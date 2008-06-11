@@ -1,0 +1,23 @@
+org.imirsel.m2k.io to do list:
+
+Create a walkthrough HTML file for whole package
+	Inputting data and creating experiments with InputSignals
+	Inputting data and creating experiments with MusicDB and CSV files
+
+Get full review of MusicDB.java and related modules
+
+Based on DeliminatedTextFileUtilities.java, 
+	Add a writeSignalArrayMetadataToDelimTextFile module
+	Add a writeSignalArrayDataToDelimTextFile module
+
+Test (and fix?) AudioFilePlayer modules, think WAV is ok and MP3 is broken
+
+Long term:
+
+Rebuild audio file reader? JAudio? How about Jlayer SPI?
+
+Add Weka integration modules!!!
+	write ARFF files as well
+	See Sang's code, needs testing 
+
+Add Marsyas integration modules!!!
