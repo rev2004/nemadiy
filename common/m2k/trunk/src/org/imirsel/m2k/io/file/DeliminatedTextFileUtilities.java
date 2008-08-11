@@ -7,8 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
 
 
@@ -238,6 +239,134 @@ public class DeliminatedTextFileUtilities {
         }else{
             throw new FileNotFoundException("The file: " + csvFile.getPath() + " was not found!");
         }
+    }
+    
+    
+    /**
+     * Returns a 2D String array representation of the data block from the csv file.
+     * @param classPath The class path of the deliminated text file to be read.
+     * @param delimiter The delimiter to use to read the file.
+     * @param headerRow The number of the header row or -1 for no header row.
+     * @throws java.io.IOException Thrown if there is a problem reading the deliminated text file.
+     * @throws java.io.FileNotFoundException Thrown if the deliminated text file is not found.
+     * @return a 2D String array representation of the data block from the csv file.
+     */
+    public static String[][] getDelimTextDataBlock(String classPath, String delimiter, int headerRow) throws IOException, FileNotFoundException{
+        String[][] csvData = loadDelimTextData(classPath, delimiter, -1);
+        //String[] headers;
+        if(headerRow == -1)
+        {
+            //set headers
+            //headers = new String[csvData.length]; 
+            return csvData;
+        }else{
+            //headers = csvData[headerRow];
+            //Truncate remaining data
+            String[][] truncCSVData = new String[csvData.length - (headerRow + 1)][];
+            for (int i = 0; i < (csvData.length - (headerRow + 1)); i++) {
+                truncCSVData[i] = csvData[i + (headerRow + 1)];
+            }
+            return truncCSVData;
+        }
+    }
+    
+    /**
+     * Returns only the headers from the deliminated text file.
+     * @param classPath The class path of the deliminated text file to be read.
+     * @param delimiter The delimiter to be used to read the text file.
+     * @param headerRow The row number to be used as the header row.
+     * @throws java.io.IOException Thrown if there is a problem reading the deliminated text file.
+     * @return the headers row from the deliminated text file.
+     */
+    public static String[] loadDelimTextHeaders(String classPath, String delimiter, int headerRow) throws IOException {
+
+        BufferedReader textBuffer; 
+        
+        InputStream iStream = ClassLoader.getSystemResourceAsStream(classPath);
+        textBuffer= new BufferedReader(new InputStreamReader(iStream));
+        
+        String line = null; 
+        try
+        {
+            //read data
+            int count = -1;
+            while(count < headerRow){
+                //skip to header row
+                line = textBuffer.readLine();
+                count++;
+            }
+            String[] headers = parseDelimTextLine(line,delimiter);
+            for (int i = 0; i < headers.length; i++) {
+                headers[i] = headers[i].trim();
+            }
+            textBuffer.close();
+            return headers;
+        }
+        catch (java.io.IOException ioe)
+        {
+            textBuffer.close();
+            throw new java.io.IOException("An IOException occured while reading file: " + classPath + "\n" + ioe);
+        }
+    }
+    
+    /**
+     * Loads the entire deliminated text file into a 2d String array.
+     * @param classPath The class path of the deliminated text file to be read.
+     * @param delimiter The delimiter to be used to read the text file.
+     * @param lines Number of lines to read or -1 for all of them.
+     * @throws java.io.IOException Thrown if there is a problem reading the deliminated text file.
+     * @return the entire deliminated text file represented as a 2d String array.
+     */
+    public static String[][] loadDelimTextData(String classPath, String delimiter, int lines)  throws IOException{
+
+        BufferedReader textBuffer;
+        ArrayList rowData = new ArrayList();
+        int maxRowLength = 0;
+
+        InputStream iStream = ClassLoader.getSystemResourceAsStream(classPath);
+        textBuffer= new BufferedReader(new InputStreamReader(iStream));
+
+        String line = null; 
+        try
+        {
+            //read data
+            int count = 0;
+            line = textBuffer.readLine();
+            while ((line != null)&&((count < lines)|(lines == -1)))
+            {
+                if (!line.trim().equals("")){
+                    String[] row = parseDelimTextLine(line,delimiter);
+                    rowData.add(row);
+                    if (row.length > maxRowLength)
+                    {
+                        maxRowLength = row.length;
+                    }
+                }
+                line = textBuffer.readLine();
+                count++;
+            }
+        }
+        catch (java.io.IOException ioe)
+        {
+            textBuffer.close();
+            throw new java.io.IOException("An IOException occured while reading file: " + classPath + "\n" + ioe);
+        }
+        catch (java.lang.NullPointerException npe)
+        {
+            textBuffer.close();
+            throw new RuntimeException("NullPointerException caused by: " + classPath, npe);
+        }
+
+        String[][] outputData = new String[rowData.size()][maxRowLength];
+        for (int i = 0; i < rowData.size(); i++) {
+            String[] row = (String[])rowData.get(i);
+            for (int j = 0; j < row.length; j++) {
+                outputData[i][j] = row[j].trim();
+                //detect and remove speechmarks
+            }
+        }
+        textBuffer.close();
+        return outputData;
     }
     
     /**
