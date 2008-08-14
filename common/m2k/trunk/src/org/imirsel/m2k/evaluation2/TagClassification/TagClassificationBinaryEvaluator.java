@@ -78,9 +78,11 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         int totalFalseNegative = 0;
 
         //result objects
+        HashMap<String, Double> tag2Accuracy = new HashMap<String, Double>();
         HashMap<String, Double> tag2Precision = new HashMap<String, Double>();
         HashMap<String, Double> tag2Recall = new HashMap<String, Double>();
         HashMap<String, Double> tag2FMeasure = new HashMap<String, Double>();
+        double totalAccuracy;
         double totalPrecision;
         double totalRecall;
         double totalFmeasure;
@@ -131,26 +133,31 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             int tp = tag2truePositive.get(tag).intValue();
             int fp = tag2falsePositive.get(tag).intValue();
             int fn = tag2falseNegative.get(tag).intValue();
+            double accuracy = (double) tp / (double) (tp + fp + fn);
             double precision = (double) tp / (double) (tp + fp);
             double recall = (double) tp / (double) (tp + fn);
             double fMeasure = (2 * recall * precision) / (recall + precision);
+            tag2Accuracy.put(tag, accuracy);
             tag2Precision.put(tag, precision);
             tag2Recall.put(tag, recall);
             tag2FMeasure.put(tag, fMeasure);
         }
 
         //compute total stats
+        totalAccuracy = (double) totalTruePositive / (double) (totalTruePositive + totalFalsePositive + totalFalseNegative);
         totalPrecision = (double) totalTruePositive / (double) (totalTruePositive + totalFalsePositive);
         totalRecall = (double) totalTruePositive / (double) (totalTruePositive + totalFalseNegative);
         totalFmeasure = (2 * totalRecall * totalPrecision) / (totalRecall + totalPrecision);
 
         //append results to report
+        systemReport += "Overall accuracy: " + totalAccuracy + "\n";
         systemReport += "Overall precision: " + totalPrecision + "\n";
         systemReport += "Overall recall:    " + totalRecall + "\n";
         systemReport += "Overall fMeasure:  " + totalFmeasure + "\n";
         for (Iterator<String> it = tags.iterator(); it.hasNext();) {
             tag = it.next();
             systemReport += "tag '" + tag + "':\n";
+            systemReport += "    precision: " + tag2Accuracy.get(tag).doubleValue() + "\n";
             systemReport += "    precision: " + tag2Precision.get(tag).doubleValue() + "\n";
             systemReport += "    recall:    " + tag2Recall.get(tag).doubleValue() + "\n";
             systemReport += "    fMeasure:  " + tag2FMeasure.get(tag).doubleValue() + "\n";
@@ -170,10 +177,12 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
 
         //store evaluation data
         dataToEvaluate.setMetadata(EvaluationDataObject.SYSTEM_RESULTS_REPORT, systemReport);
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_ACCURACY_MAP, tag2Accuracy);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_PRECISION_MAP, tag2Precision);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_RECALL_MAP, tag2Recall);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP, tag2FMeasure);
         
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_ACCURACY, totalAccuracy);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_PRECISION, totalPrecision);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_RECALL, totalRecall);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_FMEASURE, totalFmeasure);

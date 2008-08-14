@@ -63,10 +63,12 @@ public class EvaluationDataObject implements Serializable{
      * to a map linking tags to their affinity values. */
     public static final String TAG_AFFINITY_MAP = "Tag classification affinity map";
     
+    public static final String TAG_BINARY_ACCURACY_MAP = "Tag classification binary relevance accuracy map";
     public static final String TAG_BINARY_PRECISION_MAP = "Tag classification binary relevance precision map";
     public static final String TAG_BINARY_RECALL_MAP = "Tag classification binary relevance recall map";
     public static final String TAG_BINARY_FMEASURE_MAP = "Tag classification binary relevance fMeasure map";
     
+    public static final String TAG_BINARY_OVERALL_ACCURACY = "Tag classification binary relevance overall accuracy";
     public static final String TAG_BINARY_OVERALL_PRECISION = "Tag classification binary relevance overall precision";
     public static final String TAG_BINARY_OVERALL_RECALL = "Tag classification binary relevance overall recall";
     public static final String TAG_BINARY_OVERALL_FMEASURE = "Tag classification binary relevance overall fMeasure";
