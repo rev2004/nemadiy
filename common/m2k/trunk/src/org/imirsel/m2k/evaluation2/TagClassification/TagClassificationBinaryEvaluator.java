@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.imirsel.m2k.evaluation2.EvaluationDataObject;
 import org.imirsel.m2k.evaluation2.Evaluator;
+import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
 import org.imirsel.m2k.util.noMetadataException;
 
 /**
@@ -41,15 +42,27 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         return false;
     }
 
-    private String evaluateResultsAgainstGT(EvaluationDataObject dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException {
+    public String evaluateResultsAgainstGT(String systemName, EvaluationDataObject dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException {
         //init report
         String systemReport = "Results file:      " + dataToEvaluate.getFile().getAbsolutePath() + "\n";
         systemReport = "Ground-truth file: " + groundTruth.getFile().getAbsolutePath() + "\n";
 
-        //the data to compare
+        //check GT and eval data for existence of right data 
+        if (!groundTruth.hasMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)) {
+            throw new noMetadataException("No " + EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP + " ground-truth metadata found in object, representing " + groundTruth.getFile().getAbsolutePath());
+        }
+        if (!dataToEvaluate.hasMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)) {
+            File theFile = dataToEvaluate.getFile();
+            throw new RuntimeException("No " + EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP + " evaluation metadata found in object representing " + theFile.getAbsolutePath());
+        }
+        //get the data to compare
         HashMap<String, HashSet<String>> binaryTagData = (HashMap<String, HashSet<String>>) dataToEvaluate.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
         HashMap<String, HashSet<String>> GT_binaryTagData = (HashMap<String, HashSet<String>>) groundTruth.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
-
+        if (!GT_binaryTagData.keySet().containsAll(binaryTagData.keySet())) {
+            throw new RuntimeException("The groundtruth Object representing " + groundTruth.getFile().getAbsolutePath() + ", does not have ground truth" +
+                    "for all the paths specified in " + dataToEvaluate.getFile().getAbsolutePath());
+        }
+        
         //util references
         String path, tag;
         HashSet<String> trueSet;
@@ -143,10 +156,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             systemReport += "    fMeasure:  " + tag2FMeasure.get(tag).doubleValue() + "\n";
         }
 
-        //store overall results
-        tag2Precision.put("OVERALL", totalPrecision);
-        tag2Recall.put("OVERALL", totalRecall);
-        tag2FMeasure.put("OVERALL", totalFmeasure);
+        
 
         //report on files evaluated against
         systemReport += "Number of files tested against: " + binaryTagData.size() + "\n";
@@ -163,11 +173,18 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_PRECISION_MAP, tag2Precision);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_RECALL_MAP, tag2Recall);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP, tag2FMeasure);
-
+        
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_PRECISION, totalPrecision);
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_RECALL, totalRecall);
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_FMEASURE, totalFmeasure);
+        
+        
         //serialise out the evaluation data
         //  later this should be changed to use ASCII file format - when Collections are supported by write method of EvaluationDataObject
+        File systemDirectory = new File(outputDir.getAbsolutePath() + File.separator + systemName);
+        systemDirectory.mkdir();
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(outputDir.getAbsolutePath() + File.separator + dataToEvaluate.getFile().getName() + ".evalData.ser");
+            FileOutputStream fileOutputStream = new FileOutputStream(systemDirectory.getAbsolutePath() + File.separator + dataToEvaluate.getFile().getName() + ".evalData.ser");
             ObjectOutputStream objectOutputStream;
             objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(dataToEvaluate);
@@ -177,7 +194,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         } 
         //write out report
         try {
-            BufferedWriter textOut = new BufferedWriter(new FileWriter(outputDir.getAbsolutePath() + File.separator + dataToEvaluate.getFile().getName() + ".report.txt"));
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(systemDirectory.getAbsolutePath() + File.separator + dataToEvaluate.getFile().getName() + ".report.txt"));
             textOut.write(systemReport);
             textOut.newLine();
             textOut.close();
@@ -188,55 +205,66 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         return systemReport;
     }
 
-    private void incrementTagCount(HashMap<String, AtomicInteger> map, String tag) {
-        if (!map.containsKey(tag)) {
-            map.put(tag, new AtomicInteger(1));
-        } else {
-            map.get(tag).incrementAndGet();
-        }
-    }
-
-    public String evaluate(EvaluationDataObject[] dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException{
+    public String evaluate(String[] systemNames, EvaluationDataObject[][] dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException{
         String report = "";
 
-        //check GT and eval data for existence of right data 
-        if (!groundTruth.hasMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)) {
-            throw new noMetadataException("No " + EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP + " ground-truth metadata found in object, representing " + groundTruth.getFile().getAbsolutePath());
-        }
-        HashMap<String, HashSet<String>> GT_binaryTagData = (HashMap<String, HashSet<String>>) groundTruth.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
+        //evaluate each system
         for (int i = 0; i < dataToEvaluate.length; i++) {
-            if (!dataToEvaluate[i].hasMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)) {
-                File theFile = dataToEvaluate[i].getFile();
-                throw new RuntimeException("No " + EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP + " evaluation metadata found in object " + i + ", representing " + theFile.getAbsolutePath());
+            report += "System: " + systemNames[i] + "\n";
+            //evaluate each fold
+            for (int j = 0; j < dataToEvaluate.length; j++) {
+                String systemReport = evaluateResultsAgainstGT(systemNames[i], dataToEvaluate[i][j], groundTruth, outputDir);
+                report += systemReport + EvaluationDataObject.DIVIDER + "\n";
             }
-            HashMap<String, HashSet<String>> binaryTagData = (HashMap<String, HashSet<String>>) dataToEvaluate[i].getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
-            if (!GT_binaryTagData.keySet().containsAll(binaryTagData.keySet())) {
-                throw new RuntimeException("The groundtruth Object, representing " + groundTruth.getFile().getAbsolutePath() + ", does not have ground truth" +
-                        "for all the paths specified in " + dataToEvaluate[i].getFile().getAbsolutePath());
-            }
-
+            report += EvaluationDataObject.DIVIDER + "\n";
         }
-
-        //evaluate each dataToEvaluate entry
-        for (int i = 0; i < dataToEvaluate.length; i++) {
-            String systemReport = evaluateResultsAgainstGT(dataToEvaluate[i], groundTruth, outputDir);
-            report += systemReport + EvaluationDataObject.DIVIDER + "\n";
-        }
-
-
-    
-    //TODO: stat sig tests
-    //over all objects
-    //  prepare per-tag F-measure and accuracy for use in Friedmans's test with TK HSD
-    //  prepare per-tag F-measure and accuracy for use in Beta-Binomial test
-
-    //  call matlab and execute Friedman's test with TK HSD
-    //    write results to file
-    //  call matlab and execute Beta-Binomial test
-    //    write results to file
 
         
+        //TODO: stat sig tests
+        //  prepare per-tag F-measure and precison data file for use in Friedmans's test with TK HSD
+        int numFolds = dataToEvaluate[0].length;
+        int totalNumRows = 0;
+        
+        String[][] tagNames = new String[numFolds][];
+        for (int i = 0; i < numFolds; i++) {
+            HashMap<String, Double> tag2fmeasureMap =  (HashMap<String, Double>)dataToEvaluate[0][i].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
+            tagNames[i] = tag2fmeasureMap.keySet().toArray(new String[tag2fmeasureMap.size()]);
+            totalNumRows += tagNames[i].length;
+        }
+        
+        String[][] csvData = new String[totalNumRows+1][systemNames.length + 2];    
+        csvData[0][0] = "tag";
+        csvData[0][1] = "fold";
+        
+        for (int i = 0; i < systemNames.length; i++) {
+            csvData[0][i+2] = systemNames[i];
+        }
+        int foldOffset = 1;
+        for (int f = 0; f < numFolds; f++) {
+            for (int j = 0; j < tagNames[f].length; j++) {
+                csvData[foldOffset + j][0] = tagNames[f][j];
+                csvData[foldOffset + j][1] = "" + (f + 1);
+                for (int s = 0; s < systemNames.length; s++) {
+                    HashMap<String, Double> tag2fmeasureMap =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
+                    csvData[foldOffset + j][s+2] = "" + tag2fmeasureMap.get(tagNames[f][j]).doubleValue();
+                }
+            }
+            foldOffset += tagNames[f].length;
+        }
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(new File(outputDir.getAbsolutePath() + File.separator + "friedman.csv"), ",", csvData, true); 
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        //  prepare per-tag F-measure and precision for use in Beta-Binomial test
+        
+        //  call matlab and execute Friedman's test with TK HSD
+        //    write results to file
+        //  call matlab and execute Beta-Binomial test
+        //    write results to file
 
+        
         //write overall report to file
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(outputDir.getAbsolutePath() + File.separator + "overall_report.txt"));
@@ -248,4 +276,14 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         } 
         return report;
     }
+    
+    private void incrementTagCount(HashMap<String, AtomicInteger> map, String tag) {
+        if (!map.containsKey(tag)) {
+            map.put(tag, new AtomicInteger(1));
+        } else {
+            map.get(tag).incrementAndGet();
+        }
+    }
+
+    
 }

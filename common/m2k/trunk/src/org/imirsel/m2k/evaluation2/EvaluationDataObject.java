@@ -67,6 +67,10 @@ public class EvaluationDataObject implements Serializable{
     public static final String TAG_BINARY_RECALL_MAP = "Tag classification binary relevance recall map";
     public static final String TAG_BINARY_FMEASURE_MAP = "Tag classification binary relevance fMeasure map";
     
+    public static final String TAG_BINARY_OVERALL_PRECISION = "Tag classification binary relevance overall precision";
+    public static final String TAG_BINARY_OVERALL_RECALL = "Tag classification binary relevance overall recall";
+    public static final String TAG_BINARY_OVERALL_FMEASURE = "Tag classification binary relevance overall fMeasure";
+    
             
     /**
      * The metadata hashmap.
