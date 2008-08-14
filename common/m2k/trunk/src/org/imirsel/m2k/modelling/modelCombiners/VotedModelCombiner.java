@@ -32,9 +32,11 @@ public class VotedModelCombiner {
     }
     
     /**
-     * Applies the trained combiner to an array of Signal Objects (one for each classifier)
-     * and returns a single Signal object with classification metadata added.
-     * @param decisionProfile an array of Signal Objects (one for each classifier).
+     * Applies an array of classifiers to a single Signal Object (passed to all classifiers)
+     * and returns a single Signal object with classification metadata added. 
+     * Classificaiton is determined by voting.
+     * @param testData the Signal Object (one for all classifiers).
+     * @param classifiers the classifiers to apply to the Signal Object.
      * @return A single Signal object with classification metadata added.
      * @throws org.imirsel.m2k.util.noMetadataException Thrown if required metadata is not found.
      */
@@ -59,12 +61,13 @@ public class VotedModelCombiner {
     }
     
     /**
-     * Applies the trained combiner to a 2d array of Signal Objects (indexed
-     * [num examples][num classifers]) and returns a single Signal object with 
-     * classification metadata added.
-     * @param decisionProfiles a 2D array of Signal Objects (one for each classifier).
-     * @return An array of Signal objects with classification metadata added 
-     *  (one for each example.
+     * Applies an array of classifiers to an array of Signal Objects (each is 
+     * passed to all classifiers) and returns an array of Signal objects with 
+     * classification metadata added. 
+     * Classificaiton is determined by voting.
+     * @param testData the Signal Object array (one for all classifiers).
+     * @param classifiers the classifiers to apply to the Signal Objects.
+     * @return An array of Signal objects with classification metadata added.
      * @throws org.imirsel.m2k.util.noMetadataException Thrown if required metadata is not found.
      */
     public static Signal[] classify(Signal[] testData, SignalClassifier[] classifiers) throws noMetadataException
@@ -80,9 +83,9 @@ public class VotedModelCombiner {
     
     /**
      * Calculates the probability of class membership of a Signal Object.
-     * @param decisionProfile The Signals object to calculate the probabilities of 
-     * class membership for. These probabilities should be ordered such that the indexes
-     * match the class names returned by <code>getClassNames</code>.
+     * @param testData The Signal object to calculate the probabilities of 
+     * class membership for. These probabilities should be ordered such that the 
+     * indexes match the class names returned by <code>getClassNames</code>.
      * @return An array of the probabilities of class membership
      * @throws org.imirsel.m2k.util.noMetadataException Thrown if required metadata is not found.
      */

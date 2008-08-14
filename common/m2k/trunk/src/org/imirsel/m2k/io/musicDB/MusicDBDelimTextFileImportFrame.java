@@ -66,8 +66,6 @@ public class MusicDBDelimTextFileImportFrame extends javax.swing.JFrame {
     /**
      * Creates new form MusicDBDelimTextFileImportFrame taking the MusicDB Object to 
      * populate and an <CODE>MusicDBDelimTextFileImportModule</CODE> as input.
-     * @param listener_ an <CODE>MusicDBDelimTextFileImportModule</CODE> module to be notified when the import has 
-     * been completed.
      * @param theDB The MusicDB Object to populate.
      */
     public MusicDBDelimTextFileImportFrame(MusicDB theDB) {

@@ -9,7 +9,8 @@
 
 package org.imirsel.m2k.evaluation2;
 
-import org.imirsel.m2k.util.Signal;
+import java.io.File;
+import org.imirsel.m2k.util.noMetadataException;
 
 /**
  *
@@ -30,16 +31,17 @@ public interface Evaluator {
     public boolean returnsInCSV();
     
     /**
-     * Evaluates an array of Signal Objects against a 2D array of 
-     * groundtruth objects. The first index of the groundtruth array 
-     * should be of the same length as the dataToEvaluate array, i.e.
-     * dataToEvaluate[n] & groundTruth[n][]. Thus there can be a 
-     * variable number of groundtruth Objects (1 or more than 1) for 
-     * each Object to be evaluated.
-     * @param dataToEvaluate The data (Signal Objects) to evaluate.
-     * @param groundTruth The groundtruth Signal Objects to evaluate against.
+     * Evaluates an array of EvaluationDataObject Objects against an a
+     * groundtruth object of the same type. Each EvaluationDataObject from 
+     * dataToEvaluate represents the results from a different system. 
+     * @param dataToEvaluate The data (EvaluationDataObject Objects) to evaluate.
+     * @param groundTruth The groundtruth EvaluationDataObject Object to 
+     * evaluate against.
+     * @param outputDir Directory to write any plots and other reports to.
      * @return Return a String containing the evaluation report.
+     * @throws noMetadataException Thrown if an important metadata Object is 
+     * not found in the ground-truth or evaluation data.
      */
-    public String evaluate(Signal[] dataToEvaluate, Signal[][] groundTruth);
+    public String evaluate(EvaluationDataObject[] dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException;
     
 }

@@ -22,6 +22,6 @@ public interface EvalFileReader {
     
     public void setVerbose(boolean verbose_);
     
-    public Signal readFile(File theFile);
+    public EvaluationDataObject readFile(File theFile);
     
 }

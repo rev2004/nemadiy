@@ -48,10 +48,10 @@ public class ExternalIntegrationClass {
     }
     
     /** Sets the extension that will be replaced if encountered.
-     * @param the extension that will be replaced if encountered.
+     * @param theExtension the extension that will be replaced if encountered.
      */
-    public void setReplaceExtension(String theCommand) {
-        this.replaceExtension = theCommand;
+    public void setReplaceExtension(String theExtension) {
+        this.replaceExtension = theExtension;
     }
     
     /** Returns the extension that will be replaced if encountered.
@@ -62,10 +62,10 @@ public class ExternalIntegrationClass {
     }
     
     /** Sets the size of the Input buffer.
-     * @param the size of the Input buffer.
+     * @param bufferSize_ the size of the Input buffer.
      */
-    public void setBufferSize(int theCommand) {
-        this.bufferSize = theCommand;
+    public void setBufferSize(int bufferSize_) {
+        this.bufferSize = bufferSize_;
     }
     
     /** Returns the size of the Input buffer.

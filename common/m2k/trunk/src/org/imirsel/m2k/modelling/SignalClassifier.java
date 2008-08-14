@@ -62,7 +62,6 @@ public interface SignalClassifier extends Serializable{
      * Trains the classifier on the array of Signal objects. Implementations of 
      * this method should also produce an ordered list of the class names which 
      * can be returned with the <code>getClassNames</code> method.
-     * @see getClassNames
      * @param inputData the Signal array that the model should be trained on.
      * @throws noMetadataException Thrown if there is no class metadata to train the Gaussian model with
      */

@@ -8,7 +8,8 @@ import org.imirsel.m2k.modelling.SimpleMultiVectorSignalClassifier;
 import org.imirsel.m2k.modelling.cart.CART;
 
 /**
- * A single Gaussian classifier that is trained on an array of <code>Signal</code> 
+ * A classifier based on the growth of a CART tree classifier in a multi-class 
+ * LDA feature space, both of which are trained on an array of <code>Signal</code> 
  * objects with either diagonal or full covariance.
  * @author  Kris West
  */
@@ -31,7 +32,7 @@ public class MClassLinearDiscriminantAnalysisCARTClassifier extends SimpleMultiV
     private boolean verbose = false;
     
     /**
-     * Creates a new instance of SingleGaussian
+     * Creates a new instance of MClassLinearDiscriminantAnalysisCARTClassifier
      */
     public MClassLinearDiscriminantAnalysisCARTClassifier() {
         super();
@@ -42,8 +43,8 @@ public class MClassLinearDiscriminantAnalysisCARTClassifier extends SimpleMultiV
     }
     
     /**
-     * Copy constructor for a SingleGaussian
-     * @param oldGaussian The <code>SingleGaussian</code> to copied
+     * Copy constructor for a MClassLinearDiscriminantAnalysisCARTClassifier
+     * @param oldClassifier The <code>MClassLinearDiscriminantAnalysisCARTClassifier</code> to copied
      */
     public MClassLinearDiscriminantAnalysisCARTClassifier(MClassLinearDiscriminantAnalysisCARTClassifier oldClassifier) {
         super(oldClassifier);

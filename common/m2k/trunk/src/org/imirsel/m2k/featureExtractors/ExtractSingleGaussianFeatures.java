@@ -96,7 +96,7 @@ public class ExtractSingleGaussianFeatures {
             
             double[] aFrame = theWindow.applyWindow(readerOutput);
             double[] spectrum = theFFT.fftScaledMagnitude(aFrame);
-            double[] featureFrame = featExtractor.extractMFCCsFromSpectra(spectrum);
+            double[] featureFrame = featExtractor.computeFeaturesFromSpectra(spectrum);
             featFrames.add(featureFrame);
         }
             

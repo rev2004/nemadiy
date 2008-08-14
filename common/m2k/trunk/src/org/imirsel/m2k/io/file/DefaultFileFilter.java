@@ -27,7 +27,8 @@ public class DefaultFileFilter{
     }
    /**
     *Returns true if the file satisfies one of the extensions.
-    * @param File, @return boolean 
+    * @param f the file to test against the filter.
+    * @return a boolean indicating that the file should be accepted or dropped.
     */
     public boolean accept(File f){
         if (s==0){

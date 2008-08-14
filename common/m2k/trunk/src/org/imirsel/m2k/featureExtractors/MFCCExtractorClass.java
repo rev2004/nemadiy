@@ -53,7 +53,7 @@ public class MFCCExtractorClass implements FeatureExtractorInterface{
         filters = new MelFilterBankClass(numFilters,SampleRate,low,high);
     }
     
-    public double[] extractMFCCsFromSpectra(double[] FFTMagnitudes){
+    public double[] computeFeaturesFromSpectra(double[] FFTMagnitudes){
         double[] filterCoeffs = filters.filter(FFTMagnitudes);
         double[] dctCoeffs = transform.performDCT(filterCoeffs);
         return Mathematics.logN(dctCoeffs,0);

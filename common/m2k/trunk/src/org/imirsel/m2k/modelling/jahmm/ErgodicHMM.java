@@ -46,7 +46,7 @@ public class ErgodicHMM implements SignalClassifier{
     
     /**
      * Copy constructor for a ErgodicHMM
-     * @param oldGaussian The <code>ErgodicHMM</code> to copied
+     * @param oldHMM The <code>ErgodicHMM</code> to copied
      */
     public ErgodicHMM(ErgodicHMM oldHMM) {
         isTrained = oldHMM.isTrained;
@@ -155,7 +155,7 @@ public class ErgodicHMM implements SignalClassifier{
     
     /**
      * Sets a flag indicating whether a classifier has been trained or not.
-     * @return a flag indicating whether a classifier has been trained or not.
+     * @param val a flag indicating whether a classifier has been trained or not.
      */
     public void setIsTrained(boolean val) {
         this.isTrained = val;
@@ -246,7 +246,7 @@ public class ErgodicHMM implements SignalClassifier{
      * Sets the List of the class namesin the data that the classifier
      * will be trained on. This List should be ordered such that the integers returned
      * from the classification methods index the correct class names. `
-     * @param classNames a List containing the class names.
+     * @param classNames_ a List containing the class names.
      */
     public void setClassNames(List classNames_) {
         Collections.sort(classNames_);
@@ -366,7 +366,7 @@ public class ErgodicHMM implements SignalClassifier{
     
     /**
      * Calculates the probability of class membership of a Signal Object.
-     * @param inputSignal The Signal object to calculate the probabilities of
+     * @param input The Signal object to calculate the probabilities of
      * class membership for. This probabilities should be ordered such that the indexes
      * match the class names returned by <code>getClassNames</code>.
      * @return An array of the probabilities of class membership

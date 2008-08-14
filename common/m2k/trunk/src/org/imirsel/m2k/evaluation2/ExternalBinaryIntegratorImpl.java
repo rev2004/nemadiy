@@ -15,7 +15,7 @@ public class ExternalBinaryIntegratorImpl {
     boolean isRunning = false;
     BufferedInputStream inputStream;
     BufferedInputStream errorStream;
-    //java.io.BufferedInputStream
+    
     Process process = null;
     //Buffer size in bytes
     int bufferSize = 1048576; // 1 mb buffer
@@ -35,20 +35,6 @@ public class ExternalBinaryIntegratorImpl {
             process.destroy();
         }
     }
-    
-//    /** Sets the size of the Input buffer.
-//     * @param the size of the Input buffer.
-//     */
-//    public void setBufferSize(int theCommand) {
-//        this.bufferSize = theCommand;
-//    }
-//    
-//    /** Returns the size of the Input buffer.
-//     * @return the size of the Input buffer.
-//     */
-//    public int getBufferSize() {
-//        return bufferSize;
-//    }
     
     /**
      * Prints out the buffered input stream
@@ -93,7 +79,7 @@ public class ExternalBinaryIntegratorImpl {
      * the command are formated according to the commandFormattingStr, the list of input files and
      * the output file name.
      *
-     * legal command formatting strings might include: $m$1 $o
+     * legal command formatting strings might include: $m $1 $o
      *                                                 $m -param 74 $1 $2 $o
      *                                                 $m -param 74 -1 $1 -2 $2 -3 $3 -out $o
      *                                                 $m -param 74 -model $1 -codebook $2 -audiofile $3 $o

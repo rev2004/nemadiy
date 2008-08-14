@@ -8,8 +8,9 @@ import org.imirsel.m2k.modelling.SimpleMultiVectorSignalClassifier;
 import org.imirsel.m2k.modelling.singleGaussian.SingleGaussian;
 
 /**
- * A single Gaussian classifier that is trained on an array of <code>Signal</code> 
- * objects with either diagonal or full covariance.
+ * A classifier based on the training of a single Gaussian classifier in a 
+ * one-against-all LDA feature space, both of which are trained on an array of 
+ * <code>Signal</code> objects with either diagonal or full covariance.
  * @author  Kris West
  */
 public class OAALinearDiscriminantAnalysisGaussianClassifier extends SimpleMultiVectorSignalClassifier{
@@ -22,7 +23,7 @@ public class OAALinearDiscriminantAnalysisGaussianClassifier extends SimpleMulti
     private boolean useFullCovariance = true;
     
     /**
-     * Creates a new instance of SingleGaussian
+     * Creates a new instance of OAALinearDiscriminantAnalysisGaussianClassifier
      */
     public OAALinearDiscriminantAnalysisGaussianClassifier() {
         super();
@@ -33,8 +34,8 @@ public class OAALinearDiscriminantAnalysisGaussianClassifier extends SimpleMulti
     }
     
     /**
-     * Copy constructor for a SingleGaussian
-     * @param oldGaussian The <code>SingleGaussian</code> to copied
+     * Copy constructor for a OAALinearDiscriminantAnalysisGaussianClassifier
+     * @param oldClassifier The <code>OAALinearDiscriminantAnalysisGaussianClassifier</code> to copied
      */
     public OAALinearDiscriminantAnalysisGaussianClassifier(OAALinearDiscriminantAnalysisGaussianClassifier oldClassifier) {
         super(oldClassifier);

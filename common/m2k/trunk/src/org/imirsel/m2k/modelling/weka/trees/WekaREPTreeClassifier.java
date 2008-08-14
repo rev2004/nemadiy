@@ -137,19 +137,14 @@ public class WekaREPTreeClassifier implements SignalClassifier {
      *
      * @param inputData the Signal array that the model should be trained on.
      * @throws noMetadataException Thrown if there is no class metadata to train the Gaussian model with
-     * @see getClassNames
      */
-    public void train(Signal[] inputData) {
+    public void train(Signal[] inputData) throws noMetadataException{
 
         List classNamesList = new ArrayList();
         for (int i = 0; i < inputData.length; i++) {
-            try {
-                String className = inputData[i].getStringMetadata(Signal.PROP_CLASS);
-                if ((className != null) && (!classNamesList.contains(className))) {
-                    classNamesList.add(className);
-                }
-            } catch (noMetadataException ex) {
-                throw new RuntimeException("No class metadata found to train model on!", ex);
+            String className = inputData[i].getStringMetadata(Signal.PROP_CLASS);
+            if ((className != null) && (!classNamesList.contains(className))) {
+                classNamesList.add(className);
             }
         }
         Collections.sort(classNamesList);
