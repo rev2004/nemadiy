@@ -31,10 +31,12 @@ public interface Evaluator {
     public boolean returnsInCSV();
     
     /**
-     * Evaluates an array of EvaluationDataObject Objects against an a
+     * Evaluates a 2D array of EvaluationDataObject Objects against an a
      * groundtruth object of the same type. Each EvaluationDataObject from 
-     * dataToEvaluate represents the results from a different system. 
+     * dataToEvaluate represents the results from a different system, the first
+     * index denoting the system and the second denoting the fold. 
      * @param dataToEvaluate The data (EvaluationDataObject Objects) to evaluate.
+     * The array is indexed [system][fold].
      * @param groundTruth The groundtruth EvaluationDataObject Object to 
      * evaluate against.
      * @param outputDir Directory to write any plots and other reports to.
@@ -42,6 +44,10 @@ public interface Evaluator {
      * @throws noMetadataException Thrown if an important metadata Object is 
      * not found in the ground-truth or evaluation data.
      */
-    public String evaluate(EvaluationDataObject[] dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException;
+    public String evaluate(String[] systemNames, EvaluationDataObject[][] dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException;
+    
+    
+    
+    public String evaluateResultsAgainstGT(String systemName, EvaluationDataObject dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException;
     
 }
