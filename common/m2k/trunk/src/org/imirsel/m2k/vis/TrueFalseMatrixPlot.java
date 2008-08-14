@@ -42,7 +42,7 @@ public class TrueFalseMatrixPlot extends ApplicationFrame {
      * 
      * @param title
      * @param algorithmNames
-     * @param confusion
+     * @param trueFalseData
      */
     public TrueFalseMatrixPlot(final String title, final String[] algorithmNames, boolean[][] trueFalseData) {
 

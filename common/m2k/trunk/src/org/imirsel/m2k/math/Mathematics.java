@@ -451,7 +451,7 @@ public class Mathematics {
      * total lies.
      *
      * @param input the array for which the rolloff is calculated
-     * @percent the percent of the sum total at which the rolloff point is
+     * @param percent the percent of the sum total at which the rolloff point is
      * calculated
      *
      * @return output the kurtosis of the input array
@@ -513,7 +513,7 @@ public class Mathematics {
      * i.e. vector1 .* vector2
      *
      * @param vector1 the array of representing the first vector
-     * @param vector1 the array of representing the second vector
+     * @param vector2 the array of representing the second vector
      *
      * @return output the vector of element multplies of the inputs
      */
@@ -534,10 +534,10 @@ public class Mathematics {
      *
      * @return output the vector of element multplies of the inputs
      */
-    public static double[] elementDivide(double[] vector1, double[] vector2) {
-        double[] output = new double[vector1.length];
-        for (int i = 0; i < vector1.length; i++ ) {
-            output[i] = vector1[i] / vector2[i];
+    public static double[] elementDivide(double[] numerator, double[] divisor) {
+        double[] output = new double[numerator.length];
+        for (int i = 0; i < numerator.length; i++ ) {
+            output[i] = numerator[i] / divisor[i];
         }
         return output;
     }

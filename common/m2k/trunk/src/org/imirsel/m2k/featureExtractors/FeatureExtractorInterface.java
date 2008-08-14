@@ -19,7 +19,7 @@ public interface FeatureExtractorInterface {
     
     public void init(Signal aSignal);
     
-    public double[] extractMFCCsFromSpectra(double[] FFTMagnitudes);
+    public double[] computeFeaturesFromSpectra(double[] FFTMagnitudes);
     
     public String[] getColNames();
      

@@ -135,7 +135,6 @@ public class Signal implements Serializable, Cloneable, Comparable {
     public final static String PROP_LIKELIHOODS = "Likelihoods";
     /**
      * Constant definition for model used to produce class membership Likelihoods.
-     * @see PROP_LIKELIHOODS
      */
     public final static String PROP_LIKELIHOODS_MODEL = "Likelihoods model";
     
@@ -317,6 +316,17 @@ public class Signal implements Serializable, Cloneable, Comparable {
     }
     
     /**
+     * Returns a flag indicating whether there is an entry in the metadata map
+     * for the specified key.
+     * @param key The metadata key to check.
+     * @return a flag indicating whether there is an entry in the metadata map
+     * for the specified key.
+     */
+    public boolean hasMetadata(String key){
+        return metadata.containsKey(key);
+    }
+    
+    /**
      *  Compares two Signal Objects for equality based on their filelocation metadata.
      *  @param otherSignal The Signal to compare this Object with.
      *  @return An integer indicating equality or ordering.
@@ -370,8 +380,9 @@ public class Signal implements Serializable, Cloneable, Comparable {
         return clone;
     }
     
-    /** Returns a File Object for the file specified by the file location metadata
-     *  @return
+    /** Returns a File Object for the path specified by the file location metadata.
+     * @throws noMetadataException if the Signal Object has no file locaiton metadata.
+     * @return a File Object for the path specified by the file location metadata.
      */
     public File getFile() throws noMetadataException {
         return new File(this.getStringMetadata(Signal.PROP_FILE_LOCATION));

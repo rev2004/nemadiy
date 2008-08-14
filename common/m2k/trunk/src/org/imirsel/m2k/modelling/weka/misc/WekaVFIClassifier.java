@@ -123,7 +123,6 @@ public class WekaVFIClassifier implements SignalClassifier {
      *
      * @param inputData the Signal array that the model should be trained on.
      * @throws noMetadataException Thrown if there is no class metadata to train the Gaussian model with
-     * @see getClassNames
      */
     public void train(Signal[] inputData) {
 

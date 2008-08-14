@@ -46,7 +46,7 @@ public class StatisticalSignificanceMatrixPlot extends ApplicationFrame {
      * 
      * @param title
      * @param algorithmNames
-     * @param plotPoints
+     * @param sigLevelsDbl
      */
     public StatisticalSignificanceMatrixPlot(final String title, final String[] algorithmNames, double[][] sigLevelsDbl) {
 

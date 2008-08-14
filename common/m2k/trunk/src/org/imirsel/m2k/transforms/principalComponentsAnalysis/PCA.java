@@ -77,7 +77,7 @@ public class PCA implements SignalTrainedTransform {
     
     /**
      * Sets a flag indicating whether the transform has been trained or not.
-     * @return a flag indicating whether the transform has been trained or not.
+     * @param val a flag indicating whether the transform has been trained or not.
      */
     public void setIsTrained(boolean val) {
         this.isTrained = val;;
@@ -145,7 +145,7 @@ public class PCA implements SignalTrainedTransform {
     
     /**
      * Trains the transform on the array of Signal objects.
-     * @param inputData The array of Signal Objects to train the transform on.
+     * @param signals The array of Signal Objects to train the transform on.
      * @throws noMetadataException Thrown if there is no class metadata to train
      * the transform with.
      */

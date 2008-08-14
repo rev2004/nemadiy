@@ -45,7 +45,7 @@ public class ConfusionMatrixPlot extends ApplicationFrame {
      * 
      * @param title
      * @param algorithmNames
-     * @param confusion
+     * @param confusionDbl
      */
     public ConfusionMatrixPlot(final String title, final String[] algorithmNames, double[][] confusionDbl) {
 

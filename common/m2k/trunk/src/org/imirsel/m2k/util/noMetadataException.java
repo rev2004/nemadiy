@@ -6,7 +6,7 @@ import java.lang.*;
  * An exception thrown when an element of metadata is requested but has not been set
  * @author  kw
  */
-public class noMetadataException extends Exception {
+public class noMetadataException extends RuntimeException {
 
     /**
      * Creates a new instance of the noMetadataException with the specified message
