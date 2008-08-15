@@ -133,7 +133,8 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             int tp = tag2truePositive.get(tag).intValue();
             int fp = tag2falsePositive.get(tag).intValue();
             int fn = tag2falseNegative.get(tag).intValue();
-            double accuracy = (double) tp / (double) (tp + fp + fn);
+            int tn = binaryTagData.size() - (tp + fp + fn);
+            double accuracy = (double) (tp + tn) / (double) binaryTagData.size();
             double precision = (double) tp / (double) (tp + fp);
             double recall = (double) tp / (double) (tp + fn);
             double fMeasure = (2 * recall * precision) / (recall + precision);
