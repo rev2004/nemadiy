@@ -76,6 +76,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         int totalTruePositive = 0;
         int totalFalsePositive = 0;
         int totalFalseNegative = 0;
+        int totalTrueNegative = 0;
 
         //result objects
         HashMap<String, Double> tag2Accuracy = new HashMap<String, Double>();
@@ -134,6 +135,9 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             int fp = tag2falsePositive.get(tag).intValue();
             int fn = tag2falseNegative.get(tag).intValue();
             int tn = binaryTagData.size() - (tp + fp + fn);
+            
+            totalTrueNegative += tn;
+            
             double accuracy = (double) (tp + tn) / (double) binaryTagData.size();
             double precision = (double) tp / (double) (tp + fp);
             double recall = (double) tp / (double) (tp + fn);
@@ -145,7 +149,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         }
 
         //compute total stats
-        totalAccuracy = (double) totalTruePositive / (double) (totalTruePositive + totalFalsePositive + totalFalseNegative);
+        totalAccuracy = (double) (totalTruePositive + totalTrueNegative) / (double) (totalTruePositive + totalFalsePositive + totalFalseNegative + totalTrueNegative);
         totalPrecision = (double) totalTruePositive / (double) (totalTruePositive + totalFalsePositive);
         totalRecall = (double) totalTruePositive / (double) (totalTruePositive + totalFalseNegative);
         totalFmeasure = (2 * totalRecall * totalPrecision) / (totalRecall + totalPrecision);
