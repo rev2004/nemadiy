@@ -73,6 +73,12 @@ public class EvaluationDataObject implements Serializable{
     public static final String TAG_BINARY_OVERALL_RECALL = "Tag classification binary relevance overall recall";
     public static final String TAG_BINARY_OVERALL_FMEASURE = "Tag classification binary relevance overall fMeasure";
     
+    public static final String TAG_AFFINITY_AUC_ROC = "Tag classification affinity AUC-ROC map";
+    public static final String TAG_AFFINITY_ROC_DATA = "Tag classification affinity ROC data points map";
+    public static final String TAG_AFFINITY_TAG_AFFINITY_DATAPOINTS = "Tag classification affinity data points map";
+    
+    public static final String TAG_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples map";
+    public static final String TAG_NUM_NEGATIVE_EXAMPLES = "Tag classification number of negative examples map";
             
     /**
      * The metadata hashmap.
