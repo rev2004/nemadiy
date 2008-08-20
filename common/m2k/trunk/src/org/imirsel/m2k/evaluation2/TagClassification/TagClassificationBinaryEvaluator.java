@@ -19,7 +19,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.imirsel.m2k.evaluation2.EvaluationDataObject;
 import org.imirsel.m2k.evaluation2.Evaluator;
+import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
+import org.imirsel.m2k.util.MatlabCommandlineIntegrationClass;
 import org.imirsel.m2k.util.noMetadataException;
 
 /**
@@ -29,7 +31,12 @@ import org.imirsel.m2k.util.noMetadataException;
 public class TagClassificationBinaryEvaluator implements Evaluator {
 
     private boolean verbose = true;
+    private boolean performMatlabStatSigTests = true;
+    private String matlabPath = "matlab";
 
+    private static final int FMEASURE_FILE_INDEX = 0;
+    private static final int ACCURACY_FILE_INDEX = 1;
+    
     public boolean getVerbose() {
         return verbose;
     }
@@ -39,8 +46,10 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
     }
 
     public boolean returnsInCSV() {
-        return false;
+        return true;
     }
+    
+    
 
     public String evaluateResultsAgainstGT(String systemName, EvaluationDataObject dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException {
         //init report
@@ -241,60 +250,9 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             }
             report += EvaluationDataObject.DIVIDER + "\n";
         }
-
         
-        //TODO: stat sig tests
-        //  prepare per-tag F-measure and precison data file for use in Friedmans's test with TK HSD
-        int numFolds = dataToEvaluate[0].length;
-        int totalNumRows = 0;
+        File[] CSVResultFiles = writeOutCSVResultFiles(dataToEvaluate, systemNames, outputDir);
         
-        String[][] tagNames = new String[numFolds][];
-        for (int i = 0; i < numFolds; i++) {
-            HashMap<String, Double> tag2fmeasureMap =  (HashMap<String, Double>)dataToEvaluate[0][i].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
-            tagNames[i] = tag2fmeasureMap.keySet().toArray(new String[tag2fmeasureMap.size()]);
-            totalNumRows += tagNames[i].length;
-        }
-        
-        String[][] csvData = new String[totalNumRows+1][systemNames.length + 4];    
-        csvData[0][0] = "tag";
-        csvData[0][1] = "fold";
-        csvData[0][2] = "positive examples";
-        csvData[0][3] = "negative examples";
-        
-        for (int i = 0; i < systemNames.length; i++) {
-            csvData[0][i+4] = systemNames[i];
-        }
-        int foldOffset = 1;
-        for (int f = 0; f < numFolds; f++) {
-            HashMap<String,Integer> tag2NumPos = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
-            HashMap<String,Integer> tag2NumNeg = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
-            for (int j = 0; j < tagNames[f].length; j++) {
-                csvData[foldOffset + j][0] = tagNames[f][j];
-                csvData[foldOffset + j][1] = "" + (f + 1);
-                csvData[foldOffset + j][2] = "" + tag2NumPos.get(tagNames[f][j]);
-                csvData[foldOffset + j][3] = "" + tag2NumNeg.get(tagNames[f][j]);
-                
-                
-                for (int s = 0; s < systemNames.length; s++) {
-                    HashMap<String, Double> tag2fmeasureMap =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
-                    csvData[foldOffset + j][s+4] = "" + tag2fmeasureMap.get(tagNames[f][j]).doubleValue();
-                }
-            }
-            foldOffset += tagNames[f].length;
-        }
-        try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(new File(outputDir.getAbsolutePath() + File.separator + "binary_Fmeasure.csv"), ",", csvData, true); 
-        } catch (IOException ex) {
-            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        //  prepare per-tag F-measure and precision for use in Beta-Binomial test
-        
-        //  call matlab and execute Friedman's test with TK HSD
-        //    write results to file
-        //  call matlab and execute Beta-Binomial test
-        //    write results to file
-
         
         //write overall report to file
         try {
@@ -305,6 +263,20 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         } 
+        
+        
+        if (performMatlabStatSigTests){
+            //call matlab and execute Friedman's test with TK HSD for Fmeasure
+            performFriedmanTestWithFMeasure(outputDir, CSVResultFiles, systemNames);
+            
+            //call matlab and execute Friedman's test with TK HSD for Accuracy
+            performFriedmanTestWithAccuracy(outputDir, CSVResultFiles, systemNames);
+            
+            
+            //  call matlab and execute Beta-Binomial test
+            
+            
+        }
         return report;
     }
     
@@ -314,6 +286,207 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         } else {
             map.get(tag).incrementAndGet();
         }
+    }
+
+    public boolean getPerformMatlabStatSigTests() {
+        return performMatlabStatSigTests;
+    }
+
+    public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests) {
+        this.performMatlabStatSigTests = performMatlabStatSigTests;
+    }
+
+    public String getMatlabPath() {
+        return matlabPath;
+    }
+
+    public void setMatlabPath(String matlabPath) {
+        this.matlabPath = matlabPath;
+    }
+
+    private void performFriedmanTestWithAccuracy(File outputDir, File[] CSVResultFiles, String[] systemNames) {
+        //make sure readtext is in the working directory for matlab
+        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
+        
+        //create an m-file to run the test
+        String evalCommand = "performFriedmanForTagsAccuracy";
+        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "binary_Accuracy.friedman.tukeyKramerHSD.png";
+        try {
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+
+            textOut.write("[data, result] = readtext('" + CSVResultFiles[ACCURACY_FILE_INDEX].getAbsolutePath() + "', '\t')");
+            textOut.newLine();
+            textOut.write("Fmeasure_Scores = data(:,5:" + (systemNames.length + 4) + ");");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(Fmeasure_Scores,1,'on');");
+            textOut.newLine();
+            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+            textOut.newLine();
+            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+            textOut.newLine();
+            textOut.write("exit;");
+            textOut.newLine();
+
+            textOut.close();
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+        matlabIntegrator.setMatlabBin(matlabPath);
+        matlabIntegrator.setCommandFormattingStr("");
+        matlabIntegrator.setMainCommand(evalCommand);
+        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+        matlabIntegrator.start();
+        try {
+            matlabIntegrator.join();
+            //  call matlab and execute Beta-Binomial test
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        
+        //delete readtext.m
+        readtextMFile.delete();
+
+    }
+
+    private void performFriedmanTestWithFMeasure(File outputDir, File[] CSVResultFiles, String[] systemNames) {
+        //make sure readtext is in the working directory for matlab
+        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
+        //create an m-file to run the test
+        String evalCommand = "performFriedmanForTags";
+        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "binary_FMeasure.friedman.tukeyKramerHSD.png";
+        try {
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+
+            textOut.write("[data, result] = readtext('" + CSVResultFiles[FMEASURE_FILE_INDEX].getAbsolutePath() + "', '\t')");
+            textOut.newLine();
+            textOut.write("Fmeasure_Scores = data(:,5:" + (systemNames.length + 4) + ");");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(Fmeasure_Scores,1,'on');");
+            textOut.newLine();
+            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+            textOut.newLine();
+            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+            textOut.newLine();
+            textOut.write("exit;");
+            textOut.newLine();
+
+            textOut.close();
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+        matlabIntegrator.setMatlabBin(matlabPath);
+        matlabIntegrator.setCommandFormattingStr("");
+        matlabIntegrator.setMainCommand(evalCommand);
+        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+        matlabIntegrator.start();
+        try {
+            matlabIntegrator.join();
+
+            //  call matlab and execute Beta-Binomial test
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+
+        //delete readtext.m
+        readtextMFile.delete();
+    }
+
+    private File[] writeOutCSVResultFiles(EvaluationDataObject[][] dataToEvaluate, String[] systemNames, File outputDir) throws noMetadataException {
+
+
+        //TODO: stat sig tests
+        //  prepare per-tag F-measure and accuracy data files for use in Friedmans's test with TK HSD
+        int numFolds = dataToEvaluate[0].length;
+        int totalNumRows = 0;
+
+        String[][] tagNames = new String[numFolds][];
+        for (int i = 0; i < numFolds; i++) {
+            HashMap<String, Double> tag2fmeasureMap = (HashMap<String, Double>) dataToEvaluate[0][i].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
+            tagNames[i] = tag2fmeasureMap.keySet().toArray(new String[tag2fmeasureMap.size()]);
+            totalNumRows += tagNames[i].length;
+        }
+
+
+        String[][] fMeasureCsvData = new String[totalNumRows + 1][systemNames.length + 4];
+        fMeasureCsvData[0][0] = "tag";
+        fMeasureCsvData[0][1] = "fold";
+        fMeasureCsvData[0][2] = "positive examples";
+        fMeasureCsvData[0][3] = "negative examples";
+
+        for (int i = 0; i < systemNames.length; i++) {
+            fMeasureCsvData[0][i + 4] = systemNames[i];
+        }
+        int foldOffset = 1;
+        for (int f = 0; f < numFolds; f++) {
+            HashMap<String, Integer> tag2NumPos = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
+            HashMap<String, Integer> tag2NumNeg = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
+            for (int j = 0; j < tagNames[f].length; j++) {
+                fMeasureCsvData[foldOffset + j][0] = tagNames[f][j];
+                fMeasureCsvData[foldOffset + j][1] = "" + (f + 1);
+                fMeasureCsvData[foldOffset + j][2] = "" + tag2NumPos.get(tagNames[f][j]);
+                fMeasureCsvData[foldOffset + j][3] = "" + tag2NumNeg.get(tagNames[f][j]);
+
+
+                for (int s = 0; s < systemNames.length; s++) {
+                    HashMap<String, Double> tag2fmeasureMap = (HashMap<String, Double>) dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
+                    fMeasureCsvData[foldOffset + j][s + 4] = "" + tag2fmeasureMap.get(tagNames[f][j]).doubleValue();
+                }
+            }
+            foldOffset += tagNames[f].length;
+        }
+        File FmeasureFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_Fmeasure.csv");
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(FmeasureFile, ",", fMeasureCsvData, true);
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String[][] accuracyCsvData = new String[totalNumRows + 1][systemNames.length + 4];
+        accuracyCsvData[0][0] = "tag";
+        accuracyCsvData[0][1] = "fold";
+        accuracyCsvData[0][2] = "positive examples";
+        accuracyCsvData[0][3] = "negative examples";
+
+        for (int i = 0; i < systemNames.length; i++) {
+            accuracyCsvData[0][i + 4] = systemNames[i];
+        }
+        foldOffset = 1;
+        for (int f = 0; f < numFolds; f++) {
+            HashMap<String, Integer> tag2NumPos = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
+            HashMap<String, Integer> tag2NumNeg = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
+            for (int j = 0; j < tagNames[f].length; j++) {
+                accuracyCsvData[foldOffset + j][0] = tagNames[f][j];
+                accuracyCsvData[foldOffset + j][1] = "" + (f + 1);
+                accuracyCsvData[foldOffset + j][2] = "" + tag2NumPos.get(tagNames[f][j]);
+                accuracyCsvData[foldOffset + j][3] = "" + tag2NumNeg.get(tagNames[f][j]);
+
+
+                for (int s = 0; s < systemNames.length; s++) {
+                    HashMap<String, Double> tag2accuracyMap = (HashMap<String, Double>) dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
+                    accuracyCsvData[foldOffset + j][s + 4] = "" + tag2accuracyMap.get(tagNames[f][j]).doubleValue();
+                }
+            }
+            foldOffset += tagNames[f].length;
+        }
+        File AccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_Accuracy.csv");
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AccuracyFile, ",", accuracyCsvData, true);
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //  prepare per-tag F-measure and Accuracy for use in Beta-Binomial test
+        return new File[]{FmeasureFile,AccuracyFile};
     }
 
     

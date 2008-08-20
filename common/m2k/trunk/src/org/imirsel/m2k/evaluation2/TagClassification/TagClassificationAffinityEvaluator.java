@@ -17,12 +17,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.imirsel.m2k.evaluation2.EvaluationDataObject;
 import org.imirsel.m2k.evaluation2.Evaluator;
+import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
+import org.imirsel.m2k.util.MatlabCommandlineIntegrationClass;
 import org.imirsel.m2k.util.noMetadataException;
 import org.imirsel.m2k.vis.SimpleNumericPlot;
 
@@ -31,8 +32,10 @@ import org.imirsel.m2k.vis.SimpleNumericPlot;
  * @author kris
  */
 public class TagClassificationAffinityEvaluator implements Evaluator{
-   private boolean verbose = true;
-
+    private boolean verbose = true;
+    private boolean performMatlabStatSigTests = true;
+    private String matlabPath = "matlab";
+    
     public boolean getVerbose() {
         return verbose;
     }
@@ -42,8 +45,10 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
     }
 
     public boolean returnsInCSV() {
-        return false;
+        return true;
     }
+
+    
 
     class AffinityDataPoint implements Comparable{
         boolean tagApplies;
@@ -333,19 +338,12 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             }
             foldOffset += tagNames[f].length;
         }
+        File AUC_ROC_file = new File(outputDir.getAbsolutePath() + File.separator + "affinity_AUC_ROC.csv");
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(new File(outputDir.getAbsolutePath() + File.separator + "affinity_AUC_ROC.csv"), ",", csvData, true); 
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AUC_ROC_file, "\t", csvData, true); 
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        //  prepare per-tag F-measure and precision for use in Beta-Binomial test
-        
-        //  call matlab and execute Friedman's test with TK HSD
-        //    write results to file
-        //  call matlab and execute Beta-Binomial test
-        //    write results to file
-
         
         //write overall report to file
         try {
@@ -356,7 +354,85 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         } 
+        
+        if (performMatlabStatSigTests){
+            //delete readtext.m
+            performFriedManTestWith_tag_AUC_ROC(outputDir, AUC_ROC_file, systemNames);
+            
+            //  call matlab and execute Beta-Binomial test
+            
+            
+        }
+        
+        
         return report;
     }
 
+    
+    public boolean getPerformMatlabStatSigTests() {
+        return performMatlabStatSigTests;
+    }
+
+    public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests) {
+        this.performMatlabStatSigTests = performMatlabStatSigTests;
+    }
+
+    public String getMatlabPath() {
+        return matlabPath;
+    }
+
+    public void setMatlabPath(String matlabPath) {
+        this.matlabPath = matlabPath;
+    }
+
+    
+    private void performFriedManTestWith_tag_AUC_ROC(File outputDir, File AUC_ROC_file, String[] systemNames) {
+        //call matlab and execute Friedman's test with TK HSD
+        //make sure readtext is in the working directory for matlab
+        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
+        //create an m-file to run the test
+        String evalCommand = "performFriedmanForTags";
+        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity_AUC_ROC.friedman.tukeyKramerHSD.png";
+        try {
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+
+            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t')");
+            textOut.newLine();
+            textOut.write("AUC_ROC_Scores = data(:,5:" + (systemNames.length + 4) + ");");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUC_ROC_Scores,1,'on');");
+            textOut.newLine();
+            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+            textOut.newLine();
+            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+            textOut.newLine();
+            textOut.write("exit;");
+            textOut.newLine();
+
+            textOut.close();
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+        matlabIntegrator.setMatlabBin(matlabPath);
+        matlabIntegrator.setCommandFormattingStr("");
+        matlabIntegrator.setMainCommand(evalCommand);
+        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+        matlabIntegrator.start();
+        try {
+            matlabIntegrator.join();
+
+            //  call matlab and execute Beta-Binomial test
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //delete readtext.m
+        readtextMFile.delete();
+
+        //  call matlab and execute Beta-Binomial test
+    }
+    
 }
