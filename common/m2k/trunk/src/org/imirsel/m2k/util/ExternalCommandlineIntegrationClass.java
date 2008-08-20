@@ -2,6 +2,8 @@ package org.imirsel.m2k.util;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -9,13 +11,14 @@ import java.io.IOException;
  *
  * @author Kris West (kw@cmp.uea.ac.uk)
  */
-public class ExternalIntegrationClass {
+public class ExternalCommandlineIntegrationClass extends Thread{
     
-    String MainCommand = ""; // Command and parameters to run
-    String OutputFilename = ""; //Filename to pass as Output
-    String WorkingDir = "";  // Absolute path to working directory to run command in
-    boolean AddExtensionToInput = false; // If set true, adds an extension to input file instead of using output file parameter
-    String Extension = ""; //Extension to add to input filename
+    String mainCommand = ""; // Command and parameters to run
+    String outputFilename = ""; //Filename to pass as Output
+    String inputFilename = ""; //Filename to pass as Input
+    String workingDir = "";  // Absolute path to working directory to run command in
+    boolean addExtensionToInput = false; // If set true, adds an extension to input file instead of using output file parameter
+    String extension = ""; //extension to add to input filename
     String commandFormattingStr = "$m -anOption $i $o";
     String replaceExtension = "";
     boolean isRunning = false;
@@ -30,12 +33,12 @@ public class ExternalIntegrationClass {
     int OutputBufferIndex = 0;
     
     /** Creates a new instance of ExternalIntegrationModule. */
-    public ExternalIntegrationClass() {
-        MainCommand = "";
-        OutputFilename = "";
-        WorkingDir = "";
-        AddExtensionToInput = false;
-        Extension = "";
+    public ExternalCommandlineIntegrationClass() {
+        mainCommand = "";
+        outputFilename = "";
+        workingDir = "";
+        addExtensionToInput = false;
+        extension = "";
     }
     
     /** Kills the process representing the command
@@ -93,46 +96,56 @@ public class ExternalIntegrationClass {
      * @param theCommand the command to be run, as it would be entered on the command line
      */
     public void setMainCommand(String theCommand) {
-        MainCommand = theCommand;
+        mainCommand = theCommand;
     }
     
     /** Returns the external command to be run.
      * @return the command to be run, as it would be entered on the command line
      */
     public String getMainCommand() {
-        return MainCommand;
+        return mainCommand;
     }
     
-    /** Sets filename to be passed as output to the next module in the itinery.
-     * If <code>AddOutputFilenameToCommand</code> is set this filename is also appended
-     * to the external command
-     * @param outFile filename to be passed as output to the next module in the itinery
+    /** Sets filename to be used as the output file by the external command.
+   * @param outFile filename to be used as the output file by the external command.
      */
     public void setOutputFilename(String outFile) {
-        OutputFilename = outFile;
+        outputFilename = outFile;
     }
     
-    /** Returns filename to be passed as output to the next module in the itinery.
-     * If <code>AddOutputFilenameToCommand</code> is set this filename is also appended
-     * to the external command
-     * @return filename to be passed as output to the next module in the itinery
+    /** Returns filename to be used as the output file by the external command.
+     * @return filename to be used as the output file by the external command.
      */
     public String getOutputFilename() {
-        return OutputFilename;
+        return outputFilename;
+    }
+    
+    /** Sets filename to be passed as the input file path.
+     * @param inFile filename to be passed as the input file path.
+     */
+    public void setInputFilename(String inFile) {
+        inputFilename = inFile;
+    }
+    
+    /** Sets filename to be passed as the input file path.
+     * @return filename to be passed as the input file path.
+     */
+    public String getInputFilename() {
+        return inputFilename;
     }
     
     /** Sets the path to the working directory to execute the external command in.
      * @param path The path to the working directory to execute the external command in
      */
     public void setWorkingDir(String path) {
-        WorkingDir = path;
+        workingDir = path;
     }
     
     /** Returns the path to the working directory to execute the external command in.
      * @return The path to the working directory to execute the external command in
      */
     public String getWorkingDir() {
-        return WorkingDir;
+        return workingDir;
     }
     
     /** Sets the flag that determines whether an extension is added to the input
@@ -142,7 +155,7 @@ public class ExternalIntegrationClass {
      * is added to the input filename
      */
     public void setAddExtensionToInput(boolean addExtension) {
-        AddExtensionToInput = addExtension;
+        addExtensionToInput = addExtension;
     }
     
     /** Returns the value of the flag that determines whether an extension is added to the input
@@ -152,7 +165,7 @@ public class ExternalIntegrationClass {
      * is added to the input filename
      */
     public boolean getAddExtensionToInput() {
-        return AddExtensionToInput;
+        return addExtensionToInput;
     }
     
     /** Sets the extension that is added to the input filename in order to generate
@@ -160,7 +173,7 @@ public class ExternalIntegrationClass {
      * @param ext The extension to add to the input filename
      */
     public void setExtension(String ext) {
-        Extension = ext;
+        extension = ext;
     }
     
     /** Returns the extension that is added to the input filename in order to generate
@@ -168,7 +181,7 @@ public class ExternalIntegrationClass {
      * @return The extension to add to the input filename
      */
     public String getExtension() {
-        return Extension;
+        return extension;
     }
     
     /**
@@ -176,14 +189,14 @@ public class ExternalIntegrationClass {
      * @param inputStream the <code>InputStream</code> to be printed out in the console
      * @throws Exception Thrown if the <code>InputStream</code> is unavailable
      */
-    void ProcessInputStream(BufferedInputStream inputStream) throws Exception {
+    void processInputStream(BufferedInputStream inputStream) throws IOException{
         int numBytes = 0;
         
         while (true) {
             int numBytesAvailable = 0;
             try {
                 numBytesAvailable = inputStream.available();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 System.out.println("inputStream.available() error!!!");
                 throw e;
             }
@@ -196,9 +209,9 @@ public class ExternalIntegrationClass {
                 numBytes = inputStream.read(OutputBuffer, OutputBufferIndex, numBytesAvailable);
                 if (numBytes != numBytesAvailable) {
                     System.out.println("numBytes != numBytesAvailable");
-                    throw new Exception();
+                    throw new IOException("numBytes != numBytesAvailable");
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 System.out.println("inputStream.read() error!!!");
                 throw e;
             }
@@ -209,23 +222,26 @@ public class ExternalIntegrationClass {
         }
     }
     
-    private void runCommand(final String inputFilename) throws IOException, RuntimeException {
-        System.out.println("External Code Integration Module \nby Kris West, University of East Anglia, UK, kristopher.west@uea.ac.uk");
+    private void runCommand() throws IOException {
+        
+        if (isRunning){
+            throw new RuntimeException("Attempted to run a command, while another command is already running!");
+        }
         
         // Create File to represent working directory
-        File dir = new File(WorkingDir);
+        File dir = new File(workingDir);
         
         // Get the output filename
-        if (AddExtensionToInput == false) {
-            outfile = dir.getCanonicalPath() + File.separator + OutputFilename;
+        if (addExtensionToInput == false) {
+            outfile = dir.getCanonicalPath() + File.separator + outputFilename;
         } else {
             File tempInFile = new File(inputFilename);
             String tempFileName = tempInFile.getName();
             if ((!this.replaceExtension.equals(""))&&(tempFileName.endsWith(this.replaceExtension))) {
                 int idx = tempFileName.lastIndexOf(this.replaceExtension);
-                outfile = dir.getCanonicalPath() + File.separator + tempFileName.substring(0, idx) + Extension;
+                outfile = dir.getCanonicalPath() + File.separator + tempFileName.substring(0, idx) + extension;
             } else {
-                outfile = dir.getCanonicalPath() + File.separator + (new File(inputFilename)).getName() + Extension;
+                outfile = dir.getCanonicalPath() + File.separator + (new File(inputFilename)).getName() + extension;
             }
         }
         
@@ -238,9 +254,9 @@ public class ExternalIntegrationClass {
         String ExternalCommand = "";
         String[] components = commandFormattingStr.split("[$]");
         
-        File command = new File(MainCommand);
+        File command = new File(mainCommand);
         if (!command.exists()) {
-            File command2 = new File(dir.getCanonicalPath() + File.separator + MainCommand);
+            File command2 = new File(dir.getCanonicalPath() + File.separator + mainCommand);
             if (!command2.exists()) {
                 throw new RuntimeException("External Integration module was unable to locate your command!\n" +
                         "File names tried:\n\t" + command.getCanonicalPath() + "\n\t" + command2.getCanonicalPath() + "\n" +
@@ -388,6 +404,31 @@ public class ExternalIntegrationClass {
         this.isRunning = true;
         inputStream = new BufferedInputStream(process.getInputStream(), bufferSize);
         errorStream = new BufferedInputStream(process.getErrorStream(), bufferSize);
+    }
+    
+    public void run() {
+        try {
+            runCommand();
+        
+            while(isRunning){
+                processInputStream(inputStream);
+                processInputStream(errorStream);
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ExternalCommandlineIntegrationClass.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ExternalCommandlineIntegrationClass.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RuntimeException ex) {
+            Logger.getLogger(ExternalCommandlineIntegrationClass.class.getName()).log(Level.SEVERE, null, ex);
+        } finally{
+            if (process != null){
+                process.destroy();
+                process = null;
+            }
+        }
     }
     
 }

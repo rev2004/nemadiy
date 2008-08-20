@@ -324,7 +324,7 @@ public class DeliminatedTextFileUtilities {
         int maxRowLength = 0;
 
         InputStream iStream = ClassLoader.getSystemResourceAsStream(classPath);
-        textBuffer= new BufferedReader(new InputStreamReader(iStream));
+        textBuffer = new BufferedReader(new InputStreamReader(iStream));
 
         String line = null; 
         try
