@@ -72,7 +72,9 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         HashMap<String, AtomicInteger> tag2truePositive = new HashMap<String, AtomicInteger>();
         HashMap<String, AtomicInteger> tag2falsePositive = new HashMap<String, AtomicInteger>();
         HashMap<String, AtomicInteger> tag2falseNegative = new HashMap<String, AtomicInteger>();
-
+        HashMap<String, Integer> tag2numPositiveExamples = new HashMap<String, Integer>();
+        HashMap<String, Integer> tag2numNegativeExamples = new HashMap<String, Integer>();
+        
         int totalTruePositive = 0;
         int totalFalsePositive = 0;
         int totalFalseNegative = 0;
@@ -146,6 +148,11 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             tag2Precision.put(tag, precision);
             tag2Recall.put(tag, recall);
             tag2FMeasure.put(tag, fMeasure);
+            
+            int numPositivesExamples = tp + fn;
+            int numNegativeExamples = tn + fp;
+            tag2numPositiveExamples.put(tag,numPositivesExamples);
+            tag2numNegativeExamples.put(tag, numNegativeExamples);
         }
 
         //compute total stats
@@ -192,6 +199,8 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_RECALL, totalRecall);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_FMEASURE, totalFmeasure);
         
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES, tag2numPositiveExamples);
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES, tag2numNegativeExamples);
         
         //serialise out the evaluation data
         //  later this should be changed to use ASCII file format - when Collections are supported by write method of EvaluationDataObject
@@ -246,27 +255,35 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             totalNumRows += tagNames[i].length;
         }
         
-        String[][] csvData = new String[totalNumRows+1][systemNames.length + 2];    
+        String[][] csvData = new String[totalNumRows+1][systemNames.length + 4];    
         csvData[0][0] = "tag";
         csvData[0][1] = "fold";
+        csvData[0][2] = "positive examples";
+        csvData[0][3] = "negative examples";
         
         for (int i = 0; i < systemNames.length; i++) {
-            csvData[0][i+2] = systemNames[i];
+            csvData[0][i+4] = systemNames[i];
         }
         int foldOffset = 1;
         for (int f = 0; f < numFolds; f++) {
+            HashMap<String,Integer> tag2NumPos = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
+            HashMap<String,Integer> tag2NumNeg = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
             for (int j = 0; j < tagNames[f].length; j++) {
                 csvData[foldOffset + j][0] = tagNames[f][j];
                 csvData[foldOffset + j][1] = "" + (f + 1);
+                csvData[foldOffset + j][2] = "" + tag2NumPos.get(tagNames[f][j]);
+                csvData[foldOffset + j][3] = "" + tag2NumNeg.get(tagNames[f][j]);
+                
+                
                 for (int s = 0; s < systemNames.length; s++) {
                     HashMap<String, Double> tag2fmeasureMap =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
-                    csvData[foldOffset + j][s+2] = "" + tag2fmeasureMap.get(tagNames[f][j]).doubleValue();
+                    csvData[foldOffset + j][s+4] = "" + tag2fmeasureMap.get(tagNames[f][j]).doubleValue();
                 }
             }
             foldOffset += tagNames[f].length;
         }
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(new File(outputDir.getAbsolutePath() + File.separator + "friedman.csv"), ",", csvData, true); 
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(new File(outputDir.getAbsolutePath() + File.separator + "binary_Fmeasure.csv"), ",", csvData, true); 
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -281,7 +298,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         
         //write overall report to file
         try {
-            BufferedWriter textOut = new BufferedWriter(new FileWriter(outputDir.getAbsolutePath() + File.separator + "overall_report.txt"));
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(outputDir.getAbsolutePath() + File.separator + "tag_binary_relevance_report.txt"));
             textOut.write(report);
             textOut.newLine();
             textOut.close();
