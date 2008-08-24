@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * @author kris
  */
 public class TagClassificationBinaryFileReader implements EvalFileReader {
-    private boolean verbose = true;
+    private boolean verbose = false;
     private static final int FILE_FORMAT_ERROR_TOLERANCE = 2;
     
     public boolean getVerbose() {

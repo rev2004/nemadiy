@@ -638,9 +638,10 @@ public class Mathematics {
                 minVal = input[i];
             }
         }
+        double range = maxVal - minVal;
         
         for (int i = 0; i <= (histogramBins); i++ ) {
-            upperBounds[i] = minVal + (((maxVal - minVal)/(double)histogramBins)*(double)i);    
+            upperBounds[i] = minVal + ((range/(double)histogramBins)*(double)i);    
         }
         
         for (int i = 0; i < array1NumValues; i++ ) {
@@ -656,10 +657,58 @@ public class Mathematics {
         for (int j = 0; j < (histogramBins); j++ ) {
             if (hist[j] > 0) {
                 double prob = (double)hist[j] / (double)array1NumValues;
-                entropy += (prob * Math.log(prob)) * (double)hist[j];
+                entropy += (prob * Math.log(prob));
             }
         }
         entropy = -entropy;
+        return entropy;
+    }    
+    
+    /**
+     * Computes the entropy of an int array using a histogram to compute probabilities
+     *
+     * @param input the array for which to calculate the entropy
+     * @param histogramBins the number of histogram bins to use in calculation
+     *
+     * @return dist the entropy of the array
+     */
+    public static double entropy(int[] input, int histogramBins) {
+        int array1NumValues = input.length;
+        int[] hist = new int[histogramBins];
+        int[] upperBounds = new int[histogramBins+1];
+        int maxVal = 0, minVal = 0;
+        
+        for (int i = 0; i < array1NumValues; i++ ) {
+            if (input[i] > maxVal) {
+                maxVal = input[i];
+            } else if (input[i] < minVal) {
+                minVal = input[i];
+            }
+        }
+        int range = maxVal - minVal;
+        
+        for (int i = 0; i <= (histogramBins); i++ ) {
+            upperBounds[i] = (int)Math.round(minVal + ((range)/(double)histogramBins)*(double)i);    
+        }
+        
+        for (int i = 0; i < array1NumValues; i++ ) {
+            for (int j = 0; j < (histogramBins); j++ ) {
+                if (input[i] <= upperBounds[j+1]) {
+                    hist[j]++;
+                    break;
+                }
+            }
+        }
+        
+        double entropy = 0.0;
+        for (int j = 0; j < (histogramBins); j++ ) {
+            if (hist[j] > 0) {
+                double prob = (double)hist[j] / (double)array1NumValues;
+                entropy += (prob * Math.log(prob));
+            }
+        }
+        entropy = -entropy;
+        
         return entropy;
     }    
 }

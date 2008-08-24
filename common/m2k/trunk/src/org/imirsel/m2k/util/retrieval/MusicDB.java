@@ -1,6 +1,4 @@
 package org.imirsel.m2k.util.retrieval;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
 import java.util.HashMap;
@@ -10,8 +8,10 @@ import java.io.*;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
+import org.imirsel.m2k.math.Mathematics;
 import org.imirsel.m2k.vis.ResultCurvePlot;
 
 /**
@@ -27,6 +27,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
     
     HashMap<String,Signal> fileNameToSignalObject = null;
     HashMap<String,HashMap<String,ArrayList<Signal>>> indexKeyToIndexMap = null;
+    
     
     //store other stuff in Signal objects
     
@@ -477,6 +478,22 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
             return null;
         }
     }
+    /**
+     * Returns the class for a particular metadata type for a particular Signal Object.
+     * @param IndexKey The metadata type to return the class of for the file.
+     * @param Signal The Signal Object to return the class of.
+     * @return The class name of the Signal Object for the specified metadata type.
+     * @throws org.imirsel.m2k.util.noMetadataException Thrown if the requested metadata type was not in the original Signal Object.
+     */
+    public HashSet<String> getMetadataClassesForSignal(String IndexKey, Signal Signal) throws noMetadataException {
+        if (this.containsSignal(Signal)) {
+            Signal theSig = this.fileNameToSignalObject.get(Signal.getStringMetadata(Signal.PROP_FILE_LOCATION));
+            return (HashSet<String>)theSig.getMetadata(IndexKey);
+        }else {
+            System.out.println("WARNING: The MusicDB object was not indexing the file " + Signal.getFile().getPath());
+            return null;
+        }
+    }
     
     /**
      * Returns true if the MusicDB is indexing the specified Signal Object.
@@ -517,20 +534,40 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
         }
         
         //iterate through indexed metadatas
-        String[] keys = this.indexKeyToIndexMap.keySet().toArray(new String[this.indexKeyToIndexMap.size()]);
-        for (int i = 0; i < keys.length; i++) {
+        for (Iterator<String> it = this.indexKeyToIndexMap.keySet().iterator();it.hasNext();) {
+            String key = it.next();
             try{
-                String aClass = theSignal.getStringMetadata(keys[i]);
-                HashMap<String,ArrayList<Signal>> index = this.indexKeyToIndexMap.get(keys[i]);
-                if (this.containsMetadataClass(keys[i],aClass)) {
-                    ArrayList<Signal> metadataList = index.get(aClass);
-                    if (!metadataList.contains(theSignal)){
-                        metadataList.add(theSignal);
+                if (theSignal.hasMetadata(key)){
+                    if (key.equals(Signal.PROP_TAGS)){
+                        HashSet<String> tags = (HashSet<String>)theSignal.getMetadata(key);
+                        for (Iterator<String> it2 = tags.iterator(); it2.hasNext();) {
+                            String aTag = it2.next();
+                            HashMap<String,ArrayList<Signal>> index = this.indexKeyToIndexMap.get(key);
+                            if (this.containsMetadataClass(key,aTag)) {
+                                ArrayList<Signal> metadataList = index.get(aTag);
+                                if (!metadataList.contains(theSignal)){
+                                    metadataList.add(theSignal);
+                                }
+                            }else{
+                                ArrayList<Signal> metadataList = new ArrayList<Signal>();
+                                metadataList.add(theSignal);
+                                index.put(aTag,metadataList);
+                            }
+                        }
+                    }else{
+                        String aClass = theSignal.getStringMetadata(key);
+                        HashMap<String,ArrayList<Signal>> index = this.indexKeyToIndexMap.get(key);
+                        if (this.containsMetadataClass(key,aClass)) {
+                            ArrayList<Signal> metadataList = index.get(aClass);
+                            if (!metadataList.contains(theSignal)){
+                                metadataList.add(theSignal);
+                            }
+                        }else{
+                            ArrayList<Signal> metadataList = new ArrayList<Signal>();
+                            metadataList.add(theSignal);
+                            index.put(aClass,metadataList);
+                        }
                     }
-                }else{
-                    ArrayList<Signal> metadataList = new ArrayList<Signal>();
-                    metadataList.add(theSignal);
-                    index.put(aClass,metadataList);
                 }
             } catch (noMetadataException ex) {
                 
@@ -629,7 +666,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                 if (!removeList.contains(metaKeys[i])) {
                     System.out.println("\tadding " + metaKeys[i]);
                     List sigList = this.getSignalListForMetadataClass(indexKey,metaKeys[i]);
-                    //ArrayList fileList = (ArrayList)theIndex.get(metaKeys[i]);
+                    //ArrayList fileList = (ArrayList)theIndex.get(metaKeys[sourceFold]);
                     
                     for (int j = 0; j < sigList.size(); j++) {
                         
@@ -777,8 +814,8 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
         }
         
         /*System.out.println("Evaluation files:");
-        for (int i = 0; i < Signals.size(); i++) {
-            System.out.println("\t" + ((Signal)Signals.get(i)).getStringMetadata(Signal.PROP_FILE_LOCATION));
+        for (int sourceFold = 0; sourceFold < Signals.size(); sourceFold++) {
+            System.out.println("\t" + ((Signal)Signals.get(sourceFold)).getStringMetadata(Signal.PROP_FILE_LOCATION));
         }*/
         System.out.println("");
         ArrayList keys = (ArrayList)this.getIndexedMetadatas();
@@ -1341,13 +1378,13 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
 //        try {
 //            //produce times similar plots
 //            ResultCurvePlot[] plots = new ResultCurvePlot[TEST_LEVELS.length];
-//            for (int i = 0; i < TEST_LEVELS.length; i++) {
-//                plots[i] = new ResultCurvePlot(timesSeen[i], ret.getRetrieverName() + " # times similar plot - top " + TEST_LEVELS[i]);
+//            for (int sourceFold = 0; sourceFold < TEST_LEVELS.length; sourceFold++) {
+//                plots[sourceFold] = new ResultCurvePlot(timesSeen[sourceFold], ret.getRetrieverName() + " # times similar plot - top " + TEST_LEVELS[sourceFold]);
 //                if (storageDirForReportAndPlots != null){
-//                    File aPlotFile = new File(storageDirForReportAndPlots.getPath() + File.separator + "timesSimilarPlot_" + TEST_LEVELS[i] + ".png");
+//                    File aPlotFile = new File(storageDirForReportAndPlots.getPath() + File.separator + "timesSimilarPlot_" + TEST_LEVELS[sourceFold] + ".png");
 //                    try {
 //                        //save to PNG files
-//                        plots[i].writeImageToPNG(aPlotFile);
+//                        plots[sourceFold].writeImageToPNG(aPlotFile);
 //                    } catch (IOException ex) {
 //                        System.out.println("IOException prevented saving of plot to disk!\n" + ex);
 //                        ex.printStackTrace();
@@ -1358,10 +1395,10 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
 //            System.out.println("Failed to create times similar plot images, perhaps no X11 session is available or the Display variable is not set.");
 //        }
 //        //Display plots if possible
-//        for (int i = 0; i < TEST_LEVELS.length; i++) {
-//            JFrame theFrame = new JFrame(plots[i].getName());
-//            theFrame.add(plots[i]);
-//            theFrame.setSize(plots[i].getWidth() + 20, plots[i].getHeight() + 40);
+//        for (int sourceFold = 0; sourceFold < TEST_LEVELS.length; sourceFold++) {
+//            JFrame theFrame = new JFrame(plots[sourceFold].getName());
+//            theFrame.add(plots[sourceFold]);
+//            theFrame.setSize(plots[sourceFold].getWidth() + 20, plots[sourceFold].getHeight() + 40);
 //            theFrame.validate();
 //            theFrame.setVisible(true);
 //        }
@@ -1698,11 +1735,11 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                         //File loc = new File(similar[k].getTheResult().getStringMetadata(Signal.PROP_FILE_LOCATION));
                         idx = (fileLoc2Index.get(similar[k].getTheResult().getStringMetadata(Signal.PROP_FILE_LOCATION))).intValue();
                         
-                        /*for (int j = 0; j < Signals.size(); j++) {
-                            File testLoc = new File(((Signal)Signals.get(j)).getStringMetadata(Signal.PROP_FILE_LOCATION));
+                        /*for (int sourceArtistIndex = 0; sourceArtistIndex < Signals.size(); sourceArtistIndex++) {
+                            File testLoc = new File(((Signal)Signals.get(sourceArtistIndex)).getStringMetadata(Signal.PROP_FILE_LOCATION));
                             if (loc.equals(testLoc))
                             {
-                                idx = j;
+                                idx = sourceArtistIndex;
                                 break;
                             }
                         }*/
@@ -1732,11 +1769,11 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                         //File loc = new File(similar[k].getTheResult().getStringMetadata(Signal.PROP_FILE_LOCATION));
                         idx = (fileLoc2Index.get(similar[k].getTheResult().getStringMetadata(Signal.PROP_FILE_LOCATION))).intValue();
                         
-                        /*for (int j = 0; j < Signals.size(); j++) {
-                            File testLoc = new File(((Signal)Signals.get(j)).getStringMetadata(Signal.PROP_FILE_LOCATION));
+                        /*for (int sourceArtistIndex = 0; sourceArtistIndex < Signals.size(); sourceArtistIndex++) {
+                            File testLoc = new File(((Signal)Signals.get(sourceArtistIndex)).getStringMetadata(Signal.PROP_FILE_LOCATION));
                             if (loc.equals(testLoc))
                             {
-                                idx = j;
+                                idx = sourceArtistIndex;
                                 break;
                             }
                         }*/
@@ -1836,10 +1873,10 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
             }
         }
         //Display plots if possible
-        /*for (int i = 0; i < TEST_LEVELS.length; i++) {
-            JFrame theFrame = new JFrame(plots[i].getName());
-            theFrame.add(plots[i]);
-            theFrame.setSize(plots[i].getWidth() + 20, plots[i].getHeight() + 40);
+        /*for (int sourceFold = 0; sourceFold < TEST_LEVELS.length; sourceFold++) {
+            JFrame theFrame = new JFrame(plots[sourceFold].getName());
+            theFrame.add(plots[sourceFold]);
+            theFrame.setSize(plots[sourceFold].getWidth() + 20, plots[sourceFold].getHeight() + 40);
             theFrame.validate();
             theFrame.setVisible(true);
         }*/
@@ -2049,13 +2086,13 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
 
                     }else{
                         ArrayList<Signal> filterList = filterIndex.get(filterClass);
-                        /*if (Math.min(filterList.size(),maxToTakeForEachFilterClass) > numToTrain[i] - numUsedTrain[i])
+                        /*if (Math.min(filterList.size(),maxToTakeForEachFilterClass) > numToTrain[sourceFold] - numUsedTrain[sourceFold])
                         {//skip as it will take us over the needed amount
                             //have one more go then quit
                             theSig = (Signal)aClass.get(rnd.nextInt(aClass.size()));
                             filterClass = this.getMetadataClassForSignal(metadataFilter,theSig);
                             filterList = (ArrayList)filterIndex.get(filterClass);
-                            if (Math.min(filterList.size(),maxToTakeForEachFilterClass) > numToTrain[i] - numUsedTrain[i])
+                            if (Math.min(filterList.size(),maxToTakeForEachFilterClass) > numToTrain[sourceFold] - numUsedTrain[sourceFold])
                             {//quit
                                 break;
                             }
@@ -2114,9 +2151,9 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                             ArrayList<Signal> filterList = filterIndex.get(filterClass);
                             Collections.sort(filterList);
                             for (int j = 0; j < filterList.size(); j++) {
-                                //if (copyAClass.contains(filterList.get(j)))
+                                //if (copyAClass.contains(filterList.get(sourceArtistIndex)))
                                 //{
-                                //    Signal aSig = (Signal)aClass.remove(aClass.indexOf(filterList.get(j)));
+                                //    Signal aSig = (Signal)aClass.remove(aClass.indexOf(filterList.get(sourceArtistIndex)));
                                 //    aSig.setMetadata(Signal.PROP_CLASS,aSig.getMetadata(testMetadata));
                                 //    test.add(aSig);
                                 //    numUsedTest[classNameList.indexOf(aSig.getMetadata(testMetadata))]++;
@@ -2200,6 +2237,295 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
         
     }
     
+    
+    public Signal[][] getCrossValidationFoldsForTags(int numFolds, long randomSeed, int maxNumAdjustments) throws noMetadataException {
+        if (!this.indexingMetadata(Signal.PROP_TAGS)) {
+            throw new RuntimeException("Not indexing " + Signal.PROP_TAGS + " metadata!");
+        }
+        if (!this.indexingMetadata(Signal.PROP_ARTIST)) {
+            throw new RuntimeException("Not indexing " + Signal.PROP_ARTIST + " metadata!");
+        }
+        
+        List<String> tags = this.getMetadataClasses(Signal.PROP_TAGS);
+        List<String> artists = this.getMetadataClasses(Signal.PROP_ARTIST);
+        HashMap<String, int[]> artistToTagCountArray = new HashMap<String, int[]>();
+        
+        int[] totalTagCountArr = new int[tags.size()];
+        String aTag, anArtist;
+        for (Iterator<String> it = artists.iterator(); it.hasNext();) {
+            anArtist = it.next();
+            int[] tagCountArr = new int[tags.size()];
+            List<Signal> artistsTracks = this.getSignalListForMetadataClass(Signal.PROP_ARTIST, anArtist);
+            for (Iterator<Signal> it2 = artistsTracks.iterator(); it2.hasNext();) {
+                Signal signal = it2.next();
+                HashSet<String> signalTags = getMetadataClassesForSignal(Signal.PROP_TAGS,signal);
+                for (Iterator<String> it3 = signalTags.iterator(); it3.hasNext();) {
+                    int tagIdx = tags.indexOf(it3.next());
+                    tagCountArr[tagIdx]++;
+                    totalTagCountArr[tagIdx]++;
+                }
+                
+            }
+            artistToTagCountArray.put(anArtist, tagCountArr);
+        }
+
+        ArrayList<String>[] foldArtists = new ArrayList[numFolds];
+        ArrayList<int[]>  foldTagCounts = new ArrayList<int[]>();
+        for (int i = 0; i < numFolds; i++) {
+            foldArtists[i] = new ArrayList<String>();
+            foldTagCounts.add(new int[tags.size()]);
+        }
+        
+        //randomly assign artists to folds
+        Random rnd = new Random(randomSeed);
+        int currFold = 0;
+        while(artists.size() > 0){
+            anArtist = artists.remove(rnd.nextInt(artists.size()));
+            foldArtists[currFold].add(anArtist);
+            int[] tagCountArr = artistToTagCountArray.get(anArtist);
+            for (int i = 0; i < tagCountArr.length; i++) {
+                foldTagCounts.get(currFold)[i] += tagCountArr[i];
+            }
+            currFold++;
+            if (currFold == numFolds){
+                currFold = 0;
+            }
+        }
+        
+        System.out.println("optimising split proportions...");
+        double currentDeviation = measureMaxDeviationFromIdeal(numFolds, foldTagCounts, totalTagCountArr);
+        double newDeviaton;
+        double currentEntropy = measureEntropyOfSplit(numFolds, foldTagCounts);
+        double newEntropy;
+        
+        
+        //integrate entropy into the split eval
+        
+        DecimalFormat dec = new DecimalFormat();
+        dec.setMaximumFractionDigits(4);
+        boolean done = false;
+        for (int i = 0; i < maxNumAdjustments; i++) {
+            if (i % 1 == 0){
+                System.out.println("deviation (from ideal proportions) at iteration " + i + ": " +dec.format(currentDeviation) + ", entropy: " + dec.format(currentEntropy));
+            }
+            double[] results = tryMovingArtist(foldArtists, artistToTagCountArray, foldTagCounts, totalTagCountArr, currentDeviation, currentEntropy, tags.size());
+            if (results[0] < currentDeviation){
+                currentDeviation = results[0];
+                currentEntropy = results[1];
+            }else if(results[1] > currentEntropy){
+                currentDeviation = results[0];
+                currentEntropy = results[1];
+            }else{
+                //TODO: try swapping artists 
+                results = trySwappingArtist(foldArtists, artistToTagCountArray, foldTagCounts, totalTagCountArr, currentDeviation, currentEntropy, tags.size());
+                if (results[0] < currentDeviation){
+                    currentDeviation = results[0];
+                    currentEntropy = results[1];
+                }else if(results[1] > currentEntropy){
+                    currentDeviation = results[0];
+                    currentEntropy = results[1];
+                }else{
+                    done = true;
+                    System.out.println("maxima reached at deviation: " + dec.format(currentDeviation) + ", entropy: " + dec.format(currentEntropy));
+                    break;
+                }
+            }
+        }
+        if (!done){
+            System.out.println("Stopped trying to improve split at deviation (from ideal proportions): " + dec.format(currentDeviation));
+        }
+        
+        ArrayList<Signal>[] folds = new ArrayList[numFolds];
+        for (int i = 0; i < folds.length; i++) {
+            folds[i] = new ArrayList<Signal>();
+            for (Iterator<String> it = foldArtists[i].iterator(); it.hasNext();) {
+                folds[i].addAll(this.getSignalListForMetadataClass(Signal.PROP_ARTIST, it.next()));
+            }
+        }
+        
+        Signal[][] theSplit = new Signal[numFolds][];
+        for (int i = 0; i < theSplit.length; i++) {
+            theSplit[i] = folds[i].toArray(new Signal[folds[i].size()]);
+        }
+        
+        System.out.println("Outputting " + numFolds + "-fold cross validated tag sets");
+        System.out.print("\t" + tags.size() + " tags: \n");
+        for (int i = 0; i < tags.size(); i++) {
+            System.out.print(tags.get(i) + "\t");
+        }
+        System.out.println("");
+        for (int i = 0; i < theSplit.length; i++) {
+            System.out.println("\tfold " + i + ": " + theSplit[i].length + " Signal Objects");
+            System.out.print("\tproportion of examples used: ");
+            for (int t = 0; t < tags.size(); t++) {
+                System.out.print(dec.format(((float)foldTagCounts.get(i)[t] / (float)totalTagCountArr[t])) + "\t");
+            }
+            System.out.println("\n");
+        }
+        System.out.println("");
+
+        return theSplit;
+    }
+    
+    private double[] tryMovingArtist(ArrayList<String>[] foldArtists, HashMap<String, int[]> artistToTagCountArray, ArrayList<int[]> foldTagCounts, int[] totalTagCountArr, double currentDeviation, double currentEntropy, int numTags){
+         //basic brute force search for best move
+        int bestSourceFold = -1;
+        int bestArtist = -1;
+        int bestDestinationFold = -1;
+        
+        double bestDeviation = currentDeviation;
+        double currDeviation;
+        double bestEntropy = currentEntropy;
+        double currEntropy;
+        
+        int[] sourceFoldArr, destinationFoldArr;
+        int[] removedFoldTagCounts, addedFoldTagCounts;
+        int[] artistCounts;
+        int numFolds = foldArtists.length;
+        ArrayList<int[]> tempFoldTagCounts;
+                
+        for (int sourceFold = 0; sourceFold < numFolds; sourceFold++) {
+            for (int artistIndex = 0; artistIndex < foldArtists[sourceFold].size(); artistIndex++) {
+                removedFoldTagCounts = new int[numTags];
+                artistCounts = artistToTagCountArray.get(foldArtists[sourceFold].get(artistIndex));
+                sourceFoldArr = foldTagCounts.get(sourceFold);
+                for (int i = 0; i < numTags; i++) {
+                    removedFoldTagCounts[i] = sourceFoldArr[i] - artistCounts[i];
+                }
+                
+                for (int destinationFold = 0; destinationFold < numFolds; destinationFold++) {
+                    if(destinationFold != sourceFold){
+                        tempFoldTagCounts = (ArrayList<int[]>)foldTagCounts.clone();
+                        tempFoldTagCounts.set(sourceFold, removedFoldTagCounts);
+                        addedFoldTagCounts = new int[numTags];
+                        destinationFoldArr = foldTagCounts.get(destinationFold);
+                        for (int i = 0; i < numTags; i++) {
+                            addedFoldTagCounts[i] = destinationFoldArr[i] + artistCounts[i];
+                        }
+                        tempFoldTagCounts.set(destinationFold, addedFoldTagCounts);
+                        currDeviation = measureMaxDeviationFromIdeal(numFolds, tempFoldTagCounts, totalTagCountArr);
+                        currEntropy = measureEntropyOfSplit(numFolds, tempFoldTagCounts);
+                        if(currDeviation < bestDeviation){
+                            bestDeviation = currDeviation;
+                            bestSourceFold = sourceFold;
+                            bestDestinationFold = destinationFold;
+                            bestArtist = artistIndex;
+                            bestEntropy = currEntropy;
+                        }else if(((currDeviation - bestDeviation) < 0.01) && (currEntropy > bestEntropy)){
+                            bestDeviation = currDeviation;
+                            bestSourceFold = sourceFold;
+                            bestDestinationFold = destinationFold;
+                            bestArtist = artistIndex;
+                            bestEntropy = currEntropy;
+                        }
+                    }
+                }
+            }
+        }
+        
+        //if we improved make changes
+        if(bestSourceFold != -1){
+            String artist = foldArtists[bestSourceFold].remove(bestArtist);
+            artistCounts = artistToTagCountArray.get(artist);
+            sourceFoldArr = foldTagCounts.get(bestSourceFold);
+            for (int i = 0; i < numTags; i++) {
+                sourceFoldArr[i] -= artistCounts[i];
+            }
+            foldArtists[bestDestinationFold].add(artist);
+            destinationFoldArr = foldTagCounts.get(bestDestinationFold);
+            for (int i = 0; i < numTags; i++) {
+                destinationFoldArr[i] += artistCounts[i];
+            }
+        }
+        
+        return new double[]{bestDeviation,bestEntropy};
+    }
+    
+    private double[] trySwappingArtist(ArrayList<String>[] foldArtists, HashMap<String, int[]> artistToTagCountArray, ArrayList<int[]> foldTagCounts, int[] totalTagCountArr, double currentDeviation, double currentEntropy, int numTags){
+         //basic brute force search for best move
+        int bestSourceFold = -1;
+        int bestSourceArtist = -1;
+        int bestDestinationFold = -1;
+        int bestDestinationArtist = -1;
+        
+        double bestDeviation = currentDeviation;
+        double currDeviation;
+        double bestEntropy = currentEntropy;
+        double currEntropy;
+        
+        int[] sourceFoldArr, destinationFoldArr;
+        int[] removedSourceFoldTagCounts, addedSourceFoldTagCounts, addedDestinationFoldTagCounts;
+        int[] sourceArtistCounts, destinationArtistCounts;
+        int numFolds = foldArtists.length;
+        ArrayList<int[]> tempFoldTagCounts;
+                
+        for (int sourceFold = 0; sourceFold < numFolds-1; sourceFold++) {
+            for (int sourceArtistIndex = 0; sourceArtistIndex < foldArtists[sourceFold].size(); sourceArtistIndex++) {
+                removedSourceFoldTagCounts = new int[numTags];
+                sourceArtistCounts = artistToTagCountArray.get(foldArtists[sourceFold].get(sourceArtistIndex));
+                sourceFoldArr = foldTagCounts.get(sourceFold);
+                for (int i = 0; i < numTags; i++) {
+                    removedSourceFoldTagCounts[i] = sourceFoldArr[i] - sourceArtistCounts[i];
+                }
+                
+                for (int destinationFold = sourceFold+1; destinationFold < numFolds; destinationFold++) {
+                    for (int destinationArtistIndex = 0; destinationArtistIndex < foldArtists[destinationFold].size(); destinationArtistIndex++) {
+                        tempFoldTagCounts = (ArrayList<int[]>)foldTagCounts.clone();
+                        destinationFoldArr = foldTagCounts.get(destinationFold);
+                        destinationArtistCounts = artistToTagCountArray.get(foldArtists[destinationFold].get(destinationArtistIndex));
+                        addedDestinationFoldTagCounts = new int[numTags];
+                        addedSourceFoldTagCounts = new int[numTags];
+                        for (int i = 0; i < numTags; i++) {
+                            addedDestinationFoldTagCounts[i] = destinationFoldArr[i] + (sourceArtistCounts[i] - destinationArtistCounts[i]);
+                            addedSourceFoldTagCounts[i] = removedSourceFoldTagCounts[i] + destinationArtistCounts[i];
+                        }
+                        
+                        tempFoldTagCounts.set(sourceFold, addedSourceFoldTagCounts);
+                        tempFoldTagCounts.set(destinationFold, addedDestinationFoldTagCounts);
+                        
+                        currDeviation = measureMaxDeviationFromIdeal(numFolds, tempFoldTagCounts, totalTagCountArr);
+                        currEntropy = measureEntropyOfSplit(numFolds, tempFoldTagCounts);
+                        if(currDeviation < bestDeviation){
+                            bestDeviation = currDeviation;
+                            bestSourceFold = sourceFold;
+                            bestDestinationFold = destinationFold;
+                            bestSourceArtist = sourceArtistIndex;
+                            bestDestinationArtist = destinationArtistIndex;
+                            bestEntropy = currEntropy;
+                        }else if(((currDeviation - bestDeviation) < 0.01) && (currEntropy > bestEntropy)){
+                            bestDeviation = currDeviation;
+                            bestSourceFold = sourceFold;
+                            bestDestinationFold = destinationFold;
+                            bestSourceArtist = sourceArtistIndex;
+                            bestDestinationArtist = destinationArtistIndex;
+                            bestEntropy = currEntropy;
+                        }
+                        
+                        
+                    }
+                }
+            }
+        }
+        
+        //if we improved make changes
+        if(bestSourceFold != -1){
+            String source_artist = foldArtists[bestSourceFold].remove(bestSourceArtist);
+            String destination_artist = foldArtists[bestDestinationFold].remove(bestDestinationArtist);
+            foldArtists[bestSourceFold].add(destination_artist);
+            foldArtists[bestDestinationFold].add(source_artist);
+            
+            sourceArtistCounts = artistToTagCountArray.get(source_artist);
+            destinationArtistCounts = artistToTagCountArray.get(destination_artist);
+            sourceFoldArr = foldTagCounts.get(bestSourceFold);
+            destinationFoldArr = foldTagCounts.get(bestDestinationFold);
+            for (int i = 0; i < numTags; i++) {
+                sourceFoldArr[i] += (destinationArtistCounts[i] - sourceArtistCounts[i]);
+                destinationFoldArr[i] += (sourceArtistCounts[i] - destinationArtistCounts[i]);
+            }
+        }
+        
+        return new double[]{bestDeviation,bestEntropy};
+    }
     
     
     /**
@@ -2602,6 +2928,48 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
             msg += "\t\t" + indexes.get(i) + ":\t" + this.indexKeyToIndexMap.get(indexes.get(i)).size() + "\n";
         }
         return msg;
+    }
+
+    private double measureMaxDeviationFromIdeal(int numFolds, ArrayList<int[]> foldTagCounts, int[] totalTagCountArr) {
+        //measure how far from the ideal split this is
+        double targetProportion = 1.0 / numFolds;
+//        double totalDeviation = 0.0;
+        int[] foldCounts;
+//        for (int i = 0; i < numFolds; i++) {
+//            foldCounts = foldTagCounts.get(i);
+//            for (int j = 0; j < totalTagCountArr.length; j++) {
+//                totalDeviation += Math.abs(((double)foldCounts[j] / (double)totalTagCountArr[j]) - targetProportion);
+//            }
+//        }
+//        totalDeviation /= numFolds * totalTagCountArr.length;
+//        return totalDeviation;
+        
+        double maxDeviation = 0.0;
+        double dev;
+        for (int i = 0; i < numFolds; i++) {
+            foldCounts = foldTagCounts.get(i);
+            for (int j = 0; j < totalTagCountArr.length; j++) {
+                dev = Math.abs(((double)foldCounts[j] / (double)totalTagCountArr[j]) - targetProportion);
+                if (dev > maxDeviation){
+                    maxDeviation = dev;
+                }
+            }
+        }
+        
+        
+        return maxDeviation;
+    }
+    
+    private double measureEntropyOfSplit(int numFolds, ArrayList<int[]> foldTagCounts) {
+        double totalEntropy = 0.0;
+        int[] foldCounts;
+        for (int i = 0; i < numFolds; i++) {
+            foldCounts = foldTagCounts.get(i);
+            totalEntropy += Mathematics.entropy(foldCounts, 20);
+            
+        }
+        
+        return totalEntropy / numFolds;
     }
     
     /**

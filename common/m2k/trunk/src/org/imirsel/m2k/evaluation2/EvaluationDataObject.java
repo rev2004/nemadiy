@@ -23,7 +23,7 @@ import org.imirsel.m2k.util.noMetadataException;
  */
 public class EvaluationDataObject implements Serializable{
 
-    public static final long serialVersionUID = -1234567890123456789L;
+    public static final long serialVersionUID = -1234567894463456789L;
     
     //Metadata key constants
     /** Constant definition for metadata key: column label     */
@@ -38,7 +38,9 @@ public class EvaluationDataObject implements Serializable{
     public final static String PROP_PERF = "Performance";
     /** Constant definition for algorithm name (used as an identifier in evaluations).     */
     public final static String PROP_ALG_NAME = "Algorithm name";
-    /** Constant definition for class membership Likelihoods.     */
+    /** Constant definition for algorithm name (used as an identifier in evaluations).     */
+    public final static String PATH_TO_ARTIST_MAP = "Pathto artist map";
+    
     
     //Evaluation results constants
     /** Constant definition for metadata key: Evaluation report*/
@@ -63,6 +65,9 @@ public class EvaluationDataObject implements Serializable{
      * to a map linking tags to their affinity values. */
     public static final String TAG_AFFINITY_MAP = "Tag classification affinity map";
     
+    
+    public static final String TAG_LIST = "Tag list";
+    
     public static final String TAG_BINARY_ACCURACY_MAP = "Tag classification binary relevance accuracy map";
     public static final String TAG_BINARY_PRECISION_MAP = "Tag classification binary relevance precision map";
     public static final String TAG_BINARY_RECALL_MAP = "Tag classification binary relevance recall map";
@@ -73,8 +78,10 @@ public class EvaluationDataObject implements Serializable{
     public static final String TAG_BINARY_OVERALL_RECALL = "Tag classification binary relevance overall recall";
     public static final String TAG_BINARY_OVERALL_FMEASURE = "Tag classification binary relevance overall fMeasure";
     
-    public static final String TAG_AFFINITY_AUC_ROC = "Tag classification affinity AUC-ROC map";
-    public static final String TAG_AFFINITY_ROC_DATA = "Tag classification affinity ROC data points map";
+    public static final String TAG_AFFINITY_AUC_ROC = "Tag classification affinity tag AUC-ROC map";
+    public static final String TAG_AFFINITY_ROC_DATA = "Tag classification affinity tag ROC data points map";
+    public static final String TAG_AFFINITY_CLIP_AUC_ROC = "Tag classification affinity clip AUC-ROC map";
+    public static final String TAG_AFFINITY_CLIP_ROC_DATA = "Tag classification affinity clip ROC data points map";
     public static final String TAG_AFFINITY_TAG_AFFINITY_DATAPOINTS = "Tag classification affinity data points map";
     
     public static final String TAG_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples map";

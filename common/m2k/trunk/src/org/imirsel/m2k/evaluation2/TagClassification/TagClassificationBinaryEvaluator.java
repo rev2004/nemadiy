@@ -30,7 +30,7 @@ import org.imirsel.m2k.util.noMetadataException;
  */
 public class TagClassificationBinaryEvaluator implements Evaluator {
 
-    private boolean verbose = true;
+    private boolean verbose = false;
     private boolean performMatlabStatSigTests = true;
     private String matlabPath = "matlab";
 
@@ -68,8 +68,19 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         HashMap<String, HashSet<String>> binaryTagData = (HashMap<String, HashSet<String>>) dataToEvaluate.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
         HashMap<String, HashSet<String>> GT_binaryTagData = (HashMap<String, HashSet<String>>) groundTruth.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
         if (!GT_binaryTagData.keySet().containsAll(binaryTagData.keySet())) {
+            HashSet<String> missingData = new HashSet<String>();
+            missingData.addAll(binaryTagData.keySet());
+            missingData.removeAll(GT_binaryTagData.keySet());
+            String missingPaths = "";
+            for (Iterator<String> it = missingData.iterator(); it.hasNext();) {
+                missingPaths += it.next() + ", ";                
+            }
             throw new RuntimeException("The groundtruth Object representing " + groundTruth.getFile().getAbsolutePath() + ", does not have ground truth" +
-                    "for all the paths specified in " + dataToEvaluate.getFile().getAbsolutePath());
+                    "for all the paths specified in " + dataToEvaluate.getFile().getAbsolutePath() + ". Paths without data: " + missingPaths);
+        }
+        
+        if(verbose){
+            System.out.println("Evaluating: " + dataToEvaluate.getFile().getAbsolutePath());
         }
         
         //util references
@@ -99,7 +110,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         double totalRecall;
         double totalFmeasure;
 
-        //step through all paths in teh results
+        //step through all paths in the results
         for (Iterator<String> pathIter = binaryTagData.keySet().iterator(); pathIter.hasNext();) {
             path = pathIter.next();
             returnedSet = binaryTagData.get(path);
@@ -129,6 +140,10 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         tags.addAll(tag2falsePositive.keySet());
         tags.addAll(tag2falseNegative.keySet());
 
+        if(verbose){
+            System.out.println("\tcomputing per-tag statistics");
+        }
+        
         //compute per tag stats
         for (Iterator<String> it = tags.iterator(); it.hasNext();) {
             tag = it.next();
@@ -151,8 +166,17 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             
             double accuracy = (double) (tp + tn) / (double) binaryTagData.size();
             double precision = (double) tp / (double) (tp + fp);
+            if ((tp + fp)==0){
+                precision = 0.0;
+            }
             double recall = (double) tp / (double) (tp + fn);
+            if ((tp + fn)==0){
+                recall = 0.0;
+            }
             double fMeasure = (2 * recall * precision) / (recall + precision);
+            if ((precision == 0.0)||(recall == 0)){
+                fMeasure = 0.0;
+            }
             tag2Accuracy.put(tag, accuracy);
             tag2Precision.put(tag, precision);
             tag2Recall.put(tag, recall);
@@ -164,6 +188,10 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             tag2numNegativeExamples.put(tag, numNegativeExamples);
         }
 
+        if(verbose){
+            System.out.println("\tcomputing total statistics");
+        }
+        
         //compute total stats
         totalAccuracy = (double) (totalTruePositive + totalTrueNegative) / (double) (totalTruePositive + totalFalsePositive + totalFalseNegative + totalTrueNegative);
         totalPrecision = (double) totalTruePositive / (double) (totalTruePositive + totalFalsePositive);
@@ -178,14 +206,16 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         for (Iterator<String> it = tags.iterator(); it.hasNext();) {
             tag = it.next();
             systemReport += "tag '" + tag + "':\n";
-            systemReport += "    precision: " + tag2Accuracy.get(tag).doubleValue() + "\n";
+            systemReport += "    accuracy: " + tag2Accuracy.get(tag).doubleValue() + "\n";
             systemReport += "    precision: " + tag2Precision.get(tag).doubleValue() + "\n";
             systemReport += "    recall:    " + tag2Recall.get(tag).doubleValue() + "\n";
             systemReport += "    fMeasure:  " + tag2FMeasure.get(tag).doubleValue() + "\n";
         }
 
         
-
+        if(verbose){
+            System.out.println("\toutputting");
+        }
         //report on files evaluated against
         systemReport += "Number of files tested against: " + binaryTagData.size() + "\n";
         systemReport += "Test file paths: " + binaryTagData.size() + "\n";
@@ -234,6 +264,10 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         } 
 
+        if(verbose){
+            System.out.println("\n\n" + systemReport);
+        }
+        
         return systemReport;
     }
 
@@ -489,5 +523,16 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         return new File[]{FmeasureFile,AccuracyFile};
     }
 
-    
+    public static void main(String[] args) {
+        String systemName = args[0];
+        File resultFile = new File(args[1]);
+        File gtFile = new File(args[2]);
+        File outputDirectory = new File(args[3]);
+        
+        TagClassificationBinaryFileReader binReader = new TagClassificationBinaryFileReader();
+        TagClassificationBinaryEvaluator evaluator = new TagClassificationBinaryEvaluator();
+        evaluator.setVerbose(true);
+        evaluator.evaluateResultsAgainstGT(systemName, binReader.readFile(resultFile), binReader.readFile(gtFile), outputDirectory);
+        
+    }
 }
