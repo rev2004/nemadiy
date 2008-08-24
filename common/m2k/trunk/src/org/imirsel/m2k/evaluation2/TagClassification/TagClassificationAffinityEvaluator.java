@@ -491,15 +491,10 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         } 
         
         if (performMatlabStatSigTests){
-            //delete readtext.m
             performFriedManTestWith_tag_AUC_ROC(outputDir, AUC_ROC_file, systemNames);
-            
-            //  call matlab and execute Beta-Binomial test
-            
-            
+            performFriedManTestWith_clip_AUC_ROC(outputDir,clip_AUC_ROC_file, systemNames);
         }
-        
-        
+
         return report;
     }
 
@@ -566,8 +561,53 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         }
         //delete readtext.m
         readtextMFile.delete();
+    }
+    
+    private void performFriedManTestWith_clip_AUC_ROC(File outputDir, File AUC_ROC_file, String[] systemNames) {
+        //call matlab and execute Friedman's test with TK HSD
+        //make sure readtext is in the working directory for matlab
+        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
+        //create an m-file to run the test
+        String evalCommand = "performFriedmanForClips";
+        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity_clip_AUC_ROC.friedman.tukeyKramerHSD.png";
+        try {
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
-        //  call matlab and execute Beta-Binomial test
+            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t')");
+            textOut.newLine();
+            textOut.write("clip_AUC_ROC_Scores = data(:,5:" + (systemNames.length + 4) + ");");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(clip_AUC_ROC_Scores,1,'on');");
+            textOut.newLine();
+            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+            textOut.newLine();
+            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+            textOut.newLine();
+            textOut.write("exit;");
+            textOut.newLine();
+
+            textOut.close();
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+        matlabIntegrator.setMatlabBin(matlabPath);
+        matlabIntegrator.setCommandFormattingStr("");
+        matlabIntegrator.setMainCommand(evalCommand);
+        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+        matlabIntegrator.start();
+        try {
+            matlabIntegrator.join();
+
+            //  call matlab and execute Beta-Binomial test
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //delete readtext.m
+        readtextMFile.delete();
     }
     
     
