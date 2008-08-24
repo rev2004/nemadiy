@@ -306,9 +306,11 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             //call matlab and execute Friedman's test with TK HSD for Accuracy
             performFriedmanTestWithAccuracy(outputDir, CSVResultFiles, systemNames);
             
+            //  call matlab and execute Beta-Binomial test with F-measure
+            performBetaBinomialTestWithFMeasure(outputDir, CSVResultFiles, systemNames);
             
-            //  call matlab and execute Beta-Binomial test
-            
+            //  call matlab and execute Beta-Binomial test with accuracy scores
+            performBetaBinomialTestWithAccuracy(outputDir, CSVResultFiles, systemNames);
             
         }
         return report;
@@ -381,10 +383,6 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        
-        //delete readtext.m
-        readtextMFile.delete();
-
     }
 
     private void performFriedmanTestWithFMeasure(File outputDir, File[] CSVResultFiles, String[] systemNames) {
@@ -392,7 +390,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
         CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
         //create an m-file to run the test
-        String evalCommand = "performFriedmanForTags";
+        String evalCommand = "performFriedmanForTagsFMeasure";
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
         String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "binary_FMeasure.friedman.tukeyKramerHSD.png";
         try {
@@ -411,6 +409,93 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             textOut.write("exit;");
             textOut.newLine();
 
+            textOut.close();
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+        matlabIntegrator.setMatlabBin(matlabPath);
+        matlabIntegrator.setCommandFormattingStr("");
+        matlabIntegrator.setMainCommand(evalCommand);
+        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+        matlabIntegrator.start();
+        try {
+            matlabIntegrator.join();
+
+            //  call matlab and execute Beta-Binomial test
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+
+    }
+    
+    
+    private void performBetaBinomialTestWithFMeasure(File outputDir, File[] CSVResultFiles, String[] systemNames) {
+        //make sure readtext is in the working directory for matlab
+        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
+        File BBFile = new File(outputDir.getAbsolutePath() + File.separator + "betaBinomEB.m");
+        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/betaBinomEB.m", BBFile);
+        File BBreportFile = new File(outputDir.getAbsolutePath() + File.separator + "bbReport.m");
+        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/bbReport.m", BBreportFile);
+        
+        //create an m-file to run the test
+        String evalCommand = "performBBForTagsFMeasure";
+        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+        String matlabOutputPath = outputDir.getAbsolutePath() + File.separator + "binary_FMeasure.BetaBinomial";
+        try {
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+
+            textOut.write("bbReport('" +  CSVResultFiles[FMEASURE_FILE_INDEX].getAbsolutePath() + "', '" + matlabOutputPath + "')");
+            textOut.newLine();
+            textOut.write("exit;");
+            textOut.newLine();
+            
+            textOut.close();
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+        matlabIntegrator.setMatlabBin(matlabPath);
+        matlabIntegrator.setCommandFormattingStr("");
+        matlabIntegrator.setMainCommand(evalCommand);
+        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+        matlabIntegrator.start();
+        try {
+            matlabIntegrator.join();
+
+            //  call matlab and execute Beta-Binomial test
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+
+    }
+    
+    private void performBetaBinomialTestWithAccuracy(File outputDir, File[] CSVResultFiles, String[] systemNames) {
+        //make sure readtext is in the working directory for matlab
+        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
+        File BBFile = new File(outputDir.getAbsolutePath() + File.separator + "betaBinomEB.m");
+        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/betaBinomEB.m", BBFile);
+        File BBreportFile = new File(outputDir.getAbsolutePath() + File.separator + "bbReport.m");
+        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/bbReport.m", BBreportFile);
+        
+        //create an m-file to run the test
+        String evalCommand = "performBBForTagsAccuracy";
+        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+        String matlabOutputPath = outputDir.getAbsolutePath() + File.separator + "binary_Accuracy.BetaBinomial";
+        try {
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+
+            textOut.write("bbReport('" +  CSVResultFiles[ACCURACY_FILE_INDEX].getAbsolutePath() + "', '" + matlabOutputPath + "')");
+            textOut.newLine();
+            textOut.write("exit;");
+            textOut.newLine();
+            
             textOut.close();
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
