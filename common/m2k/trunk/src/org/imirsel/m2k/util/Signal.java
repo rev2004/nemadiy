@@ -50,6 +50,10 @@ public class Signal implements Serializable, Cloneable, Comparable {
      */
     public final static String PROP_GENRE = "genre";
     /**
+     * Constant definition for metadata key: tags
+     */
+    public final static String PROP_TAGS = "tags";
+    /**
      * Constant definition for metadata key: year
      */
     public final static String PROP_ALT_YEAR = "year";
@@ -1445,5 +1449,10 @@ public class Signal implements Serializable, Cloneable, Comparable {
             
         }
         return segmentationCol;
+    
+    }
+    
+    public int hashCode(){
+        return this.getFile().hashCode();
     }
 }

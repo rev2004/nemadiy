@@ -71,7 +71,7 @@ public class SimpleNumericPlot extends ApplicationFrame {
         range1 = range1_;
         range2 = range2_;
         
-        final JFreeChart chart = createChart();
+        chart = createChart();
         final ChartPanel panel = new ChartPanel(chart, true, true, true, true, true);
         panel.setPreferredSize(new java.awt.Dimension(600, 400));
         setContentPane(panel);
