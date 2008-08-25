@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,6 +22,22 @@ import java.util.logging.Logger;
  */
 public class TagClassificationBinaryFileReader implements EvalFileReader {
     private boolean verbose = false;
+    private boolean MIREX_submissionMode = false;
+    public boolean getMIREX_submissionMode() {
+        return MIREX_submissionMode;
+    }
+
+    public void setMIREX_submissionMode(boolean mirexMode) {
+        this.MIREX_submissionMode = mirexMode;
+    }
+    
+    private static final HashSet<String> ACCEPTED_FILE_EXTENSIONS = new HashSet<String>();
+    static{
+        ACCEPTED_FILE_EXTENSIONS.add(".mp3");
+        ACCEPTED_FILE_EXTENSIONS.add(".wav");
+        ACCEPTED_FILE_EXTENSIONS.add(".mid");
+    }
+
     private static final int FILE_FORMAT_ERROR_TOLERANCE = 2;
     
     public boolean getVerbose() {
@@ -35,13 +52,26 @@ public class TagClassificationBinaryFileReader implements EvalFileReader {
         if(verbose){
             System.out.println("   appending tag: " + tag + " to path: " + path);
         }
-        if (pathsToRelevantTags.containsKey(path)){
-            HashSet<String> tagSet = pathsToRelevantTags.get(path);
+        String key,ext;
+        if (MIREX_submissionMode){
+            key = new File(path).getName();
+            for (Iterator<String> it = ACCEPTED_FILE_EXTENSIONS.iterator(); it.hasNext();) {
+                ext = it.next();
+                if(key.endsWith(ext)){
+                    key.replaceAll(ext, "");
+                    break;
+                }
+            }
+        }else{
+            key = path;
+        }
+        if (pathsToRelevantTags.containsKey(key)){
+            HashSet<String> tagSet = pathsToRelevantTags.get(key);
             tagSet.add(tag);
         }else{
             HashSet<String> tagSet = new HashSet<String>();
             tagSet.add(tag);
-            pathsToRelevantTags.put(path, tagSet);
+            pathsToRelevantTags.put(key, tagSet);
         }
     }
     

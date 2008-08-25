@@ -80,8 +80,9 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
     
     public String evaluateResultsAgainstGT(String systemName, EvaluationDataObject dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException {
         //init report
-        String systemReport = "Results file:      " + dataToEvaluate.getFile().getAbsolutePath() + "\n";
-        systemReport = "Ground-truth file: " + groundTruth.getFile().getAbsolutePath() + "\n";
+        String systemReport = "System name:       " + systemName + "\n" +
+                              "Results file:      " + dataToEvaluate.getFile().getAbsolutePath() + "\n";
+        systemReport =        "Ground-truth file: " + groundTruth.getFile().getAbsolutePath() + "\n";
 
         //check GT and eval data for existence of right data 
         if (!groundTruth.hasMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)) {
