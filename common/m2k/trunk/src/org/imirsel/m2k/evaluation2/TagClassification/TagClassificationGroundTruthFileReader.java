@@ -23,6 +23,15 @@ import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
  */
 public class TagClassificationGroundTruthFileReader implements EvalFileReader {
     private boolean verbose = false;
+    private boolean mirexMode = false;
+    public boolean getMirexMode() {
+        return mirexMode;
+    }
+
+    public void setMirexMode(boolean mirexMode) {
+        this.mirexMode = mirexMode;
+    }
+    
     private static final int FILE_FORMAT_ERROR_TOLERANCE = 2;
     
     private static HashSet<String> known_headers;
@@ -86,14 +95,28 @@ public class TagClassificationGroundTruthFileReader implements EvalFileReader {
             ArrayList<String> allTags = new ArrayList<String>();
             
             int id_col = -1, artist_col = -1, first_tag_col = -1;
-            for (int i = 0; i < headers.length; i++) {
-                if (headers[i].equalsIgnoreCase("track")){
-                    id_col = i;
-                }else if(headers[i].equalsIgnoreCase("artist")){
-                    artist_col = i;
-                }else if(!known_headers.contains(headers[i])){
-                    first_tag_col = i;
-                    break;
+            
+            if (getMirexMode()){
+                for (int i = 0; i < headers.length; i++) {
+                    if (headers[i].equalsIgnoreCase("id")){
+                        id_col = i;
+                    }else if(headers[i].equalsIgnoreCase("artist")){
+                        artist_col = i;
+                    }else if(!known_headers.contains(headers[i])){
+                        first_tag_col = i;
+                        break;
+                    }
+                }
+            }else{
+                for (int i = 0; i < headers.length; i++) {
+                    if (headers[i].equalsIgnoreCase("path")){
+                        id_col = i;
+                    }else if(headers[i].equalsIgnoreCase("artist")){
+                        artist_col = i;
+                    }else if(!known_headers.contains(headers[i])){
+                        first_tag_col = i;
+                        break;
+                    }
                 }
             }
             for (int i = first_tag_col; i < headers.length; i++) {
@@ -126,5 +149,7 @@ public class TagClassificationGroundTruthFileReader implements EvalFileReader {
         }
         return output;
     }
+
+    
 
 }
