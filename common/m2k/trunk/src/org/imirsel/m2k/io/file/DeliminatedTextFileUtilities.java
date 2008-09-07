@@ -381,7 +381,7 @@ public class DeliminatedTextFileUtilities {
         String[] comps = tmp.split(delimiter);
         for (int i = 0; i < comps.length; i++) {
             
-            if ((comps[i].length() > 0) && (comps[i].charAt(0) == '"')){
+            if ((comps[i].length() > 1) && (comps[i].charAt(0) == '"')){
                 //remove speechmarks
                 comps[i] = comps[i].substring(1);
                 comps[i] = comps[i].substring(0, comps[i].length() - 1);

@@ -186,7 +186,7 @@ public class AudioFileReadClass {
         if ((this.framesSoFar >= this.maxOutFrames)&&(limitAudioFrames == true))
         {
             if (verbose){
-                System.out.println("Resetting reader - output limit exceeded.");
+                System.out.println("Resetting reader - output limit exceeded. Read " + framesSoFar + " frames.");
             }
             fileReader.close();
             fileReader = null;

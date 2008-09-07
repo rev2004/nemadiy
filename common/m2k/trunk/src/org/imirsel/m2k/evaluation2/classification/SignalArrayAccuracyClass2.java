@@ -7,7 +7,8 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.m2k.evaluation;
+package org.imirsel.m2k.evaluation2.classification;
+import org.imirsel.m2k.evaluation.*;
 import java.util.ArrayList;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
@@ -20,8 +21,11 @@ import java.io.*;
  *
  * @author kris
  */
-public class SignalArrayAccuracyClass {
-    private final static int COL_WIDTH = 7;
+public class SignalArrayAccuracyClass2 {
+    private String resultFileExt = ".eval";
+    private String signalFileExt = ".asciiEvalSignal";
+    
+    private static final int COL_WIDTH = 7;
     private ArrayList classNames = null;
     private ArrayList resultSignals = null;
     private ArrayList hierarchies = null;
@@ -38,8 +42,6 @@ public class SignalArrayAccuracyClass {
     private boolean useNormalisedEvalMetricForRanking = false;
     
     private String ModelName = "Model";
-    private String resultFileExt = ".eval";
-    private String signalFileExt = ".asciiEvalSignal";
     private String storageDirectory = "evalTest";
     private String classHierarchyFile = "";
     
@@ -57,7 +59,7 @@ public class SignalArrayAccuracyClass {
     private boolean verbose = false;
     
     /** Creates a new instance of SignalArrayAccuracyClass */
-    public SignalArrayAccuracyClass(String ModelName_, String resultFileExt_, String signalFileExt_, String storageDirectory_, String classHierarchyFile_, boolean verbose_) {
+    public SignalArrayAccuracyClass2(String ModelName_, String resultFileExt_, String signalFileExt_, String storageDirectory_, String classHierarchyFile_, boolean verbose_) {
         this.classNames = null;
         this.resultSignals = null;
         this.storedConfusion = null;

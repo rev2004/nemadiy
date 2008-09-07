@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.m2k.evaluation2.TagClassification;
+package org.imirsel.m2k.evaluation2.tagsClassification;
 
 import java.io.Serializable;
 

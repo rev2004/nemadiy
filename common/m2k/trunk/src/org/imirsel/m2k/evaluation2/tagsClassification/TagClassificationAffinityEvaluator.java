@@ -3,8 +3,13 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.m2k.evaluation2.TagClassification;
+package org.imirsel.m2k.evaluation2.tagsClassification;
 
+import org.imirsel.m2k.evaluation2.tagsClassification.AffinityDataPoint;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryEvaluator;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryFileReader;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationAffinityFileReader;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationAffinityEvaluator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
