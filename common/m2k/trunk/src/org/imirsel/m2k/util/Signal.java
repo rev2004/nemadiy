@@ -126,6 +126,10 @@ public class Signal implements Serializable, Cloneable, Comparable {
      */
     public final static String PROP_PERF = "Performance";
     /**
+     * Constant definition for performance per class (rather than total) metadata.
+     */
+    public final static String PROP_PERF_PER_CLASS = "Performance per class";
+    /**
      * Constant definition for performance metadata.
      */
     public final static String PROP_DURATION = "Duration";

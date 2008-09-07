@@ -3,8 +3,9 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.m2k.evaluation2.TagClassification;
+package org.imirsel.m2k.evaluation2.tagsClassification;
 
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryFileReader;
 import org.imirsel.m2k.evaluation2.*;
 import java.io.BufferedReader;
 import java.io.File;
