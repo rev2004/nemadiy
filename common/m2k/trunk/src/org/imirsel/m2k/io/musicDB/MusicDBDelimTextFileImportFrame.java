@@ -57,6 +57,7 @@ public class MusicDBDelimTextFileImportFrame extends javax.swing.JFrame {
         metadataSelectionsVector.add(Signal.PROP_TRACKNAME);
         metadataSelectionsVector.add(Signal.PROP_ALT_GENRE);
         metadataSelectionsVector.add(Signal.PROP_ALT_YEAR);
+        metadataSelectionsVector.add(Signal.PROP_CLASS);
         
         setDatabase(new MusicDB());
         
@@ -87,6 +88,7 @@ public class MusicDBDelimTextFileImportFrame extends javax.swing.JFrame {
         metadataSelectionsVector.add(Signal.PROP_GENRE);
         metadataSelectionsVector.add(Signal.PROP_TRACKNAME);
         metadataSelectionsVector.add(Signal.PROP_ALT_GENRE);
+        metadataSelectionsVector.add(Signal.PROP_CLASS);
         setDatabase(theDB);
     }
     
