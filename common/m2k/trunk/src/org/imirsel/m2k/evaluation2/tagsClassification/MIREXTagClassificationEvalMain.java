@@ -70,9 +70,9 @@ public class MIREXTagClassificationEvalMain {
             ArrayList<File> affinityFiles = new ArrayList<File>();
             
             for (int i = 0; i < files.length; i++) {
-                if (files[i].getName().endsWith(BINARY_FILE_EXTENSION)){
+                if (files[i].getName().endsWith(BINARY_FILE_EXTENSION) || files[i].getName().endsWith(BINARY_FILE_EXTENSION + ".txt")){
                     binaryFiles.add(files[i]);
-                }else if(files[i].getName().endsWith(AFFINITY_FILE_EXTENSION)){
+                }else if(files[i].getName().endsWith(AFFINITY_FILE_EXTENSION) || files[i].getName().endsWith(AFFINITY_FILE_EXTENSION + ".txt")){
                     affinityFiles.add(files[i]);
                 }else{
                     System.out.println("ignoring unrecognized file: " + files[i].getAbsolutePath());
@@ -113,6 +113,7 @@ public class MIREXTagClassificationEvalMain {
         //read each binary result file and create EvaluationDataObject arrays
         TagClassificationBinaryFileReader binReader = new TagClassificationBinaryFileReader();
         binReader.setMIREX_submissionMode(true);
+        binReader.setVerbose(false);
         EvaluationDataObject[][] resultData = new EvaluationDataObject[systemNames.size()][numFolds];
         for (int i = 0; i < systemNames.size(); i++) {
             ArrayList<File> fileList = binaryResultsFilesPerSystemPerFold.get(i);
@@ -134,6 +135,7 @@ public class MIREXTagClassificationEvalMain {
         System.out.println("reading affinity result data files...");
         TagClassificationAffinityFileReader affReader = new TagClassificationAffinityFileReader();
         affReader.setMIREX_submissionMode(true);
+        affReader.setVerbose(false);
         ArrayList<EvaluationDataObject[]> affResultData = new ArrayList<EvaluationDataObject[]>();
         for (int i = 0; i < systemNames.size(); i++) {
             ArrayList<File> fileList = affinityResultsFilesPerSystemPerFold.get(i);
