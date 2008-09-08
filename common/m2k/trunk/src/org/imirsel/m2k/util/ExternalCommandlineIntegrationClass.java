@@ -413,10 +413,16 @@ public class ExternalCommandlineIntegrationClass extends Thread{
             while(isRunning){
                 processInputStream(inputStream);
                 processInputStream(errorStream);
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ExternalCommandlineIntegrationClass.class.getName()).log(Level.SEVERE, null, ex);
+                try{
+                    int exitVal = process.exitValue();
+                    System.out.println("precess exited with status: " + exitVal);
+                    break;
+                }catch(IllegalThreadStateException e){
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MatlabCommandlineIntegrationClass.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         } catch (IOException ex) {

@@ -5,18 +5,12 @@
 
 package org.imirsel.m2k.evaluation2.tagsClassification;
 
-import org.imirsel.m2k.evaluation2.tagsClassification.AffinityDataPoint;
-import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryEvaluator;
-import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryFileReader;
-import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationAffinityFileReader;
-import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationAffinityEvaluator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import org.imirsel.m2k.evaluation2.EvaluationDataObject;
 import org.imirsel.m2k.evaluation2.Evaluator;
 import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
@@ -85,7 +78,8 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
     
     public String evaluateResultsAgainstGT(String systemName, EvaluationDataObject dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException {
         //init report
-        String systemReport = "System name:       " + systemName + "\n" +
+        String systemReport = "-----------------------------------------------------------\n" +
+                              "System name:       " + systemName + "\n" +
                               "Results file:      " + dataToEvaluate.getFile().getAbsolutePath() + "\n";
         systemReport =        "Ground-truth file: " + groundTruth.getFile().getAbsolutePath() + "\n";
 
@@ -347,13 +341,13 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         
         //report on files evaluated against
         systemReport += "Number of files tested against: " + path2tag2affinity.size() + "\n";
-        systemReport += "Test file paths: " + path2tag2affinity.size() + "\n";
-        String[] paths = path2tag2affinity.keySet().toArray(new String[path2tag2affinity.size()]);
-        Arrays.sort(paths);
-        for (int j = 0; j < paths.length; j++) {
-            systemReport += "\t" + paths[j] + "\n";
-        }
-        systemReport += "  ---   \n";
+//        systemReport += "Test file paths: " + path2tag2affinity.size() + "\n";
+//        String[] paths = path2tag2affinity.keySet().toArray(new String[path2tag2affinity.size()]);
+//        Arrays.sort(paths);
+//        for (int j = 0; j < paths.length; j++) {
+//            systemReport += "\t" + paths[j] + "\n";
+//        }
+        systemReport += "  ---   \n\n";
 
         //store evaluation report
         dataToEvaluate.setMetadata(EvaluationDataObject.SYSTEM_RESULTS_REPORT, systemReport);
@@ -390,6 +384,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
         //evaluate each system
         for (int i = 0; i < dataToEvaluate.length; i++) {
+            System.err.println("Evaluating system: " + systemNames[i]);
             report += "System: " + systemNames[i] + "\n";
             //evaluate each fold
             for (int j = 0; j < dataToEvaluate.length; j++) {
@@ -397,6 +392,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                 report += systemReport + EvaluationDataObject.DIVIDER + "\n";
             }
             report += EvaluationDataObject.DIVIDER + "\n";
+            System.err.println("done.");
         }
 
         
@@ -404,6 +400,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         int numFolds = dataToEvaluate[0].length;
         int totalNumRows = 0;
         
+        System.err.println("Writing out tag AUC-ROC data");
         //Write out tag AUC-ROC data for significance testing
         String[][] tagNames = new String[numFolds][];
         for (int i = 0; i < numFolds; i++) {
@@ -441,13 +438,13 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         }
         File AUC_ROC_file = new File(outputDir.getAbsolutePath() + File.separator + "affinity_tag_AUC_ROC.csv");
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AUC_ROC_file, "\t", csvData, true); 
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AUC_ROC_file, "\t", csvData, false); 
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         
-        
+        System.err.println("Writing out per-track AUC-ROC data");
         //Write out clip AUC-ROC data for significance testing
         String[][] clipNames = new String[numFolds][];
         for (int i = 0; i < numFolds; i++) {
@@ -478,14 +475,23 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         }
         File clip_AUC_ROC_file = new File(outputDir.getAbsolutePath() + File.separator + "affinity_clip_AUC_ROC.csv");
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(clip_AUC_ROC_file, "\t", csvData, true); 
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(clip_AUC_ROC_file, "\t", csvData, false); 
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         
         
+        //do stat sig tests!
         
+        
+        
+        
+        
+        
+        
+        
+        System.err.println("Writing out overall report");
         //write overall report to file
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(outputDir.getAbsolutePath() + File.separator + "tag_affinity_report.txt"));
@@ -497,10 +503,11 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         } 
         
         if (performMatlabStatSigTests){
-            performFriedManTestWith_tag_AUC_ROC(outputDir, AUC_ROC_file, systemNames);
-            performFriedManTestWith_clip_AUC_ROC(outputDir,clip_AUC_ROC_file, systemNames);
+            performFriedmanTestWithTag_AUC_ROC(outputDir, AUC_ROC_file, systemNames);
+            performFriedmanTestWithTrack_AUC_ROC(outputDir,clip_AUC_ROC_file, systemNames);
         }
 
+        System.err.println("done.");
         return report;
     }
 
@@ -522,23 +529,25 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
     }
 
     
-    private void performFriedManTestWith_tag_AUC_ROC(File outputDir, File AUC_ROC_file, String[] systemNames) {
-        //call matlab and execute Friedman's test with TK HSD
+    private void performFriedmanTestWithTag_AUC_ROC(File outputDir,File AUC_ROC_file, String[] systemNames) {
         //make sure readtext is in the working directory for matlab
         File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
-        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
+        
         //create an m-file to run the test
-        String evalCommand = "performFriedmanForTags";
+        String evalCommand = "performFriedmanForAUC_ROC_TAG";
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
-        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity_AUC_ROC.friedman.tukeyKramerHSD.png";
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity.AUC_ROC_TAG.friedman.tukeyKramerHSD.png";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
-            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t')");
+            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
             textOut.newLine();
-            textOut.write("AUC_ROC_Scores = data(:,5:" + (systemNames.length + 4) + ");");
+            textOut.write("algNames = data(1,3:" + (systemNames.length + 4) + ")';");
             textOut.newLine();
-            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUC_ROC_Scores,1,'on');");
+            textOut.write("AUCROC_TAG = cell2mat(data(2:length(data),3:" + (systemNames.length + 2) + "));");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUCROC_TAG,1,'on');");
             textOut.newLine();
             textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
             textOut.newLine();
@@ -549,7 +558,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
             textOut.close();
         } catch (IOException ex) {
-            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
@@ -560,32 +569,31 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         matlabIntegrator.start();
         try {
             matlabIntegrator.join();
-
-            //  call matlab and execute Beta-Binomial test
         } catch (InterruptedException ex) {
             Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //delete readtext.m
-        readtextMFile.delete();
+
     }
     
-    private void performFriedManTestWith_clip_AUC_ROC(File outputDir, File AUC_ROC_file, String[] systemNames) {
-        //call matlab and execute Friedman's test with TK HSD
+    private void performFriedmanTestWithTrack_AUC_ROC(File outputDir,File AUC_ROC_file, String[] systemNames) {
         //make sure readtext is in the working directory for matlab
         File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
-        CopyFileFromClassPathToDisk.copy("org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
+        
         //create an m-file to run the test
-        String evalCommand = "performFriedmanForClips";
+        String evalCommand = "performFriedmanForAUC_ROC_TRACK";
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
-        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity_clip_AUC_ROC.friedman.tukeyKramerHSD.png";
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity.AUC_ROC_TRACK.friedman.tukeyKramerHSD.png";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
-            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t')");
+            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
             textOut.newLine();
-            textOut.write("clip_AUC_ROC_Scores = data(:,5:" + (systemNames.length + 4) + ");");
+            textOut.write("algNames = data(1,3:" + (systemNames.length + 4) + ")';");
             textOut.newLine();
-            textOut.write("[P,friedmanTable,friedmanStats] = friedman(clip_AUC_ROC_Scores,1,'on');");
+            textOut.write("AUCROC_TRACK = cell2mat(data(1:length(data),3:" + (systemNames.length + 2) + "));");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUCROC_TRACK,1,'on');");
             textOut.newLine();
             textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
             textOut.newLine();
@@ -596,7 +604,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
             textOut.close();
         } catch (IOException ex) {
-            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
@@ -607,14 +615,105 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         matlabIntegrator.start();
         try {
             matlabIntegrator.join();
-
-            //  call matlab and execute Beta-Binomial test
         } catch (InterruptedException ex) {
             Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //delete readtext.m
-        readtextMFile.delete();
+
     }
+    
+//    private void performFriedManTestWith_tag_AUC_ROC(File outputDir, File AUC_ROC_file, String[] systemNames) {
+//        //call matlab and execute Friedman's test with TK HSD
+//        //make sure readtext is in the working directory for matlab
+//        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+//        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
+//        //create an m-file to run the test
+//        String evalCommand = "performFriedmanForTags";
+//        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+//        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity_AUC_ROC.friedman.tukeyKramerHSD.png";
+//        try {
+//            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+//
+//            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t')");
+//            textOut.newLine();
+//            textOut.write("AUC_ROC_Scores = data(:,5:" + (systemNames.length + 4) + ");");
+//            textOut.newLine();
+//            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUC_ROC_Scores,1,'on');");
+//            textOut.newLine();
+//            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+//            textOut.newLine();
+//            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+//            textOut.newLine();
+//            textOut.write("exit;");
+//            textOut.newLine();
+//
+//            textOut.close();
+//        } catch (IOException ex) {
+//            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+//        matlabIntegrator.setMatlabBin(matlabPath);
+//        matlabIntegrator.setCommandFormattingStr("");
+//        matlabIntegrator.setMainCommand(evalCommand);
+//        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+//        matlabIntegrator.start();
+//        try {
+//            matlabIntegrator.join();
+//
+//            //  call matlab and execute Beta-Binomial test
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        //delete readtext.m
+//        readtextMFile.delete();
+//    }
+    
+//    private void performFriedManTestWith_clip_AUC_ROC(File outputDir, File AUC_ROC_file, String[] systemNames) {
+//        //call matlab and execute Friedman's test with TK HSD
+//        //make sure readtext is in the working directory for matlab
+//        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+//        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
+//        //create an m-file to run the test
+//        String evalCommand = "performFriedmanForClips";
+//        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+//        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity_clip_AUC_ROC.friedman.tukeyKramerHSD.png";
+//        try {
+//            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+//
+//            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t')");
+//            textOut.newLine();
+//            textOut.write("clip_AUC_ROC_Scores = data(:,5:" + (systemNames.length + 4) + ");");
+//            textOut.newLine();
+//            textOut.write("[P,friedmanTable,friedmanStats] = friedman(clip_AUC_ROC_Scores,1,'on');");
+//            textOut.newLine();
+//            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+//            textOut.newLine();
+//            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+//            textOut.newLine();
+//            textOut.write("exit;");
+//            textOut.newLine();
+//
+//            textOut.close();
+//        } catch (IOException ex) {
+//            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+//        matlabIntegrator.setMatlabBin(matlabPath);
+//        matlabIntegrator.setCommandFormattingStr("");
+//        matlabIntegrator.setMainCommand(evalCommand);
+//        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+//        matlabIntegrator.start();
+//        try {
+//            matlabIntegrator.join();
+//
+//            //  call matlab and execute Beta-Binomial test
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        //delete readtext.m
+//        readtextMFile.delete();
+//    }
     
     
     public static void main(String[] args) {

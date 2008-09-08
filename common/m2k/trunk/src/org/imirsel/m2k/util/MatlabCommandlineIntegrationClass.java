@@ -1,7 +1,8 @@
 package org.imirsel.m2k.util;
 
 import java.io.*;
-import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A module that executes a command via the java <code>Runtime</code> object.
@@ -59,7 +60,7 @@ public class MatlabCommandlineIntegrationClass extends ExternalCommandlineIntegr
      * Specifically setup for executing commands in Matlab.
      * @throws java.lang.Exception If an error occurs.
      */
-    protected void runCommand() throws java.lang.Exception {
+    protected void runCommand() throws IOException {
         // Get the input filename
         if (isRunning) {
             throw new RuntimeException("Attempted to run a command, while another command is already running!");
@@ -153,5 +154,36 @@ public class MatlabCommandlineIntegrationClass extends ExternalCommandlineIntegr
         inputStream = new BufferedInputStream(process.getInputStream(), bufferSize);
         errorStream = new BufferedInputStream(process.getErrorStream(), bufferSize);
 
+    }
+    
+    public void run() {
+        try {
+            runCommand();
+        
+            while(isRunning){
+                processInputStream(inputStream);
+                processInputStream(errorStream);
+                try{
+                    int exitVal = process.exitValue();
+                    System.out.println("precess exited with status: " + exitVal);
+                    break;
+                }catch(IllegalThreadStateException e){
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MatlabCommandlineIntegrationClass.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(MatlabCommandlineIntegrationClass.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RuntimeException ex) {
+            Logger.getLogger(MatlabCommandlineIntegrationClass.class.getName()).log(Level.SEVERE, null, ex);
+        } finally{
+            if (process != null){
+                process.destroy();
+                process = null;
+            }
+        }
     }
 }

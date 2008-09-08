@@ -15,7 +15,7 @@ dummy = textread(results_file, '%s%*[^\n]');
 Nlines = length(dummy);
 
 % Really read it, and reshape it to be the right size
-strings = textread(results_file, '%s');
+strings = textread(results_file, '\t');
 strings = reshape(strings, [], Nlines)';
 headers = strings(1,:);
 systems = headers(5:end);

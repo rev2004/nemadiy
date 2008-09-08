@@ -59,7 +59,7 @@ public class TagClassificationAffinityFileReader implements EvalFileReader {
             for (Iterator<String> it = ACCEPTED_FILE_EXTENSIONS.iterator(); it.hasNext();) {
                 ext = it.next();
                 if(key.endsWith(ext)){
-                    key.replaceAll(ext, "");
+                    key = key.replaceAll(ext, "");
                     break;
                 }
             }
