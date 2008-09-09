@@ -104,7 +104,7 @@ public class ParseAndPlotConfusionMatrix {
             confusionLines.add(line.trim());
             line = textBuffer.readLine();
         }
-        System.out.println("found " + confusionLines.size() + " lines of confusion matrix");
+        //System.err.println("found " + confusionLines.size() + " lines of confusion matrix");
         
         //skip another 3 lines, skip % confusion matrix, skip one further line
         for (int i = 0; i < confusionLines.size()+4; i++) {
@@ -117,23 +117,23 @@ public class ParseAndPlotConfusionMatrix {
             line = textBuffer.readLine();
             classNames.add(line.trim().split(":")[1].trim());
         }
-        System.out.println("Class names:");
-        for (int i = 0; i < classNames.size(); i++) {
-            System.out.println("\t" + classNames.get(i));
-        }
+//        System.err.println("Class names:");
+//        for (int i = 0; i < classNames.size(); i++) {
+//            System.err.println("\t" + classNames.get(i));
+//        }
 
         //parse confusion matrix into double[][]
         double[][] conf = new double[classNames.size()][classNames.size()];
         for (int i = 0; i < confusionLines.size(); i++) {
             String aLine = confusionLines.get(i);
             String[] lineComps = aLine.split("[\\s]++");
-            String out = "number of comps in confusion line " + i + ": " + lineComps.length;
-            if (lineComps.length == classNames.size()+1){
-                out += " (correct)";
-            }else{
-                out += " (mismatch with number of class names)";
-            }
-            System.out.println(out);
+//            String out = "number of comps in confusion line " + i + ": " + lineComps.length;
+//            if (lineComps.length == classNames.size()+1){
+//                out += " (correct)";
+//            }else{
+//                out += " (mismatch with number of class names)";
+//            }
+//            System.out.println(out);
             for (int j = 1; j <= classNames.size(); j++) {
                 conf[i][j-1] = Double.valueOf(lineComps[j]);
             }
