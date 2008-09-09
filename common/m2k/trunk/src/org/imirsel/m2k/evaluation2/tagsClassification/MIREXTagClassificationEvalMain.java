@@ -8,6 +8,8 @@ package org.imirsel.m2k.evaluation2.tagsClassification;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import org.imirsel.m2k.evaluation2.EvaluationDataObject;
 
@@ -44,6 +46,10 @@ public class MIREXTagClassificationEvalMain {
         ArrayList<String> systemNames = new ArrayList<String>();
         ArrayList<File> resultsDirs = new ArrayList<File>();
         
+        
+        
+//        ArrayList<Integer> systemsMissingAffinityData = new ArrayList<Integer>();
+        
         System.out.println("---");
         for (int i = 2; i < args.length; i+=2) {
             String systemName = args[i+1];
@@ -52,6 +58,9 @@ public class MIREXTagClassificationEvalMain {
             resultsDirs.add(resultsPath);
             System.out.println("System " + systemNames.size()+ "; " + systemName + ", " + resultsPath.getAbsolutePath());
         }
+        
+        ArrayList<String> affinitySystemNames = (ArrayList<String>)systemNames.clone();
+        
         System.out.println("---");
         
         //get each directory of results
@@ -59,6 +68,7 @@ public class MIREXTagClassificationEvalMain {
         ArrayList<ArrayList<File>> binaryResultsFilesPerSystemPerFold = new ArrayList<ArrayList<File>>();
         ArrayList<ArrayList<File>> affinityResultsFilesPerSystemPerFold = new ArrayList<ArrayList<File>>();
         int numFolds = -1;
+        int systemIdx = 0;
         for (Iterator<File> it = resultsDirs.iterator(); it.hasNext();) {
             File dir = it.next();
             File[] files = dir.listFiles();
@@ -92,16 +102,21 @@ public class MIREXTagClassificationEvalMain {
             
             if (affinityFiles.size() == 0){
                 System.out.println("WARNING: No affinity data files detected for result dir: " + dir.getAbsolutePath());
-                affinityResultsFilesPerSystemPerFold.add(new ArrayList<File>());
+                //affinityResultsFilesPerSystemPerFold.add(new ArrayList<File>());
+                affinitySystemNames.remove(systemIdx);
+                systemIdx--;
             }else if ((numFolds != 1)&&(affinityFiles.size() != numFolds)){
                 
                 System.out.println("WARNING: Wrong number (" + affinityFiles.size() + ") of affinity data files detected " +
                         "for result dir: " + dir.getAbsolutePath() + ", should be " + numFolds + "\n" +
                         "skipping affinity evaluation.");
-                affinityResultsFilesPerSystemPerFold.add(new ArrayList<File>());
+                //affinityResultsFilesPerSystemPerFold.add(new ArrayList<File>());
+                affinitySystemNames.remove(systemIdx);
+                systemIdx--;
             }else{
                 affinityResultsFilesPerSystemPerFold.add(affinityFiles);
             }
+            systemIdx++;
         }
         
         //read GT file
@@ -115,12 +130,66 @@ public class MIREXTagClassificationEvalMain {
         binReader.setMIREX_submissionMode(true);
         binReader.setVerbose(false);
         EvaluationDataObject[][] resultData = new EvaluationDataObject[systemNames.size()][numFolds];
+        HashSet<String>[] masterPathListPerFold = new HashSet[numFolds];
+        for (int i = 0; i < masterPathListPerFold.length; i++) {
+            masterPathListPerFold[i] = new HashSet<String>();
+            
+        }
         for (int i = 0; i < systemNames.size(); i++) {
             ArrayList<File> fileList = binaryResultsFilesPerSystemPerFold.get(i);
             for (int j = 0; j <numFolds; j++) {
-                resultData[i][j] = binReader.readFile(fileList.get(j));                
+                resultData[i][j] = binReader.readFile(fileList.get(j));              
+                masterPathListPerFold[j].addAll(((HashMap<String,HashSet<String>>)resultData[i][j].getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)).keySet());
             }
         }
+        
+        //read each affinity result file and create EvaluationDataObject arrays
+        System.out.println("reading affinity result data files...");
+        TagClassificationAffinityFileReader affReader = new TagClassificationAffinityFileReader();
+        affReader.setMIREX_submissionMode(true);
+        affReader.setVerbose(false);
+        ArrayList<EvaluationDataObject[]> affResultData = new ArrayList<EvaluationDataObject[]>();
+        for (int i = 0; i < affinitySystemNames.size(); i++) {
+            ArrayList<File> fileList = affinityResultsFilesPerSystemPerFold.get(i);
+            
+            EvaluationDataObject[] affSysResults = new EvaluationDataObject[numFolds];
+            for (int j = 0; j < numFolds; j++) {
+                affSysResults[j] = affReader.readFile(fileList.get(j));   
+                masterPathListPerFold[j].addAll(((HashMap<String,HashMap<String,Double>>)affSysResults[j].getMetadata(EvaluationDataObject.TAG_AFFINITY_MAP)).keySet());
+            }
+            affResultData.add(affSysResults);
+        }
+        
+        
+        //patch in tracks with missing classifications
+        System.out.println("searching for result sets with missing paths (no classifications or affinities)");
+        for (int i = 0; i < systemNames.size(); i++) {
+            for (int j = 0; j < numFolds; j++) {
+                HashSet<String> missing = (HashSet<String>)masterPathListPerFold[j].clone();
+                HashMap<String,HashSet<String>> path2tagList = (HashMap<String,HashSet<String>>)resultData[i][j].getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
+                missing.removeAll(path2tagList.keySet());
+                if (!missing.isEmpty()){
+                    System.out.println("\tpatching in " + missing.size() + " paths (as no classification were returned) for: " + systemNames.get(i) + ", fold " + (j+1));
+                    for (Iterator<String> it = missing.iterator(); it.hasNext();) {
+                        path2tagList.put(it.next(), new HashSet<String>());
+                    }        
+                }
+            }
+        }
+        for (int i = 0; i < affinitySystemNames.size(); i++) {
+            for (int j = 0; j < numFolds; j++) {
+                HashSet<String> missing = (HashSet<String>)masterPathListPerFold[j].clone();
+                HashMap<String,HashMap<String,Double>> path2tagAffList = (HashMap<String,HashMap<String,Double>>)affResultData.get(i)[j].getMetadata(EvaluationDataObject.TAG_AFFINITY_MAP);
+                missing.removeAll(path2tagAffList.keySet());
+                if (!missing.isEmpty()){
+                    System.out.println("\tpatching in " + missing.size() + " paths (as no affinities were returned) for: " + systemNames.get(i) + ", fold " + (j+1));
+                    for (Iterator<String> it = missing.iterator(); it.hasNext();) {
+                        path2tagAffList.put(it.next(), new HashMap<String,Double>());
+                    }        
+                }
+            }
+        }
+        
         
         //run binary evaluation
         System.out.println("performing binary relevance evaluation...");
@@ -131,33 +200,13 @@ public class MIREXTagClassificationEvalMain {
                 resultData, GT, rootEvaluationDir);
         
         
-        //read each affinity result file and create EvaluationDataObject arrays
-        System.out.println("reading affinity result data files...");
-        TagClassificationAffinityFileReader affReader = new TagClassificationAffinityFileReader();
-        affReader.setMIREX_submissionMode(true);
-        affReader.setVerbose(false);
-        ArrayList<EvaluationDataObject[]> affResultData = new ArrayList<EvaluationDataObject[]>();
-        for (int i = 0; i < systemNames.size(); i++) {
-            ArrayList<File> fileList = affinityResultsFilesPerSystemPerFold.get(i);
-            if (fileList.size() == 0){
-                //skip system
-                systemNames.remove(i);
-                continue;
-            }
-            
-            EvaluationDataObject[] affSysResults = new EvaluationDataObject[numFolds];
-            for (int j = 0; j < numFolds; j++) {
-                affSysResults[j] = affReader.readFile(fileList.get(j));                
-            }
-            affResultData.add(affSysResults);
-        }
         
         //run affinity evaluation
         System.out.println("performing tag affinity evaluation...");
         TagClassificationAffinityEvaluator affEval = new TagClassificationAffinityEvaluator();
         affEval.setVerbose(true);
         affEval.setPerformMatlabStatSigTests(true);
-        affEval.evaluate((String[])systemNames.toArray(new String[systemNames.size()]), 
+        affEval.evaluate((String[])affinitySystemNames.toArray(new String[affinitySystemNames.size()]), 
                 (EvaluationDataObject[][])affResultData.toArray(new EvaluationDataObject[affResultData.size()][]), 
                 GT, rootEvaluationDir);
         

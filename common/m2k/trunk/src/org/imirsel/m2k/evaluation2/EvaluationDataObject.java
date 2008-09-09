@@ -60,6 +60,9 @@ public class EvaluationDataObject implements Serializable{
      * <code>HashMap<String,HashSet<String>></code> - mapping paths to a set
      * of relevant tags. */
     public static final String TAG_BINARY_RELEVANCE_MAP = "Tag classification binary relevance map";
+    /** Constant definition for the list of tag names appearing in the data in 
+     * the form of a <code>HashSet<String></code>. */
+    public static final String TAG_NAME_SET = "Tag name set";
     /** Constant definition for tag classification data in the form of a 
      * <code>HashMap<String,HashMap<String,Double>></code> - mapping paths
      * to a map linking tags to their affinity values. */
@@ -69,6 +72,8 @@ public class EvaluationDataObject implements Serializable{
     public static final String TAG_LIST = "Tag list";
     
     public static final String TAG_BINARY_ACCURACY_MAP = "Tag classification binary relevance accuracy map";
+    public static final String TAG_BINARY_POS_ACCURACY_MAP = "Tag classification binary relevance positive example accuracy map";
+    public static final String TAG_BINARY_NEG_ACCURACY_MAP = "Tag classification binary relevance negative example accuracy map";
     public static final String TAG_BINARY_PRECISION_MAP = "Tag classification binary relevance precision map";
     public static final String TAG_BINARY_RECALL_MAP = "Tag classification binary relevance recall map";
     public static final String TAG_BINARY_FMEASURE_MAP = "Tag classification binary relevance fMeasure map";

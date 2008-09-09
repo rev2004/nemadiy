@@ -27,7 +27,7 @@ public class SignalArrayAccuracyClass2 {
     
     private static final int COL_WIDTH = 7;
     private ArrayList classNames = null;
-    private ArrayList resultSignals = null;
+    private ArrayList<Signal> resultSignals = null;
     private ArrayList hierarchies = null;
     private ArrayList hierachiesKey = null;
     private boolean usingAHierachy = false;
@@ -58,6 +58,8 @@ public class SignalArrayAccuracyClass2 {
     
     private boolean verbose = false;
     
+    private File reportFile = null;
+    
     /** Creates a new instance of SignalArrayAccuracyClass */
     public SignalArrayAccuracyClass2(String ModelName_, String resultFileExt_, String signalFileExt_, String storageDirectory_, String classHierarchyFile_, boolean verbose_) {
         this.classNames = null;
@@ -84,7 +86,7 @@ public class SignalArrayAccuracyClass2 {
         
     }
     
-    public double evaluate(Signal[] theSignals) throws IllegalArgumentException, IllegalArgumentException, IOException, noMetadataException {
+    public Signal[] evaluate(Signal[] theSignals) throws IllegalArgumentException, IllegalArgumentException, IOException, noMetadataException {
         numberOfResultSets++;
         
         if (classNames == null) {
@@ -551,7 +553,7 @@ public class SignalArrayAccuracyClass2 {
         evalSignal.setMetadata(Signal.PROP_PERF_PER_CLASS, perClassAccuracy);
         
         if (resultSignals == null) {
-            resultSignals = new ArrayList();
+            resultSignals = new ArrayList<Signal>();
         }
         resultSignals.add(evalSignal);
         
@@ -593,14 +595,17 @@ public class SignalArrayAccuracyClass2 {
         {
             File theFile = new File(this.storageDirectory + File.separator + this.getModelName() + File.separator + this.getModelName() + this.signalFileExt + "." + i); //rewrite the file
             try {
-                resultSignalArray[i].setMetadata(Signal.PROP_CLASS, this.getModelName());
+                resultSignalArray[i].setMetadata(Signal.PROP_ALG_NAME, this.getModelName());
                 resultSignalArray[i].write(theFile);
                 
             } catch(IOException ex) {
                 ex.printStackTrace();
             }
         }
-        return finalAccuracy;
+        reportFile = resultFile;
+        
+        
+        return resultSignalArray;
     }
 
     public void initHierachy(String inFile) {
@@ -781,6 +786,12 @@ public class SignalArrayAccuracyClass2 {
 
     public void setModelName(String ModelName) {
         this.ModelName = ModelName;
+    }
+
+    public
+
+    File getReportFile() {
+        return reportFile;
     }
 
     

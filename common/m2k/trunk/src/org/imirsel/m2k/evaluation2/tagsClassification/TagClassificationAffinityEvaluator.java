@@ -95,6 +95,8 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         //get the data to compare
         HashMap<String, HashMap<String,Double>> path2tag2affinity = (HashMap<String, HashMap<String,Double>>) dataToEvaluate.getMetadata(EvaluationDataObject.TAG_AFFINITY_MAP);
         HashMap<String, HashSet<String>> GT_binaryTagData = (HashMap<String, HashSet<String>>) groundTruth.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
+        HashSet<String> tagSet = (HashSet<String>)groundTruth.getMetadata(EvaluationDataObject.TAG_NAME_SET);
+        
         if (!GT_binaryTagData.keySet().containsAll(path2tag2affinity.keySet())) {
             HashSet<String> missingData = new HashSet<String>();
             missingData.addAll(path2tag2affinity.keySet());
@@ -106,23 +108,13 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             throw new RuntimeException("The groundtruth Object representing " + groundTruth.getFile().getAbsolutePath() + ", does not have ground truth" +
                     "for all the paths specified in " + dataToEvaluate.getFile().getAbsolutePath() + ". Paths without data: " + missingPaths);
         }
-//        if (!path2tag2affinity.keySet().containsAll(GT_binaryTagData.keySet())) {
-//            System.out.println("WARNING: The result object representing: " + groundTruth.getFile().getAbsolutePath() + ", does not have result data for " +
-//                    "all the paths specified in the ground truth file: " + dataToEvaluate.getFile().getAbsolutePath());
-//        }
+        
         
         //prepare the output directory
         File systemDirectory = new File(outputDir.getAbsolutePath() + File.separator + systemName);
         systemDirectory.mkdirs();
         File plotDir = new File(systemDirectory.getAbsolutePath() + File.separator + "ROC curve plots");
         plotDir.mkdir();
-        
-        //get list of all tags
-        HashSet<String> tags = new HashSet<String>();
-        for (Iterator<String> it = GT_binaryTagData.keySet().iterator(); it.hasNext();) {
-            HashSet tagSet = GT_binaryTagData.get(it.next());
-            tags.addAll(tagSet);
-        }
         
         //result objects
         HashMap<String, Double> clip2AUC_ROC = new HashMap<String, Double>();
@@ -132,7 +124,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         HashMap<String, ArrayList<double[]>> tag2ROCpointSequence = new HashMap<String, ArrayList<double[]>>();
         
         HashMap<String, ArrayList<AffinityDataPoint>> tag2affinityDataPoints = new HashMap<String, ArrayList<AffinityDataPoint>>();
-        for (Iterator<String> it = tags.iterator(); it.hasNext();) {
+        for (Iterator<String> it = tagSet.iterator(); it.hasNext();) {
             tag2affinityDataPoints.put(it.next(),new ArrayList<AffinityDataPoint>());
         }
         HashMap<String, Integer> tag2numPositiveExamples = new HashMap<String, Integer>();
@@ -175,7 +167,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             }
             
             //fill in missing affinities
-            missingAffinities = (HashSet<String>)tags.clone();
+            missingAffinities = (HashSet<String>)tagSet.clone();
             missingAffinities.removeAll(returnedAffinities.keySet());
             for (Iterator<String> it = missingAffinities.iterator(); it.hasNext();) {
                 tag = it.next();
@@ -238,7 +230,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_TAG_AFFINITY_DATAPOINTS, tag2affinityDataPoints);
 
         //compute AUC-ROC for each tag
-        for (Iterator<String> it = tag2affinityDataPoints.keySet().iterator(); it.hasNext();) {
+        for (Iterator<String> it = tagSet.iterator(); it.hasNext();) {
             tag = it.next();
             dataPointList = tag2affinityDataPoints.get(tag);
             Collections.sort(dataPointList);
@@ -293,12 +285,12 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             addROCpoint(anROCpointSequence, ((double)falsePositives/negatives), ((double)truePositives/(double)positives));
             
             systemReport += "Tag: " + tag + "\n";
-            systemReport += "ROC curve (false pos,true pos): ";
-            for (Iterator<double[]> it2 = anROCpointSequence.iterator(); it2.hasNext();) {
-                ds = it2.next();
-                systemReport += ds[0] + "," + ds[1] + "\t";
-            }
-            systemReport += "\n";
+//            systemReport += "ROC curve (false pos,true pos): ";
+//            for (Iterator<double[]> it2 = anROCpointSequence.iterator(); it2.hasNext();) {
+//                ds = it2.next();
+//                systemReport += ds[0] + "," + ds[1] + "\t";
+//            }
+//            systemReport += "\n";
             
             //plot ROC curve and save
 //            System.out.println("ROC sequence length: " + anROCpointSequence.size());
@@ -325,7 +317,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             
             
             File plotFile = new File(plotDir.getAbsolutePath() + File.separator + tag + ".png");
-            tagROCPlot.writeChartToFile(plotFile,850,1000);
+            tagROCPlot.writeChartToFile(plotFile,600,600);
             
             
             //compute AUC-ROC 
@@ -333,6 +325,8 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             systemReport += "Area under the ROC curve (AUC-ROC): " + auc + "\n";
             tag2AUC_ROC.put(tag, auc);
         }
+        
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC,tag2AUC_ROC);
         
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_ROC_DATA,tag2ROCpointSequence);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES, tag2numPositiveExamples);
@@ -387,7 +381,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             System.err.println("Evaluating system: " + systemNames[i]);
             report += "System: " + systemNames[i] + "\n";
             //evaluate each fold
-            for (int j = 0; j < dataToEvaluate.length; j++) {
+            for (int j = 0; j < dataToEvaluate[i].length; j++) {
                 String systemReport = evaluateResultsAgainstGT(systemNames[i], dataToEvaluate[i][j], groundTruth, outputDir);
                 report += systemReport + EvaluationDataObject.DIVIDER + "\n";
             }
@@ -409,14 +403,12 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             totalNumRows += tagNames[i].length;
         }
         
-        String[][] csvData = new String[totalNumRows+1][systemNames.length + 4];    
+        String[][] csvData = new String[totalNumRows+1][systemNames.length + 2];    
         csvData[0][0] = "tag";
         csvData[0][1] = "fold";
-        csvData[0][2] = "positive examples";
-        csvData[0][3] = "negative examples";
         
         for (int i = 0; i < systemNames.length; i++) {
-            csvData[0][i+4] = systemNames[i];
+            csvData[0][i+2] = systemNames[i];
         }
         int foldOffset = 1;
         for (int f = 0; f < numFolds; f++) {
@@ -425,13 +417,11 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             for (int j = 0; j < tagNames[f].length; j++) {
                 csvData[foldOffset + j][0] = tagNames[f][j];
                 csvData[foldOffset + j][1] = "" + (f + 1);
-                csvData[foldOffset + j][2] = "" + tag2NumPos.get(tagNames[f][j]);
-                csvData[foldOffset + j][3] = "" + tag2NumNeg.get(tagNames[f][j]);
                 
                 
                 for (int s = 0; s < systemNames.length; s++) {
                     HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC);
-                    csvData[foldOffset + j][s+4] = "" + tag2AUC_ROC.get(tagNames[f][j]).doubleValue();
+                    csvData[foldOffset + j][s+2] = "" + tag2AUC_ROC.get(tagNames[f][j]).doubleValue();
                 }
             }
             foldOffset += tagNames[f].length;
@@ -447,6 +437,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         System.err.println("Writing out per-track AUC-ROC data");
         //Write out clip AUC-ROC data for significance testing
         String[][] clipNames = new String[numFolds][];
+        totalNumRows = 0;
         for (int i = 0; i < numFolds; i++) {
             HashMap<String, Double> clip2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[0][i].getMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_AUC_ROC);
             clipNames[i] = clip2AUC_ROC.keySet().toArray(new String[clip2AUC_ROC.size()]);
@@ -462,16 +453,20 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         }
         foldOffset = 1;
         for (int f = 0; f < numFolds; f++) {
-            for (int j = 0; j < tagNames[f].length; j++) {
-                csvData[foldOffset + j][0] = tagNames[f][j];
-                csvData[foldOffset + j][1] = "" + (f + 1);
+            for (int c = 0; c < clipNames[f].length; c++) {
+                csvData[foldOffset + c][0] = clipNames[f][c];
+                csvData[foldOffset + c][1] = "" + (f + 1);
                 
                 for (int s = 0; s < systemNames.length; s++) {
                     HashMap<String, Double> clip2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_AUC_ROC);
-                    csvData[foldOffset + j][s+2] = "" + clip2AUC_ROC.get(tagNames[f][j]).doubleValue();
+                    if(!clip2AUC_ROC.containsKey(clipNames[f][c])){
+                        System.out.println("Error! Results for system: " + systemNames[s] + " did not contain results for fold " + (f+1) + " clip " + clipNames[f][c] + "!");
+                    }
+                    
+                    csvData[foldOffset + c][s+2] = "" + clip2AUC_ROC.get(clipNames[f][c]).doubleValue();
                 }
             }
-            foldOffset += tagNames[f].length;
+            foldOffset += clipNames[f].length;
         }
         File clip_AUC_ROC_file = new File(outputDir.getAbsolutePath() + File.separator + "affinity_clip_AUC_ROC.csv");
         try {
@@ -479,16 +474,6 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
-        //do stat sig tests!
-        
-        
-        
-        
-        
-        
         
         
         System.err.println("Writing out overall report");
@@ -501,6 +486,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         } 
+        
         
         if (performMatlabStatSigTests){
             performFriedmanTestWithTag_AUC_ROC(outputDir, AUC_ROC_file, systemNames);
@@ -543,7 +529,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
             textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
             textOut.newLine();
-            textOut.write("algNames = data(1,3:" + (systemNames.length + 4) + ")';");
+            textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
             textOut.newLine();
             textOut.write("AUCROC_TAG = cell2mat(data(2:length(data),3:" + (systemNames.length + 2) + "));");
             textOut.newLine();
@@ -589,9 +575,9 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
             textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
             textOut.newLine();
-            textOut.write("algNames = data(1,3:" + (systemNames.length + 4) + ")';");
+            textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
             textOut.newLine();
-            textOut.write("AUCROC_TRACK = cell2mat(data(1:length(data),3:" + (systemNames.length + 2) + "));");
+            textOut.write("AUCROC_TRACK = cell2mat(data(2:length(data),3:" + (systemNames.length + 2) + "));");
             textOut.newLine();
             textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUCROC_TRACK,1,'on');");
             textOut.newLine();

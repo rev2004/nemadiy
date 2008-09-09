@@ -74,7 +74,8 @@ bsamp = exp(sizesamp) ./ (1 + exp(meansamp));
 
 r = zeros(length(y), length(meansamp));
 for j=1:length(y)
-  r(j,:) = beta_sample(asamp + y(j), bsamp + n(j) - y(j));
+%  r(j,:) = beta_sample(asamp + y(j), bsamp + n(j) - y(j));
+  r(j,:) = random('beta', asamp + y(j), bsamp + n(j) - y(j));
 end
 
 q = quantile(r', [.025 .5 .975]);

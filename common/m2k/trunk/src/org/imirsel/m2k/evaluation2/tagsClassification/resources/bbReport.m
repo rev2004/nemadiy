@@ -11,19 +11,21 @@ function bbReport(results_file, report_dir)
 % systemN.  Where the system results are fractional accuracies.
 
 % Horrible: read the file once to determine the number of lines
-dummy = textread(results_file, '%s%*[^\n]');
-Nlines = length(dummy);
+%dummy = textread(results_file, '\t');
+%Nlines = length(dummy);
 
 % Really read it, and reshape it to be the right size
-strings = textread(results_file, '\t');
-strings = reshape(strings, [], Nlines)';
+strings = readtext(results_file, '\t');
+%strings = reshape(strings, [], Nlines)';
 headers = strings(1,:);
 systems = headers(5:end);
 strings = strings(2:end,:);
 
 % Process the loaded strings
 tags = strings(:,1);
-M = str2double(strings(:,2:end));
+strings = strings(:,2:end);
+
+M = reshape(cat(1,strings{:}), size(strings));
 folds = M(:,1);
 np = M(:,2);
 nn = M(:,3);

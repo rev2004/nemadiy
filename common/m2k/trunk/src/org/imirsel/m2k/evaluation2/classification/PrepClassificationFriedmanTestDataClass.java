@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
@@ -22,20 +23,22 @@ import org.imirsel.m2k.util.noMetadataException;
 public class PrepClassificationFriedmanTestDataClass {
 
     /**
-     * A utility class that takes a vector of Signal arrays containing algorithm 
+     * A utility class that takes an ArrayList of Signal arrays containing algorithm 
      * name and performance (per class) metadata and outputs the data into a CSV 
      * file to be used to perform significance tests in Matlab or another 
      * suitable environment.
      * 
-     * @param sigStore A vector of Signal arrays containing algorithm name and
-     * performance metadata.
+     * @param sigStore An ArrayList of Signal arrays containing algorithm name and
+     * performance metadata. Each Signal Object represents a single fold of the
+     * experiment (thus each array should be ordered in the same way).
      * @param outputDirectory The directory to output the CSV file into.
      * @param evaluationName The name of the evaluation (used to name output file.
      * @param outputFileExt The extension to put on the output file.
      * @param verbose Determines wheter the data should be dumped to the console
      * as well.
+     * @return A File Object indicating where the output CSV file was written to.
      */
-    public static void prepFriedmanTestDataOverClasses(Vector<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean verbose) {
+    public static File prepFriedmanTestDataOverClasses(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean verbose) {
         //sort systems alphabetically
         HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
         for (int i = 0; i < sigStore.size(); i++) {
@@ -103,8 +106,9 @@ public class PrepClassificationFriedmanTestDataClass {
                 throw new RuntimeException("Could not create the output folder.");
             }
         }
+        File testFile = null;
         try {
-            File testFile = new File(outputDirectory + File.separator + evaluationName + "_friedman" + outputFileExt);
+            testFile = new File(outputDirectory + File.separator + evaluationName + "_results_class_fold" + outputFileExt);
             BufferedWriter output = new BufferedWriter(new FileWriter(testFile));
             output.write(EvaluationOutput);
             output.close();
@@ -115,23 +119,26 @@ public class PrepClassificationFriedmanTestDataClass {
         if (verbose) {
             System.out.println(EvaluationOutput);
         }
+        return testFile;
     }
     
     /**
-     * A utility class that takes a vector of Signal arrays containing algorithm 
+     * A utility class that takes an ArrayList of Signal arrays containing algorithm 
      * name and performance metadata and outputs the data into a CSV file to
      * be used to perform significance tests in Matlab or another suitable
      * environment.
      * 
-     * @param sigStore A vector of Signal arrays containing algorithm name and
-     * performance metadata.
+     * @param sigStore An ArrayList of Signal arrays containing algorithm name and
+     * performance metadata. Each Signal Object represents a single fold of the
+     * experiment (thus each array should be ordered in the same way)
      * @param outputDirectory The directory to output the CSV file into.
      * @param evaluationName The name of the evaluation (used to name output file.
      * @param outputFileExt The extension to put on the output file.
      * @param verbose Determines wheter the data should be dumped to the console
      * as well.
+     * @return A File Object indicating where the output CSV file was written to.
      */
-    public static void prepFriedmanTestData(Vector<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean verbose) {
+    public static File prepFriedmanTestData(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean verbose) {
         //sort systems alphabetically
         HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
         for (int i = 0; i < sigStore.size(); i++) {
@@ -194,8 +201,9 @@ public class PrepClassificationFriedmanTestDataClass {
                 throw new RuntimeException("Could not create the output folder.");
             }
         }
+        File testFile = null;
         try {
-            File testFile = new File(outputDirectory + File.separator + evaluationName + "_friedman" + outputFileExt);
+            testFile = new File(outputDirectory + File.separator + evaluationName + "_results_fold" + outputFileExt);
             BufferedWriter output = new BufferedWriter(new FileWriter(testFile));
             output.write(EvaluationOutput);
             output.close();
@@ -206,6 +214,7 @@ public class PrepClassificationFriedmanTestDataClass {
         if (verbose) {
             System.out.println(EvaluationOutput);
         }
+        return testFile;
     }
     
 }
