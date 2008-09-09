@@ -48,7 +48,7 @@ public class TagClassificationBinaryFileReader implements EvalFileReader {
         verbose = verbose_;
     }
 
-    private void addToHash(HashMap<String,HashSet<String>> pathsToRelevantTags, String path, String tag){
+    private void addToHash(HashMap<String,HashSet<String>> pathsToRelevantTags, HashSet<String> allTags, String path, String tag){
         if(verbose){
             System.out.println("   appending tag: " + tag + " to path: " + path);
         }
@@ -65,6 +65,7 @@ public class TagClassificationBinaryFileReader implements EvalFileReader {
         }else{
             key = path;
         }
+        allTags.add(tag);
         if (pathsToRelevantTags.containsKey(key)){
             HashSet<String> tagSet = pathsToRelevantTags.get(key);
             tagSet.add(tag);
@@ -88,6 +89,7 @@ public class TagClassificationBinaryFileReader implements EvalFileReader {
             int errorCount = 0;
             
             HashMap<String,HashSet<String>> pathsToRelevantTags = new HashMap<String,HashSet<String>>();
+            HashSet<String> allTags = new HashSet<String>();
             String line = textBuffer.readLine();
             String[] lineComps;
             int lineNum = 0;
@@ -108,11 +110,11 @@ public class TagClassificationBinaryFileReader implements EvalFileReader {
                     }else if(lineComps.length > 2){
                         //3 component format
                         if(lineComps[2].trim().equals("1")){
-                            addToHash(pathsToRelevantTags,lineComps[0].trim(),lineComps[1].trim());
+                            addToHash(pathsToRelevantTags,allTags,lineComps[0].trim(),lineComps[1].trim());
                         }//else assume a 0 (non-relevant) so ignore the line
                     }else{
                         //2 component format
-                        addToHash(pathsToRelevantTags,lineComps[0].trim(),lineComps[1].trim());
+                        addToHash(pathsToRelevantTags,allTags,lineComps[0].trim(),lineComps[1].trim());
                     }
                 }else{
                     System.out.println("empty line ignored, line: " + lineNum + ", file: " + theFile.getAbsolutePath());
@@ -123,7 +125,7 @@ public class TagClassificationBinaryFileReader implements EvalFileReader {
             
             //append data to the EvaluationDataObject Object
             output.setMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP, pathsToRelevantTags);
-        
+            output.setMetadata(EvaluationDataObject.TAG_NAME_SET, allTags);
         } catch (IOException ex) {
             throw new RuntimeException("IOExcecption occured while reading file: " + theFile.getAbsolutePath(), ex);
         } finally {

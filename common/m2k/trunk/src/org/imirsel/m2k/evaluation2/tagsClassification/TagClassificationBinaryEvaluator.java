@@ -4,16 +4,12 @@
  */
 package org.imirsel.m2k.evaluation2.tagsClassification;
 
-import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryEvaluator;
-import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryFileReader;
-import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationAffinityEvaluator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -72,6 +68,8 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         //get the data to compare
         HashMap<String, HashSet<String>> binaryTagData = (HashMap<String, HashSet<String>>) dataToEvaluate.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
         HashMap<String, HashSet<String>> GT_binaryTagData = (HashMap<String, HashSet<String>>) groundTruth.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
+        HashSet<String> tagSet = (HashSet<String>)groundTruth.getMetadata(EvaluationDataObject.TAG_NAME_SET);
+        
         if (!GT_binaryTagData.keySet().containsAll(binaryTagData.keySet())) {
             HashSet<String> missingData = new HashSet<String>();
             missingData.addAll(binaryTagData.keySet());
@@ -107,10 +105,14 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
 
         //result objects
         HashMap<String, Double> tag2Accuracy = new HashMap<String, Double>();
+        HashMap<String, Double> tag2PosAccuracy = new HashMap<String, Double>();
+        HashMap<String, Double> tag2NegAccuracy = new HashMap<String, Double>();
         HashMap<String, Double> tag2Precision = new HashMap<String, Double>();
         HashMap<String, Double> tag2Recall = new HashMap<String, Double>();
         HashMap<String, Double> tag2FMeasure = new HashMap<String, Double>();
         double totalAccuracy;
+        double totalPosAccuracy;
+        double totalNegAccuracy;
         double totalPrecision;
         double totalRecall;
         double totalFmeasure;
@@ -140,17 +142,12 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             }
         }
 
-        //get full set of tags
-        HashSet<String> tags = new HashSet<String>(tag2truePositive.keySet());
-        tags.addAll(tag2falsePositive.keySet());
-        tags.addAll(tag2falseNegative.keySet());
-
         if(verbose){
             System.err.println("\tcomputing per-tag statistics");
         }
         
         //compute per tag stats
-        for (Iterator<String> it = tags.iterator(); it.hasNext();) {
+        for (Iterator<String> it = tagSet.iterator(); it.hasNext();) {
             tag = it.next();
             //fill in any gaps in maps
             if (!tag2truePositive.containsKey(tag)) {
@@ -170,6 +167,9 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             totalTrueNegative += tn;
             
             double accuracy = (double) (tp + tn) / (double) binaryTagData.size();
+            double posAccuracy = (double) tp / (double)(tp+fn);
+            double negAccuracy = (double) tn / (double)(fp+tn);
+            
             double precision = (double) tp / (double) (tp + fp);
             if ((tp + fp)==0){
                 precision = 0.0;
@@ -183,6 +183,8 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
                 fMeasure = 0.0;
             }
             tag2Accuracy.put(tag, accuracy);
+            tag2PosAccuracy.put(tag, posAccuracy);
+            tag2NegAccuracy.put(tag, negAccuracy);
             tag2Precision.put(tag, precision);
             tag2Recall.put(tag, recall);
             tag2FMeasure.put(tag, fMeasure);
@@ -199,22 +201,28 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         
         //compute total stats
         totalAccuracy = (double) (totalTruePositive + totalTrueNegative) / (double) (totalTruePositive + totalFalsePositive + totalFalseNegative + totalTrueNegative);
+        totalPosAccuracy = (double) totalTruePositive / (double) (totalTruePositive + totalFalseNegative);
+        totalNegAccuracy = (double) totalTrueNegative / (double) (totalFalsePositive + totalTrueNegative);
         totalPrecision = (double) totalTruePositive / (double) (totalTruePositive + totalFalsePositive);
         totalRecall = (double) totalTruePositive / (double) (totalTruePositive + totalFalseNegative);
         totalFmeasure = (2 * totalRecall * totalPrecision) / (totalRecall + totalPrecision);
 
         //append results to report
-        systemReport += "Overall accuracy: " + totalAccuracy + "\n";
-        systemReport += "Overall precision: " + totalPrecision + "\n";
-        systemReport += "Overall recall:    " + totalRecall + "\n";
-        systemReport += "Overall fMeasure:  " + totalFmeasure + "\n";
-        for (Iterator<String> it = tags.iterator(); it.hasNext();) {
+        systemReport += "Overall accuracy:             " + totalAccuracy + "\n";
+        systemReport += "Overall +ve example accuracy: " + totalPosAccuracy + "\n";
+        systemReport += "Overall -ve example accuracy: " + totalNegAccuracy + "\n";
+        systemReport += "Overall precision:            " + totalPrecision + "\n";
+        systemReport += "Overall recall:               " + totalRecall + "\n";
+        systemReport += "Overall fMeasure:             " + totalFmeasure + "\n";
+        for (Iterator<String> it = tagSet.iterator(); it.hasNext();) {
             tag = it.next();
             systemReport += "tag '" + tag + "':\n";
-            systemReport += "    accuracy: " + tag2Accuracy.get(tag).doubleValue() + "\n";
-            systemReport += "    precision: " + tag2Precision.get(tag).doubleValue() + "\n";
-            systemReport += "    recall:    " + tag2Recall.get(tag).doubleValue() + "\n";
-            systemReport += "    fMeasure:  " + tag2FMeasure.get(tag).doubleValue() + "\n";
+            systemReport += "    accuracy:                 " + tag2Accuracy.get(tag).doubleValue() + "\n";
+            systemReport += "    +ve example accuracy:     " + tag2PosAccuracy.get(tag).doubleValue() + "\n";
+            systemReport += "    -ve example accuracy:     " + tag2NegAccuracy.get(tag).doubleValue() + "\n";
+            systemReport += "    precision:                " + tag2Precision.get(tag).doubleValue() + "\n";
+            systemReport += "    recall:                   " + tag2Recall.get(tag).doubleValue() + "\n";
+            systemReport += "    fMeasure:                 " + tag2FMeasure.get(tag).doubleValue() + "\n";
         }
 
         
@@ -234,6 +242,8 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         //store evaluation data
         dataToEvaluate.setMetadata(EvaluationDataObject.SYSTEM_RESULTS_REPORT, systemReport);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_ACCURACY_MAP, tag2Accuracy);
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_POS_ACCURACY_MAP, tag2PosAccuracy);
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_NEG_ACCURACY_MAP, tag2NegAccuracy);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_PRECISION_MAP, tag2Precision);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_RECALL_MAP, tag2Recall);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP, tag2FMeasure);
@@ -318,14 +328,13 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             System.out.println("\tFriedman accuracy...");
             performFriedmanTestWithAccuracy(outputDir, CSVResultFiles, systemNames);
             System.out.println("\tdone.");
-//            //  call matlab and execute Beta-Binomial test with F-measure
-//            performBetaBinomialTestWithFMeasure(outputDir, CSVResultFiles, systemNames);
-//            
+
 //            //  call matlab and execute Beta-Binomial test with accuracy scores
-//            System.out.println("\tBeta Binomial...");
-//            performBetaBinomialTestWithAccuracy(outputDir, CSVResultFiles, systemNames);
-//            System.out.println("\tdone.");
-//            System.out.println("done.");
+            System.out.println("\tBeta Binomial...");
+            performBetaBinomialTestWithAccuracy(outputDir, CSVResultFiles, systemNames);
+            System.out.println("\tdone.");
+            
+            System.out.println("done.");
         }
         return report;
     }
@@ -502,6 +511,13 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/betaBinomEB.m", BBFile);
         File BBreportFile = new File(outputDir.getAbsolutePath() + File.separator + "bbReport.m");
         CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/bbReport.m", BBreportFile);
+        File drawMultinomFile = new File(outputDir.getAbsolutePath() + File.separator + "drawMultinom.m");
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/drawMultinom.m", drawMultinomFile);
+        File argmaxFile = new File(outputDir.getAbsolutePath() + File.separator + "argmax.m");
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/argmax.m", argmaxFile);
+        
+        File outputPlotDir = new File(outputDir.getAbsolutePath() + File.separator + "binary_Accuracy.BetaBinomial");
+        outputPlotDir.mkdirs();
         
         //create an m-file to run the test
         String evalCommand = "performBBForTagsAccuracy";
@@ -539,6 +555,42 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         readtextMFile.delete();
     }
 
+    private void writeCSVResultFile(String metadataType, int totalNumRows, String[] systemNames, int numFolds, EvaluationDataObject[][] dataToEvaluate, String[][] tagNames, File outputFile) throws noMetadataException {
+
+        String[][] csvData = new String[totalNumRows + 1][systemNames.length + 4];
+        csvData[0][0] = "tag";
+        csvData[0][1] = "fold";
+        csvData[0][2] = "positive examples";
+        csvData[0][3] = "negative examples";
+
+        for (int i = 0; i < systemNames.length; i++) {
+            csvData[0][i + 4] = systemNames[i];
+        }
+        int foldOffset = 1;
+        for (int f = 0; f < numFolds; f++) {
+            HashMap<String, Integer> tag2NumPos = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
+            HashMap<String, Integer> tag2NumNeg = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
+            for (int j = 0; j < tagNames[f].length; j++) {
+                csvData[foldOffset + j][0] = tagNames[f][j];
+                csvData[foldOffset + j][1] = "" + (f + 1);
+                csvData[foldOffset + j][2] = "" + tag2NumPos.get(tagNames[f][j]);
+                csvData[foldOffset + j][3] = "" + tag2NumNeg.get(tagNames[f][j]);
+
+
+                for (int s = 0; s < systemNames.length; s++) {
+                    HashMap<String, Double> data = (HashMap<String, Double>) dataToEvaluate[s][f].getMetadata(metadataType);
+                    csvData[foldOffset + j][s + 4] = "" + data.get(tagNames[f][j]).doubleValue();
+                }
+            }
+            foldOffset += tagNames[f].length;
+        }
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(outputFile, "\t", csvData, false);
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private File[] writeOutCSVResultFiles(EvaluationDataObject[][] dataToEvaluate, String[] systemNames, File outputDir) throws noMetadataException {
 
 
@@ -555,76 +607,57 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         }
 
 
-        String[][] fMeasureCsvData = new String[totalNumRows + 1][systemNames.length + 4];
-        fMeasureCsvData[0][0] = "tag";
-        fMeasureCsvData[0][1] = "fold";
-        fMeasureCsvData[0][2] = "positive examples";
-        fMeasureCsvData[0][3] = "negative examples";
-
-        for (int i = 0; i < systemNames.length; i++) {
-            fMeasureCsvData[0][i + 4] = systemNames[i];
-        }
-        int foldOffset = 1;
-        for (int f = 0; f < numFolds; f++) {
-            HashMap<String, Integer> tag2NumPos = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
-            HashMap<String, Integer> tag2NumNeg = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
-            for (int j = 0; j < tagNames[f].length; j++) {
-                fMeasureCsvData[foldOffset + j][0] = tagNames[f][j];
-                fMeasureCsvData[foldOffset + j][1] = "" + (f + 1);
-                fMeasureCsvData[foldOffset + j][2] = "" + tag2NumPos.get(tagNames[f][j]);
-                fMeasureCsvData[foldOffset + j][3] = "" + tag2NumNeg.get(tagNames[f][j]);
-
-
-                for (int s = 0; s < systemNames.length; s++) {
-                    HashMap<String, Double> tag2fmeasureMap = (HashMap<String, Double>) dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
-                    fMeasureCsvData[foldOffset + j][s + 4] = "" + tag2fmeasureMap.get(tagNames[f][j]).doubleValue();
-                }
-            }
-            foldOffset += tagNames[f].length;
-        }
         File FmeasureFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_Fmeasure.csv");
-        try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(FmeasureFile, "\t", fMeasureCsvData, false);
-        } catch (IOException ex) {
-            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        String[][] accuracyCsvData = new String[totalNumRows + 1][systemNames.length + 4];
-        accuracyCsvData[0][0] = "tag";
-        accuracyCsvData[0][1] = "fold";
-        accuracyCsvData[0][2] = "positive examples";
-        accuracyCsvData[0][3] = "negative examples";
-
-        for (int i = 0; i < systemNames.length; i++) {
-            accuracyCsvData[0][i + 4] = systemNames[i];
-        }
-        foldOffset = 1;
-        for (int f = 0; f < numFolds; f++) {
-            HashMap<String, Integer> tag2NumPos = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
-            HashMap<String, Integer> tag2NumNeg = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
-            for (int j = 0; j < tagNames[f].length; j++) {
-                accuracyCsvData[foldOffset + j][0] = tagNames[f][j];
-                accuracyCsvData[foldOffset + j][1] = "" + (f + 1);
-                accuracyCsvData[foldOffset + j][2] = "" + tag2NumPos.get(tagNames[f][j]);
-                accuracyCsvData[foldOffset + j][3] = "" + tag2NumNeg.get(tagNames[f][j]);
-
-
-                for (int s = 0; s < systemNames.length; s++) {
-                    HashMap<String, Double> tag2accuracyMap = (HashMap<String, Double>) dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
-                    accuracyCsvData[foldOffset + j][s + 4] = "" + tag2accuracyMap.get(tagNames[f][j]).doubleValue();
-                }
-            }
-            foldOffset += tagNames[f].length;
-        }
+        writeCSVResultFile(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, FmeasureFile);
+//
         File AccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_Accuracy.csv");
-        try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AccuracyFile, "\t", accuracyCsvData, false);
-        } catch (IOException ex) {
-            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        writeCSVResultFile(EvaluationDataObject.TAG_BINARY_ACCURACY_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, AccuracyFile);
+  
+        File PosAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_positive_example_Accuracy.csv");
+        writeCSVResultFile(EvaluationDataObject.TAG_BINARY_POS_ACCURACY_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, PosAccuracyFile);
+  
+        File NegAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_negative_example_Accuracy.csv");
+        writeCSVResultFile(EvaluationDataObject.TAG_BINARY_NEG_ACCURACY_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, NegAccuracyFile);
+  
+        
+//        String[][] accuracyCsvData = new String[totalNumRows + 1][systemNames.length + 4];
+//        accuracyCsvData[0][0] = "tag";
+//        accuracyCsvData[0][1] = "fold";
+//        accuracyCsvData[0][2] = "positive examples";
+//        accuracyCsvData[0][3] = "negative examples";
+//
+//        for (int i = 0; i < systemNames.length; i++) {
+//            accuracyCsvData[0][i + 4] = systemNames[i];
+//        }
+//        foldOffset = 1;
+//        for (int f = 0; f < numFolds; f++) {
+//            HashMap<String, Integer> tag2NumPos = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
+//            HashMap<String, Integer> tag2NumNeg = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
+//            for (int j = 0; j < tagNames[f].length; j++) {
+//                accuracyCsvData[foldOffset + j][0] = tagNames[f][j];
+//                accuracyCsvData[foldOffset + j][1] = "" + (f + 1);
+//                accuracyCsvData[foldOffset + j][2] = "" + tag2NumPos.get(tagNames[f][j]);
+//                accuracyCsvData[foldOffset + j][3] = "" + tag2NumNeg.get(tagNames[f][j]);
+//
+//
+//                for (int s = 0; s < systemNames.length; s++) {
+//                    HashMap<String, Double> tag2accuracyMap = (HashMap<String, Double>) dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
+//                    accuracyCsvData[foldOffset + j][s + 4] = "" + tag2accuracyMap.get(tagNames[f][j]).doubleValue();
+//                }
+//            }
+//            foldOffset += tagNames[f].length;
+//        }
+//        File AccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_Accuracy.csv");
+//        try {
+//            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AccuracyFile, "\t", accuracyCsvData, false);
+//        } catch (IOException ex) {
+//            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
+        
+        
         //  prepare per-tag F-measure and Accuracy for use in Beta-Binomial test
-        return new File[]{FmeasureFile,AccuracyFile};
+        return new File[]{FmeasureFile,AccuracyFile,PosAccuracyFile,NegAccuracyFile};
     }
 
     public static void main(String[] args) {
