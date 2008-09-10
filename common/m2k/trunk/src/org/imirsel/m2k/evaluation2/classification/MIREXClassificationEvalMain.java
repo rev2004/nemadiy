@@ -59,7 +59,7 @@ public class MIREXClassificationEvalMain {
     
     public void parseCommandLineArgs(String[] args){
         if (args.length < 5){
-            System.out.println("ERROR: Insufficient arguments!\n" + USAGE);
+            System.err.println("ERROR: Insufficient arguments!\n" + USAGE);
             System.exit(1);
         }
         
@@ -70,7 +70,7 @@ public class MIREXClassificationEvalMain {
         rootEvaluationDir = new File(args[2]);
         rootEvaluationDir.mkdirs();
         if (args.length % 2 != 1){
-            System.out.println("WARNING: an even number of arguments was specified, one may have been ignored!\n" + USAGE);
+            System.err.println("WARNING: an even number of arguments was specified, one may have been ignored!\n" + USAGE);
         }
         
         systemNames = new ArrayList<String>();
@@ -90,23 +90,23 @@ public class MIREXClassificationEvalMain {
     public static final String USAGE = "args: evaluationName /path/to/GT/file /path/to/output/dir /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName";
     public static void main(String[] args) {
         
-        System.out.println("MIREX 2008 Classification evaluator\n" +
+        System.err.println("MIREX 2008 Classification evaluator\n" +
                 "\t\tby Kris West (kris.west@gmail.com");
-        System.out.println("");
+        System.err.println("");
         
         MIREXClassificationEvalMain eval = new MIREXClassificationEvalMain();
         eval.parseCommandLineArgs(args);
         
         eval.performEvaluation();
         
-        System.out.println("---exit---");
+        System.err.println("---exit---");
         
     }
     
     public void performEvaluation() {
 
         //get each directory of results
-        System.out.println("Determining location of binary and affinity evaluation files for each system for each experiment fold...");
+        System.err.println("Determining location of bresults files for each system for each experiment fold...");
         ArrayList<ArrayList<File>> resultsFilesPerSystemPerFold = new ArrayList<ArrayList<File>>();
         int numFolds = -1;
         for (Iterator<File> it = resultsDirs.iterator(); it.hasNext();) {
@@ -127,30 +127,35 @@ public class MIREXClassificationEvalMain {
             if (numFolds == -1) {
                 numFolds = resultFiles.size();
             } else if (numFolds != resultFiles.size()) {
-                System.out.println("ERROR: The number of folds (" + resultFiles.size() + ") detected " + "in directory: " + dir.getAbsolutePath() + " for result files is not equal to the number detected " + "for the preceeding systems (" + numFolds + ")!");
+                System.err.println("ERROR: The number of folds (" + resultFiles.size() + ") detected " + "in directory: " + dir.getAbsolutePath() + " for result files is not equal to the number detected " + "for the preceeding systems (" + numFolds + ")!");
                 System.exit(1);
             }
         }
 
-        System.out.println("reading result data files...");
+        System.err.println("reading result data files...");
         //read each binary result file and create EvaluationDataObject arrays
         Signal[][][] resultData = new Signal[systemNames.size()][numFolds][];
         for (int i = 0; i < systemNames.size(); i++) {
+            System.err.println("\treading " + systemNames.get(i));
             ArrayList<File> fileList = resultsFilesPerSystemPerFold.get(i);
             for (int j = 0; j < numFolds; j++) {
-                resultData[i][j] = ClassificationResultReadClass.readClassificationFileAsSignals(fileList.get(j), gtFile);
+                resultData[i][j] = ClassificationResultReadClass.readClassificationFileAsSignals(fileList.get(j), gtFile,true);
             }
         }
 
-        System.out.println("Performing individual classification evals...");
+        System.err.println("Performing individual classification evals...");
         //run SignalArrayAccuracyClass2 on each system
         File[] resultFiles = new File[resultData.length];
         ArrayList<Signal[]> resultSignals = new ArrayList(resultData.length);
         for (int i = 0; i < resultData.length; i++) {
-            SignalArrayAccuracyClass2 evaluator = new SignalArrayAccuracyClass2(systemNames.get(i), ".eval.txt", ".evalData.ser", rootEvaluationDir.getAbsolutePath(), null, true);
+            System.out.println("\tevaluating " + systemNames.get(i));
+            File systemOutputDir = new File(rootEvaluationDir.getAbsolutePath() + File.separator + systemNames.get(i));
+            systemOutputDir.mkdirs();
+            SignalArrayAccuracyClass2 evaluator = new SignalArrayAccuracyClass2(systemNames.get(i), ".eval.txt", ".evalData.ser", systemOutputDir.getAbsolutePath(), null, true);
+            Signal[] resultSignalArr = null;
             for (int j = 0; j < numFolds; j++) {
                 try {
-                    resultSignals.add(evaluator.evaluate(resultData[i][j]));
+                    resultSignalArr = evaluator.evaluate(resultData[i][j]);
                 } catch (IllegalArgumentException ex) {
                     Logger.getLogger(MIREXClassificationEvalMain.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -159,12 +164,13 @@ public class MIREXClassificationEvalMain {
                     Logger.getLogger(MIREXClassificationEvalMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            resultSignals.add(resultSignalArr);
             resultFiles[i] = evaluator.getReportFile();
         }
 
 
         //plot confusion matrices
-        System.out.println("Plotting overall confusion matrices...");
+        System.err.println("Plotting overall confusion matrices...");
         ParseAndPlotConfusionMatrix confPlotter = new ParseAndPlotConfusionMatrix();
         for (int i = 0; i < resultFiles.length; i++) {
             try {
@@ -175,51 +181,106 @@ public class MIREXClassificationEvalMain {
         }
 
 
-        System.out.println("Writing out CSV result files over whole task...");
+        System.err.println("Writing out CSV result files over whole task...");
         //prep result test data CSV file over classes and folds
-        File perClassFoldCSV = PrepClassificationFriedmanTestDataClass.prepFriedmanTestDataOverClasses(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", true);
+        File perClassCSV = WriteResultFilesClass.prepFriedmanTestDataOverClasses(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", true);
 
 
         //prep result test data CSV file over folds only
-        File perFoldCSV = PrepClassificationFriedmanTestDataClass.prepFriedmanTestData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", true);
+        File perFoldCSV = WriteResultFilesClass.prepFriedmanTestData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", true);
 
+        //write out results summary
+        File summaryCSV = WriteResultFilesClass.prepSummaryResultData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", true);
+
+        
 
         //run friedman test if matlab available?
         if (getPerformMatlabStatSigTests()){
-            System.out.println("Performing Friedman's tests in Matlab...");
+            System.err.println("Performing Friedman's tests in Matlab...");
             String[] systemNamesArr = systemNames.toArray(new String[systemNames.size()]);
             
-            performFriedmanTestWithClassFoldAccuracy(rootEvaluationDir, perClassFoldCSV, systemNamesArr);
+            performFriedmanTestWithClassAccuracy(rootEvaluationDir, perClassCSV, systemNamesArr);
             performFriedmanTestWithFoldAccuracy(rootEvaluationDir, perFoldCSV, systemNamesArr);
         }
     }
     
-    private void performFriedmanTestWithClassFoldAccuracy(File outputDir, File CSVResultFile, String[] systemNames) {
+    private void performFriedmanTestWithClassAccuracy(File outputDir, File CSVResultFile, String[] systemNames) {
         //make sure readtext is in the working directory for matlab
         File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
         CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
         
         //create an m-file to run the test
-        String evalCommand = "performFriedmanForClassFoldAccuracy";
+        String evalCommand = "performFriedmanForClassAccuracy";
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
-        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "perClassAndFoldAccuracy.friedman.tukeyKramerHSD.png";
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "perClassAccuracy.friedman.tukeyKramerHSD.png";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
-            textOut.write("[data, result] = readtext('" + CSVResultFile.getAbsolutePath() + "', '\t');");
+//            textOut.write("[data, result] = readtext('" + CSVResultFile.getAbsolutePath() + "', ',');");
+//            textOut.newLine();
+//            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
+//            textOut.newLine();
+//            textOut.write("[length,width] = size(data);");
+//            textOut.newLine();
+//            textOut.write("Acc_Scores = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
+//            textOut.newLine();
+//            textOut.write("[P,friedmanTable,friedmanStats] = friedman(Acc_Scores,1,'on');");
+//            textOut.newLine();
+//            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+//            textOut.newLine();
+//            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+//            textOut.newLine();
+//            textOut.write("exit;");
+//            textOut.newLine();
+            
+            
+            textOut.write("[data, result] = readtext('" + CSVResultFile.getAbsolutePath() + "', ',');");
             textOut.newLine();
-            textOut.write("algNames = data(1,5:" + (systemNames.length + 4) + ")';");
+            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
             textOut.newLine();
-            textOut.write("Acc_Scores = cell2mat(data(2:length(data),5:" + (systemNames.length + 4) + "));");
+            textOut.write("[length,width] = size(data);");
             textOut.newLine();
-            textOut.write("[P,friedmanTable,friedmanStats] = friedman(Acc_Scores,1,'on');");
+            textOut.write("Acc_Scores = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
             textOut.newLine();
-            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+            textOut.write("[val sort_idx] = sort(mean(Acc_Scores));");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(Acc_Scores(:,fliplr(sort_idx)),1,'on'); close(gcf)");
+            textOut.newLine();
+            textOut.write("[c,m,h,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05,'display','off');");
+            textOut.newLine();
+            textOut.write("fig = figure;");
+            textOut.newLine();
+            textOut.write("width = (-c(1,3)+c(1,5))/4;");
+            textOut.newLine();
+            textOut.write("set(gcf,'position',[497   313   450   351])");
+            textOut.newLine();
+            textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
+            textOut.newLine();
+            textOut.write("for i=1:" + systemNames.length + ",");
+            textOut.newLine();
+            textOut.write("    plot([i i],[-width width]+friedmanStats.meanranks(i));");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[-width -width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[+width +width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',algNames(fliplr(sort_idx)))");
+            textOut.newLine();
+            textOut.write("ylabel('Mean Column Ranks')");
+            textOut.newLine();
+            textOut.write("h = title('" + CSVResultFile.getAbsolutePath() + "')");
+            textOut.newLine();
+            textOut.write("set(h,'interpreter','none')");
             textOut.newLine();
             textOut.write("saveas(fig,'" + matlabPlotPath + "');");
             textOut.newLine();
             textOut.write("exit;");
             textOut.newLine();
+
 
             textOut.close();
         } catch (IOException ex) {
@@ -253,21 +314,73 @@ public class MIREXClassificationEvalMain {
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
-            textOut.write("[data, result] = readtext('" + CSVResultFile.getAbsolutePath() + "', '\t');");
+//            textOut.write("[data, result] = readtext('" + CSVResultFile.getAbsolutePath() + "', ',');");
+//            textOut.newLine();
+//            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
+//            textOut.newLine();
+//            textOut.write("[length,width] = size(data);");
+//            textOut.newLine();
+//            textOut.write("Acc_Scores = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
+//            textOut.newLine();
+//            textOut.write("[P,friedmanTable,friedmanStats] = friedman(Acc_Scores,1,'on');");
+//            textOut.newLine();
+//            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+//            textOut.newLine();
+//            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+//            textOut.newLine();
+//            textOut.write("exit;");
+//            textOut.newLine();
+
+            
+            textOut.write("[data, result] = readtext('" + CSVResultFile.getAbsolutePath() + "', ',');");
             textOut.newLine();
-            textOut.write("algNames = data(1,5:" + (systemNames.length + 4) + ")';");
+            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
             textOut.newLine();
-            textOut.write("Acc_Scores = cell2mat(data(2:length(data),5:" + (systemNames.length + 4) + "));");
+            textOut.write("[length,width] = size(data);");
             textOut.newLine();
-            textOut.write("[P,friedmanTable,friedmanStats] = friedman(Acc_Scores,1,'on');");
+            textOut.write("Acc_Scores = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
             textOut.newLine();
-            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+            textOut.write("[val sort_idx] = sort(mean(Acc_Scores));");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(Acc_Scores(:,fliplr(sort_idx)),1,'on'); close(gcf)");
+            textOut.newLine();
+            textOut.write("[c,m,h,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05,'display','off');");
+            textOut.newLine();
+            textOut.write("fig = figure;");
+            textOut.newLine();
+            textOut.write("width = (-c(1,3)+c(1,5))/4;");
+            textOut.newLine();
+            textOut.write("set(gcf,'position',[497   313   450   351])");
+            textOut.newLine();
+            textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
+            textOut.newLine();
+            textOut.write("for i=1:" + systemNames.length + ",");
+            textOut.newLine();
+            textOut.write("    plot([i i],[-width width]+friedmanStats.meanranks(i));");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[-width -width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[+width +width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',algNames(fliplr(sort_idx)))");
+            textOut.newLine();
+            textOut.write("ylabel('Mean Column Ranks')");
+            textOut.newLine();
+            textOut.write("h = title('" + CSVResultFile.getAbsolutePath() + "')");
+            textOut.newLine();
+            textOut.write("set(h,'interpreter','none')");
             textOut.newLine();
             textOut.write("saveas(fig,'" + matlabPlotPath + "');");
             textOut.newLine();
             textOut.write("exit;");
             textOut.newLine();
 
+
+            
             textOut.close();
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
