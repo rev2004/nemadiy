@@ -92,7 +92,7 @@ public class SignalArrayAccuracyClass2 {
         if (classNames == null) {
             classNames = new ArrayList();
         }
-        if ((classHierarchyFile.trim()).compareTo("") != 0 ) {
+        if ((classHierarchyFile != null) && ((classHierarchyFile.trim()).compareTo("") != 0 )) {
             usingAHierachy = true;
         }
         
@@ -107,7 +107,7 @@ public class SignalArrayAccuracyClass2 {
         if(verbose) {
             System.out.println("Output path: " + resultFile.getPath());
         }
-       StorageDir.mkdirs();
+        StorageDir.mkdirs();
 //        if (!StorageDir.exists()) {
 //            if (!StorageDir.mkdirs()) {
 //                throw new RuntimeException("Could not create the output folder.");
@@ -539,7 +539,7 @@ public class SignalArrayAccuracyClass2 {
                 evalSignal.setMetadata(Signal.PROP_PERF, new Double(DiscountedAccuracy));
             }
         }
-        evalSignal.setMetadata(Signal.PROP_ALG_NAME, getModelName());
+        evalSignal.setMetadata(Signal.PROP_ALG_NAME, this.getModelName());
         
         evalSignal.setMetadata(Signal.PROP_CLASSES, classNames.toArray(new String[classNames.size()]));
         double[] perClassAccuracy = new double[classNames.size()];
@@ -564,7 +564,8 @@ public class SignalArrayAccuracyClass2 {
         }
         
         if(verbose) {
-            System.out.println(outBufferString);}
+            System.out.println(outBufferString);
+        }
         
         try {
             //use buffering
@@ -585,7 +586,7 @@ public class SignalArrayAccuracyClass2 {
         }
         
         //output signal array
-        File theDir = new File(this.storageDirectory + File.separator + this.getModelName());
+        File theDir = new File(this.storageDirectory + File.separator + "evalData");
         if (!theDir.isDirectory()) {
             if (!theDir.mkdirs()) {
                 throw new RuntimeException("Could not create the output folder.");
@@ -593,7 +594,7 @@ public class SignalArrayAccuracyClass2 {
         }
         for (int i=0;i<resultSignalArray.length;i++)
         {
-            File theFile = new File(this.storageDirectory + File.separator + this.getModelName() + File.separator + this.getModelName() + this.signalFileExt + "." + i); //rewrite the file
+            File theFile = new File(theDir.getAbsolutePath() + File.separator + this.getModelName() + this.signalFileExt + "." + i); //rewrite the file
             try {
                 resultSignalArray[i].setMetadata(Signal.PROP_ALG_NAME, this.getModelName());
                 resultSignalArray[i].write(theFile);

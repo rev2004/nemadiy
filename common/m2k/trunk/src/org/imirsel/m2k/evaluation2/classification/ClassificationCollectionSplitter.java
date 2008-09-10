@@ -4,7 +4,6 @@
  */
 package org.imirsel.m2k.evaluation2.classification;
 
-import org.imirsel.m2k.evaluation2.TagClassification.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.imirsel.m2k.evaluation2.EvaluationDataObject;
 import org.imirsel.m2k.io.musicDB.MusicDBDelimTextFileImportFrame;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.retrieval.MusicDB;

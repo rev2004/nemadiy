@@ -426,9 +426,45 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             }
             foldOffset += tagNames[f].length;
         }
+        File AUC_ROC_fold_file = new File(outputDir.getAbsolutePath() + File.separator + "affinity_tag_fold_AUC_ROC.csv");
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AUC_ROC_fold_file, "\t", csvData, false); 
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        System.err.println("Writing out tag AUC-ROC data averaged across folds");
+        //Write out tag AUC-ROC data for significance testing
+        HashSet<String> tagNamesSet = new HashSet<String>();
+        for (int i = 0; i < numFolds; i++) {
+            HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[0][i].getMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC);
+            tagNamesSet.addAll(tag2AUC_ROC.keySet());
+        }
+        
+        String[][] csvDataAveraged = new String[tagNamesSet.size()+1][systemNames.length + 1];    
+        csvDataAveraged[0][0] = "tag";
+        for (int i = 0; i < systemNames.length; i++) {
+            csvDataAveraged[0][i+1] = systemNames[i];
+        }
+        int tagIdx = 1;
+        for (Iterator<String> it = tagNamesSet.iterator(); it.hasNext();) {
+            String tag = it.next();
+            csvDataAveraged[tagIdx][0] = tag;
+            for (int s = 0; s < systemNames.length; s++) {
+                double avg = 0.0;
+                for (int f = 0; f < numFolds; f++) {
+                    HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC);
+                    avg += tag2AUC_ROC.get(tag);
+                }
+                avg /= numFolds;
+                csvDataAveraged[tagIdx][s+1] = "" + avg;
+            }
+            tagIdx++;
+        }
+
         File AUC_ROC_file = new File(outputDir.getAbsolutePath() + File.separator + "affinity_tag_AUC_ROC.csv");
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AUC_ROC_file, "\t", csvData, false); 
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AUC_ROC_file, "\t", csvDataAveraged, false); 
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -529,13 +565,45 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
             textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
             textOut.newLine();
-            textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
+            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
             textOut.newLine();
-            textOut.write("AUCROC_TAG = cell2mat(data(2:length(data),3:" + (systemNames.length + 2) + "));");
+            textOut.write("[length,width] = size(data);");
             textOut.newLine();
-            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUCROC_TAG,1,'on');");
+            textOut.write("AUCROC_TAG = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
             textOut.newLine();
-            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+            textOut.write("[val sort_idx] = sort(mean(AUCROC_TAG));");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUCROC_TAG(:,fliplr(sort_idx)),1,'on'); close(gcf)");
+            textOut.newLine();
+            textOut.write("[c,m,h,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05,'display','off');");
+            textOut.newLine();
+            textOut.write("fig = figure;");
+            textOut.newLine();
+            textOut.write("width = (-c(1,3)+c(1,5))/4;");
+            textOut.newLine();
+            textOut.write("set(gcf,'position',[497   313   450   351])");
+            textOut.newLine();
+            textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
+            textOut.newLine();
+            textOut.write("for i=1:" + systemNames.length + ",");
+            textOut.newLine();
+            textOut.write("    plot([i i],[-width width]+friedmanStats.meanranks(i));");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[-width -width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[+width +width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',algNames(fliplr(sort_idx)))");
+            textOut.newLine();
+            textOut.write("ylabel('Mean Column Ranks')");
+            textOut.newLine();
+            textOut.write("h = title('" + AUC_ROC_file.getAbsolutePath() + "')");
+            textOut.newLine();
+            textOut.write("set(h,'interpreter','none')");
             textOut.newLine();
             textOut.write("saveas(fig,'" + matlabPlotPath + "');");
             textOut.newLine();
@@ -572,22 +640,74 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity.AUC_ROC_TRACK.friedman.tukeyKramerHSD.png";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+//
+//            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
+//            textOut.newLine();
+//            textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
+//            textOut.newLine();
+//            textOut.write("[length,width] = size(data);");
+//            textOut.newLine();
+//            textOut.write("AUCROC_TRACK = cell2mat(data(2:length,3:" + (systemNames.length + 2) + "));");
+//            textOut.newLine();
+//            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUCROC_TRACK,1,'on');");
+//            textOut.newLine();
+//            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+//            textOut.newLine();
+//            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+//            textOut.newLine();
+//            textOut.write("exit;");
+//            textOut.newLine();
 
             textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
             textOut.newLine();
             textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
             textOut.newLine();
-            textOut.write("AUCROC_TRACK = cell2mat(data(2:length(data),3:" + (systemNames.length + 2) + "));");
+            textOut.write("[length,width] = size(data);");
             textOut.newLine();
-            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUCROC_TRACK,1,'on');");
+            textOut.write("AUCROC_TAG = cell2mat(data(2:length,3:" + (systemNames.length + 2) + "));");
             textOut.newLine();
-            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
+            textOut.write("[val sort_idx] = sort(mean(AUCROC_TAG));");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUCROC_TAG(:,fliplr(sort_idx)),1,'on'); close(gcf)");
+            textOut.newLine();
+            textOut.write("[c,m,h,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05,'display','off');");
+            textOut.newLine();
+            textOut.write("fig = figure;");
+            textOut.newLine();
+            textOut.write("width = (-c(1,3)+c(1,5))/4;");
+            textOut.newLine();
+            textOut.write("set(gcf,'position',[497   313   450   351])");
+            textOut.newLine();
+            textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
+            textOut.newLine();
+            textOut.write("for i=1:" + systemNames.length + ",");
+            textOut.newLine();
+            textOut.write("    plot([i i],[-width width]+friedmanStats.meanranks(i));");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[-width -width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[+width +width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',algNames(fliplr(sort_idx)))");
+            textOut.newLine();
+            textOut.write("ylabel('Mean Column Ranks')");
+            textOut.newLine();
+            textOut.write("h = title('" + AUC_ROC_file.getAbsolutePath() + "')");
+            textOut.newLine();
+            textOut.write("set(h,'interpreter','none')");
             textOut.newLine();
             textOut.write("saveas(fig,'" + matlabPlotPath + "');");
             textOut.newLine();
             textOut.write("exit;");
             textOut.newLine();
-
+            
+            
+            
+            
             textOut.close();
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
