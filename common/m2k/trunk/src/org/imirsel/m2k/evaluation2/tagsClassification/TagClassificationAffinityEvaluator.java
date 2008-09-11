@@ -560,6 +560,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         String evalCommand = "performFriedmanForAUC_ROC_TAG";
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
         String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity.AUC_ROC_TAG.friedman.tukeyKramerHSD.png";
+        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + "affinity.AUC_ROC_TAG.friedman.tukeyKramerHSD.csv";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
@@ -607,6 +608,28 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             textOut.newLine();
             textOut.write("saveas(fig,'" + matlabPlotPath + "');");
             textOut.newLine();
+            textOut.write("fidFriedman=fopen('" + friedmanTablePath + "','w+');");
+            textOut.newLine();
+            textOut.write("fprintf(fidFriedman,'%s,%s,%s,%s,%s,%s\\n','*TeamID','TeamID','Lowerbound','Mean','Upperbound','Significance');");
+            textOut.newLine();
+            textOut.write("for i=1:size(c,1)");
+            textOut.newLine();
+            textOut.write("        if sign(c(i,3))*sign(c(i,5)) > 0");
+            textOut.newLine();
+            textOut.write("            tf='TRUE';");
+            textOut.newLine();
+            textOut.write("        else");
+            textOut.newLine();
+            textOut.write("            tf='FALSE';");
+            textOut.newLine();
+            textOut.write("        end");
+            textOut.newLine();
+            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',algNames{c(i,1)},algNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("fclose(fidFriedman);");
+            textOut.newLine();
             textOut.write("exit;");
             textOut.newLine();
 
@@ -638,6 +661,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         String evalCommand = "performFriedmanForAUC_ROC_TRACK";
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
         String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity.AUC_ROC_TRACK.friedman.tukeyKramerHSD.png";
+        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + "affinity.AUC_ROC_TRACK.friedman.tukeyKramerHSD.csv";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 //
@@ -701,6 +725,28 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             textOut.write("set(h,'interpreter','none')");
             textOut.newLine();
             textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+            textOut.newLine();
+            textOut.write("fidFriedman=fopen('" + friedmanTablePath + "','w+');");
+            textOut.newLine();
+            textOut.write("fprintf(fidFriedman,'%s,%s,%s,%s,%s,%s\\n','*TeamID','TeamID','Lowerbound','Mean','Upperbound','Significance');");
+            textOut.newLine();
+            textOut.write("for i=1:size(c,1)");
+            textOut.newLine();
+            textOut.write("        if sign(c(i,3))*sign(c(i,5)) > 0");
+            textOut.newLine();
+            textOut.write("            tf='TRUE';");
+            textOut.newLine();
+            textOut.write("        else");
+            textOut.newLine();
+            textOut.write("            tf='FALSE';");
+            textOut.newLine();
+            textOut.write("        end");
+            textOut.newLine();
+            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',algNames{c(i,1)},algNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("fclose(fidFriedman);");
             textOut.newLine();
             textOut.write("exit;");
             textOut.newLine();
