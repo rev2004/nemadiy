@@ -319,16 +319,16 @@ public class DeliminatedTextFileUtilities {
      */
     public static String[][] loadDelimTextData(String classPath, String delimiter, int lines)  throws IOException{
 
-        BufferedReader textBuffer;
+        BufferedReader textBuffer = null;
         ArrayList rowData = new ArrayList();
         int maxRowLength = 0;
 
-        InputStream iStream = ClassLoader.getSystemResourceAsStream(classPath);
-        textBuffer = new BufferedReader(new InputStreamReader(iStream));
+        try{
+            InputStream iStream = ClassLoader.getSystemResourceAsStream(classPath);
+            textBuffer = new BufferedReader(new InputStreamReader(iStream));
 
-        String line = null; 
-        try
-        {
+            String line = null; 
+
             //read data
             int count = 0;
             line = textBuffer.readLine();
@@ -354,7 +354,7 @@ public class DeliminatedTextFileUtilities {
         catch (java.lang.NullPointerException npe)
         {
             textBuffer.close();
-            throw new RuntimeException("NullPointerException caused by: " + classPath, npe);
+            throw new RuntimeException("NullPointerException caused by classpath: " + classPath, npe);
         }
 
         String[][] outputData = new String[rowData.size()][maxRowLength];
@@ -370,25 +370,74 @@ public class DeliminatedTextFileUtilities {
     }
     
     /**
-     * Parse a single line of the deliminated text file, removing speechmarks if necessary
+     * Parse a single line of the deliminated text file, removing speechmarks if 
+     * necessary.
+     * 
      * @param line The line to parse.
      * @param delimiter The delimiter to be used to segment the line.
      * @return A String[] representing the data from the deliminated line.
      */
     public static String[] parseDelimTextLine(String line, String delimiter){
-        ArrayList output = new ArrayList();
+        ArrayList<String> output = new ArrayList<String>();
         String tmp = line.trim();
-        String[] comps = tmp.split(delimiter);
-        for (int i = 0; i < comps.length; i++) {
-            
-            if ((comps[i].length() > 1) && (comps[i].charAt(0) == '"')){
-                //remove speechmarks
-                comps[i] = comps[i].substring(1);
-                comps[i] = comps[i].substring(0, comps[i].length() - 1);
+        char delimChar = delimiter.charAt(0);
+        
+        boolean encounteredSpeechMarks = false;
+        boolean insideSpeechMarks = false;
+        int lastIdx = 0;
+        int i = 0;
+        try{
+            for (; i < tmp.length(); i++){
+                if (tmp.charAt(i) == delimChar && !insideSpeechMarks){
+                    if (encounteredSpeechMarks){
+                        output.add(tmp.substring(lastIdx+1, i-1));
+                        encounteredSpeechMarks = false;
+                        lastIdx = i+1;
+                    }else{
+                        output.add(tmp.substring(lastIdx, i));
+                        lastIdx = i+1;
+                    }
+                }else if (tmp.charAt(i) == '"'){
+                    encounteredSpeechMarks = true;
+                    insideSpeechMarks = !insideSpeechMarks;
+                }
             }
-            output.add(comps[i]);
-
+            if (lastIdx != i){
+                if (encounteredSpeechMarks){
+                    if (insideSpeechMarks){
+                        System.out.println("WARNING: DeliminatedTextFileUtilities.parseDelimTextLine(): unclosed quotes (\") encountered on line '" + line + "'");
+                        output.add(tmp.substring(lastIdx, i));
+                    }else{
+                        output.add(tmp.substring(lastIdx+1, i-1));
+                    }
+                }else{
+                    output.add(tmp.substring(lastIdx, i));
+                }
+            }
+            
+        }catch(Exception e){
+            System.out.println("Error parsing line:\n\t[" + tmp + "]");
+            System.out.println("Was at index: " + i);
+            System.out.println("Encountered speech marks: " + encounteredSpeechMarks);
+            System.out.println("lastIdx: " + lastIdx);
+            System.out.println("Exception: " + e.getMessage());
+            System.out.println("");
+            System.exit(1);
         }
+        
+        
+//        
+//        String[] comps = tmp.split(delimiter);
+//        for (int i = 0; i < comps.length; i++) {
+//            
+//            if ((comps[i].length() > 1) && (comps[i].charAt(0) == '"')){
+//                //remove speechmarks
+//                comps[i] = comps[i].substring(1);
+//                comps[i] = comps[i].substring(0, comps[i].length() - 1);
+//            }
+//            output.add(comps[i]);
+//
+//        }
 
         
 //        while(tmp.length()>0)
@@ -422,7 +471,7 @@ public class DeliminatedTextFileUtilities {
 //            }
 //        }
         
-        String[] outLine = (String[])output.toArray(new String[output.size()]);
+        String[] outLine = output.toArray(new String[output.size()]);
         
         return outLine;
     }
