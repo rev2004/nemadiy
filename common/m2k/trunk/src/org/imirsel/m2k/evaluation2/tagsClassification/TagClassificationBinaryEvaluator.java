@@ -35,6 +35,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
 
     private static final int FMEASURE_FILE_INDEX = 0;
     private static final int ACCURACY_FILE_INDEX = 1;
+    private static final int ACCURACY_PER_FOLD_FILE_INDEX = 5;
     
     public boolean getVerbose() {
         return verbose;
@@ -425,10 +426,11 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             textOut.write("    plot([-0.1 .1]+i,[+width +width]+friedmanStats.meanranks(i))");
             textOut.newLine();
             textOut.write("end");
-            textOut.newLine();
             textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
             textOut.newLine();
-            textOut.write("set(gca,'xticklabel',algNames(fliplr(sort_idx)))");
+            textOut.write("sortedAlgNames = algNames(fliplr(sort_idx));");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',sortedAlgNames)");
             textOut.newLine();
             textOut.write("ylabel('Mean Column Ranks')");
             textOut.newLine();
@@ -454,7 +456,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             textOut.newLine();
             textOut.write("        end");
             textOut.newLine();
-            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',algNames{c(i,1)},algNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
+            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',sortedAlgNames{c(i,1)},sortedAlgNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
             textOut.newLine();
             textOut.write("end");
             textOut.newLine();
@@ -547,7 +549,9 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             textOut.newLine();
             textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
             textOut.newLine();
-            textOut.write("set(gca,'xticklabel',algNames(fliplr(sort_idx)))");
+            textOut.write("sortedAlgNames = algNames(fliplr(sort_idx));");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',sortedAlgNames)");
             textOut.newLine();
             textOut.write("ylabel('Mean Column Ranks')");
             textOut.newLine();
@@ -573,7 +577,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             textOut.newLine();
             textOut.write("        end");
             textOut.newLine();
-            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',algNames{c(i,1)},algNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
+            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',sortedAlgNames{c(i,1)},sortedAlgNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
             textOut.newLine();
             textOut.write("end");
             textOut.newLine();
@@ -627,7 +631,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
-            textOut.write("bbReport('" +  CSVResultFiles[ACCURACY_FILE_INDEX].getAbsolutePath() + "', '" + matlabOutputPath + "')");
+            textOut.write("bbReport('" +  CSVResultFiles[ACCURACY_PER_FOLD_FILE_INDEX].getAbsolutePath() + "', '" + matlabOutputPath + "')");
             textOut.newLine();
             textOut.write("exit;");
             textOut.newLine();
@@ -774,7 +778,6 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         File AvgNegAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_avg_negative_example_Accuracy.csv");
         writeAvgAcrossFoldsCSVResultFile(EvaluationDataObject.TAG_BINARY_NEG_ACCURACY_MAP, systemNames, numFolds, dataToEvaluate, tagNamesSet, AvgNegAccuracyFile);
   
-        
         return new File[]{AvgFmeasureFile,AvgAccuracyFile,AvgPosAccuracyFile,AvgNegAccuracyFile,FmeasureFile,AccuracyFile,PosAccuracyFile,NegAccuracyFile};
     }
 

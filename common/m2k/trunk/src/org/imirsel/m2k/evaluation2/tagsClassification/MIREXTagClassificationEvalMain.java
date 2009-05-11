@@ -71,6 +71,12 @@ public class MIREXTagClassificationEvalMain {
         int systemIdx = 0;
         for (Iterator<File> it = resultsDirs.iterator(); it.hasNext();) {
             File dir = it.next();
+            
+            if (!dir.exists()){
+                System.out.println("ERROR: Result directory (" + dir.getAbsolutePath() + ") did not exist\n" + USAGE);
+                System.exit(1);
+            }
+            
             File[] files = dir.listFiles();
             //this should sort results consistenly across all submissions, 
             //   if they use the same names for their results files 

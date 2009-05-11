@@ -131,7 +131,7 @@ public class TagClassificationBinaryFileReader implements EvalFileReader {
         } finally {
             try {
                 textBuffer.close();
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(TagClassificationBinaryFileReader.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
