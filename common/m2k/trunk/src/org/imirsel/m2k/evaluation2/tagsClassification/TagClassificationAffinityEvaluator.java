@@ -12,7 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -161,9 +160,17 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             for (Iterator<String> it = returnedAffinities.keySet().iterator(); it.hasNext();) {
                 tag = it.next();
                 //System.out.println("\ttag: " + tag);
-                tag2affinityDataPoints.get(tag).add(new AffinityDataPoint(trueSet.contains(tag), returnedAffinities.get(tag)));
-                tmpClipROCPointList.add(new AffinityDataPoint(trueSet.contains(tag), returnedAffinities.get(tag)));
-                
+                try{
+                    tag2affinityDataPoints.get(tag).add(new AffinityDataPoint(trueSet.contains(tag), returnedAffinities.get(tag)));
+                    tmpClipROCPointList.add(new AffinityDataPoint(trueSet.contains(tag), returnedAffinities.get(tag)));
+                }catch(Exception e){
+                    String tagSetStr = "";
+                    for (Iterator<String> tagit = tag2affinityDataPoints.keySet().iterator(); tagit.hasNext();){
+                        tagSetStr += "\t'" + tagit.next() + "'\n";
+                    }
+                    throw new RuntimeException("Tag from returned affinities (" + tag + "), for file: " + dataToEvaluate.getFile().getAbsolutePath() + 
+                            ", not found in the tag set. Tag set contains:\n" + tagSetStr);
+                }
             }
             
             //fill in missing affinities
@@ -598,7 +605,9 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             textOut.newLine();
             textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
             textOut.newLine();
-            textOut.write("set(gca,'xticklabel',algNames(fliplr(sort_idx)))");
+            textOut.write("sortedAlgNames = algNames(fliplr(sort_idx));");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',sortedAlgNames)");
             textOut.newLine();
             textOut.write("ylabel('Mean Column Ranks')");
             textOut.newLine();
@@ -624,7 +633,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             textOut.newLine();
             textOut.write("        end");
             textOut.newLine();
-            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',algNames{c(i,1)},algNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
+            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',sortedAlgNames{c(i,1)},sortedAlgNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
             textOut.newLine();
             textOut.write("end");
             textOut.newLine();
@@ -716,7 +725,9 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             textOut.newLine();
             textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
             textOut.newLine();
-            textOut.write("set(gca,'xticklabel',algNames(fliplr(sort_idx)))");
+            textOut.write("sortedAlgNames = algNames(fliplr(sort_idx));");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',sortedAlgNames)");
             textOut.newLine();
             textOut.write("ylabel('Mean Column Ranks')");
             textOut.newLine();
@@ -742,7 +753,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             textOut.newLine();
             textOut.write("        end");
             textOut.newLine();
-            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',algNames{c(i,1)},algNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
+            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',sortedAlgNames{c(i,1)},sortedAlgNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
             textOut.newLine();
             textOut.write("end");
             textOut.newLine();
