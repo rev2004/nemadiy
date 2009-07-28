@@ -381,7 +381,7 @@
         <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
         <jdbc.url><![CDATA[jdbc:mysql://localhost/nema_diy?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
         <jdbc.username>root</jdbc.username>
-        <jdbc.password>newgslis</jdbc.password>
+        <jdbc.password></jdbc.password>
     
         <!-- Properties calculated by AppFuse when running full-source plugin -->
         <aspectj.version>1.6.0</aspectj.version>
