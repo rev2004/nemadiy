@@ -1,12 +1,4 @@
-<%@ page language="java" import="java.util.*,java.text.*,java.io.*,java.net.*,
-com.hp.hpl.jena.rdf.model.*,
-org.meandre.client.*,
-org.meandre.core.repository.*,
-org.meandre.core.engine.execution.*,
-org.meandre.configuration.*,
-org.meandre.webapp.*,
-org.json.*,
-org.meandre.webapp.HttpClientGet" %>
+<%@ page language="java" import="java.util.*,java.text.*,java.io.*,java.net.*,com.hp.hpl.jena.rdf.model.*,org.meandre.client.*,org.meandre.core.repository.*,org.meandre.core.engine.execution.*,org.meandre.configuration.*,org.meandre.webapp.*,org.json.JSONArray,org.json.JSONObject,org.meandre.webapp.HttpClientGet" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:if test="${empty username}"> 
@@ -65,11 +57,11 @@ while (uri_flow.getJSONObject(0).get("token").toString().equals("MissinToken")){
 String job_uri = uri_flow.getJSONObject(0).get("uri").toString();
 System.out.println("\n\n\n Here is your job uri:"+job_uri);
 //<c:set var="job_key" value="${job_uri}"/>
-//<jsp:forward page="/aux/console_interactive.jsp?uri=${job_key}"></jsp:forward>
+//<jsp:forward page="/aux2/console_interactive.jsp?uri=${job_key}"></jsp:forward>
 
 %>
-<jsp:include page="../diy/header.jsp" flush="true" />
-<jsp:include page="../diy/webapp-navigation.jsp" flush="true" />
+<jsp:include page="/header.jsp" flush="true" />
+<jsp:include page="/webapp-navigation.jsp" flush="true" />
 <div id="mainContainer">	
 	<div id="main">
 		<p class="information">${username} on ${meandreURL}</p>
@@ -83,7 +75,7 @@ System.out.println("\n\n\n Here is your job uri:"+job_uri);
 					<tr>
 						<td>
 							<pre>						
-								<a href="../aux/console_interactive.jsp?uri=<%=job_uri%>" target="_blank">Go to Console OUTPUT</a>
+								<a href="/aux2/console_interactive.jsp?uri=<%=job_uri%>" target="_blank">Go to Console OUTPUT</a>
 								<a href="http://nema.lis.uiuc.edu/nema_results/results/<%=job_uri.substring(25,job_uri.length())%>" target="_blank">Go to Results Directory</a>
 								
 							</pre>
@@ -94,4 +86,4 @@ System.out.println("\n\n\n Here is your job uri:"+job_uri);
 		</div>
 	</div>
 </div>
-<jsp:include page="../diy/footer.jsp" flush="true" />
+<jsp:include page="/footer.jsp" flush="true" />
