@@ -16,7 +16,7 @@
 				<td>${job.server_id}</td>
 				<td>${job.status}</td>
 				<td>${job.ts}</td>
-				<td><a href="/aux/console.jsp?uri=${job.job_id}">${job.job_id}</a></td>
+				<td><a href="/aux2/console.jsp?uri=${job.job_id}">${job.job_id}</a></td>
 			</tr>
 		</c:forEach>	
 	</tbody>

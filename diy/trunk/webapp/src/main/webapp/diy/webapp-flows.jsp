@@ -29,7 +29,7 @@
 			<tr>
 				<td>Actions</td>
 				<td>
-					<a href="/aux/tune_options_hover.jsp?uri=${fd.flowComponent}">Go to Options</a>
+					<a href="/aux2/tune_options_hover.jsp?uri=${fd.flowComponent}">Go to Options</a>
 				</td>
 			</tr>
 		</tbody>
