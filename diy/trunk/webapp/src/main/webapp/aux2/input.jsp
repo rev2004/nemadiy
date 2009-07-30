@@ -1,9 +1,7 @@
-<%@ page language="java" import="java.util.*,java.text.*,java.io.*,java.net.*,
-org.meandre.client.*,
-org.meandre.core.repository.*" %>
+<%@ page language="java" import="java.util.*,java.text.*,java.io.*,java.net.*,org.meandre.client.*,org.meandre.core.repository.*" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:if test="${empty username}"> 
-	<jsp:forward page="../diy/login.jsp"></jsp:forward>
+	<jsp:forward page="/login.jsp"></jsp:forward>
 </c:if>
 <%
 // Clone the flow description
@@ -12,15 +10,15 @@ org.meandre.core.repository.*" %>
 //QueryableRepository qr = new RepositoryImpl(meandreProxy.getRepository().getAvailableFlowDescriptionsMap().get(uri).getModel());
 //session.setAttribute("fd",qr.getAvailableFlowDescriptions().iterator().next());
 %>
-<jsp:include page="../diy/header.jsp" flush="true" />
-<jsp:include page="../diy/webapp-navigation.jsp" flush="true" />
+<jsp:include page="/header.jsp" flush="true" />
+<jsp:include page="/webapp-navigation.jsp" flush="true" />
 <c:set var="fd" value="${meandreProxy.repository.availableFlowDescriptionsMap[param.uri]}"/>
 <div id="mainContainer">	
 	<div id="main">
 		<p class="information">${username} on ${meandreURL}</p>
 		<br/>
 		<div id="main-divs-group">
-			<form method="post" action="/aux/tune_options.jsp?uri=${fd.flowComponent}">
+			<form method="post" action="/aux2/tune_options.jsp?uri=${fd.flowComponent}">
 			<table>
 				<thead>
 					<tr>
@@ -109,4 +107,4 @@ org.meandre.core.repository.*" %>
 		</div>
 	</div>
 </div>
-<jsp:include page="../diy/footer.jsp" flush="true" />
+<jsp:include page="/footer.jsp" flush="true" />

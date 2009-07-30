@@ -17,15 +17,15 @@ HashMap<String,String> dataType = new HashMap<String,String>(10);
 dataType.put("MFCC","checkbox");
 pageContext.setAttribute("dataType",dataType);
 %>
-<jsp:include page="../diy/header.jsp" flush="true" />
-<jsp:include page="../diy/webapp-navigation.jsp" flush="true" />
+<jsp:include page="/header.jsp" flush="true" />
+<jsp:include page="/webapp-navigation.jsp" flush="true" />
 <c:set var="fd" value="${meandreProxy.repository.availableFlowDescriptionsMap[param.uri]}"/>
 <div id="mainContainer">	
 	<div id="main">
 		<p class="information">${username} on ${meandreURL}</p>
 		<br/>
 		<div id="main-divs-group">
-			<form method="post" action="/aux/run-executeDebug.jsp">
+			<form method="post" action="/aux2/run-executeDebug.jsp">
 			<table>
 				<thead>
 					<tr>
@@ -193,4 +193,4 @@ pageContext.setAttribute("dataType",dataType);
 		</div>
 	</div>
 </div>
-<jsp:include page="../diy/footer.jsp" flush="true" />
+<jsp:include page="/footer.jsp" flush="true" />
