@@ -1,7 +1,7 @@
 package edu.illinois.gslis.imirsel.dao;
 
 import edu.illinois.gslis.imirsel.Constants;
-import edu.illinois.gslis.imirsel.model.Address;
+//import edu.illinois.gslis.imirsel.model.Address;
 import edu.illinois.gslis.imirsel.model.Role;
 import edu.illinois.gslis.imirsel.model.User;
 import org.springframework.dao.DataAccessException;
@@ -47,15 +47,15 @@ public class UserDaoTest extends BaseDaoTestCase {
     public void testUpdateUser() throws Exception {
         User user = dao.get(-1L);
 
-        Address address = user.getAddress();
-        address.setAddress("new address");
+       // Address address = user.getAddress();
+       // address.setAddress("new address");
 
         dao.saveUser(user);
         flush();
 
         user = dao.get(-1L);
-        assertEquals(address, user.getAddress());
-        assertEquals("new address", user.getAddress().getAddress());
+//        assertEquals(address, user.getAddress());
+ //       assertEquals("new address", user.getAddress().getAddress());
         
         // verify that violation occurs when adding new user with same username
         user.setId(null);
@@ -105,14 +105,15 @@ public class UserDaoTest extends BaseDaoTestCase {
         user.setPassword("testpass");
         user.setFirstName("Test");
         user.setLastName("Last");
-        Address address = new Address();
+        /*Address address = new Address();
         address.setCity("Denver");
         address.setProvince("CO");
         address.setCountry("USA");
         address.setPostalCode("80210");
-        user.setAddress(address);
+*/
+//        user.setAddress(address);
         user.setEmail("testuser@appfuse.org");
-        user.setWebsite("http://raibledesigns.com");
+ //       user.setWebsite("http://raibledesigns.com");
         
         Role role = rdao.getRoleByName(Constants.USER_ROLE);
         assertNotNull(role.getId());
