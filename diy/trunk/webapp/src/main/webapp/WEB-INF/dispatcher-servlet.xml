@@ -77,6 +77,7 @@
                 /admin/reload.html=reloadController
                 /admin/users.html=userController
                 /mainMenu.html=filenameController
+                /experimentMenu.html=filenameController
                 /passwordHint.html=passwordHintController
                 /*.jsp=viewResolver
             </value>
