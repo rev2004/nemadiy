@@ -2,7 +2,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     
-    <display-name>appfuse</display-name>
+    <display-name>NEMA</display-name>
     <distributable/>
 
     <!-- precompiled jsp mappings -->
@@ -10,7 +10,7 @@
     <!-- Define the default CSS Theme -->
     <context-param>
         <param-name>csstheme</param-name>
-        <param-value>simplicity</param-value>
+        <param-value>andreas01</param-value>
     </context-param>
     <!-- Define the basename for a resource bundle for I18N -->
     <context-param>
