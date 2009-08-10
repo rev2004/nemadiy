@@ -124,12 +124,7 @@
                 <setinputfield description="set confirmPassword" name="confirmPassword" value="test"/>
                 <setinputfield description="set firstName" name="firstName" value="Test"/>
                 <setinputfield description="set lastName" name="lastName" value="Name"/>
-                <setinputfield description="set city" name="address.city" value="Denver"/>
-                <setinputfield description="select province" name="address.province" value="CO"/>
-                <setselectfield description="select country" name="address.country" value="US"/>
-                <setinputfield description="set postalCode" name="address.postalCode" value="80210"/>
                 <setinputfield description="set email" name="email" value="newuser@raibledesigns.com"/>
-                <setinputfield description="set website" name="website" value="http://raibledesigns.com"/>
                 <setinputfield description="set passwordHint" name="passwordHint" value="test"/>
                 <setselectfield description="select roles" name="userRoles" value="ROLE_USER"/>
                 <clickbutton label="${button.save}" description="Click button 'Save'"/>
@@ -163,12 +158,7 @@
                 <setinputfield description="set confirmPassword" name="confirmPassword" value="test"/>
                 <setinputfield description="set firstName" name="firstName" value="Test"/>
                 <setinputfield description="set lastName" name="lastName" value="Name"/>
-                <setinputfield description="set city" name="address.city" value="Denver"/>
-                <setinputfield description="set state" name="address.province" value="CO"/>
-                <setselectfield description="select country" name="address.country" value="US"/>
-                <setinputfield description="set postalCode" name="address.postalCode" value="80210"/>
                 <setinputfield description="set email" name="email" value="signup-user@raibledesigns.com"/>
-                <setinputfield description="set website" name="website" value="http://raibledesigns.com"/>
                 <setinputfield description="set passwordHint" name="passwordHint" value="test"/>
                 <clickbutton label="${button.register}" description="Click button 'Signup'"/>
 
