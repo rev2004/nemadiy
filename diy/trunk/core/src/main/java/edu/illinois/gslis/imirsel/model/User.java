@@ -34,9 +34,9 @@ public class User extends BaseObject implements Serializable, UserDetails {
     private String firstName;                   // required
     private String lastName;                    // required
     private String email;                       // required; unique
-    private String phoneNumber;
-    private String website;
-    private Address address = new Address();
+    //private String phoneNumber;
+    //private String website;
+    //private Address address = new Address();
     private Integer version;
     private Set<Role> roles = new HashSet<Role>();
     private boolean enabled;
@@ -97,7 +97,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return email;
     }
 
-    @Column(name="phone_number")
+  /*  @Column(name="phone_number")
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -105,7 +105,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
     public String getWebsite() {
         return website;
     }
-
+*/
     /**
      * Returns the full name.
      * @return firstName + ' ' + lastName
@@ -115,11 +115,11 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return firstName + ' ' + lastName;
     }
 
-    @Embedded
+  /*  @Embedded
     public Address getAddress() {
         return address;
     }
-
+*/
     @ManyToMany(fetch = FetchType.EAGER) 
     @JoinTable(
             name="user_role",
@@ -245,7 +245,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
     public void setEmail(String email) {
         this.email = email;
     }
-
+/*
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
@@ -257,7 +257,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
     public void setAddress(Address address) {
         this.address = address;
     }
-
+*/
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }

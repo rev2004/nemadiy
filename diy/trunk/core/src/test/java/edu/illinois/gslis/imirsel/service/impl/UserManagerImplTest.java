@@ -59,7 +59,7 @@ public class UserManagerImplTest extends BaseManagerMockTestCase {
         }});
         
         final User user = userManager.getUser("1");
-        user.setPhoneNumber("303-555-1212");
+       //user.setPhoneNumber("303-555-1212");
 
         context.checking(new Expectations() {{
             one(userDao).saveUser(with(same(user)));
@@ -67,7 +67,7 @@ public class UserManagerImplTest extends BaseManagerMockTestCase {
         }});
         
         User returned = userManager.saveUser(user);
-        assertTrue(returned.getPhoneNumber().equals("303-555-1212"));
+        //assertTrue(returned.getPhoneNumber().equals("303-555-1212"));
         assertTrue(returned.getRoles().size() == 1);
     }
 

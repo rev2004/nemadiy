@@ -62,7 +62,7 @@ public class UniversalManagerTest extends BaseManagerMockTestCase {
         }});
 
         User user = createUser();
-        user.getAddress().setCountry("USA");
+       // user.getAddress().setCountry("USA");
         manager.save(user);
     }
 

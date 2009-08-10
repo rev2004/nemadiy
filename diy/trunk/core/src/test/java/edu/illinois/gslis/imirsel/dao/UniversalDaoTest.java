@@ -33,8 +33,8 @@ public class UniversalDaoTest extends BaseDaoTestCase {
         user.setPassword("bar");
         user.setFirstName("first");
         user.setLastName("last");
-        user.getAddress().setCity("Denver");
-        user.getAddress().setPostalCode("80465");
+        //user.getAddress().setCity("Denver");
+        //user.getAddress().setPostalCode("80465");
         user.setEmail("foo@bar.com");
 
         // create
@@ -48,12 +48,12 @@ public class UniversalDaoTest extends BaseDaoTestCase {
         assertEquals("last", user.getLastName());
 
         // update
-        user.getAddress().setCountry("USA");
+        //user.getAddress().setCountry("USA");
         universalDao.save(user);
         flush();
 
         user = (User) universalDao.get(User.class, user.getId());
-        assertEquals( "USA", user.getAddress().getCountry());
+        //assertEquals( "USA", user.getAddress().getCountry());
 
         // delete
         universalDao.remove(User.class, user.getId());
