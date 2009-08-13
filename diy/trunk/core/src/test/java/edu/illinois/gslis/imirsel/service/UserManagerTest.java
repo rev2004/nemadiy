@@ -32,11 +32,12 @@ public class UserManagerTest extends BaseManagerTestCase {
     public void testSaveUser() throws Exception {
         user = mgr.getUserByUsername("user");
        // user.setPhoneNumber("303-555-1212");
+        user.addPreference("emailMe","true");
 
-        log.debug("saving user with updated phone number: " + user);
+        log.debug("saving user with updated preference: " + user);
 
         user = mgr.saveUser(user);
-     //   assertEquals("303-555-1212", user.getPhoneNumber());
+        assertEquals("true", user.getPreference("emailMe"));
         assertEquals(1, user.getRoles().size());
     }
 

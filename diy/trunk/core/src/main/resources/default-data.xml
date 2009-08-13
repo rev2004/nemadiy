@@ -31,8 +31,8 @@
             <value description="id">2</value>
             <value description="username">admin</value>
             <value description="password">d033e22ae348aeb5660fc2140aec35850c4da997</value>
-            <value description="first_name">Matt</value>
-            <value description="last_name">Raible</value>
+            <value description="first_name">Amit</value>
+            <value description="last_name">Kumar</value>
             <value description="email">kumaramit01@gmail.com</value>
             <value description="phone_number"></value>
             <value description="password_hint"><![CDATA[The same as your username.]]></value>
@@ -58,6 +58,18 @@
             <value description="description"><![CDATA[Default role for all Users]]></value>
         </row>
     </table>
+    
+       <table name="preference_value">
+        <column>id</column>
+        <column>value</column>
+        <column>mkey</column>
+        <row>
+            <value description="id">1</value>
+            <value description="value">TRUE</value>
+            <value description="mkey">EMAILPREF</value>
+        </row>
+    </table>
+    
     <table name="user_role">
         <column>user_id</column>
         <column>role_id</column>
@@ -70,4 +82,16 @@
             <value description="role_id">1</value>
         </row>
     </table>
+    
+    
+       <table name="user_prefs">
+        <column>user_id</column>
+        <column>preferences_id</column>
+        <row>
+            <value description="user_id">1</value>
+            <value description="preferences_id">1</value>
+        </row>
+    </table>
+    
+    
 </dataset>

@@ -1,0 +1,41 @@
+package edu.illinois.gslis.imirsel.dao.hibernate;
+
+import java.util.List;
+
+
+import edu.illinois.gslis.imirsel.dao.PreferenceValueDao;
+import edu.illinois.gslis.imirsel.model.PreferenceValue;
+
+
+public class PreferenceValueDaoHibernate extends GenericDaoHibernate<PreferenceValue, Long> implements PreferenceValueDao {
+		
+	public PreferenceValueDaoHibernate(){
+		super(PreferenceValue.class);
+	}
+
+	public List<PreferenceValue> getPreferenceValues() {
+		return this.getAllDistinct();
+	}
+
+	public void savePreferenceValue(PreferenceValue preferenceValue) {
+		save(preferenceValue);
+	}
+
+	public PreferenceValue getPreferenceValue(String key) {
+		  List preferenceValueList = getHibernateTemplate().find("from PreferenceValue where key=?", key);
+	        if (preferenceValueList.isEmpty()) {
+	            return null;
+	        } else {
+	            return (PreferenceValue) preferenceValueList.get(0);
+	        }
+	}
+
+	public void removePreferenceWithKey(String key) {
+		   Object pvalue = getPreferenceValue(key);
+	        getHibernateTemplate().delete(pvalue);
+		
+	}
+
+	
+
+}
