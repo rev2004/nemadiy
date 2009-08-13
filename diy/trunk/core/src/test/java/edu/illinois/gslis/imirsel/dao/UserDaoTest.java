@@ -167,25 +167,20 @@ public class UserDaoTest extends BaseDaoTestCase {
          boolean success=user.getPreferences().remove(new PreferenceValue("testPreference","value of Preference"));//.removePreference("testPreference");
          user= dao.saveUser(user);
          flush();
+         assertTrue(success);
          assertEquals(1, user.getPreferences().size());
-         for(PreferenceValue pal: user.getPreferences() ){
-        	 System.out.println(pal.toString());
-         }
+      
          user.addPreference("testPreference","changed value of Preference");
          dao.saveUser(user);
          flush();
-         for(PreferenceValue pal: user.getPreferences() ){
-        	 System.out.println(pal.toString());
-         }
          
          
          user.updatePreference("testPreference", "new value");
          user = dao.saveUser(user);
          flush();
          assertEquals(2, user.getPreferences().size());
-         for(PreferenceValue pal: user.getPreferences() ){
-        	 System.out.println(pal.toString());
-         }
+         assertEquals("new value",user.getPreference("testPreference"));
+      
          
          
          
