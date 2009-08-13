@@ -34,6 +34,7 @@ public class UserManagerImplTest extends BaseManagerMockTestCase {
     public void testGetUser() throws Exception {
         final User testData = new User("1");
         testData.getRoles().add(new Role("user"));
+        testData.addPreference("emailMe", "true");
 
         // set expected behavior on dao
         context.checking(new Expectations() {{
@@ -51,6 +52,7 @@ public class UserManagerImplTest extends BaseManagerMockTestCase {
     public void testSaveUser() throws Exception {
         final User testData = new User("1");
         testData.getRoles().add(new Role("user"));
+        testData.addPreference("emailMe", "true");
 
         // set expected behavior on dao
         context.checking(new Expectations() {{
@@ -67,7 +69,7 @@ public class UserManagerImplTest extends BaseManagerMockTestCase {
         }});
         
         User returned = userManager.saveUser(user);
-        //assertTrue(returned.getPhoneNumber().equals("303-555-1212"));
+        assertTrue(returned.getPreference("emailMe").equals("true"));
         assertTrue(returned.getRoles().size() == 1);
     }
 

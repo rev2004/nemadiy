@@ -69,4 +69,27 @@
             <value description="role_id">-1</value>
         </row>
     </table>
+    
+         <table name="preference_value">
+        <column>id</column>
+        <column>value</column>
+        <column>mkey</column>
+        <row>
+            <value description="id">1</value>
+            <value description="value">TRUE</value>
+            <value description="mkey">EMAILPREF</value>
+        </row>
+    </table>
+    
+       <table name="user_prefs">
+        <column>user_id</column>
+        <column>preferences_id</column>
+        <row>
+            <value description="user_id">-1</value>
+            <value description="preferences_id">1</value>
+        </row>
+    </table>
+    
+    
+    
 </dataset>

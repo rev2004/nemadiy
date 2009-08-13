@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -34,15 +35,14 @@ public class User extends BaseObject implements Serializable, UserDetails {
     private String firstName;                   // required
     private String lastName;                    // required
     private String email;                       // required; unique
-    //private String phoneNumber;
-    //private String website;
-    //private Address address = new Address();
     private Integer version;
     private Set<Role> roles = new HashSet<Role>();
     private boolean enabled;
     private boolean accountExpired;
     private boolean accountLocked;
     private boolean credentialsExpired;
+    private Set<PreferenceValue> preferences = new HashSet<PreferenceValue>();
+
 
     /**
      * Default constructor - creates a new instance with no values set.
@@ -129,6 +129,71 @@ public class User extends BaseObject implements Serializable, UserDetails {
     public Set<Role> getRoles() {
         return roles;
     }
+    
+    
+
+    @OneToMany(fetch = FetchType.EAGER,  cascade=CascadeType.ALL)
+    @JoinTable(
+            name="user_prefs",
+            joinColumns = { @JoinColumn( name="user_id") }
+            			 
+            		
+    )  
+    public Set<PreferenceValue> getPreferences(){
+    	return preferences;
+    }
+    
+
+    @Transient
+	public void addPreference(String key, String value) {
+    	PreferenceValue pvalue = new PreferenceValue(key,value);
+		preferences.add(pvalue);
+	}
+    
+    @Transient
+    public String getPreference(String key){
+    	for(PreferenceValue pv: preferences){
+    		if(pv.getKey().equals(key)){
+    			return pv.getValue();
+    		}
+    	}
+    	return null;
+    }
+    
+    @Transient
+	public boolean updatePreference(String key, String value) {
+    	boolean updated=Boolean.FALSE;
+    	
+    	for(PreferenceValue pv: preferences){
+    		if(pv.getKey().equals(key)){
+    			pv.setValue(value);
+    			updated= Boolean.TRUE;
+    			return updated;
+    		}
+    	}
+    	
+    	if(!updated){
+    		preferences.add(new PreferenceValue(key,value));
+    	}
+    	return updated;
+	}
+ 
+    @Transient
+    public boolean removePreference(String key){
+    	Iterator<PreferenceValue> it =  preferences.iterator();
+    	boolean success= Boolean.FALSE;
+    	while(it.hasNext()){
+    		PreferenceValue pval=it.next();
+    		if(pval.getKey().equals(key)){
+    			it.remove();
+    			success = Boolean.TRUE;
+    		}
+    	}
+    	return success;
+    }
+
+	
+
 
     /**
      * Convert user roles to LabelValue objects for convenience.
@@ -261,6 +326,10 @@ public class User extends BaseObject implements Serializable, UserDetails {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+    
+    public void setPreferences(Set<PreferenceValue> pvalues){
+    	this.preferences=pvalues;
+    }
 
     public void setVersion(Integer version) {
         this.version = version;
@@ -332,4 +401,5 @@ public class User extends BaseObject implements Serializable, UserDetails {
         }
         return sb.toString();
     }
+
 }

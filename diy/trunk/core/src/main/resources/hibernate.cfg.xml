@@ -5,5 +5,6 @@
     <session-factory>
         <mapping class="edu.illinois.gslis.imirsel.model.User"/>
         <mapping class="edu.illinois.gslis.imirsel.model.Role"/>
+        <mapping class="edu.illinois.gslis.imirsel.model.PreferenceValue"/>
     </session-factory>
 </hibernate-configuration>

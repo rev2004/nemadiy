@@ -2,6 +2,7 @@ package edu.illinois.gslis.imirsel.dao;
 
 import edu.illinois.gslis.imirsel.Constants;
 //import edu.illinois.gslis.imirsel.model.Address;
+import edu.illinois.gslis.imirsel.model.PreferenceValue;
 import edu.illinois.gslis.imirsel.model.Role;
 import edu.illinois.gslis.imirsel.model.User;
 import org.springframework.dao.DataAccessException;
@@ -11,6 +12,7 @@ import junit.framework.Assert;
 public class UserDaoTest extends BaseDaoTestCase {
     private UserDao dao = null;
     private RoleDao rdao = null;
+    private PreferenceValueDao pvalueDao = null;
     
     public void setUserDao(UserDao dao) {
         this.dao = dao;
@@ -20,6 +22,10 @@ public class UserDaoTest extends BaseDaoTestCase {
         this.rdao = rdao;
     }
 
+    public void setPreferenceValueDao(PreferenceValueDao pvalueDao){
+    	this.pvalueDao = pvalueDao;
+    }
+    
     public void testGetUserInvalid() throws Exception {
         try {
             dao.get(1000L);
@@ -47,17 +53,13 @@ public class UserDaoTest extends BaseDaoTestCase {
     public void testUpdateUser() throws Exception {
         User user = dao.get(-1L);
 
-       // Address address = user.getAddress();
-       // address.setAddress("new address");
-
+        user.addPreference("emailPref", "true");
         dao.saveUser(user);
         flush();
 
         user = dao.get(-1L);
-//        assertEquals(address, user.getAddress());
- //       assertEquals("new address", user.getAddress().getAddress());
-        
-        // verify that violation occurs when adding new user with same username
+        assertEquals("true", user.getPreference("emailPref"));
+ 
         user.setId(null);
 
         endTransaction();
@@ -145,5 +147,48 @@ public class UserDaoTest extends BaseDaoTestCase {
     public void testUserNotExists() throws Exception {
         boolean b = dao.exists(111L);
         assertFalse(b);
+    }
+    
+    public void testAddRemoveAndUpdateUserPreference(){
+    	 User user = dao.get(-1L);
+    	 assertEquals(1, user.getPreferences().size());
+    	 user.addPreference("testPreference","value of Preference");
+    	 user = dao.saveUser(user);
+         flush();
+         assertEquals(2, user.getPreferences().size());
+         // saving the preference again -should keep the count same
+         user.addPreference("testPreference","value of Preference");
+    	 user = dao.saveUser(user);
+         flush();
+         assertEquals(2, user.getPreferences().size());
+         
+         
+         
+         boolean success=user.getPreferences().remove(new PreferenceValue("testPreference","value of Preference"));//.removePreference("testPreference");
+         user= dao.saveUser(user);
+         flush();
+         assertEquals(1, user.getPreferences().size());
+         for(PreferenceValue pal: user.getPreferences() ){
+        	 System.out.println(pal.toString());
+         }
+         user.addPreference("testPreference","changed value of Preference");
+         dao.saveUser(user);
+         flush();
+         for(PreferenceValue pal: user.getPreferences() ){
+        	 System.out.println(pal.toString());
+         }
+         
+         
+         user.updatePreference("testPreference", "new value");
+         user = dao.saveUser(user);
+         flush();
+         assertEquals(2, user.getPreferences().size());
+         for(PreferenceValue pal: user.getPreferences() ){
+        	 System.out.println(pal.toString());
+         }
+         
+         
+         
+         
     }
 }
