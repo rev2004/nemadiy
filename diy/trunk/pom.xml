@@ -6,7 +6,7 @@
     <groupId>edu.illinois.gslis.imirsel</groupId>
     <artifactId>nema</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.01-SNAPSHOT</version>
     <name>Nema  Modular Application</name>
     <url>http://www.imirsel.org</url>
 
@@ -22,7 +22,35 @@
     </licenses>
 
     <scm>
+    <connection>scm:svn:https://svn.lis.illinois.edu/NEMA/application/trunk</connection>
+    <developerConnection>scm:svn:https://svn.lis.illinois.edu/NEMA/application/trunk</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://svn.lis.illinois.edu/NEMA/application/trunk</url>
     </scm>
+    
+<distributionManagement>
+  <!-- use the following if you're not using a snapshot version. -->
+  <repository>
+    <id>MonkRepository</id>
+    <name>Monk Repository</name>
+    <url>scp://monk.lis.uiuc.edu/content/web/root/maven2</url>
+  </repository>
+  <!-- use the following if you ARE using a snapshot version. -->
+  <snapshotRepository>
+   <uniqueVersion>true</uniqueVersion>
+    <id>MonkSnapshotRepository</id>
+    <name>Monk Snapshot Repository</name>
+    <url>scp://monk.lis.illinois.edu/content/web/root/snapshot</url>
+  </snapshotRepository>
+  
+  
+    <downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
+    <status>deployed</status>
+  
+</distributionManagement>
+
+
+    
 
     <issueManagement>
         <system></system>
