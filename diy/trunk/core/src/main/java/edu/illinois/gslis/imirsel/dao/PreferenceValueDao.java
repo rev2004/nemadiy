@@ -18,4 +18,7 @@ public interface PreferenceValueDao extends GenericDao<PreferenceValue, Long> {
 
 	public void removePreferenceWithKey(String key);
 
+
+	public void remove(PreferenceValue preferenceValue);
+
 }

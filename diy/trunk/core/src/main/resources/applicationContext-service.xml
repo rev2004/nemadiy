@@ -105,6 +105,10 @@
     <bean id="roleManager" class="edu.illinois.gslis.imirsel.service.impl.RoleManagerImpl">
         <property name="roleDao" ref="roleDao"/>
     </bean>
+    
+    <bean id="preferenceValueManager" class="edu.illinois.gslis.imirsel.service.impl.PreferenceValueManagerImpl">
+        <property name="preferenceValueDao" ref="preferenceValueDao"/>
+    </bean>
 
     <!-- Add new Managers here -->
 </beans>
