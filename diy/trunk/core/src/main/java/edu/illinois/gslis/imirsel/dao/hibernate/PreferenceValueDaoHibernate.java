@@ -29,11 +29,25 @@ public class PreferenceValueDaoHibernate extends GenericDaoHibernate<PreferenceV
 	            return (PreferenceValue) preferenceValueList.get(0);
 	        }
 	}
+	
+	public PreferenceValue getPreference(String key,String value) {
+		  List preferenceValueList = getHibernateTemplate().find("from PreferenceValue where key=? and value=?", new String[]{key, value});
+		    if (preferenceValueList.isEmpty()) {
+	            return null;
+	        } else {
+	            return (PreferenceValue) preferenceValueList.get(0);
+	        }
+	}
 
 	public void removePreferenceWithKey(String key) {
-		   Object pvalue = getPreferenceValue(key);
+		    Object pvalue = getPreferenceValue(key);
 	        getHibernateTemplate().delete(pvalue);
 		
+	}
+
+	public void remove(PreferenceValue preferenceValue) {
+		 Object pvalue = getPreference(preferenceValue.getKey(), preferenceValue.getValue());
+	     getHibernateTemplate().delete(pvalue);
 	}
 
 	

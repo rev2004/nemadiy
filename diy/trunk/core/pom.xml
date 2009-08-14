@@ -7,13 +7,20 @@
     <parent>
         <groupId>edu.illinois.gslis.imirsel</groupId>
         <artifactId>nema</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.01-SNAPSHOT</version>
         <relativePath>../nema/pom.xml</relativePath>
     </parent>
     
     <artifactId>nema-core</artifactId>
     <packaging>jar</packaging>
     <name>NEMA Modular Application - Core</name>
+    
+    <scm>
+    <connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/core</connection>
+    <developerConnection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/core</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://svn.lis.uiuc.edu/NEMA/application/trunk/core</url>
+    </scm>
     
     <build>
         <plugins>

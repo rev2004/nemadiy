@@ -143,6 +143,10 @@ public class User extends BaseObject implements Serializable, UserDetails {
     	return preferences;
     }
     
+    @Transient
+    public void addPreference(PreferenceValue pvalue) {
+ 		preferences.add(pvalue);
+	}
 
     @Transient
 	public void addPreference(String key, String value) {
