@@ -79,6 +79,10 @@
                 /admin/users.html=userController
                 /mainMenu.html=filenameController
                 /experimentMenu.html=filenameController
+                /experimentStatusMenu.html=filenameController
+                /featureExtraction.html=filenameController
+                /classification.html=filenameController
+                /evaluation.html=filenameController  
                 /passwordHint.html=passwordHintController
                 /*.jsp=viewResolver
             </value>
