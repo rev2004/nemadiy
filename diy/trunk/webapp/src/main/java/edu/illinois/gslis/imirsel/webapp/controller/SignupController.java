@@ -4,7 +4,9 @@ import org.springframework.security.AccessDeniedException;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import edu.illinois.gslis.imirsel.Constants;
+import edu.illinois.gslis.imirsel.model.PreferenceValue;
 import edu.illinois.gslis.imirsel.model.User;
+import edu.illinois.gslis.imirsel.service.PreferenceValueManager;
 import edu.illinois.gslis.imirsel.service.RoleManager;
 import edu.illinois.gslis.imirsel.service.UserExistsException;
 import edu.illinois.gslis.imirsel.webapp.util.RequestUtil;
@@ -14,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -23,8 +27,18 @@ import java.util.Locale;
  */
 public class SignupController extends BaseFormController {
     private RoleManager roleManager;
+    private PreferenceValueManager preferenceValueManager;
 
-    public void setRoleManager(RoleManager roleManager) {
+    public PreferenceValueManager getPreferenceValueManager() {
+		return preferenceValueManager;
+	}
+
+	public void setPreferenceValueManager(
+			PreferenceValueManager preferenceValueManager) {
+		this.preferenceValueManager = preferenceValueManager;
+	}
+
+	public void setRoleManager(RoleManager roleManager) {
         this.roleManager = roleManager;
     }
 
@@ -47,6 +61,21 @@ public class SignupController extends BaseFormController {
 
         // Set the default user role on this new user
         user.addRole(roleManager.getRole(Constants.USER_ROLE));
+        log.debug("getting default preferences");
+        List<PreferenceValue> list= preferenceValueManager.getDefaultPreferenceValues();
+        
+        if (log.isDebugEnabled()) {
+        	log.debug("Got: " + list.size() + " default preferences");
+        
+        }
+        
+        for(PreferenceValue pvalue:list){
+        	if (log.isDebugEnabled()) {
+                log.debug("adding preference: " + pvalue.toString());
+            }
+
+        	user.addPreference(pvalue);
+        }
 
         try {
             this.getUserManager().saveUser(user);

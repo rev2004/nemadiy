@@ -33,7 +33,7 @@
     Define form validation config in validation-forms.xml
   -->
 
-      <form name="address">
+   <!--     <form name="address">
               <field property="city"
                      depends="required">
 
@@ -62,6 +62,7 @@
                   <arg0 key="address.province"/>
               </field>
       </form>
+      -->
       <form name="user">
               <field property="username"
                      depends="required">
@@ -98,7 +99,7 @@
 
                   <arg0 key="user.lastName"/>
               </field>
-              <field property="address.city"
+              <!--  <field property="address.city"
                      depends="required">
 
                   <arg0 key="user.address.city"/>
@@ -125,11 +126,13 @@
 
                   <arg0 key="user.address.province"/>
               </field>
+              -->
               <field property="email"
                      depends="required,email">
 
                   <arg0 key="user.email"/>
               </field>
+              <!-- 
               <field property="phoneNumber"
                      depends="mask">
                   <msg
@@ -142,6 +145,7 @@
                     <var-value>${phone}</var-value>
                   </var>
               </field>
+              -->
               <field property="passwordHint"
                      depends="required">
 

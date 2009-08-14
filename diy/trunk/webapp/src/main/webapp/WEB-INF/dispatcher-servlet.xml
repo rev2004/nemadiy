@@ -37,6 +37,7 @@
         <property name="successView" value="redirect:mainMenu.html"/>
         <property name="userManager" ref="userManager"/>
         <property name="roleManager" ref="roleManager"/>
+        <property name="preferenceValueManager" ref="preferenceValueManager"/>
         <property name="mailEngine" ref="mailEngine"/>
         <property name="message" ref="mailMessage"/>
         <property name="templateName" value="accountCreated.vm"/>
