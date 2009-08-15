@@ -45,7 +45,6 @@
   
   
     <downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
-    <status>deployed</status>
   
 </distributionManagement>
 
@@ -53,16 +52,32 @@
     
 
     <issueManagement>
-        <system></system>
-        <url></url>
+    <!--     
+    	This needs to be configured before the project becomes bigger
+        <system>trac</system>
+        <url>http://nema.lis.illinois.edu/trac</url>
+        
+        --> 
     </issueManagement>
 
     <developers>
         <developer>
-            <id></id>
-            <name></name>
-            <email></email>
-            <timezone></timezone>
+            <id>amitku</id>
+            <name>Amit Kumar</name>
+            <email>amitku@illinois.edu</email>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>mertbay</id>
+            <name>Mert Bay</name>
+            <email>mertbay@gmail.com</email>
+            <timezone>-5</timezone>
+        </developer>
+         <developer>
+            <id>agrudz2</id>
+            <name>Anatolliy Grudz</name>
+            <email>agruzd2@illinois.edu</email>
+            <timezone>-5</timezone>
         </developer>
     </developers>
     
@@ -409,8 +424,8 @@
         <jdbc.version>5.0.5</jdbc.version>
         <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
         <jdbc.url><![CDATA[jdbc:mysql://localhost/nema_diy?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
-        <jdbc.username>root</jdbc.username>
-        <jdbc.password>newgslis</jdbc.password>
+        <jdbc.username></jdbc.username>
+        <jdbc.password></jdbc.password>
     
         <!-- Properties calculated by AppFuse when running full-source plugin -->
         <aspectj.version>1.6.0</aspectj.version>
