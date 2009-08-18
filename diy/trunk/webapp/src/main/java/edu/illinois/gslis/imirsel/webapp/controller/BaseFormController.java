@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 
 import edu.illinois.gslis.imirsel.Constants;
 import edu.illinois.gslis.imirsel.model.User;
+import edu.illinois.gslis.imirsel.propertyeditors.CustomMapPropertyEditor;
 import edu.illinois.gslis.imirsel.service.MailEngine;
 import edu.illinois.gslis.imirsel.service.UserManager;
 
@@ -166,6 +167,8 @@ public class BaseFormController extends SimpleFormController {
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, null, 
                                     new CustomDateEditor(dateFormat, true));
+        CustomMapPropertyEditor cmap = new CustomMapPropertyEditor(Map.class);
+        binder.registerCustomEditor(Map.class, "preferences", cmap);
     }
 
     /**
