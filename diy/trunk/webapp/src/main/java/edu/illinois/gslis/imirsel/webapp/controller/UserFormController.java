@@ -8,6 +8,7 @@ import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
 import org.apache.commons.lang.StringUtils;
 import edu.illinois.gslis.imirsel.Constants;
+import edu.illinois.gslis.imirsel.DefaultPreferenceInitializer;
 import edu.illinois.gslis.imirsel.model.Role;
 import edu.illinois.gslis.imirsel.model.User;
 import edu.illinois.gslis.imirsel.service.RoleManager;
@@ -21,7 +22,10 @@ import org.springframework.mail.MailException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Implementation of <strong>SimpleFormController</strong> that interacts with
@@ -87,6 +91,21 @@ public class UserFormController extends BaseFormController {
                     }
                 }
             }
+            
+         
+            
+            Map<String, String> prefs=DefaultPreferenceInitializer.getDefaultPreferences();
+            
+            for(String key:prefs.keySet()){
+            String val = request.getParameter("_"+key);
+            if(val==null)
+            	user.updatePreference(key,  "false");
+            else
+            	user.updatePreference(key,  "true");
+            }	
+            
+            
+            
 
             Integer originalVersion = user.getVersion();
             

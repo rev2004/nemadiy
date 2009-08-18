@@ -109,6 +109,9 @@
     
 <c:choose>
     <c:when test="${param.from == 'list' or param.method == 'Add'}">
+    
+
+    
     <li>
         <fieldset>
             <legend><fmt:message key="userProfile.accountSettings"/></legend>
@@ -150,6 +153,22 @@
     </li>
     </c:when>
     <c:when test="${not empty user.username}">
+        <li>
+    	<fieldset>
+    		<legend><fmt:message key="userProfile.notificationSettings"/></legend>
+    		
+    	  <c:forEach var="status" items="${user.preferences}" varStatus="status1">
+        		<appfuse:label key="${status.key}.title" colon="false" styleClass="required"/> 
+        		<input type="checkbox" name ="<c:out value="_${status.key}"/>"  value="true" <c:if test="${status.value}">CHECKED</c:if> />
+        		
+        		<br/>
+           	</c:forEach>
+        
+    	</fieldset>
+    </li>
+    
+    
+    
     <li>
         <strong><appfuse:label key="user.roles"/>:</strong>
         <c:forEach var="role" items="${user.roleList}" varStatus="status">
