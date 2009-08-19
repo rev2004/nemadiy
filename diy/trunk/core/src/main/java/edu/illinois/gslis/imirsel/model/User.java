@@ -196,7 +196,18 @@ public class User extends BaseObject implements Serializable, UserDetails {
     	return success;
     }
 
-	
+
+    @Transient
+    public List<LabelValue> getPreferenceValueList(){
+    	 List<LabelValue> list= new ArrayList<LabelValue>();
+         if (this.roles != null) {
+             for (PreferenceValue p : preferences) {
+                 // convert the user's preference to LabelValue Objects
+                list.add(new LabelValue(p.getKey(), p.getValue()));
+             }
+         }
+         return list;
+    }
 
 
     /**

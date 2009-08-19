@@ -1,6 +1,7 @@
 package edu.illinois.gslis.imirsel.service;
 
 import java.util.List;
+import java.util.Map;
 
 import edu.illinois.gslis.imirsel.model.LabelValue;
 
@@ -16,4 +17,6 @@ public interface LookupManager extends UniversalManager {
      * @return List of LabelValue objects
      */
     List<LabelValue> getAllRoles();
+    
+    Map<String,String> getAllDefaultPreferences();
 }

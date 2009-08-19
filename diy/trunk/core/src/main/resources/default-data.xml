@@ -65,8 +65,23 @@
         <column>mkey</column>
         <row>
             <value description="id">1</value>
+            <value description="value">FALSE</value>
+            <value description="mkey">emailPrefStartFlow</value>
+        </row>
+        <row>
+            <value description="id">2</value>
             <value description="value">TRUE</value>
-            <value description="mkey">EMAILPREF</value>
+            <value description="mkey">emailPrefEndFlow</value>
+        </row>
+        <row>
+            <value description="id">3</value>
+            <value description="value">TRUE</value>
+            <value description="mkey">emailPrefAbortFlow</value>
+        </row>
+                <row>
+            <value description="id">4</value>
+            <value description="value">TRUE</value>
+            <value description="mkey">emailPrefFlowResult</value>
         </row>
     </table>
     
@@ -90,6 +105,18 @@
         <row>
             <value description="user_id">1</value>
             <value description="preferences_id">1</value>
+        </row>
+        <row>
+            <value description="user_id">1</value>
+            <value description="preferences_id">2</value>
+        </row>
+        <row>
+            <value description="user_id">1</value>
+            <value description="preferences_id">3</value>
+        </row>
+        <row>
+            <value description="user_id">1</value>
+            <value description="preferences_id">4</value>
         </row>
     </table>
     
