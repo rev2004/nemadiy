@@ -424,9 +424,9 @@
         <jdbc.version>5.0.5</jdbc.version>
         <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
         <jdbc.url><![CDATA[jdbc:mysql://localhost/nema_diy?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
-        <jdbc.username></jdbc.username>
-        <jdbc.password></jdbc.password>
-    
+     <!--    <jdbc.username>${jdbc.user}</jdbc.username>
+        <jdbc.password>${jdbc.password}</jdbc.password>
+     -->
         <!-- Properties calculated by AppFuse when running full-source plugin -->
         <aspectj.version>1.6.0</aspectj.version>
         <clickstream.version>1.0.2</clickstream.version>
