@@ -1,5 +1,6 @@
 package edu.illinois.gslis.imirsel.service.impl;
 
+import edu.illinois.gslis.imirsel.DefaultPreferenceInitializer;
 import edu.illinois.gslis.imirsel.dao.LookupDao;
 import edu.illinois.gslis.imirsel.model.LabelValue;
 import edu.illinois.gslis.imirsel.model.Role;
@@ -7,6 +8,7 @@ import edu.illinois.gslis.imirsel.service.LookupManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -39,4 +41,10 @@ public class LookupManagerImpl extends UniversalManagerImpl implements LookupMan
 
         return list;
     }
+
+	public Map<String, String> getAllDefaultPreferences() {
+		return DefaultPreferenceInitializer.getDefaultPreferences();
+	}
+
+
 }

@@ -73,6 +73,12 @@ public class Constants {
      * when adding/editing a user.
      */
     public static final String AVAILABLE_ROLES = "availableRoles";
+    
+    /**
+     * The default preferences, a request-scoped attribute when adding/editing
+     * a user
+     */
+    public static final String DEFAULT_PREFERENCES ="defaultPreferences";
 
     /**
      * The name of the CSS Theme setting.
