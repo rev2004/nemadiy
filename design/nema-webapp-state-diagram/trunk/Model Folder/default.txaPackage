@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<nodeSet  version="1.1">
+	<node uin="j8ctxyfzn2a6n9-wmwgbb">
+		<property name="$metaclass" value="StateMachine"/>
+		<property name="$name" value="NEMA DIY"/>
+		<node uin="-acitv2fzn2a6ngibwvh6">
+			<property name="$metaclass" value="Region20"/>
+			<property name="$name" value="Region20"/>
+			<node uin="k9ofrlfzn2b0up-adzdue">
+				<property name="$metaclass" value="PseudoState20"/>
+				<property name="$name" value="Initial1"/>
+				<property name="$kind" value="initial"/>
+				<link uin="ieje0rfzn2lf94-6ta3lg">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<participant referencedUin="design:node:::k9ofrlfzn2b0up-adzdue:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2b6l1d5jb8a:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+			</node>
+			<node uin="-3uf15dfzn2b6l1d5jb8a">
+				<property name="$metaclass" value="State20"/>
+				<property name="$name" value="Front Door"/>
+				<node uin="-acitv2fzn2b6l3-uxnofp">
+					<property name="$metaclass" value="Region20"/>
+					<property name="$name" value="Region20"/>
+				</node>
+				<link uin="ieje0rfzn2lq2e-ah58q">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="Create Account"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2b6l1d5jb8a:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2cbtv-knta3w:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+				<link uin="ieje0rfzn2mlm7-v3he6g">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="View Help"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2b6l1d5jb8a:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2ly8t-xuj299:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+				<link uin="ieje0rfzn2nmey-fdoul">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="Login"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2b6l1d5jb8a:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2n55nudkmw8:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+			</node>
+			<node uin="-3uf15dfzn2bpn9vmho0v">
+				<property name="$metaclass" value="State20"/>
+				<property name="$name" value="Landing Page"/>
+				<node uin="-acitv2fzn2bpndrfir6g">
+					<property name="$metaclass" value="Region20"/>
+					<property name="$name" value="Region20"/>
+				</node>
+				<link uin="ieje0rfzn2ouumxon3qq">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="View Job"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2bpn9vmho0v:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2cr8h-kwre7r:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+				<link uin="ieje0rfzn2pt0d-8fppxs">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="Manage Prefs"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2bpn9vmho0v:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2kl9xkmzj8a:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+				<link uin="ieje0rfzn2t3qhbxnxzs">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="Prepare New Job"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2bpn9vmho0v:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+				<link uin="ieje0rfzn4t7xa-dued8w">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="View Help"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2bpn9vmho0v:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2ly8t-xuj299:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+				<link uin="ieje0rfzn4ujj5-q9rfwo">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="Logout"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2bpn9vmho0v:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2b6l1d5jb8a:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+			</node>
+			<node uin="-3uf15dfzn2cbtv-knta3w">
+				<property name="$metaclass" value="State20"/>
+				<property name="$name" value="Registration Form"/>
+				<node uin="-acitv2fzn2cbtzicmua0">
+					<property name="$metaclass" value="Region20"/>
+					<property name="$name" value="Region20"/>
+				</node>
+			</node>
+			<node uin="-3uf15dfzn2cr8h-kwre7r">
+				<property name="$metaclass" value="State20"/>
+				<property name="$name" value="Job Detail"/>
+				<node uin="-acitv2fzn2cr8je027zr">
+					<property name="$metaclass" value="Region20"/>
+					<property name="$name" value="Region20"/>
+				</node>
+				<link uin="ieje0rfzn2uosh-ox55ko">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="Delete Job"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2cr8h-kwre7r:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2bpn9vmho0v:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+			</node>
+			<node uin="-3uf15dfzn2kl9xkmzj8a">
+				<property name="$metaclass" value="State20"/>
+				<property name="$name" value="Account Preferences"/>
+				<node uin="-acitv2fzn2kl9z43lk4b">
+					<property name="$metaclass" value="Region20"/>
+					<property name="$name" value="Region20"/>
+				</node>
+			</node>
+			<node uin="-3uf15dfzn2ly8t-xuj299">
+				<property name="$metaclass" value="State20"/>
+				<property name="$name" value="Help"/>
+				<node uin="-acitv2fzn2ly8xui2zct">
+					<property name="$metaclass" value="Region20"/>
+					<property name="$name" value="Region20"/>
+				</node>
+			</node>
+			<node uin="-3uf15dfzn2n55nudkmw8">
+				<property name="$metaclass" value="State20"/>
+				<property name="$name" value="Login Form"/>
+				<node uin="-acitv2fzn2n55q-vwnpxp">
+					<property name="$metaclass" value="Region20"/>
+					<property name="$name" value="Region20"/>
+				</node>
+				<link uin="ieje0rfzn2ofrcsub55o">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="Success"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2n55nudkmw8:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2bpn9vmho0v:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+				<link uin="ieje0rfzn3p7wj-gfweiq">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2n55nudkmw8:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2cbtv-knta3w:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+				<link uin="jkjvkfzn57rnw-7i2v81">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="Reset Password"/>
+					<participant referencedUin="design:node:::-3uf15dfzn2n55nudkmw8:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn3fzsywnn15a:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+			</node>
+			<node uin="1g64yfzn385x5c67e92">
+				<property name="$metaclass" value="Note"/>
+				<property name="$name" value="Note1"/>
+				<property name="$note_text" value="Stop Job&#10;Delete Job&#10;View Job Result/s&#10;Publish Feature Set"/>
+				<link uin="ieje0rfzn4h4bb-urzy8m">
+					<property name="$metaclass" value="Note Link"/>
+					<participant referencedUin="design:node:::1g64yfzn385x5c67e92:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2cr8h-kwre7r:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+			</node>
+			<node uin="-3uf15dfzn3fzsywnn15a">
+				<property name="$metaclass" value="State20"/>
+				<property name="$name" value="Forgot Password Form"/>
+				<node uin="-acitv2fzn3fzt0xtp22k">
+					<property name="$metaclass" value="Region20"/>
+					<property name="$name" value="Region20"/>
+				</node>
+			</node>
+			<node uin="1g64yfzn48kvysi0haz">
+				<property name="$metaclass" value="Note"/>
+				<property name="$name" value="Note2"/>
+				<property name="$note_text" value="Project Info"/>
+				<link uin="ieje0rfzn4a8kqdrcsi2">
+					<property name="$metaclass" value="Note Link"/>
+					<participant referencedUin="design:node:::1g64yfzn48kvysi0haz:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2b6l1d5jb8a:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+			</node>
+			<node uin="1g64yfzn4aghnu5iky7">
+				<property name="$metaclass" value="Note"/>
+				<property name="$name" value="Note3"/>
+				<property name="$note_text" value="Email Address&#10;First Name&#10;Last Name&#10;Password&#10;Confirm Password&#10;Password Hint&#10;Remember Me"/>
+				<link uin="ieje0rfzn4c2c0c2zfgc">
+					<property name="$metaclass" value="Note Link"/>
+					<participant referencedUin="design:node:::1g64yfzn4aghnu5iky7:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2cbtv-knta3w:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+			</node>
+			<node uin="1g64yfzn4cwsx-fgu9u0">
+				<property name="$metaclass" value="Note"/>
+				<property name="$name" value="Note4"/>
+				<property name="$note_text" value="List of Jobs (all status types)"/>
+				<link uin="ieje0rfzn4erz68ehuac">
+					<property name="$metaclass" value="Note Link"/>
+					<participant referencedUin="design:node:::1g64yfzn4cwsx-fgu9u0:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2bpn9vmho0v:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+			</node>
+			<node uin="-3uf15dfzpqjpre1eeahq">
+				<property name="$metaclass" value="State20"/>
+				<property name="$name" value="Prepare Job Wizard"/>
+				<node uin="-acitv2fzpqjprf-lt7zb2">
+					<property name="$metaclass" value="Region20"/>
+					<property name="$name" value="Region20"/>
+					<node uin="3xyiqfzpqmjejff7ufw">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Job Type List"/>
+						<node uin="8o8ddfzpqmjej-7ovhmy">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="dtd14fzpqmjejfc0jqm">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Classificaiton"/>
+							<participant referencedUin="design:node:::3xyiqfzpqmjejff7ufw:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::1u5wffzpqmjem-piz15u:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+						<link uin="15fprfzpqmjekq05evt">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Extraction"/>
+							<participant referencedUin="design:node:::3xyiqfzpqmjejff7ufw:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::7wgsofzpqmjen-e0jbdp:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+						<link uin="6xxy6fzpqmjekfkx6ob">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Evaluation"/>
+							<participant referencedUin="design:node:::3xyiqfzpqmjejff7ufw:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::486ckfzpqmjennotbo0:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="9o69mfzpqmjek-4oys1o">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Job Properties Form"/>
+						<node uin="egj8afzpqmjek-8paex1">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="bjtmxfzpqmjel75akxs">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Start"/>
+							<participant referencedUin="design:node:::9o69mfzpqmjek-4oys1o:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::hnja0fzpqmjeqjzb4fd:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="hrtk2fzpqmjelfcejos">
+						<property name="$metaclass" value="Note"/>
+						<property name="$name" value="Note5"/>
+						<property name="$note_text" value="Job Type Options:&#10;Classification Job&#10;Extraction Job&#10;Evaluation Job"/>
+						<link uin="awf2vfzpqmjel-clyqa6">
+							<property name="$metaclass" value="Note Link"/>
+							<participant referencedUin="design:node:::hrtk2fzpqmjelfcejos:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::3xyiqfzpqmjejff7ufw:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="94acsfzpqmjelc39pwb">
+						<property name="$metaclass" value="Note"/>
+						<property name="$name" value="Note6"/>
+						<property name="$note_text" value="Job Name&#10;Job Description&#10;Algorithm Properties"/>
+						<link uin="bysocfzpqmjem-pv50sw">
+							<property name="$metaclass" value="Note Link"/>
+							<participant referencedUin="design:node:::94acsfzpqmjelc39pwb:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::9o69mfzpqmjek-4oys1o:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="1u5wffzpqmjem-piz15u">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Music Collection List"/>
+						<node uin="3nltefzpqmjem-oycrzo">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="b3c2cfzpqmjem9b3d6q">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Collection"/>
+							<participant referencedUin="design:node:::1u5wffzpqmjem-piz15u:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::65i7afzpqmjeppuz2ku:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="7wgsofzpqmjen-e0jbdp">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Music Collection List"/>
+						<node uin="4k2ybfzpqmjen5xxrxl">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="a08ksfzpqmjeniobh4">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Collection"/>
+							<participant referencedUin="design:node:::7wgsofzpqmjen-e0jbdp:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::gfmdvfzpqmjer-m220ca:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="486ckfzpqmjennotbo0">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Classification Results List"/>
+						<node uin="b4mr8fzpqmjen-yxk34j">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="aqv9kfzpqmjeopc6t8b">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Classification Result"/>
+							<participant referencedUin="design:node:::486ckfzpqmjennotbo0:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::bn8c7fzpqmjetc2eno7:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="65i7afzpqmjeppuz2ku">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Feature Set List"/>
+						<node uin="hs0g2fzpqmjep3y78r7">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="e9qkrfzpqmjep87kfp6">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Feature Set"/>
+							<participant referencedUin="design:node:::65i7afzpqmjeppuz2ku:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::2a0anfzpqmjep-kil13:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="2a0anfzpqmjep-kil13">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Algorithm List"/>
+						<node uin="f7gxjfzpqmjep-erndu4">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="17jkxfzpqmjepustsgd">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Algorithm"/>
+							<participant referencedUin="design:node:::2a0anfzpqmjep-kil13:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::5g2mrfzpqmjeqbag01u:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="5g2mrfzpqmjeqbag01u">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Ground Truth List"/>
+						<node uin="bwq1xfzpqmjeq6lf6l6">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="fpf5fzpqmjeq-71rzet">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Ground Truth"/>
+							<participant referencedUin="design:node:::5g2mrfzpqmjeqbag01u:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::9o69mfzpqmjek-4oys1o:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="hnja0fzpqmjeqjzb4fd">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Confirm Submission"/>
+						<node uin="v4k8fzpqmjer-w875qc">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="ieje0rfzpquuv0dnq7xp">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<participant referencedUin="design:node:::hnja0fzpqmjeqjzb4fd:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::6drk9lfzpqurpg118gpv:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="gfmdvfzpqmjer-m220ca">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Algorithm List"/>
+						<node uin="89enzfzpqmjerwli910">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="4q5zffzpqmjerupve1r">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Algorithm"/>
+							<participant referencedUin="design:node:::gfmdvfzpqmjer-m220ca:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::9wzwsfzpqmjes6y8ofj:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="9wzwsfzpqmjes6y8ofj">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Job Properties Form"/>
+						<node uin="dolg2fzpqmjesjylvuo">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="dg7u9fzpqmjesiji7lv">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Start"/>
+							<participant referencedUin="design:node:::9wzwsfzpqmjes6y8ofj:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::4ugc5fzpqmjesj6uogt:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="4ugc5fzpqmjesj6uogt">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Confirm Submission"/>
+						<node uin="hp3pkfzpqmjes-2ufveg">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="ieje0rfzpqti9k93xbz8">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<participant referencedUin="design:node:::4ugc5fzpqmjesj6uogt:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::6drk9lfzpqtetkxpkmv2:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="bn8c7fzpqmjetc2eno7">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Ground Truth List"/>
+						<node uin="c6zuyfzpqmjet-hdd3lb">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="1mu2ufzpqmjet4hsen7">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Choose Ground Truth"/>
+							<participant referencedUin="design:node:::bn8c7fzpqmjetc2eno7:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::gbhnofzpqmjet-mkrjrm:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="gbhnofzpqmjet-mkrjrm">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Job Properties From"/>
+						<node uin="j0m02fzpqmjeul62irc">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="j7ae6fzpqmjeu-n3ith6">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<property name="label" value="Start"/>
+							<participant referencedUin="design:node:::gbhnofzpqmjet-mkrjrm:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::h2x8ifzpqmjeu-d20yvm:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="h2x8ifzpqmjeu-d20yvm">
+						<property name="$metaclass" value="State20"/>
+						<property name="$name" value="Confirm Submission"/>
+						<node uin="8onufzpqmjeu-xh646l">
+							<property name="$metaclass" value="Region20"/>
+							<property name="$name" value="Region20"/>
+						</node>
+						<link uin="ieje0rfzpqtltc-mrg8gr">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<participant referencedUin="design:node:::h2x8ifzpqmjeu-d20yvm:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::6drk9lfzpqsoei-mu2ltf:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="k9ofrlfzpqrw6s-fla6dk">
+						<property name="$metaclass" value="PseudoState20"/>
+						<property name="$name" value="Initial1"/>
+						<property name="$kind" value="initial"/>
+						<link uin="ieje0rfzpqs0e4wv1js">
+							<property name="$metaclass" value="TransitionLink20"/>
+							<participant referencedUin="design:node:::k9ofrlfzpqrw6s-fla6dk:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+							<participant referencedUin="design:node:::3xyiqfzpqmjejff7ufw:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+						</link>
+					</node>
+					<node uin="6drk9lfzpqsoei-mu2ltf">
+						<property name="$metaclass" value="FinalState20"/>
+						<property name="$name" value="Final1"/>
+					</node>
+					<node uin="6drk9lfzpqtetkxpkmv2">
+						<property name="$metaclass" value="FinalState20"/>
+						<property name="$name" value="Final2"/>
+					</node>
+					<node uin="6drk9lfzpqurpg118gpv">
+						<property name="$metaclass" value="FinalState20"/>
+						<property name="$name" value="Final3"/>
+					</node>
+				</node>
+				<link uin="ieje0rfzpqujf1a4c64o">
+					<property name="$metaclass" value="TransitionLink20"/>
+					<property name="label" value="Done"/>
+					<participant referencedUin="design:node:::-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Client"></participant>
+					<participant referencedUin="design:node:::-3uf15dfzn2bpn9vmho0v:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb" role="Supplier"></participant>
+				</link>
+			</node>
+		</node>
+	</node>
+</nodeSet>
