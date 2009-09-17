@@ -318,6 +318,18 @@
 				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
 			</link>
 		</node>
+		<node uin="ilocbfzpy7fesxez6o4">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="description"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="irpoxfzpy7fesmh9jx2">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::ilocbfzpy7fesxez6o4:-tdsqjufzcszrkutk6kvu" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
 		<node uin="hnimszfzcvztamj0ujup">
 			<property name="$metaclass" value="Property20"/>
 			<property name="mod_Visibility" value="$packageLocal"/>
