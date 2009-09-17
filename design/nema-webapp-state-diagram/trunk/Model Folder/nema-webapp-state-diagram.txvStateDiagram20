@@ -17,7 +17,7 @@
 					<property name="bounds" value="729,113,130,69"/>
 					<property name="location_set_by_user" value="true"/>
 					<property name="bounds_setted_by_user" value="true"/>
-					<property name="background_color" value="255,255,128"/>
+					<property name="background_color" value="255,255,200"/>
 					<reference referencedUin="design:link:::ieje0rfzn4h4bb-urzy8m:1g64yfzn385x5c67e92:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 						<property name="sourceAnchor" value="772,149"/>
 						<property name="targetAnchor" value="721,109"/>
@@ -165,7 +165,7 @@
 						<reference referencedUin="design:node:::hrtk2fzpqmjelfcejos:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 							<property name="bounds" value="144,27,123,68"/>
 							<property name="location_set_by_user" value="true"/>
-							<property name="background_color" value="255,255,128"/>
+							<property name="background_color" value="255,255,200"/>
 							<reference referencedUin="design:link:::awf2vfzpqmjel-clyqa6:hrtk2fzpqmjelfcejos:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 								<property name="sourceAnchor" value="647,486"/>
 								<property name="targetAnchor" value="617,505"/>
@@ -175,28 +175,11 @@
 							<property name="bounds" value="516,719,18,18"/>
 							<property name="location_set_by_user" value="true"/>
 						</reference>
-						<reference referencedUin="design:node:::7wgsofzpqmjen-e0jbdp:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
-							<property name="bounds" value="259,172,127,49"/>
-							<property name="location_set_by_user" value="true"/>
-							<property name="bounds_setted_by_user" value="true"/>
-							<reference referencedUin="design:link:::a08ksfzpqmjeniobh4:7wgsofzpqmjen-e0jbdp:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
-								<property name="sourceAnchor" value="818,612"/>
-								<property name="targetAnchor" value="818,669"/>
-								<property name="location_set_by_user" value="true"/>
-								<reference referencedUin="label:label:design:link:::a08ksfzpqmjeniobh4:7wgsofzpqmjen-e0jbdp:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
-									<property name="bounds" value="821,631,101,19"/>
-								</reference>
-							</reference>
-							<reference referencedUin="design:node:::4k2ybfzpqmjen5xxrxl:7wgsofzpqmjen-e0jbdp:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
-								<property name="bounds" value="0,0,125,23"/>
-								<property name="location_set_by_user" value="true"/>
-							</reference>
-						</reference>
 						<reference referencedUin="design:node:::94acsfzpqmjelc39pwb:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 							<property name="bounds" value="266,628,141,56"/>
 							<property name="location_set_by_user" value="true"/>
 							<property name="bounds_setted_by_user" value="true"/>
-							<property name="background_color" value="255,255,128"/>
+							<property name="background_color" value="255,255,200"/>
 							<reference referencedUin="design:link:::bysocfzpqmjem-pv50sw:94acsfzpqmjelc39pwb:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 								<property name="sourceAnchor" value="879,1019"/>
 								<property name="targetAnchor" value="977,961"/>
@@ -217,6 +200,23 @@
 								<reference referencedUin="label:label:design:link:::e9qkrfzpqmjep87kfp6:65i7afzpqmjeppuz2ku:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 									<property name="bounds" value="1022,665,105,19"/>
 								</reference>
+							</reference>
+						</reference>
+						<reference referencedUin="design:node:::7wgsofzpqmjen-e0jbdp:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
+							<property name="bounds" value="259,172,127,49"/>
+							<property name="location_set_by_user" value="true"/>
+							<property name="bounds_setted_by_user" value="true"/>
+							<reference referencedUin="design:link:::a08ksfzpqmjeniobh4:7wgsofzpqmjen-e0jbdp:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
+								<property name="sourceAnchor" value="818,612"/>
+								<property name="targetAnchor" value="818,669"/>
+								<property name="location_set_by_user" value="true"/>
+								<reference referencedUin="label:label:design:link:::a08ksfzpqmjeniobh4:7wgsofzpqmjen-e0jbdp:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
+									<property name="bounds" value="821,631,101,19"/>
+								</reference>
+							</reference>
+							<reference referencedUin="design:node:::4k2ybfzpqmjen5xxrxl:7wgsofzpqmjen-e0jbdp:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
+								<property name="bounds" value="0,0,125,23"/>
+								<property name="location_set_by_user" value="true"/>
 							</reference>
 						</reference>
 						<reference referencedUin="design:node:::6drk9lfzpqsoei-mu2ltf:-acitv2fzpqjprf-lt7zb2:-3uf15dfzpqjpre1eeahq:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
@@ -392,7 +392,7 @@
 					<property name="bounds" value="19,454,206,116"/>
 					<property name="location_set_by_user" value="true"/>
 					<property name="bounds_setted_by_user" value="true"/>
-					<property name="background_color" value="255,255,128"/>
+					<property name="background_color" value="255,255,200"/>
 					<reference referencedUin="design:link:::ieje0rfzn4c2c0c2zfgc:1g64yfzn4aghnu5iky7:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 						<property name="sourceAnchor" value="157,490"/>
 						<property name="targetAnchor" value="157,394"/>
@@ -536,7 +536,7 @@
 				<reference referencedUin="design:node:::1g64yfzn4cwsx-fgu9u0:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 					<property name="bounds" value="559,209,174,25"/>
 					<property name="location_set_by_user" value="true"/>
-					<property name="background_color" value="255,255,128"/>
+					<property name="background_color" value="255,255,200"/>
 					<reference referencedUin="design:link:::ieje0rfzn4erz68ehuac:1g64yfzn4cwsx-fgu9u0:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 						<property name="sourceAnchor" value="580,257"/>
 						<property name="targetAnchor" value="523,257"/>
@@ -546,7 +546,7 @@
 				<reference referencedUin="design:node:::1g64yfzn48kvysi0haz:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 					<property name="bounds" value="84,36,89,25"/>
 					<property name="location_set_by_user" value="true"/>
-					<property name="background_color" value="255,255,128"/>
+					<property name="background_color" value="255,255,200"/>
 					<reference referencedUin="design:link:::ieje0rfzn4a8kqdrcsi2:1g64yfzn48kvysi0haz:-acitv2fzn2a6ngibwvh6:j8ctxyfzn2a6n9-wmwgbb">
 						<property name="sourceAnchor" value="156,97"/>
 						<property name="targetAnchor" value="156,134"/>
