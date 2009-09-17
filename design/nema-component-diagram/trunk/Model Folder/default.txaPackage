@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<nodeSet  version="1.1">
+	<node uin="ba089nfz343ixdh52nq">
+		<property name="$metaclass" value="Component20"/>
+		<property name="$name" value="NEMA Flow Service"/>
+		<link uin="ieje0rfz345sbs-iagcbe">
+			<property name="$metaclass" value="ProvidedInterface20"/>
+			<participant referencedUin="design:node:::ba089nfz343ixdh52nq" role="Client"></participant>
+			<participant referencedUin="design:node:::-amcqg9fz345l8h10mg7x" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfz364pkewsw8zh">
+			<property name="$metaclass" value="Dependency20"/>
+			<participant referencedUin="design:node:::ba089nfz343ixdh52nq" role="Client"></participant>
+			<participant referencedUin="design:node:::ba089nfz34andgdxpczh" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfz367adq-gh34i3">
+			<property name="$metaclass" value="Dependency20"/>
+			<participant referencedUin="design:node:::ba089nfz343ixdh52nq" role="Client"></participant>
+			<participant referencedUin="design:node:::ba089nfz34psyn-4guapy" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfz369682de0wjx">
+			<property name="$metaclass" value="Dependency20"/>
+			<participant referencedUin="design:node:::ba089nfz343ixdh52nq" role="Client"></participant>
+			<participant referencedUin="design:node:::ba089nfz34corc-azbzpi" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="-amcqg9fz345l8h10mg7x">
+		<property name="$metaclass" value="Interface20"/>
+		<property name="$name" value="Flow Service"/>
+	</node>
+	<node uin="ba089nfz348by1pif1sc">
+		<property name="$metaclass" value="Component20"/>
+		<property name="$name" value="NEMA Web App"/>
+		<link uin="ieje0rfz348z8bfmss7b">
+			<property name="$metaclass" value="RequiredInterface20"/>
+			<participant referencedUin="design:node:::ba089nfz348by1pif1sc" role="Client"></participant>
+			<participant referencedUin="design:node:::-amcqg9fz345l8h10mg7x" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfz3674tl-i9j4zw">
+			<property name="$metaclass" value="Dependency20"/>
+			<participant referencedUin="design:node:::ba089nfz348by1pif1sc" role="Client"></participant>
+			<participant referencedUin="design:node:::ba089nfz34ab5l-b14lcm" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="ba089nfz34ab5l-b14lcm">
+		<property name="$metaclass" value="Component20"/>
+		<property name="$name" value="Web App DB"/>
+	</node>
+	<node uin="ba089nfz34andgdxpczh">
+		<property name="$metaclass" value="Component20"/>
+		<property name="$name" value="Flow Repository"/>
+	</node>
+	<node uin="ba089nfz34corc-azbzpi">
+		<property name="$metaclass" value="Component20"/>
+		<property name="$name" value="NEMA Meandre Server"/>
+		<node uin="ba089nfz34nwbtk0bwxp">
+			<property name="$metaclass" value="Component20"/>
+			<property name="$name" value="Job Status Probe"/>
+			<link uin="ieje0rfz36dr1j6v5cze">
+				<property name="$metaclass" value="Dependency20"/>
+				<participant referencedUin="design:node:::ba089nfz34nwbtk0bwxp:ba089nfz34corc-azbzpi" role="Client"></participant>
+				<participant referencedUin="design:node:::ba089nfz34surue11cu5:ba089nfz34corc-azbzpi" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="ba089nfz34surue11cu5">
+			<property name="$metaclass" value="Component20"/>
+			<property name="$name" value="Meandre Engine"/>
+		</node>
+		<link uin="ieje0rfz367gvz-aofzoa">
+			<property name="$metaclass" value="Dependency20"/>
+			<participant referencedUin="design:node:::ba089nfz34corc-azbzpi" role="Client"></participant>
+			<participant referencedUin="design:node:::ba089nfz34d41rrj70dz" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfz36cnz3rj6ijy">
+			<property name="$metaclass" value="Dependency20"/>
+			<participant referencedUin="design:node:::ba089nfz34corc-azbzpi" role="Client"></participant>
+			<participant referencedUin="design:node:::ba089nfz34psyn-4guapy" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="ba089nfz34d41rrj70dz">
+		<property name="$metaclass" value="Component20"/>
+		<property name="$name" value="RDF Store"/>
+	</node>
+	<node uin="ba089nfz34psyn-4guapy">
+		<property name="$metaclass" value="Component20"/>
+		<property name="$name" value="Flow Service DB"/>
+	</node>
+</nodeSet>
