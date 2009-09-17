@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<nodeSet  version="1.1">
+	<node uin="jevcj8fzd2r3te-ra3qd4">
+		<property name="$metaclass" value="Device20"/>
+		<property name="$name" value="Linux Server"/>
+		<node uin="-2452mffzd3id91q7u0f2">
+			<property name="$metaclass" value="ExecutionEnvironment20"/>
+			<property name="$name" value="Meandre Server"/>
+			<link uin="ieje0rfzd4alc8-vocudn">
+				<property name="$metaclass" value="Deployment20"/>
+				<participant referencedUin="design:node:::-2452mffzd3id91q7u0f2:jevcj8fzd2r3te-ra3qd4" role="Client"></participant>
+				<participant referencedUin="design:node:::-4asen8fzd49qv2vmrrwd" role="Supplier"></participant>
+			</link>
+		</node>
+		<link uin="ieje0rfzd3jlsdo3wlhb">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="label" value="JDBC"/>
+			<property name="clientCardinality" value="1..*"/>
+			<participant referencedUin="design:node:::jevcj8fzd2r3te-ra3qd4" role="Client"></participant>
+			<participant referencedUin="design:node:::jevcj8fzd3dhql-x0hwpz" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfzd4n3we5obdhw">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="label" value="JDBC"/>
+			<participant referencedUin="design:node:::jevcj8fzd2r3te-ra3qd4" role="Client"></participant>
+			<participant referencedUin="design:node:::61wm0fzd4077y-lvrwht" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="jevcj8fzd2szce-uqduba">
+		<property name="$metaclass" value="Device20"/>
+		<property name="$name" value="Linux Server"/>
+		<node uin="-2452mffzd3lce4uxokd4">
+			<property name="$metaclass" value="ExecutionEnvironment20"/>
+			<property name="$name" value="NEMA Flow Service"/>
+		</node>
+		<link uin="ieje0rfzd3ml33w8afa3">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="supplierCardinality" value="1..*"/>
+			<property name="label" value="REST / HTTP"/>
+			<participant referencedUin="design:node:::jevcj8fzd2szce-uqduba" role="Client"></participant>
+			<participant referencedUin="design:node:::jevcj8fzd2r3te-ra3qd4" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfzd47egn-ibd5ui">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="label" value="JDBC"/>
+			<participant referencedUin="design:node:::jevcj8fzd2szce-uqduba" role="Client"></participant>
+			<participant referencedUin="design:node:::61wm0fzd4077y-lvrwht" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="emlt0fzd3vlkflp0txp">
+		<property name="$metaclass" value="Device20"/>
+		<property name="$name" value="Linux Server"/>
+		<node uin="9bqtgfzd3vlkfq61qou">
+			<property name="$metaclass" value="ExecutionEnvironment20"/>
+			<property name="$name" value="Java EE Application Server"/>
+			<link uin="ieje0rfzd4kgwd-iz4ce4">
+				<property name="$metaclass" value="Deployment20"/>
+				<participant referencedUin="design:node:::9bqtgfzd3vlkfq61qou:emlt0fzd3vlkflp0txp" role="Client"></participant>
+				<participant referencedUin="design:node:::-y2zfpsfzd4htge-r8x2ps" role="Supplier"></participant>
+			</link>
+		</node>
+		<link uin="ieje0rfzd3x554-mq2sbp">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="label" value="RMI"/>
+			<participant referencedUin="design:node:::emlt0fzd3vlkflp0txp" role="Client"></participant>
+			<participant referencedUin="design:node:::jevcj8fzd2szce-uqduba" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfzd4h6zpp1g44h">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="label" value="JDBC"/>
+			<participant referencedUin="design:node:::emlt0fzd3vlkflp0txp" role="Client"></participant>
+			<participant referencedUin="design:node:::br9btfzd4gne3-hzks1b" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="jevcj8fzd3dhql-x0hwpz">
+		<property name="$metaclass" value="Device20"/>
+		<property name="$name" value="Linux Server"/>
+		<node uin="-2452mffzd3e4s0-mnsa41">
+			<property name="$metaclass" value="ExecutionEnvironment20"/>
+			<property name="$name" value="MySQL"/>
+			<link uin="ieje0rfzd3fqd2-6hn89r">
+				<property name="$metaclass" value="Deployment20"/>
+				<participant referencedUin="design:node:::-2452mffzd3e4s0-mnsa41:jevcj8fzd3dhql-x0hwpz" role="Client"></participant>
+				<participant referencedUin="design:node:::-y2zfpsfzd3fehsabcov" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+	<node uin="61wm0fzd4077y-lvrwht">
+		<property name="$metaclass" value="Device20"/>
+		<property name="$name" value="Linux Server"/>
+		<node uin="6my8ifzd4077ybott85">
+			<property name="$metaclass" value="ExecutionEnvironment20"/>
+			<property name="$name" value="MySQL"/>
+			<link uin="ieje0rfzd41wswlh68io">
+				<property name="$metaclass" value="Deployment20"/>
+				<participant referencedUin="design:node:::6my8ifzd4077ybott85:61wm0fzd4077y-lvrwht" role="Client"></participant>
+				<participant referencedUin="design:node:::-y2zfpsfzd41err-8nhi42" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+	<node uin="br9btfzd4gne3-hzks1b">
+		<property name="$metaclass" value="Device20"/>
+		<property name="$name" value="Linux Server"/>
+		<node uin="6c4mefzd4gne3-1pipo9">
+			<property name="$metaclass" value="ExecutionEnvironment20"/>
+			<property name="$name" value="MySQL"/>
+			<link uin="ieje0rfzd4lw3h-x7vey">
+				<property name="$metaclass" value="Deployment20"/>
+				<participant referencedUin="design:node:::6c4mefzd4gne3-1pipo9:br9btfzd4gne3-hzks1b" role="Client"></participant>
+				<participant referencedUin="design:node:::-y2zfpsfzd4l9jt-xz0z5l" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+	<node uin="-y2zfpsfzd3fehsabcov">
+		<property name="$metaclass" value="Artifact20"/>
+		<property name="$name" value="Meandre Schema"/>
+	</node>
+	<node uin="-y2zfpsfzd41err-8nhi42">
+		<property name="$metaclass" value="Artifact20"/>
+		<property name="$name" value="Flow Service Schema"/>
+	</node>
+	<node uin="-4asen8fzd49qv2vmrrwd">
+		<property name="$metaclass" value="DeploymentSpecification20"/>
+		<property name="$name" value="RDF Store Location"/>
+	</node>
+	<node uin="ttifwdfzd4ebw9e3ddt9">
+		<property name="$metaclass" value="Constraint"/>
+		<property name="$name" value="Constraint1"/>
+		<node uin="ul14qafzd4ebwb-4yn2ko">
+			<property name="$metaclass" value="ValueSpecification"/>
+			<property name="$name" value="ValueSpecification1"/>
+			<property name="language" value="ocl"/>
+			<property name="body" value="frozen&#10;"/>
+		</node>
+		<link uin="ieje0rfzd4esfo-t7u5v5">
+			<property name="$metaclass" value="ConstraintLink"/>
+			<participant referencedUin="design:node:::ttifwdfzd4ebw9e3ddt9" role="Client"></participant>
+			<participant referencedUin="design:node:::-2452mffzd3e4s0-mnsa41:jevcj8fzd3dhql-x0hwpz" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="-y2zfpsfzd4htge-r8x2ps">
+		<property name="$metaclass" value="Artifact20"/>
+		<property name="$name" value="NemaApp.war"/>
+	</node>
+	<node uin="-y2zfpsfzd4l9jt-xz0z5l">
+		<property name="$metaclass" value="Artifact20"/>
+		<property name="$name" value="NEMA App Schema"/>
+	</node>
+	<node uin="1g64yfzd4suah-jbpshw">
+		<property name="$metaclass" value="Note"/>
+		<property name="$note_text" value="Users&#10;Roles&#10;Preferences&#10;Collections&#10;Feature Sets&#10;Ground Truths"/>
+		<link uin="ieje0rfzd4ugofij2mpb">
+			<property name="$metaclass" value="Note Link"/>
+			<participant referencedUin="design:node:::1g64yfzd4suah-jbpshw" role="Client"></participant>
+			<participant referencedUin="design:node:::-y2zfpsfzd4l9jt-xz0z5l" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="1g64yfzd4v0ul-lqxoit">
+		<property name="$metaclass" value="Note"/>
+		<property name="$note_text" value="Flows&#10;Jobs&#10;Job Results&#10;Notifications"/>
+		<link uin="ieje0rfzd4vdv58dnoxp">
+			<property name="$metaclass" value="Note Link"/>
+			<participant referencedUin="design:node:::1g64yfzd4v0ul-lqxoit" role="Client"></participant>
+			<participant referencedUin="design:node:::-y2zfpsfzd41err-8nhi42" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="1g64yfzd50nl7-vv2xqd">
+		<property name="$metaclass" value="Note"/>
+		<property name="$note_text" value="All Meandre servers are configured to share the same store."/>
+		<link uin="ieje0rfzd51nlo-is28r">
+			<property name="$metaclass" value="Note Link"/>
+			<participant referencedUin="design:node:::1g64yfzd50nl7-vv2xqd" role="Client"></participant>
+			<participant referencedUin="design:node:::-4asen8fzd49qv2vmrrwd" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="1g64yfzd52wka6orwnf">
+		<property name="$metaclass" value="Note"/>
+		<property name="$note_text" value="Cluster of Meandre Servers"/>
+		<link uin="ieje0rfzd53xtjtjgfj2">
+			<property name="$metaclass" value="Note Link"/>
+			<participant referencedUin="design:node:::1g64yfzd52wka6orwnf" role="Client"></participant>
+			<participant referencedUin="design:node:::jevcj8fzd2r3te-ra3qd4" role="Supplier"></participant>
+		</link>
+	</node>
+</nodeSet>
