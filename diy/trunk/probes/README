@@ -1,0 +1,4 @@
+This project produces two artifacets:
+
+-A probe that does the lifecycle of flow monitoring.
+-A plugin that exposes the database properties used by the probe.
