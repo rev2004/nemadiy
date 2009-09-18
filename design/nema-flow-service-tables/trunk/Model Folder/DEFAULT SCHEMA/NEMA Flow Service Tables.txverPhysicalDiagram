@@ -51,7 +51,7 @@
 			</reference>
 		</reference>
 		<reference referencedUin="design:node:::-kxpr2xfzpwxhyxm9nxci">
-			<property name="bounds" value="125,325,281,211"/>
+			<property name="bounds" value="125,325,281,221"/>
 			<property name="location_set_by_user" value="true"/>
 			<property name="$shortcutReference" value="true"/>
 			<property name="bounds_setted_by_user" value="true"/>
@@ -60,29 +60,26 @@
 			</reference>
 			<reference referencedUin="design:node:::15pjgfzpymsp2-655gh6:-kxpr2xfzpwxhyxm9nxci">
 			</reference>
-			<reference referencedUin="design:node:::eh3w48fzpyhb7hnk1tr9:-kxpr2xfzpwxhyxm9nxci">
-				<property name="bounds" value="68,88,0,0"/>
-			</reference>
 			<reference referencedUin="design:node:::eh3w48fzpyh5zyaugqmi:-kxpr2xfzpwxhyxm9nxci">
 				<property name="bounds" value="51,81,0,0"/>
 			</reference>
 			<reference referencedUin="design:node:::eh3w48fzpyht5017rh7x:-kxpr2xfzpwxhyxm9nxci">
 				<property name="bounds" value="75,108,0,0"/>
 			</reference>
-			<reference referencedUin="design:node:::6gg7sfzpygyc1-4oz1ei:-kxpr2xfzpwxhyxm9nxci">
-				<property name="bounds" value="41,30,0,0"/>
-				<property name="location_set_by_user" value="true"/>
-			</reference>
 			<reference referencedUin="design:link:::ieje0rfzpyn6xx1608ma:-kxpr2xfzpwxhyxm9nxci">
 				<property name="sourceAnchor" value="380,330"/>
 				<property name="targetAnchor" value="586,157"/>
 				<property name="bendpoints" value=""/>
 			</reference>
+			<reference referencedUin="design:node:::6gg7sfzpygyc1-4oz1ei:-kxpr2xfzpwxhyxm9nxci">
+				<property name="bounds" value="41,30,0,0"/>
+				<property name="location_set_by_user" value="true"/>
+			</reference>
 			<reference referencedUin="design:link:::ieje0rfzr32ap9-x9xtqo:-kxpr2xfzpwxhyxm9nxci">
-				<property name="sourceAnchor" value="411,480"/>
-				<property name="targetAnchor" value="345,541"/>
-				<property name="bendpoints" value="440,480,440,580,345,580"/>
-				<property name="smooth_bendpoints" value="440,480,440,580,345,580"/>
+				<property name="sourceAnchor" value="411,490"/>
+				<property name="targetAnchor" value="345,551"/>
+				<property name="bendpoints" value="440,490,440,590,345,590"/>
+				<property name="smooth_bendpoints" value="440,490,440,590,345,590"/>
 				<property name="location_set_by_user" value="true"/>
 			</reference>
 			<reference referencedUin="design:node:::eh3w48fzpyhj2lk2cqgo:-kxpr2xfzpwxhyxm9nxci">
