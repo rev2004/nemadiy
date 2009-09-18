@@ -425,4 +425,13 @@
 			</link>
 		</node>
 	</node>
+	<node uin="1g64yfzr9hpz8-qafo9z">
+		<property name="$metaclass" value="Note"/>
+		<property name="$note_text" value="server_address = ip of the machine that executed (or is executing) the job.&#10;&#10;flow_id = the flow that was executed.&#10;&#10;job_uri = the key returned by Meandre for monitoring the job."/>
+		<link uin="ieje0rfzr9lnrq-hzuwy">
+			<property name="$metaclass" value="Note Link"/>
+			<participant referencedUin="design:node:::1g64yfzr9hpz8-qafo9z" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzpwvzvo-5b2rzg" role="Supplier"></participant>
+		</link>
+	</node>
 </nodeSet>
