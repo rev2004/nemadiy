@@ -112,9 +112,32 @@
 			<property name="erExactCardinality" value="1"/>
 			<property name="$metaclass" value="erPhysicalRelationship"/>
 			<property name="$name" value="fk3"/>
+			<link uin="ieje0rfzr35e83-mtnmp5">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::ieje0rfzr2ql8cbst0ia:-kxpr2xfzpwvzvo-5b2rzg" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzpymz8f-x1ujnk:-kxpr2xfzpwxhyxm9nxci" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzr35e8a-kxwkdr">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="ieje0rfzr35e8fhtzvxq">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::ieje0rfzr35e8a-kxwkdr:ieje0rfzr2ql8cbst0ia:-kxpr2xfzpwvzvo-5b2rzg" role="Client"></participant>
+					<participant referencedUin="design:node:::15pjgfzpymsp2-655gh6:-kxpr2xfzpwxhyxm9nxci" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::ieje0rfzr2ql8cbst0ia:-kxpr2xfzpwvzvo-5b2rzg" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzr33szs-vj2776:-kxpr2xfzpwvzvo-5b2rzg" role="Supplier"></participant>
+			</link>
 			<participant referencedUin="design:node:::-kxpr2xfzpwvzvo-5b2rzg" role="Client"></participant>
 			<participant referencedUin="design:node:::-kxpr2xfzpwxhyxm9nxci" role="Supplier"></participant>
 		</link>
+		<node uin="eh3w48fzr33szs-vj2776">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="flow"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+			<property name="erNotNull" value="true"/>
+		</node>
 	</node>
 	<node uin="-kxpr2xfzpwxhyxm9nxci">
 		<property name="$metaclass" value="erPhysicalEntity"/>
