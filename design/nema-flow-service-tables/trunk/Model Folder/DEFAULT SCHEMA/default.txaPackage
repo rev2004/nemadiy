@@ -171,14 +171,6 @@
 			<property name="erPhysicalSize" value="5"/>
 			<property name="erPhysicalScale" value="0"/>
 		</node>
-		<node uin="eh3w48fzpyhb7hnk1tr9">
-			<property name="$metaclass" value="erPhysicalAttribute"/>
-			<property name="erPhysicalScale" value="0"/>
-			<property name="$name" value="creator"/>
-			<property name="erPhysicalType" value="BIGINT"/>
-			<property name="erPhysicalSize" value="20"/>
-			<property name="erNotNull" value="true"/>
-		</node>
 		<node uin="eh3w48fzpyhj2lk2cqgo">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
 			<property name="$name" value="keyWords"/>
@@ -221,11 +213,27 @@
 					<participant referencedUin="design:node:::eh3w48fzpycdccsq0hzz:-kxpr2xfzpyc8w9mzlwb6" role="Supplier"></participant>
 				</link>
 				<participant referencedUin="design:link:::ieje0rfzpyn6xx1608ma:-kxpr2xfzpwxhyxm9nxci" role="Client"></participant>
-				<participant referencedUin="design:node:::eh3w48fzpyhb7hnk1tr9:-kxpr2xfzpwxhyxm9nxci" role="Supplier"></participant>
+				<participant referencedUin="design:node:::g27t3fzr3j1rj-qzs0x6:-kxpr2xfzpwxhyxm9nxci" role="Supplier"></participant>
 			</link>
 			<participant referencedUin="design:node:::-kxpr2xfzpwxhyxm9nxci" role="Client"></participant>
 			<participant referencedUin="design:node:::-kxpr2xfzpyc8w9mzlwb6" role="Supplier"></participant>
 		</link>
+		<node uin="5pjwrfzr3iyjq-4h79i1">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="url"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="255"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="g27t3fzr3j1rj-qzs0x6">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="creator"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+			<property name="erNotNull" value="true"/>
+		</node>
 		<node uin="eh3w48fzr30ro7-mtpmd8">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
 			<property name="erPhysicalScale" value="0"/>
