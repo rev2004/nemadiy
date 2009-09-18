@@ -1,0 +1,64 @@
+package edu.illinois.gslis.imirsel.util;
+
+/*
+ * @(#) JNDIHelper.java @VERSION@
+ * 
+ * Copyright (c) 2009+ Amit Kumar
+ * 
+ * The software is released under ASL 2.0, Please
+ * read License.txt
+ *
+ */
+
+
+import java.util.Hashtable;
+import java.util.logging.Logger;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
+
+/**
+ * 
+ * @author amitku
+ *
+ */
+public class JNDIHelper {
+	private static Logger logger = Logger.getAnonymousLogger();
+	
+
+	public static DataSource getFlowResultDataSource() throws Exception{
+		return getDataSource("java:/flowresults");
+	}
+
+
+
+	private static DataSource getDataSource(String service) throws Exception {
+		Context ctx;
+		try{
+			Hashtable env = new Hashtable();
+			env.put(Context.INITIAL_CONTEXT_FACTORY,"org.mortbay.naming.InitialContextFactory");
+			env.put(Context.PROVIDER_URL,"localhost:1099");
+			 ctx = new InitialContext(env);
+		}catch (Exception e){
+			logger.severe("Error configuring initial context "+e);
+			throw e;
+		}
+		Object obj;//object to return
+		try{
+			obj = ctx.lookup(service); //perform lookup
+		}catch (NamingException e) {
+			logger.warning("Problem looking up Object java:/monkmiddleware in the java:comp/env/jdbc JNDI namespase. Is the server namespace configured?: " + e +":"+ e.getMessage());
+			throw new Exception(e);
+		}
+		if(obj==null){
+			throw new Exception("could not find "+service);
+		}else{
+			return (DataSource)obj;
+			
+		}
+	}
+
+}

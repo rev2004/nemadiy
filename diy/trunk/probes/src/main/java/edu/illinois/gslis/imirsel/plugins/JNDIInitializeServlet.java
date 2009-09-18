@@ -56,6 +56,19 @@ public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin 
 	final static String DATA_PROPERTY_5 =  "concurrentConnection";
 	
 	
+	// TEST
+	public static void main(String args[]){
+		System.out.println("Before Trying to load the flow result properties file");
+		Properties flowResultsProperties = new Properties();
+		try {
+			flowResultsProperties.load(JNDIInitializeServlet.class.getClassLoader().getResourceAsStream("flowresults.properties"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println("After Trying to load the flow result properties file");
+	}
+	
+	
 	/**Called when the servlet starts -called only once.
 	 * 
 	 */
@@ -66,7 +79,7 @@ public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin 
 		
 		Properties flowResultsProperties = new Properties();
 		try {
-			flowResultsProperties.load(JNDIInitializeServlet.class.getResourceAsStream("flowresults.properties"));
+			flowResultsProperties.load(JNDIInitializeServlet.class.getClassLoader().getResourceAsStream("flowresults.properties"));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -99,7 +112,6 @@ public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin 
 	
 	
 	private DataSource getDataSource(Properties monkProperties) throws Exception {
-		
 		String driver =monkProperties.getProperty(DATA_PROPERTY_1);
 		String jdbc_url = monkProperties.getProperty(DATA_PROPERTY_2);
 		String user = monkProperties.getProperty(DATA_PROPERTY_3);
