@@ -626,10 +626,13 @@
 		</link>
 		<node uin="hnimszfzmul8pa-tgg4vc">
 			<property name="$metaclass" value="Property20"/>
-			<property name="mod_Visibility" value="$packageLocal"/>
-			<property name="$name" value="localPath"/>
 			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
 			<property name="mod__type" value="String"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="url"/>
 			<link uin="ieje0rfzmulfqk-bqj7kc">
 				<property name="$metaclass" value="TypeLink"/>
 				<participant referencedUin="design:node:::hnimszfzmul8pa-tgg4vc:-tdsqjufzct1nol-w16gmg" role="Client"></participant>
@@ -729,10 +732,13 @@
 		</node>
 		<node uin="hnimszfzmulonw-ra2r1f">
 			<property name="$metaclass" value="Property20"/>
-			<property name="mod_Visibility" value="$packageLocal"/>
-			<property name="$name" value="localPath"/>
 			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
 			<property name="mod__type" value="String"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="url"/>
 			<link uin="ieje0rfzmulza5-ev0064">
 				<property name="$metaclass" value="TypeLink"/>
 				<participant referencedUin="design:node:::hnimszfzmulonw-ra2r1f:-tdsqjufzct2fwr-t5p87o" role="Client"></participant>
@@ -898,7 +904,7 @@
 			<property name="lower" value="1"/>
 			<property name="upper" value="1"/>
 			<property name="multiplicity" value="1"/>
-			<property name="$name" value="localPath"/>
+			<property name="$name" value="url"/>
 			<link uin="ieje0rfzcuc95n5qgf81">
 				<property name="$metaclass" value="TypeLink"/>
 				<participant referencedUin="design:node:::hnimszfzcubvjys1639q:-tdsqjufzcu71k1ov5xhw" role="Client"></participant>
