@@ -17,14 +17,15 @@ public class NEMAFlowNotification implements Probe {
 	 * 
 	 */
 	public void initialize (){
-	
+	// Initialize the log4 logger
+		System.out.println("Probe Initialized");
 	}
 	
 	/** Invoked when the probe object has finished its live cycle.
 	 * 
 	 */
 	public void dispose(){
-		
+		System.out.println("Probe Disposed");
 	}
 	
 	/** Returns the serialized probe information.
@@ -40,7 +41,7 @@ public class NEMAFlowNotification implements Probe {
 	 * @param ts The time stamp
 	 */
 	public void probeFlowStart(String sFlowUniqueID, Date ts, String weburl){
-		
+		System.out.println("Flow Started " + ts.toString()+ " " +sFlowUniqueID + "  " + weburl);
 	}
 	
 	/** The flow stopped executing.
@@ -49,7 +50,7 @@ public class NEMAFlowNotification implements Probe {
 	 * @param ts The time stamp
 	 */
 	public void probeFlowFinish(String sFlowUniqueID, Date ts){
-		
+		System.out.println("Flow Finished " + ts.toString()+ " " +sFlowUniqueID);
 	}
 	
 	/** The flow aborted the execution.
