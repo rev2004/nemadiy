@@ -36,8 +36,8 @@
 				<property name="bounds" value="22,23,0,0"/>
 			</reference>
 			<reference referencedUin="design:link:::ieje0rfzpycvyidwc9k6:-kxpr2xfzpwvzvo-5b2rzg">
-				<property name="sourceAnchor" value="411,116"/>
-				<property name="targetAnchor" value="545,116"/>
+				<property name="sourceAnchor" value="130,255"/>
+				<property name="targetAnchor" value="5,255"/>
 				<property name="bendpoints" value=""/>
 			</reference>
 			<reference referencedUin="design:node:::eh3w48fzpxk0i6-f1q552:-kxpr2xfzpwvzvo-5b2rzg">
@@ -67,8 +67,8 @@
 				<property name="bounds" value="75,108,0,0"/>
 			</reference>
 			<reference referencedUin="design:link:::ieje0rfzpyn6xx1608ma:-kxpr2xfzpwxhyxm9nxci">
-				<property name="sourceAnchor" value="380,330"/>
-				<property name="targetAnchor" value="586,157"/>
+				<property name="sourceAnchor" value="130,330"/>
+				<property name="targetAnchor" value="5,330"/>
 				<property name="bendpoints" value=""/>
 			</reference>
 			<reference referencedUin="design:node:::6gg7sfzpygyc1-4oz1ei:-kxpr2xfzpwxhyxm9nxci">
@@ -87,21 +87,56 @@
 			</reference>
 		</reference>
 		<reference referencedUin="design:node:::-kxpr2xfzpwxsy8vyfwla">
-			<property name="bounds" value="540,265,180,116"/>
+			<property name="bounds" value="545,25,246,141"/>
 			<property name="location_set_by_user" value="true"/>
 			<property name="$shortcutReference" value="true"/>
 			<property name="bounds_setted_by_user" value="true"/>
+			<reference referencedUin="design:node:::eh3w48fzr489ua1xe8f6:-kxpr2xfzpwxsy8vyfwla">
+				<property name="bounds" value="144,3,0,0"/>
+			</reference>
+			<reference referencedUin="design:node:::eh3w48fzr43a6sy03ouv:-kxpr2xfzpwxsy8vyfwla">
+				<property name="bounds" value="57,30,0,0"/>
+			</reference>
+			<reference referencedUin="design:link:::ieje0rfzr44lcl-fr9rxa:-kxpr2xfzpwxsy8vyfwla">
+				<property name="sourceAnchor" value="550,145"/>
+				<property name="targetAnchor" value="411,145"/>
+				<property name="bendpoints" value=""/>
+				<property name="location_set_by_user" value="true"/>
+			</reference>
+			<reference referencedUin="design:node:::eh3w48fzr45wtn-y5986t:-kxpr2xfzpwxsy8vyfwla">
+				<property name="bounds" value="151,1,0,0"/>
+			</reference>
+			<reference referencedUin="design:node:::eh3w48fzr43uht-zbudfx:-kxpr2xfzpwxsy8vyfwla">
+				<property name="bounds" value="116,3,0,0"/>
+			</reference>
 		</reference>
 		<reference referencedUin="design:node:::-kxpr2xfzpwy36f-qhd9d">
-			<property name="bounds" value="540,490,180,126"/>
+			<property name="bounds" value="545,250,246,141"/>
 			<property name="location_set_by_user" value="true"/>
 			<property name="$shortcutReference" value="true"/>
 			<property name="bounds_setted_by_user" value="true"/>
+			<reference referencedUin="design:link:::ieje0rfzr4brna-arjns3:-kxpr2xfzpwy36f-qhd9d">
+				<property name="sourceAnchor" value="550,295"/>
+				<property name="targetAnchor" value="5,295"/>
+				<property name="bendpoints" value=""/>
+				<property name="location_set_by_user" value="true"/>
+			</reference>
+			<reference referencedUin="design:node:::eh3w48fzr4bw7355v8gv:-kxpr2xfzpwy36f-qhd9d">
+				<property name="bounds" value="133,16,0,0"/>
+			</reference>
+			<reference referencedUin="design:node:::eh3w48fzr4dz5w-z38mz:-kxpr2xfzpwy36f-qhd9d">
+				<property name="bounds" value="646,246,0,0"/>
+			</reference>
+			<reference referencedUin="design:node:::eh3w48fzr4engsmeuyvy:-kxpr2xfzpwy36f-qhd9d">
+				<property name="bounds" value="91,-4,0,0"/>
+			</reference>
 		</reference>
 		<reference referencedUin="design:node:::-kxpr2xfzpyc8w9mzlwb6">
-			<property name="bounds" value="540,70,180,82"/>
+			<property name="bounds" value="-180,235,180,91"/>
 			<property name="location_set_by_user" value="true"/>
 			<property name="$shortcutReference" value="true"/>
+			<property name="bounds_setted_by_user" value="true"/>
+			<property name="$hidden" value="true"/>
 			<reference referencedUin="design:node:::eh3w48fzpycdccsq0hzz:-kxpr2xfzpyc8w9mzlwb6">
 				<property name="bounds" value="28,6,0,0"/>
 			</reference>
