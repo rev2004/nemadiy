@@ -169,6 +169,7 @@
 			<property name="erPhysicalType" value="INTEGER"/>
 			<property name="erPhysicalSize" value="5"/>
 			<property name="erPhysicalScale" value="0"/>
+			<property name="erNotNull" value="true"/>
 		</node>
 		<node uin="of3lt0fzpymz8f-x1ujnk">
 			<property name="$metaclass" value="erPhysicalKeyGroup"/>
@@ -201,6 +202,35 @@
 			</link>
 			<participant referencedUin="design:node:::-kxpr2xfzpwxhyxm9nxci" role="Client"></participant>
 			<participant referencedUin="design:node:::-kxpr2xfzpyc8w9mzlwb6" role="Supplier"></participant>
+		</link>
+		<node uin="eh3w48fzr30ro7-mtpmd8">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="derivedFrom"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<link uin="ieje0rfzr32ap9-x9xtqo">
+			<property name="erExactCardinality" value="1"/>
+			<property name="$metaclass" value="erPhysicalRelationship"/>
+			<property name="$name" value="fk4"/>
+			<link uin="ieje0rfzr330ha-1bubbo">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::ieje0rfzr32ap9-x9xtqo:-kxpr2xfzpwxhyxm9nxci" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzpymz8f-x1ujnk:-kxpr2xfzpwxhyxm9nxci" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzr330hd-22njc3">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="ieje0rfzr330hfxsj3z9">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::ieje0rfzr330hd-22njc3:ieje0rfzr32ap9-x9xtqo:-kxpr2xfzpwxhyxm9nxci" role="Client"></participant>
+					<participant referencedUin="design:node:::15pjgfzpymsp2-655gh6:-kxpr2xfzpwxhyxm9nxci" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::ieje0rfzr32ap9-x9xtqo:-kxpr2xfzpwxhyxm9nxci" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzr30ro7-mtpmd8:-kxpr2xfzpwxhyxm9nxci" role="Supplier"></participant>
+			</link>
+			<participant referencedUin="design:node:::-kxpr2xfzpwxhyxm9nxci" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzpwxhyxm9nxci" role="Supplier"></participant>
 		</link>
 	</node>
 	<node uin="-kxpr2xfzpwxsy8vyfwla">
