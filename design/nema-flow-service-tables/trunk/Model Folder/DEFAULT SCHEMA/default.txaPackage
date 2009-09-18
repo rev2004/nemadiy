@@ -166,25 +166,25 @@
 		</node>
 		<node uin="eh3w48fzpyh5zyaugqmi">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
-			<property name="$name" value="dateCreated"/>
-			<property name="erPhysicalType" value="INTEGER"/>
+			<property name="$name" value="date_created"/>
+			<property name="erPhysicalType" value="DATE"/>
 			<property name="erPhysicalSize" value="5"/>
 			<property name="erPhysicalScale" value="0"/>
 		</node>
 		<node uin="eh3w48fzpyhj2lk2cqgo">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
-			<property name="$name" value="keyWords"/>
-			<property name="erPhysicalType" value="INTEGER"/>
-			<property name="erPhysicalSize" value="5"/>
+			<property name="$name" value="key_words"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
 			<property name="erPhysicalScale" value="0"/>
 		</node>
 		<node uin="eh3w48fzpyht5017rh7x">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
-			<property name="$name" value="isTemplate"/>
-			<property name="erPhysicalType" value="INTEGER"/>
-			<property name="erPhysicalSize" value="5"/>
-			<property name="erPhysicalScale" value="0"/>
 			<property name="erNotNull" value="true"/>
+			<property name="$name" value="is_template"/>
+			<property name="erPhysicalType" value="BIT"/>
+			<property name="erPhysicalSize" value="1"/>
+			<property name="erPhysicalScale" value="0"/>
 		</node>
 		<node uin="of3lt0fzpymz8f-x1ujnk">
 			<property name="$metaclass" value="erPhysicalKeyGroup"/>
@@ -221,10 +221,10 @@
 		<node uin="5pjwrfzr3iyjq-4h79i1">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
 			<property name="erPhysicalScale" value="0"/>
-			<property name="$name" value="url"/>
-			<property name="erPhysicalType" value="VARCHAR"/>
-			<property name="erPhysicalSize" value="255"/>
 			<property name="erNotNull" value="true"/>
+			<property name="$name" value="url"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
 		</node>
 		<node uin="g27t3fzr3j1rj-qzs0x6">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
@@ -236,10 +236,10 @@
 		</node>
 		<node uin="eh3w48fzr30ro7-mtpmd8">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
-			<property name="erPhysicalScale" value="0"/>
-			<property name="$name" value="derivedFrom"/>
+			<property name="$name" value="instance_of"/>
 			<property name="erPhysicalType" value="BIGINT"/>
 			<property name="erPhysicalSize" value="20"/>
+			<property name="erPhysicalScale" value="0"/>
 		</node>
 		<link uin="ieje0rfzr32ap9-x9xtqo">
 			<property name="erExactCardinality" value="1"/>

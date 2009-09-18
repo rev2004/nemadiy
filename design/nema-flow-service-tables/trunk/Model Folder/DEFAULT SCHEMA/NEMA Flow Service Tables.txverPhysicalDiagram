@@ -78,8 +78,8 @@
 			<reference referencedUin="design:link:::ieje0rfzr32ap9-x9xtqo:-kxpr2xfzpwxhyxm9nxci">
 				<property name="sourceAnchor" value="411,490"/>
 				<property name="targetAnchor" value="345,551"/>
-				<property name="bendpoints" value="440,490,440,590,345,590"/>
-				<property name="smooth_bendpoints" value="440,490,440,590,345,590"/>
+				<property name="bendpoints" value="440,490,440,580,345,580"/>
+				<property name="smooth_bendpoints" value="440,490,440,580,345,580"/>
 				<property name="location_set_by_user" value="true"/>
 			</reference>
 			<reference referencedUin="design:node:::eh3w48fzpyhj2lk2cqgo:-kxpr2xfzpwxhyxm9nxci">
