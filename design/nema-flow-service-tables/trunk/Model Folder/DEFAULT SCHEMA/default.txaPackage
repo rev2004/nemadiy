@@ -80,11 +80,11 @@
 		</node>
 		<node uin="eh3w48fzpyapmv-e5qv6u">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
-			<property name="erPhysicalScale" value="0"/>
-			<property name="$name" value="owner"/>
+			<property name="erNotNull" value="true"/>
+			<property name="$name" value="owner_id"/>
 			<property name="erPhysicalType" value="BIGINT"/>
 			<property name="erPhysicalSize" value="20"/>
-			<property name="erNotNull" value="true"/>
+			<property name="erPhysicalScale" value="0"/>
 		</node>
 		<link uin="ieje0rfzpycvyidwc9k6">
 			<property name="erExactCardinality" value="1"/>
@@ -132,11 +132,18 @@
 		</link>
 		<node uin="eh3w48fzr33szs-vj2776">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
-			<property name="erPhysicalScale" value="0"/>
-			<property name="$name" value="flow"/>
+			<property name="erNotNull" value="true"/>
+			<property name="$name" value="flow_id"/>
 			<property name="erPhysicalType" value="BIGINT"/>
 			<property name="erPhysicalSize" value="20"/>
-			<property name="erNotNull" value="true"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="eh3w48fzr9b4ng-rdrh4g">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="job_uri"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
 		</node>
 	</node>
 	<node uin="-kxpr2xfzpwxhyxm9nxci">
@@ -229,11 +236,11 @@
 		</node>
 		<node uin="g27t3fzr3j1rj-qzs0x6">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
-			<property name="erPhysicalScale" value="0"/>
-			<property name="$name" value="creator"/>
+			<property name="erNotNull" value="true"/>
+			<property name="$name" value="creator_id"/>
 			<property name="erPhysicalType" value="BIGINT"/>
 			<property name="erPhysicalSize" value="20"/>
-			<property name="erNotNull" value="true"/>
+			<property name="erPhysicalScale" value="0"/>
 		</node>
 		<node uin="eh3w48fzr30ro7-mtpmd8">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
@@ -287,10 +294,10 @@
 		</node>
 		<node uin="eh3w48fzr43uht-zbudfx">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
-			<property name="erPhysicalScale" value="0"/>
-			<property name="$name" value="generated_by"/>
+			<property name="$name" value="job_id"/>
 			<property name="erPhysicalType" value="BIGINT"/>
 			<property name="erPhysicalSize" value="20"/>
+			<property name="erPhysicalScale" value="0"/>
 		</node>
 		<link uin="ieje0rfzr44lcl-fr9rxa">
 			<property name="erExactCardinality" value="1"/>
@@ -365,7 +372,7 @@
 		</node>
 		<node uin="eh3w48fzr4bw7355v8gv">
 			<property name="$metaclass" value="erPhysicalAttribute"/>
-			<property name="$name" value="recipient"/>
+			<property name="$name" value="recipient_id"/>
 			<property name="erPhysicalType" value="INTEGER"/>
 			<property name="erPhysicalSize" value="5"/>
 			<property name="erPhysicalScale" value="0"/>
