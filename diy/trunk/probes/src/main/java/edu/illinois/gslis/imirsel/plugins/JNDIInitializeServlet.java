@@ -38,7 +38,7 @@ import org.meandre.plugins.MeandrePlugin;
 /**Initializes various JNDI resources for MEANDRE
  * 
  * @author Amit Kumar
- * Created on Apr 2, 2009 2:46:39 AM
+ * Created on Sep 1 2009
  *
  */
 public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin {
