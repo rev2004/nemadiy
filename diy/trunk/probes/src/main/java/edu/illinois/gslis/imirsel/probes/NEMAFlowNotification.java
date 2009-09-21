@@ -2,7 +2,11 @@ package edu.illinois.gslis.imirsel.probes;
 
 import java.util.Date;
 
+import javax.sql.DataSource;
+
 import org.meandre.core.engine.Probe;
+
+import edu.illinois.gslis.imirsel.util.JNDIHelper;
 
 /** This FlowNotification is used by the Meandre Server to persist the 
  * notifications to the database.
@@ -12,6 +16,10 @@ import org.meandre.core.engine.Probe;
  *
  */
 public class NEMAFlowNotification implements Probe {
+	
+	
+	private DataSource dataSource=null;
+	
 
 	/** Invoked when the probe object get instantiated.
 	 * 
@@ -19,7 +27,13 @@ public class NEMAFlowNotification implements Probe {
 	public void initialize (){
 	// Initialize the log4 logger
 		System.out.println("Probe Initialized");
-	}
+	     try {
+			dataSource= JNDIHelper.getFlowResultDataSource();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}                                                        
+    }
 	
 	/** Invoked when the probe object has finished its live cycle.
 	 * 

@@ -11,6 +11,7 @@ package edu.illinois.gslis.imirsel.plugins;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import java.util.Hashtable;
@@ -34,6 +35,9 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.meandre.configuration.CoreConfiguration;
 import org.meandre.plugins.MeandrePlugin;
 
+import edu.illinois.gslis.imirsel.annotations.SQLPersistence;
+import edu.illinois.gslis.imirsel.model.Job;
+
 
 /**Initializes various JNDI resources for MEANDRE
  * 
@@ -49,6 +53,9 @@ public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin 
 	private Logger logger;
 	private Context ctx;
 	private boolean inited=Boolean.FALSE;
+	private DataSource dataSourceFlowResults=null;
+	private DataSource dataSourceJob=null;
+	
 	final static String DATA_PROPERTY_1 =  "driver";
 	final static String DATA_PROPERTY_2 =  "jdbcURL";
 	final static String DATA_PROPERTY_3 =  "user";
@@ -76,18 +83,17 @@ public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin 
 	public void init(ServletConfig config) throws ServletException{
 		super.init(config);
 		logger.info("Starting the JNDIInitialize Servlet: -loading various database contexts");
-		
 		Properties flowResultsProperties = new Properties();
+		Properties jobStatusProperties = new Properties();
 		try {
 			flowResultsProperties.load(JNDIInitializeServlet.class.getClassLoader().getResourceAsStream("flowresults.properties"));
+			jobStatusProperties.load(JNDIInitializeServlet.class.getClassLoader().getResourceAsStream("jobstatus.properties"));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			logger.severe(e1.getMessage());
 			throw new ServletException(e1);
 		}
-		
-		
 		try{
 			Hashtable env = new Hashtable();
 			env.put(Context.INITIAL_CONTEXT_FACTORY,"org.mortbay.naming.InitialContextFactory");
@@ -98,24 +104,71 @@ public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin 
 			throw new ServletException(e);
 		}
 		
-		DataSource dataSourceFlowResults=null;
 		try {
 			dataSourceFlowResults = getDataSource(flowResultsProperties);
+			dataSourceJob = getDataSource(jobStatusProperties);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.severe("Error getting properites  "+e);
 		}
 		logger.info("binding flowresults datasource");
 		bindObject("java:/flowresults",dataSourceFlowResults);
+		bindObject("java:/jobstatus",dataSourceJob);
+		
+		createDataTablesIfNotExist();
 		this.inited(true);
 	}
 	
 	
-	private DataSource getDataSource(Properties monkProperties) throws Exception {
-		String driver =monkProperties.getProperty(DATA_PROPERTY_1);
-		String jdbc_url = monkProperties.getProperty(DATA_PROPERTY_2);
-		String user = monkProperties.getProperty(DATA_PROPERTY_3);
-		String password =monkProperties.getProperty(DATA_PROPERTY_4);
+	/**Creates tables if the tables don't already exist
+	 * 
+	 */
+	private void createDataTablesIfNotExist() {
+		// check for the Job table, if it does not exist create it
+		SQLPersistence mdata=Job.class.getAnnotation(SQLPersistence.class);
+		String sqlCreate =mdata.create();
+		if(sqlCreate.equals("[unassigned]")){
+			System.out.println("Ignoring sql Create for Job.class "+ sqlCreate);
+			return;
+		}
+		
+		 Connection con = null;
+         try {
+                con = dataSourceJob.getConnection();
+         }catch(SQLException e) {
+                System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
+         }
+         PreparedStatement createTable = null;
+         try {
+			createTable= con.prepareStatement(sqlCreate);
+			createTable.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				con.commit();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+
+
+	private DataSource getDataSource(Properties properties) throws Exception {
+		String driver =properties.getProperty(DATA_PROPERTY_1);
+		String jdbc_url = properties.getProperty(DATA_PROPERTY_2);
+		String user = properties.getProperty(DATA_PROPERTY_3);
+		String password =properties.getProperty(DATA_PROPERTY_4);
 		try {
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
