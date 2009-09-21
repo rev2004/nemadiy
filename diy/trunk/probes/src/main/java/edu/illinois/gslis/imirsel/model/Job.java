@@ -2,15 +2,25 @@ package edu.illinois.gslis.imirsel.model;
 
 import java.sql.Timestamp;
 
+import edu.illinois.gslis.imirsel.annotations.SQLPersistence;
+
+@SQLPersistence(create =  "create table IF NOT EXISTS nema_jobstatus (id bigint(20) NOT NULL auto_increment PRIMARY KEY," +
+		" executionId text NOT NULL," +
+		" status int(11)," +
+		"serverAddress text NOT NULL, " +
+		"startTimeStamp TIMESTAMP," +
+		"finishTimeStamp TIMESTAMP) engine=innodb",
+	store="insert into nema_jobstatus(executionId,status,serverAddress,startTimeStamp, finishTimeStamp) " +
+			"values(?,?,?,?,?)")
 public class Job {
 	// object id
 	private long id;
 	private Timestamp finishTimeStamp;
-	private String name;
+	//private String name;
 	private String serverAddress;
 	private Timestamp startTimeStamp;
-	private int status;
-	private Timestamp submitTimeStamp;
+	//private int status;
+	//private Timestamp submitTimeStamp;
 	
 	public long getId() {
 		return id;
@@ -24,25 +34,27 @@ public class Job {
 	public void setFinishTimeStamp(Timestamp finishTimeStamp) {
 		this.finishTimeStamp = finishTimeStamp;
 	}
-	public String getName() {
+/*	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
+*/
 	public String getServerAddress() {
 		return serverAddress;
 	}
 	public void setServerAddress(String serverAddress) {
 		this.serverAddress = serverAddress;
 	}
+
 	public Timestamp getStartTimeStamp() {
 		return startTimeStamp;
 	}
 	public void setStartTimeStamp(Timestamp startTimeStamp) {
 		this.startTimeStamp = startTimeStamp;
 	}
-	public int getStatus() {
+/*	public int getStatus() {
 		return status;
 	}
 	public void setStatus(int status) {
@@ -54,5 +66,5 @@ public class Job {
 	public void setSubmitTimeStamp(Timestamp submitTimeStamp) {
 		this.submitTimeStamp = submitTimeStamp;
 	}
-	
+	*/
 }

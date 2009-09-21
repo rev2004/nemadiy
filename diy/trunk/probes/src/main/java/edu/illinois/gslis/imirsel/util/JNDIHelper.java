@@ -29,8 +29,23 @@ public class JNDIHelper {
 	private static Logger logger = Logger.getAnonymousLogger();
 	
 
+	/**Returns the DataSource for the flow results -used by components
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	public static DataSource getFlowResultDataSource() throws Exception{
 		return getDataSource("java:/flowresults");
+	}
+
+
+	/**Returns the DataSource for the job status database -used by the probe
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public static DataSource getJobStatusDataSource() throws Exception{
+		return getDataSource("java:/jobstatus");
 	}
 
 
