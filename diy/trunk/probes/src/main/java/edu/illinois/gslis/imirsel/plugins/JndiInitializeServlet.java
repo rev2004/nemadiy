@@ -66,9 +66,9 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 	// TEST
 	public static void main(String args[]){
 		System.out.println("Before Trying to load the flow result properties file");
-		Properties flowResultsProperties = new Properties();
+		Properties flowServiceProperties = new Properties();
 		try {
-			flowResultsProperties.load(JndiInitializeServlet.class.getClassLoader().getResourceAsStream("jobresult.properties"));
+			flowServiceProperties.load(JndiInitializeServlet.class.getClassLoader().getResourceAsStream("nemaflowservice.properties"));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -83,11 +83,9 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 	public void init(ServletConfig config) throws ServletException{
 		super.init(config);
 		logger.info("Starting the JNDIInitialize Servlet: -loading various database contexts");
-		Properties flowResultsProperties = new Properties();
-		Properties jobStatusProperties = new Properties();
+		Properties nemaFlowServiceProperties = new Properties();
 		try {
-			flowResultsProperties.load(JndiInitializeServlet.class.getClassLoader().getResourceAsStream("jobresult.properties"));
-			jobStatusProperties.load(JndiInitializeServlet.class.getClassLoader().getResourceAsStream("job.properties"));
+			nemaFlowServiceProperties.load(JndiInitializeServlet.class.getClassLoader().getResourceAsStream("nemaflowservice.properties"));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -105,8 +103,8 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 		}
 		
 		try {
-			dataSourceFlowResults = getDataSource(flowResultsProperties);
-			dataSourceJob = getDataSource(jobStatusProperties);
+			dataSourceFlowResults = getDataSource(nemaFlowServiceProperties);
+			dataSourceJob = getDataSource(nemaFlowServiceProperties);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.severe("Error getting properites  "+e);
