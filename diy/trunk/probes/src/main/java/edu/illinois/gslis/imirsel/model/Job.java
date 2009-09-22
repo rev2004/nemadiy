@@ -4,16 +4,17 @@ import java.sql.Timestamp;
 
 import edu.illinois.gslis.imirsel.annotations.SqlPersistence;
 
-@SqlPersistence(create =  "create table IF NOT EXISTS nema_job" +
+@SqlPersistence(
+	create =  "create table IF NOT EXISTS nema_job" +
 		" (id bigint(20) NOT NULL auto_increment PRIMARY KEY," +
 		" name text NOT NULL,"+
 		" executionId text NOT NULL," +
-		" status int(11)," +
+		" status int(8)," +
 		" serverAddress text NOT NULL, " +
 		" startTimeStamp TIMESTAMP," +
 		" finishTimeStamp TIMESTAMP) engine=innodb",
-	store="insert into nema_jobstatus(executionId,status,serverAddress,startTimeStamp, finishTimeStamp) " +
-			"values(?,?,?,?,?)")
+	store="insert into nema_jobstatus(name,executionId,status,serverAddress,startTimeStamp, finishTimeStamp) " +
+			"values(?,?,?,?,?,?)")
 public class Job {
 	// object id
 	private long id;
