@@ -13,6 +13,25 @@
   	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
   	<url>http://www.lis.illinois.edu</url>
   </organization>
+
+  <distributionManagement>
+    <!-- use the following if you're not using a snapshot version. -->
+      <repository>
+          <id>MonkRepository</id>
+              <name>Monk Repository</name>
+                  <url>scp://monk.lis.uiuc.edu/content/web/root/maven2</url>
+                    </repository>
+                      <!-- use the following if you ARE using a snapshot version. -->
+                        <snapshotRepository>
+                           <uniqueVersion>true</uniqueVersion>
+                               <id>MonkSnapshotRepository</id>
+                                   <name>Monk Snapshot Repository</name>
+                                       <url>scp://monk.lis.illinois.edu/content/web/root/snapshot</url>
+                                         </snapshotRepository>
+
+                                             <downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
+
+        </distributionManagement>
   
   
    <build>
@@ -62,8 +81,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+      <version>4.2</version>
     </dependency>
     
     
