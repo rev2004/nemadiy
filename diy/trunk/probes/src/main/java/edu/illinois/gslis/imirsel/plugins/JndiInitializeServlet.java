@@ -45,7 +45,7 @@ import edu.illinois.gslis.imirsel.model.Job;
  * Created on Sep 1 2009
  *
  */
-public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin {
+public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin {
 	/**
 	 * 
 	 */
@@ -68,7 +68,7 @@ public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin 
 		System.out.println("Before Trying to load the flow result properties file");
 		Properties flowResultsProperties = new Properties();
 		try {
-			flowResultsProperties.load(JNDIInitializeServlet.class.getClassLoader().getResourceAsStream("flowresults.properties"));
+			flowResultsProperties.load(JndiInitializeServlet.class.getClassLoader().getResourceAsStream("jobresult.properties"));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -86,8 +86,8 @@ public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin 
 		Properties flowResultsProperties = new Properties();
 		Properties jobStatusProperties = new Properties();
 		try {
-			flowResultsProperties.load(JNDIInitializeServlet.class.getClassLoader().getResourceAsStream("flowresults.properties"));
-			jobStatusProperties.load(JNDIInitializeServlet.class.getClassLoader().getResourceAsStream("jobstatus.properties"));
+			flowResultsProperties.load(JndiInitializeServlet.class.getClassLoader().getResourceAsStream("jobresult.properties"));
+			jobStatusProperties.load(JndiInitializeServlet.class.getClassLoader().getResourceAsStream("job.properties"));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

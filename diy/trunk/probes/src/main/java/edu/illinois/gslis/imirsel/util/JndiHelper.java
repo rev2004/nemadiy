@@ -1,7 +1,7 @@
 package edu.illinois.gslis.imirsel.util;
 
 /*
- * @(#) JNDIHelper.java @VERSION@
+ * @(#) JndiHelper.java @VERSION@
  * 
  * Copyright (c) 2009+ Amit Kumar
  * 
@@ -25,7 +25,7 @@ import javax.sql.DataSource;
  * @author amitku
  *
  */
-public class JNDIHelper {
+public class JndiHelper {
 	private static Logger logger = Logger.getAnonymousLogger();
 	
 
