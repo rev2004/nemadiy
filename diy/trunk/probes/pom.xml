@@ -3,7 +3,7 @@
   <groupId>edu.illinois.gslis.imirsel</groupId>
   <artifactId>probes</artifactId>
   <name>NEMA: Probes and Plugin</name>
-  <version>1.01-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
 
 <scm>
   	<connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/probes</connection>
