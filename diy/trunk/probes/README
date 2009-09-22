@@ -3,9 +3,9 @@ This project produces two artifacets:
 -A probe that monitors the lifecycle of a flow.
 -A plugin that exposes the database properties used by the probe.
 
-In order to run the probe and plugin in the meandre application, -Create two databases
-nema_flowresults and nema_jobstatus on the database server with the username and password (-look at the
-flowresults.properties and jobstatus.properties file respectively.)
+In order to run the probe and plugin in the meandre application, -Create a database
+nema_flowservice on the database server with the username and password (-look at the
+nemaflowservice.properties file.)
 
 
 
