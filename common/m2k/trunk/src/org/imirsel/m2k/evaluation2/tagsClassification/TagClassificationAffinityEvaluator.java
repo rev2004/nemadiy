@@ -35,6 +35,18 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
     private boolean performMatlabStatSigTests = true;
     private String matlabPath = "matlab";
     
+    private int[] precisionPoints = new int[]{3,6,9,12,15};
+    
+    private HashSet<String> query_subset = null;
+    
+    public HashSet<String> getQuery_subset(){
+        return query_subset;
+    }
+
+    public void setQuery_subset(HashSet<String> query_subset){
+        this.query_subset = query_subset;
+    }
+
     public boolean getVerbose() {
         return verbose;
     }
@@ -54,6 +66,9 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
     
     private double computeAreaUnderROCCurve(ArrayList<double[]> ROCpointSequence){
         //System.out.println("computing AUC-ROC for " + ROCpointSequence.size() + " point sequence");
+        if (ROCpointSequence.size() == 0){
+            return 0.0;
+        }
         double[] last = ROCpointSequence.get(0);
         double[] curr;
         double area = 0.0;
@@ -82,6 +97,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                               "Results file:      " + dataToEvaluate.getFile().getAbsolutePath() + "\n";
         systemReport =        "Ground-truth file: " + groundTruth.getFile().getAbsolutePath() + "\n";
 
+        
         //check GT and eval data for existence of right data 
         if (!groundTruth.hasMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)) {
             throw new noMetadataException("No " + EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP + " ground-truth metadata found in object, representing " + groundTruth.getFile().getAbsolutePath());
@@ -119,8 +135,13 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         HashMap<String, Double> clip2AUC_ROC = new HashMap<String, Double>();
         HashMap<String, ArrayList<double[]>> clip2ROCpointSequence = new HashMap<String, ArrayList<double[]>>();
         
+        HashMap<String, double[]> clip2PrecisionAtN = new HashMap<String, double[]>();
+        
         HashMap<String, Double> tag2AUC_ROC = new HashMap<String, Double>();
         HashMap<String, ArrayList<double[]>> tag2ROCpointSequence = new HashMap<String, ArrayList<double[]>>();
+        
+        double overallAUC_ROC;
+        ArrayList<double[]> overallROCpointSequence = null;
         
         HashMap<String, ArrayList<AffinityDataPoint>> tag2affinityDataPoints = new HashMap<String, ArrayList<AffinityDataPoint>>();
         for (Iterator<String> it = tagSet.iterator(); it.hasNext();) {
@@ -148,10 +169,20 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         double[] ds;
         int idx;
         ArrayList<AffinityDataPoint> tmpClipROCPointList;
+        ArrayList<AffinityDataPoint> overallROCPointList = new ArrayList<AffinityDataPoint>();
+        
+        double[] avgPrecisionAtN = new double[precisionPoints.length];
+        int numPaths = 0;
         
         //step through all paths in the results and populate the tag2affinityDataPoints map
         for (Iterator<String> pathIter = path2tag2affinity.keySet().iterator(); pathIter.hasNext();) {
             path = pathIter.next();
+            if((getQuery_subset() != null)&&(!query_subset.contains(path))){
+                continue;
+            }
+            
+            numPaths++;
+            
             //System.out.println("path: " + path);
             returnedAffinities = path2tag2affinity.get(path);
             trueSet = GT_binaryTagData.get(path);
@@ -161,8 +192,10 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                 tag = it.next();
                 //System.out.println("\ttag: " + tag);
                 try{
-                    tag2affinityDataPoints.get(tag).add(new AffinityDataPoint(trueSet.contains(tag), returnedAffinities.get(tag)));
-                    tmpClipROCPointList.add(new AffinityDataPoint(trueSet.contains(tag), returnedAffinities.get(tag)));
+                    AffinityDataPoint tmpDataPoint = new AffinityDataPoint(trueSet.contains(tag), returnedAffinities.get(tag));
+                    tag2affinityDataPoints.get(tag).add(tmpDataPoint);
+                    tmpClipROCPointList.add(tmpDataPoint);
+                    overallROCPointList.add(tmpDataPoint);
                 }catch(Exception e){
                     String tagSetStr = "";
                     for (Iterator<String> tagit = tag2affinityDataPoints.keySet().iterator(); tagit.hasNext();){
@@ -178,8 +211,10 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             missingAffinities.removeAll(returnedAffinities.keySet());
             for (Iterator<String> it = missingAffinities.iterator(); it.hasNext();) {
                 tag = it.next();
-                tag2affinityDataPoints.get(tag).add(new AffinityDataPoint(trueSet.contains(tag), Double.NEGATIVE_INFINITY));
-                tmpClipROCPointList.add(new AffinityDataPoint(trueSet.contains(tag), Double.NEGATIVE_INFINITY));
+                AffinityDataPoint tmpDataPoint = new AffinityDataPoint(trueSet.contains(tag),Double.NEGATIVE_INFINITY);
+                tag2affinityDataPoints.get(tag).add(tmpDataPoint);
+                tmpClipROCPointList.add(tmpDataPoint);
+                overallROCPointList.add(tmpDataPoint);
             }
             Collections.sort(tmpClipROCPointList);
             
@@ -210,8 +245,12 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             anROCpointSequence = new ArrayList<double[]>();
             clip2ROCpointSequence.put(path,anROCpointSequence);
             //addROCpoint(anROCpointSequence, 0.0, 0.0);
+            int pointCount = 0;
+            int currentN = 0;
+            double[] precisions = new double[precisionPoints.length];
             for (Iterator<AffinityDataPoint> it2 = tmpClipROCPointList.iterator(); it2.hasNext();) {
                 dataPoint = it2.next();
+                pointCount++;
                 if (dataPoint.affinity != lastAffinity){
                     addROCpoint(anROCpointSequence, ((double)falsePositives/(double)negatives), ((double)truePositives/(double)positives));
                 }
@@ -220,7 +259,20 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                 }else{
                     falsePositives++;
                 }
+                
+                //compute precisionat N scores
+                if (currentN < precisionPoints.length && pointCount == precisionPoints[currentN]){
+                    precisions[currentN] = truePositives / (double)(truePositives + falsePositives);
+                    currentN++;
+                }
             }
+            
+            //store precision at N for each clip
+            for (int i = 0; i < precisionPoints.length; i++){
+                avgPrecisionAtN[i] += precisions[i];
+            }
+            clip2PrecisionAtN.put(path, precisions);
+            
             if (anROCpointSequence.size() == 0){
                 addROCpoint(anROCpointSequence, 0.0, 0.0);
             }
@@ -231,6 +283,20 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             clip2AUC_ROC.put(path, auc);
             clip2ROCpointSequence.put(path,anROCpointSequence);
         }
+        
+        for (int i = 0; i < avgPrecisionAtN.length; i++){
+            avgPrecisionAtN[i] /= numPaths;
+        }
+        systemReport += "Average Precision at N:\n" +
+                "\tN\tPrecision\n";
+        for (int i = 0; i < precisionPoints.length; i++){
+            systemReport += "\t" + precisionPoints[i] + "\t" + avgPrecisionAtN[i] + "\n";
+        }
+        systemReport += "\n";
+        
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_OVERALL_PRECISION_AT_N, avgPrecisionAtN);
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_PRECISION_AT_N,clip2PrecisionAtN);
+        
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_AUC_ROC, clip2AUC_ROC);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_ROC_DATA, clip2ROCpointSequence);
         
@@ -240,12 +306,93 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         for (Iterator<String> it = tagSet.iterator(); it.hasNext();) {
             tag = it.next();
             dataPointList = tag2affinityDataPoints.get(tag);
-            Collections.sort(dataPointList);
-            
+            if (dataPointList.size() > 0){
+                Collections.sort(dataPointList);
+
+                //count positives and negatives
+                positives = 0;
+                negatives = 0;
+                for (Iterator<AffinityDataPoint> it2 = dataPointList.iterator(); it2.hasNext();) {
+                    dataPoint = it2.next();
+                    if(dataPoint.tagApplies){
+                        positives++;
+                    }else{
+                        negatives++;
+                    }
+                }
+
+
+                if (positives == 0){
+                    System.out.println("no positives!");
+                }
+                if (negatives == 0){
+                    System.out.println("no negatives!");
+                }
+
+                tag2numPositiveExamples.put(tag, positives);
+                tag2numNegativeExamples.put(tag, negatives);
+
+                //compute ROC
+                truePositives = 0;
+                falsePositives = 0;
+                truePosRate = 0.0;
+                falsePosRate = 0.0;
+                lastAffinity = Double.NEGATIVE_INFINITY;
+                anROCpointSequence = new ArrayList<double[]>();
+                tag2ROCpointSequence.put(tag,anROCpointSequence);
+
+                for (Iterator<AffinityDataPoint> it2 = dataPointList.iterator(); it2.hasNext();) {
+                    dataPoint = it2.next();
+                    if (dataPoint.affinity != lastAffinity){
+                        addROCpoint(anROCpointSequence, ((double)falsePositives/(double)negatives), ((double)truePositives/(double)positives));
+                    }
+                    if (dataPoint.tagApplies){
+                        truePositives++;
+                    }else{
+                        falsePositives++;
+                    }
+                }
+                if (anROCpointSequence.size() == 0){
+                    addROCpoint(anROCpointSequence, 0.0, 0.0);
+                }
+                addROCpoint(anROCpointSequence, ((double)falsePositives/negatives), ((double)truePositives/(double)positives));
+
+                systemReport += "Tag: " + tag + "\n";
+
+                ROCdomain = new double[anROCpointSequence.size()];
+                ROCrange = new double[anROCpointSequence.size()];
+                idx = 0;
+                for (Iterator<double[]> it2 = anROCpointSequence.iterator(); it2.hasNext();) {
+                    ds = it2.next();
+                    ROCdomain[idx] = ds[0];
+                    ROCrange[idx++] = ds[1];
+                }
+                SimpleNumericPlot tagROCPlot = new SimpleNumericPlot(false, false, dataToEvaluate.getFile().getName() + ", " + tag + " ROC curve", 
+                        "tag", null, "True postive rate", "False positive rate", ROCdomain, ROCrange, null);
+
+                File plotFile = new File(plotDir.getAbsolutePath() + File.separator + tag + ".png");
+                tagROCPlot.writeChartToFile(plotFile,600,600);
+
+
+                //compute AUC-ROC 
+                double auc = computeAreaUnderROCCurve(anROCpointSequence);
+                systemReport += "Area under the ROC curve (AUC-ROC): " + auc + "\n";
+                tag2AUC_ROC.put(tag, auc);
+            }else{
+                String message = "WARNING: no examples of tag '" + tag + "' found in the data";
+                System.out.println(message);
+                systemReport += message + "\n";
+            }
+        }
+        
+        {
+            //compute overall AUC-ROC
+            Collections.sort(overallROCPointList);
+
             //count positives and negatives
             positives = 0;
             negatives = 0;
-            for (Iterator<AffinityDataPoint> it2 = dataPointList.iterator(); it2.hasNext();) {
+            for (Iterator<AffinityDataPoint> it2 = overallROCPointList.iterator(); it2.hasNext();) {
                 dataPoint = it2.next();
                 if(dataPoint.tagApplies){
                     positives++;
@@ -253,18 +400,14 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                     negatives++;
                 }
             }
-            
-            
+
             if (positives == 0){
                 System.out.println("no positives!");
             }
             if (negatives == 0){
                 System.out.println("no negatives!");
             }
-            
-            tag2numPositiveExamples.put(tag, positives);
-            tag2numNegativeExamples.put(tag, negatives);
-            
+
             //compute ROC
             truePositives = 0;
             falsePositives = 0;
@@ -272,13 +415,12 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             falsePosRate = 0.0;
             lastAffinity = Double.NEGATIVE_INFINITY;
             anROCpointSequence = new ArrayList<double[]>();
-            tag2ROCpointSequence.put(tag,anROCpointSequence);
-            
-            //addROCpoint(anROCpointSequence, 0.0, 0.0);
-            for (Iterator<AffinityDataPoint> it2 = dataPointList.iterator(); it2.hasNext();) {
+            overallROCpointSequence = anROCpointSequence;
+
+            for (Iterator<AffinityDataPoint> it2 = overallROCPointList.iterator(); it2.hasNext();) {
                 dataPoint = it2.next();
                 if (dataPoint.affinity != lastAffinity){
-                    addROCpoint(anROCpointSequence, ((double)falsePositives/(double)negatives), ((double)truePositives/(double)positives));
+                    addROCpoint(overallROCpointSequence, ((double)falsePositives/(double)negatives), ((double)truePositives/(double)positives));
                 }
                 if (dataPoint.tagApplies){
                     truePositives++;
@@ -286,62 +428,50 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                     falsePositives++;
                 }
             }
-            if (anROCpointSequence.size() == 0){
-                addROCpoint(anROCpointSequence, 0.0, 0.0);
+            if (overallROCpointSequence.size() == 0){
+                addROCpoint(overallROCpointSequence, 0.0, 0.0);
             }
-            addROCpoint(anROCpointSequence, ((double)falsePositives/negatives), ((double)truePositives/(double)positives));
-            
-            systemReport += "Tag: " + tag + "\n";
-//            systemReport += "ROC curve (false pos,true pos): ";
-//            for (Iterator<double[]> it2 = anROCpointSequence.iterator(); it2.hasNext();) {
-//                ds = it2.next();
-//                systemReport += ds[0] + "," + ds[1] + "\t";
-//            }
-//            systemReport += "\n";
-            
-            //plot ROC curve and save
-//            System.out.println("ROC sequence length: " + anROCpointSequence.size());
-//            
-//            System.out.println("ROC curve (false pos,true pos): ");
-//            for (Iterator<double[]> it2 = anROCpointSequence.iterator(); it2.hasNext();) {
-//                ds = it2.next();
-//                System.out.print(ds[0] + "," + ds[1] + "\t");
-//            }
-//            System.out.println("");
-            
-            ROCdomain = new double[anROCpointSequence.size()];
-            ROCrange = new double[anROCpointSequence.size()];
+            addROCpoint(overallROCpointSequence, ((double)falsePositives/negatives), ((double)truePositives/(double)positives));
+
+            systemReport += "Overall: \n";
+
+            ROCdomain = new double[overallROCpointSequence.size()];
+            ROCrange = new double[overallROCpointSequence.size()];
             idx = 0;
-            for (Iterator<double[]> it2 = anROCpointSequence.iterator(); it2.hasNext();) {
+            for (Iterator<double[]> it2 = overallROCpointSequence.iterator(); it2.hasNext();) {
                 ds = it2.next();
                 ROCdomain[idx] = ds[0];
                 ROCrange[idx++] = ds[1];
             }
-            SimpleNumericPlot tagROCPlot = new SimpleNumericPlot(false, false, dataToEvaluate.getFile().getName() + ", " + tag + " ROC curve", 
+            SimpleNumericPlot overallROCPlot = new SimpleNumericPlot(false, false, dataToEvaluate.getFile().getName() + ", overall ROC curve", 
                     "tag", null, "True postive rate", "False positive rate", ROCdomain, ROCrange, null);
-//            tagROCPlot.validate();
-//            tagROCPlot.setVisible(true);
-            
-            
-            File plotFile = new File(plotDir.getAbsolutePath() + File.separator + tag + ".png");
-            tagROCPlot.writeChartToFile(plotFile,600,600);
-            
-            
+
+            File plotFile = new File(plotDir.getAbsolutePath() + File.separator + "overall.png");
+            overallROCPlot.writeChartToFile(plotFile,600,600);
+
+
             //compute AUC-ROC 
             double auc = computeAreaUnderROCCurve(anROCpointSequence);
             systemReport += "Area under the ROC curve (AUC-ROC): " + auc + "\n";
-            tag2AUC_ROC.put(tag, auc);
+            overallAUC_ROC = auc;
+
         }
         
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC,tag2AUC_ROC);
         
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC,tag2AUC_ROC);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_ROC_DATA,tag2ROCpointSequence);
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_OVERALL_AUC_ROC,overallAUC_ROC);
+        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_OVERALL_ROC_DATA,overallROCpointSequence);
+        
+        
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES, tag2numPositiveExamples);
         dataToEvaluate.setMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES, tag2numNegativeExamples);
+        dataToEvaluate.setMetadata(EvaluationDataObject.OVERALL_NUM_POSITIVE_EXAMPLES, positives);
+        dataToEvaluate.setMetadata(EvaluationDataObject.OVERALL_NUM_NEGATIVE_EXAMPLES, negatives);
         
         
         //report on files evaluated against
-        systemReport += "Number of files tested against: " + path2tag2affinity.size() + "\n";
+        systemReport += "Number of files tested against: " + clip2AUC_ROC.size() + "\n";
 //        systemReport += "Test file paths: " + path2tag2affinity.size() + "\n";
 //        String[] paths = path2tag2affinity.keySet().toArray(new String[path2tag2affinity.size()]);
 //        Arrays.sort(paths);
@@ -519,6 +649,46 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         }
         
         
+        
+        
+        //Write out clip Precision at N data for significance testing
+        File[] clip_Prec_at_N_files = new File[precisionPoints.length];
+        for (int i = 0; i < precisionPoints.length; i++){
+            System.err.println("Writing out per-track precision at " + precisionPoints[i] + " data");
+            
+            csvData = new String[totalNumRows+1][systemNames.length + 2];    
+            csvData[0][0] = "clip";
+            csvData[0][1] = "fold";
+
+            for (int j = 0; j < systemNames.length; j++) {
+                csvData[0][j+2] = systemNames[j];
+            }
+            foldOffset = 1;
+            for (int f = 0; f < numFolds; f++) {
+                for (int c = 0; c < clipNames[f].length; c++) {
+                    csvData[foldOffset + c][0] = clipNames[f][c];
+                    csvData[foldOffset + c][1] = "" + (f + 1);
+
+                    for (int s = 0; s < systemNames.length; s++) {
+                        HashMap<String, double[]> clip2PrecAtN =  (HashMap<String, double[]>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_PRECISION_AT_N);
+                        if(!clip2PrecAtN.containsKey(clipNames[f][c])){
+                            System.out.println("Error! Results for system: " + systemNames[s] + " did not contain precision at N results for fold " + (f+1) + " clip " + clipNames[f][c] + "!");
+                        }
+
+                        csvData[foldOffset + c][s+2] = "" + clip2PrecAtN.get(clipNames[f][c])[i];
+                    }
+                }
+                foldOffset += clipNames[f].length;
+            }
+            clip_Prec_at_N_files[i] = new File(outputDir.getAbsolutePath() + File.separator + "affinity_clip_Precision_at_" + precisionPoints[i] + ".csv");
+            try {
+                DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(clip_Prec_at_N_files[i], "\t", csvData, false); 
+            } catch (IOException ex) {
+                Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        
         System.err.println("Writing out overall report");
         //write overall report to file
         try {
@@ -532,8 +702,11 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         
         
         if (performMatlabStatSigTests){
-            performFriedmanTestWithTag_AUC_ROC(outputDir, AUC_ROC_file, systemNames);
-            performFriedmanTestWithTrack_AUC_ROC(outputDir,clip_AUC_ROC_file, systemNames);
+            //performFriedmanTestWithTag_AUC_ROC(outputDir, AUC_ROC_file, systemNames);
+            performFriedmanTestWithTrack_AUC_ROC(outputDir, clip_AUC_ROC_file, systemNames);
+            for (int i = 0; i < precisionPoints.length; i++){
+                performFriedmanTestWithTrack_Precision_at_N(precisionPoints[i], outputDir, clip_Prec_at_N_files[i], systemNames);
+            }
         }
 
         System.err.println("done.");
@@ -673,23 +846,6 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + "affinity.AUC_ROC_TRACK.friedman.tukeyKramerHSD.csv";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
-//
-//            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
-//            textOut.newLine();
-//            textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
-//            textOut.newLine();
-//            textOut.write("[length,width] = size(data);");
-//            textOut.newLine();
-//            textOut.write("AUCROC_TRACK = cell2mat(data(2:length,3:" + (systemNames.length + 2) + "));");
-//            textOut.newLine();
-//            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUCROC_TRACK,1,'on');");
-//            textOut.newLine();
-//            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
-//            textOut.newLine();
-//            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
-//            textOut.newLine();
-//            textOut.write("exit;");
-//            textOut.newLine();
 
             textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
             textOut.newLine();
@@ -784,100 +940,110 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
     }
     
-//    private void performFriedManTestWith_tag_AUC_ROC(File outputDir, File AUC_ROC_file, String[] systemNames) {
-//        //call matlab and execute Friedman's test with TK HSD
-//        //make sure readtext is in the working directory for matlab
-//        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
-//        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
-//        //create an m-file to run the test
-//        String evalCommand = "performFriedmanForTags";
-//        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
-//        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity_AUC_ROC.friedman.tukeyKramerHSD.png";
-//        try {
-//            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
-//
-//            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t')");
-//            textOut.newLine();
-//            textOut.write("AUC_ROC_Scores = data(:,5:" + (systemNames.length + 4) + ");");
-//            textOut.newLine();
-//            textOut.write("[P,friedmanTable,friedmanStats] = friedman(AUC_ROC_Scores,1,'on');");
-//            textOut.newLine();
-//            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
-//            textOut.newLine();
-//            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
-//            textOut.newLine();
-//            textOut.write("exit;");
-//            textOut.newLine();
-//
-//            textOut.close();
-//        } catch (IOException ex) {
-//            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
-//        matlabIntegrator.setMatlabBin(matlabPath);
-//        matlabIntegrator.setCommandFormattingStr("");
-//        matlabIntegrator.setMainCommand(evalCommand);
-//        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
-//        matlabIntegrator.start();
-//        try {
-//            matlabIntegrator.join();
-//
-//            //  call matlab and execute Beta-Binomial test
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        //delete readtext.m
-//        readtextMFile.delete();
-//    }
-    
-//    private void performFriedManTestWith_clip_AUC_ROC(File outputDir, File AUC_ROC_file, String[] systemNames) {
-//        //call matlab and execute Friedman's test with TK HSD
-//        //make sure readtext is in the working directory for matlab
-//        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
-//        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/TagClassification/resources/readtext.m", readtextMFile);
-//        //create an m-file to run the test
-//        String evalCommand = "performFriedmanForClips";
-//        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
-//        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity_clip_AUC_ROC.friedman.tukeyKramerHSD.png";
-//        try {
-//            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
-//
-//            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t')");
-//            textOut.newLine();
-//            textOut.write("clip_AUC_ROC_Scores = data(:,5:" + (systemNames.length + 4) + ");");
-//            textOut.newLine();
-//            textOut.write("[P,friedmanTable,friedmanStats] = friedman(clip_AUC_ROC_Scores,1,'on');");
-//            textOut.newLine();
-//            textOut.write("[c,m,fig,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05);");
-//            textOut.newLine();
-//            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
-//            textOut.newLine();
-//            textOut.write("exit;");
-//            textOut.newLine();
-//
-//            textOut.close();
-//        } catch (IOException ex) {
-//            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
-//        matlabIntegrator.setMatlabBin(matlabPath);
-//        matlabIntegrator.setCommandFormattingStr("");
-//        matlabIntegrator.setMainCommand(evalCommand);
-//        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
-//        matlabIntegrator.start();
-//        try {
-//            matlabIntegrator.join();
-//
-//            //  call matlab and execute Beta-Binomial test
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        //delete readtext.m
-//        readtextMFile.delete();
-//    }
-    
+    private void performFriedmanTestWithTrack_Precision_at_N(int N, File outputDir,File precisionAtNFile, String[] systemNames) {
+        //make sure readtext is in the working directory for matlab
+        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
+        
+        //create an m-file to run the test
+        String evalCommand = "performFriedmanForPrecisionAt" + N;
+        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "affinity.PrecisionAt" + N + ".friedman.tukeyKramerHSD.png";
+        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + "affinity.PrecisionAt" + N + ".friedman.tukeyKramerHSD.csv";
+        try {
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+            
+            String matrixName = "precisionAt" + N;
+            
+            textOut.write("[data, result] = readtext('" + precisionAtNFile.getAbsolutePath() + "', '\t');");
+            textOut.newLine();
+            textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
+            textOut.newLine();
+            textOut.write("[length,width] = size(data);");
+            textOut.newLine();
+            textOut.write(matrixName + " = cell2mat(data(2:length,3:" + (systemNames.length + 2) + "));");
+            textOut.newLine();
+            textOut.write("[val sort_idx] = sort(mean(" + matrixName + "));");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(" + matrixName + "(:,fliplr(sort_idx)),1,'on'); close(gcf)");
+            textOut.newLine();
+            textOut.write("[c,m,h,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05,'display','off');");
+            textOut.newLine();
+            textOut.write("fig = figure;");
+            textOut.newLine();
+            textOut.write("width = (-c(1,3)+c(1,5))/4;");
+            textOut.newLine();
+            textOut.write("set(gcf,'position',[497   313   450   351])");
+            textOut.newLine();
+            textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
+            textOut.newLine();
+            textOut.write("for i=1:" + systemNames.length + ",");
+            textOut.newLine();
+            textOut.write("    plot([i i],[-width width]+friedmanStats.meanranks(i));");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[-width -width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[+width +width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
+            textOut.newLine();
+            textOut.write("sortedAlgNames = algNames(fliplr(sort_idx));");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',sortedAlgNames)");
+            textOut.newLine();
+            textOut.write("ylabel('Mean Column Ranks')");
+            textOut.newLine();
+            textOut.write("h = title('" + precisionAtNFile.getAbsolutePath() + "')");
+            textOut.newLine();
+            textOut.write("set(h,'interpreter','none')");
+            textOut.newLine();
+            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+            textOut.newLine();
+            textOut.write("fidFriedman=fopen('" + friedmanTablePath + "','w+');");
+            textOut.newLine();
+            textOut.write("fprintf(fidFriedman,'%s,%s,%s,%s,%s,%s\\n','*TeamID','TeamID','Lowerbound','Mean','Upperbound','Significance');");
+            textOut.newLine();
+            textOut.write("for i=1:size(c,1)");
+            textOut.newLine();
+            textOut.write("        if sign(c(i,3))*sign(c(i,5)) > 0");
+            textOut.newLine();
+            textOut.write("            tf='TRUE';");
+            textOut.newLine();
+            textOut.write("        else");
+            textOut.newLine();
+            textOut.write("            tf='FALSE';");
+            textOut.newLine();
+            textOut.write("        end");
+            textOut.newLine();
+            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',sortedAlgNames{c(i,1)},sortedAlgNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("fclose(fidFriedman);");
+            textOut.newLine();
+            textOut.write("exit;");
+            textOut.newLine();
+            
+            textOut.close();
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+        matlabIntegrator.setMatlabBin(matlabPath);
+        matlabIntegrator.setCommandFormattingStr("");
+        matlabIntegrator.setMainCommand(evalCommand);
+        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+        matlabIntegrator.start();
+        try {
+            matlabIntegrator.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
     
     public static void main(String[] args) {
         String systemName = args[0];

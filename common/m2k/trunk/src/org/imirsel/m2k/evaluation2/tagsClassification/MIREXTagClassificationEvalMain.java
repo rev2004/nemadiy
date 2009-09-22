@@ -22,7 +22,7 @@ public class MIREXTagClassificationEvalMain {
     public static final String BINARY_FILE_EXTENSION = ".bin";
     public static final String AFFINITY_FILE_EXTENSION = ".aff";
     
-    public static final String USAGE = "args: /path/to/GT/file /path/to/output/dir /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName";
+    public static final String USAGE = "args: /path/to/GT/file /path/to/output/dir /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemName [-s /path/to/subsetOfQueriesToEvaluate]";
     public static void main(String[] args) {
         
         System.out.println("MIREX 2008 Audio Tag classification evaluator\n" +
@@ -49,17 +49,36 @@ public class MIREXTagClassificationEvalMain {
         
         
 //        ArrayList<Integer> systemsMissingAffinityData = new ArrayList<Integer>();
+        File subsetFile = null;
         
         System.out.println("---");
         for (int i = 2; i < args.length; i+=2) {
-            String systemName = args[i+1];
-            File resultsPath = new File(args[i]);
-            systemNames.add(systemName);
-            resultsDirs.add(resultsPath);
-            System.out.println("System " + systemNames.size()+ "; " + systemName + ", " + resultsPath.getAbsolutePath());
+            if (args[i].equalsIgnoreCase("-s")){
+                subsetFile = new File(args[i+1]);
+            }else{
+                File resultsPath = new File(args[i]);
+                String systemName = args[i+1];
+                systemNames.add(systemName);
+                resultsDirs.add(resultsPath);
+                System.out.println("System " + systemNames.size()+ "; " + systemName + ", " + resultsPath.getAbsolutePath());
+            }
         }
         
         ArrayList<String> affinitySystemNames = (ArrayList<String>)systemNames.clone();
+        
+        //integrate subset here
+        HashSet<String> subset = null;
+        
+        if(subsetFile != null){
+            //load subset
+            System.out.println("Loading subset of queries to evaluate from: " + subsetFile.getAbsolutePath());
+            TagClassificationQuerySubsetReader subsetReader = new TagClassificationQuerySubsetReader();
+            subsetReader.setMIREX_submissionMode(true);
+            subsetReader.setVerbose(true);
+            subset = subsetReader.readFile(subsetFile);
+        }else{
+            System.out.println("Not loading a query subset, evaluating all available queries");
+        }
         
         System.out.println("---");
         
@@ -174,6 +193,9 @@ public class MIREXTagClassificationEvalMain {
                 HashSet<String> missing = (HashSet<String>)masterPathListPerFold[j].clone();
                 HashMap<String,HashSet<String>> path2tagList = (HashMap<String,HashSet<String>>)resultData[i][j].getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
                 missing.removeAll(path2tagList.keySet());
+                if (subset != null){
+                    missing.retainAll(subset);
+                }
                 if (!missing.isEmpty()){
                     System.out.println("\tpatching in " + missing.size() + " paths (as no classification were returned) for: " + systemNames.get(i) + ", fold " + (j+1));
                     for (Iterator<String> it = missing.iterator(); it.hasNext();) {
@@ -187,6 +209,9 @@ public class MIREXTagClassificationEvalMain {
                 HashSet<String> missing = (HashSet<String>)masterPathListPerFold[j].clone();
                 HashMap<String,HashMap<String,Double>> path2tagAffList = (HashMap<String,HashMap<String,Double>>)affResultData.get(i)[j].getMetadata(EvaluationDataObject.TAG_AFFINITY_MAP);
                 missing.removeAll(path2tagAffList.keySet());
+                if (subset != null){
+                    missing.retainAll(subset);
+                }
                 if (!missing.isEmpty()){
                     System.out.println("\tpatching in " + missing.size() + " paths (as no affinities were returned) for: " + systemNames.get(i) + ", fold " + (j+1));
                     for (Iterator<String> it = missing.iterator(); it.hasNext();) {
@@ -200,19 +225,23 @@ public class MIREXTagClassificationEvalMain {
         //run binary evaluation
         System.out.println("performing binary relevance evaluation...");
         TagClassificationBinaryEvaluator binEval = new TagClassificationBinaryEvaluator();
+        if (subset != null){
+            binEval.setQuery_subset(subset);
+        }
         binEval.setVerbose(true);
         binEval.setPerformMatlabStatSigTests(true);
-        binEval.evaluate((String[])systemNames.toArray(new String[systemNames.size()]), 
+        binEval.evaluate(systemNames.toArray(new String[systemNames.size()]), 
                 resultData, GT, rootEvaluationDir);
-        
-        
         
         //run affinity evaluation
         System.out.println("performing tag affinity evaluation...");
         TagClassificationAffinityEvaluator affEval = new TagClassificationAffinityEvaluator();
+        if (subset != null){
+            affEval.setQuery_subset(subset);
+        }
         affEval.setVerbose(true);
         affEval.setPerformMatlabStatSigTests(true);
-        affEval.evaluate((String[])affinitySystemNames.toArray(new String[affinitySystemNames.size()]), 
+        affEval.evaluate(affinitySystemNames.toArray(new String[affinitySystemNames.size()]), 
                 (EvaluationDataObject[][])affResultData.toArray(new EvaluationDataObject[affResultData.size()][]), 
                 GT, rootEvaluationDir);
         
