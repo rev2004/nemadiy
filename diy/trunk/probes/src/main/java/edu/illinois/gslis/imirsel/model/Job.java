@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 import edu.illinois.gslis.imirsel.annotations.SqlPersistence;
 
-@SqlPersistence(create =  "create table IF NOT EXISTS nema_jobstatus " +
+@SqlPersistence(create =  "create table IF NOT EXISTS nema_job" +
 		" (id bigint(20) NOT NULL auto_increment PRIMARY KEY," +
 		" name text NOT NULL,"+
 		" executionId text NOT NULL," +
