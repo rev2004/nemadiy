@@ -78,6 +78,14 @@ public class EvaluationDataObject implements Serializable{
     public static final String TAG_BINARY_RECALL_MAP = "Tag classification binary relevance recall map";
     public static final String TAG_BINARY_FMEASURE_MAP = "Tag classification binary relevance fMeasure map";
     
+    public static final String TAG_BINARY_TRACK_ACCURACY_MAP = "Tag track classification binary relevance accuracy map";
+    public static final String TAG_BINARY_TRACK_POS_ACCURACY_MAP = "Tag track classification binary relevance positive example accuracy map";
+    public static final String TAG_BINARY_TRACK_NEG_ACCURACY_MAP = "Tag track classification binary relevance negative example accuracy map";
+    public static final String TAG_BINARY_TRACK_PRECISION_MAP = "Tag track classification binary relevance precision map";
+    public static final String TAG_BINARY_TRACK_RECALL_MAP = "Tag track classification binary relevance recall map";
+    public static final String TAG_BINARY_TRACK_FMEASURE_MAP = "Tag track classification binary relevance fMeasure map";
+    
+    
     public static final String TAG_BINARY_OVERALL_ACCURACY = "Tag classification binary relevance overall accuracy";
     public static final String TAG_BINARY_OVERALL_PRECISION = "Tag classification binary relevance overall precision";
     public static final String TAG_BINARY_OVERALL_RECALL = "Tag classification binary relevance overall recall";
@@ -87,11 +95,19 @@ public class EvaluationDataObject implements Serializable{
     public static final String TAG_AFFINITY_ROC_DATA = "Tag classification affinity tag ROC data points map";
     public static final String TAG_AFFINITY_CLIP_AUC_ROC = "Tag classification affinity clip AUC-ROC map";
     public static final String TAG_AFFINITY_CLIP_ROC_DATA = "Tag classification affinity clip ROC data points map";
+    public static final String TAG_AFFINITY_OVERALL_AUC_ROC = "Tag classification affinity overall AUC-ROC";
+    public static final String TAG_AFFINITY_OVERALL_ROC_DATA = "Tag classification affinity overall ROC data points";
     public static final String TAG_AFFINITY_TAG_AFFINITY_DATAPOINTS = "Tag classification affinity data points map";
+    
+    public static final String TAG_AFFINITY_CLIP_PRECISION_AT_N = "Tag classification affinity clip precision at N map";
+    public static final String TAG_AFFINITY_OVERALL_PRECISION_AT_N = "Tag classification affinity overall precision at N";
     
     public static final String TAG_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples map";
     public static final String TAG_NUM_NEGATIVE_EXAMPLES = "Tag classification number of negative examples map";
-            
+    
+    public static final String OVERALL_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples overall";
+    public static final String OVERALL_NUM_NEGATIVE_EXAMPLES = "Tag classification number of negative examples overall";
+    
     /**
      * The metadata hashmap.
      */

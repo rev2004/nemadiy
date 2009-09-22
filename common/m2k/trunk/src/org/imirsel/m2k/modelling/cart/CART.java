@@ -544,7 +544,7 @@ public class CART implements SignalClassifier {
             }
         }*/
         if(this.verbose) {
-            double resubAcc = 100.0 * ((double)root.getTreeMisclassifications()) / ((double)root.numExamples);
+            double resubAcc = 100.0 * (1.0 - ((double)root.getTreeMisclassifications() / (double)root.numExamples));
             int correct = 0;
             for (int i=0;i<inputData.length;i++)
             {
