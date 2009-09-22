@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?><project>
-  <parent>
-    <artifactId>nema</artifactId>
-    <groupId>edu.illinois.gslis.imirsel</groupId>
-    <version>1.01-SNAPSHOT</version>
-  </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.illinois.gslis.imirsel</groupId>
   <artifactId>probes</artifactId>
@@ -110,5 +105,14 @@
     
     
   </dependencies>
+
+  <properties>
+   <commons.dbcp.version>1.2.1</commons.dbcp.version>                     
+   <jstl.version>1.1.2</jstl.version>                                     
+   <log4j.version>1.2.13</log4j.version>                                  
+   <meandre-server.version>1.4.5</meandre-server.version> 
+   <servlet.version>2.4</servlet.version>
+
+  </properties>
 
 </project>
