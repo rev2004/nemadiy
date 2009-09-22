@@ -35,7 +35,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.meandre.configuration.CoreConfiguration;
 import org.meandre.plugins.MeandrePlugin;
 
-import edu.illinois.gslis.imirsel.annotations.SQLPersistence;
+import edu.illinois.gslis.imirsel.annotations.SqlPersistence;
 import edu.illinois.gslis.imirsel.model.Job;
 
 
@@ -125,7 +125,7 @@ public class JNDIInitializeServlet extends HttpServlet implements MeandrePlugin 
 	 */
 	private void createDataTablesIfNotExist() {
 		// check for the Job table, if it does not exist create it
-		SQLPersistence mdata=Job.class.getAnnotation(SQLPersistence.class);
+		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
 		String sqlCreate =mdata.create();
 		if(sqlCreate.equals("[unassigned]")){
 			System.out.println("Ignoring sql Create for Job.class "+ sqlCreate);
