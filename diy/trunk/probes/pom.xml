@@ -74,7 +74,24 @@
             </testResource>
         </testResources>
     </build>
-  
+<repositories>
+<repository>
+<id>central</id>
+<url>http://repo1.maven.org/maven2</url>
+</repository>
+<repository>
+<id>appfuse</id>
+<url>http://static.appfuse.org/repository</url>
+</repository>
+<repository>
+<id>monk</id>
+<url>http://www.monkproject.org/maven2</url>
+</repository>
+<repository>
+<id>taneshanet</id>
+<url>http://tanesha.net/maven2</url>
+</repository>
+</repositories>
   
   
   <dependencies>
