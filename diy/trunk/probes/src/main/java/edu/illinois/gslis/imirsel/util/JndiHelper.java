@@ -35,7 +35,7 @@ public class JndiHelper {
 	 * @throws Exception
 	 */
 	public static DataSource getFlowResultDataSource() throws Exception{
-		return getDataSource("java:/flowresults");
+		return getDataSource(PluginConstants.JOBRESULT_JNDI_SERVICE);
 	}
 
 
@@ -45,7 +45,7 @@ public class JndiHelper {
 	 * @throws Exception
 	 */
 	public static DataSource getJobStatusDataSource() throws Exception{
-		return getDataSource("java:/jobstatus");
+		return getDataSource(PluginConstants.JOB_JNDI_SERVICE);
 	}
 
 
@@ -65,7 +65,8 @@ public class JndiHelper {
 		try{
 			obj = ctx.lookup(service); //perform lookup
 		}catch (NamingException e) {
-			logger.warning("Problem looking up Object java:/monkmiddleware in the java:comp/env/jdbc JNDI namespase. Is the server namespace configured?: " + e +":"+ e.getMessage());
+			logger.warning("Problem looking up Object "+service+" in the java:comp/env/jdbc " +
+					"JNDI namespase. Is the server namespace configured?: " + e +":"+ e.getMessage());
 			throw new Exception(e);
 		}
 		if(obj==null){
