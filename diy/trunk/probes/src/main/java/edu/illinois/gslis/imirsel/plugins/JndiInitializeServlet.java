@@ -43,6 +43,7 @@ import edu.illinois.gslis.imirsel.model.Job;
  * 
  * @author Amit Kumar
  * Created on Sep 1 2009
+ * @revised Amit Kumar -changed the autoCommit to false in the pooling data source.
  *
  */
 public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin {
@@ -195,7 +196,7 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 		GenericObjectPool connectionPool = new GenericObjectPool(null);
 		ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(jdbc_url, user, password);
 		PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(
-				connectionFactory, connectionPool, null, null, false, true);
+				connectionFactory, connectionPool, null, null, false, false);
 		PoolingDataSource dataSource = new PoolingDataSource(connectionPool);
 		return dataSource;
 	}
