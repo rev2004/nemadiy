@@ -111,8 +111,8 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 			logger.severe("Error getting properites  "+e);
 		}
 		logger.info("binding flowresults datasource");
-		bindObject("java:/flowresults",dataSourceFlowResults);
-		bindObject("java:/jobstatus",dataSourceJob);
+		bindObject("java:/jobresult",dataSourceFlowResults);
+		bindObject("java:/job",dataSourceJob);
 		
 		createDataTablesIfNotExist();
 		this.inited(true);
