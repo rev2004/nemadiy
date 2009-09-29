@@ -8,11 +8,12 @@ import java.util.concurrent.TimeUnit;
 
 public class MeandreJobScheduler implements JobScheduler {
 	
-	private MeandreServer headNode;
+	/*#MeandreJobSchedulerConfig lnkMeandreJobSchedulerConfig*/
+private MeandreServer head;
 	
 	private Queue jobQueue;
 	
-	private List<MeandreServer> servers;
+	private List<MeandreServer> workers;
 
 	private final ScheduledExecutorService executor = Executors
 			.newSingleThreadScheduledExecutor();
@@ -49,4 +50,19 @@ public class MeandreJobScheduler implements JobScheduler {
 		// submit job
 		// unlock
 	}
+
+
+	public List<MeandreServer> getWorkers() {
+		return workers;
+	}
+
+
+	public void addWorker(MeandreServer server) {
+		
+	}
+	
+	public void removeWorker(MeandreServer server) {
+		
+	}
+	
 }

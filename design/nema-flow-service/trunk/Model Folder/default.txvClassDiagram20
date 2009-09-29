@@ -61,13 +61,13 @@
 		<reference referencedUin="jdt:e_class:src:NemaFlowService">
 			<property name="bounds" value="45,35,200,197"/>
 			<property name="location_set_by_user" value="true"/>
-			<reference referencedUin="jdt:l_impl:src:NemaFlowService:FlowService">
-				<property name="sourceAnchor" value="250,80"/>
-				<property name="targetAnchor" value="265,80"/>
-			</reference>
 			<reference referencedUin="jdt:l_ast:src:NemaFlowService:jobScheduler">
 				<property name="sourceAnchor" value="178,237"/>
 				<property name="targetAnchor" value="178,255"/>
+			</reference>
+			<reference referencedUin="jdt:l_impl:src:NemaFlowService:FlowService">
+				<property name="sourceAnchor" value="250,80"/>
+				<property name="targetAnchor" value="265,80"/>
 			</reference>
 		</reference>
 		<reference referencedUin="jdt:e_class:src:MeandreJobScheduler">
@@ -76,10 +76,6 @@
 			<reference referencedUin="jdt:l_impl:src:MeandreJobScheduler:JobScheduler">
 				<property name="sourceAnchor" value="895,297"/>
 				<property name="targetAnchor" value="239,297"/>
-			</reference>
-			<reference referencedUin="jdt:l_ast:src:MeandreJobScheduler:headNode">
-				<property name="sourceAnchor" value="1022,354"/>
-				<property name="targetAnchor" value="1022,440"/>
 			</reference>
 		</reference>
 		<reference referencedUin="jdt:e_class:src:JobScheduler">
