@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<nodeSet  version="1.1">
+	<view uin="V1hexuhg01dtmu9-bmrzr2">
+		<property name="$defaultDiagram" value="true"/>
+		<property name="$metaclass" value="ClassDiagram20"/>
+		<property name="__options" value=""/>
+		<reference referencedUin="jdt:e_class:src:FlowService">
+			<property name="bounds" value="260,35,241,289"/>
+			<property name="location_set_by_user" value="true"/>
+			<property name="bounds_setted_by_user" value="true"/>
+			<reference referencedUin="jdt:l_dpn:src:FlowService:lnkJob">
+				<property name="sourceAnchor" value="506,308"/>
+				<property name="targetAnchor" value="575,308"/>
+			</reference>
+			<reference referencedUin="jdt:l_dpn:src:FlowService:lnkFlow">
+				<property name="sourceAnchor" value="506,140"/>
+				<property name="targetAnchor" value="575,140"/>
+			</reference>
+			<reference referencedUin="jdt:l_dpn:src:FlowService:lnkNotification">
+				<property name="sourceAnchor" value="449,329"/>
+				<property name="targetAnchor" value="449,398"/>
+			</reference>
+			<reference referencedUin="jdt:e_method:src:FlowService.executeJob:executeJob~QString;~QString;~QLong;~QString;">
+			</reference>
+		</reference>
+		<reference referencedUin="jdt:e_class:src:Flow">
+			<property name="bounds" value="570,33,161,206"/>
+			<property name="location_set_by_user" value="true"/>
+			<property name="bounds_setted_by_user" value="true"/>
+			<reference referencedUin="jdt:l_ast:src:Flow:instanceOf">
+				<property name="sourceAnchor" value="736,240"/>
+				<property name="targetAnchor" value="732,244"/>
+				<property name="bendpoints" value="765,240,765,273,732,273"/>
+				<property name="smooth_bendpoints" value="765,240,765,273,732,273"/>
+			</reference>
+		</reference>
+		<reference referencedUin="jdt:e_class:src:Job">
+			<property name="bounds" value="570,288,161,241"/>
+			<property name="location_set_by_user" value="true"/>
+			<property name="bounds_setted_by_user" value="true"/>
+			<reference referencedUin="jdt:l_ast:src:Job:flow">
+				<property name="sourceAnchor" value="648,293"/>
+				<property name="targetAnchor" value="648,244"/>
+			</reference>
+		</reference>
+		<reference referencedUin="jdt:e_class:src:Notification">
+			<property name="bounds" value="365,393,121,136"/>
+			<property name="location_set_by_user" value="true"/>
+			<property name="bounds_setted_by_user" value="true"/>
+		</reference>
+		<reference referencedUin="design:view:::V1hexuhg06weoa0xsjbru">
+			<property name="bounds" value="60,370,228,247"/>
+			<property name="location_set_by_user" value="true"/>
+		</reference>
+		<reference referencedUin="jdt:e_class:src:MeandreServer">
+			<property name="bounds" value="945,435,189,228"/>
+			<property name="location_set_by_user" value="true"/>
+		</reference>
+		<reference referencedUin="jdt:e_class:src:NemaFlowService">
+			<property name="bounds" value="45,35,200,197"/>
+			<property name="location_set_by_user" value="true"/>
+			<reference referencedUin="jdt:l_impl:src:NemaFlowService:FlowService">
+				<property name="sourceAnchor" value="250,80"/>
+				<property name="targetAnchor" value="265,80"/>
+			</reference>
+			<reference referencedUin="jdt:l_ast:src:NemaFlowService:jobScheduler">
+				<property name="sourceAnchor" value="178,237"/>
+				<property name="targetAnchor" value="178,255"/>
+			</reference>
+		</reference>
+		<reference referencedUin="jdt:e_class:src:MeandreJobScheduler">
+			<property name="bounds" value="890,105,200,244"/>
+			<property name="location_set_by_user" value="true"/>
+			<reference referencedUin="jdt:l_impl:src:MeandreJobScheduler:JobScheduler">
+				<property name="sourceAnchor" value="895,297"/>
+				<property name="targetAnchor" value="239,297"/>
+			</reference>
+			<reference referencedUin="jdt:l_ast:src:MeandreJobScheduler:headNode">
+				<property name="sourceAnchor" value="1022,354"/>
+				<property name="targetAnchor" value="1022,440"/>
+			</reference>
+		</reference>
+		<reference referencedUin="jdt:e_class:src:JobScheduler">
+			<property name="bounds" value="113,250,121,94"/>
+			<property name="location_set_by_user" value="true"/>
+		</reference>
+	</view>
+</nodeSet>
