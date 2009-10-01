@@ -27,7 +27,8 @@ private MeandreServer head;
 	
 	
 	public void abortJob(Job job) {
-		
+		// find meandre server that is processing the job
+		// tell it to abort the job
 	}
 	
 	public void scheduleJob(Job job){
@@ -56,6 +57,9 @@ private MeandreServer head;
 		return workers;
 	}
 
+	public boolean isRunning(String jobId) {
+		return false;
+	}
 
 	public void addWorker(MeandreServer server) {
 		

@@ -54,10 +54,15 @@
 			</reference>
 		</reference>
 		<reference referencedUin="jdt:e_class:src:MeandreServer">
-			<property name="bounds" value="390,215,255,235"/>
+			<property name="bounds" value="390,215,255,266"/>
 			<property name="location_set_by_user" value="true"/>
 			<property name="$shortcutReference" value="true"/>
 			<property name="bounds_setted_by_user" value="true"/>
+			<property name="collapsedCompartments" value=""/>
+			<reference referencedUin="jdt:l_ast:src:MeandreServer:abortPending">
+				<property name="sourceAnchor" value="522,220"/>
+				<property name="targetAnchor" value="522,176"/>
+			</reference>
 			<reference referencedUin="jdt:l_ast:src:MeandreServer:numJobsRunning">
 				<property name="sourceAnchor" value="522,231"/>
 				<property name="targetAnchor" value="522,176"/>
@@ -72,25 +77,25 @@
 			<property name="location_set_by_user" value="true"/>
 			<property name="$shortcutReference" value="true"/>
 			<property name="bounds_setted_by_user" value="true"/>
+			<reference referencedUin="jdt:l_ast:src:NemaFlowService:jobScheduler">
+				<property name="sourceAnchor" value="153,526"/>
+				<property name="targetAnchor" value="153,584"/>
+			</reference>
 			<reference referencedUin="jdt:l_impl:src:NemaFlowService:FlowService">
 				<property name="sourceAnchor" value="160,310"/>
 				<property name="targetAnchor" value="160,241"/>
 				<property name="bendpoints" value=""/>
 			</reference>
-			<reference referencedUin="jdt:l_ast:src:NemaFlowService:jobScheduler">
-				<property name="sourceAnchor" value="153,526"/>
-				<property name="targetAnchor" value="153,584"/>
-			</reference>
 		</reference>
 		<reference referencedUin="jdt:e_class:src:MeandreJobScheduler">
-			<property name="bounds" value="390,505,255,301"/>
+			<property name="bounds" value="390,540,255,321"/>
 			<property name="location_set_by_user" value="true"/>
 			<property name="$shortcutReference" value="true"/>
 			<property name="bounds_setted_by_user" value="true"/>
 			<property name="collapsedCompartments" value=""/>
 			<reference referencedUin="jdt:l_dpn:src:MeandreJobScheduler:lnkMeandreJobSchedulerConfig">
-				<property name="sourceAnchor" value="650,675"/>
-				<property name="targetAnchor" value="790,675"/>
+				<property name="sourceAnchor" value="650,690"/>
+				<property name="targetAnchor" value="790,690"/>
 				<property name="bendpoints" value=""/>
 			</reference>
 			<reference referencedUin="jdt:l_impl:src:MeandreJobScheduler:JobScheduler">
@@ -99,8 +104,8 @@
 				<property name="bendpoints" value=""/>
 			</reference>
 			<reference referencedUin="jdt:l_ast:src:MeandreJobScheduler:head">
-				<property name="sourceAnchor" value="522,510"/>
-				<property name="targetAnchor" value="522,455"/>
+				<property name="sourceAnchor" value="522,545"/>
+				<property name="targetAnchor" value="522,486"/>
 			</reference>
 		</reference>
 		<reference referencedUin="jdt:e_class:src:JobScheduler">
