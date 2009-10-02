@@ -6,13 +6,16 @@ import java.util.Date;
  */
 
 public class Job {
+	
+	public enum JobStatus {UNKNOWN,SUBMITTED,RUNNING,FINISHED};
+	
 	private Long id;
 	private String description;
 	private String serverAddress;
 	private Date submitTimestamp;
 	private Date startTimestamp;
 	private Date finishTimestamp;
-	private Integer jobStatus;
+	private Integer statusCode;
 	private Long ownerId;
 	private String ownerEmail;
 	private Flow flow;
@@ -53,11 +56,23 @@ public class Job {
 	public void setFinishTimestamp(Date finishTimestamp) {
 		this.finishTimestamp = finishTimestamp;
 	}
-	public Integer getJobStatus() {
-		return jobStatus;
+	public Integer getStatusCode() {
+		return statusCode;
 	}
-	public void setJobStatus(Integer jobStatus) {
-		this.jobStatus = jobStatus;
+	public void setStatusCode(Integer statusCode) {
+		this.statusCode = statusCode;
+	}
+	public JobStatus getJobStatus() {
+		switch (statusCode) {
+		case 1:
+		return JobStatus.SUBMITTED;
+		case 2:
+		return JobStatus.RUNNING;
+		case 3:
+		return JobStatus.FINISHED;
+		default:
+			return JobStatus.UNKNOWN;
+		}
 	}
 	public Long getOwnerId() {
 		return ownerId;
@@ -83,7 +98,5 @@ public class Job {
 	public void setJobUri(String jobUri) {
 		this.jobUri = jobUri;
 	}
-	
-	
 	
 }
