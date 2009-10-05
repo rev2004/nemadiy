@@ -37,6 +37,7 @@ import org.meandre.plugins.MeandrePlugin;
 
 import edu.illinois.gslis.imirsel.annotations.SqlPersistence;
 import edu.illinois.gslis.imirsel.model.Job;
+import edu.illinois.gslis.imirsel.util.PluginConstants;
 
 
 /**Initializes various JNDI resources for MEANDRE
@@ -111,9 +112,8 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 			logger.severe("Error getting properites  "+e);
 		}
 		logger.info("binding flowresults datasource");
-		bindObject("java:/jobresult",dataSourceFlowResults);
-		bindObject("java:/job",dataSourceJob);
-		
+		bindObject(PluginConstants.JOBRESULT_JNDI_SERVICE,dataSourceFlowResults);
+		bindObject(PluginConstants.JOB_JNDI_SERVICE,dataSourceJob);
 		createDataTablesIfNotExist();
 		this.inited(true);
 	}
@@ -192,7 +192,7 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 	}
 	
 	private  DataSource setupDataSource(String jdbc_url, String user,String password) {
-		System.out.println("Setting up jdbc datasource: " + jdbc_url + " user: " + user);
+		//System.out.println("Setting up jdbc datasource: " + jdbc_url + " user: " + user);
 		GenericObjectPool connectionPool = new GenericObjectPool(null);
 		ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(jdbc_url, user, password);
 		PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(
@@ -204,7 +204,7 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 
 	public void bindObject(String jndiLoc, Object obj)
 	{	
-		System.out.println("JNDI Binding: " + jndiLoc);
+		//System.out.println("JNDI Binding: " + jndiLoc);
 		try{
 		ctx.bind(jndiLoc, obj);
 		}catch(NamingException e){

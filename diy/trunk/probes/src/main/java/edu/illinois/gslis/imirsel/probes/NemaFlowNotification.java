@@ -26,13 +26,14 @@ public class NemaFlowNotification implements Probe {
 	 */
 	public void initialize (){
 	// Initialize the log4 logger
-		System.out.println("Probe Initialized");
+	/*	System.out.println("Probe Initialized");
 	     try {
 			dataSource= JndiHelper.getFlowResultDataSource();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}                                                        
+		}
+		*/                                                        
     }
 	
 	/** Invoked when the probe object has finished its live cycle.
@@ -55,7 +56,7 @@ public class NemaFlowNotification implements Probe {
 	 * @param ts The time stamp
 	 */
 	public void probeFlowStart(String sFlowUniqueID, Date ts, String weburl){
-		System.out.println("Flow Started " + ts.toString()+ " " +sFlowUniqueID + "  " + weburl);
+		System.out.println("$$$$$ Flow Started " + ts.toString()+ " " +sFlowUniqueID + "  " + weburl);
 	}
 	
 	/** The flow stopped executing.
@@ -85,6 +86,7 @@ public class NemaFlowNotification implements Probe {
 	 */
 	public void probeExecutableComponentInitialized(String sECID, Object owc, 
 			Date ts, boolean bSerializeState){
+		System.out.println("Initialized "+ sECID);
 		
 	}
 
