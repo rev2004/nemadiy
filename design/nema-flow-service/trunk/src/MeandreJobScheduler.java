@@ -196,6 +196,9 @@ public class MeandreJobScheduler implements JobScheduler {
 			if (size == 1) {
 				curr = null;
 			} else {
+				if (curr == match) {
+					curr = curr.getNext();
+				}
 				match.getNext().setPrev(match.getPrev());
 				match.getPrev().setNext(match.getNext());
 			}
