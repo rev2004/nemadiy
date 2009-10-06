@@ -120,5 +120,21 @@
 			<property name="$shortcutReference" value="true"/>
 			<property name="bounds_setted_by_user" value="true"/>
 		</reference>
+		<reference referencedUin="jdt:e_class:src:MeandreLoadBalancer">
+			<property name="bounds" value="40,720,231,116"/>
+			<property name="location_set_by_user" value="true"/>
+			<property name="$shortcutReference" value="true"/>
+			<property name="bounds_setted_by_user" value="true"/>
+		</reference>
+		<reference referencedUin="jdt:e_class:src:RoundRobinLoadBalancer">
+			<property name="bounds" value="85,890,200,91"/>
+			<property name="location_set_by_user" value="true"/>
+			<property name="$shortcutReference" value="true"/>
+			<reference referencedUin="jdt:l_impl:src:RoundRobinLoadBalancer:MeandreLoadBalancer">
+				<property name="sourceAnchor" value="160,895"/>
+				<property name="targetAnchor" value="160,841"/>
+				<property name="bendpoints" value=""/>
+			</reference>
+		</reference>
 	</view>
 </nodeSet>
