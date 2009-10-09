@@ -6,11 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
 
 
@@ -19,85 +23,93 @@ import org.imirsel.m2k.util.noMetadataException;
  *
  * @author Kris West (kw@cmp.uea.ac.uk)
  */
-public class DistanceMatrix implements Serializable{
-    
-    /** A matrix of similarity scores indexed [row][column] where each row 
+public class DenseDistanceMatrix implements DistanceMatrixInterface{
+
+    public static final long serialVersionUID = 12903102456L;
+
+    float min = Float.MAX_VALUE;
+    float max = Float.MIN_VALUE;
+    float norm;
+
+
+    /** A matrix of distance scores indexed [row][column] where each row
      *  represents the distance scores from the corresponding file in the 
      *  audioFiles array.*/
     private float[][] theMatrix;
 
-    /** The list of file objects representing the files that distances are 
-     * calculated between.
-     */
-    private File[] audioFiles;
-    
+    private HashMap<File,Integer> fileToIndex;
+    private HashMap<Integer,File> indexToFile;
+
     /** Name to be used to identify this distance Matrix */
     private String name;
     
     /**
      * Creates a new instance of DistanceMatrix
      */
-    public DistanceMatrix() {
+    public DenseDistanceMatrix() {
         theMatrix = null;
-        audioFiles = null;
+        fileToIndex = new HashMap<File,Integer>();
         name = "";
     }
-    
-    /*public void removeFileFromMatrix(File theFile){
-        int idx = Arrays.asList(audioFiles).indexOf(theFile);
-        if (idx == -1){
-            throw new RuntimeException("The file: " + theFile.getPath() + " was not indexed by the DistanceMatrix!");
-        }
-        
-        File[] audioFiles_ = new File[audioFiles.length-1];
-        float[][] theMatrix_ = new float[audioFiles.length-1][audioFiles.length-1];
-        for (int i = 0; i < audioFiles.length; i++) {
-            if (i < idx)
-            {
-                audioFiles_[i] = audioFiles[i];
-                for (int j = 0; j < audioFiles.length; j++) {
-                    if (j < idx){
-                        theMatrix_[i][j] = theMatrix[i][j];
-                    }else if (j > idx){
-                        theMatrix_[i][j-1] = theMatrix[i][j];
-                    }
-                }
-            }
-            else if (i > idx){
-                audioFiles_[i-1] = audioFiles[i];
-                for (int j = 0; j < audioFiles.length; j++) {
-                    if (j < idx){
-                        theMatrix_[i-1][j] = theMatrix[i][j];
-                    }else if (j > idx){
-                        theMatrix_[i-1][j-1] = theMatrix[i][j];
-                    }
-                }
-            }
-        }
-        
-        audioFiles = audioFiles_;
-        theMatrix = theMatrix_;
-    }*/
     
     /**
      * Creates a new instance of DistanceMatrix using the specified matrix of 
      * doubles and the array of file names.
+     * @param name_
+     * @param aMatrix
+     * @param someFiles 
      */
-    public DistanceMatrix(String name_, float[][] aMatrix, File[] someFiles) {
+    public DenseDistanceMatrix(String name_, float[][] aMatrix, File[] someFiles) {
         if (name_ == null){
             name = "<no name given>";
         }else{
             name = name_;
         }
         theMatrix = aMatrix;
-        audioFiles = someFiles;
+        fileToIndex = new HashMap<File,Integer>();
+        indexToFile = new HashMap<Integer,File>();
+        for (int i = 0; i < someFiles.length; i++){
+            fileToIndex.put(someFiles[i],i);
+            indexToFile.put(i,someFiles[i]);
+        }
+        computeMinAndMax();
+    }
+
+    public void computeMinAndMax(){
+        boolean complete = true;
+        for (int i = 0; i < theMatrix.length; i++) {
+            for (int j = 0; j < theMatrix[i].length; j++) {
+                if (theMatrix[i][j] != Float.POSITIVE_INFINITY){
+                    if (theMatrix[i][j] < min)
+                    {
+                        min = theMatrix[i][j];
+                    }else if(theMatrix[i][j] > max)
+                    {
+                        max = theMatrix[i][j];
+                    }
+                }
+            }
+
+            if (theMatrix[i].length != theMatrix.length)
+            {
+                complete = false;
+                System.out.println("Inconsistent number of distances found. Index contains " + theMatrix.length + " files but " + theMatrix[i].length + " were found for file index " + i);
+            }
+        }
+
+        norm = max + Float.MIN_VALUE;
+
+        if (complete){
+            System.out.println("Dense distance matrix, indexing " + theMatrix.length + " Objects with min dist: " + min + " and max dist: " + max);
+        }else{
+            System.out.println("WARNING: Incomplete or corrupted dense distance matrix received!\nProceeding anyway...");
+        }
     }
     
     public float getDistance(File file1, File file2)
     {
-        List fileList = Arrays.asList(audioFiles);
         try{
-            return theMatrix[fileList.indexOf(file1)][fileList.indexOf(file2)];
+            return theMatrix[getFileToIndex().get(file1)][getFileToIndex().get(file2)];
         }catch(ArrayIndexOutOfBoundsException arex)
         {
             throw new RuntimeException("No distances were found for one of the files passed!\n Query file: " + file1.getPath() + "\nResult file: " + file2.getPath());
@@ -106,11 +118,9 @@ public class DistanceMatrix implements Serializable{
     
     public float[] getDistances(File file)
     {
-        List fileList = Arrays.asList(audioFiles);
         try{
-            return theMatrix[fileList.indexOf(file)];
-        }catch(ArrayIndexOutOfBoundsException arex)
-        {
+            return theMatrix[getFileToIndex().get(file)];
+        }catch(ArrayIndexOutOfBoundsException arex){
             throw new RuntimeException("No distances were found for the file passed!\n Query file: " + file.getPath());
         }
     }
@@ -122,7 +132,13 @@ public class DistanceMatrix implements Serializable{
     
     public File[] getFiles()
     {
-        return audioFiles;
+        File[] out = new File[fileToIndex.size()];
+        for (Iterator<File> it = getFileToIndex().keySet().iterator(); it.hasNext();){
+            File aFile = it.next();
+            Integer index = getFileToIndex().get(aFile);
+            out[index] = aFile;
+        }
+        return out;
     }
     
     public String getName()
@@ -135,7 +151,7 @@ public class DistanceMatrix implements Serializable{
         if (theMatrix == null){
             return 0;
         }else {
-            return audioFiles.length;
+            return getFileToIndex().size();
         }
     }
     
@@ -148,17 +164,20 @@ public class DistanceMatrix implements Serializable{
      */
     public void remapFileLocation(String oldLocation, String newLocation){
         
-        int loc = Arrays.asList(audioFiles).indexOf(new File(oldLocation));
-        if(loc != -1){
-            audioFiles[loc] = new File(newLocation);
+        Integer loc = getFileToIndex().remove(new File(oldLocation));
+        getIndexToFile().remove(loc);
+        File newFile = new File(newLocation);
+        if(loc != null){
+            getFileToIndex().put(newFile,loc);
+            getIndexToFile().put(loc,newFile);
         }else{
             throw new RuntimeException("The specified file was not found in the DistanceMatrix and cannot be remapped to a new location!\nFile: " + oldLocation + "\nTo be mapped to: " + newLocation);
         }
     }
     
     public void removeFile(File fileLocation){
-        int loc = Arrays.asList(audioFiles).indexOf(fileLocation);
-        if(loc != -1){
+        Integer loc = getFileToIndex().remove(fileLocation);
+        if(loc != null){
             float[][] newMatrix = new float[this.indexSize() - 1][this.indexSize() - 1];
             
             for (int i = 0; i < theMatrix.length; i++) {
@@ -184,17 +203,24 @@ public class DistanceMatrix implements Serializable{
                     }
                 }
             }
-            File[] newFiles = new File[audioFiles.length-1];
-            for (int i = 0; i < audioFiles.length; i++) {
-                if (i<loc)
-                {
-                    newFiles[i] = audioFiles[i];
-                }else if (i>loc){
-                    newFiles[i-1] = audioFiles[i];
+
+            HashMap<File,Integer> newFiles = new HashMap<File,Integer>(getFileToIndex().size());
+            HashMap<Integer,File> newIndexes = new HashMap<Integer,File>(getFileToIndex().size());
+            for (Iterator<File> it = getFileToIndex().keySet().iterator(); it.hasNext();){
+                File aFile = it.next();
+                int pos = getFileToIndex().get(aFile);
+                if(pos < loc){
+                    newFiles.put(aFile, pos);
+                    newIndexes.put(pos,aFile);
+                }else{
+                    newFiles.put(aFile, pos-1);
+                    newIndexes.put(pos-1,aFile);
                 }
             }
+
             theMatrix = newMatrix;
-            audioFiles = newFiles;
+            fileToIndex = newFiles;
+            indexToFile = newIndexes;
         }else{
             System.out.println("WARNING: The specified file (" + fileLocation.getPath()  + ") was not found in the DistanceMatrix and cannot be removed!");
         }
@@ -212,6 +238,7 @@ public class DistanceMatrix implements Serializable{
             output.newLine();
             
             //Write file names
+            File[] audioFiles = getFiles();
             for (int i = 0; i < audioFiles.length; i++) {
                 output.write( (i+1) + "\t" + audioFiles[i].getPath() );
                 output.newLine();
@@ -245,7 +272,7 @@ public class DistanceMatrix implements Serializable{
         }
     }
     
-    public static DistanceMatrix read(File theFile) throws IOException{
+    public static DenseDistanceMatrix read(File theFile) throws IOException{
         if (theFile.exists())
         {
             if(theFile.canRead()){
@@ -258,12 +285,12 @@ public class DistanceMatrix implements Serializable{
                 }
                 catch(java.io.FileNotFoundException fnfe)
                 {
-                    throw new RuntimeException("The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n\tDistance matrix file: " + theFile.getPath());
+                    throw new RuntimeException("The specified file does not exist.\n\tDistance matrix file: " + theFile.getPath());
                 }
                 String line = null; 
-                List files = new ArrayList();
+                List<String> files = new ArrayList<String>();
                 String name;
-                DistanceMatrix distanceMatrix = null;
+                DenseDistanceMatrix distanceMatrix = null;
                 try
                 {
                     //read matrix name
@@ -279,11 +306,11 @@ public class DistanceMatrix implements Serializable{
                     if (line == null)
                     {
                         //something went wrong
-                        throw new RuntimeException("Unexpected end of file, this exception should never be thrown and indicates a serious bug.\nDistance matrix file: " + theFile.getPath());
+                        throw new RuntimeException("Unexpected end of file.\n\tDistance matrix file: " + theFile.getPath());
                     }else if( !( (line.toLowerCase().startsWith("Q/R".toLowerCase())) || (line.toLowerCase().startsWith("Q\\R".toLowerCase())) ) )
                     {
                         //Again, something went wrong
-                        throw new RuntimeException("The file is not in the expected format, this exception should never be thrown and indicates a serious bug.\nDistance matrix file: " + theFile.getPath());
+                        throw new RuntimeException("The file is not in the expected format\nDistance matrix file: " + theFile.getPath());
                     }
                     
                     line = textBuffer.readLine();
@@ -299,22 +326,27 @@ public class DistanceMatrix implements Serializable{
                             System.out.println("DistanceMatrix.read(): Warning: " + (comps.length - (files.size() + 1)) + " additional tokens were found on line " + (i+1) + " of file: " + theFile.getPath());
                         }
                         for (int j = 0; j < files.size(); j++) {
-                            theMatrix[i][j] = (float)Double.parseDouble(comps[j+1]);
+                            try{
+                                theMatrix[i][j] = (float)Double.parseDouble(comps[j+1]);
+                            }catch(NumberFormatException nfe){
+                                if (comps[j+1].equalsIgnoreCase("inf")){
+                                    theMatrix[i][j] = Float.POSITIVE_INFINITY;
+                                }
+                            }
                         }
                         line = textBuffer.readLine();
                     }
                     
                     //Format filenames for use in DistanceMatrix
-                    String[] fileStrs = (String[])files.toArray(new String[files.size()]);
+                    String[] fileStrs = files.toArray(new String[files.size()]);
     
                     File[] filesArr = new File[files.size()];
                     for (int i = 0; i < fileStrs.length; i++) {
                         filesArr[i] = new File(fileStrs[i]);
                     }
                     
-                    
                     //create distance matrix object
-                    distanceMatrix = new DistanceMatrix(name, theMatrix, filesArr);
+                    distanceMatrix = new DenseDistanceMatrix(name, theMatrix, filesArr);
                 }
                 catch (java.io.IOException ioe)
                 {
@@ -432,4 +464,63 @@ public class DistanceMatrix implements Serializable{
         }
         
     }
+
+    public boolean containsFile(File aFile){
+        return getFileToIndex().containsKey(aFile);
+    }
+
+    public SearchResult[] retrieveMostSimilar(Signal querySignal) throws noMetadataException{
+        float[] dists = getDistances(querySignal.getFile());
+
+        SearchResult[] outputResults = new SearchResult[dists.length];
+        //normalise distances and create SearchResult Objects
+        for (int j = 0; j < dists.length; j++) {
+            if(dists[j] == Float.POSITIVE_INFINITY){
+                outputResults[j] = new SearchResult(new Signal(getIndexToFile().get(j).getPath()),0.0f);
+            }else{
+                outputResults[j] = new SearchResult(new Signal(getIndexToFile().get(j).getPath()), 1.0f - ((dists[j] - min) / norm));
+            }
+        }
+
+        Arrays.sort(outputResults);
+        return outputResults;
+        
+    }
+
+    public SearchResult[] retrieveNMostSimilar(Signal querySignal, int n) throws noMetadataException{
+        float[] dists = getDistances(querySignal.getFile());
+
+        SortedSet<SearchResult> results = new TreeSet<SearchResult>();
+        for (int j = 0; j < dists.length; j++) {
+            //if(dists[j] != Float.POSITIVE_INFINITY){
+                float score = 1.0f - ((dists[j] - min) / norm);
+                if ((results.size() < n) || (score >= results.last().getScore()) ){
+                    results.add(new SearchResult(new Signal(getIndexToFile().get(j).getPath()), score));
+                    //System.out.println("added " + j + ", score: " + score);
+                    if (results.size() > n){
+                        results.remove(results.last());
+                    }
+                }
+            //}
+        }
+
+        SearchResult[] truncResults = results.toArray(new SearchResult[results.size()]);
+        return truncResults;
+    }
+
+    /**
+     * @return the fileToIndex
+     */
+    public HashMap<File, Integer> getFileToIndex(){
+        return fileToIndex;
+    }
+
+    /**
+     * @return the indexToFile
+     */
+    public HashMap<Integer, File> getIndexToFile(){
+        return indexToFile;
+    }
+
+    
 }

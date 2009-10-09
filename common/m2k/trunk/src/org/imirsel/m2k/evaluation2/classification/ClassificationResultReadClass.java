@@ -11,6 +11,8 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationGroundTruthFileReader;
+import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
 
@@ -61,16 +63,15 @@ public class ClassificationResultReadClass {
                         if (!str.equals("")) {
                             String[] splitted = str.split("\t");
                             File aPath = new File(splitted[0]);
-                            String name = aPath.getName().toLowerCase();
-                            name = name.replaceAll(".wav", "").replaceAll(".mp3", "").replaceAll(".mid", "").trim();
-                            if(name.equals("")){
+                            String key = RemapMusicDBFilenamesClass.convertFileToMIREX_ID(aPath);
+                            if(key.equals("")){
                                 throw new RuntimeException("Error: an emprty track name was read from file: " + toRead.getAbsolutePath());
                             }
-                            String className = splitted[1].trim();
+                            String className = TagClassificationGroundTruthFileReader.cleanTag(splitted[1]);
                             if(className.equals("")){
                                 throw new RuntimeException("Error: an emprty class name was read from file: " + toRead.getAbsolutePath());
                             }
-                            dataRead.put(name, className);
+                            dataRead.put(key, className);
                         }
                         str = br.readLine();
                     }
