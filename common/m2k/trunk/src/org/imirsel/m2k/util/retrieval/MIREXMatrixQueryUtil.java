@@ -33,9 +33,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationAffinityEvaluator;
+import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
 import org.imirsel.m2k.io.musicDB.MusicDBDelimTextFileImportFrame;
 import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
+import org.imirsel.m2k.util.MatlabCommandlineIntegrationClass;
 import org.imirsel.m2k.util.ReencodeAudioWithLameAndParameters;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
@@ -75,13 +80,25 @@ public class MIREXMatrixQueryUtil {
             "\t" + FILTERED_GENRE + " path/to/DistMatrix path/to/MetadataDB path/to/local/dir/of/audio/files path/to/save/report/and/plots/to \n" +
             "\t" + RETURN_RESULTS + " path/to/DistMatrix path/to/MetadataDB /path/to/local/dir/of/audio/files query numResult filterCoverSongs(y/n) \n" +
             "\t" + CREATE_EVALUTRON_DATA_FILES + " path/DistMatrix/folder path/to/MetadataDB path/to/query/file numResults(5) path/to/local/dir/of/audio/files path/to/save/queryCandidateFile/to path/to/save/teamNameFile/to [dir/to/re-encode/audio/files/to]\n" +
-            "\t" + PROCESS_EVALUTRON_RESULTS + " path/to/team/table/file path/to/result/table/file path/to/task/table/file \n";
-            
+            "\t" + PROCESS_EVALUTRON_RESULTS + " path/to/team/table/file path/to/result/table/file path/to/task/table/file path/to/output/dir\n";
+
+    private static String matlabPath = "matlab";
+
     
     /** Creates a new instance of MIREXMatrixQueryUtil */
     public MIREXMatrixQueryUtil() {
     }
-    
+
+
+    public String getMatlabPath() {
+        return matlabPath;
+    }
+
+    public void setMatlabPath(String matlabPath) {
+        this.matlabPath = matlabPath;
+    }
+
+
     /**
      * @param args the command line arguments
      */
@@ -1516,8 +1533,9 @@ public class MIREXMatrixQueryUtil {
         File teamTable = new File(args[1]);
         File resultTable = new File(args[2]);
         File taskTable = new File(args[3]);
+        File outputDir = new File(args[4]);
         
-        evaluateSystems(resultTable,taskTable,teamTable);
+        evaluateSystems(resultTable,taskTable,teamTable,outputDir);
         
     }
     
@@ -1541,7 +1559,7 @@ public class MIREXMatrixQueryUtil {
         }
     }
     
-    private static void evaluateSystems(File resultsTableFile, File taskTableFile, File teamTableFile) throws IOException{
+    private static void evaluateSystems(File resultsTableFile, File taskTableFile, File teamTableFile, File outputDir) throws IOException{
         
         
         //parse team table
@@ -1673,50 +1691,291 @@ public class MIREXMatrixQueryUtil {
             }
         }
 
-        //do data output
-        System.out.println("Evaluation results:");
-        System.out.println("System names:");
-        for (int i = 0; i < systemNames.size(); i++) {
-            System.out.println(i + ": " + systemNames.get(i));
+        
+        //dump results to CSV
+        String[] header = new String[systemNames.size()+1];
+        header[0] = "*Query";
+        for (int i = 0; i < systemNames.size(); i++){
+            header[i+1] = systemNames.get(i);
         }
 
-        System.out.println("");
-        
-        
-        System.out.println("Average (across graders) per query fine scores:");
-        System.out.print("query");
-        for (int i = 0; i < systemNames.size(); i++) {
-            System.out.print("," + systemNames.get(i));
-        }
-        System.out.println("");
-        
+        System.out.println("Writing out Fine score CSV");
+        double[] overallAvgFine = new double[systemNames.size()];
+        String[][] fine_scores_CSV = new String[numQueries+1][systemNames.size()+1];
+        fine_scores_CSV[0] = header;
         for (int i = 0; i < numQueries; i++) {
-            System.out.print(queries[i]);
+            fine_scores_CSV[i+1][0] = queries[i].toString();
             for (int j = 0; j < systemNames.size(); j++) {
-                System.out.print("," + avgFineScores[j][i]);
+                 fine_scores_CSV[i+1][j+1] = "" + avgFineScores[j][i];
+                 overallAvgFine[j] += avgFineScores[j][i];
             }
-            System.out.println("");
         }
-        System.out.println("");
-        
-        
-        
-        System.out.println("Average (across graders) per query cat scores:");
-        System.out.print("query");
-        for (int i = 0; i < systemNames.size(); i++) {
-            System.out.print("," + systemNames.get(i));
+        for (int i = 0; i < overallAvgFine.length; i++){
+            overallAvgFine[i] /= numQueries;
         }
-        System.out.println("");
-        
+        File fine_csv = new File(outputDir.getAbsolutePath() + File.separator + "fine_scores.csv");
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(fine_csv, ",", fine_scores_CSV, false);
+        } catch (IOException ex) {
+            Logger.getLogger(MIREXMatrixQueryUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+
+        System.out.println("Writing out Cat score CSV");
+        double[] overallAvgCat = new double[systemNames.size()];
+        String[][] cat_scores_CSV = new String[numQueries+1][systemNames.size()+1];
+        cat_scores_CSV[0] = header;
         for (int i = 0; i < numQueries; i++) {
-            System.out.print(queries[i]);
+            cat_scores_CSV[i+1][0] = queries[i].toString();
             for (int j = 0; j < systemNames.size(); j++) {
-                System.out.print("," + avgCatScores[j][i]);
+                 cat_scores_CSV[i+1][j+1] = "" + avgCatScores[j][i];
+                 overallAvgCat[j] += avgCatScores[j][i];
             }
-            System.out.println("");
         }
-        System.out.println("");
-        
+        for (int i = 0; i < overallAvgCat.length; i++){
+            overallAvgCat[i] /= numQueries;
+        }
+        File cat_csv = new File(outputDir.getAbsolutePath() + File.separator + "cat_scores.csv");
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(cat_csv, ",", cat_scores_CSV, false);
+        } catch (IOException ex) {
+            Logger.getLogger(MIREXMatrixQueryUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+
+        //perform Friedman TK
+        System.out.println("Performing statistical tests");
+        performFriedmanTestWithFineScores(outputDir, fine_csv, systemNames.toArray(new String[systemNames.size()]));
+        performFriedmanTestWithCatScores(outputDir, cat_csv, systemNames.toArray(new String[systemNames.size()]));
+
+
+
+        //output summary CSV for MIREX wiki
+        System.out.println("Writing out summary CSV");
+        String[][] summary_CSV = new String[3][systemNames.size()+1];
+        summary_CSV[0][0] = "*Measure";
+        summary_CSV[1][0] = "Average Fine Score";
+        summary_CSV[2][0] = "Average Cat Score";
+
+        for (int i = 0; i < systemNames.size(); i++){
+            summary_CSV[0][i+1] = systemNames.get(i);
+            summary_CSV[1][i+1] = "" + overallAvgFine[i];
+            summary_CSV[2][i+1] = "" + overallAvgCat[i];
+        }
+        File summary_csv = new File(outputDir.getAbsolutePath() + File.separator + "summary_evalutron.csv");
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(summary_csv, ",", summary_CSV, false);
+        } catch (IOException ex) {
+            Logger.getLogger(MIREXMatrixQueryUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void performFriedmanTestWithFineScores(File outputDir, File CSV_file, String[] systemNames) {
+        //make sure readtext is in the working directory for matlab
+        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
+
+        //create an m-file to run the test
+        String evalCommand = "performFriedmanForFineScores";
+        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "evalutron.fine.friedman.tukeyKramerHSD.png";
+        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + "evalutron.fine.friedman.tukeyKramerHSD.csv";
+        try {
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+
+            textOut.write("[data, result] = readtext('" + CSV_file.getAbsolutePath() + "', ',');");
+            textOut.newLine();
+            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
+            textOut.newLine();
+            textOut.write("[length,width] = size(data);");
+            textOut.newLine();
+            textOut.write("FINE = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
+            textOut.newLine();
+            textOut.write("[val sort_idx] = sort(mean(FINE));");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(FINE(:,fliplr(sort_idx)),1,'on'); close(gcf)");
+            textOut.newLine();
+            textOut.write("[c,m,h,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05,'display','off');");
+            textOut.newLine();
+            textOut.write("fig = figure;");
+            textOut.newLine();
+            textOut.write("width = (-c(1,3)+c(1,5))/4;");
+            textOut.newLine();
+            textOut.write("set(gcf,'position',[497   313   450   351])");
+            textOut.newLine();
+            textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
+            textOut.newLine();
+            textOut.write("for i=1:" + systemNames.length + ",");
+            textOut.newLine();
+            textOut.write("    plot([i i],[-width width]+friedmanStats.meanranks(i));");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[-width -width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[+width +width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
+            textOut.newLine();
+            textOut.write("sortedAlgNames = algNames(fliplr(sort_idx));");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',sortedAlgNames)");
+            textOut.newLine();
+            textOut.write("ylabel('Mean Column Ranks')");
+            textOut.newLine();
+            textOut.write("h = title('" + CSV_file.getAbsolutePath() + "')");
+            textOut.newLine();
+            textOut.write("set(h,'interpreter','none')");
+            textOut.newLine();
+            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+            textOut.newLine();
+            textOut.write("fidFriedman=fopen('" + friedmanTablePath + "','w+');");
+            textOut.newLine();
+            textOut.write("fprintf(fidFriedman,'%s,%s,%s,%s,%s,%s\\n','*TeamID','TeamID','Lowerbound','Mean','Upperbound','Significance');");
+            textOut.newLine();
+            textOut.write("for i=1:size(c,1)");
+            textOut.newLine();
+            textOut.write("        if sign(c(i,3))*sign(c(i,5)) > 0");
+            textOut.newLine();
+            textOut.write("            tf='TRUE';");
+            textOut.newLine();
+            textOut.write("        else");
+            textOut.newLine();
+            textOut.write("            tf='FALSE';");
+            textOut.newLine();
+            textOut.write("        end");
+            textOut.newLine();
+            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',sortedAlgNames{c(i,1)},sortedAlgNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("fclose(fidFriedman);");
+            textOut.newLine();
+            textOut.write("exit;");
+            textOut.newLine();
+
+            textOut.close();
+        } catch (IOException ex) {
+            Logger.getLogger(MIREXMatrixQueryUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+        matlabIntegrator.setMatlabBin(matlabPath);
+        matlabIntegrator.setCommandFormattingStr("");
+        matlabIntegrator.setMainCommand(evalCommand);
+        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+        matlabIntegrator.start();
+        try {
+            matlabIntegrator.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(MIREXMatrixQueryUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    private static void performFriedmanTestWithCatScores(File outputDir, File CSV_file, String[] systemNames) {
+        //make sure readtext is in the working directory for matlab
+        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
+
+        //create an m-file to run the test
+        String evalCommand = "performFriedmanForCatScores";
+        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "evalutron.cat.friedman.tukeyKramerHSD.png";
+        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + "evalutron.cat.friedman.tukeyKramerHSD.csv";
+        try {
+            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
+
+            textOut.write("[data, result] = readtext('" + CSV_file.getAbsolutePath() + "', ',');");
+            textOut.newLine();
+            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
+            textOut.newLine();
+            textOut.write("[length,width] = size(data);");
+            textOut.newLine();
+            textOut.write("CAT = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
+            textOut.newLine();
+            textOut.write("[val sort_idx] = sort(mean(CAT));");
+            textOut.newLine();
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(FINE(:,fliplr(sort_idx)),1,'on'); close(gcf)");
+            textOut.newLine();
+            textOut.write("[c,m,h,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05,'display','off');");
+            textOut.newLine();
+            textOut.write("fig = figure;");
+            textOut.newLine();
+            textOut.write("width = (-c(1,3)+c(1,5))/4;");
+            textOut.newLine();
+            textOut.write("set(gcf,'position',[497   313   450   351])");
+            textOut.newLine();
+            textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
+            textOut.newLine();
+            textOut.write("for i=1:" + systemNames.length + ",");
+            textOut.newLine();
+            textOut.write("    plot([i i],[-width width]+friedmanStats.meanranks(i));");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[-width -width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("    plot([-0.1 .1]+i,[+width +width]+friedmanStats.meanranks(i))");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
+            textOut.newLine();
+            textOut.write("sortedAlgNames = algNames(fliplr(sort_idx));");
+            textOut.newLine();
+            textOut.write("set(gca,'xticklabel',sortedAlgNames)");
+            textOut.newLine();
+            textOut.write("ylabel('Mean Column Ranks')");
+            textOut.newLine();
+            textOut.write("h = title('" + CSV_file.getAbsolutePath() + "')");
+            textOut.newLine();
+            textOut.write("set(h,'interpreter','none')");
+            textOut.newLine();
+            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+            textOut.newLine();
+            textOut.write("fidFriedman=fopen('" + friedmanTablePath + "','w+');");
+            textOut.newLine();
+            textOut.write("fprintf(fidFriedman,'%s,%s,%s,%s,%s,%s\\n','*TeamID','TeamID','Lowerbound','Mean','Upperbound','Significance');");
+            textOut.newLine();
+            textOut.write("for i=1:size(c,1)");
+            textOut.newLine();
+            textOut.write("        if sign(c(i,3))*sign(c(i,5)) > 0");
+            textOut.newLine();
+            textOut.write("            tf='TRUE';");
+            textOut.newLine();
+            textOut.write("        else");
+            textOut.newLine();
+            textOut.write("            tf='FALSE';");
+            textOut.newLine();
+            textOut.write("        end");
+            textOut.newLine();
+            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',sortedAlgNames{c(i,1)},sortedAlgNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
+            textOut.newLine();
+            textOut.write("end");
+            textOut.newLine();
+            textOut.write("fclose(fidFriedman);");
+            textOut.newLine();
+            textOut.write("exit;");
+            textOut.newLine();
+
+            textOut.close();
+        } catch (IOException ex) {
+            Logger.getLogger(MIREXMatrixQueryUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
+        matlabIntegrator.setMatlabBin(matlabPath);
+        matlabIntegrator.setCommandFormattingStr("");
+        matlabIntegrator.setMainCommand(evalCommand);
+        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
+        matlabIntegrator.start();
+        try {
+            matlabIntegrator.join();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(MIREXMatrixQueryUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
     
 }
