@@ -343,7 +343,7 @@ public class MIREXMatrixQueryUtil {
         }
         File distMatFile = new File(distMat); 
         //read distanceMatrix
-        DistanceMatrix distMatrix = DistanceMatrix.read(distMatFile);
+        DenseDistanceMatrix distMatrix = DenseDistanceMatrix.read(distMatFile);
         
         //read MusicDB Object describing collection
         String mDB = args[2];
@@ -422,7 +422,8 @@ public class MIREXMatrixQueryUtil {
         try {
             String line = textBuffer.readLine();
             while(line != null){
-                if (line != null){
+                line = line.trim();
+                if (!line.equals("")){
                     queries.add(line);
                 }
                 line = textBuffer.readLine();
@@ -481,7 +482,7 @@ public class MIREXMatrixQueryUtil {
         
         try{
             theDB = RemapMusicDBFilenamesClass.remap(theDB, localAudioDir, true, true);
-            distMatrix = RemapMusicDBFilenamesClass.remapDistanceMatrix(distMatrix, localAudioDir, true);
+            distMatrix = RemapMusicDBFilenamesClass.remapDenseDistanceMatrix(distMatrix, localAudioDir, true);
             
         }catch(IOException ioe){
             throw new RuntimeException("An IOException occured while remapping file anems!\n",ioe);
@@ -595,7 +596,7 @@ public class MIREXMatrixQueryUtil {
         for (Iterator<String> it = queries.iterator(); it.hasNext();) {
             String key = it.next();
             if (!idToFile.containsKey(key)){
-                throw new RuntimeException("Didn't find ID: " + key + " in directory tree root at " + localAudioDir.getAbsolutePath() + "\n" + idToFile.size() + " ids found.");
+                throw new RuntimeException("Didn't find ID: '" + key + "' in directory tree root at " + localAudioDir.getAbsolutePath() + "\n" + idToFile.size() + " ids found.");
             }
             queryPaths.add(idToFile.get(key).getAbsolutePath());
         }
@@ -695,20 +696,20 @@ public class MIREXMatrixQueryUtil {
         File queryFile = new File(query); 
         
          if (!queryFile.exists()) {
-            throw new FileNotFoundException("runQuery(): The specified file does not exist!\n File: " + queryFile.getPath());
+            throw new FileNotFoundException("runEvalutronPrep(): The specified file does not exist!\n File: " + queryFile.getPath());
         }
         if (queryFile.isDirectory()) {
-            throw new RuntimeException("runQuery(): The specified file is a directory and therefore cannot be read!\n Path: " + queryFile.getPath());
+            throw new RuntimeException("runEvalutronPrep(): The specified file is a directory and therefore cannot be read!\n Path: " + queryFile.getPath());
         }
         if (!queryFile.canRead()) {
-            throw new RuntimeException("runQuery(): The specified file exists but cannot be read!\n File: " + queryFile.getPath());
+            throw new RuntimeException("runEvalutronPrep(): The specified file exists but cannot be read!\n File: " + queryFile.getPath());
         }
         
         BufferedReader textBuffer;
         try {
             textBuffer = new BufferedReader( new FileReader(queryFile) );
         } catch(java.io.FileNotFoundException fnfe) {
-            throw new RuntimeException("runQuery(): The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n File: " + queryFile.getPath());
+            throw new RuntimeException("runEvalutronPrep(): The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n File: " + queryFile.getPath());
         }
         List<String> queries = new ArrayList<String>();
         try {
@@ -716,20 +717,29 @@ public class MIREXMatrixQueryUtil {
             line = textBuffer.readLine(); // ignore header line
             
             while(line != null){
-                if (line != null){
-                    String queryString = line.split("\t")[1];
+                line = line.trim();
+                if (!line.equals("")){
+                    String queryString;
+                    String[] comps = line.split("\t");
+                    if (comps.length > 1){
+                        queryString = comps[1];
+                    }else{
+                        queryString = comps[0];
+                    }
+
                     if (queryString.startsWith("\"")&&(queryString.endsWith("\""))){
                         queryString = queryString.substring(1,queryString.length()-1);
                     }
                     queries.add(queryString);
                 }
+                
                 line = textBuffer.readLine();
             }
         } catch (java.io.IOException ioe) {
-            throw new java.io.IOException("runQuery()runQuery(): An IOException occured while reading file: " + queryFile.getPath() + "\n" + ioe);
+            throw new java.io.IOException("runEvalutronPrep(): An IOException occured while reading file: " + queryFile.getPath() + "\n" + ioe);
         } catch (java.lang.NullPointerException npe) {
             npe.printStackTrace();
-            throw new RuntimeException("runQuery(): NullPointerException caused by: " + queryFile.getPath());
+            throw new RuntimeException("runEvalutronPrep(): NullPointerException caused by: " + queryFile.getPath());
         } finally {
             if (textBuffer != null)
             {
@@ -776,10 +786,6 @@ public class MIREXMatrixQueryUtil {
         
         
         
-        List<String> queryFiles = associateQueriesWithFiles(queries, localAudioDirFile);
-        
-                
-        
         
         //parse output files arguments
         String queryCandidate = args[6];
@@ -793,7 +799,7 @@ public class MIREXMatrixQueryUtil {
         
         String teamName = args[7];
         if (teamName.trim().equals("")){
-            System.out.println("Unable to processoutput result file name argument (" + teamName +")!\n" + USAGE);
+            System.out.println("Unable to process output result file name argument (" + teamName +")!\n" + USAGE);
             return;
         }
         File teamNameFile = new File(teamName);
@@ -823,8 +829,19 @@ public class MIREXMatrixQueryUtil {
                 output.close();
             }
         }
-        
-        
+
+
+
+        System.out.println("Associating queries with local audio files in: " + localAudioDirFile.getAbsolutePath());
+        List<String> queryFiles = associateQueriesWithFiles(queries, localAudioDirFile);
+
+
+
+        System.out.println("Remapping metadata to local audio files in: " + localAudioDirFile.getAbsolutePath());
+        theDB = RemapMusicDBFilenamesClass.remapWithMIREXIDs(theDB, localAudioDir, true, true);
+
+
+
         //load and query each distance matrix
         List<List<List<String>>> teamResultsList = new ArrayList<List<List<String>>>();
         //record number of unique results
@@ -833,17 +850,25 @@ public class MIREXMatrixQueryUtil {
             resultTracks[i] = new HashSet<String>();
         }
 
-        
+
         for (int d = 0; d < distMatrixFiles.length; d++) {
             File distMatrixFile = distMatrixFiles[d];
             System.out.println("loading and querying distance matrix: " + distMatrixFile.getAbsolutePath());
             //read distanceMatrix
-            DistanceMatrix distMatrix = DistanceMatrix.read(distMatrixFile);
-
+            DistanceMatrixInterface distMatrix = null;
             try{
-                theDB = RemapMusicDBFilenamesClass.remap(theDB, localAudioDir, true, true);
-                distMatrix = RemapMusicDBFilenamesClass.remapDistanceMatrix(distMatrix, localAudioDir, true);
 
+
+                distMatrix = DenseDistanceMatrix.read(distMatrixFile);
+
+            }catch(Exception e){
+                e.printStackTrace();
+                System.out.println("Failed to parse " + distMatrixFile.getPath() + " as a dense matrix due to exception (" + e.getClass().getName() + ": " + e.getMessage() + "), attempting to parse as sparse...");
+                distMatrix = SparseDistanceMatrix.read(distMatrixFile);
+            }
+            try{
+                System.out.println("\tremapping dist mat files to local audio files in: " + localAudioDirFile.getAbsolutePath());
+                distMatrix = RemapMusicDBFilenamesClass.remapDistanceMatrixWithMIREXIDs(distMatrix, localAudioDir, true);
             }catch(IOException ioe){
                 throw new RuntimeException("An IOException occured while remapping file anems!\n",ioe);
             }
@@ -918,6 +943,13 @@ public class MIREXMatrixQueryUtil {
                         output.newLine();
                         id++;
                     }
+
+
+                    //add query in as well to check on sleepy graders?
+                    output.write("\"" + id + "\"\t\"" + (i+1) + "\"\t\"" + (j+1) + "\"\t\"" + convertFileToMIREX_ID(new File(queryFiles.get(i))) + "\"\t\"" + date + "\"");
+                    output.newLine();
+                    id++;
+
                 }
             }
         } finally {
@@ -967,7 +999,24 @@ public class MIREXMatrixQueryUtil {
         }
         File distMatFile = new File(distMat); 
         //read distanceMatrix
-        DistanceMatrix distMatrix = DistanceMatrix.read(distMatFile);
+        //read distanceMatrix
+        DistanceMatrixInterface distMatrix = null;
+        try{
+
+
+            distMatrix = DenseDistanceMatrix.read(distMatFile);
+
+        }catch(Exception e){
+            System.out.println("Failed to parse " + distMatFile.getPath() + " as a dense matrix due to exception (" + e.getMessage() + "), attempting to parse as sparse...");
+            distMatrix = SparseDistanceMatrix.read(distMatFile);
+        }
+//        try{
+//            System.out.println("\tremapping dist mat files to local audio files in: " + localAudioDirFile.getAbsolutePath());
+//            distMatrix = RemapMusicDBFilenamesClass.remapDistanceMatrixWithMIREXIDs(distMatrix, localAudioDir, true);
+//        }catch(IOException ioe){
+//            throw new RuntimeException("An IOException occured while remapping file anems!\n",ioe);
+//        }
+
         
         //read MusicDB Object describing collection
         String mDB = args[2];
@@ -1035,8 +1084,8 @@ public class MIREXMatrixQueryUtil {
         }
         
         try{
-            theDB = RemapMusicDBFilenamesClass.remap(theDB, localAudioDir, true, true);
-            distMatrix = RemapMusicDBFilenamesClass.remapDistanceMatrix(distMatrix, localAudioDir, true);
+            theDB = RemapMusicDBFilenamesClass.remapWithMIREXIDs(theDB, localAudioDir, false, true);
+            distMatrix = RemapMusicDBFilenamesClass.remapDistanceMatrixWithMIREXIDs(distMatrix, localAudioDir, false);
             
         }catch(IOException ioe){
             throw new RuntimeException("An IOException occured while remapping file anems!\n",ioe);
@@ -1060,13 +1109,17 @@ public class MIREXMatrixQueryUtil {
         }
         if (filter){
             //remove irrelevant coversongs
-            List toRemove =  theDB.getSignalListForMetadataClass(Signal.PROP_GENRE, "cover song");
-            System.out.println("Removing " + toRemove.size() + " cover songs from distance matrix (" + distMatrix.indexSize() + ") and metadata db (" + theDB.size() + ")");
-            for (int i = toRemove.size()-1; i >= 0; i--) {
-                distMatrix.removeFile(((Signal)toRemove.get(i)).getFile());
-                theDB.removeSignalFromDatabase(((Signal)toRemove.get(i)));
+            try{
+                List toRemove =  theDB.getSignalListForMetadataClass(Signal.PROP_GENRE, "cover song");
+                System.out.println("Removing " + toRemove.size() + " cover songs from distance matrix (" + distMatrix.indexSize() + ") and metadata db (" + theDB.size() + ")");
+                for (int i = toRemove.size()-1; i >= 0; i--) {
+                    distMatrix.removeFile(((Signal)toRemove.get(i)).getFile());
+                    theDB.removeSignalFromDatabase(((Signal)toRemove.get(i)));
+                }
+                System.out.println("New DistanceMatrix size: " + distMatrix.indexSize() + ", new MusicDB size: " + theDB.size());
+            }catch(noMetadataException e){
+                System.out.println("Cover song class was not indexed, skipping cover song filtering");
             }
-            System.out.println("New DistanceMatrix size: " + distMatrix.indexSize() + ", new MusicDB size: " + theDB.size());
         }
         
         //Init DistanceMatrix query object
@@ -1085,7 +1138,7 @@ public class MIREXMatrixQueryUtil {
         }
         File distMatFile = new File(distMat); 
         //read distanceMatrix
-        DistanceMatrix distMatrix = DistanceMatrix.read(distMatFile);
+        DenseDistanceMatrix distMatrix = DenseDistanceMatrix.read(distMatFile);
         
         //read MusicDB Object describing collection
         String mDB = args[2];
@@ -1155,7 +1208,7 @@ public class MIREXMatrixQueryUtil {
         
         try{
             theDB = RemapMusicDBFilenamesClass.remap(theDB, localAudioDir, true, true);
-            distMatrix = RemapMusicDBFilenamesClass.remapDistanceMatrix(distMatrix, localAudioDir, true);
+            distMatrix = RemapMusicDBFilenamesClass.remapDenseDistanceMatrix(distMatrix, localAudioDir, true);
             
         }catch(IOException ioe){
             throw new RuntimeException("An IOException occured while remapping file anems!\n",ioe);
@@ -1203,7 +1256,7 @@ public class MIREXMatrixQueryUtil {
         }
         File distMatFile = new File(distMat); 
         //read distanceMatrix
-        DistanceMatrix distMatrix = DistanceMatrix.read(distMatFile);
+        DenseDistanceMatrix distMatrix = DenseDistanceMatrix.read(distMatFile);
         
         //parse output file argument
         String out = args[2];
@@ -1226,7 +1279,7 @@ public class MIREXMatrixQueryUtil {
         }
         File distMatFile = new File(distMat); 
         //read distanceMatrix
-        DistanceMatrix distMatrix = DistanceMatrix.read(distMatFile);
+        DenseDistanceMatrix distMatrix = DenseDistanceMatrix.read(distMatFile);
         
         //read MusicDB Object describing collection
         String mDB = args[2];
@@ -1296,7 +1349,7 @@ public class MIREXMatrixQueryUtil {
         
         try{
             theDB = RemapMusicDBFilenamesClass.remap(theDB, localAudioDir, true, true);
-            distMatrix = RemapMusicDBFilenamesClass.remapDistanceMatrix(distMatrix, localAudioDir, true);
+            distMatrix = RemapMusicDBFilenamesClass.remapDenseDistanceMatrix(distMatrix, localAudioDir, true);
             
         }catch(IOException ioe){
             throw new RuntimeException("An IOException occured while remapping file anems!\n",ioe);
@@ -1346,7 +1399,7 @@ public class MIREXMatrixQueryUtil {
         }
         File distMatFile = new File(distMat); 
         //read distanceMatrix
-        DistanceMatrix distMatrix = DistanceMatrix.read(distMatFile);
+        DenseDistanceMatrix distMatrix = DenseDistanceMatrix.read(distMatFile);
         
         
         //read MusicDB Object describing collection
@@ -1417,7 +1470,7 @@ public class MIREXMatrixQueryUtil {
         
         try{
             theDB = RemapMusicDBFilenamesClass.remap(theDB, localAudioDir, true, true);
-            distMatrix = RemapMusicDBFilenamesClass.remapDistanceMatrix(distMatrix, localAudioDir, true);
+            distMatrix = RemapMusicDBFilenamesClass.remapDenseDistanceMatrix(distMatrix, localAudioDir, true);
             
         }catch(IOException ioe){
             throw new RuntimeException("An IOException occured while remapping file anems!\n",ioe);

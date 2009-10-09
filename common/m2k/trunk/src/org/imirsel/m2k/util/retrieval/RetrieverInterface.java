@@ -67,17 +67,17 @@ public interface RetrieverInterface extends Serializable{
      */
     public SearchResult[] retrieveNMostSimilar(Signal querySignal, int N) throws noMetadataException;
     
-    
-    /**
-     * Returns a 2D double array representing the Similarity of each Object indexed by 
-     * the retriever to each other Object, in the range 0:1 where the diagonal should 
-     * be 1.0. The matrix should be ordered exactly the same as the output from 
-     * <code>getSignals()</code> and <code>getFiles()</code>.
-     * @return a 2D double array representing the Similarity of each Object indexed by 
-     * the retriever to each other Object, in the range 0:1
-     * @throws org.imirsel.m2k.util.noMetadataException Thrown if required metadata is not found in an Object being queried for the matrix.
-     */
-    public float[][] getSimilarityMatrix() throws noMetadataException;
+//
+//    /**
+//     * Returns a 2D double array representing the Similarity of each Object indexed by
+//     * the retriever to each other Object, in the range 0:1 where the diagonal should
+//     * be 1.0. The matrix should be ordered exactly the same as the output from
+//     * <code>getSignals()</code> and <code>getFiles()</code>.
+//     * @return a 2D double array representing the Similarity of each Object indexed by
+//     * the retriever to each other Object, in the range 0:1
+//     * @throws org.imirsel.m2k.util.noMetadataException Thrown if required metadata is not found in an Object being queried for the matrix.
+//     */
+//    public float[][] getSimilarityMatrix() throws noMetadataException;
     
     /** 
      * Returns a <CODE>DistanceMatrix</CODE> Object representing the distance
@@ -89,5 +89,5 @@ public interface RetrieverInterface extends Serializable{
      * @throws org.imirsel.m2k.util.noMetadataException Thrown if required 
      * metadata is not found in an Object being queried for the matrix.
      */
-    public DistanceMatrix getDistanceMatrix() throws noMetadataException;
+    public DistanceMatrixInterface getDistanceMatrix() throws noMetadataException;
 }

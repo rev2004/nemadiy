@@ -509,7 +509,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
 //            textOut.newLine();
 
             
-            textOut.write("[data, result] = readtext('" + CSVResultFiles[ACCURACY_FILE_INDEX].getAbsolutePath() + "', '\t');");
+            textOut.write("[data, result] = readtext('" + CSVResultFiles[ACCURACY_FILE_INDEX].getAbsolutePath() + "', ',');");
             textOut.newLine();
             textOut.write("algNames = data(1,4:" + (systemNames.length + 3) + ")';");
             textOut.newLine();
@@ -613,7 +613,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
-            textOut.write("[data, result] = readtext('" + CSVResultFiles[FMEASURE_FILE_INDEX].getAbsolutePath() + "', '\t');");
+            textOut.write("[data, result] = readtext('" + CSVResultFiles[FMEASURE_FILE_INDEX].getAbsolutePath() + "', ',');");
             textOut.newLine();
             textOut.write("algNames = data(1,4:" + (systemNames.length + 3) + ")';");
             textOut.newLine();
@@ -719,7 +719,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
-            textOut.write("[data, result] = readtext('" + CSVResultFiles[FMEASURE_PER_TRACK_FILE_INDEX].getAbsolutePath() + "', '\t');");
+            textOut.write("[data, result] = readtext('" + CSVResultFiles[FMEASURE_PER_TRACK_FILE_INDEX].getAbsolutePath() + "', ',');");
             textOut.newLine();
             textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
             textOut.newLine();
@@ -864,10 +864,33 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
 //        readtextMFile.delete();
 //    }
 
+    private String[] produceSummaryRowAvgByTag(String metadataType, String measureName, String[] systemNames, int numFolds, EvaluationDataObject[][] dataToEvaluate, String[][] tagNames) throws noMetadataException {
+
+        String[] csvData = new String[systemNames.length + 1];
+        csvData[0] = measureName;
+        double[] avg = new double[systemNames.length];
+        int totalTags = 0;
+        for (int f = 0; f < numFolds; f++) {
+            totalTags += tagNames[f].length;
+            for (int j = 0; j < tagNames[f].length; j++) {
+                for (int s = 0; s < systemNames.length; s++) {
+                    HashMap<String, Double> data = (HashMap<String, Double>) dataToEvaluate[s][f].getMetadata(metadataType);
+                    avg[s] += data.get(tagNames[f][j]).doubleValue();
+                }
+            }
+        }
+
+        for (int i = 0; i < avg.length; i++){
+            avg[i] /= totalTags;
+            csvData[i+1] = "" + avg[i];
+        }
+        return csvData;
+    }
+
     private void writeCSVResultFile(String metadataType, int totalNumRows, String[] systemNames, int numFolds, EvaluationDataObject[][] dataToEvaluate, String[][] tagNames, File outputFile) throws noMetadataException {
 
         String[][] csvData = new String[totalNumRows + 1][systemNames.length + 4];
-        csvData[0][0] = "tag";
+        csvData[0][0] = "*tag";
         csvData[0][1] = "fold";
         csvData[0][2] = "positive examples";
         csvData[0][3] = "negative examples";
@@ -894,7 +917,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             foldOffset += tagNames[f].length;
         }
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(outputFile, "\t", csvData, false);
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(outputFile, ",", csvData, false);
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -902,9 +925,9 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
     
     private void writeCSVResultFilePerTrack(String metadataType, int totalNumRows, String[] systemNames, int numFolds, EvaluationDataObject[][] dataToEvaluate, String[][] pathNames, File outputFile) throws noMetadataException {
 
-        String[][] csvData = new String[totalNumRows + 1][systemNames.length + 4];
-        csvData[0][0] = "track";
-        csvData[0][1] = "fold";
+        String[][] csvData = new String[totalNumRows + 1][systemNames.length + 2];
+        csvData[0][0] = "*Track";
+        csvData[0][1] = "Fold";
         
         for (int i = 0; i < systemNames.length; i++) {
             csvData[0][i + 2] = systemNames[i];
@@ -923,7 +946,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             foldOffset += pathNames[f].length;
         }
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(outputFile, "\t", csvData, false);
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(outputFile, ",", csvData, false);
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -932,9 +955,9 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
     private void writeAvgAcrossFoldsCSVResultFile(String metadataType,  String[] systemNames, int numFolds, EvaluationDataObject[][] dataToEvaluate, HashSet<String> tagNames, File outputFile) throws noMetadataException {
 
         String[][] csvData = new String[tagNames.size()+1][systemNames.length + 3];
-        csvData[0][0] = "tag";
-        csvData[0][1] = "positive examples";
-        csvData[0][2] = "negative examples";
+        csvData[0][0] = "*Tag";
+        csvData[0][1] = "Positive Examples";
+        csvData[0][2] = "Negative Examples";
 
         for (int i = 0; i < systemNames.length; i++) {
             csvData[0][i + 3] = systemNames[i];
@@ -964,7 +987,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         }
         
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(outputFile, "\t", csvData, false);
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(outputFile, ",", csvData, false);
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1031,7 +1054,27 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
   
         File AvgNegAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_avg_negative_example_Accuracy.csv");
         writeAvgAcrossFoldsCSVResultFile(EvaluationDataObject.TAG_BINARY_NEG_ACCURACY_MAP, systemNames, numFolds, dataToEvaluate, tagNamesSet, AvgNegAccuracyFile);
-  
+
+
+        String[][] summaryData = new String[5][];
+        String[] header = new String[systemNames.length+1];
+        header[0] = "*Measure";
+        for (int i = 0; i < systemNames.length; i++){
+            header[i+1] = systemNames[i];
+        }
+        summaryData[0] = header;
+        summaryData[1] = produceSummaryRowAvgByTag(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP, "Average Tag F-measure", systemNames, numFolds, dataToEvaluate, tagNames);
+        summaryData[2] = produceSummaryRowAvgByTag(EvaluationDataObject.TAG_BINARY_ACCURACY_MAP, "Average Tag Accuracy", systemNames, numFolds, dataToEvaluate, tagNames);
+        summaryData[3] = produceSummaryRowAvgByTag(EvaluationDataObject.TAG_BINARY_POS_ACCURACY_MAP, "Average Positive Tag Accuracy", systemNames, numFolds, dataToEvaluate, tagNames);
+        summaryData[4] = produceSummaryRowAvgByTag(EvaluationDataObject.TAG_BINARY_NEG_ACCURACY_MAP, "Average Negative Tag Accuracy", systemNames, numFolds, dataToEvaluate, tagNames);
+
+        File SummaryFile = new File(outputDir.getAbsolutePath() + File.separator + "summary_binary.csv");
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(SummaryFile, ",", summaryData, false);
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         return new File[]{AvgFmeasureFile,AvgAccuracyFile,AvgPosAccuracyFile,AvgNegAccuracyFile,FmeasureFile,AccuracyFile,PosAccuracyFile,NegAccuracyFile,TrackFmeasureFile,TrackAccuracyFile,TrackPosAccuracyFile,TrackNegAccuracyFile};
     }
 

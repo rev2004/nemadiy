@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
+import org.imirsel.m2k.util.retrieval.MIREXMatrixQueryUtil;
 
 /**
  *
@@ -52,28 +54,21 @@ public class TagClassificationBinaryFileReader implements EvalFileReader {
         if(verbose){
             System.out.println("   appending tag: " + tag + " to path: " + path);
         }
-        String key,ext;
+        String key,cleanTag;
         if (MIREX_submissionMode){
-            key = new File(path).getName();
-            for (Iterator<String> it = ACCEPTED_FILE_EXTENSIONS.iterator(); it.hasNext();) {
-                ext = it.next();
-                if(key.endsWith(ext)){
-                    key = key.replaceAll(ext, "");
-                    break;
-                }
-            }
+            key = RemapMusicDBFilenamesClass.convertFileToMIREX_ID(new File(path));
         }else{
             key = path;
         }
-        allTags.add(tag);
-        if (pathsToRelevantTags.containsKey(key)){
-            HashSet<String> tagSet = pathsToRelevantTags.get(key);
-            tagSet.add(tag);
-        }else{
-            HashSet<String> tagSet = new HashSet<String>();
-            tagSet.add(tag);
+        cleanTag = TagClassificationGroundTruthFileReader.cleanTag(tag);
+        allTags.add(cleanTag);
+
+        HashSet<String> tagSet = pathsToRelevantTags.get(key);
+        if (tagSet == null){
+            tagSet = new HashSet<String>();
             pathsToRelevantTags.put(key, tagSet);
         }
+        tagSet.add(cleanTag);
     }
     
     public EvaluationDataObject readFile(File theFile) {

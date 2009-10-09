@@ -11,11 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.imirsel.m2k.evaluation2.EvalFileReader;
 import org.imirsel.m2k.evaluation2.EvaluationDataObject;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
+import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
 
 /**
  *
@@ -31,7 +30,11 @@ public class TagClassificationGroundTruthFileReader implements EvalFileReader {
     public void setMirexMode(boolean mirexMode) {
         this.mirexMode = mirexMode;
     }
-    
+
+    public static String cleanTag(String tag){
+        return tag.toLowerCase().replaceAll("\\s+", "_").replaceAll("[^a-z0-9]", "");
+    }
+
     private static final int FILE_FORMAT_ERROR_TOLERANCE = 2;
     
     private static HashSet<String> known_headers;
@@ -59,6 +62,13 @@ public class TagClassificationGroundTruthFileReader implements EvalFileReader {
         if(verbose){
             System.out.println("   appending tag: " + tag + " to path: " + path);
         }
+        //not needed as this is done in readFile()
+//        String key;
+//        if (mirexMode){
+//            key = RemapMusicDBFilenamesClass.convertFileToMIREX_ID(new File(path));
+//        }else{
+//            key = path;
+//        }
         if (pathsToRelevantTags.containsKey(path)){
             HashSet<String> tagSet = pathsToRelevantTags.get(path);
             tagSet.add(tag);
@@ -120,12 +130,15 @@ public class TagClassificationGroundTruthFileReader implements EvalFileReader {
                 }
             }
             for (int i = first_tag_col; i < headers.length; i++) {
-                allTags.add(headers[i].toLowerCase());
+                allTags.add(cleanTag(headers[i]));
             }
             
             for (int i = 0; i < data.length; i++) {
                 String artist = data[i][artist_col];
                 String id = data[i][id_col];
+                if (mirexMode){
+                    id = RemapMusicDBFilenamesClass.convertFileToMIREX_ID(new File(id));
+                }
                 pathsToArtist.put(id, artist);
                 for (int j = first_tag_col; j < headers.length; j++) {
                     if (data[i][j].equalsIgnoreCase("1")||data[i][j].equalsIgnoreCase("y")){

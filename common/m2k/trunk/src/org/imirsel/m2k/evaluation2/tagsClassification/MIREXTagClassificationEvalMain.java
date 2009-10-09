@@ -26,7 +26,7 @@ public class MIREXTagClassificationEvalMain {
     public static void main(String[] args) {
         
         System.out.println("MIREX 2008 Audio Tag classification evaluator\n" +
-                "\t\tby Kis West (kris.west@gmail.com\n" +
+                "\t\tby Kris West (kris.west@gmail.com\n" +
                 "\t\tBeta Binomial test by Michael Mandel (mim@ee.columbia.edu)");
         System.out.println("");
         
