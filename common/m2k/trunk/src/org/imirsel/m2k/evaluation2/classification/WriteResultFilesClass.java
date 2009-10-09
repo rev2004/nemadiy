@@ -62,7 +62,7 @@ public class WriteResultFilesClass {
         String EvaluationOutput = "";
 
         String[] runNames = new String[numAlgos];
-        EvaluationOutput += "Class,";
+        EvaluationOutput += "*Class,";
         for (int i = 0; i < numAlgos; i++) {
             try {
                 runNames[i] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME).replaceAll(",", " ");
@@ -168,7 +168,7 @@ public class WriteResultFilesClass {
         String EvaluationOutput = "";
 
         String[] runNames = new String[numAlgos];
-        EvaluationOutput += "Classification fold,";
+        EvaluationOutput += "*Classification fold,";
         for (int i = 0; i < numAlgos; i++) {
             try {
                 runNames[i] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME);
@@ -289,7 +289,7 @@ public class WriteResultFilesClass {
         
         DecimalFormat dec = new DecimalFormat();
         dec.setMaximumFractionDigits(2);
-        EvaluationOutput += "Participant,Average Classifcation Accuracy\n";
+        EvaluationOutput += "*Participant,Average Classifcation Accuracy\n";
         for (int i = 0; i < numAlgos; i++) {
             EvaluationOutput += runNames[i] + ",";
             EvaluationOutput += dec.format(means[i] * 100.0);
@@ -304,7 +304,7 @@ public class WriteResultFilesClass {
         }
         File testFile = null;
         try {
-            testFile = new File(outputDirectory + File.separator + evaluationName + "_avg_results" + outputFileExt);
+            testFile = new File(outputDirectory + File.separator + "summary_" + evaluationName + outputFileExt);
             BufferedWriter output = new BufferedWriter(new FileWriter(testFile));
             output.write(EvaluationOutput);
             output.close();

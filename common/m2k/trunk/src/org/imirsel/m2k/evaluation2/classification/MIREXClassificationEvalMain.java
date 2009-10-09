@@ -183,7 +183,6 @@ public class MIREXClassificationEvalMain {
         //prep result test data CSV file over classes and folds
         File perClassCSV = WriteResultFilesClass.prepFriedmanTestDataOverClasses(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", true);
 
-
         //prep result test data CSV file over folds only
         File perFoldCSV = WriteResultFilesClass.prepFriedmanTestData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", true);
 
