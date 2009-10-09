@@ -1,0 +1,1 @@
+These are some demo CSS "skins" that came with AppFuse.
