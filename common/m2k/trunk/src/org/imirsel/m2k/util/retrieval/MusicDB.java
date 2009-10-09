@@ -24,7 +24,9 @@ import org.imirsel.m2k.vis.ResultCurvePlot;
  * @author Kris West (kw@cmp.uea.ac.uk)  
  */
 public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
-    
+
+    public static final long serialVersionUID = -2179456818738132209L;
+
     HashMap<String,Signal> fileNameToSignalObject = null;
     HashMap<String,HashMap<String,ArrayList<Signal>>> indexKeyToIndexMap = null;
     
@@ -57,7 +59,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
      * Clones the MusicDB. Note data is not duplicated only mappings.
      * @return the clone
      */
-    @SuppressWarnings("unchecked")
+    @Override
     public Object clone()//
     {
         MusicDB out = new MusicDB();
@@ -127,12 +129,12 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
         indexKeyToIndexMap.put(theKey, index);
         if (fileNameToSignalObject.size() > 0)//already contains Signals then index
         {
-            Object[] files = fileNameToSignalObject.keySet().toArray();
+            String[] files = fileNameToSignalObject.keySet().toArray(new String[fileNameToSignalObject.size()]);
             for (int i = 0; i < files.length; i++) {
                 try {
                     Signal aSig = fileNameToSignalObject.get(files[i]);
                     if (containsMetadataClass(theKey,aSig.getMetadata(theKey))) {
-                        ArrayList<Signal> metadataList = index.get(aSig.getMetadata(theKey));
+                        ArrayList<Signal> metadataList = index.get((String)aSig.getMetadata(theKey));
                         if (!metadataList.contains(aSig)){
                             metadataList.add(aSig);
                         }
@@ -408,7 +410,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
         }
         HashMap<String,ArrayList<Signal>> index = indexKeyToIndexMap.get(IndexKey);
         ArrayList<Integer> sizes = new ArrayList<Integer>();
-        Object[] keysArr = index.keySet().toArray();
+        String[] keysArr = index.keySet().toArray(new String[index.size()]);
         for (int i = 0; i < keysArr.length; i++) {
             sizes.add(new Integer(((List)index.get(keysArr[i])).size()));
         }
@@ -796,20 +798,20 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
         
         
         //get a DistanceMatrix to work on
-        DistanceMatrix dists = retriever.getDistanceMatrix();
+        DistanceMatrixInterface dists = retriever.getDistanceMatrix();
         
         //Build a retriever from the DistanceMatrix
         DistanceMatrixRetriever ret = new DistanceMatrixRetriever(dists);
         
         //List files = Arrays.asList(dists.getFiles());
-        List Signals = Arrays.asList(ret.getSignals());
+        List<Signal> Signals = Arrays.asList(ret.getSignals());
         
         retriever = null;
         
         //create a file location to index hashmap to speed up times similar file search
         HashMap<String,Integer> fileLoc2Index = new HashMap<String,Integer>(Signals.size());
         for (int i = 0; i < Signals.size(); i++) {
-            fileLoc2Index.put(((Signal)Signals.get(i)).getStringMetadata(Signal.PROP_FILE_LOCATION), new Integer(i));
+            fileLoc2Index.put(Signals.get(i).getStringMetadata(Signal.PROP_FILE_LOCATION), new Integer(i));
         }
         
         /*System.out.println("Evaluation files:");
@@ -817,7 +819,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
             System.out.println("\t" + ((Signal)Signals.get(sourceFold)).getStringMetadata(Signal.PROP_FILE_LOCATION));
         }*/
         System.out.println("");
-        ArrayList keys = (ArrayList)this.getIndexedMetadatas();
+        ArrayList<String> keys = (ArrayList<String>)this.getIndexedMetadatas();
         
         //variables for genre confusion matrices
         List genreClasses = this.getMetadataClasses(Signal.PROP_GENRE);
@@ -878,7 +880,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
             
 
 
-            Signal theQuery = (Signal)Signals.get(i);
+            Signal theQuery = Signals.get(i);
 
             //retrieve results
             SearchResult[] similar = ret.retrieveNMostSimilar(theQuery, maxTestLevel+1);
@@ -888,13 +890,14 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
             int[][] maxCount = new int[indexedMetadatas.size()][TEST_LEVELS.length];
             boolean retrievedSelf = false;
             
-            
+            File file1 = Signals.get(i).getFile();
+
             //measure average distance between all examples (for normalisation)
-            float[] distVector = dists.getDistances((theQuery).getFile());
-            for (int k = 0; k < distVector.length; k++) {
+            for (int k = 0; k < Signals.size(); k++) {
+
                 //ignore self retrieval
                 if(k != i) {
-                    totalDistance += distVector[k];
+                    totalDistance += dists.getDistance(file1, Signals.get(k).getFile());
                     totalCount++;
                 }
             }
@@ -908,7 +911,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                     //collect last result if retriever also retrieved query
                     if(retrievedSelf){
                         for (int j = 0; j < indexedMetadatas.size(); j++) {
-                            if(this.getMetadataClassForSignal((String)keys.get(j),similar[k].getTheResult()).equals(this.getMetadataClassForSignal((String)keys.get(j),theQuery))) {
+                            if(this.getMetadataClassForSignal(keys.get(j),similar[k].getTheResult()).equals(this.getMetadataClassForSignal(keys.get(j),theQuery))) {
                                 numInSameClass[j][currentTestLevel]++;
                             }
                         }
@@ -952,7 +955,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                     }else{
                         //record neighbourhood matches
                         for (int j = 0; j < indexedMetadatas.size(); j++){
-                            if(this.getMetadataClassForSignal((String)keys.get(j),similar[k].getTheResult()).equals(this.getMetadataClassForSignal((String)keys.get(j),theQuery))) {
+                            if(this.getMetadataClassForSignal(keys.get(j),similar[k].getTheResult()).equals(this.getMetadataClassForSignal(keys.get(j),theQuery))) {
                                 numInSameClass[j][currentTestLevel]++;
                             }
                         }
@@ -978,24 +981,25 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
             
             
             //measure full distances
-            for (int k = 0; k < distVector.length; k++) {
-                //ignore self retrieval
-                if(k != i) {
-                    for (int j = 0; j < indexedMetadatas.size(); j++){
-                        if(this.getMetadataClassForSignal((String)keys.get(j),(Signal)Signals.get(k)).equals(this.getMetadataClassForSignal((String)keys.get(j),theQuery))) {
-                            labelDistances[j] += distVector[k];
+            for (int j = 0; j < indexedMetadatas.size(); j++){
+                String queryMeta = this.getMetadataClassForSignal(keys.get(j),theQuery);
+                for (int k = 0; k < Signals.size(); k++) {
+                    //ignore self retrieval
+                    if(k != i) {
+                        Signal theSig = Signals.get(k);
+                        if(this.getMetadataClassForSignal(keys.get(j),theSig).equals(queryMeta)) {
+                            labelDistances[j] += dists.getDistance(file1, theSig.getFile());
                             labelCounts[j]++;
                         }
                     }
-                    
                 }
             }
             
             
             for (int j = 0; j < indexedMetadatas.size(); j++){
-                String metadataClass = this.getMetadataClassForSignal((String)keys.get(j),theQuery);
-                HashMap index = (HashMap)this.indexKeyToIndexMap.get(keys.get(j));
-                ArrayList metaClassList = (ArrayList)index.get(metadataClass);
+                String metadataClass = this.getMetadataClassForSignal(keys.get(j),theQuery);
+                HashMap<String, ArrayList<Signal>> index = this.indexKeyToIndexMap.get(keys.get(j));
+                ArrayList<Signal> metaClassList = index.get(metadataClass);
                 for (int k = 0; k < TEST_LEVELS.length; k++) {
                     //Collect number of examples for each query available in database
                     if (metaClassList.size()>TEST_LEVELS[k]) {
@@ -1044,7 +1048,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                 currentTestLevel = 0;
                 
                 //retrieve results
-                SearchResult[] similar = ret.retrieveNMostSimilar((Signal)Signals.get(i), 300);
+                SearchResult[] similar = ret.retrieveNMostSimilar(Signals.get(i), 300);
                 
                 
                 //initialise temp storage for neighbourhood counts
@@ -1059,7 +1063,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                 int k = 0;
                 //measure filtered genre neighbourhood matches
                 //end when enough filtered results collected
-                int queryClass = genreClasses.indexOf(this.getMetadataClassForSignal(Signal.PROP_GENRE,(Signal)Signals.get(i)));
+                int queryClass = genreClasses.indexOf(this.getMetadataClassForSignal(Signal.PROP_GENRE,Signals.get(i)));
                 while ((testsPossible < maxTestLevel+1)&&(k < similar.length))
                 {
                     //if on last result in current test level
@@ -1083,7 +1087,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                     }
                     else{
                         //catch retrieval of query and songs by same artist
-                        if((!this.getMetadataClassForSignal(Signal.PROP_ARTIST,similar[k].getTheResult()).equals(this.getMetadataClassForSignal(Signal.PROP_ARTIST,(Signal)Signals.get(i)))) && (!similar[k].getTheResult().equals((Signal)Signals.get(i)))){
+                        if((!this.getMetadataClassForSignal(Signal.PROP_ARTIST,similar[k].getTheResult()).equals(this.getMetadataClassForSignal(Signal.PROP_ARTIST,Signals.get(i)))) && (!similar[k].getTheResult().equals(Signals.get(i)))){
                             //record filtered neighbourhood matches
                             int resultClass = genreClasses.indexOf(this.getMetadataClassForSignal(Signal.PROP_GENRE,similar[k].getTheResult()));
                             
@@ -1100,7 +1104,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                     k++;
                 }
 
-                String metadataClass = this.getMetadataClassForSignal(Signal.PROP_GENRE,(Signal)Signals.get(i));
+                String metadataClass = this.getMetadataClassForSignal(Signal.PROP_GENRE,Signals.get(i));
                 HashMap index = (HashMap)this.indexKeyToIndexMap.get(Signal.PROP_GENRE);
                 ArrayList metaClassList = (ArrayList)index.get(metadataClass);
                 for (int t = 0; t < TEST_LEVELS.length; t++) {
@@ -1339,7 +1343,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
         msg += "---\n";
         for (int i = 0; i < TEST_LEVELS.length; i++) {
             msg += "Maximum number of times a song was similar at " + TEST_LEVELS[i] + " results:\t" + alwaysSimilar[i] + "\n";
-            Signal theSig = (Signal)Signals.get(indexes[i]);
+            Signal theSig = Signals.get(indexes[i]);
             msg += "\t\tTrack: " + theSig.getStringMetadata(Signal.PROP_FILE_LOCATION) + ", genre: " + this.getMetadataClassForSignal(Signal.PROP_GENRE,theSig) + "\n";
         }
         
@@ -1414,7 +1418,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
         int maxTestLevel = TEST_LEVELS[TEST_LEVELS.length-1];
         
         //get a DistanceMatrix to work on
-        DistanceMatrix dists = retriever.getDistanceMatrix();
+        DistanceMatrixInterface dists = retriever.getDistanceMatrix();
         
         //Build a retriever from the DistanceMatrix
         DistanceMatrixRetriever ret = new DistanceMatrixRetriever(dists);
@@ -1965,14 +1969,14 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
                 //sort by file locaitonmetadata
                 Collections.sort((List<Signal>)copyAClass);
                 while((numUsedTrain[i] < numToTrain[i])&&(copyAClass.size() > 0)){
-                    Signal aSig = (Signal)copyAClass.remove(rnd.nextInt(copyAClass.size()));
+                    Signal aSig = copyAClass.remove(rnd.nextInt(copyAClass.size()));
                     aSig.setMetadata(Signal.PROP_CLASS,aSig.getStringMetadata(testMetadata));
                     
                     train.add(aSig);
                     numUsedTrain[i]++;
                 }
                 while((numUsedTest[i] < numToTest[i])&&(copyAClass.size() > 0)){
-                    Signal aSig = (Signal)copyAClass.remove(rnd.nextInt(copyAClass.size()));
+                    Signal aSig = copyAClass.remove(rnd.nextInt(copyAClass.size()));
                     aSig.setMetadata(Signal.PROP_CLASS,aSig.getStringMetadata(testMetadata));
                     test.add(aSig);
                     numUsedTest[i]++;

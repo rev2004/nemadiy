@@ -26,8 +26,6 @@ import org.imirsel.m2k.util.noMetadataException;
  */
 public class MIREXClassificationEvalMain {
 
-    
-
     private boolean performMatlabStatSigTests = true;
     private String matlabPath = "matlab";
     private String evaluationName;
@@ -106,7 +104,7 @@ public class MIREXClassificationEvalMain {
     public void performEvaluation() {
 
         //get each directory of results
-        System.err.println("Determining location of bresults files for each system for each experiment fold...");
+        System.err.println("Determining location of results files for each system for each experiment fold...");
         ArrayList<ArrayList<File>> resultsFilesPerSystemPerFold = new ArrayList<ArrayList<File>>();
         int numFolds = -1;
         for (Iterator<File> it = resultsDirs.iterator(); it.hasNext();) {

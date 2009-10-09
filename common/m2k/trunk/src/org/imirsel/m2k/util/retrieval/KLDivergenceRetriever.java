@@ -6,7 +6,7 @@ import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
 import java.util.HashMap;
 import java.util.ArrayList;
-import org.imirsel.m2k.util.retrieval.DistanceMatrix;
+import org.imirsel.m2k.util.retrieval.DenseDistanceMatrix;
 import org.imirsel.m2k.util.retrieval.SearchResult;
 
 /**
@@ -214,7 +214,7 @@ public class KLDivergenceRetriever implements SimpleDistMeasureRetrievalInterfac
         return simMatrix;
     }
     
-    public DistanceMatrix getDistanceMatrix(){
+    public DenseDistanceMatrix getDistanceMatrix(){
         //iterate through all files
         if (Files == null) {
             this.finaliseIndex();
@@ -244,7 +244,7 @@ public class KLDivergenceRetriever implements SimpleDistMeasureRetrievalInterfac
         for (int i = 0; i < this.Files.length; i++) {
             theFiles[i] = new File(this.Files[i]);
         }
-        return new DistanceMatrix(this.getRetrieverName(), distMatrix, theFiles);
+        return new DenseDistanceMatrix(this.getRetrieverName(), distMatrix, theFiles);
     }
     
     /** Retrieve N transcriptions most similar to the query */

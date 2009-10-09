@@ -56,6 +56,7 @@ public class TagClassificationCollectionSplitter {
             theDb.addFileToDatabase(toInput);
         }
 
+        System.out.println("Computing the corss-validation folds...");
         Signal[/*fold*/][/*tracks*/] dataset = theDb.getCrossValidationFoldsForTags(numFolds, System.currentTimeMillis(), MAX_NUM_ADJUSTMENTS);
 
         try {
@@ -74,6 +75,8 @@ public class TagClassificationCollectionSplitter {
 
             //deal with different versions here
             if (collectionVersionPaths == null){
+
+                System.out.println("Creating a single collection version...");
 
                 File featExtractFile = new File(outputDir.getAbsolutePath() + File.separator + "featExtractList.txt");
                 out = new BufferedWriter(new FileWriter(featExtractFile));
@@ -124,8 +127,9 @@ public class TagClassificationCollectionSplitter {
                     
                     String collectionPath = collectionVersionPaths.get(v)[0];
                     String collectionName = collectionVersionPaths.get(v)[1];
-                    
-                    System.out.println("creating collection version: " + collectionName);
+
+                    System.out.println("Creating collection version " + (v+1) + " with name " + collectionName);
+
                     
                     File collectionDir = new File(outputDir.getAbsolutePath()  + File.separator + collectionName);
                     collectionDir.mkdirs();

@@ -526,6 +526,17 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             System.err.println("done.");
         }
 
+        //produce summary CSV file
+        String[][] summaryCsvDataAveraged = new String[3+precisionPoints.length][systemNames.length + 1];
+        summaryCsvDataAveraged[0][0] = "*Measure";
+        summaryCsvDataAveraged[1][0] = "Average AUC-ROC Tag";
+        summaryCsvDataAveraged[2][0] = "Average AUC-ROC Clip";
+        for (int i = 0; i < precisionPoints.length; i++){
+            summaryCsvDataAveraged[3+i][0] = "Precision at " + precisionPoints[i];
+        }
+        for (int i = 0; i < systemNames.length; i++) {
+            summaryCsvDataAveraged[0][i+1] = systemNames[i];
+        }
         
         //  prepare per-tag tag and clip AUC-ROC data for use in Friedmans's test with TK HSD
         int numFolds = dataToEvaluate[0].length;
@@ -541,16 +552,16 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         }
         
         String[][] csvData = new String[totalNumRows+1][systemNames.length + 2];    
-        csvData[0][0] = "tag";
-        csvData[0][1] = "fold";
+        csvData[0][0] = "*Tag";
+        csvData[0][1] = "Fold";
         
         for (int i = 0; i < systemNames.length; i++) {
             csvData[0][i+2] = systemNames[i];
         }
         int foldOffset = 1;
         for (int f = 0; f < numFolds; f++) {
-            HashMap<String,Integer> tag2NumPos = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
-            HashMap<String,Integer> tag2NumNeg = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
+//            HashMap<String,Integer> tag2NumPos = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
+//            HashMap<String,Integer> tag2NumNeg = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
             for (int j = 0; j < tagNames[f].length; j++) {
                 csvData[foldOffset + j][0] = tagNames[f][j];
                 csvData[foldOffset + j][1] = "" + (f + 1);
@@ -565,12 +576,13 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         }
         File AUC_ROC_fold_file = new File(outputDir.getAbsolutePath() + File.separator + "affinity_tag_fold_AUC_ROC.csv");
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AUC_ROC_fold_file, "\t", csvData, false); 
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AUC_ROC_fold_file, ",", csvData, false);
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         System.err.println("Writing out tag AUC-ROC data averaged across folds");
+
         //Write out tag AUC-ROC data for significance testing
         HashSet<String> tagNamesSet = new HashSet<String>();
         for (int i = 0; i < numFolds; i++) {
@@ -578,11 +590,16 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             tagNamesSet.addAll(tag2AUC_ROC.keySet());
         }
         
-        String[][] csvDataAveraged = new String[tagNamesSet.size()+1][systemNames.length + 1];    
-        csvDataAveraged[0][0] = "tag";
+        //collect per fold averages
+        String[][] csvDataAveraged = new String[tagNamesSet.size()+1][systemNames.length + 1];
+        csvDataAveraged[0][0] = "*Tag";
         for (int i = 0; i < systemNames.length; i++) {
             csvDataAveraged[0][i+1] = systemNames[i];
         }
+
+        //also collect averages for summary CSV
+        double[] avgTagAUCROC = new double[systemNames.length];
+
         int tagIdx = 1;
         for (Iterator<String> it = tagNamesSet.iterator(); it.hasNext();) {
             String tag = it.next();
@@ -595,8 +612,13 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                 }
                 avg /= numFolds;
                 csvDataAveraged[tagIdx][s+1] = "" + avg;
+                avgTagAUCROC[s] += avg;
             }
             tagIdx++;
+        }
+        for (int i = 0; i < avgTagAUCROC.length; i++){
+            avgTagAUCROC[i] /= tagNamesSet.size();
+            summaryCsvDataAveraged[1][i+1] = "" + avgTagAUCROC[i];
         }
 
         File AUC_ROC_file = new File(outputDir.getAbsolutePath() + File.separator + "affinity_tag_AUC_ROC.csv");
@@ -608,6 +630,8 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         
         
         System.err.println("Writing out per-track AUC-ROC data");
+
+
         //Write out clip AUC-ROC data for significance testing
         String[][] clipNames = new String[numFolds][];
         totalNumRows = 0;
@@ -616,16 +640,24 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             clipNames[i] = clip2AUC_ROC.keySet().toArray(new String[clip2AUC_ROC.size()]);
             totalNumRows += clipNames[i].length;
         }
+
+        //also collect averages for summary CSV
+        double[] avgClipAUCROC = new double[systemNames.length];
+
         
         csvData = new String[totalNumRows+1][systemNames.length + 2];    
-        csvData[0][0] = "clip";
-        csvData[0][1] = "fold";
+        csvData[0][0] = "*Clip";
+        csvData[0][1] = "Fold";
 
         for (int i = 0; i < systemNames.length; i++) {
             csvData[0][i+2] = systemNames[i];
         }
         foldOffset = 1;
+
+        int totalNumClips = 0;
+        double aVal = 0.0;
         for (int f = 0; f < numFolds; f++) {
+            totalNumClips += clipNames[f].length;
             for (int c = 0; c < clipNames[f].length; c++) {
                 csvData[foldOffset + c][0] = clipNames[f][c];
                 csvData[foldOffset + c][1] = "" + (f + 1);
@@ -635,20 +667,25 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                     if(!clip2AUC_ROC.containsKey(clipNames[f][c])){
                         System.out.println("Error! Results for system: " + systemNames[s] + " did not contain results for fold " + (f+1) + " clip " + clipNames[f][c] + "!");
                     }
-                    
-                    csvData[foldOffset + c][s+2] = "" + clip2AUC_ROC.get(clipNames[f][c]).doubleValue();
+                    aVal = clip2AUC_ROC.get(clipNames[f][c]).doubleValue();
+                    csvData[foldOffset + c][s+2] = "" + aVal;
+                    avgClipAUCROC[s] += aVal;
                 }
             }
             foldOffset += clipNames[f].length;
         }
         File clip_AUC_ROC_file = new File(outputDir.getAbsolutePath() + File.separator + "affinity_clip_AUC_ROC.csv");
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(clip_AUC_ROC_file, "\t", csvData, false); 
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(clip_AUC_ROC_file, ",", csvData, false);
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        
+        for (int i = 0; i < avgClipAUCROC.length; i++){
+            avgClipAUCROC[i] /= totalNumClips;
+            summaryCsvDataAveraged[2][i+1] = "" + avgClipAUCROC[i];
+        }
+
         
         
         //Write out clip Precision at N data for significance testing
@@ -657,12 +694,16 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             System.err.println("Writing out per-track precision at " + precisionPoints[i] + " data");
             
             csvData = new String[totalNumRows+1][systemNames.length + 2];    
-            csvData[0][0] = "clip";
-            csvData[0][1] = "fold";
+            csvData[0][0] = "*Clip";
+            csvData[0][1] = "Fold";
 
             for (int j = 0; j < systemNames.length; j++) {
                 csvData[0][j+2] = systemNames[j];
             }
+
+            //also collect averages for summary CSV
+            double[] avgClipPrecAtN = new double[systemNames.length];
+
             foldOffset = 1;
             for (int f = 0; f < numFolds; f++) {
                 for (int c = 0; c < clipNames[f].length; c++) {
@@ -674,21 +715,34 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                         if(!clip2PrecAtN.containsKey(clipNames[f][c])){
                             System.out.println("Error! Results for system: " + systemNames[s] + " did not contain precision at N results for fold " + (f+1) + " clip " + clipNames[f][c] + "!");
                         }
-
-                        csvData[foldOffset + c][s+2] = "" + clip2PrecAtN.get(clipNames[f][c])[i];
+                        aVal = clip2PrecAtN.get(clipNames[f][c])[i];
+                        csvData[foldOffset + c][s+2] = "" + aVal;
+                        avgClipPrecAtN[s] += aVal;
                     }
                 }
                 foldOffset += clipNames[f].length;
             }
             clip_Prec_at_N_files[i] = new File(outputDir.getAbsolutePath() + File.separator + "affinity_clip_Precision_at_" + precisionPoints[i] + ".csv");
             try {
-                DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(clip_Prec_at_N_files[i], "\t", csvData, false); 
+                DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(clip_Prec_at_N_files[i], ",", csvData, false);
             } catch (IOException ex) {
                 Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
             }
+            for (int j = 0; j < avgClipPrecAtN.length; j++){
+                avgClipPrecAtN[j] /= totalNumClips;
+                summaryCsvDataAveraged[3+i][j+1] = "" + avgClipPrecAtN[j];
+            }
         }
-        
-        
+
+        System.out.println("Writing out summary CSV");
+        File summaryFile = new File(outputDir.getAbsolutePath() + File.separator + "summary_affinity.csv");
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(summaryFile, ",", summaryCsvDataAveraged, false);
+        } catch (IOException ex) {
+            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
         System.err.println("Writing out overall report");
         //write overall report to file
         try {
@@ -744,7 +798,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
-            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
+            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', ',');");
             textOut.newLine();
             textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
             textOut.newLine();
@@ -847,7 +901,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
-            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', '\t');");
+            textOut.write("[data, result] = readtext('" + AUC_ROC_file.getAbsolutePath() + "', ',');");
             textOut.newLine();
             textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
             textOut.newLine();
@@ -955,7 +1009,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             
             String matrixName = "precisionAt" + N;
             
-            textOut.write("[data, result] = readtext('" + precisionAtNFile.getAbsolutePath() + "', '\t');");
+            textOut.write("[data, result] = readtext('" + precisionAtNFile.getAbsolutePath() + "', ',');");
             textOut.newLine();
             textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
             textOut.newLine();

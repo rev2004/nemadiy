@@ -5,7 +5,6 @@
 
 package org.imirsel.m2k.evaluation2.tagsClassification;
 
-import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryFileReader;
 import org.imirsel.m2k.evaluation2.*;
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,9 +12,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
 
 /**
  *
@@ -53,27 +52,20 @@ public class TagClassificationAffinityFileReader implements EvalFileReader {
         if(verbose){
             System.out.println("   appending tag: " + tag + ", affinity: " + value + " to path: " + path);
         }
-        String key,ext;
+        String key,cleanTag;
         if (MIREX_submissionMode){
-            key = new File(path).getName();
-            for (Iterator<String> it = ACCEPTED_FILE_EXTENSIONS.iterator(); it.hasNext();) {
-                ext = it.next();
-                if(key.endsWith(ext)){
-                    key = key.replaceAll(ext, "");
-                    break;
-                }
-            }
+            key = RemapMusicDBFilenamesClass.convertFileToMIREX_ID(new File(path));
         }else{
             key = path;
         }
-        if (pathsToRelevantTags.containsKey(key)){
-            HashMap<String,Double> tagMap = pathsToRelevantTags.get(key);
-            tagMap.put(tag,value);
-        }else{
-            HashMap<String,Double> tagMap = new HashMap<String,Double>();
-            tagMap.put(tag,value);
+        cleanTag = TagClassificationGroundTruthFileReader.cleanTag(tag);
+
+        HashMap<String,Double> tagMap = pathsToRelevantTags.get(key);
+        if (tagMap == null){
+            tagMap = new HashMap<String,Double>();
             pathsToRelevantTags.put(key, tagMap);
         }
+        tagMap.put(cleanTag,value);
     }
     
     public EvaluationDataObject readFile(File theFile) {
