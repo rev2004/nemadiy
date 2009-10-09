@@ -1,4 +1,4 @@
-/* A CSS Framework template by Mattias Fjellström, zelphus@gmail.com */
+/* A CSS Framework template by Mattias Fjellstrï¿½m, zelphus@gmail.com */
 /* Based on "A CSS Framework by Mike Stenhouse of Content with Style" */
 
 /* SITE SPECIFIC LAYOUT */
@@ -67,8 +67,9 @@
             }
         /* MAIN */
             div#main {
-                
+                width: 97%;
             }
+			
         /* END MAIN */
         
         /* SUB */
