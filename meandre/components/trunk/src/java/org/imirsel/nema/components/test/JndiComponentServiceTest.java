@@ -7,7 +7,7 @@
  * read License.txt
  *
  */
-package edu.illinois.gslis.imirsel.components.test;
+package org.imirsel.nema.components.test;
 
 import java.util.logging.Logger;
 
