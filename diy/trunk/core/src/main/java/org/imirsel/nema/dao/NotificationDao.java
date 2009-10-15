@@ -2,7 +2,7 @@ package org.imirsel.nema.dao;
 
 import java.util.List;
 
-import org.imirsel.nema.model.Job;
+import org.imirsel.nema.model.Notification;
 
 /**
  * Notification Data Access Object (DAO) interface.
@@ -10,7 +10,7 @@ import org.imirsel.nema.model.Job;
  * @author shirk
  * @since 1.0
  */
-public interface NotificationDao extends GenericDao<Job, Long> {
+public interface NotificationDao extends GenericDao<Notification, Long> {
     /**
      * Return the {@link Notifications}s that the specified user was the
      * recipient.
@@ -19,6 +19,6 @@ public interface NotificationDao extends GenericDao<Job, Long> {
      * {@link Notification}s will be fetched.
      * @return A list of {@link Notifications}s.
      */
-    List<Job> getJobsByOwnerId(Long userId);
+    List<Notification> getNotificationsByRecipientId(Long userId);
 
 }
