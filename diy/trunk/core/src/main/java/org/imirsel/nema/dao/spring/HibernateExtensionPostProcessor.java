@@ -20,7 +20,7 @@ import java.util.Properties;
  * <p>As an example consider the following Spring bean configuration:
  * 
  * <pre>
- * &lt;bean class=&quot;edu.illinois.gslis.imirsel.dao.spring.HibernateExtensionPostProcessor&quot;&gt;
+ * &lt;bean class=&quot;org.imirsel.nema.dao.spring.HibernateExtensionPostProcessor&quot;&gt;
  *     &lt;property name=&quot;mappingResources&quot;&gt;
  *         &lt;list&gt;
  *             &lt;value&gt;edu/illinois/gslis/imirsel/model/Foo.hbm.xml&lt;/value&gt;
@@ -28,7 +28,7 @@ import java.util.Properties;
  *     &lt;/property&gt;
  *     &lt;property name=&quot;annotatedClasses&quot;&gt;
  *         &lt;list&gt;
- *             &lt;value&gt;edu.illinois.gslis.imirsel.model.Bar&lt;/value&gt;
+ *             &lt;value&gt;org.imirsel.nema.model.Bar&lt;/value&gt;
  *         &lt;/list&gt;
  *     &lt;/property&gt;
  * &lt;/bean&gt;

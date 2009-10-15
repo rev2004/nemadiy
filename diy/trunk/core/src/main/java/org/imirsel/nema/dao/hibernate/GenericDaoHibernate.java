@@ -21,8 +21,8 @@ import java.util.Map;
  *
  * <p>To register this class in your Spring context file, use the following XML.
  * <pre>
- *      &lt;bean id="fooDao" class="edu.illinois.gslis.imirsel.dao.hibernate.GenericDaoHibernate"&gt;
- *          &lt;constructor-arg value="edu.illinois.gslis.imirsel.model.Foo"/&gt;
+ *      &lt;bean id="fooDao" class="org.imirsel.nema.dao.hibernate.GenericDaoHibernate"&gt;
+ *          &lt;constructor-arg value="org.imirsel.nema.model.Foo"/&gt;
  *          &lt;property name="sessionFactory" ref="sessionFactory"/&gt;
  *      &lt;/bean&gt;
  * </pre>

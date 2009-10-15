@@ -16,10 +16,10 @@ import org.imirsel.nema.service.GenericManager;
  *
  * <p>To register this class in your Spring context file, use the following XML.
  * <pre>
- *     &lt;bean id="userManager" class="edu.illinois.gslis.imirsel.service.impl.GenericManagerImpl"&gt;
+ *     &lt;bean id="userManager" class="org.imirsel.nema.service.impl.GenericManagerImpl"&gt;
  *         &lt;constructor-arg&gt;
- *             &lt;bean class="edu.illinois.gslis.imirsel.dao.hibernate.GenericDaoHibernate"&gt;
- *                 &lt;constructor-arg value="edu.illinois.gslis.imirsel.model.User"/&gt;
+ *             &lt;bean class="org.imirsel.nema.dao.hibernate.GenericDaoHibernate"&gt;
+ *                 &lt;constructor-arg value="org.imirsel.nema.model.User"/&gt;
  *                 &lt;property name="sessionFactory" ref="sessionFactory"/&gt;
  *             &lt;/bean&gt;
  *         &lt;/constructor-arg&gt;
@@ -28,10 +28,10 @@ import org.imirsel.nema.service.GenericManager;
  *
  * <p>If you're using iBATIS instead of Hibernate, use:
  * <pre>
- *     &lt;bean id="userManager" class="edu.illinois.gslis.imirsel.service.impl.GenericManagerImpl"&gt;
+ *     &lt;bean id="userManager" class="org.imirsel.nema.service.impl.GenericManagerImpl"&gt;
  *         &lt;constructor-arg&gt;
- *             &lt;bean class="edu.illinois.gslis.imirsel.dao.ibatis.GenericDaoiBatis"&gt;
- *                 &lt;constructor-arg value="edu.illinois.gslis.imirsel.model.User"/&gt;
+ *             &lt;bean class="org.imirsel.nema.dao.ibatis.GenericDaoiBatis"&gt;
+ *                 &lt;constructor-arg value="org.imirsel.nema.model.User"/&gt;
  *                 &lt;property name="dataSource" ref="dataSource"/&gt;
  *                 &lt;property name="sqlMapClient" ref="sqlMapClient"/&gt;
  *             &lt;/bean&gt;

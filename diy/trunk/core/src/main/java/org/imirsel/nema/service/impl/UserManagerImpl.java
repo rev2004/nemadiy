@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author <a href="mailto:matt@raibledesigns.com">Matt Raible</a>
  */
-@WebService(serviceName = "UserService", endpointInterface = "edu.illinois.gslis.imirsel.service.UserService")
+@WebService(serviceName = "UserService", endpointInterface = "org.imirsel.nema.service.UserService")
 public class UserManagerImpl extends UniversalManagerImpl implements UserManager, UserService {
     private UserDao dao;
     private PasswordEncoder passwordEncoder;
