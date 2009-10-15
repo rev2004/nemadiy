@@ -6,10 +6,13 @@ import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.context.SecurityContextImpl;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import edu.illinois.gslis.imirsel.Constants;
-import edu.illinois.gslis.imirsel.dao.UserDao;
-import edu.illinois.gslis.imirsel.model.Role;
-import edu.illinois.gslis.imirsel.model.User;
+
+import org.imirsel.nema.Constants;
+import org.imirsel.nema.dao.UserDao;
+import org.imirsel.nema.model.Role;
+import org.imirsel.nema.model.User;
+import org.imirsel.nema.service.UserManager;
+import org.imirsel.nema.service.UserSecurityAdvice;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.jmock.Mockery;

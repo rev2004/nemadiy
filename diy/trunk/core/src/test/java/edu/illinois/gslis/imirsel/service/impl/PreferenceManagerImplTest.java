@@ -1,10 +1,12 @@
 package edu.illinois.gslis.imirsel.service.impl;
 
+import org.imirsel.nema.dao.PreferenceValueDao;
+import org.imirsel.nema.service.PreferenceValueManager;
+import org.imirsel.nema.service.impl.BaseManagerMockTestCase;
+import org.imirsel.nema.service.impl.PreferenceValueManagerImpl;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.illinois.gslis.imirsel.dao.PreferenceValueDao;
-import edu.illinois.gslis.imirsel.service.PreferenceValueManager;
 
 public class PreferenceManagerImplTest extends BaseManagerMockTestCase {
 	

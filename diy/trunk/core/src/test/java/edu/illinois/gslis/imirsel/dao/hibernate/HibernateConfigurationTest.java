@@ -1,10 +1,10 @@
 package edu.illinois.gslis.imirsel.dao.hibernate;
 
-import edu.illinois.gslis.imirsel.dao.BaseDaoTestCase;
 import org.hibernate.SessionFactory;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.persister.entity.EntityPersister;
+import org.imirsel.nema.dao.BaseDaoTestCase;
 
 import java.util.Map;
 

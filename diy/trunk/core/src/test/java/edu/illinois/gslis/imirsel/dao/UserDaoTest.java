@@ -1,10 +1,15 @@
 package edu.illinois.gslis.imirsel.dao;
 
-import edu.illinois.gslis.imirsel.Constants;
 //import edu.illinois.gslis.imirsel.model.Address;
-import edu.illinois.gslis.imirsel.model.PreferenceValue;
-import edu.illinois.gslis.imirsel.model.Role;
-import edu.illinois.gslis.imirsel.model.User;
+
+import org.imirsel.nema.Constants;
+import org.imirsel.nema.dao.BaseDaoTestCase;
+import org.imirsel.nema.dao.PreferenceValueDao;
+import org.imirsel.nema.dao.RoleDao;
+import org.imirsel.nema.dao.UserDao;
+import org.imirsel.nema.model.PreferenceValue;
+import org.imirsel.nema.model.Role;
+import org.imirsel.nema.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import junit.framework.Assert;

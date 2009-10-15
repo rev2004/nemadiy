@@ -1,6 +1,8 @@
 package edu.illinois.gslis.imirsel.dao;
 
-import edu.illinois.gslis.imirsel.model.User;
+import org.imirsel.nema.dao.BaseDaoTestCase;
+import org.imirsel.nema.dao.UniversalDao;
+import org.imirsel.nema.model.User;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.orm.ObjectRetrievalFailureException;
 

@@ -3,8 +3,8 @@
 
 <hibernate-configuration>
     <session-factory>
-        <mapping class="edu.illinois.gslis.imirsel.model.User"/>
-        <mapping class="edu.illinois.gslis.imirsel.model.Role"/>
-        <mapping class="edu.illinois.gslis.imirsel.model.PreferenceValue"/>
+        <mapping class="org.imirsel.nema.model.User"/>
+        <mapping class="org.imirsel.nema.model.Role"/>
+        <mapping class="org.imirsel.nema.model.PreferenceValue"/>
     </session-factory>
 </hibernate-configuration>

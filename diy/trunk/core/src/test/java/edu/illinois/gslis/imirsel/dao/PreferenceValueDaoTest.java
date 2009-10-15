@@ -1,8 +1,10 @@
 package edu.illinois.gslis.imirsel.dao;
 
+import org.imirsel.nema.dao.BaseDaoTestCase;
+import org.imirsel.nema.dao.PreferenceValueDao;
+import org.imirsel.nema.model.PreferenceValue;
 import org.springframework.dao.DataAccessException;
 
-import edu.illinois.gslis.imirsel.model.PreferenceValue;
 
 public class PreferenceValueDaoTest extends BaseDaoTestCase {
 	

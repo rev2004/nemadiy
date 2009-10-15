@@ -1,7 +1,10 @@
 package edu.illinois.gslis.imirsel.service.impl;
 
-import edu.illinois.gslis.imirsel.dao.UniversalDao;
-import edu.illinois.gslis.imirsel.model.User;
+
+import org.imirsel.nema.dao.UniversalDao;
+import org.imirsel.nema.model.User;
+import org.imirsel.nema.service.impl.BaseManagerMockTestCase;
+import org.imirsel.nema.service.impl.UniversalManagerImpl;
 import org.jmock.Expectations;
 import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.test.AssertThrows;

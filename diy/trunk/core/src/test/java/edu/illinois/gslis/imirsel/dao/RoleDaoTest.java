@@ -3,8 +3,11 @@ package edu.illinois.gslis.imirsel.dao;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.illinois.gslis.imirsel.Constants;
-import edu.illinois.gslis.imirsel.model.Role;
+import org.imirsel.nema.Constants;
+import org.imirsel.nema.dao.BaseDaoTestCase;
+import org.imirsel.nema.dao.RoleDao;
+import org.imirsel.nema.model.Role;
+
 
 public class RoleDaoTest extends BaseDaoTestCase {
     private RoleDao dao;
