@@ -7,7 +7,7 @@
  * read License.txt
  *
  */
-package edu.illinois.gslis.imirsel.components.io;
+package org.imirsel.nema.components.io;
 
 import java.util.Arrays;
 import java.util.Iterator;
