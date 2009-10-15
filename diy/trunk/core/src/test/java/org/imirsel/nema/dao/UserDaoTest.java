@@ -1,6 +1,6 @@
 package org.imirsel.nema.dao;
 
-//import edu.illinois.gslis.imirsel.model.Address;
+//import org.imirsel.nema.model.Address;
 
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.dao.BaseDaoTestCase;

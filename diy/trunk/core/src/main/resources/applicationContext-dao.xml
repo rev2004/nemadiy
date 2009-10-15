@@ -53,8 +53,8 @@
         
         eg... 'fooDao'
     
-    <bean id="fooDao" class="edu.illinois.gslis.imirsel.dao.hibernate.GenericDaoHibernate">
-        <constructor-arg value="edu.illinois.gslis.imirsel.model.Foo"/>
+    <bean id="fooDao" class="org.imirsel.nema.dao.hibernate.GenericDaoHibernate">
+        <constructor-arg value="org.imirsel.nema.model.Foo"/>
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     
