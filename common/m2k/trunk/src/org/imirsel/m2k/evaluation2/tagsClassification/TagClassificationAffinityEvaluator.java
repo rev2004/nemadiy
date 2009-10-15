@@ -623,7 +623,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
         File AUC_ROC_file = new File(outputDir.getAbsolutePath() + File.separator + "affinity_tag_AUC_ROC.csv");
         try {
-            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AUC_ROC_file, "\t", csvDataAveraged, false); 
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(AUC_ROC_file, ",", csvDataAveraged, false);
         } catch (IOException ex) {
             Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -756,7 +756,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         
         
         if (performMatlabStatSigTests){
-            //performFriedmanTestWithTag_AUC_ROC(outputDir, AUC_ROC_file, systemNames);
+            performFriedmanTestWithTag_AUC_ROC(outputDir, AUC_ROC_file, systemNames);
             performFriedmanTestWithTrack_AUC_ROC(outputDir, clip_AUC_ROC_file, systemNames);
             for (int i = 0; i < precisionPoints.length; i++){
                 performFriedmanTestWithTrack_Precision_at_N(precisionPoints[i], outputDir, clip_Prec_at_N_files[i], systemNames);

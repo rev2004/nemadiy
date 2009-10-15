@@ -26,6 +26,7 @@ import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +36,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationAffinityEvaluator;
 import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
 import org.imirsel.m2k.io.musicDB.MusicDBDelimTextFileImportFrame;
@@ -80,7 +80,7 @@ public class MIREXMatrixQueryUtil {
             "\t" + FILTERED_GENRE + " path/to/DistMatrix path/to/MetadataDB path/to/local/dir/of/audio/files path/to/save/report/and/plots/to \n" +
             "\t" + RETURN_RESULTS + " path/to/DistMatrix path/to/MetadataDB /path/to/local/dir/of/audio/files query numResult filterCoverSongs(y/n) \n" +
             "\t" + CREATE_EVALUTRON_DATA_FILES + " path/DistMatrix/folder path/to/MetadataDB path/to/query/file numResults(5) path/to/local/dir/of/audio/files path/to/save/queryCandidateFile/to path/to/save/teamNameFile/to [dir/to/re-encode/audio/files/to]\n" +
-            "\t" + PROCESS_EVALUTRON_RESULTS + " path/to/team/table/file path/to/result/table/file path/to/task/table/file path/to/output/dir\n";
+            "\t" + PROCESS_EVALUTRON_RESULTS + " path/to/team/table/file path/to/result/table/file path/to/task/table/file path/to/query/table path/to/metadata/musicDB/file path/to/output/dir\n";
 
     private static String matlabPath = "matlab";
 
@@ -1533,9 +1533,11 @@ public class MIREXMatrixQueryUtil {
         File teamTable = new File(args[1]);
         File resultTable = new File(args[2]);
         File taskTable = new File(args[3]);
-        File outputDir = new File(args[4]);
-        
-        evaluateSystems(resultTable,taskTable,teamTable,outputDir);
+        File queryTable = new File(args[4]);
+        File metadataDB = new File(args[5]);
+        File outputDir = new File(args[6]);
+
+        evaluateSystems(resultTable,taskTable,teamTable,queryTable,metadataDB,outputDir);
         
     }
     
@@ -1559,127 +1561,226 @@ public class MIREXMatrixQueryUtil {
         }
     }
     
-    private static void evaluateSystems(File resultsTableFile, File taskTableFile, File teamTableFile, File outputDir) throws IOException{
-        
+    private static void evaluateSystems(File resultsTableFile, File taskTableFile, File teamTableFile, File queryTableFile, File metadataMusicDB, File outputDir) throws IOException{
         
         //parse team table
         //id_team 	title 	affiliation
-        String[][] teamTable = DeliminatedTextFileUtilities.getDelimTextDataBlock(teamTableFile, ",", 0);
         
-        ArrayList<String> systemNames = new ArrayList<String>(teamTable.length);
-        ArrayList<Integer> systemIDs = new ArrayList<Integer>(teamTable.length);
-        
-        for (int i = 0; i < teamTable.length; i++) {
-            systemIDs.add(Integer.parseInt(teamTable[i][0]));
-            systemNames.add(teamTable[i][1]);
+        ArrayList<String> systemNames = new ArrayList<String>();
+        ArrayList<Integer> systemIDs = new ArrayList<Integer>();
+        {
+            String[][] teamTable = DeliminatedTextFileUtilities.getDelimTextDataBlock(teamTableFile, ",", 0);
+            SortableId[] sysNamesSort = new SortableId[teamTable.length];
+            for (int i = 0; i < teamTable.length; i++) {
+                sysNamesSort[i] = new SortableId(Integer.parseInt(teamTable[i][0]), teamTable[i][1]);
+            }
+            Arrays.sort(sysNamesSort);
+            for (int i = 0; i < sysNamesSort.length; i++){
+                systemIDs.add(sysNamesSort[i].id);
+                systemNames.add(sysNamesSort[i].label);
+            }
         }
 
-        
+
+        //load query table and map query ids to hashcodes
+        HashMap<Integer,String> queryIdToIMIRSELCode = new HashMap<Integer,String>();
+        {
+            String[][] queryData = DeliminatedTextFileUtilities.getDelimTextDataBlock(queryTableFile, ",", 0);
+
+            int id;
+            String code;
+            for (int i = 0; i < queryData.length; i++){
+                id = Integer.parseInt(queryData[i][0]);
+                code = queryData[i][1];
+                System.out.println("mapping query id '" + id + "' to code '" + code + "'");
+                queryIdToIMIRSELCode.put(id,code);
+            }
+        }
+
+
+
         //parse results table and map result, query pairs to systems
+        //count total num results for use in raw data CSV
+        int totalNumResults = 0;
         //id_result 	id_query 	id_team 	id_song 	date
-        String[][] result_table = DeliminatedTextFileUtilities.getDelimTextDataBlock(resultsTableFile, ",", 0);
-        
         HashMap<Integer,HashSet<String>>[] systemResultMaps = new HashMap[systemIDs.size()];
         for (int i = 0; i < systemResultMaps.length; i++) {
             systemResultMaps[i] = new HashMap<Integer, HashSet<String>>();
         }
+        {
+            String[][] result_table = DeliminatedTextFileUtilities.getDelimTextDataBlock(resultsTableFile, ",", 0);
+            for (int i = 0; i < result_table.length; i++) {
+                Integer id_team = new Integer(result_table[i][2]);
+                String id_song = result_table[i][3];
+                Integer id_query = new Integer(result_table[i][1]);
 
-        
-        for (int i = 0; i < result_table.length; i++) {
-            Integer id_team = new Integer(result_table[i][2]);
-            String id_song = result_table[i][3];
-            Integer id_query = new Integer(result_table[i][1]);
-            
-            int systemIdx = systemIDs.indexOf(id_team);
-            
-            HashSet<String> resultSetForQuery;
-            if (systemResultMaps[systemIdx].containsKey(id_query)){
-                resultSetForQuery = systemResultMaps[systemIdx].get(id_query);
-            }else{
-                resultSetForQuery = new HashSet<String>();
-                systemResultMaps[systemIdx].put(id_query,resultSetForQuery);
+                if(!id_song.equals(queryIdToIMIRSELCode.get(id_query))){
+                    int systemIdx = systemIDs.indexOf(id_team);
+
+                    HashSet<String> resultSetForQuery;
+                    if (systemResultMaps[systemIdx].containsKey(id_query)){
+                        resultSetForQuery = systemResultMaps[systemIdx].get(id_query);
+                    }else{
+                        resultSetForQuery = new HashSet<String>();
+                        systemResultMaps[systemIdx].put(id_query,resultSetForQuery);
+                    }
+                    resultSetForQuery.add(id_song);
+                    totalNumResults++;
+                }
             }
-            resultSetForQuery.add(id_song);
         }
-
         
         //parse task table and index result scores
         //id_task 	tname 	id_evaluator 	id_query 	id_song 	relevance 	relevance2 	active 	date
-        String[][] data = DeliminatedTextFileUtilities.getDelimTextDataBlock(taskTableFile, ",", 0);
         HashMap<Integer,HashMap<String,AtomicInteger>> queryToResultValidationCount = new HashMap<Integer,HashMap<String,AtomicInteger>>();
         HashMap<Integer,HashMap<String,Double>> queryToResultFineScoreSumMap = new HashMap<Integer,HashMap<String,Double>>();
         HashMap<Integer,HashMap<String,Double>> queryToResultCatScoreSumMap = new HashMap<Integer,HashMap<String,Double>>();
-        
-        
-        for (int i = 0; i < data.length; i++) {
-            
-            Integer query = new Integer(data[i][3]);
-            String result = data[i][4];
-            
-            Integer catScore = new Integer(data[i][5]);
-            double fineScore = Double.parseDouble(data[i][6]);
-            
-            
 
-            HashMap<String,AtomicInteger> validationCounts;
-            HashMap<String,Double> fineScoreSums;
-            HashMap<String,Double> catScoreSums;
-            if (!queryToResultValidationCount.containsKey(query)){
-                validationCounts = new HashMap<String,AtomicInteger>();
-                fineScoreSums = new HashMap<String,Double>();
-                catScoreSums = new HashMap<String,Double>();
+        {
+            String[][] data = DeliminatedTextFileUtilities.getDelimTextDataBlock(taskTableFile, ",", 0);
 
-                queryToResultValidationCount.put(query, validationCounts);
-                queryToResultFineScoreSumMap.put(query, fineScoreSums);
-                queryToResultCatScoreSumMap.put(query, catScoreSums);
-            }else{
-                validationCounts = queryToResultValidationCount.get(query);
-                fineScoreSums = queryToResultFineScoreSumMap.get(query);
-                catScoreSums = queryToResultCatScoreSumMap.get(query);
+            for (int i = 0; i < data.length; i++) {
+                Integer query = new Integer(data[i][3]);
+                String result = data[i][4];
+
+                if(!result.equals(queryIdToIMIRSELCode.get(query))){
+
+                    Integer catScore = new Integer(data[i][5]);
+                    double fineScore = Double.parseDouble(data[i][6]);
+
+                    HashMap<String,AtomicInteger> validationCounts;
+                    HashMap<String,Double> fineScoreSums;
+                    HashMap<String,Double> catScoreSums;
+                    if (!queryToResultValidationCount.containsKey(query)){
+                        validationCounts = new HashMap<String,AtomicInteger>();
+                        fineScoreSums = new HashMap<String,Double>();
+                        catScoreSums = new HashMap<String,Double>();
+
+                        queryToResultValidationCount.put(query, validationCounts);
+                        queryToResultFineScoreSumMap.put(query, fineScoreSums);
+                        queryToResultCatScoreSumMap.put(query, catScoreSums);
+                    }else{
+                        validationCounts = queryToResultValidationCount.get(query);
+                        fineScoreSums = queryToResultFineScoreSumMap.get(query);
+                        catScoreSums = queryToResultCatScoreSumMap.get(query);
+                    }
+
+                    if (!validationCounts.containsKey(result)){
+                        validationCounts.put(result, new AtomicInteger(1));
+                        fineScoreSums.put(result, new Double(fineScore));
+                        catScoreSums.put(result, new Double(mapToCatScore(catScore)));
+                    }else{
+                        validationCounts.get(result).incrementAndGet();
+                        double oldFineSum = fineScoreSums.get(result).doubleValue();
+                        fineScoreSums.put(result,new Double(oldFineSum+fineScore));
+                        double oldCatSum = catScoreSums.get(result);
+                        catScoreSums.put(result,new Double(oldCatSum+mapToCatScore(catScore)));
+                    }
+                }
             }
-
-            if (!validationCounts.containsKey(result)){
-                validationCounts.put(result, new AtomicInteger(1));
-                fineScoreSums.put(result, new Double(fineScore));
-                catScoreSums.put(result, new Double(mapToCatScore(catScore)));
-            }else{
-                validationCounts.get(result).incrementAndGet();
-                double oldFineSum = fineScoreSums.get(result).doubleValue();
-                fineScoreSums.put(result,new Double(oldFineSum+fineScore));
-                double oldCatSum = catScoreSums.get(result);
-                catScoreSums.put(result,new Double(oldCatSum+mapToCatScore(catScore)));
-            }
-
         }
+
+        //load metadata MusicDB
+        if (!metadataMusicDB.exists()) {
+            throw new RuntimeException("The file set as a parameter does not exist!\nFile: " + metadataMusicDB.getAbsolutePath());
+        }
+        if(!metadataMusicDB.canRead()) {
+            throw new RuntimeException("Unable to read from file: " + metadataMusicDB.getAbsolutePath());
+        }
+
+        FileInputStream fin;
+        try {
+            fin = new FileInputStream(metadataMusicDB);
+        } catch(FileNotFoundException fnf) {
+            throw new RuntimeException("File could not be opened for reading,\n either file exists but is a directory rather than a regular file, does not exist, or cannot be opened for some other reason.",fnf);
+        }
+        ObjectInputStream in;
+        try {
+            in = new ObjectInputStream(fin);
+        } catch(IOException ioe) {
+            throw new RuntimeException("I/O error occured while reading stream header",ioe);
+        }
+        Object theOb;
+        try {
+            theOb = in.readObject();
+        } catch(ClassNotFoundException cnf) {
+            throw new RuntimeException("The class of the Serialized Object could not be found!",cnf);
+        } catch(InvalidClassException ice) {
+            throw new RuntimeException("Something is wrong with a class used by Serialization (wrong JRE version?)!",ice);
+        } catch(StreamCorruptedException sce) {
+            throw new RuntimeException("Control information in the stream is inconsistent!", sce);
+        } catch(IOException ioe) {
+            throw new RuntimeException("I/O error occured while reading in Object",ioe);
+        }
+
+        MusicDB theDB = (MusicDB)theOb;
+        if ((!theDB.indexingMetadata(Signal.PROP_ARTIST))||(!theDB.indexingMetadata(Signal.PROP_GENRE)))
+        {
+            System.out.println("The metadata DB should index both artist and genre tags, the MusicDB loaded did not!");
+            return;
+        }
+
+        //remap the DB
+        RemapMusicDBFilenamesClass.remapToMIREXIDs(theDB);
+
+
+
+
         
+        
+        //sort queries by number and genre
+        int numQueries = queryToResultValidationCount.size();
+        SortableId[] sortedQueries = new SortableId[numQueries];
+        
+        {
+            Integer[] queries = queryToResultValidationCount.keySet().toArray(new Integer[numQueries]);
+            for (int i = 0; i < numQueries; i++){
+
+                String query = queryIdToIMIRSELCode.get(queries[i]);
+                System.out.println("got query code '" + query + "' for query id '" + queries[i] + "'");
+                sortedQueries[i] = new SortableId(queries[i], theDB.getMetadataClassForFile(Signal.PROP_GENRE, query));
+            }
+
+            Arrays.sort(sortedQueries);
+        }
+
+
         
         //compute average fine score and category score for each query for each system
-        int numQueries = queryToResultValidationCount.size();
-        Integer[] queries = queryToResultValidationCount.keySet().toArray(new Integer[numQueries]);
-        
         double[][] avgFineScores = new double[systemNames.size()][numQueries];
         double[][] avgCatScores = new double[systemNames.size()][numQueries];
         
         HashMap<String,AtomicInteger> validationCounts;
         HashMap<String,Double> fineScoreSums;
         HashMap<String,Double> catScoreSums;
-                
+
+        //also produce a CSV containing raw data for each system
+        String[][] rawData = new String[totalNumResults+1][5];
+        int rawDataCount = 1;
+        rawData[0] = new String[]{"*Team","Query","Candidate","BROAD Score","FINE Score"};
+        String systemName,query;
+        double fine,cat;
         for (int i = 0; i < numQueries; i++) {
+            query = queryIdToIMIRSELCode.get(sortedQueries[i].id);
             for (int j = 0; j < systemNames.size(); j++) {
+                systemName = systemNames.get(j);
                 //get result list for query - and compute avg fine and cat scores
-                HashSet<String> results = systemResultMaps[j].get(queries[i]);
+                HashSet<String> results = systemResultMaps[j].get(sortedQueries[i].id);
                 int numValid = 0;
                 
                 for (Iterator<String> iter = results.iterator(); iter.hasNext(); ) {
                     String aResult = iter.next();
-                    validationCounts = queryToResultValidationCount.get(queries[i]);
-                    fineScoreSums = queryToResultFineScoreSumMap.get(queries[i]);
-                    catScoreSums = queryToResultCatScoreSumMap.get(queries[i]);
+                    validationCounts = queryToResultValidationCount.get(sortedQueries[i].id);
+                    fineScoreSums = queryToResultFineScoreSumMap.get(sortedQueries[i].id);
+                    catScoreSums = queryToResultCatScoreSumMap.get(sortedQueries[i].id);
 
                     if (validationCounts.containsKey(aResult)){
+                        fine = fineScoreSums.get(aResult) / (double)validationCounts.get(aResult).intValue();;
+                        avgFineScores[j][i] += fine;
+                        cat = catScoreSums.get(aResult) / (double)validationCounts.get(aResult).intValue();
+                        avgCatScores[j][i] += cat;
 
-                        avgFineScores[j][i] += fineScoreSums.get(aResult) / (double)validationCounts.get(aResult).intValue();
-                        avgCatScores[j][i] += catScoreSums.get(aResult) / (double)validationCounts.get(aResult).intValue();
+                        rawData[rawDataCount++] = new String[]{systemName,query,aResult,""+cat, ""+fine};
 
                         numValid++;
                     }
@@ -1691,22 +1792,32 @@ public class MIREXMatrixQueryUtil {
             }
         }
 
-        
+        System.out.println("produced " + rawDataCount + " raw data rows of expected " + (totalNumResults+1));
+        File raw_csv = new File(outputDir.getAbsolutePath() + File.separator + "raw_evalutron_data.csv");
+        System.out.println("writing to file: " + raw_csv.getAbsolutePath());
+        try {
+            DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(raw_csv, ",", rawData, false);
+        } catch (IOException ex) {
+            Logger.getLogger(MIREXMatrixQueryUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         //dump results to CSV
-        String[] header = new String[systemNames.size()+1];
-        header[0] = "*Query";
+        String[] header = new String[systemNames.size()+2];
+        header[0] = "*Genre";
+        header[1] = "Query";
         for (int i = 0; i < systemNames.size(); i++){
-            header[i+1] = systemNames.get(i);
+            header[i+2] = systemNames.get(i);
         }
 
         System.out.println("Writing out Fine score CSV");
         double[] overallAvgFine = new double[systemNames.size()];
-        String[][] fine_scores_CSV = new String[numQueries+1][systemNames.size()+1];
+        String[][] fine_scores_CSV = new String[numQueries+1][systemNames.size()+2];
         fine_scores_CSV[0] = header;
         for (int i = 0; i < numQueries; i++) {
-            fine_scores_CSV[i+1][0] = queries[i].toString();
+            fine_scores_CSV[i+1][0] = sortedQueries[i].label;
+            fine_scores_CSV[i+1][1] = queryIdToIMIRSELCode.get(sortedQueries[i].id);
             for (int j = 0; j < systemNames.size(); j++) {
-                 fine_scores_CSV[i+1][j+1] = "" + avgFineScores[j][i];
+                 fine_scores_CSV[i+1][j+2] = "" + avgFineScores[j][i];
                  overallAvgFine[j] += avgFineScores[j][i];
             }
         }
@@ -1724,12 +1835,13 @@ public class MIREXMatrixQueryUtil {
 
         System.out.println("Writing out Cat score CSV");
         double[] overallAvgCat = new double[systemNames.size()];
-        String[][] cat_scores_CSV = new String[numQueries+1][systemNames.size()+1];
+        String[][] cat_scores_CSV = new String[numQueries+1][systemNames.size()+2];
         cat_scores_CSV[0] = header;
         for (int i = 0; i < numQueries; i++) {
-            cat_scores_CSV[i+1][0] = queries[i].toString();
+            cat_scores_CSV[i+1][0] = sortedQueries[i].label;
+            cat_scores_CSV[i+1][1] = queryIdToIMIRSELCode.get(sortedQueries[i].id);
             for (int j = 0; j < systemNames.size(); j++) {
-                 cat_scores_CSV[i+1][j+1] = "" + avgCatScores[j][i];
+                 cat_scores_CSV[i+1][j+2] = "" + avgCatScores[j][i];
                  overallAvgCat[j] += avgCatScores[j][i];
             }
         }
@@ -1770,6 +1882,22 @@ public class MIREXMatrixQueryUtil {
         } catch (IOException ex) {
             Logger.getLogger(MIREXMatrixQueryUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        System.out.println("--exit--");
+    }
+
+    private static class SortableId implements Comparable<SortableId>{
+        int id;
+        String label;
+
+        public SortableId(int id, String label){
+            this.id = id;
+            this.label = label;
+        }
+
+        public int compareTo(SortableId other){
+            return label.compareTo(other.label);
+        }
     }
 
     private static void performFriedmanTestWithFineScores(File outputDir, File CSV_file, String[] systemNames) {
@@ -1787,11 +1915,11 @@ public class MIREXMatrixQueryUtil {
 
             textOut.write("[data, result] = readtext('" + CSV_file.getAbsolutePath() + "', ',');");
             textOut.newLine();
-            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
+            textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
             textOut.newLine();
             textOut.write("[length,width] = size(data);");
             textOut.newLine();
-            textOut.write("FINE = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
+            textOut.write("FINE = cell2mat(data(2:length,3:" + (systemNames.length + 2) + "));");
             textOut.newLine();
             textOut.write("[val sort_idx] = sort(mean(FINE));");
             textOut.newLine();
@@ -1890,15 +2018,15 @@ public class MIREXMatrixQueryUtil {
 
             textOut.write("[data, result] = readtext('" + CSV_file.getAbsolutePath() + "', ',');");
             textOut.newLine();
-            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
+            textOut.write("algNames = data(1,3:" + (systemNames.length + 2) + ")';");
             textOut.newLine();
             textOut.write("[length,width] = size(data);");
             textOut.newLine();
-            textOut.write("CAT = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
+            textOut.write("CAT = cell2mat(data(2:length,3:" + (systemNames.length + 2) + "));");
             textOut.newLine();
             textOut.write("[val sort_idx] = sort(mean(CAT));");
             textOut.newLine();
-            textOut.write("[P,friedmanTable,friedmanStats] = friedman(FINE(:,fliplr(sort_idx)),1,'on'); close(gcf)");
+            textOut.write("[P,friedmanTable,friedmanStats] = friedman(CAT(:,fliplr(sort_idx)),1,'on'); close(gcf)");
             textOut.newLine();
             textOut.write("[c,m,h,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05,'display','off');");
             textOut.newLine();
