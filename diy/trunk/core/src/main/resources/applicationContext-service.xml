@@ -39,12 +39,12 @@
         </tx:attributes>
     </tx:advice>
     
-    <bean id="userSecurityAdvice" class="edu.illinois.gslis.imirsel.service.UserSecurityAdvice"/>
+    <bean id="userSecurityAdvice" class="org.imirsel.nema.service.UserSecurityAdvice"/>
     
     <!-- =================================================================== -->
     <!-- Mail: Sender and Velocity configuration                             -->
     <!-- =================================================================== -->
-    <bean id="mailEngine" class="edu.illinois.gslis.imirsel.service.MailEngine">
+    <bean id="mailEngine" class="org.imirsel.nema.service.MailEngine">
         <property name="mailSender" ref="mailSender"/>
         <property name="velocityEngine" ref="velocityEngine"/>
         <property name="from" value="${mail.default.from}"/>
@@ -89,24 +89,24 @@
     <!-- =================================================================== -->
     <!-- Managers: For accessing DAOs                                        -->
     <!-- =================================================================== -->
-    <bean id="manager" class="edu.illinois.gslis.imirsel.service.impl.UniversalManagerImpl">
+    <bean id="manager" class="org.imirsel.nema.service.impl.UniversalManagerImpl">
         <property name="dao" ref="universalDao"/>
     </bean>
     
-    <bean id="lookupManager" class="edu.illinois.gslis.imirsel.service.impl.LookupManagerImpl">
+    <bean id="lookupManager" class="org.imirsel.nema.service.impl.LookupManagerImpl">
         <property name="lookupDao" ref="lookupDao"/>
     </bean>
 
-    <bean id="userManager" class="edu.illinois.gslis.imirsel.service.impl.UserManagerImpl">
+    <bean id="userManager" class="org.imirsel.nema.service.impl.UserManagerImpl">
         <property name="userDao" ref="userDao"/>
         <property name="passwordEncoder" ref="passwordEncoder"/>
     </bean>
 
-    <bean id="roleManager" class="edu.illinois.gslis.imirsel.service.impl.RoleManagerImpl">
+    <bean id="roleManager" class="org.imirsel.nema.service.impl.RoleManagerImpl">
         <property name="roleDao" ref="roleDao"/>
     </bean>
     
-    <bean id="preferenceValueManager" class="edu.illinois.gslis.imirsel.service.impl.PreferenceValueManagerImpl">
+    <bean id="preferenceValueManager" class="org.imirsel.nema.service.impl.PreferenceValueManagerImpl">
         <property name="preferenceValueDao" ref="preferenceValueDao"/>
     </bean>
 

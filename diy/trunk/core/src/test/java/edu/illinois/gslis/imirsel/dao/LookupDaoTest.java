@@ -2,6 +2,9 @@ package edu.illinois.gslis.imirsel.dao;
 
 import java.util.List;
 
+import org.imirsel.nema.dao.BaseDaoTestCase;
+import org.imirsel.nema.dao.LookupDao;
+
 /**
  * This class tests the current LookupDao implementation class
  * @author mraible

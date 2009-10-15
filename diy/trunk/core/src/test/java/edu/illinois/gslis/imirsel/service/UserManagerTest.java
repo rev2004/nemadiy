@@ -2,8 +2,12 @@ package edu.illinois.gslis.imirsel.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import edu.illinois.gslis.imirsel.Constants;
-import edu.illinois.gslis.imirsel.model.User;
+import org.imirsel.nema.Constants;
+import org.imirsel.nema.model.User;
+import org.imirsel.nema.service.BaseManagerTestCase;
+import org.imirsel.nema.service.RoleManager;
+import org.imirsel.nema.service.UserManager;
+
 
 public class UserManagerTest extends BaseManagerTestCase {
     //~ Instance fields ========================================================

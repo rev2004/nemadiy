@@ -74,6 +74,7 @@
         <column>id</column>
         <column>value</column>
         <column>mkey</column>
+
         <row>
             <value description="id">1</value>
             <value description="value">FALSE</value>
@@ -89,11 +90,33 @@
             <value description="value">TRUE</value>
             <value description="mkey">emailPrefAbortFlow</value>
         </row>
-                <row>
+         <row>
             <value description="id">4</value>
             <value description="value">TRUE</value>
             <value description="mkey">emailPrefFlowResult</value>
         </row>
+
+        <row>
+            <value description="id">5</value>
+            <value description="value">FALSE</value>
+            <value description="mkey">emailPrefStartFlow</value>
+        </row>
+        <row>
+            <value description="id">6</value>
+            <value description="value">TRUE</value>
+            <value description="mkey">emailPrefEndFlow</value>
+        </row>
+        <row>
+            <value description="id">7</value>
+            <value description="value">TRUE</value>
+            <value description="mkey">emailPrefAbortFlow</value>
+        </row>
+         <row>
+            <value description="id">8</value>
+            <value description="value">TRUE</value>
+            <value description="mkey">emailPrefFlowResult</value>
+        </row>
+
     	</table>
     
      <table name="user_prefs">
@@ -118,19 +141,19 @@
         
         <row>
             <value description="user_id">-2</value>
-            <value description="preferences_id">1</value>
+            <value description="preferences_id">5</value>
         </row>
         <row>
             <value description="user_id">-2</value>
-            <value description="preferences_id">2</value>
+            <value description="preferences_id">6</value>
         </row>
         <row>
             <value description="user_id">-2</value>
-            <value description="preferences_id">3</value>
+            <value description="preferences_id">7</value>
         </row>
         <row>
             <value description="user_id">-2</value>
-            <value description="preferences_id">4</value>
+            <value description="preferences_id">8</value>
         </row>
     </table>
     

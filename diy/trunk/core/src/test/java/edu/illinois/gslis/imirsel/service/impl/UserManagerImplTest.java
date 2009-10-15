@@ -1,11 +1,15 @@
 package edu.illinois.gslis.imirsel.service.impl;
 
-import edu.illinois.gslis.imirsel.Constants;
-import edu.illinois.gslis.imirsel.dao.RoleDao;
-import edu.illinois.gslis.imirsel.dao.UserDao;
-import edu.illinois.gslis.imirsel.model.Role;
-import edu.illinois.gslis.imirsel.model.User;
-import edu.illinois.gslis.imirsel.service.UserExistsException;
+
+import org.imirsel.nema.Constants;
+import org.imirsel.nema.dao.RoleDao;
+import org.imirsel.nema.dao.UserDao;
+import org.imirsel.nema.model.Role;
+import org.imirsel.nema.model.User;
+import org.imirsel.nema.service.UserExistsException;
+import org.imirsel.nema.service.impl.BaseManagerMockTestCase;
+import org.imirsel.nema.service.impl.RoleManagerImpl;
+import org.imirsel.nema.service.impl.UserManagerImpl;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JMock;
 import static org.junit.Assert.*;

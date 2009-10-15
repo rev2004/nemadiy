@@ -1,5 +1,7 @@
 package edu.illinois.gslis.imirsel.service;
 
+import org.imirsel.nema.service.BaseManagerTestCase;
+import org.imirsel.nema.service.MailEngine;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;

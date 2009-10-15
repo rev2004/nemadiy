@@ -1,6 +1,10 @@
 package edu.illinois.gslis.imirsel.service;
 
-import edu.illinois.gslis.imirsel.model.User;
+
+import org.imirsel.nema.model.User;
+import org.imirsel.nema.service.BaseManagerTestCase;
+import org.imirsel.nema.service.UserExistsException;
+import org.imirsel.nema.service.UserManager;
 import org.springframework.beans.BeanUtils;
 
 public class UserExistsExceptionTest extends BaseManagerTestCase {

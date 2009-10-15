@@ -1,9 +1,12 @@
 package edu.illinois.gslis.imirsel.service.impl;
 
-import edu.illinois.gslis.imirsel.dao.LookupDao;
-import edu.illinois.gslis.imirsel.model.Role;
-import edu.illinois.gslis.imirsel.model.LabelValue;
-import edu.illinois.gslis.imirsel.Constants;
+
+import org.imirsel.nema.Constants;
+import org.imirsel.nema.dao.LookupDao;
+import org.imirsel.nema.model.LabelValue;
+import org.imirsel.nema.model.Role;
+import org.imirsel.nema.service.impl.BaseManagerMockTestCase;
+import org.imirsel.nema.service.impl.LookupManagerImpl;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
