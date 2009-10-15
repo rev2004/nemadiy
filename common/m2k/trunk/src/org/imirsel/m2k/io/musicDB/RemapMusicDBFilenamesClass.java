@@ -377,6 +377,47 @@ public class RemapMusicDBFilenamesClass {
         return theDB;
     }
 
+    /**
+     * Remaps filenames within a MusicDB Object to files found within a particular
+     * folder by matching the name minus any audio or midi extension. Support
+     * for matching directory tree structures (partial path matching) will be added later.
+     * @param theDB
+     * @param newFolderPath
+     * @param removeHTTPSpaces
+     * @param removeUnmappedFiles
+     * @return
+     * @throws java.io.IOException Thrown if a problem occurs while searching the directory.
+     * @throws org.imirsel.m2k.util.noMetadataException Thrown if required filelocation metadata is not found.
+     */
+    public static MusicDB remapToMIREXIDs(MusicDB theDB) throws IOException{
+
+        System.out.println("Remapping files from MusicDB to their ids");
+
+        //iterate through all file locations
+        List<String> files = theDB.getFileNames();
+        int done = 0;
+        for (int i = 0; i < files.size(); i++) {
+            //Check whether file in dir exists with same name
+
+            File oldFile = new File(files.get(i));
+            String key = convertFileToMIREX_ID(oldFile);
+
+            try {
+                //Change file location pointer and Signal Object
+                theDB.remapFileLocation(files.get(i),key);
+                //System.out.println("remapping '" + files.get(i) + "' to '" + key + "'");
+                done++;
+            } catch (noMetadataException ex) {
+                throw new RuntimeException("File not mapped due to noMetadataexception. This is a bug. Contact kw@cmp.uea.ac.uk",ex);
+            }
+
+        }
+
+        System.out.println("RemapMusicDBFilenames: Remapped " + done + " of " + files.size() + " files.");
+        System.out.println("New DB size: " + theDB.size());
+        return theDB;
+    }
+
     public static DistanceMatrixInterface remapDistanceMatrixWithMIREXIDs(DistanceMatrixInterface theDistMat, String newFolderPath, boolean removeHTTPSpaces) throws IOException{
         if(theDistMat instanceof DenseDistanceMatrix){
             return remapDenseDistanceMatrixWithMIREXIDs((DenseDistanceMatrix)theDistMat, newFolderPath, removeHTTPSpaces);
