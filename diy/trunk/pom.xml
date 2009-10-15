@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>edu.illinois.gslis.imirsel</groupId>
+    <groupId>org.imirsel</groupId>
     <artifactId>nema</artifactId>
     <packaging>pom</packaging>
-    <version>1.01-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>Nema  Modular Application</name>
     <url>http://www.imirsel.org</url>
 
@@ -16,8 +15,8 @@
 
     <licenses>
         <license>
-            <name></name>
-            <url></url>
+            <name/>
+            <url/>
         </license>
     </licenses>
 
@@ -77,6 +76,12 @@
             <id>agrudz2</id>
             <name>Anatolliy Grudz</name>
             <email>agruzd2@illinois.edu</email>
+            <timezone>-5</timezone>
+        </developer>
+         <developer>
+            <id>shirk</id>
+            <name>Andrew Shirk</name>
+            <email>shirk@illinois.edu</email>
             <timezone>-5</timezone>
         </developer>
     </developers>
@@ -231,7 +236,8 @@
     <modules>
         <module>core</module>
         <module>web</module>
-    </modules>
+    <module>probes</module>
+  </modules>
 
     <reporting>
         <plugins>
@@ -310,7 +316,7 @@
                 <jdbc.driverClassName>org.h2.Driver</jdbc.driverClassName>
                 <jdbc.url><![CDATA[jdbc:h2:${java.io.tmpdir}/nema_diy]]></jdbc.url>
                 <jdbc.username>sa</jdbc.username>
-                <jdbc.password></jdbc.password>
+                <jdbc.password/>
             </properties>
         </profile>
         <profile>
@@ -324,7 +330,7 @@
                 <jdbc.driverClassName>org.hsqldb.jdbcDriver</jdbc.driverClassName>
                 <jdbc.url><![CDATA[jdbc:hsqldb:${java.io.tmpdir}/nema_diy;shutdown=true]]></jdbc.url>
                 <jdbc.username>sa</jdbc.username>
-                <jdbc.password></jdbc.password>
+                <jdbc.password/>
             </properties>
         </profile>
         <profile>
