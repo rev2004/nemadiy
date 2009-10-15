@@ -5,11 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-        <groupId>edu.illinois.gslis.imirsel</groupId>
+        <groupId>org.imirsel</groupId>
         <artifactId>nema</artifactId>
-        <version>1.01-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
         <relativePath>../nema/pom.xml</relativePath>
     </parent>
+    <groupId>org.imirsel</groupId>
     
     <artifactId>nema-core</artifactId>
     <packaging>jar</packaging>
@@ -21,6 +22,10 @@
     <tag>HEAD</tag>
     <url>https://svn.lis.uiuc.edu/NEMA/application/trunk/core</url>
     </scm>
+    <organization>
+    	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
+    	<url>http://www.lis.illinois.edu</url>
+    </organization>
     
     <build>
         <plugins>
