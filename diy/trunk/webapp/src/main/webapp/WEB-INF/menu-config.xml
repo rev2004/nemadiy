@@ -5,6 +5,15 @@
     </Displayers>
     <Menus>
         <Menu name="MainMenu" title="mainMenu.title" page="/mainMenu.html" roles="ROLE_ADMIN,ROLE_USER"/>
+		<Menu name="Jobs" title="jobs.title" page="/jobs.jsp" roles="ROLE_ADMIN,ROLE_USER">
+            <Item name="JobType" title="Job Type" page="/jobstype.jsp"/>
+            <Item name="JobClassification" title="Classification Job Setup" page="/jobclassification.jsp"/>
+            <Item name="JobEvaluation" title="Evaluation Job Setup" page="/jobevaluation.jsp"/>
+            <Item name="JobExtraction" title="Extraction Job Setup" page="/jobextraction.jsp"/>
+            <Item name="JobStatus" title="Job Status" page="/jobstatus.jsp"/>
+            <Item name="JobDetails" title="Job Details" page="/jobdetails.jsp"/>			
+		</Menu>
+
         <Menu name="UserMenu" title="menu.user" description="User Menu" page="/userform.html" roles="ROLE_ADMIN,ROLE_USER"/>
        <Menu name="ExperimentMenu" title="experimentMenu.title" page="/experimentMenu.html" roles="ROLE_ADMIN,ROLE_USER"/>
         <Menu name="ExperimentStatusMenu" title="experimentStatusMenu.title" page="/experimentStatusMenu.html" roles="ROLE_ADMIN,ROLE_USER"/>
