@@ -8,7 +8,7 @@ import org.imirsel.nema.model.Job;
 
 /**
  * This class interacts with Spring's HibernateTemplate to save/delete and
- * retrieve Job objects.
+ * retrieve JobResult objects.
  */
 public class JobDaoHibernate extends GenericDaoHibernate<Job, Long> implements JobDao {
 
