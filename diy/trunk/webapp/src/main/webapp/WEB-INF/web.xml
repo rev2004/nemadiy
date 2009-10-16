@@ -10,11 +10,8 @@
     <!-- Define the default CSS Theme -->
     <context-param>
         <param-name>csstheme</param-name>
-<<<<<<< .mine
         <param-value>puzzlewithstyle</param-value>
-=======
         <param-value>andreas01</param-value>
->>>>>>> .r271
     </context-param>
     <!-- Define the basename for a resource bundle for I18N -->
     <context-param>
