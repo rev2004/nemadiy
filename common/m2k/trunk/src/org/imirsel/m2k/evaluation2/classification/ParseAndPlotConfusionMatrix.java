@@ -76,47 +76,64 @@ public class ParseAndPlotConfusionMatrix {
         {
             throw new RuntimeException("The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n\tFile: " + resultFile.getPath());
         }
-        String line = textBuffer.readLine();
+        String line = null;
+        ArrayList<String> classNames = null;
+        ArrayList<String> confusionLines = null;
+        String algorithmName = null;
+        try{
+            line = textBuffer.readLine();
 
-        //find start of overall results
-        int count = 0;
-        while(!line.startsWith("Overall Accuracy ")){
-            //read data
-            count++;
+            //find start of overall results
+            int count = 0;
+            while(!line.startsWith("Overall Accuracy ")){
+                //read data
+                count++;
+                line = textBuffer.readLine();
+            }
+            if(line == null){
+                throw new RuntimeException("End of file reached while seeking overall results!");
+            }
+            line = line.substring(17, line.length());//replaceAll("Overall Accuracy ", "");
+            String[] comps = line.split(":");
+            algorithmName = comps[0];
+
+            boolean usingHierarchy = false;
+
+            //read and discard 4 more lines to get to start of conf mat
             line = textBuffer.readLine();
-        }
-        if(line == null){
-            throw new RuntimeException("End of file reached while seeking overall results!");
-        }
-        line = line.substring(17, line.length());//replaceAll("Overall Accuracy ", "");
-        String[] comps = line.split(":");
-        String algorithmName = comps[0];
-        
-        //read and discard 4 more lines to get to start of conf mat
-        line = textBuffer.readLine();
-        line = textBuffer.readLine();
-        line = textBuffer.readLine();
-        line = textBuffer.readLine();
-        
-        ArrayList<String> confusionLines = new ArrayList<String>();
-        line = textBuffer.readLine();
-        while(!line.trim().equals("")){
-            confusionLines.add(line.trim());
             line = textBuffer.readLine();
-        }
-        //System.err.println("found " + confusionLines.size() + " lines of confusion matrix");
-        
-        //skip another 3 lines, skip % confusion matrix, skip one further line
-        for (int i = 0; i < confusionLines.size()+4; i++) {
+            if(line.startsWith("Hierachical Accuracy")){
+                line = textBuffer.readLine();
+                line = textBuffer.readLine();
+            }
             line = textBuffer.readLine();
+            line = textBuffer.readLine();
+
+            confusionLines = new ArrayList<String>();
+            line = textBuffer.readLine();
+            while(!line.trim().equals("")){
+                confusionLines.add(line.trim());
+                line = textBuffer.readLine();
+            }
+            //System.err.println("found " + confusionLines.size() + " lines of confusion matrix");
+
+            //skip another 3 lines, skip % confusion matrix, skip one further line
+            for (int i = 0; i < confusionLines.size()+4; i++) {
+                line = textBuffer.readLine();
+            }
+
+            //get classname lines
+            classNames = new ArrayList<String>();
+            for (int i = 0; i < confusionLines.size(); i++) {
+                line = textBuffer.readLine();
+                classNames.add(line.trim().split(":")[1].trim());
+            }
+        }catch(Exception e){
+            throw new RuntimeException("Exception occured, current line = '" + line + "'",e);
         }
 
-        //get classname lines
-        ArrayList<String> classNames = new ArrayList<String>();
-        for (int i = 0; i < confusionLines.size(); i++) {
-            line = textBuffer.readLine();
-            classNames.add(line.trim().split(":")[1].trim());
-        }
+
+
 //        System.err.println("Class names:");
 //        for (int i = 0; i < classNames.size(); i++) {
 //            System.err.println("\t" + classNames.get(i));

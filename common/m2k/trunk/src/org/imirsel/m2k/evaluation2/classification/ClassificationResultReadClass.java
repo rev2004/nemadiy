@@ -27,10 +27,10 @@ public class ClassificationResultReadClass {
         HashMap<String,String> groundTruth = readClassificationFile(gtFile, MIREXMode);
         
         if (!groundTruth.keySet().containsAll(data.keySet())) {
-            String msg = "ERROR: The groundtruth does not contain all the paths specified in the classification results!.";
+            String msg = "ERROR: The groundtruth file " + gtFile.getAbsolutePath() + " does not contain all the paths specified in the classification result file " + toRead.getAbsolutePath() + "!";
             HashSet<String> missing = new HashSet<String>();
-            missing.addAll(groundTruth.keySet());
-            missing.removeAll(data.keySet());
+            missing.addAll(data.keySet());
+            missing.removeAll(groundTruth.keySet());
             msg += "\nPaths missing:";
             for (Iterator<String> it = missing.iterator(); it.hasNext();) {
                 msg += "\n\t" + it.next();
@@ -61,7 +61,7 @@ public class ClassificationResultReadClass {
                     while (str != null){
                         str = str.trim();
                         if (!str.equals("")) {
-                            String[] splitted = str.split("\t");
+                            String[] splitted = str.split("\\s+");
                             File aPath = new File(splitted[0]);
                             String key = RemapMusicDBFilenamesClass.convertFileToMIREX_ID(aPath);
                             if(key.equals("")){

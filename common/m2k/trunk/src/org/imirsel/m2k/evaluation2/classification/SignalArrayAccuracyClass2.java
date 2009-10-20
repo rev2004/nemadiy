@@ -8,14 +8,13 @@
  */
 
 package org.imirsel.m2k.evaluation2.classification;
-import org.imirsel.m2k.evaluation.*;
 import java.util.ArrayList;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
 import java.text.DecimalFormat;
-import java.io.Serializable;
 import java.util.Collections;
 import java.io.*;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationGroundTruthFileReader;
 
 /**
  *
@@ -26,18 +25,18 @@ public class SignalArrayAccuracyClass2 {
     private String signalFileExt = ".asciiEvalSignal";
     
     private static final int COL_WIDTH = 7;
-    private ArrayList classNames = null;
+    private ArrayList<String> classNames = null;
     private ArrayList<Signal> resultSignals = null;
-    private ArrayList hierarchies = null;
-    private ArrayList hierachiesKey = null;
+    private ArrayList<String[]> hierarchies = null;
+    private ArrayList<String> hierachiesKey = null;
     private boolean usingAHierachy = false;
     
-    private ArrayList StoredAccuracies = null;
-    private ArrayList StoredNormalisedAccuracies = null;
-    private ArrayList StoredDiscountedAccuracies = null;
-    private ArrayList StoredNormalisedDiscountedAccuracies = null;
+    private ArrayList<Double> StoredAccuracies = null;
+    private ArrayList<Double> StoredNormalisedAccuracies = null;
+    private ArrayList<Double> StoredDiscountedAccuracies = null;
+    private ArrayList<Double> StoredNormalisedDiscountedAccuracies = null;
     
-    private ArrayList indivIterationOutput = null;
+    private ArrayList<String> indivIterationOutput = null;
     
     private boolean useNormalisedEvalMetricForRanking = false;
     
@@ -60,7 +59,14 @@ public class SignalArrayAccuracyClass2 {
     
     private File reportFile = null;
     
-    /** Creates a new instance of SignalArrayAccuracyClass */
+    /** Creates a new instance of SignalArrayAccuracyClass
+     * @param ModelName_
+     * @param resultFileExt_
+     * @param signalFileExt_
+     * @param storageDirectory_
+     * @param classHierarchyFile_
+     * @param verbose_
+     */
     public SignalArrayAccuracyClass2(String ModelName_, String resultFileExt_, String signalFileExt_, String storageDirectory_, String classHierarchyFile_, boolean verbose_) {
         this.classNames = null;
         this.resultSignals = null;
@@ -90,7 +96,7 @@ public class SignalArrayAccuracyClass2 {
         numberOfResultSets++;
         
         if (classNames == null) {
-            classNames = new ArrayList();
+            classNames = new ArrayList<String>();
         }
         if ((classHierarchyFile != null) && ((classHierarchyFile.trim()).compareTo("") != 0 )) {
             usingAHierachy = true;
@@ -197,7 +203,7 @@ public class SignalArrayAccuracyClass2 {
                     
                         trueKeys.remove(trueIndex);
                         String[] tempTrue = (String[])trueHierachies.remove(trueIndex);
-                        ArrayList truePath = new ArrayList();
+                        ArrayList<String> truePath = new ArrayList<String>();
                         for(int i=0;i<tempTrue.length;i++) {
                             truePath.add(tempTrue[i]);
                         }
@@ -205,7 +211,7 @@ public class SignalArrayAccuracyClass2 {
                         {
                             classifiedKeys.remove(classifiedIndex);
                             String[] tempClassification = (String[])classifiedHierachies.remove(classifiedIndex);
-                            ArrayList classifiedPath = new ArrayList();
+                            ArrayList<String> classifiedPath = new ArrayList<String>();
                             for(int i=0;i<tempClassification.length;i++) {
                                 classifiedPath.add(tempClassification[i]);
                             }
@@ -230,7 +236,7 @@ public class SignalArrayAccuracyClass2 {
                 //totalScore = totalScore + 1.0;
             }
         }
-        int theSignalsLength = theSignals.length;
+        //int theSignalsLength = theSignals.length;
         
         
         //Store confusion matrices
@@ -267,13 +273,13 @@ public class SignalArrayAccuracyClass2 {
                 tot += confusion[x][y];
             }
             if(verbose) {
-                System.out.println("Total num examples for class: " + (String)classNames.get(y) + " for this iteration is = " + tot);
+                System.out.println("Total num examples for class: " + classNames.get(y) + " for this iteration is = " + tot);
             }
             for(int x=0; x<classNames.size(); x++) {
                 if (tot > 0) {
                     percentConfusion[x][y] = (double)confusion[x][y] / (double)tot;
                     if(this.usingAHierachy) {
-                        percentDiscountedConfusion[x][y] = (double)discountedConfusion[x][y] / (double)tot;
+                        percentDiscountedConfusion[x][y] = discountedConfusion[x][y] / (double)tot;
                     }
                 } else {
                     percentConfusion[x][y] = 0.0;
@@ -286,10 +292,10 @@ public class SignalArrayAccuracyClass2 {
         
         if (this.StoredAccuracies == null)
         {
-            this.StoredAccuracies = new ArrayList();
-            this.StoredDiscountedAccuracies = new ArrayList();
-            this.StoredNormalisedAccuracies = new ArrayList();
-            this.StoredNormalisedDiscountedAccuracies = new ArrayList();
+            this.StoredAccuracies = new ArrayList<Double>();
+            this.StoredDiscountedAccuracies = new ArrayList<Double>();
+            this.StoredNormalisedAccuracies = new ArrayList<Double>();
+            this.StoredNormalisedDiscountedAccuracies = new ArrayList<Double>();
         }
         
         //Calculate accuracy as diagonal sum of confusion matrix divided by total number of examples
@@ -334,7 +340,7 @@ public class SignalArrayAccuracyClass2 {
         
 //WRITE OUTPUT FOR THIS ITERATION
         if (this.indivIterationOutput == null) {
-            this.indivIterationOutput = new ArrayList();
+            this.indivIterationOutput = new ArrayList<String>();
         }
         String bufferString = this.littleDivider;
         bufferString += "Iteration " + this.numberOfResultSets + "\n";
@@ -370,7 +376,7 @@ public class SignalArrayAccuracyClass2 {
         outBufferString += "Number of iterations = " + numberOfResultSets + "\n";
         System.out.println("Number of iterations = " + numberOfResultSets + "\n");
         for (int i=0;i<this.numberOfResultSets;i++) {
-            outBufferString += (String)this.indivIterationOutput.get(i);
+            outBufferString += this.indivIterationOutput.get(i);
         }
         outBufferString += this.bigDivider;
 //END WRITE FINAL OUTPUT HEADER
@@ -389,13 +395,13 @@ public class SignalArrayAccuracyClass2 {
                 finalTot += this.storedConfusion[x][y];
             }
             if(verbose) {
-                System.out.println("Total num examples for class: " + (String)classNames.get(y) + " over all iterations is = " + finalTot);
+                System.out.println("Total num examples for class: " + classNames.get(y) + " over all iterations is = " + finalTot);
             }
             for(int x=0; x<classNames.size(); x++) {
                 if (finalTot > 0) {
                     finalPercentConfusion[x][y] = (double)this.storedConfusion[x][y] / (double)finalTot;
                     if(this.usingAHierachy) {
-                        finalPercentDiscountedConfusion[x][y] = (double)this.storedDiscountedConfusion[x][y] / (double)finalTot;
+                        finalPercentDiscountedConfusion[x][y] = this.storedDiscountedConfusion[x][y] / (double)finalTot;
                     }
                 } else {
                     finalPercentConfusion[x][y] = 0.0;
@@ -449,12 +455,12 @@ public class SignalArrayAccuracyClass2 {
             double varianceNormalisedAccuracy = 0.0;
             double varianceNormalisedDiscountedAccuracy = 0.0;
             
-            varianceAccuracy = ((Double)this.StoredAccuracies.get(i)).doubleValue() - finalAccuracy;
-            varianceNormalisedAccuracy = ((Double)this.StoredNormalisedAccuracies.get(i)).doubleValue() - finalNormalisedAccuracy;
+            varianceAccuracy = (this.StoredAccuracies.get(i)).doubleValue() - finalAccuracy;
+            varianceNormalisedAccuracy = (this.StoredNormalisedAccuracies.get(i)).doubleValue() - finalNormalisedAccuracy;
                 
             if(this.usingAHierachy) {
-                varianceDiscountedAccuracy = ((Double)this.StoredDiscountedAccuracies.get(i)).doubleValue() - finalDiscountedAccuracy;
-                varianceNormalisedDiscountedAccuracy = ((Double)this.StoredNormalisedDiscountedAccuracies.get(i)).doubleValue() - finalNormalisedDiscountedAccuracy;
+                varianceDiscountedAccuracy = (this.StoredDiscountedAccuracies.get(i)).doubleValue() - finalDiscountedAccuracy;
+                varianceNormalisedDiscountedAccuracy = (this.StoredNormalisedDiscountedAccuracies.get(i)).doubleValue() - finalNormalisedDiscountedAccuracy;
             }
             
             stdDeviationAccuracy += (varianceAccuracy * varianceAccuracy);
@@ -532,6 +538,9 @@ public class SignalArrayAccuracyClass2 {
             } else {
                 evalSignal.setMetadata(Signal.PROP_PERF, new Double(Accuracy));
             }
+
+
+
         } else {
             if(this.useNormalisedEvalMetricForRanking) {
                 evalSignal.setMetadata(Signal.PROP_PERF, new Double(NormalisedDiscountedAccuracy));
@@ -539,18 +548,42 @@ public class SignalArrayAccuracyClass2 {
                 evalSignal.setMetadata(Signal.PROP_PERF, new Double(DiscountedAccuracy));
             }
         }
+        
+        evalSignal.setMetadata(Signal.PROP_PERF_ACC, new Double(Accuracy));
+        evalSignal.setMetadata(Signal.PROP_PERF_NORM_ACC, new Double(NormalisedAccuracy));
+        if (this.usingAHierachy) {
+            evalSignal.setMetadata(Signal.PROP_PERF_DISCOUNTED_ACC, new Double(DiscountedAccuracy));
+            evalSignal.setMetadata(Signal.PROP_PERF_NORM_DISCOUNTED_ACC, new Double(NormalisedDiscountedAccuracy));
+        }
+
         evalSignal.setMetadata(Signal.PROP_ALG_NAME, this.getModelName());
         
         evalSignal.setMetadata(Signal.PROP_CLASSES, classNames.toArray(new String[classNames.size()]));
+
+
+
+
         double[] perClassAccuracy = new double[classNames.size()];
         for (int i = 0; i < perClassAccuracy.length; i++) {
-            if (usingAHierachy){
-                perClassAccuracy[i] = percentDiscountedConfusion[i][i];
-            }else{
-                perClassAccuracy[i] = percentConfusion[i][i];
-            }
+            perClassAccuracy[i] = percentConfusion[i][i];
+            
         }
         evalSignal.setMetadata(Signal.PROP_PERF_PER_CLASS, perClassAccuracy);
+        evalSignal.setMetadata(Signal.PROP_PERF_ACC_PER_CLASS, perClassAccuracy);
+
+        if (usingAHierachy){
+            double[] perClassDiscountedAccuracy = new double[classNames.size()];
+            for (int i = 0; i < perClassDiscountedAccuracy.length; i++) {
+                perClassDiscountedAccuracy[i] = percentDiscountedConfusion[i][i];
+
+            }
+            evalSignal.setMetadata(Signal.PROP_PERF_PER_CLASS, perClassDiscountedAccuracy);
+            evalSignal.setMetadata(Signal.PROP_PERF_DISCOUNTED_ACC_PER_CLASS, perClassDiscountedAccuracy);
+        }
+
+
+
+
         
         if (resultSignals == null) {
             resultSignals = new ArrayList<Signal>();
@@ -560,7 +593,7 @@ public class SignalArrayAccuracyClass2 {
         Signal[] resultSignalArray = new Signal[resultSignals.size()];
         
         for (int m = 0; m < resultSignals.size(); m++) {
-            resultSignalArray[m] = (Signal)resultSignals.get(m);
+            resultSignalArray[m] = resultSignals.get(m);
         }
         
         if(verbose) {
@@ -611,8 +644,9 @@ public class SignalArrayAccuracyClass2 {
 
     public void initHierachy(String inFile) {
         //Initialise Hierachy scoring stuff
-        this.hierarchies = new ArrayList();
-        this.hierachiesKey = new ArrayList();
+        System.out.println("reading hierarchy file: " + inFile);
+        this.hierarchies = new ArrayList<String[]>();
+        this.hierachiesKey = new ArrayList<String>();
         File hierarchyFile = new File(inFile);
         BufferedReader textBuffer = null;
         String[] dataLine = {"init1", "init2"};
@@ -622,9 +656,20 @@ public class SignalArrayAccuracyClass2 {
             textBuffer = new BufferedReader( new FileReader(hierarchyFile) );
             String line = null; //not declared within while loop
             while (( line = textBuffer.readLine()) != null) {
-                dataLine = line.split("\t");
-                this.hierarchies.add(dataLine);
-                this.hierachiesKey.add(dataLine[0]);
+                line = line.trim();
+                if(!line.equals("")){
+                    dataLine = line.split("\t");
+                    for (int i = 0; i < dataLine.length; i++){
+                        dataLine[i] = TagClassificationGroundTruthFileReader.cleanTag(dataLine[i]);
+                    }
+                    this.hierarchies.add(dataLine);
+                    this.hierachiesKey.add(dataLine[0]);
+                    System.out.print("Adding");
+                    for (int i = 0; i < dataLine.length; i++){
+                        System.out.print("\t" + dataLine[i]);
+                    }
+                    System.out.println("");
+                }
             }
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
@@ -646,6 +691,7 @@ public class SignalArrayAccuracyClass2 {
      * Writes an integer confusion matrix to a file.
      * @param matrix The matrix to be written.
      * @param classNames The class names.
+     * @return
      */
     public String writeIntConfusionMatrix(int[][] matrix, ArrayList classNames) {
         String bufferString = "Truth\t\t";
@@ -667,6 +713,7 @@ public class SignalArrayAccuracyClass2 {
      * Writes a double confusion matrix to a file.
      * @param matrix The matrix to be written.
      * @param classNames The class names.
+     * @return
      */
     public String writeDoubleConfusionMatrix(double[][] matrix, ArrayList classNames) {
         String bufferString = "Truth\t\t";
@@ -688,6 +735,7 @@ public class SignalArrayAccuracyClass2 {
      * Writes a double confusion matrix to a file.
      * @param matrix The matrix to be written.
      * @param classNames The class names.
+     * @return 
      */
     public String writePercentageConfusionMatrix(double[][] matrix, ArrayList classNames) {
         String bufferString = "Truth\t\t";
@@ -709,6 +757,7 @@ public class SignalArrayAccuracyClass2 {
 
     /** 
      * Outputs the confusion matrix key
+     * @param classNames
      * @return the key
      */
     public String writeMatrixKey(ArrayList classNames) {
