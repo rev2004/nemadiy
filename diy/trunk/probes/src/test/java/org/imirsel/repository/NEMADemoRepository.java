@@ -1,4 +1,4 @@
-package edu.illinois.gslis.imirsel.repository;
+package org.imirsel.repository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.imirsel.demo.components.PrintObjectComponentHack;
 import org.meandre.core.repository.ConnectorDescription;
 import org.meandre.core.repository.CorruptedDescriptionException;
 import org.meandre.core.repository.DataPortDescription;
@@ -19,7 +20,6 @@ import org.meandre.core.repository.PropertiesDescription;
 import org.meandre.core.repository.PropertiesDescriptionDefinition;
 import org.meandre.core.repository.TagsDescription;
 import org.meandre.demo.components.ConcatenateStringsComponent;
-import org.meandre.demo.components.PrintObjectComponentHack;
 
 import org.meandre.demo.components.PushStringComponent;
 import org.meandre.demo.repository.DemoRepositoryGenerator;

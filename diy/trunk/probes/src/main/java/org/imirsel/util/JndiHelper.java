@@ -1,4 +1,4 @@
-package edu.illinois.gslis.imirsel.util;
+package org.imirsel.util;
 
 /*
  * @(#) JndiHelper.java @VERSION@

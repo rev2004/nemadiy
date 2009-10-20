@@ -1,4 +1,4 @@
-package edu.illinois.gslis.imirsel.annotations;
+package org.imirsel.annotations;
 
 import java.lang.annotation.*;
 
@@ -10,5 +10,6 @@ public @interface SqlPersistence {
 	String store() default "[unassigned]";
 	String update() default "[unassigned]";
 	String queryById() default "[unassigned]";
-	String queryByName() default "[unassigned]"; 
+	String queryByName() default "[unassigned]";
+	String select() default "[unassigned]"; 
 }

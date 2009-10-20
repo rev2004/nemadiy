@@ -4,7 +4,7 @@
    <entry key="null">org.meandre.core.engine.probes.NullProbeImpl</entry>
    <entry key="rdf">org.meandre.core.engine.probes.MeandreRDFDialectProbeImpl</entry>
    <entry key="statistics">org.meandre.core.engine.probes.StatisticsProbeImpl</entry>
-   <entry key="nemaFlowMonitor">edu.illinois.gslis.imirsel.probes.NEMAFlowNotification</entry>
+   <entry key="nemaFlowMonitor">org.imirsel.probes.NEMAFlowNotification</entry>
 </properties>
 
 

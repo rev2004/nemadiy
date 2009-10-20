@@ -1,4 +1,4 @@
-package org.meandre.demo.components;
+package org.imirsel.demo.components;
 
 import org.meandre.annotations.*;
 import org.meandre.core.ComponentContext;

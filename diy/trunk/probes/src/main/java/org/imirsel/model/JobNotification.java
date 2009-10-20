@@ -1,4 +1,4 @@
-package edu.illinois.gslis.imirsel.model;
+package org.imirsel.model;
 
 import java.sql.Timestamp;
 
