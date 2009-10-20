@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>edu.illinois.gslis.imirsel</groupId>
+  <groupId>org.imirsel</groupId>
   <artifactId>probes</artifactId>
   <name>NEMA: Probes and Plugin</name>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.2-SNAPSHOT</version>
 
 <scm>
   	<connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/probes</connection>
