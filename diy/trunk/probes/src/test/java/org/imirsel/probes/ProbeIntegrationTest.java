@@ -12,7 +12,7 @@ public class ProbeIntegrationTest {
 	public static void main(String args[]){
 		Logger logger = Logger.getAnonymousLogger();
 		String sFlowUrl ="http://test.org/helloworld/";
-		MeandreClient meandreClient  = new MeandreClient("127.0.0.1", 1714);
+		MeandreClient meandreClient  = new MeandreClient("128.174.154.145", 1714);
 		meandreClient.setLogger(logger);
 		meandreClient.setCredentials("admin", "admin");
 		try {

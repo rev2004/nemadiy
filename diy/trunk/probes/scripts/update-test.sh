@@ -1,0 +1,1 @@
+scp target/probes-1.0.2-SNAPSHOT.jar amit@128.174.154.145:/home/amit/projects/Meandre-Infrastructure-1.4.5/nema/lib
