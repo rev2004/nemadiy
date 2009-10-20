@@ -34,17 +34,18 @@ public class WriteResultFilesClass {
      * experiment (thus each array should be ordered in the same way).
      * @param outputDirectory The directory to output the CSV file into.
      * @param evaluationName The name of the evaluation (used to name output file.
+     * @param perfMetadataKey
      * @param outputFileExt The extension to put on the output file.
      * @param verbose Determines wheter the data should be dumped to the console
      * as well.
      * @return A File Object indicating where the output CSV file was written to.
      */
-    public static File prepFriedmanTestDataOverClasses(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean verbose) {
+    public static File prepFriedmanTestDataOverClasses(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
         //sort systems alphabetically
         HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
         for (int i = 0; i < sigStore.size(); i++) {
             try {
-                sigArrMap.put(((Signal[]) sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), (Signal[]) sigStore.get(i));
+                sigArrMap.put((sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), sigStore.get(i));
             } catch (noMetadataException ex) {
                 throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + ex);
             }
@@ -87,7 +88,7 @@ public class WriteResultFilesClass {
             for (int j = 0 ; j < numAlgos; j++){
                 double avg = 0.0;
                 for (int i = 0; i < numRuns; i++) {
-                    avg += sigStore.get(j)[i].getDoubleArrayMetadata(Signal.PROP_PERF_PER_CLASS)[c];
+                    avg += sigStore.get(j)[i].getDoubleArrayMetadata(perfMetadataKey)[c];
                 }
                 avg /= numRuns;
 
@@ -115,7 +116,7 @@ public class WriteResultFilesClass {
         }
         File testFile = null;
         try {
-            testFile = new File(outputDirectory + File.separator + evaluationName + "_results_class" + outputFileExt);
+            testFile = new File(outputDirectory + File.separator + evaluationName + "_" + perfMetadataKey.replaceAll("\\s+", "_") + outputFileExt);
             BufferedWriter output = new BufferedWriter(new FileWriter(testFile));
             output.write(EvaluationOutput);
             output.close();
@@ -145,7 +146,7 @@ public class WriteResultFilesClass {
      * as well.
      * @return A File Object indicating where the output CSV file was written to.
      */
-    public static File prepFriedmanTestData(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean verbose) {
+    public static File prepFriedmanTestData(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
         //sort systems alphabetically
         HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
         for (int i = 0; i < sigStore.size(); i++) {
@@ -189,7 +190,7 @@ public class WriteResultFilesClass {
             EvaluationOutput += i + ",";
             for (int j = 0 ; j < numAlgos; j++){
                 try{
-                    EvaluationOutput += "" + sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF);
+                    EvaluationOutput += "" + sigStore.get(j)[i].getDoubleMetadata(perfMetadataKey);
                 } catch (noMetadataException e) {
                     throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
                 }
@@ -210,7 +211,7 @@ public class WriteResultFilesClass {
         }
         File testFile = null;
         try {
-            testFile = new File(outputDirectory + File.separator + evaluationName + "_results_fold" + outputFileExt);
+            testFile = new File(outputDirectory + File.separator + evaluationName + "_" + perfMetadataKey.replaceAll("\\s+", "_") + outputFileExt);
             BufferedWriter output = new BufferedWriter(new FileWriter(testFile));
             output.write(EvaluationOutput);
             output.close();
@@ -239,7 +240,7 @@ public class WriteResultFilesClass {
      * as well.
      * @return A File Object indicating where the output CSV file was written to.
      */
-    public static File prepSummaryResultData(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean verbose) {
+    public static File prepSummaryResultData(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean usingAHierarchy, boolean verbose) {
         //sort systems alphabetically
         HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
         for (int i = 0; i < sigStore.size(); i++) {
@@ -251,9 +252,15 @@ public class WriteResultFilesClass {
         }
         String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
         Arrays.sort(keys);
-        
-        double[] means = new double[keys.length];
-        
+
+
+        double[][] means = null;
+        if(usingAHierarchy){
+            means = new double[keys.length][4];
+        }else{
+            means = new double[keys.length][2];
+        }
+
         sigStore.clear();
         for (int i = 0; i < keys.length; i++) {
             sigStore.add(sigArrMap.get(keys[i]));
@@ -276,24 +283,48 @@ public class WriteResultFilesClass {
         for (int i = 0; i < numRuns; i++) {
             for (int j = 0 ; j < numAlgos; j++){
                 try{
-                    means[j] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF);
+                    means[j][0] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_ACC);
+                    means[j][1] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_NORM_ACC);
+                    if(usingAHierarchy){
+                        means[j][2] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_DISCOUNTED_ACC);
+                        means[j][3] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_NORM_DISCOUNTED_ACC);
+                    }
                 } catch (noMetadataException e) {
                     throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
                 }
             }
         }
+        int numMetrics = 2;
+        if(usingAHierarchy){
+            numMetrics = 4;
+        }
         for (int i = 0; i < numAlgos; i++) {
-            means[i] /= numRuns;
+            for (int j = 0; j < numMetrics; j++){
+                means[i][j] /= numRuns;
+            }
         }
         
         
         DecimalFormat dec = new DecimalFormat();
         dec.setMaximumFractionDigits(2);
-        EvaluationOutput += "*Participant,Average Classifcation Accuracy\n";
+        //TODO: undo this hack
+        //EvaluationOutput += "*Participant,Mean Accuracy,Mean Normalised Accuracy";
+        EvaluationOutput += "*Participant,Mean Accuracy";
+        if (usingAHierarchy){
+            //TODO: undo this hack
+            //EvaluationOutput += ",Mean Discounted Accuracy,Mean Normalised Accuracy";
+            EvaluationOutput += ",Mean Discounted Accuracy";
+        }
+        EvaluationOutput += "\n";
         for (int i = 0; i < numAlgos; i++) {
-            EvaluationOutput += runNames[i] + ",";
-            EvaluationOutput += dec.format(means[i] * 100.0);
-            EvaluationOutput += "%\n";
+            EvaluationOutput += runNames[i];
+            //for (int j = 0; j < numMetrics; j++){
+            //TODO: undo this hack
+            for (int j = 0; j < numMetrics; j+=2){
+                EvaluationOutput += "," + dec.format(means[i][j] * 100.0) + "%";
+            }
+            
+            EvaluationOutput += "\n";
         }
         
         File copyToDirFile = new File(outputDirectory);

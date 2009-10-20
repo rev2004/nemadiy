@@ -31,6 +31,7 @@ public class MIREXClassificationEvalMain {
     private String evaluationName;
     private File gtFile;
     private File rootEvaluationDir;
+    private File hierarchyFile = null;
     private ArrayList<String> systemNames;
     private ArrayList<File> resultsDirs;
     
@@ -62,10 +63,11 @@ public class MIREXClassificationEvalMain {
         }
         
         evaluationName = args[0];
-        
+        System.out.println("Evaluation name:   " + evaluationName);
         gtFile = new File(args[1]);
-        
+        System.out.println("Ground-truth file: " + gtFile.getAbsolutePath());
         rootEvaluationDir = new File(args[2]);
+        System.out.println("Root eval dir:     " + rootEvaluationDir.getAbsolutePath());
         rootEvaluationDir.mkdirs();
         if (args.length % 2 != 1){
             System.err.println("WARNING: an even number of arguments was specified, one may have been ignored!\n" + USAGE);
@@ -74,8 +76,20 @@ public class MIREXClassificationEvalMain {
         systemNames = new ArrayList<String>();
         resultsDirs = new ArrayList<File>();
         
+        int startIdx = -1;
+        if (args[3].equalsIgnoreCase("-h")){
+            hierarchyFile = new File(args[4]);
+            System.out.println("Hierarchy file:    " + hierarchyFile.getAbsolutePath());
+            startIdx = 5;
+        }else{
+            startIdx = 3;
+            System.out.println("Hierarchy file:    <None specified>");
+            hierarchyFile = null;
+        }
+
+
         System.out.println("---");
-        for (int i = 3; i < args.length; i+=2) {
+        for (int i = startIdx; i < args.length; i+=2) {
             String systemName = args[i+1];
             File resultsPath = new File(args[i]);
             systemNames.add(systemName);
@@ -85,7 +99,7 @@ public class MIREXClassificationEvalMain {
         System.out.println("---");
     }
     
-    public static final String USAGE = "args: evaluationName /path/to/GT/file /path/to/output/dir /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName";
+    public static final String USAGE = "args: evaluationName /path/to/GT/file /path/to/output/dir [-h /path/to/hierarchy/file] /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName";
     public static void main(String[] args) {
         
         System.err.println("MIREX 2008 Classification evaluator\n" +
@@ -109,7 +123,9 @@ public class MIREXClassificationEvalMain {
         int numFolds = -1;
         for (Iterator<File> it = resultsDirs.iterator(); it.hasNext();) {
             File dir = it.next();
+            System.out.println("\tretrieving files for " + dir.getAbsolutePath());
             File[] files = dir.listFiles();
+            System.out.println("\t\tgot " + files.length + " files");
             //this should sort results consistenly across all submissions,
             //   if they use the same names for their results files 
             //   (otherwise there is no way to know if they are about the same test across different submissions)
@@ -149,7 +165,12 @@ public class MIREXClassificationEvalMain {
             System.out.println("\tevaluating " + systemNames.get(i));
             File systemOutputDir = new File(rootEvaluationDir.getAbsolutePath() + File.separator + systemNames.get(i));
             systemOutputDir.mkdirs();
-            SignalArrayAccuracyClass2 evaluator = new SignalArrayAccuracyClass2(systemNames.get(i), ".eval.txt", ".evalData.ser", systemOutputDir.getAbsolutePath(), null, true);
+            SignalArrayAccuracyClass2 evaluator = null;
+            if(hierarchyFile == null){
+                evaluator = new SignalArrayAccuracyClass2(systemNames.get(i), ".eval.txt", ".evalData.ser", systemOutputDir.getAbsolutePath(), null, true);
+            }else{
+                evaluator = new SignalArrayAccuracyClass2(systemNames.get(i), ".eval.txt", ".evalData.ser", systemOutputDir.getAbsolutePath(), hierarchyFile.getAbsolutePath(), true);
+            }
             Signal[] resultSignalArr = null;
             for (int j = 0; j < numFolds; j++) {
                 try {
@@ -181,15 +202,21 @@ public class MIREXClassificationEvalMain {
 
         System.err.println("Writing out CSV result files over whole task...");
         //prep result test data CSV file over classes and folds
-        File perClassCSV = WriteResultFilesClass.prepFriedmanTestDataOverClasses(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", true);
+        File perClassCSV = WriteResultFilesClass.prepFriedmanTestDataOverClasses(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_ACC_PER_CLASS, ".csv", true);
 
         //prep result test data CSV file over folds only
-        File perFoldCSV = WriteResultFilesClass.prepFriedmanTestData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", true);
+        File perFoldCSV = WriteResultFilesClass.prepFriedmanTestData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_ACC, ".csv", true);
+
+        File discountedPerClassCSV = null;
+        File discountedPerFoldCSV = null;
+
+        if (hierarchyFile != null){
+            discountedPerClassCSV = WriteResultFilesClass.prepFriedmanTestDataOverClasses(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_DISCOUNTED_ACC_PER_CLASS, ".csv", true);
+            discountedPerFoldCSV = WriteResultFilesClass.prepFriedmanTestData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_DISCOUNTED_ACC, ".csv", true);
+        }
 
         //write out results summary
-        File summaryCSV = WriteResultFilesClass.prepSummaryResultData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", true);
-
-        
+        File summaryCSV = WriteResultFilesClass.prepSummaryResultData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", hierarchyFile != null, true);
 
         //run friedman test if matlab available?
         if (getPerformMatlabStatSigTests()){
@@ -198,6 +225,13 @@ public class MIREXClassificationEvalMain {
             
             performFriedmanTestWithClassAccuracy(rootEvaluationDir, perClassCSV, systemNamesArr);
             performFriedmanTestWithFoldAccuracy(rootEvaluationDir, perFoldCSV, systemNamesArr);
+
+            if (hierarchyFile != null){
+                performFriedmanTestWithClassAccuracy(rootEvaluationDir, discountedPerClassCSV, systemNamesArr);
+                performFriedmanTestWithFoldAccuracy(rootEvaluationDir, discountedPerFoldCSV, systemNamesArr);
+            }
+
+
         }
     }
     
@@ -208,9 +242,10 @@ public class MIREXClassificationEvalMain {
         
         //create an m-file to run the test
         String evalCommand = "performFriedmanForClassAccuracy";
+        String name = CSVResultFile.getName().replaceAll(".csv", "");
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
-        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "perClassAccuracy.friedman.tukeyKramerHSD.png";
-        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + "perClassAccuracy.friedman.tukeyKramerHSD.csv";
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.png";
+        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.csv";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
@@ -250,7 +285,13 @@ public class MIREXClassificationEvalMain {
             textOut.newLine();
             textOut.write("width = (-c(1,3)+c(1,5))/4;");
             textOut.newLine();
-            textOut.write("set(gcf,'position',[497   313   450   351])");
+            textOut.write("set(fig,'paperunit','points')");
+            textOut.newLine();
+            textOut.write("set(fig,'paperposition',[1 500 1200 500])");
+            textOut.newLine();
+            textOut.write("set(fig,'papersize',[1200 500])");
+            textOut.newLine();
+            textOut.write("set(fig,'position',[1 500 1200 500])");
             textOut.newLine();
             textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
             textOut.newLine();
@@ -273,6 +314,14 @@ public class MIREXClassificationEvalMain {
             textOut.write("h = title('" + CSVResultFile.getAbsolutePath() + "')");
             textOut.newLine();
             textOut.write("set(h,'interpreter','none')");
+            textOut.newLine();
+            textOut.write("outerpos = get(gca,'outerposition');");
+            textOut.newLine();
+            textOut.write("tightinset = get(gca,'tightinset');");
+            textOut.newLine();
+            textOut.write("newpos = [tightinset(1) tightinset(2) outerpos(3)-(tightinset(1) + tightinset(3)) outerpos(4)-(tightinset(2) + tightinset(4))];");
+            textOut.newLine();
+            textOut.write("set(gca,'position',newpos);");
             textOut.newLine();
             textOut.write("saveas(fig,'" + matlabPlotPath + "');");
             textOut.newLine();
@@ -329,9 +378,10 @@ public class MIREXClassificationEvalMain {
         
         //create an m-file to run the test
         String evalCommand = "performFriedmanForFoldAccuracy";
+        String name = CSVResultFile.getName().replaceAll(".csv", "");
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
-        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + "perFoldAccuracy.friedman.tukeyKramerHSD.png";
-        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + "perFoldAccuracy.friedman.tukeyKramerHSD.csv";
+        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.png";
+        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.csv";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
 
@@ -371,7 +421,13 @@ public class MIREXClassificationEvalMain {
             textOut.newLine();
             textOut.write("width = (-c(1,3)+c(1,5))/4;");
             textOut.newLine();
-            textOut.write("set(gcf,'position',[497   313   450   351])");
+            textOut.write("set(fig,'paperunit','points')");
+            textOut.newLine();
+            textOut.write("set(fig,'paperposition',[1 500 1200 500])");
+            textOut.newLine();
+            textOut.write("set(fig,'papersize',[1200 500])");
+            textOut.newLine();
+            textOut.write("set(fig,'position',[1 500 1200 500])");
             textOut.newLine();
             textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
             textOut.newLine();
@@ -394,6 +450,14 @@ public class MIREXClassificationEvalMain {
             textOut.write("h = title('" + CSVResultFile.getAbsolutePath() + "')");
             textOut.newLine();
             textOut.write("set(h,'interpreter','none')");
+            textOut.newLine();
+            textOut.write("outerpos = get(gca,'outerposition');");
+            textOut.newLine();
+            textOut.write("tightinset = get(gca,'tightinset');");
+            textOut.newLine();
+            textOut.write("newpos = [tightinset(1) tightinset(2) outerpos(3)-(tightinset(1) + tightinset(3)) outerpos(4)-(tightinset(2) + tightinset(4))];");
+            textOut.newLine();
+            textOut.write("set(gca,'position',newpos);");
             textOut.newLine();
             textOut.write("saveas(fig,'" + matlabPlotPath + "');");
             textOut.newLine();

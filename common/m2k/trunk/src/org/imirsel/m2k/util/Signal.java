@@ -126,6 +126,30 @@ public class Signal implements Serializable, Cloneable, Comparable {
      */
     public final static String PROP_PERF = "Performance";
     /**
+     * Constant definition for performance metadata.
+     */
+    public final static String PROP_PERF_ACC = "Accuracy";
+    /**
+     * Constant definition for performance metadata.
+     */
+    public final static String PROP_PERF_ACC_PER_CLASS = "Accuracy Per Class";
+    /**
+     * Constant definition for performance metadata.
+     */
+    public final static String PROP_PERF_NORM_ACC = "Normalised Accuracy";
+    /**
+     * Constant definition for performance metadata.
+     */
+    public final static String PROP_PERF_DISCOUNTED_ACC = "Discounted Accuracy";
+    /**
+     * Constant definition for performance metadata.
+     */
+    public final static String PROP_PERF_DISCOUNTED_ACC_PER_CLASS = "Discounted Accuracy Per Class";
+    /**
+     * Constant definition for performance metadata.
+     */
+    public final static String PROP_PERF_NORM_DISCOUNTED_ACC = "Normalised Discounted Accuracy";
+    /**
      * Constant definition for performance per class (rather than total) metadata.
      */
     public final static String PROP_PERF_PER_CLASS = "Performance per class";
