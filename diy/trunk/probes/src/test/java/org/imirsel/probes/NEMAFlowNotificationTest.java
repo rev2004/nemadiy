@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.illinois.gslis.imirsel.probes;
+package org.imirsel.probes;
 
 
 
@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 
+import org.imirsel.probes.NemaFlowNotification;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.After;
@@ -28,9 +29,6 @@ import org.meandre.core.repository.RepositoryImpl;
 import org.meandre.demo.repository.DemoRepositoryGenerator;
 
 import com.hp.hpl.jena.rdf.model.Model;
-
-import edu.illinois.gslis.imirsel.plugins.JndiInitializeServlet;
-import edu.illinois.gslis.imirsel.repository.NEMADemoRepository;
 
 /**
  * @author Amit Kumar
@@ -56,7 +54,7 @@ public class NEMAFlowNotificationTest {
 	*/	
 		
 		
-		Model model = NEMADemoRepository.getTestHelloWorldWithSleepRepository("http://test.org");//.getTestHelloWorldHetereogenousRepository();
+		Model model = DemoRepositoryGenerator.getTestHelloWorldRepository();//.getTestHelloWorldHetereogenousRepository();
 		QueryableRepository qr = new RepositoryImpl(model);
 		CoreConfiguration cnf = new CoreConfiguration();
 		Conductor conductor = new Conductor(10,cnf);

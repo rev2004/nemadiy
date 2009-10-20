@@ -7,7 +7,7 @@
  * read License.txt
  *
  */
-package edu.illinois.gslis.imirsel.plugins;
+package org.imirsel.plugins;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -32,12 +32,12 @@ import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
+import org.imirsel.annotations.SqlPersistence;
+import org.imirsel.model.Job;
+import org.imirsel.util.PluginConstants;
 import org.meandre.configuration.CoreConfiguration;
 import org.meandre.plugins.MeandrePlugin;
 
-import edu.illinois.gslis.imirsel.annotations.SqlPersistence;
-import edu.illinois.gslis.imirsel.model.Job;
-import edu.illinois.gslis.imirsel.util.PluginConstants;
 
 
 /**Initializes various JNDI resources for MEANDRE

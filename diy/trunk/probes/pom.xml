@@ -27,13 +27,14 @@
                                <id>MonkSnapshotRepository</id>
                                    <name>Monk Snapshot Repository</name>
                                        <url>scp://monk.lis.illinois.edu/content/web/root/snapshot</url>
-                                         </snapshotRepository>
-                                             <downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
+                </snapshotRepository>
+            <downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
 
         </distributionManagement>
   
   
    <build>
+    <defaultGoal>install</defaultGoal>
   	<plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -121,6 +122,14 @@
   <version>1.5.6</version>
   <scope>test</scope>
 </dependency>
+
+<dependency>
+  <groupId>commons-httpclient</groupId>
+  <artifactId>commons-httpclient</artifactId>
+  <version>3.1</version>
+  <scope>test</scope>
+</dependency>
+
 
 <dependency>
   <groupId>org.apache.lucene</groupId>

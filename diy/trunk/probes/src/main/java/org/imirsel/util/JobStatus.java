@@ -1,4 +1,4 @@
-package edu.illinois.gslis.imirsel.util;
+package org.imirsel.util;
 
 public class JobStatus {
 	public static int ABORTED=-1;
