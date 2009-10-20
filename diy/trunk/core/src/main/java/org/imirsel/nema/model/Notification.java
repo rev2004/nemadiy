@@ -23,6 +23,7 @@ public class Notification implements Serializable {
 	
 	private Long id;
 	private Long recipientId;
+	private String recipientEmail;
 	private Date dateCreated;
 	private String message;
 	private Job job;
@@ -64,6 +65,13 @@ public class Notification implements Serializable {
 	}
 	public void setJob(Job job) {
 		this.job = job;
+	}
+	@Column(name="recipientEmail",nullable=false)
+	public String getRecipientEmail() {
+		return recipientEmail;
+	}
+	public void setRecipientEmail(String recipientEmail) {
+		this.recipientEmail = recipientEmail;
 	}
 
 
