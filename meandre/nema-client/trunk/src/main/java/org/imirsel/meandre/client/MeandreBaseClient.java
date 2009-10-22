@@ -150,6 +150,51 @@ public class MeandreBaseClient{
 		
         return httpClient;
     }
+    
+    
+    
+    /** Does an authenticated GET request against the server using the
+	 * input url suffix and params, it does not wait for the response body 
+	 * to be read through.
+     * 
+     * <p>url visited will be:
+     * <p>http://<meandre-host>:<port>/<sRestCommand><queryParams(?n1=v1?n2=v2...)>
+	 * 
+	 * @param sRestCommand The url suffix
+	 * @param queryParams the http query params to append to the url. Null is
+	 * an acceptable value for this set if no params are needed.
+	 * 
+	 * @return The raw content bytes of the server's response
+	 */
+	public int executeGetRequestNoBlock(String sRestCommand, 
+			Set<NameValuePair> queryParams)
+	        throws TransmissionException{
+
+		GetMethod get = new GetMethod();
+		get.setPath("/" + sRestCommand);
+		get.setDoAuthentication(true);
+		if(queryParams != null){
+		    NameValuePair[] nvp = new NameValuePair[queryParams.size()]; 
+		    nvp = queryParams.toArray(nvp);
+		    get.setQueryString(nvp);
+		}
+		_log.fine("executing GET:  " + extractMethodsURIString(get));
+		int httpCode=0;
+		try{
+			getHttpClient().executeMethod(get);
+			httpCode = get.getStatusCode();;
+			verifyResponseOK(get);
+		}catch (TransmissionException te){
+			throw te;
+		}catch(Exception e){
+		    //e.printStackTrace();
+			_log.severe("unanticipated exception performing http GET: " +
+			        extractMethodsURIString(get));
+			throw new TransmissionException(e);
+		}
+		return httpCode;
+	}
+    
 
 
     /** Does an authenticated GET request against the server using the
@@ -291,6 +336,24 @@ public class MeandreBaseClient{
         }
         return baResponse;
 	}
+	
+	/**
+	 * performs a GET request and returns the response data as a string.
+     * see <code>executePostRequestBytes</code> for info on params
+	 *
+	 */
+	public int executeGetRequestNoWait(String sRestCommand,
+			Set<NameValuePair> queryParams) throws TransmissionException {
+	   
+        int httpCode=executeGetRequestNoBlock(sRestCommand, queryParams);
+        _log.finer("Response from GET -NoBlock:\n" + httpCode);
+        return httpCode;
+	}
+	
+	
+
+	
+	
 
 
 	/**
