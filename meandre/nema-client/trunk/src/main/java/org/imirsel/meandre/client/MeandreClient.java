@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -917,6 +918,40 @@ public class MeandreClient extends MeandreBaseClient{
 		String sResults = executeGetRequestString(sRestCommand, nvps);
 		return sResults;
 	}
+	
+	
+
+
+
+	/**Returns True or false. If true then the request for execution
+	 * was successfully delivered 2xx http codes
+	 * 
+	 * @param sFlowUrl
+	 * @param token
+	 * @param probeList
+	 * @return
+	 * @throws TransmissionException
+	 */
+	public boolean runAsyncFlow(String sFlowUrl, String token,HashMap<String, String> probeList) throws TransmissionException {
+		String sRestCommand = "services/execute/flow.txt";
+		Set<NameValuePair> nvps = new HashSet<NameValuePair>();
+		nvps.add(new NameValuePair("uri", sFlowUrl));
+		nvps.add(new NameValuePair("token",token));
+		if(!probeList.isEmpty()){
+			Set<String> keys = probeList.keySet();
+			Iterator<String> itK = keys.iterator();
+			String key = null;
+			while(itK.hasNext()){
+				key = itK.next();
+				nvps.add(new NameValuePair(key, probeList.get(key)));
+			}
+		}
+		int httpCode=executeGetRequestNoWait(sRestCommand, nvps);
+		return true;
+	}
+
+	
+
 
 	/**
 	 * This method uploads and executes all the flows in the provided model
@@ -1349,6 +1384,50 @@ public class MeandreClient extends MeandreBaseClient{
 		return Boolean.TRUE;
 	}
 
-
+	/**Reads the flow properties for a token and returns the flow execution instance Id
+	 * 
+	 * @param token
+	 * @return
+	 * @throws TransmissionException
+	 */
+	public ExecResponse getFlowExecutionInstanceId(String token) throws TransmissionException{
+		String sRestCommand = "services/execute/uri_flow.txt";
+		Set<NameValuePair> nvps = new HashSet<NameValuePair>();
+		nvps.add(new NameValuePair("token", token));
+		String value = executeGetRequestString(sRestCommand, nvps);
+		if(value==null){
+			throw new TransmissionException("Invalid response from the server: getFlowExecutionInstanceId " + token);
+		}
+		String uri=null;
+		String hostname = null;
+		String _port = null;
+		String tokenFromServer = null;
+		int port = -1;
+		try {
+			InputStream is = new ByteArrayInputStream(value.getBytes("UTF-8"));
+			Properties properties  = new Properties();
+			properties.load(is);
+			uri=properties.getProperty("uri");
+			tokenFromServer=properties.getProperty("token");
+			hostname=properties.getProperty("hostname");
+			_port=properties.getProperty("port");
+			port = Integer.parseInt(_port);
+		} catch (UnsupportedEncodingException e) {
+			throw new TransmissionException(e);
+		} catch (IOException e) {
+			throw new TransmissionException(e);
+		}catch(Exception e){
+			throw new TransmissionException(e);
+		}
+		if(uri==null){
+			throw new TransmissionException("Error could not get uri for the token: " + token+ "\nThe properties returned from the server are: " + value );
+		}
+		ExecResponse response = new ExecResponse();
+		response.setPort(port);
+		response.setHostname(hostname);
+		response.setUri(uri);
+		response.setToken(tokenFromServer);
+		return response;
+	}
 
 }
