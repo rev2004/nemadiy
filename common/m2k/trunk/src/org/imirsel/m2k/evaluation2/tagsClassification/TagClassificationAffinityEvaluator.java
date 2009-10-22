@@ -61,11 +61,17 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
     
     private void addROCpoint(ArrayList<double[]> ROCpointSequence, double falsePosRate, double truePosRate){
+        if (Double.isNaN(falsePosRate)){
+            falsePosRate = 0.0;
+        }
+        if (Double.isNaN(truePosRate)){
+            truePosRate = 0.0;
+        }
         ROCpointSequence.add(new double[]{falsePosRate,truePosRate});
     }
     
     private double computeAreaUnderROCCurve(ArrayList<double[]> ROCpointSequence){
-        //System.out.println("computing AUC-ROC for " + ROCpointSequence.size() + " point sequence");
+        System.out.println("computing AUC-ROC for " + ROCpointSequence.size() + " point sequence");
         if (ROCpointSequence.size() == 0){
             return 0.0;
         }
@@ -80,6 +86,16 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             last = curr;
         }
         //System.out.println("returning " + area);
+        if (Double.isNaN(area)){
+            System.out.println("WARNING: returning NaN area under ROC curve");
+            System.out.println("ROC point seq: ");
+            for (int i = 1; i < ROCpointSequence.size(); i++) {
+                curr = ROCpointSequence.get(i);
+
+                System.out.print(curr[0] + "," + curr[1] + "\t");
+            }
+            System.out.println("");
+        }
         return area;
     }
     
@@ -161,7 +177,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         int falsePositives;
         double truePosRate;
         double falsePosRate;
-        double lastAffinity = Double.NEGATIVE_INFINITY;
+        double lastAffinity = 0.0;
         AffinityDataPoint dataPoint;
         ArrayList<double[]> anROCpointSequence;
         double[] ROCdomain;
@@ -211,7 +227,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             missingAffinities.removeAll(returnedAffinities.keySet());
             for (Iterator<String> it = missingAffinities.iterator(); it.hasNext();) {
                 tag = it.next();
-                AffinityDataPoint tmpDataPoint = new AffinityDataPoint(trueSet.contains(tag),Double.NEGATIVE_INFINITY);
+                AffinityDataPoint tmpDataPoint = new AffinityDataPoint(trueSet.contains(tag),0.0);
                 tag2affinityDataPoints.get(tag).add(tmpDataPoint);
                 tmpClipROCPointList.add(tmpDataPoint);
                 overallROCPointList.add(tmpDataPoint);
@@ -241,7 +257,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             falsePositives = 0;
             truePosRate = 0.0;
             falsePosRate = 0.0;
-            lastAffinity = Double.NEGATIVE_INFINITY;
+            lastAffinity = 0.0;
             anROCpointSequence = new ArrayList<double[]>();
             clip2ROCpointSequence.put(path,anROCpointSequence);
             //addROCpoint(anROCpointSequence, 0.0, 0.0);
@@ -306,6 +322,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         for (Iterator<String> it = tagSet.iterator(); it.hasNext();) {
             tag = it.next();
             dataPointList = tag2affinityDataPoints.get(tag);
+            //this is unikey to tet false as affinities are patched in for negatives
             if (dataPointList.size() > 0){
                 Collections.sort(dataPointList);
 
@@ -337,7 +354,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                 falsePositives = 0;
                 truePosRate = 0.0;
                 falsePosRate = 0.0;
-                lastAffinity = Double.NEGATIVE_INFINITY;
+                lastAffinity = 0.0;
                 anROCpointSequence = new ArrayList<double[]>();
                 tag2ROCpointSequence.put(tag,anROCpointSequence);
 
@@ -387,8 +404,11 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         
         {
             //compute overall AUC-ROC
+            System.out.println("Sorting " + overallROCPointList.size() + " affinity scores in order to compute overall AUC-ROC");
             Collections.sort(overallROCPointList);
+            System.out.println("done");
 
+            System.out.println("Computing overall AUC-ROC");
             //count positives and negatives
             positives = 0;
             negatives = 0;
@@ -413,7 +433,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             falsePositives = 0;
             truePosRate = 0.0;
             falsePosRate = 0.0;
-            lastAffinity = Double.NEGATIVE_INFINITY;
+            lastAffinity = 0.0;
             anROCpointSequence = new ArrayList<double[]>();
             overallROCpointSequence = anROCpointSequence;
 
@@ -455,6 +475,8 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             systemReport += "Area under the ROC curve (AUC-ROC): " + auc + "\n";
             overallAUC_ROC = auc;
 
+            System.out.println("done");
+
         }
         
         
@@ -482,7 +504,9 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
         //store evaluation report
         dataToEvaluate.setMetadata(EvaluationDataObject.SYSTEM_RESULTS_REPORT, systemReport);
-        
+
+        System.out.println("Writing out results");
+
         //serialise out the evaluation data
         //  later this should be changed to use ASCII file format - when Collections are supported by write method of EvaluationDataObject
         try {

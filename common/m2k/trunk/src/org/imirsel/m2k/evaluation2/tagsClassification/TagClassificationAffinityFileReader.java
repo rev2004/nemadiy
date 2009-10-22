@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
@@ -23,6 +24,11 @@ import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
 public class TagClassificationAffinityFileReader implements EvalFileReader {
     private boolean verbose = true;
     private boolean MIREX_submissionMode = false;
+
+    private double minAffinity = Double.POSITIVE_INFINITY;
+    private double maxAffinity = Double.NEGATIVE_INFINITY;
+
+
     public boolean getMIREX_submissionMode() {
         return MIREX_submissionMode;
     }
@@ -52,6 +58,15 @@ public class TagClassificationAffinityFileReader implements EvalFileReader {
         if(verbose){
             System.out.println("   appending tag: " + tag + ", affinity: " + value + " to path: " + path);
         }
+
+        if((value != Double.NaN)&&(value != Double.NEGATIVE_INFINITY)&&(value != Double.POSITIVE_INFINITY)){
+            if (value > maxAffinity){
+                maxAffinity = value;
+            }else if(value < minAffinity){
+                minAffinity = value;
+            }
+        }
+
         String key,cleanTag;
         if (MIREX_submissionMode){
             key = RemapMusicDBFilenamesClass.convertFileToMIREX_ID(new File(path));
@@ -72,7 +87,10 @@ public class TagClassificationAffinityFileReader implements EvalFileReader {
         if(verbose){
             System.out.println("Reading affinity file: " + theFile.getAbsolutePath());
         }
-        
+
+        minAffinity = Double.POSITIVE_INFINITY;
+        maxAffinity = Double.NEGATIVE_INFINITY;
+
         //init file path as evaluation file
         EvaluationDataObject output = new EvaluationDataObject(theFile.getAbsolutePath());
         BufferedReader textBuffer = null;
@@ -107,6 +125,24 @@ public class TagClassificationAffinityFileReader implements EvalFileReader {
                     System.out.println("empty line ignored, line: " + lineNum + ", file: " + theFile.getAbsolutePath());
                 }
                 line = textBuffer.readLine();
+            }
+
+            //normalise affinity values
+            double affRange = maxAffinity - minAffinity;
+            System.out.println("Normalising affinity scores:");
+            System.out.println("\tMin affinity: " + minAffinity);
+            System.out.println("\tMax affinity: " + maxAffinity);
+            System.out.println("\tRange:        " + affRange);
+            String key;
+            double normval;
+
+            for (Iterator<HashMap<String,Double>> it = pathsToRelevantTags.values().iterator(); it.hasNext();){
+                HashMap<String,Double> aMap = it.next();
+                for (Iterator<String> it1 = aMap.keySet().iterator(); it1.hasNext();){
+                    key = it1.next();
+                    normval = (aMap.get(key) - minAffinity) / affRange;
+                    aMap.put(key, normval);
+                }
             }
             
             //append data to the EvaluationDataObject Object
