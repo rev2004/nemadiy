@@ -239,51 +239,60 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         //compute per tag stats
         for (Iterator<String> it = tagSet.iterator(); it.hasNext();) {
             tag = it.next();
-            //fill in any gaps in maps
-            if (!tag2truePositive.containsKey(tag)) {
-                tag2truePositive.put(tag, new AtomicInteger(0));
-            }
-            if (!tag2falsePositive.containsKey(tag)) {
-                tag2falsePositive.put(tag, new AtomicInteger(0));
-            }
-            if (!tag2falseNegative.containsKey(tag)) {
-                tag2falseNegative.put(tag, new AtomicInteger(0));
-            }
-            int tp = tag2truePositive.get(tag).intValue();
-            int fp = tag2falsePositive.get(tag).intValue();
-            int fn = tag2falseNegative.get(tag).intValue();
-            int tn = inUse.size() - (tp + fp + fn);
+
             
-            totalTrueNegative += tn;
-            
-            double accuracy = (double) (tp + tn) / (double) inUse.size();
-            
-            double posAccuracy = (double) tp / (double)(tp+fn);
-            double negAccuracy = (double) tn / (double)(fp+tn);
-            
-            double precision = (double) tp / (double) (tp + fp);
-            if ((tp + fp)==0){
-                precision = 0.0;
+            if(!tag2truePositive.containsKey(tag) && !tag2falseNegative.containsKey(tag)){
+                //Don't fill in any gaps in maps and don't evaluate
+                
+            }else{
+                //fill in any gaps in maps
+                if (!tag2truePositive.containsKey(tag)) {
+                    tag2truePositive.put(tag, new AtomicInteger(0));
+                }
+                if (!tag2falsePositive.containsKey(tag)) {
+                    tag2falsePositive.put(tag, new AtomicInteger(0));
+                }
+                if (!tag2falseNegative.containsKey(tag)) {
+                    tag2falseNegative.put(tag, new AtomicInteger(0));
+                }
+
+
+                int tp = tag2truePositive.get(tag).intValue();
+                int fp = tag2falsePositive.get(tag).intValue();
+                int fn = tag2falseNegative.get(tag).intValue();
+                int tn = inUse.size() - (tp + fp + fn);
+
+                totalTrueNegative += tn;
+
+                double accuracy = (double) (tp + tn) / (double) inUse.size();
+
+                double posAccuracy = (double) tp / (double)(tp+fn);
+                double negAccuracy = (double) tn / (double)(fp+tn);
+
+                double precision = (double) tp / (double) (tp + fp);
+                if ((tp + fp)==0){
+                    precision = 0.0;
+                }
+                double recall = (double) tp / (double) (tp + fn);
+                if ((tp + fn)==0){
+                    recall = 0.0;
+                }
+                double fMeasure = (2 * recall * precision) / (recall + precision);
+                if ((precision == 0.0)||(recall == 0)){
+                    fMeasure = 0.0;
+                }
+                tag2Accuracy.put(tag, accuracy);
+                tag2PosAccuracy.put(tag, posAccuracy);
+                tag2NegAccuracy.put(tag, negAccuracy);
+                tag2Precision.put(tag, precision);
+                tag2Recall.put(tag, recall);
+                tag2FMeasure.put(tag, fMeasure);
+
+                int numPositivesExamples = tp + fn;
+                int numNegativeExamples = tn + fp;
+                tag2numPositiveExamples.put(tag,numPositivesExamples);
+                tag2numNegativeExamples.put(tag, numNegativeExamples);
             }
-            double recall = (double) tp / (double) (tp + fn);
-            if ((tp + fn)==0){
-                recall = 0.0;
-            }
-            double fMeasure = (2 * recall * precision) / (recall + precision);
-            if ((precision == 0.0)||(recall == 0)){
-                fMeasure = 0.0;
-            }
-            tag2Accuracy.put(tag, accuracy);
-            tag2PosAccuracy.put(tag, posAccuracy);
-            tag2NegAccuracy.put(tag, negAccuracy);
-            tag2Precision.put(tag, precision);
-            tag2Recall.put(tag, recall);
-            tag2FMeasure.put(tag, fMeasure);
-            
-            int numPositivesExamples = tp + fn;
-            int numNegativeExamples = tn + fp;
-            tag2numPositiveExamples.put(tag,numPositivesExamples);
-            tag2numNegativeExamples.put(tag, numNegativeExamples);
         }
 
         if(verbose){
@@ -308,13 +317,17 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         
         for (Iterator<String> it = tagSet.iterator(); it.hasNext();) {
             tag = it.next();
-            systemReport += "tag '" + tag + "':\n";
-            systemReport += "    accuracy:                 " + tag2Accuracy.get(tag).doubleValue() + "\n";
-            systemReport += "    +ve example accuracy:     " + tag2PosAccuracy.get(tag).doubleValue() + "\n";
-            systemReport += "    -ve example accuracy:     " + tag2NegAccuracy.get(tag).doubleValue() + "\n";
-            systemReport += "    precision:                " + tag2Precision.get(tag).doubleValue() + "\n";
-            systemReport += "    recall:                   " + tag2Recall.get(tag).doubleValue() + "\n";
-            systemReport += "    fMeasure:                 " + tag2FMeasure.get(tag).doubleValue() + "\n";
+            if (tag2FMeasure.containsKey(tag)){
+                systemReport += "tag '" + tag + "':\n";
+                systemReport += "    accuracy:                 " + tag2Accuracy.get(tag).doubleValue() + "\n";
+                systemReport += "    +ve example accuracy:     " + tag2PosAccuracy.get(tag).doubleValue() + "\n";
+                systemReport += "    -ve example accuracy:     " + tag2NegAccuracy.get(tag).doubleValue() + "\n";
+                systemReport += "    precision:                " + tag2Precision.get(tag).doubleValue() + "\n";
+                systemReport += "    recall:                   " + tag2Recall.get(tag).doubleValue() + "\n";
+                systemReport += "    fMeasure:                 " + tag2FMeasure.get(tag).doubleValue() + "\n";
+            }else{
+                systemReport += "tag '" + tag + "': skipped as there were no examples in the test set\n";
+            }
         }
 //        for (Iterator<String> it = binaryTagData.keySet().iterator(); it.hasNext();) {
 //            path = it.next();
