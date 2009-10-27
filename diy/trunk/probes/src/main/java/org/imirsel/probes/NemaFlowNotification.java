@@ -67,26 +67,26 @@ public class NemaFlowNotification implements Probe {
 	public void probeFlowStart(String sFlowUniqueID, Date ts, String weburl){
 		System.out.println("Flow Started " + ts.toString()+ " " +sFlowUniqueID + "  " + weburl);
 		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
-		String sqlUpdate =mdata.update();
+		String sqlUpdate =mdata.start();
 		if(sqlUpdate.equals("[unassigned]")){
 			System.out.println("Ignoring sql Update for Job.class "+ sqlUpdate);
 			return;
 		}
-		 Connection con = null;
-        try {
-               con = dataSource.getConnection();
+		Connection con = null;
+        try{
+        	con = dataSource.getConnection();
         }catch(SQLException e) {
-               System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
+            System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
         }
         PreparedStatement updateTable = null;
         try {
-        	int indexOfSlash = sFlowUniqueID.lastIndexOf('/');
-			String token = sFlowUniqueID.substring(indexOfSlash+1);
-			System.out.println("Token is: " + token);
+        	int indexOfSlash1 = sFlowUniqueID.lastIndexOf('/');
+        	int indexOfSlash2 = sFlowUniqueID.substring(0,indexOfSlash1).lastIndexOf('/');
+        	String token = sFlowUniqueID.substring(indexOfSlash2+1,indexOfSlash1);
 			updateTable= con.prepareStatement(sqlUpdate);
-			updateTable.setInt(1, JobStatus.START);
-			updateTable.setString(2, token);
-			System.out.println("SQL statement is: "+ updateTable.toString());
+        	updateTable.setInt(1, JobStatus.START);
+        	updateTable.setString(2, sFlowUniqueID);
+			updateTable.setString(3, token);
 			int result =updateTable.executeUpdate();
 			if(result!=1){
 				logger.info("probeFlowStart: update returned: "+ result);	
@@ -111,6 +111,7 @@ public class NemaFlowNotification implements Probe {
 	
 	}
 	
+
 	/** The flow stopped executing.
 	 * 
 	 * @param sFlowUniqueID The unique execution flow ID
@@ -118,7 +119,10 @@ public class NemaFlowNotification implements Probe {
 	 */
 	public void probeFlowFinish(String sFlowUniqueID, Date ts){
 		System.out.println("Flow Finished " + ts.toString()+ " " +sFlowUniqueID);
+		databaseQuery(sFlowUniqueID, JobStatus.FINISHED);
 	}
+
+
 	
 	/** The flow aborted the execution.
 	 * 
@@ -126,7 +130,8 @@ public class NemaFlowNotification implements Probe {
 	 * @param ts The time stamp
 	 */
 	public void probeFlowAbort(String sFlowUniqueID, Date ts,String message){
-		
+		System.out.println("Flow Aborted " + ts.toString()+ " " +sFlowUniqueID);
+		databaseQuery(sFlowUniqueID, JobStatus.ABORTED);
 	}
 
 	/** The executable component finished initialization.
@@ -229,6 +234,48 @@ public class NemaFlowNotification implements Probe {
 	public void probeExecutableComponentGetProperty(String sECID, 
 			String sPropertyName, String sPropertyValue, Date ts){
 		
+	}
+	
+	
+	private void databaseQuery(String sFlowUniqueID, int status) {
+		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
+		String sqlFinish =mdata.finish();
+		if(sqlFinish.equals("[unassigned]")){
+			System.out.println("Ignoring sql Update for Job.class "+ sqlFinish);
+			return;
+		}
+		 Connection con = null;
+        try {
+               con = dataSource.getConnection();
+        }catch(SQLException e) {
+               System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
+        }
+        PreparedStatement updateTable = null;
+        try {
+        	updateTable= con.prepareStatement(sqlFinish);
+        	updateTable.setInt(1, status);
+        	updateTable.setString(2, sFlowUniqueID);
+			int result =updateTable.executeUpdate();
+			if(result!=1){
+				logger.info("probeFlowStart: update returned: "+ result);	
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				con.commit();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

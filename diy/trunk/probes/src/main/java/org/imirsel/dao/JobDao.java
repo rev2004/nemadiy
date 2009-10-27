@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 import org.imirsel.annotations.SqlPersistence;
 import org.imirsel.model.Job;
+import org.imirsel.util.JobStatus;
 
 
 public class JobDao extends SQLDao{
@@ -19,7 +20,7 @@ public class JobDao extends SQLDao{
 	}
 	
 	
-	public Job getJob(String token){
+	public Job getJob(String _token){
 		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
 		String sqlSelect =mdata.select();
 		if(sqlSelect.equals("[unassigned]")){
@@ -36,7 +37,7 @@ public class JobDao extends SQLDao{
          PreparedStatement createSelect = null;
          try {
         	createSelect= con.prepareStatement(sqlSelect);
-			createSelect.setString(1, token);
+			createSelect.setString(1, _token);
 			createSelect.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -59,6 +60,7 @@ public class JobDao extends SQLDao{
 			long ownerId=rs.getLong("ownerId");
 			String ownerEmail=rs.getString("ownerEmail");
 			String executionInstanceId=rs.getString("executionInstanceId");
+			String token = rs.getString("token");
 			
 			job = new Job();
 			job.setName(name);
@@ -69,6 +71,7 @@ public class JobDao extends SQLDao{
 			job.setExecutionInstanceId(executionInstanceId);
 			job.setOwnerId(ownerId);
 			job.setStatusCode(statusCode);
+			job.setToken(token);
 			
 			job.setSubmitTimestamp(new Date(su));
 			job.setStartTimestamp(new Date(st));
@@ -96,13 +99,79 @@ public class JobDao extends SQLDao{
 			
 		}
 		return job;
-		
 	}
+	
+	
+	public int finishJob(String token){
+		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
+		String sqlFinish =mdata.finish();
+		if(sqlFinish.equals("[unassigned]")){
+			System.out.println("Error: sql select for Job.class "+ sqlFinish);
+			return -1;
+		}
+		 Connection con = null;
+         try {
+                con = getDataSource().getConnection();
+         }catch(SQLException e) {
+                System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
+                return  -1;
+         }
+         PreparedStatement updateStmt = null;
+         int result=-1;
+         try {
+        	 updateStmt= con.prepareStatement(sqlFinish);
+        	 updateStmt.setInt(1,JobStatus.FINISHED);
+        	 updateStmt.setString(2,token);
+        	 result=updateStmt.executeUpdate();
+         }catch (SQLException e) {
+         	// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}finally{
+ 			try {
+ 				con.commit();
+ 			} catch (SQLException e) {
+ 				// TODO Auto-generated catch block
+ 				e.printStackTrace();
+ 			}
+ 		}
+         return result;
+ 	}
 
 	
-	public int updateJob(String token, int status){
-		return status;
-	}
+	public int startJob(String token, int status){
+		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
+		String sqlStart =mdata.start();
+		if(sqlStart.equals("[unassigned]")){
+			System.out.println("Error: sql select for Job.class "+ sqlStart);
+			return -1;
+		}
+		 Connection con = null;
+         try {
+                con = getDataSource().getConnection();
+         }catch(SQLException e) {
+                System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
+                return  -1;
+         }
+         PreparedStatement updateStmt = null;
+         int result=-1;
+         try {
+        	 updateStmt= con.prepareStatement(sqlStart);
+        	 updateStmt.setInt(1,status);
+        	 updateStmt.setString(2,token);
+        	 result=updateStmt.executeUpdate();
+         }catch (SQLException e) {
+         	// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}finally{
+ 			try {
+ 				con.commit();
+ 			} catch (SQLException e) {
+ 				// TODO Auto-generated catch block
+ 				e.printStackTrace();
+ 			}
+ 		}
+         return result;
+ 	}
 	
 	public boolean insertJob(Job job){
 		boolean success=Boolean.FALSE;
@@ -127,26 +196,13 @@ public class JobDao extends SQLDao{
 			createSelect.setString(3,job.getToken());
 			createSelect.setString(4,job.getHost());
 			createSelect.setInt(5,job.getPort());
-			createSelect.setString(6,job.getStatusCode()+"");
-			createSelect.setLong(7,job.getOwnerId());
-			createSelect.setString(8,job.getOwnerEmail());
-			createSelect.setString(9,job.getExecutionInstanceId());
-			
-			
-				if(job.getSubmitTimestamp()!=null){
-					createSelect.setDate(10,new java.sql.Date(job.getSubmitTimestamp().getTime()));
-				}
-				if(job.getStartTimestamp()!=null){
-					createSelect.setDate(11,new java.sql.Date(job.getStartTimestamp().getTime()));
-				}
-				if(job.getEndTimestamp()!=null){
-					createSelect.setDate(12,new java.sql.Date(job.getEndTimestamp().getTime()));
-				}
-				if(job.getUpdateTimestamp()!=null){
-					createSelect.setDate(13,new java.sql.Date(job.getUpdateTimestamp().getTime()));
-				}
-				
-			
+			createSelect.setString(6,job.getExecutionInstanceId());
+			createSelect.setString(7,job.getStatusCode()+"");
+			createSelect.setLong(8,job.getOwnerId());
+			createSelect.setString(9,job.getOwnerEmail());
+			if(job.getSubmitTimestamp()!=null){
+				createSelect.setDate(10,new java.sql.Date(job.getSubmitTimestamp().getTime()));
+			}
 			System.out.println("Executing: "+ createSelect.toString());
 			success=createSelect.execute();
 			
@@ -163,6 +219,45 @@ public class JobDao extends SQLDao{
 		}
 		
 		return success;
+	}
+
+
+	public int updateHostAndPort(Job job) {
+		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
+		String sqlFinish =mdata.updateHostAndPort();
+		if(sqlFinish.equals("[unassigned]")){
+			System.out.println("Error: sql select for Job.class "+ sqlFinish);
+			return -1;
+		}
+		 Connection con = null;
+         try {
+                con = getDataSource().getConnection();
+         }catch(SQLException e) {
+                System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
+                return  -1;
+         }
+         PreparedStatement updateStmt = null;
+         int result=-1;
+         try {
+        	 updateStmt= con.prepareStatement(sqlFinish);
+        	 System.out.println("UPDATE: " + job.getHost()  + "  " + job.getPort() + "  --> for " + job.getExecutionInstanceId() );
+        	 updateStmt.setString(1,job.getHost());
+        	 updateStmt.setInt(2,job.getPort());
+        	 updateStmt.setString(3,job.getExecutionInstanceId());
+        	 result=updateStmt.executeUpdate();
+         }catch (SQLException e) {
+         	// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}finally{
+ 			try {
+ 				con.commit();
+ 			} catch (SQLException e) {
+ 				// TODO Auto-generated catch block
+ 				e.printStackTrace();
+ 			}
+ 		}
+         return result;
+		
 	}
 	
 	
