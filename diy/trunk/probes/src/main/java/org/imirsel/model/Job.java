@@ -23,9 +23,11 @@ import org.imirsel.annotations.SqlPersistence;
 		" endTimeStamp TIMESTAMP," +
 		" startTimeStamp TIMESTAMP," +
 		" updateTimeStamp TIMESTAMP) engine=innodb",
-	store="insert into nema_job(name,description,token,host,port,executionInstanceId,statusCode,ownerId,ownerEmail,submitTimeStamp,startTimeStamp,endTimeStamp,updateTimeStamp) " +
-			"values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-	update="update nema_job set statusCode=?, updateTimeStamp = now() where token=?")
+	store="insert into nema_job(name,description,token,host,port,executionInstanceId,statusCode,ownerId,ownerEmail,submitTimeStamp) " +
+			"values(?,?,?,?,?,?,?,?,?,?)",
+	start="update nema_job set statusCode=?, executionInstanceId=?,updateTimeStamp = now(), startTimeStamp = now() where token=?",
+	finish="update nema_job set statusCode=?,updateTimeStamp = now(), endTimeStamp=now() where executionInstanceId=?",
+	updateHostAndPort="update nema_job set host=?, port=? where executionInstanceId=?")
 public class Job {
 	
 	static public enum JobStatus {

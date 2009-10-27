@@ -12,10 +12,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletConfig;
 
 import org.imirsel.probes.NemaFlowNotification;
-import org.jmock.Expectations;
+
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
