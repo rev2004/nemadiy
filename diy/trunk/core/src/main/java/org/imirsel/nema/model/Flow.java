@@ -96,7 +96,7 @@ public class Flow implements Serializable {
 	public void setCreatorId(Long creatorId) {
 		this.creatorId = creatorId;
 	}
-	@JoinColumn(name = "flowInstanceId")
+	@JoinColumn(name = "instanceOf")
 	@ManyToOne(fetch=FetchType.EAGER)
 	public Flow getInstanceOf() {
 		return instanceOf;
