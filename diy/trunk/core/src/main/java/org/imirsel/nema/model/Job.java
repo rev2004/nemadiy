@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.JoinColumn;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenerationTime;
 
@@ -33,34 +34,49 @@ public class Job implements Serializable {
 	private static final long serialVersionUID = 3383935885803288343L;
 	
 	static public enum JobStatus {
-      UNKNOWN(-1), SUBMITTED(0), STARTED(1), ENDED(2);
+      UNKNOWN(-1), SUBMITTED(0), STARTED(1), FINISHED(2), FAILED(3), ABORTED(4);
 
-      private final int code;
+    private final int code;
 
-      private JobStatus(int code) { this.code = code; }
+    private JobStatus(int code) { this.code = code; }
 
-      private int getCode() { return code; }
+    public int getCode() { return code; }
 
-      @Override
+    @Override
 	public String toString() {
          String name = null;
          switch (code) {
 
             case -1: {
                name = "Unknown";
+               break;
             }
 
             case 0: {
                name = "Submitted";
+               break;
             }
 
             case 1: {
                name = "Started";
+               break;
             }
 
             case 2: {
                name = "Ended";
+               break;
             }
+            
+            case 3: {
+                name = "Ended";
+                break;
+             }
+
+            case 4: {
+                name = "Aborted";
+                break;
+             }
+            
          }
          return name;
       }
@@ -71,19 +87,34 @@ public class Job implements Serializable {
 
             case -1: {
                status = JobStatus.UNKNOWN;
+               break;
             }
 
             case 0: {
                status = JobStatus.SUBMITTED;
+               break;
             }
 
             case 1: {
                status = JobStatus.STARTED;
+               break;
             }
 
             case 2: {
-               status = JobStatus.ENDED;
+               status = JobStatus.FINISHED;
+               break;
             }
+            
+            case 3: {
+                status = JobStatus.FAILED;
+                break;
+             }
+            
+            case 4: {
+                status = JobStatus.ABORTED;
+                break;
+             }
+            
          }
          return status;
       }
@@ -95,6 +126,7 @@ public class Job implements Serializable {
 	private String description;
 	private String host;
 	private Integer port;
+	private Integer execPort;
 	private Date submitTimestamp;
 	private Date startTimestamp;
 	private Date endTimestamp;
@@ -103,8 +135,9 @@ public class Job implements Serializable {
 	private Long ownerId;
 	private String ownerEmail;
 	private Flow flow;
+	private Integer numTries;
 	private String executionInstanceId;
-	public Set<JobResult> results;
+	private Set<JobResult> results;
 	
 	@Id
 	@Column(name="id")
@@ -161,9 +194,14 @@ public class Job implements Serializable {
 	public Integer getStatusCode() {
 		return statusCode;
 	}
+	
 	public void setStatusCode(Integer statusCode) {
-		this.statusCode = statusCode;
+		if(!this.statusCode.equals(statusCode)) {
+		  setUpdateTimestamp(new Date());
+		  this.statusCode = statusCode;
+		}
 	}
+	
 	@Column(name="token",nullable=false)
     public String getToken() {
 		return token;
@@ -215,8 +253,12 @@ public class Job implements Serializable {
 	public void setExecutionInstanceId(String executionInstanceId) {
 		this.executionInstanceId = executionInstanceId;
 	}
+	@Transient
 	public JobStatus getJobStatus() {
 	      return JobStatus.toJobStatus(statusCode);
+	}
+	public void setJobStatus(JobStatus status) {
+		this.statusCode = status.getCode();
 	}
 	@JoinColumn(name="id")
 	@OneToMany(mappedBy="job")
@@ -226,6 +268,28 @@ public class Job implements Serializable {
 	public void setResults(Set<JobResult> results) {
 		this.results = results;
 	}
+	@Transient
+	public boolean isRunning() {
+	    return getJobStatus() == JobStatus.STARTED;
+	}
+	
+	@Column(name="numTries",nullable=false)
+	public Integer getNumTries() {
+		return numTries;
+	}
+	public void setNumTries(Integer numTries) {
+		this.numTries = numTries;
+	}
+	public void incrementNumTries() {
+		numTries++;
+	}
+	@Column(name="execPort")
+	public Integer getExecPort() {
+		return execPort;
+	}
+	public void setExecPort(Integer execPort) {
+		this.execPort = execPort;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -234,6 +298,8 @@ public class Job implements Serializable {
 				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result
 				+ ((endTimestamp == null) ? 0 : endTimestamp.hashCode());
+		result = prime * result
+				+ ((execPort == null) ? 0 : execPort.hashCode());
 		result = prime
 				* result
 				+ ((executionInstanceId == null) ? 0 : executionInstanceId
@@ -242,6 +308,8 @@ public class Job implements Serializable {
 		result = prime * result + ((host == null) ? 0 : host.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((numTries == null) ? 0 : numTries.hashCode());
 		result = prime * result
 				+ ((ownerEmail == null) ? 0 : ownerEmail.hashCode());
 		result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
@@ -277,6 +345,11 @@ public class Job implements Serializable {
 				return false;
 		} else if (!endTimestamp.equals(other.endTimestamp))
 			return false;
+		if (execPort == null) {
+			if (other.execPort != null)
+				return false;
+		} else if (!execPort.equals(other.execPort))
+			return false;
 		if (executionInstanceId == null) {
 			if (other.executionInstanceId != null)
 				return false;
@@ -301,6 +374,11 @@ public class Job implements Serializable {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (numTries == null) {
+			if (other.numTries != null)
+				return false;
+		} else if (!numTries.equals(other.numTries))
 			return false;
 		if (ownerEmail == null) {
 			if (other.ownerEmail != null)
@@ -348,6 +426,6 @@ public class Job implements Serializable {
 		} else if (!updateTimestamp.equals(other.updateTimestamp))
 			return false;
 		return true;
-	}
+	}	
 	
 }
