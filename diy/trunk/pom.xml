@@ -5,7 +5,7 @@
     <groupId>org.imirsel</groupId>
     <artifactId>nema</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <name>Nema  Modular Application</name>
     <url>http://www.imirsel.org</url>
 
@@ -238,7 +238,7 @@
         <module>web</module>
     <module>probes</module>
   </modules>
-
+<!--
     <reporting>
         <plugins>
             <plugin>
@@ -270,7 +270,7 @@
             </plugin>
         </plugins>
     </reporting>
-
+-->
     <profiles>
         <!-- ================= Production Settings Profile ================= -->
         <!-- Use "-P prod" when you want to use the settings in this profile -->
