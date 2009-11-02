@@ -2,7 +2,7 @@ package edu.illinois.gslis.imirsel.webapp.controller;
 
 import javax.servlet.http.HttpServletResponse;
 
-import edu.illinois.gslis.imirsel.Constants;
+import org.imirsel.nema.Constants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindException;

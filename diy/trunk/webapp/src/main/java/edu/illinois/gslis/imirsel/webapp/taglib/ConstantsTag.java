@@ -11,7 +11,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import edu.illinois.gslis.imirsel.Constants;
+import org.imirsel.nema.Constants;
 
 
 /**

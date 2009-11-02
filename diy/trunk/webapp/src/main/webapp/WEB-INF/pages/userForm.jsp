@@ -156,7 +156,6 @@
         <li>
     	<fieldset>
     		<legend><fmt:message key="userProfile.notificationSettings"/></legend>
-    		
     	  <c:forEach var="status" items="${user.preferences}" varStatus="status1">
         		<appfuse:label key="${status.key}.title" colon="false" styleClass="required"/> 
         		<input type="checkbox" name ="<c:out value="_${status.key}"/>"  value="true" <c:if test="${status.value}">CHECKED</c:if> />

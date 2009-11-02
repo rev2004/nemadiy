@@ -3,7 +3,6 @@
 	<name>nema-webapp</name>
 	<comment></comment>
 	<projects>
-		<project>nema-core</project>
 		<project>nema</project>
 	</projects>
 	<buildSpec>

@@ -1,14 +1,14 @@
 package edu.illinois.gslis.imirsel.webapp.controller;
 
+import org.imirsel.nema.Constants;
+import org.imirsel.nema.model.PreferenceValue;
+import org.imirsel.nema.model.User;
+import org.imirsel.nema.service.PreferenceValueManager;
+import org.imirsel.nema.service.RoleManager;
+import org.imirsel.nema.service.UserExistsException;
 import org.springframework.security.AccessDeniedException;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import edu.illinois.gslis.imirsel.Constants;
-import edu.illinois.gslis.imirsel.model.PreferenceValue;
-import edu.illinois.gslis.imirsel.model.User;
-import edu.illinois.gslis.imirsel.service.PreferenceValueManager;
-import edu.illinois.gslis.imirsel.service.RoleManager;
-import edu.illinois.gslis.imirsel.service.UserExistsException;
 import edu.illinois.gslis.imirsel.webapp.util.RequestUtil;
 import org.springframework.mail.MailException;
 import org.springframework.validation.BindException;

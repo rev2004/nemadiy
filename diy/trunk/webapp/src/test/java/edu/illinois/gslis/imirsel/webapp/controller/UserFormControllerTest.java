@@ -1,9 +1,9 @@
 package edu.illinois.gslis.imirsel.webapp.controller;
 
+import org.imirsel.nema.Constants;
+import org.imirsel.nema.model.User;
+import org.imirsel.nema.service.UserManager;
 import org.springframework.security.AccessDeniedException;
-import edu.illinois.gslis.imirsel.Constants;
-import edu.illinois.gslis.imirsel.service.UserManager;
-import edu.illinois.gslis.imirsel.model.User;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindException;

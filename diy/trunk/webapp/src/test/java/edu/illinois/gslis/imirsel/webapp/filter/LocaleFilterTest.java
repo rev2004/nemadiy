@@ -6,7 +6,7 @@ import javax.servlet.jsp.jstl.core.Config;
 
 import junit.framework.TestCase;
 
-import edu.illinois.gslis.imirsel.Constants;
+import org.imirsel.nema.Constants;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;

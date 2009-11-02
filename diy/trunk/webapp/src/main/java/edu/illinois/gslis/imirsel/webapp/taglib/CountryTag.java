@@ -12,8 +12,8 @@ import java.util.Locale;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import edu.illinois.gslis.imirsel.model.LabelValue;
 import org.displaytag.tags.el.ExpressionEvaluator;
+import org.imirsel.nema.model.LabelValue;
 
 /**
  * Tag for creating multiple &lt;select&gt; options for displaying a list of
