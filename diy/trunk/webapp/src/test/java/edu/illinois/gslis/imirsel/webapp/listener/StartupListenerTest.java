@@ -1,7 +1,8 @@
 package edu.illinois.gslis.imirsel.webapp.listener;
 
 import junit.framework.TestCase;
-import edu.illinois.gslis.imirsel.Constants;
+
+import org.imirsel.nema.Constants;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;

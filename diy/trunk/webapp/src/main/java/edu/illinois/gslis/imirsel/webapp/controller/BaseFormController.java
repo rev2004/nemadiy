@@ -15,12 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.imirsel.nema.Constants;
+import org.imirsel.nema.model.User;
+import org.imirsel.nema.service.MailEngine;
+import org.imirsel.nema.service.UserManager;
 
-import edu.illinois.gslis.imirsel.Constants;
-import edu.illinois.gslis.imirsel.model.User;
 import edu.illinois.gslis.imirsel.propertyeditors.CustomMapPropertyEditor;
-import edu.illinois.gslis.imirsel.service.MailEngine;
-import edu.illinois.gslis.imirsel.service.UserManager;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;

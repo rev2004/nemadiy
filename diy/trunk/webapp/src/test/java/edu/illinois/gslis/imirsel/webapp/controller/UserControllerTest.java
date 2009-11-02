@@ -2,7 +2,7 @@ package edu.illinois.gslis.imirsel.webapp.controller;
 
 import java.util.Map;
 
-import edu.illinois.gslis.imirsel.Constants;
+import org.imirsel.nema.Constants;
 import org.springframework.web.servlet.ModelAndView;
 
 public class UserControllerTest extends BaseControllerTestCase {

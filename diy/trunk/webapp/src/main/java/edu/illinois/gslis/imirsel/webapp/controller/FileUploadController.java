@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.illinois.gslis.imirsel.Constants;
+import org.imirsel.nema.Constants;
 import org.springframework.validation.BindException;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;

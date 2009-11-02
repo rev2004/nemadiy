@@ -6,8 +6,9 @@ import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import edu.illinois.gslis.imirsel.model.BaseObject;
-import edu.illinois.gslis.imirsel.util.DateUtil;
+import org.imirsel.nema.model.BaseObject;
+import org.imirsel.nema.util.DateUtil;
+
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
