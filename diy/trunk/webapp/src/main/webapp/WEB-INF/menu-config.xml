@@ -18,13 +18,6 @@
        <Menu name="ExperimentMenu" title="experimentMenu.title" page="/experimentMenu.html" roles="ROLE_ADMIN,ROLE_USER"/>
         <Menu name="ExperimentStatusMenu" title="experimentStatusMenu.title" page="/experimentStatusMenu.html" roles="ROLE_ADMIN,ROLE_USER"/>
   
-        <Menu name="ExperimentMenu" title="experimentMenu.title" description="New Job Menu" roles="ROLE_ADMIN,ROLE_USER" width="120" page="/experimentMenu.html">
-            <Item name="featureExtraction" title="featureExtractionMenu.title" page="/featureExtraction.html"/>
-            <Item name="classification" title="classificationMenu.title" page="/classification.html"/>
-            <Item name="evaluation" title="evaluationMenu.title" page="/evaluation.html"/>
-        </Menu>  
-  
-  
         <Menu name="AdminMenu" title="menu.admin" description="Admin Menu" roles="ROLE_ADMIN" width="120" page="/admin/users.html">
             <Item name="ViewUsers" title="menu.admin.users" page="/admin/users.html"/>
             <Item name="ActiveUsers" title="mainMenu.activeUsers" page="/admin/activeUsers.html"/>
@@ -33,6 +26,10 @@
             <Item name="FlushCache" title="menu.flushCache" page="/admin/flushCache.html"/>
             <Item name="Clickstream" title="menu.clickstream" page="/admin/clickstreams.jsp"/>
         </Menu>
-        <Menu name="Logout" title="user.logout" page="/logout.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
+
+		<Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
+
+		
+		<Menu name="Logout" title="user.logout" page="/logout.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
     </Menus>
 </MenuConfig>
