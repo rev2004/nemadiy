@@ -1,15 +1,28 @@
-<h1 class="actionBox">Extraction Job Setup</h1>
+<%@ include file="/common/taglibs.jsp"%>
+<head>
+    <title><fmt:message key="jobextraction.title"/></title>
+    <meta name="menu" content="jobextraction"/>
+</head>
+<body id="jobextraction"/>
+<p class="breadcrumbs" >
+<A class="breadcrumbs" HREF="/mainMenu.html"><fmt:message key="mainMenu.title"/></A>
+ > <A class="breadcrumbs" HREF="jobstype.jsp"><fmt:message key="jobstype.title"/></A>
+ > <span class="breadcrumbs"><fmt:message key="jobextraction.title"/></span> 
+</p>
+
+
+<h1><fmt:message key="jobextraction.title"/></h1>
 
 					<div class="actionBox">
                         <p class="actionBox">
-                            Use this form to enter your information and parameters for a new Classification job. 
+                            Use this form to enter your information and parameters for a new job. 
 							You'll be able to review your job parameters on the Job Submission page.
                         </p>
                     </div>
 
-                    <div id="formcontainer">
-                        <div class="form">
-                            <form id="theform" action="jobconfirm.jsp" enctype="multipart/form-data" method="post">
+                    <div id="formcontainer_job">
+                        <div class="form_job">
+                            <form id="theform" action="jobconfirm_extraction.jsp" enctype="multipart/form-data" method="post">
                                 <fieldset id="pt1">
                                     <label for="jobname">
                                         Job Name
@@ -25,7 +38,7 @@
                                     <input id="jobdesc" tabindex="2" style="height: 4em;" type="text">
                                 </fieldset>
                         </div>
-                        <div class="form">
+                        <div class="form_job">
 
                             <fieldset id="pt1">
                                 <label for="collection">
@@ -62,7 +75,7 @@
                             </fieldset>
                         </div>
 
-                        <div class="form">
+                        <div class="form_job">
                             <fieldset id="pt1">
                                 <label for="algorithm">
                                     Choose
@@ -95,7 +108,7 @@
                             </fieldset>
                         </div>
 
-                        <div class="form">
+                        <div class="form_job">
 							<fieldset id="pt1">
 							&nbsp;
 							</fieldset>
@@ -120,7 +133,7 @@
 
                         </div>
 
-                        <div class="form">
+                        <div class="form_job">
 
                             <fieldset id="button">
                                 <input id="submitform" tabindex="6" value="Go to Job Submission Page" type="submit">
@@ -130,3 +143,5 @@
 					</form>
 
                     </div>
+
+</body>

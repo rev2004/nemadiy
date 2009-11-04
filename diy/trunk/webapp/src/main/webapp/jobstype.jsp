@@ -1,4 +1,15 @@
-<h1>Select Job Type</h1>
+<%@ include file="/common/taglibs.jsp"%>
+<head>
+    <title><fmt:message key="jobstype.title"/></title>
+    <meta name="menu" content="jobstype"/>
+</head>
+<body id="jobstype"/>
+<p class="breadcrumbs" >
+<A class="breadcrumbs" HREF="/mainMenu.html"><fmt:message key="mainMenu.title"/></A>
+ > <span class="breadcrumbs"><fmt:message key="jobstype.title"/></span>
+</p>
+
+<h1><fmt:message key="jobstype.title"/></h1>
                     <div class="actionBox">
                         <h2 class="actionBox">Classification</h2>
 						<form method="post" action="jobclassification.jsp" id="GoForm1">
@@ -46,3 +57,5 @@
                         </p>
 
                     </div>
+
+</body>

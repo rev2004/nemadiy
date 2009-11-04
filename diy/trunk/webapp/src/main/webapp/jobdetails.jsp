@@ -1,7 +1,7 @@
 <h1>Job Details for MetalDetector v3</h1>
 
-                    <div id="formcontainer">
-                        <div class="form">
+                    <div id="formcontainer_job">
+                        <div class="form_job">
                             <form id="theform" action="action.php" enctype="multipart/form-data" method="post">
                                 <fieldset id="pt1">
 									<TABLE id="table">
@@ -42,7 +42,7 @@
                                 </fieldset>
                             </form>
                         </div>
-                        <div class="form">
+                        <div class="form_job">
 
                             <fieldset id="pt1">
                                 <label for="collection">
@@ -67,7 +67,7 @@
                             </fieldset>
                         </div>
 
-                        <div class="form">
+                        <div class="form_job">
                             <fieldset id="pt1">
                                 <label for="algorithm">
                                     Choose
@@ -92,7 +92,7 @@
                             </fieldset>
                         </div>
 
-                        <div class="form">
+                        <div class="form_job">
 							<fieldset id="pt1">
 							&nbsp;
 							</fieldset>
@@ -113,7 +113,7 @@
 
                         </div>
 
-                        <div class="form">
+                        <div class="form_job">
                             <fieldset id="pt1">
                                 <input id="submitform" tabindex="6" value="Stop This Job" type="submit">
                             </fieldset>
