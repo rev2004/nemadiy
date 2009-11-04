@@ -1,32 +1,25 @@
 <%@ include file="/common/taglibs.jsp"%>
 <head>
-    <title><fmt:message key="jobclassification.title"/></title>
-    <meta name="menu" content="jobclassification"/>
+    <title><fmt:message key="jobconfirm_class.title"/></title>
+    <meta name="menu" content="jobconfirm_class"/>
 </head>
-<body id="jobclassification"/>
+<body id="jobconfirm_class"/>
 <p class="breadcrumbs" >
 <A class="breadcrumbs" HREF="/mainMenu.html"><fmt:message key="mainMenu.title"/></A>
  > <A class="breadcrumbs" HREF="jobstype.jsp"><fmt:message key="jobstype.title"/></A>
- > <span class="breadcrumbs"><fmt:message key="jobclassification.title"/></span> 
+ > <A class="breadcrumbs" HREF="jobclassification.jsp"><fmt:message key="jobclassification.title"/></A>
+ > <span class="breadcrumbs"><fmt:message key="jobconfirm_class.title"/></span> 
 </p>
 
-<h1><fmt:message key="jobclassification.title"/></h1>
-
-					<div class="actionBox">
-                        <p class="actionBox">
-                            Use this form to enter your information and parameters for a new Classification job. 
-							You'll be able to review your job parameters on the Job Submission page.
-                        </p>
-                    </div>
+<h1><fmt:message key="jobconfirm_class.title"/></h1>
 
                     <div id="formcontainer_job">
                         <div class="form_job">
-                            <form id="theform" action="jobconfirm_classification.jsp" enctype="multipart/form-data" method="post">
+                            <form id="theform" action="action.php" enctype="multipart/form-data" method="post">
                                 <fieldset id="pt1">
-                                    <label for="jobname">
-                                        Job Name
-                                    </label>
-                                    <input id="jobname" tabindex="1" type="text">
+								   <label for="jobname">
+									Job Name</label>
+										Name 1
                                 </fieldset>
 
                                 <fieldset id="pt2">
@@ -34,8 +27,9 @@
                                         Job
                                         Description
                                     </label>
-                                    <input id="jobdesc" tabindex="2" style="height: 4em;" type="text">
+									Some Description
                                 </fieldset>
+                            </form>
                         </div>
                         <div class="form_job">
 
@@ -44,33 +38,21 @@
                                     Choose
                                     Collection
                                 </label>
-								<SELECT NAME="collection">
-									<OPTION VALUE="0" SELECTED>Select one
-									<OPTION VALUE="1">collection #1
-									<OPTION VALUE="2">collection #2
-								</SELECT>
+									collection #1
                             </fieldset>
                             <fieldset id="pt2">
                                 <label for="featureset">
                                     Choose
                                     Feature Set
                                 </label>
-								<SELECT NAME="featureset">
-									<OPTION VALUE="0" SELECTED>Select one
-									<OPTION VALUE="1">featureset #1
-									<OPTION VALUE="2">featureset #2
-								</SELECT>
+								featureset #3
                             </fieldset>
                             <fieldset id="pt3">
                                 <label for="groundtruth">
                                     Choose
                                     Ground Truth
                                 </label>
-								<SELECT NAME="groundtruth">
-									<OPTION VALUE="0" SELECTED>Select one
-									<OPTION VALUE="1">groundtruth #1
-									<OPTION VALUE="2">groundtruth #2
-								</SELECT>
+								groundtruth #1
                             </fieldset>
                         </div>
 
@@ -80,11 +62,7 @@
                                     Choose
                                     Algorithm
                                 </label>
-								<SELECT NAME="algorithm">
-									<OPTION VALUE="0" SELECTED>Select one
-									<OPTION VALUE="1">algorithm #1
-									<OPTION VALUE="2">algorithm #2
-								</SELECT>
+								algorithm #123
                             </fieldset>
                             <fieldset id="pt2">
                                 <label for="param">
@@ -92,18 +70,14 @@
                                     Algorithm
                                     Parameter
                                 </label>
-								<SELECT NAME="param">
-									<OPTION VALUE="0" SELECTED>Select one
-									<OPTION VALUE="1">param #1
-									<OPTION VALUE="2">param #2
-								</SELECT>
+								param #1
                             </fieldset>
                             <fieldset id="pt3">
                                 <label for="paramval">
                                     Enter
                                     Parameter Value
                                 </label>
-                                <input id="param1val" tabindex="4" type="text">
+								121.21
                             </fieldset>
                         </div>
 
@@ -116,30 +90,34 @@
                                     Algorithm
                                     Parameter
                                 </label>
-								<SELECT NAME="param">
-									<OPTION VALUE="0" SELECTED>Select one
-									<OPTION VALUE="1">param #1
-									<OPTION VALUE="2">param #2
-								</SELECT>
+								param #2
                             </fieldset>
                             <fieldset id="pt3">
                                 <label for="paramval">
                                     Enter
                                     Parameter Value
                                 </label>
-                                <input id="param2val" tabindex="4" type="text">
+								414
                             </fieldset>
 
                         </div>
 
+<form id="theform" action="jobclassification.jsp" enctype="multipart/form-data" method="post">				
                         <div class="form_job">
-
-                            <fieldset id="button">
-                                <input id="submitform" tabindex="6" value="Go to Job Submission Page" type="submit">
+                            <fieldset id="pt1">
+                                <input id="submitform" tabindex="1" value="Go back to Edit Properties" type="submit">
                             </fieldset>
-
+</form>
+                            <fieldset id="pt2">
+							&nbsp;
+							</fieldset>
+<form id="theform" action="" enctype="multipart/form-data" method="post">			
+                            <fieldset id="pt3">
+                                <input id="submitform" tabindex="2" value="Submit Job" type="submit" >
+                            </fieldset>
+</form>
                         </div>
-					</form>
 
                     </div>
+
 </body>
