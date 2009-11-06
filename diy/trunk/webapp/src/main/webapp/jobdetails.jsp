@@ -1,4 +1,16 @@
-<h1>Job Details for MetalDetector v3</h1>
+<%@ include file="/common/taglibs.jsp"%>
+<head>
+    <title><fmt:message key="jobdetails.title"/></title>
+    <meta name="menu" content="jobdetails"/>
+</head>
+<body id="jobdetails"/>
+<p class="breadcrumbs" >
+<A class="breadcrumbs" HREF="/mainMenu.html"><fmt:message key="mainMenu.title"/></A>
+ > <span class="breadcrumbs"><fmt:message key="jobdetails.title"/></span>
+</p>
+
+
+<h1><fmt:message key="jobdetails.heading"/> for MetalDetector v3</h1>
 
                     <div id="formcontainer_job">
                         <div class="form_job">
@@ -127,3 +139,4 @@
                         </div>
 
                     </div>
+</body>

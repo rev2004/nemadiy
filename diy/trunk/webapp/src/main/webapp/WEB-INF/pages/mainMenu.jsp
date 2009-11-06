@@ -22,12 +22,14 @@
 	<Th>Current Status</Th>
 </TR>
 </Thead>
-<TR class="even">
-	<TD>1</TD>
-	<TD>2</TD>
-	<TD>3</TD>
-	<TD>4</TD>
-</TR>
+
+	<TR class="even">
+		<TD><a href="jobdetails.jsp">Some Job 123</a></TD>
+		<TD>type1</TD>
+		<TD>11:11:11</TD>
+		<TD>completed</TD>
+	</TR>
+
 <TR class="odd">
 	<TD></TD>
 	<TD></TD>

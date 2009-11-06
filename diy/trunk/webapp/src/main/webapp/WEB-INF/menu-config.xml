@@ -27,8 +27,8 @@
             <Item name="Clickstream" title="menu.clickstream" page="/admin/clickstreams.jsp"/>
         </Menu>
 
-		<Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
-
+		<Menu name="welcomeMenu" title="welcomeMenu.title" page="/welcome.jsp" />
+		<Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" />
 		
 		<Menu name="Logout" title="user.logout" page="/logout.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
     </Menus>
