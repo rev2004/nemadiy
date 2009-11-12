@@ -11,6 +11,7 @@ package org.imirsel.nema.components.test;
 
 import java.util.logging.Logger;
 
+import org.imirsel.util.JndiHelper;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.core.ComponentContext;
@@ -19,7 +20,6 @@ import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
-import edu.illinois.gslis.imirsel.util.JndiHelper;
 
 @Component(creator="Amit Kumar", description="does testing", name="JndiComponentGetService", tags="test jndi")
 public class JndiComponentServiceTest implements ExecutableComponent {
