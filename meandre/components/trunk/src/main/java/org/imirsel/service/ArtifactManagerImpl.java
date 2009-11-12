@@ -10,6 +10,9 @@ public class ArtifactManagerImpl implements ArtifactManager {
 	
 	CoreConfiguration coreConfiguration;
 	
+	// disable the default constructor
+	private ArtifactManagerImpl(){}
+	
 	
 	public ArtifactManagerImpl(CoreConfiguration config){
 		this.coreConfiguration = config;
@@ -43,7 +46,7 @@ public class ArtifactManagerImpl implements ArtifactManager {
 		if(!success){
 			throw new IOException("could not create directory for the job "+ jobId);
 		}
-		return null;
+		return dir.getAbsolutePath();
 	}
 
 }

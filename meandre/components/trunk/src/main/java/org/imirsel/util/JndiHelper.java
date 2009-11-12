@@ -29,16 +29,6 @@ public class JndiHelper {
 	private static Logger logger = Logger.getAnonymousLogger();
 	
 
-	/**Returns the DataSource for the flow results -used by components
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	public static DataSource getFlowResultDataSource() throws Exception{
-		return getDataSource(PluginConstants.JOBRESULT_JNDI_SERVICE);
-	}
-
-
 	/**Returns the DataSource for the job status database -used by the probe
 	 * 
 	 * @return
@@ -76,5 +66,6 @@ public class JndiHelper {
 			
 		}
 	}
+
 
 }
