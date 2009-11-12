@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.imirsel</groupId>
-  <artifactId>nema-meandre-client</artifactId>
+  <artifactId>imirsel-meandre-client</artifactId>
   <name>NEMA: Meandre Client</name>
   <version>1.0.2-SNAPSHOT</version>
   
@@ -166,7 +166,7 @@
    <jstl.version>1.1.2</jstl.version>                                     
    <log4j.version>1.2.13</log4j.version>                                  
    <servlet.version>2.4</servlet.version>
-     <meandre-server.version>1.4.5</meandre-server.version>
+     <meandre-server.version>1.4.8</meandre-server.version>
   </properties>
 
 </project>
