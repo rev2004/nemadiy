@@ -459,6 +459,6 @@
         <urlrewrite.version>3.0.4</urlrewrite.version>
         <velocity.version>1.4</velocity.version>
         <xfire.version>1.2.6</xfire.version>
-        <meandre-server.version>1.4.5</meandre-server.version>
+        <meandre-server.version>1.4.8</meandre-server.version>
     </properties>
 </project>
