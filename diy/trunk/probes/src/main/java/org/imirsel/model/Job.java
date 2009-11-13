@@ -26,8 +26,8 @@ import org.imirsel.annotations.SqlPersistence;
 		" execPort int NOT NULL," +
 		" numTries int NOT NULL" +
 		") engine=innodb",
-	store="insert into job(name,description,token,host,port,executionInstanceId,statusCode,ownerId,ownerEmail,submitTimeStamp,execPort) " +
-			"values(?,?,?,?,?,?,?,?,?,?,?)",
+	store="insert into job(name,description,token,host,port,executionInstanceId,statusCode,ownerId,ownerEmail,submitTimeStamp,execPort,numTries) " +
+			"values(?,?,?,?,?,?,?,?,?,?,?,?)",
 	start="update job set statusCode=?, executionInstanceId=?,updateTimeStamp = now(), startTimeStamp = now() where token=?",
 	finish="update job set statusCode=?,updateTimeStamp = now(), endTimeStamp=now() wh" +
 			"ere executionInstanceId=?",

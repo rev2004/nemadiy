@@ -31,7 +31,7 @@ public class ProbeIntegrationTest {
 		Logger logger = Logger.getAnonymousLogger();
 		String sFlowUrl ="http://test.org/helloworld/";
 		String token = "tokenDD-"+System.currentTimeMillis();
-		MeandreClient meandreClient  = new MeandreClient("128.174.154.145", 1714);
+		MeandreClient meandreClient  = new MeandreClient("nema.lis.uiuc.edu", 1714);
 		meandreClient.setLogger(logger);
 		meandreClient.setCredentials("admin", "admin");
 		ExecResponse uriExecutionInstance=null;
@@ -88,7 +88,7 @@ public class ProbeIntegrationTest {
 	
 	private static DataSource getDataSource() throws Exception {
 		String driver ="com.mysql.jdbc.Driver";//properties.getProperty("driver");
-		String jdbc_url = "jdbc:mysql://128.174.154.145:3306/flowservice?relaxAutoCommit=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;autoReconnectForPools=true";//properties.getProperty("jdbc_url");
+		String jdbc_url = "jdbc:mysql://nema.lis.uiuc.edu:3306/flowservice?relaxAutoCommit=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;autoReconnectForPools=true";//properties.getProperty("jdbc_url");
 		String user = "nema_user";
 		String password ="reduxer101";
 		
