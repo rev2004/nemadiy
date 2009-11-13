@@ -1,11 +1,12 @@
-package org.imirsel.nema.components.test;
+package org.imirsel.nema.components.io;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.meandre.annotations.Component;
+import org.imirsel.service.ArtifactManagerImpl;
 import org.meandre.annotations.*;
-import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -40,7 +41,25 @@ public class HelloWorldComponent implements ExecutableComponent {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		logger.log(Level.INFO, "Pushing data out...");
+		
+		System.out.println("CREATING FILES...");
+		/*create two files as results*/
+		try {
+			
+			String dir=ArtifactManagerImpl.getInstance().getResultLocationForJob(cc.getFlowExecutionInstanceID());
+			File f = new File(dir,"result1.txt");
+			f.createNewFile();
+			logger.log(Level.INFO,"Create file "+ f.getAbsolutePath());
+			File f1 = new File(dir,"result2.txt");
+			f1.createNewFile();
+			logger.log(Level.INFO,"Create file "+ f1.getAbsolutePath());
+		
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		cc.pushDataComponentToOutput(DATA_OUT_1,"Hello World");
 	}
 
