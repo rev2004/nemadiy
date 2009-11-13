@@ -7,8 +7,8 @@ import org.imirsel.annotations.SqlPersistence;
 
 
 @SqlPersistence(
-	select = "select * from nema_job where token=?",	
-	create =  "create table IF NOT EXISTS nema_job" +
+	select = "select * from job where token=?",	
+	create =  "create table IF NOT EXISTS job" +
 		" (id bigint(20) NOT NULL auto_increment PRIMARY KEY," +
 		" name text NOT NULL,"+
 		" description text NOT NULL,"+
@@ -22,12 +22,17 @@ import org.imirsel.annotations.SqlPersistence;
 		" submitTimeStamp TIMESTAMP," +
 		" endTimeStamp TIMESTAMP," +
 		" startTimeStamp TIMESTAMP," +
-		" updateTimeStamp TIMESTAMP) engine=innodb",
-	store="insert into nema_job(name,description,token,host,port,executionInstanceId,statusCode,ownerId,ownerEmail,submitTimeStamp) " +
-			"values(?,?,?,?,?,?,?,?,?,?)",
-	start="update nema_job set statusCode=?, executionInstanceId=?,updateTimeStamp = now(), startTimeStamp = now() where token=?",
-	finish="update nema_job set statusCode=?,updateTimeStamp = now(), endTimeStamp=now() where executionInstanceId=?",
-	updateHostAndPort="update nema_job set host=?, port=? where executionInstanceId=?")
+		" updateTimeStamp TIMESTAMP," +
+		" execPort int NOT NULL," +
+		" numTries int NOT NULL" +
+		") engine=innodb",
+	store="insert into job(name,description,token,host,port,executionInstanceId,statusCode,ownerId,ownerEmail,submitTimeStamp,execPort) " +
+			"values(?,?,?,?,?,?,?,?,?,?,?)",
+	start="update job set statusCode=?, executionInstanceId=?,updateTimeStamp = now(), startTimeStamp = now() where token=?",
+	finish="update job set statusCode=?,updateTimeStamp = now(), endTimeStamp=now() wh" +
+			"ere executionInstanceId=?",
+	updateHostAndPort="update job set host=?, execPort=? where executionInstanceId=?",
+	queryByName="select id from job where executionInstanceId=?")
 public class Job {
 	
 	static public enum JobStatus {
@@ -127,6 +132,9 @@ public class Job {
 	//private Flow flow;
 	private String executionInstanceId;
 	
+	private int numTries;
+	private  String execPort;
+	
 	public Long getId() {
 		return id;
 	}
@@ -210,6 +218,18 @@ public class Job {
 	}
 	public void setExecutionInstanceId(String executionInstanceId) {
 		this.executionInstanceId = executionInstanceId;
+	}
+	public int getNumTries() {
+		return numTries;
+	}
+	public void setNumTries(int numTries) {
+		this.numTries = numTries;
+	}
+	public String getExecPort() {
+		return execPort;
+	}
+	public void setExecPort(String execPort) {
+		this.execPort = execPort;
 	}
 
 	

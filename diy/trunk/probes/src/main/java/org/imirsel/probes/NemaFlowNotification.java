@@ -1,7 +1,10 @@
 package org.imirsel.probes;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -10,6 +13,8 @@ import javax.sql.DataSource;
 
 import org.imirsel.annotations.SqlPersistence;
 import org.imirsel.model.Job;
+import org.imirsel.model.JobResult;
+import org.imirsel.service.ArtifactManagerImpl;
 import org.imirsel.util.JndiHelper;
 import org.imirsel.util.JobStatus;
 import org.meandre.core.engine.Probe;
@@ -120,6 +125,24 @@ public class NemaFlowNotification implements Probe {
 	public void probeFlowFinish(String sFlowUniqueID, Date ts){
 		System.out.println("Flow Finished " + ts.toString()+ " " +sFlowUniqueID);
 		databaseQuery(sFlowUniqueID, JobStatus.FINISHED);
+		int jobId = getJobIdFromFlowUniqueID(sFlowUniqueID);
+		System.out.println("Found job : "+ jobId);
+		if(jobId==-1){
+			return;
+		}
+		//FIND THE RESULTS IN THE RESULT DIRECTORY and store them
+		try {
+		String dirLoc=ArtifactManagerImpl.getInstance().getResultLocationForJob(sFlowUniqueID);
+		File dir = new File(dirLoc);
+		ResultListFilter filter = new ResultListFilter();
+		String list[]=dir.list(filter);
+			for(int i=0;i<list.length;i++){
+				savejobResult(jobId,list[i],"file");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
@@ -132,6 +155,23 @@ public class NemaFlowNotification implements Probe {
 	public void probeFlowAbort(String sFlowUniqueID, Date ts,String message){
 		System.out.println("Flow Aborted " + ts.toString()+ " " +sFlowUniqueID);
 		databaseQuery(sFlowUniqueID, JobStatus.ABORTED);
+		int jobId = getJobIdFromFlowUniqueID(sFlowUniqueID);
+		if(jobId==-1){
+			return;
+		}
+		try {
+			String dirLoc=ArtifactManagerImpl.getInstance().getResultLocationForJob(sFlowUniqueID);
+			File dir = new File(dirLoc);
+			ResultListFilter filter = new ResultListFilter();
+			String list[]=dir.list(filter);
+				for(int i=0;i<list.length;i++){
+					savejobResult(jobId,list[i],"file");
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 	}
 
 	/** The executable component finished initialization.
@@ -236,7 +276,96 @@ public class NemaFlowNotification implements Probe {
 		
 	}
 	
+	/*talks to the jobResult table*/
+	private void savejobResult(int jobId, String url, String resultType) {
+		SqlPersistence mdata=JobResult.class.getAnnotation(SqlPersistence.class);
+		String sqlStore=mdata.store();
 	
+		Connection con = null;
+        try {
+               con = dataSource.getConnection();
+        }catch(SQLException e) {
+               System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
+        }
+        PreparedStatement insertTable = null;
+        try {
+        	insertTable= con.prepareStatement(sqlStore);
+        	insertTable.setString(1, resultType);
+        	insertTable.setString(2, url);
+        	insertTable.setInt(3, jobId);
+			boolean result =insertTable.execute();
+			if(!result){
+				logger.severe("Adding results to the result table: insert returned: "+ result +  " - " + jobId);	
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				con.commit();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	
+	private int getJobIdFromFlowUniqueID(String sFlowUniqueID) {
+		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
+		String sql=mdata.queryByName();
+		if(sql.equals("[unassigned]")){
+			logger.severe("Error Job class does not have the query specified for queryByName\n");
+			return -1;
+		}
+		 Connection con = null;
+        try {
+               con = dataSource.getConnection();
+        }catch(SQLException e) {
+               System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
+        }
+        int jobId=-1;
+        PreparedStatement getId = null;
+        try {
+        	getId= con.prepareStatement(sql);
+        	getId.setString(1, sFlowUniqueID);
+        	ResultSet results =getId.executeQuery();
+        	
+        	while (results.next()){
+        		jobId=results.getInt("id");
+        	}
+        	
+			if(jobId==-1){
+				logger.severe("could not get job id with execution instance id  "+ sFlowUniqueID +  " - " + sFlowUniqueID);	
+			}
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				con.commit();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return jobId;
+	}
+
+	/*talks to the job table*/
 	private void databaseQuery(String sFlowUniqueID, int status) {
 		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
 		String sqlFinish =mdata.finish();
