@@ -34,6 +34,8 @@ import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.imirsel.annotations.SqlPersistence;
 import org.imirsel.model.Job;
+import org.imirsel.model.JobResult;
+import org.imirsel.service.ArtifactManagerImpl;
 import org.imirsel.util.PluginConstants;
 import org.meandre.configuration.CoreConfiguration;
 import org.meandre.plugins.MeandrePlugin;
@@ -55,6 +57,7 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 	private Logger logger;
 	private Context ctx;
 	private boolean inited=Boolean.FALSE;
+	private CoreConfiguration coreConfiguration;
 	private DataSource dataSourceFlowResults=null;
 	private DataSource dataSourceJob=null;
 	
@@ -84,6 +87,8 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 	@SuppressWarnings("unchecked")
 	public void init(ServletConfig config) throws ServletException{
 		super.init(config);
+		// initialize the ArtifactManagerImpl
+		ArtifactManagerImpl.init(this.coreConfiguration);
 		logger.info("Starting the JNDIInitialize Servlet: -loading various database contexts");
 		Properties nemaFlowServiceProperties = new Properties();
 		try {
@@ -159,6 +164,42 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 			}
 		}
 		
+		
+		// create the job result table if it does not exist
+		mdata=JobResult.class.getAnnotation(SqlPersistence.class);
+		sqlCreate =mdata.create();
+		if(sqlCreate.equals("[unassigned]")){
+			System.out.println("Ignoring sql Create for JobResult.class "+ sqlCreate);
+			return;
+		}
+		
+		
+       try {
+             con = dataSourceJob.getConnection();
+         }catch(SQLException e) {
+             System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
+        }
+         createTable = null;
+       try {
+			createTable= con.prepareStatement(sqlCreate);
+			createTable.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				con.commit();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 	}
 
@@ -261,7 +302,7 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 
 	public void setCoreConfiguration(CoreConfiguration cnf) {
 		// TODO Auto-generated method stub
-		
+		this.coreConfiguration = cnf;
 	}
 
 }

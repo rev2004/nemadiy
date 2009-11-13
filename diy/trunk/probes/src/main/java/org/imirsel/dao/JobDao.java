@@ -203,6 +203,8 @@ public class JobDao extends SQLDao{
 			if(job.getSubmitTimestamp()!=null){
 				createSelect.setDate(10,new java.sql.Date(job.getSubmitTimestamp().getTime()));
 			}
+			createSelect.setString(11,job.getPort()+"");
+			createSelect.setInt(12,0);
 			System.out.println("Executing: "+ createSelect.toString());
 			success=createSelect.execute();
 			

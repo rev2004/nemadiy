@@ -52,7 +52,9 @@ public class ProbeIntegrationTest {
 			job.setStatusCode(statusCode);
 			job.setToken(token);
 			job.setSubmitTimestamp(new Date());
+			
 			jdao.insertJob(job);
+			
 			
 			
 			
@@ -86,7 +88,7 @@ public class ProbeIntegrationTest {
 	
 	private static DataSource getDataSource() throws Exception {
 		String driver ="com.mysql.jdbc.Driver";//properties.getProperty("driver");
-		String jdbc_url = "jdbc:mysql://128.174.154.145:3306/nema_flowservice?relaxAutoCommit=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;autoReconnectForPools=true";//properties.getProperty("jdbc_url");
+		String jdbc_url = "jdbc:mysql://128.174.154.145:3306/flowservice?relaxAutoCommit=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;autoReconnectForPools=true";//properties.getProperty("jdbc_url");
 		String user = "nema_user";
 		String password ="reduxer101";
 		
