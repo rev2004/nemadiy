@@ -25,6 +25,7 @@ import org.meandre.core.engine.Probe;
  * 
  * @author Amit Kumar
  * @date-created 09/01/2009
+ * @date-updated 11/12/2009 -probe finish updated
  *
  */
 public class NemaFlowNotification implements Probe {
@@ -71,6 +72,15 @@ public class NemaFlowNotification implements Probe {
 	 */
 	public void probeFlowStart(String sFlowUniqueID, Date ts, String weburl){
 		System.out.println("Flow Started " + ts.toString()+ " " +sFlowUniqueID + "  " + weburl);
+		// create the directories for this flow
+		try {
+			ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(sFlowUniqueID);
+			ArtifactManagerImpl.getInstance().getResultLocationForJob(sFlowUniqueID);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
 		String sqlUpdate =mdata.start();
 		if(sqlUpdate.equals("[unassigned]")){
@@ -134,6 +144,7 @@ public class NemaFlowNotification implements Probe {
 		try {
 		String dirLoc=ArtifactManagerImpl.getInstance().getResultLocationForJob(sFlowUniqueID);
 		File dir = new File(dirLoc);
+		savejobResult(jobId,dir.getName(),"dir");
 		ResultListFilter filter = new ResultListFilter();
 		String list[]=dir.list(filter);
 			for(int i=0;i<list.length;i++){
@@ -162,6 +173,7 @@ public class NemaFlowNotification implements Probe {
 		try {
 			String dirLoc=ArtifactManagerImpl.getInstance().getResultLocationForJob(sFlowUniqueID);
 			File dir = new File(dirLoc);
+			savejobResult(jobId,dir.getName(),"dir");
 			ResultListFilter filter = new ResultListFilter();
 			String list[]=dir.list(filter);
 				for(int i=0;i<list.length;i++){
