@@ -7,7 +7,7 @@
  * read License.txt
  *
  */
-package org.imirsel.nema.components.test;
+package org.imirsel.nema.components.io;
 
 import java.util.logging.Logger;
 
@@ -26,9 +26,7 @@ public class JndiComponentServiceTest implements ExecutableComponent {
 	private Logger logger;
 	
 	@ComponentOutput(description="data source 1 testing", name="dataSource1")
-	private static final String DATA_OUTPUT_1="dataSource1";
-	@ComponentOutput(description="data source 2 testing", name="dataSource2")
-	private static final String DATA_OUTPUT_2="dataSource2";
+	private static final String DATA_OUTPUT_1="dataSource2";
 	
 	
 
@@ -39,14 +37,7 @@ public class JndiComponentServiceTest implements ExecutableComponent {
 
 	public void execute(ComponentContext cc)
 			throws ComponentExecutionException, ComponentContextException {
-		logger.info("getting data source 1");
-		Object obj1 = null;
-		try {
-			obj1=JndiHelper.getFlowResultDataSource();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+	
 		
 		logger.info("getting data source 2");
 		Object obj2 = null;
@@ -57,8 +48,7 @@ public class JndiComponentServiceTest implements ExecutableComponent {
 			e1.printStackTrace();
 		}
 		logger.info("pushing datasources out");
-		cc.pushDataComponentToOutput(DATA_OUTPUT_1, obj1);
-		cc.pushDataComponentToOutput(DATA_OUTPUT_2, obj2);
+		cc.pushDataComponentToOutput(DATA_OUTPUT_1, obj2);
 	}
 
 	public void initialize(ComponentContextProperties ccp) {
