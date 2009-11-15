@@ -1011,7 +1011,8 @@ public class MeandreClient extends MeandreBaseClient{
 		if (token != null)
 			nvps.add(new NameValuePair("token", token));
 		nvps.add(new NameValuePair("statistics", Boolean.toString(verbose)));
-
+		
+		nvps.add(new NameValuePair("nema", "true"));
 		return executeGetRequestStream(sRestCommand, nvps);
 	}
 
