@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.DefaultMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -138,8 +140,10 @@ public class MeandreBaseClient{
      */
     private HttpClient getHttpClient(){
         HttpClient httpClient = new HttpClient();
-	    HostConfiguration config = new HostConfiguration();
+        HostConfiguration config = new HostConfiguration();
         config.setHost(_serverHost, _port);
+        DefaultHttpMethodRetryHandler retryhandler = new DefaultHttpMethodRetryHandler(0,false);
+        httpClient.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, retryhandler);
         httpClient.setHostConfiguration(config);
         
         //if credentials are not set, we will assume we don't need authorization
