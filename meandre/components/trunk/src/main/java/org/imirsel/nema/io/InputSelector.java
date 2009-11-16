@@ -1,11 +1,9 @@
 package org.imirsel.nema.io;
 
-
 import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
 
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
-//import java.net.*;
+import java.util.logging.Logger; //import java.net.*;
 import java.io.*;
 
 import org.meandre.core.ComponentContext;
@@ -19,243 +17,224 @@ import org.meandre.annotations.ComponentProperty;
 import org.imirsel.nema.util.FileDownload;
 import org.imirsel.service.ArtifactManagerImpl;
 
-@Component(creator = "Mert Bay", 
-		description = "Reads an XML or CSV file from a local directory or an URL, with File location and  class  metadata. Output is a 2D String array that holds the fileLocation  in the first column and its class metadata in the second column. If the fileLocation is a URL, it will be downloaded  to a local path. The inputListfiles should be  properly formed. If individual file field is not empty, the file list will be ignored.", 
-		name = "InputSelector", 
-		tags = "input, file, URL,file download, CSV reader, XML reader", 
-		resources = "/home/mertbay/workspace/empty_meandre_component_project/lib/ACE.jar",
-		firingPolicy = Component.FiringPolicy.all)
-		
+@Component(creator = "Mert Bay", description = "Reads an XML or CSV file from a local directory or an URL, with File location and  class  metadata. Output is a 2D String array that holds the fileLocation  in the first column and its class metadata in the second column. If the fileLocation is a URL, it will be downloaded  to a local path. The inputListfiles should be  properly formed. If individual file field is not empty, the file list will be ignored.", name = "InputSelector", tags = "input, file, URL,file download, CSV reader, XML reader", resources = "/home/mertbay/workspace/empty_meandre_component_project/lib/ACE.jar", firingPolicy = Component.FiringPolicy.all)
 public class InputSelector implements ExecutableComponent {
 
-    @ComponentOutput(description = "String[][] that holds the fileLocation for the audio in the first column and its class metadata in the second column", name = "inputFiles")
-    public final static String DATA_OUTPUT = "inputFiles";
-	
+	@ComponentOutput(description = "String[][] that holds the fileLocation for the audio in the first column and its class metadata in the second column", name = "inputFiles")
+	public final static String DATA_OUTPUT = "inputFiles";
 
-    @ComponentProperty(defaultValue="http://nema.lis.uiuc.edu/example_wavs/mirex05FileList.xml",
-                      description="A file with a list of audio files with  \"fileLocation\" and  class metadata, indicating the " +
-    	    "location of the corresponding audio file and also its class",
-                      name="listFilePath")
-    final static String DATA_PROPERTY_1 = "listFilePath";
-    
-    @ComponentProperty(defaultValue="",
-            description="A local path or a URL of an individual file instead of the file list. If a URL is entered the file will be downloaded. If this property is filled, the input file list will be ignored. ",
-            name="individualFile")
-    final static String DATA_PROPERTY_2 = "individualFile";
-    
-    
-    private String listFilePath="http://nema.lis.uiuc.edu/example_wavs/mirex05FileList.xml";
-	
-    private String individualFile = "";
-    private String localListFilePath;
-    private Logger logger = null;
-    private String dir_prefix = "/data/raid4/audio/wavs/44s/full/m/";
-    private java.io.PrintStream out;
-    private String processWorkingDir;
-    
-    public void initialize(ComponentContextProperties ccp) throws ComponentExecutionException {     
-        out = ccp.getOutputConsole();
-        logger = ccp.getLogger();
-        //logger.fine(e.printStack);
+	@ComponentProperty(defaultValue = "http://nema.lis.uiuc.edu/example_wavs/mirex05FileList.xml", description = "A file with a list of audio files with  \"fileLocation\" and  class metadata, indicating the "
+			+ "location of the corresponding audio file and also its class", name = "listFilePath")
+	final static String DATA_PROPERTY_1 = "listFilePath";
+
+	@ComponentProperty(defaultValue = "", description = "A local path or a URL of an individual file instead of the file list. If a URL is entered the file will be downloaded. If this property is filled, the input file list will be ignored. ", name = "individualFile")
+	final static String DATA_PROPERTY_2 = "individualFile";
+
+	private String listFilePath = "http://nema.lis.uiuc.edu/example_wavs/mirex05FileList.xml";
+	private String individualFile = "";
+	private String localListFilePath;
+	private Logger logger = null;
+	private String dir_prefix = "/data/raid4/audio/wavs/44s/full/m/";
+	private java.io.PrintStream out;
+	private String processWorkingDir;
+
+	public void initialize(ComponentContextProperties ccp)
+			throws ComponentExecutionException {
+		out = ccp.getOutputConsole();
+		logger = ccp.getLogger();
 		try {
-			processWorkingDir = ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
+			processWorkingDir = ArtifactManagerImpl.getInstance()
+					.getProcessWorkingDirectory(
+							ccp.getFlowExecutionInstanceID());
+			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			throw new ComponentExecutionException(e1);
 		}
-		
-    }
-    
+	}
+
 	public void dispose(ComponentContextProperties ccp) {
 		// TODO Auto-generated method stub
 		out.close();
-		
 	}
+
 	public void execute(ComponentContext ccp)
 			throws ComponentExecutionException, ComponentContextException {
-		
-		listFilePath = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));	
+		listFilePath = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));
 		individualFile = String.valueOf(ccp.getProperty(DATA_PROPERTY_2));
 
-		if (!individualFile.contentEquals("")){
+		if (!individualFile.contentEquals("")) {
 			String[][] inputFiles = new String[1][2];
 			out.println("Individual file is selected");
-			if(individualFile.contains("http") || individualFile.contains("ftp") ){
-				String workingDirName =  processWorkingDir  + individualFile.substring(individualFile.indexOf("//")+2,individualFile.lastIndexOf('/')+1);						
-				inputFiles[0][0] = downloadFiles(individualFile,workingDirName);								
-			}
-			else{
+			if (individualFile.contains("http")
+					|| individualFile.contains("ftp")) {
+				String workingDirName = processWorkingDir;
+				inputFiles[0][0] = downloadFiles(individualFile, workingDirName);
+			} else {
 				inputFiles[0][0] = individualFile;
 			}
 			inputFiles[0][1] = "";
-			out.println("no 1:\tFileName=" + individualFile.subSequence(individualFile.lastIndexOf("/")+1, individualFile.length()) + "\t\tClassName= "  + "\t\t added to output");										
-			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);			
-		}
-		else {
+			out.println("no 1:\tFileName="
+					+ individualFile.subSequence(individualFile
+							.lastIndexOf("/") + 1, individualFile.length())
+					+ "\t\tClassName= " + "\t\t added to output");
+			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
+		} else {
 			BufferedReader textBuffer;
 			int noLines = 0;
-			try{
-				//Check if it is a URL
-				if (listFilePath.contains("http") || listFilePath.contains("ftp")){
-		//			localListFilePath = ccp.getPublicResourcesDirectory()+ "/inputSelectorDownloadedFiles/"+listFilePath.substring(listFilePath.lastIndexOf('/')+1, listFilePath.length());
-					
-					String workingDirName = processWorkingDir + "/" + listFilePath.substring(listFilePath.indexOf("//")+2,listFilePath.lastIndexOf('/')+1);						
-					localListFilePath=downloadFiles(listFilePath,workingDirName);	
-
-		/*			URL url= new URL(listFilePath);
-					textBuffer= new BufferedReader(new InputStreamReader(url.openStream()));
-					noLines = org.imirsel.meandre.m2k.util.LineCounter.count(textBuffer)-1;				
+			try {
+				// Check if it is a URL
+				if (listFilePath.contains("http")
+						|| listFilePath.contains("ftp")) {
+					// localListFilePath = ccp.getPublicResourcesDirectory()+
+					// "/inputSelectorDownloadedFiles/"+listFilePath.substring(listFilePath.lastIndexOf('/')+1,
+					// listFilePath.length());
+					String workingDirName = processWorkingDir;
+					localListFilePath = downloadFiles(listFilePath,
+							workingDirName);
+					textBuffer = new BufferedReader(new FileReader(
+							localListFilePath));
+					noLines = org.imirsel.nema.util.LineCounter
+							.count(textBuffer) - 1;
 					textBuffer.close();
-					textBuffer= new BufferedReader(new InputStreamReader(url.openStream()));*/
-					textBuffer = new BufferedReader( new FileReader(localListFilePath));
-					noLines = org.imirsel.nema.util.LineCounter.count(textBuffer)-1;				
+					textBuffer = new BufferedReader(new FileReader(
+							localListFilePath));
+				} else {
+					textBuffer = new BufferedReader(
+							new FileReader(listFilePath));
+					noLines = org.imirsel.nema.util.LineCounter
+							.count(textBuffer) - 1;
 					textBuffer.close();
-					textBuffer = new BufferedReader( new FileReader(localListFilePath));
+					textBuffer = new BufferedReader(
+							new FileReader(listFilePath));
 				}
-				else{
-					textBuffer = new BufferedReader( new FileReader(listFilePath));
-					noLines = org.imirsel.nema.util.LineCounter.count(textBuffer)-1;				
-					textBuffer.close();
-					textBuffer = new BufferedReader( new FileReader(listFilePath));
-				}			
-				//If it is a CSV file			
-				if(listFilePath.substring(listFilePath.length()-3, listFilePath.length()).equalsIgnoreCase("csv")){
-					out.println("The collection format is " + listFilePath.substring(listFilePath.length()-3, listFilePath.length()));
-					out.println("There are " +  noLines+ " records in the collection");
-					//Read the header info from the file
-					String Header = textBuffer.readLine();			
+				// If it is a CSV file
+				if (listFilePath.substring(listFilePath.length() - 3,
+						listFilePath.length()).equalsIgnoreCase("csv")) {
+					out.println("The collection format is "
+							+ listFilePath.substring(listFilePath.length() - 3,
+									listFilePath.length()));
+					out.println("There are " + noLines
+							+ " records in the collection");
+					// Read the header info from the file
+					String Header = textBuffer.readLine();
 					String[][] inputFiles = new String[noLines][2];
-						for(int i=0; i<noLines; i++){
-						
-							String line = textBuffer.readLine();
-							StringTokenizer str = new StringTokenizer(line, ",");
-							String fileLocation;
-							String classname;
-							if(str.countTokens()==1){
-								fileLocation = str.nextToken();
-			                    classname = "";
-			                    out.println("There is no class label");
-							}
-							else if(str.countTokens()==2){
-								fileLocation = str.nextToken();
-								classname = str.nextToken();
-							}
-							else{
-								out.println("Mistake in Record no " + i + ". Continuing...");
-								continue;
-							}
-							if(fileLocation.contains("http") || fileLocation.contains("ftp") ){
-								String workingDirName = "./" + ccp.getPublicResourcesDirectory() + "/inputSelectorDownloadedFiles/" + fileLocation.substring(fileLocation.indexOf("//")+2,fileLocation.lastIndexOf('/')+1);						
-								inputFiles[i][0] = downloadFiles(fileLocation,workingDirName);								
-							}
-							else{
-								inputFiles[i][0] = fileLocation;
-							}
-							out.println("no "+(i+1)+":\tFileName=" + fileLocation.subSequence(fileLocation.lastIndexOf("/")+1, fileLocation.length()) + "\t\tClassName=" + classname + "\t\t added to output");										
-							inputFiles[i][1] = classname;
+					for (int i = 0; i < noLines; i++) {
+						String line = textBuffer.readLine();
+						StringTokenizer str = new StringTokenizer(line, ",");
+						String fileLocation;
+						String classname;
+						if (str.countTokens() == 1) {
+							fileLocation = str.nextToken();
+							classname = "";
+							out.println("There is no class label");
+						} else if (str.countTokens() == 2) {
+							fileLocation = str.nextToken();
+							classname = str.nextToken();
+						} else {
+							out.println("Mistake in Record no " + i
+									+ ". Continuing...");
+							continue;
 						}
-						ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
-				}
-				//If it is a XML file
-				else if(listFilePath.substring(listFilePath.length()-3, listFilePath.length()).equalsIgnoreCase("xml")){
-					//To be implemented
-					SegmentedClassification[] inputXML = SegmentedClassification.parseClassificationsFile(localListFilePath); 	            
-					out.println("The collection format is xml");
-		            out.println("There are " + inputXML.length + " records in the collection.");
-		            
-		            String[][] inputFiles = new String[inputXML.length][2];
-		            for (int i=0; i<inputXML.length; i++){ 
-		                String[] classes = inputXML[i].classifications;
-		                String fileLocation = inputXML[i].identifier;
-		                String classname;
-		                if (classes !=null){
-		                	classname = classes[0];
-		                }
-		                else{
-		                    classname = "";
-		                    out.println("There is no class label");
-		                }
-		                	                
-						if(fileLocation.contains("http") || fileLocation.contains("ftp") ){
-							String workingDirName = "./" + ccp.getPublicResourcesDirectory() + "/inputSelectorDownloadedFiles/" + fileLocation.substring(fileLocation.indexOf("//")+2,fileLocation.lastIndexOf('/')+1);						
-							inputFiles[i][0] = downloadFiles(fileLocation,workingDirName);								
-						}
-						else{
+						if (fileLocation.contains("http")
+								|| fileLocation.contains("ftp")) {
+							String workingDirName = processWorkingDir;
+							inputFiles[i][0] = downloadFiles(fileLocation,
+									workingDirName);
+						} else {
 							inputFiles[i][0] = fileLocation;
 						}
-						inputFiles[i][0]= dir_prefix + inputFiles[i][0].subSequence(inputFiles[i][0].lastIndexOf("/")+1, inputFiles[i][0].length());
-						//out.println("no "+(i+1)+":\tFileName=" + inputFiles[i][0].subSequence(inputFiles[i][0].lastIndexOf("/")+1, inputFiles[i][0].length()) + "\t\tClassName=" + classname + "\t\t  added to output.");								
-						out.println("no "+(i+1)+":\tFileName=" + inputFiles[i][0].subSequence(inputFiles[i][0].lastIndexOf("/")+1, inputFiles[i][0].length()) + "\t\tClassName=" + classname + "\t\t  added to output.");
-		              }  		
-		            ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
+						out.println("no "
+								+ (i + 1)
+								+ ":\tFileName="
+								+ fileLocation.subSequence(fileLocation
+										.lastIndexOf("/") + 1, fileLocation
+										.length()) + "\t\tClassName="
+								+ classname + "\t\t added to output");
+						inputFiles[i][1] = classname;
+					}
+					ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
 				}
-				else{
-					out.println("Unsupported input file format " + listFilePath.substring(listFilePath.length()-3, listFilePath.length()));
+				// If it is a XML file
+				else if (listFilePath.substring(listFilePath.length() - 3,
+						listFilePath.length()).equalsIgnoreCase("xml")) {
+					// To be implemented
+					SegmentedClassification[] inputXML = SegmentedClassification
+							.parseClassificationsFile(localListFilePath);
+					out.println("The collection format is xml");
+					out.println("There are " + inputXML.length
+							+ " records in the collection.");
+					String[][] inputFiles = new String[inputXML.length][2];
+					for (int i = 0; i < inputXML.length; i++) {
+						String[] classes = inputXML[i].classifications;
+						String fileLocation = inputXML[i].identifier;
+						String classname;
+						if (classes != null) {
+							classname = classes[0];
+						} else {
+							classname = "";
+							out.println("There is no class label");
+						}
+						if (fileLocation.contains("http")
+								|| fileLocation.contains("ftp")) {
+							String workingDirName = processWorkingDir;
+							inputFiles[i][0] = downloadFiles(fileLocation,
+									workingDirName);
+						} else {
+							inputFiles[i][0] = fileLocation;
+						}
+						inputFiles[i][0] = dir_prefix
+								+ inputFiles[i][0].subSequence(inputFiles[i][0]
+										.lastIndexOf("/") + 1, inputFiles[i][0]
+										.length());
+						out.println("no "
+								+ (i + 1)
+								+ ":\tFileName="
+								+ inputFiles[i][0].subSequence(inputFiles[i][0]
+										.lastIndexOf("/") + 1, inputFiles[i][0]
+										.length()) + "\t\tClassName="
+								+ classname + "\t\t  added to output.");
+					}
+					ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
+				} else {
+					out.println("Unsupported input file format "
+							+ listFilePath.substring(listFilePath.length() - 3,
+									listFilePath.length()));
 				}
-				
-								
-			}
-			catch(Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-				
-			
 		}
-			
-		
-
 	}
-	
-	public String downloadFiles(String fileLocation, String workingDirName){
-		
+
+	public String downloadFiles(String fileLocation, String workingDirName) {
+
 		out.println("\nDownloading file from " + fileLocation);
- 
 
 		File workingDir = new File(workingDirName);
-		if (!workingDir.exists())
-        {
-            boolean done = workingDir.mkdirs();
-            if (!done){
-                throw new RuntimeException("Could not create the output directory");
-            }
-        }else if (!workingDir.isDirectory()){
-            throw new RuntimeException(workingDir + " No such Parent directory");
-        }
-		String localFileName = workingDirName + fileLocation.substring(fileLocation.lastIndexOf('/')+1,fileLocation.length());
-		File localFile = new File(localFileName);
-		if(localFile.exists()){
-			out.println("The file " + fileLocation + " alredy exists locally, avoiding re-download.");
+		if (!workingDir.exists()) {
+			boolean done = workingDir.mkdirs();
+			if (!done) {
+				throw new RuntimeException(
+						"Could not create the output directory");
+			}
+		} else if (!workingDir.isDirectory()) {
+			throw new RuntimeException(workingDir + " No such Parent directory");
 		}
-		else{
+		String localFileName = workingDirName
+				+ File.separator
+				+ fileLocation.substring(fileLocation.lastIndexOf('/') + 1,
+						fileLocation.length());
+		File localFile = new File(localFileName);
+		if (localFile.exists()) {
+			out.println("The file " + fileLocation
+					+ " alredy exists locally, avoiding re-download.");
+		} else {
 			FileDownload.download(fileLocation, localFileName);
 			out.println("File downloaded to local path.");
 		}
 
-	/*	String MainCommand = "wget  -m -nd " + fileLocation;
-		String[] envp = null;
-		String s;
-		try{
-			Process p = Runtime.getRuntime().exec(MainCommand,envp,workingDir);			
-			//Runtime.getRuntime().e
-	        BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-	        BufferedReader stdErr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-	        out.println("The stdout and stderr of wget:");	
-	        while((s=stdInput.readLine()) !=null){
-	              out.println(s);
-	        }	        		        	        		        
-	       while((s=stdErr.readLine()) !=null){
-	    	   out.println(s);
-	       }	      		        
-	       stdErr.close();
-	       stdInput.close();
-	       }
-			catch(Exception e){
-				e.printStackTrace();	
-			}*/
-	//	String downloadPath = workingDirName + fileLocation.subSequence(fileLocation.lastIndexOf("/")+1, fileLocation.length());
-		//out.println("File`s new relative local path:  " + downloadPath + "\n" ); 
 		return localFileName;
 	}
 
-	
 }
