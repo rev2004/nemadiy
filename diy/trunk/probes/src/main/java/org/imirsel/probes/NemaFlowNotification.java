@@ -144,14 +144,13 @@ public class NemaFlowNotification implements Probe {
 		try {
 		String dirLoc=ArtifactManagerImpl.getInstance().getResultLocationForJob(sFlowUniqueID);
 		File dir = new File(dirLoc);
-		savejobResult(jobId,dir.getName(),"dir");
+		savejobResult(jobId,dir.getAbsolutePath(),"dir");
 		ResultListFilter filter = new ResultListFilter();
 		String list[]=dir.list(filter);
 			for(int i=0;i<list.length;i++){
 				savejobResult(jobId,list[i],"file");
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -173,7 +172,7 @@ public class NemaFlowNotification implements Probe {
 		try {
 			String dirLoc=ArtifactManagerImpl.getInstance().getResultLocationForJob(sFlowUniqueID);
 			File dir = new File(dirLoc);
-			savejobResult(jobId,dir.getName(),"dir");
+			savejobResult(jobId,dir.getAbsolutePath(),"dir");
 			ResultListFilter filter = new ResultListFilter();
 			String list[]=dir.list(filter);
 				for(int i=0;i<list.length;i++){
@@ -306,9 +305,6 @@ public class NemaFlowNotification implements Probe {
         	insertTable.setString(2, url);
         	insertTable.setInt(3, jobId);
 			boolean result =insertTable.execute();
-			if(!result){
-				logger.severe("Adding results to the result table: insert returned: "+ result +  " - " + jobId);	
-			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

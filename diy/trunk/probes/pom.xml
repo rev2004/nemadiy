@@ -272,7 +272,7 @@
     
         <dependency>
             <groupId>org.imirsel</groupId>
-            <artifactId>components</artifactId>
+            <artifactId>components-api</artifactId>
             <version>1.0.2-SNAPSHOT</version>
         </dependency>
     
