@@ -205,6 +205,7 @@ public class JobDao extends SQLDao{
 			}
 			createSelect.setString(11,job.getPort()+"");
 			createSelect.setInt(12,0);
+			createSelect.setInt(13,0);
 			System.out.println("Executing: "+ createSelect.toString());
 			success=createSelect.execute();
 			

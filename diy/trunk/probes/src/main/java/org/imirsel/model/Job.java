@@ -6,6 +6,7 @@ import java.util.Date;
 import org.imirsel.annotations.SqlPersistence;
 
 
+
 @SqlPersistence(
 	select = "select * from job where token=?",	
 	create =  "create table IF NOT EXISTS job" +
@@ -24,10 +25,11 @@ import org.imirsel.annotations.SqlPersistence;
 		" startTimeStamp TIMESTAMP," +
 		" updateTimeStamp TIMESTAMP," +
 		" execPort int NOT NULL," +
-		" numTries int NOT NULL" +
+		" numTries int NOT NULL," +
+		" flowInstanceId int NOT NULL"+
 		") engine=innodb",
-	store="insert into job(name,description,token,host,port,executionInstanceId,statusCode,ownerId,ownerEmail,submitTimeStamp,execPort,numTries) " +
-			"values(?,?,?,?,?,?,?,?,?,?,?,?)",
+	store="insert into job(name,description,token,host,port,executionInstanceId,statusCode,ownerId,ownerEmail,submitTimeStamp,execPort,numTries,flowInstanceId ) " +
+			"values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
 	start="update job set statusCode=?, executionInstanceId=?,updateTimeStamp = now(), startTimeStamp = now() where token=?",
 	finish="update job set statusCode=?,updateTimeStamp = now(), endTimeStamp=now() wh" +
 			"ere executionInstanceId=?",
@@ -36,60 +38,52 @@ import org.imirsel.annotations.SqlPersistence;
 public class Job {
 	
 	static public enum JobStatus {
-	      UNKNOWN(-1), SUBMITTED(0), STARTED(1), ENDED(2);
+	      UNKNOWN(-1), SUBMITTED(0), STARTED(1), FINISHED(2), FAILED(3), ABORTED(4);
 
-	      private final int code;
+	    private final int code;
 
-	      private JobStatus(int code) { this.code = code; }
+	    private JobStatus(int code) { this.code = code; }
 
-	      private int getCode() { return code; }
+	    public int getCode() { return code; }
 
-	      @Override
+	    @Override
 		public String toString() {
 	         String name = null;
 	         switch (code) {
 
 	            case -1: {
 	               name = "Unknown";
+	               break;
 	            }
 
 	            case 0: {
 	               name = "Submitted";
+	               break;
 	            }
 
 	            case 1: {
 	               name = "Started";
+	               break;
 	            }
 
 	            case 2: {
 	               name = "Ended";
+	               break;
 	            }
+	            
+	            case 3: {
+	                name = "Ended";
+	                break;
+	             }
+
+	            case 4: {
+	                name = "Aborted";
+	                break;
+	             }
+	            
 	         }
 	         return name;
 	      }
-	      
-	      static public int toJobCode(JobStatus status) {
-		        int code=-1; 
-	    	  	switch (status) {
-
-		            case UNKNOWN: {
-		               code=-1;
-		            }
-
-		            case SUBMITTED: {
-		              code=0;
-		            }
-
-		            case STARTED: {
-		               code=1;
-		            }
-
-		            case ENDED: {
-		               code=2;
-		            }
-		         }
-		         return code;
-		      }
 
 	      static public JobStatus toJobStatus(int code) {
 	         JobStatus status = null;
@@ -97,24 +91,45 @@ public class Job {
 
 	            case -1: {
 	               status = JobStatus.UNKNOWN;
+	               break;
 	            }
 
 	            case 0: {
 	               status = JobStatus.SUBMITTED;
+	               break;
 	            }
 
 	            case 1: {
 	               status = JobStatus.STARTED;
+	               break;
 	            }
 
 	            case 2: {
-	               status = JobStatus.ENDED;
+	               status = JobStatus.FINISHED;
+	               break;
 	            }
+	            
+	            case 3: {
+	                status = JobStatus.FAILED;
+	                break;
+	             }
+	            
+	            case 4: {
+	                status = JobStatus.ABORTED;
+	                break;
+	             }
+	            
 	         }
 	         return status;
 	      }
-	   }
+
+		public static Integer toJobStatus(JobStatus status) {
+			return status.code;
+		}
+
 	
+		
+	   }
 	private Long id;
 	
 	private String name;

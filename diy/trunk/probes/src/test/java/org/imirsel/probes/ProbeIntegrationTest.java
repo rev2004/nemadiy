@@ -31,14 +31,14 @@ public class ProbeIntegrationTest {
 		Logger logger = Logger.getAnonymousLogger();
 		String sFlowUrl ="http://test.org/helloworld/";
 		String token = "tokenDD-"+System.currentTimeMillis();
-		MeandreClient meandreClient  = new MeandreClient("nema.lis.uiuc.edu", 1714);
+		MeandreClient meandreClient  = new MeandreClient("nema.lis.uiuc.edu", 11709);
 		meandreClient.setLogger(logger);
 		meandreClient.setCredentials("admin", "admin");
 		ExecResponse uriExecutionInstance=null;
 		try {
 			HashMap<String,String> hmap = new HashMap<String,String>();
 			hmap.put("nema","true");
-			int statusCode = Job.JobStatus.toJobCode(JobStatus.SUBMITTED);
+			int statusCode = Job.JobStatus.toJobStatus(JobStatus.SUBMITTED);
 			DataSource dataSource = getDataSource();
 			JobDao jdao = new JobDao(dataSource);
 			Job job = new Job();
