@@ -201,7 +201,7 @@ import jAudioFeatureExtractor.DataTypes.RecordingInfo;
                        name="Strength Of Strongest Beat")
                        final static String DATA_PROPERTY_SSB = "Strength Of Strongest Beat";
        private boolean ssb = true;
-       private String processWorkingDir;
+       private String processResultsDir;
        /////////////////////////////////////////////////////////////////////////
        java.io.PrintStream cout;
        // log messages are here
@@ -215,7 +215,8 @@ import jAudioFeatureExtractor.DataTypes.RecordingInfo;
 
                cout = ccp.getOutputConsole();
        		try {
-    			processWorkingDir = ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
+    			processResultsDir = ArtifactManagerImpl.getInstance().getResultLocationForJob(ccp.getFlowExecutionInstanceID());
+    			
     		} catch (IOException e1) {
     			// TODO Auto-generated catch block
     			throw new ComponentExecutionException(e1);
@@ -302,7 +303,7 @@ import jAudioFeatureExtractor.DataTypes.RecordingInfo;
                fdFile = String.valueOf(cc.getProperty(DATA_PROPERTY_FDFILE));
 
                //String fid = cc.getPublicResourcesDirectory()+ File.separator + "results" + File.separator + cc.getFlowExecutionInstanceID().substring(25);
-               String fid = processWorkingDir + File.separator + "results" + File.separator + cc.getFlowExecutionInstanceID().substring(25);
+               String fid = processResultsDir ;
        File outDir = new File(fid);
        if (!outDir.exists())
        {
