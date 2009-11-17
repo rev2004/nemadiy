@@ -430,6 +430,7 @@
         <jdbc.version>5.0.5</jdbc.version>
         <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
         <jdbc.url><![CDATA[jdbc:mysql://localhost/nema_diy?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
+        <flowservice.jdbc.url><![CDATA[jdbc:mysql://127.0.0.1/flowservice?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></flowservice.jdbc.url>
      <!--    <jdbc.username>${jdbc.user}</jdbc.username>
         <jdbc.password>${jdbc.password}</jdbc.password>
      -->
