@@ -29,7 +29,6 @@ public class SleepComponent implements ExecutableComponent{
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	
