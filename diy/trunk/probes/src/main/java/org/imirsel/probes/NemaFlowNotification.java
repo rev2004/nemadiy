@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -76,6 +77,7 @@ public class NemaFlowNotification implements Probe {
 		try {
 			ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(sFlowUniqueID);
 			ArtifactManagerImpl.getInstance().getResultLocationForJob(sFlowUniqueID);
+			ArtifactManagerImpl.getInstance().getCommonStorageLocation();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -84,14 +86,14 @@ public class NemaFlowNotification implements Probe {
 		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
 		String sqlUpdate =mdata.start();
 		if(sqlUpdate.equals("[unassigned]")){
-			System.out.println("Ignoring sql Update for Job.class "+ sqlUpdate);
+			logger.severe("probeFlowStart: Ignoring sql Update for Job.class "+ sqlUpdate);
 			return;
 		}
 		Connection con = null;
         try{
         	con = dataSource.getConnection();
         }catch(SQLException e) {
-            System.out.println("Error getting connection from the Job dataSource " + e.getMessage());
+        	logger.severe("Error getting connection from the Job dataSource " + e.getMessage());
         }
         PreparedStatement updateTable = null;
         try {
@@ -102,9 +104,10 @@ public class NemaFlowNotification implements Probe {
         	updateTable.setInt(1, JobStatus.START);
         	updateTable.setString(2, sFlowUniqueID);
 			updateTable.setString(3, token);
+			//updateTable.setTimestamp(4, new Timestamp(new Date().getTime()));
 			int result =updateTable.executeUpdate();
 			if(result!=1){
-				logger.info("probeFlowStart: update returned: "+ result);	
+				logger.severe("probeFlowStart: update returned: "+ result);	
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -133,11 +136,12 @@ public class NemaFlowNotification implements Probe {
 	 * @param ts The time stamp
 	 */
 	public void probeFlowFinish(String sFlowUniqueID, Date ts){
-		System.out.println("Flow Finished " + ts.toString()+ " " +sFlowUniqueID);
+		logger.info("Flow Finished " + ts.toString()+ " " +sFlowUniqueID);
 		databaseQuery(sFlowUniqueID, JobStatus.FINISHED);
 		int jobId = getJobIdFromFlowUniqueID(sFlowUniqueID);
 		System.out.println("Found job : "+ jobId);
 		if(jobId==-1){
+			logger.severe("Job "+ sFlowUniqueID + " not found");
 			return;
 		}
 		//FIND THE RESULTS IN THE RESULT DIRECTORY and store them
