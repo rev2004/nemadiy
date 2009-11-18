@@ -63,6 +63,12 @@ public class MIREXTagClassificationEvalMain {
                 System.out.println("System " + systemNames.size()+ "; " + systemName + ", " + resultsPath.getAbsolutePath());
             }
         }
+
+        boolean doStatsTests = true;
+        if (systemNames.size() == 1){
+            System.out.println("Not performing statistical comparison as only one system was specified as an argument");
+            doStatsTests = false;
+        }
         
         ArrayList<String> affinitySystemNames = (ArrayList<String>)systemNames.clone();
         
@@ -229,7 +235,7 @@ public class MIREXTagClassificationEvalMain {
             binEval.setQuery_subset(subset);
         }
         binEval.setVerbose(true);
-        binEval.setPerformMatlabStatSigTests(true);
+        binEval.setPerformMatlabStatSigTests(doStatsTests);
         binEval.evaluate(systemNames.toArray(new String[systemNames.size()]), 
                 resultData, GT, rootEvaluationDir);
         
@@ -240,7 +246,7 @@ public class MIREXTagClassificationEvalMain {
             affEval.setQuery_subset(subset);
         }
         affEval.setVerbose(true);
-        affEval.setPerformMatlabStatSigTests(true);
+        affEval.setPerformMatlabStatSigTests(doStatsTests);
         affEval.evaluate(affinitySystemNames.toArray(new String[affinitySystemNames.size()]), 
                 (EvaluationDataObject[][])affResultData.toArray(new EvaluationDataObject[affResultData.size()][]), 
                 GT, rootEvaluationDir);
