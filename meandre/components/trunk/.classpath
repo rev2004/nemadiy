@@ -8,6 +8,6 @@
 	<classpathentry kind="lib" path="lib/jAudio.jar"/>
 	<classpathentry kind="lib" path="lib/m2k.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.9.1.jar"/>
-	<classpathentry kind="lib" path="lib/components-api-1.0.2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/components-api-1.0.2-20091117.231044-2.jar"/>
 	<classpathentry kind="output" path="bin/target/classes"/>
 </classpath>

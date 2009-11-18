@@ -42,6 +42,7 @@ public class InputSelector implements ExecutableComponent {
 			throws ComponentExecutionException {
 		out = ccp.getOutputConsole();
 		logger = ccp.getLogger();
+		logger.info("initializing the inputselector");
 		try {
 			processWorkingDir = ArtifactManagerImpl.getInstance()
 					.getProcessWorkingDirectory(
@@ -142,7 +143,7 @@ public class InputSelector implements ExecutableComponent {
 						}
 						if (fileLocation.contains("http")
 								|| fileLocation.contains("ftp")) {
-							String workingDirName = commonStroageDir;
+							String workingDirName = commonStorageDir;
 							inputFiles[i][0] = downloadFiles(fileLocation,
 									workingDirName);
 						} else {
