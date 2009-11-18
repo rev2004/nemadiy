@@ -1,7 +1,7 @@
 November 18th 2009 -Amit Kumar for NEMA project
 
 This project contains aspects that are used to sanitize the third party libraries to remove
-System.exit command particularily. 
+System.exit command particularly. 
 
 The aspects are used in conjunction with the ajc compiler 
 
@@ -17,7 +17,14 @@ In order to sanitize jAudio jar following command was used
 ./ajc -injars jAudio-mod.jar -outjar jAudio-sanitized.jar 
 -sourceroots src/main/java/org/imirsel/aspects -showWeaveInfo -verbose
 
-where jAudio-mod.jar is the jar file without the crude such as build/* the installer files etc.
+where jAudio-mod.jar is the jar file without the crud such as build/* the installer files and was created
+by unjarring the orignal jAudio.jar file and deleting the crud.
 
 The sanitized jar file is jAudio-sanitized.jar.
+
+The file is available from maven
+
+http://monk.lis.uiuc.edu/maven2/jAudio/jAudio-sanitized (sanitized without crud)
+http://monk.lis.uiuc.edu/maven2/jAudio/jAudio-mod (modified without crud)
+http://monk.lis.uiuc.edu/maven2/jAudio/jAudio  (orignal)
 
