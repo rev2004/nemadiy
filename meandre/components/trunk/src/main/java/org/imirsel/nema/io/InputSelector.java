@@ -37,7 +37,7 @@ public class InputSelector implements ExecutableComponent {
 	private String dir_prefix = "/data/raid4/audio/wavs/44s/full/m/";
 	private java.io.PrintStream out;
 	private String processWorkingDir;
-
+	private String commonStorageDir;
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException {
 		out = ccp.getOutputConsole();
@@ -46,6 +46,7 @@ public class InputSelector implements ExecutableComponent {
 			processWorkingDir = ArtifactManagerImpl.getInstance()
 					.getProcessWorkingDirectory(
 							ccp.getFlowExecutionInstanceID());
+			commonStorageDir=ArtifactManagerImpl.getInstance().getCommonStorageLocation() + File.separator + "inputSelectorDownloadedFiles";
 			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -68,7 +69,8 @@ public class InputSelector implements ExecutableComponent {
 			out.println("Individual file is selected");
 			if (individualFile.contains("http")
 					|| individualFile.contains("ftp")) {
-				String workingDirName = processWorkingDir;
+				 //String workingDirName = processWorkingDir;
+				String workingDirName = commonStorageDir;
 				inputFiles[0][0] = downloadFiles(individualFile, workingDirName);
 			} else {
 				inputFiles[0][0] = individualFile;
@@ -89,7 +91,9 @@ public class InputSelector implements ExecutableComponent {
 					// localListFilePath = ccp.getPublicResourcesDirectory()+
 					// "/inputSelectorDownloadedFiles/"+listFilePath.substring(listFilePath.lastIndexOf('/')+1,
 					// listFilePath.length());
-					String workingDirName = processWorkingDir;
+					
+					
+					String workingDirName = commonStorageDir;
 					localListFilePath = downloadFiles(listFilePath,
 							workingDirName);
 					textBuffer = new BufferedReader(new FileReader(
@@ -138,7 +142,7 @@ public class InputSelector implements ExecutableComponent {
 						}
 						if (fileLocation.contains("http")
 								|| fileLocation.contains("ftp")) {
-							String workingDirName = processWorkingDir;
+							String workingDirName = commonStroageDir;
 							inputFiles[i][0] = downloadFiles(fileLocation,
 									workingDirName);
 						} else {
@@ -177,7 +181,7 @@ public class InputSelector implements ExecutableComponent {
 						}
 						if (fileLocation.contains("http")
 								|| fileLocation.contains("ftp")) {
-							String workingDirName = processWorkingDir;
+							String workingDirName = commonStorageDir;
 							inputFiles[i][0] = downloadFiles(fileLocation,
 									workingDirName);
 						} else {
@@ -223,15 +227,15 @@ public class InputSelector implements ExecutableComponent {
 		}
 		String localFileName = workingDirName
 				+ File.separator
-				+ fileLocation.substring(fileLocation.lastIndexOf('/') + 1,
-						fileLocation.length());
+				+ fileLocation.substring(listFilePath.indexOf("//")+2,fileLocation.length()).replaceAll("/", "_");
+		
 		File localFile = new File(localFileName);
 		if (localFile.exists()) {
 			out.println("The file " + fileLocation
 					+ " alredy exists locally, avoiding re-download.");
 		} else {
 			FileDownload.download(fileLocation, localFileName);
-			out.println("File downloaded to local path.");
+			out.println("File downloaded to local path at  " + localFileName );
 		}
 
 		return localFileName;
