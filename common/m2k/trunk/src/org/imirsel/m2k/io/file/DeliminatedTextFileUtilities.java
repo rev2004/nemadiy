@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import org.imirsel.m2k.util.noMetadataException;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -22,8 +23,111 @@ public class DeliminatedTextFileUtilities {
     
     /** Creates a new instance of DeliminatedTextFileUtilities */
     public DeliminatedTextFileUtilities() {
+
     }
-    
+
+    public static final String USAGE = "args: \n" +
+            "-b /path/to/dir/of/input/files extension deliminator(c|t|s) /path/to/output/dir outputDeliminator(c|t|s) [-s]\n" +
+            "  OR\n" +
+            "/path/input/file deliminator(c|t|s) /path/output/file outputDeliminator(c|t|s) [-s]\n" +
+            "\n" +
+            "The -s flag forces the use of speech marks in the output file";
+
+    public static void main(String[] args){
+        try{
+            if (args[0].equalsIgnoreCase("-b")){
+                File inDir = new File(args[1]);
+                String extension = args[2];
+                String delim = args[3];
+                File outDir = new File(args[4]);
+                String outDelim = args[5];
+                boolean useSpeechMarks = false;
+                if(args.length > 6){
+                    if(args[6].equalsIgnoreCase("-s")){
+                        useSpeechMarks = true;
+                    }else{
+                        System.out.println("unrecognised argument: " + args[6] + "\n");
+                        System.out.println(USAGE);
+                    }
+                }
+
+                List<File> files = IOUtil.getFilteredPathStrings(inDir, extension);
+                for (Iterator<File> it = files.iterator(); it.hasNext();){
+                    File file = it.next();
+                    try{
+                        normaliseCSVFileFormat(file, delim, new File(outDir.getAbsolutePath() + File.separator + file.getName()), outDelim, useSpeechMarks);
+                    }catch(Exception e){
+                        System.out.println("Exception occured while trying to normalise: " + file.getAbsolutePath());
+                        System.out.println("Arguments received (minimum 6 required with -b flag): ");
+                        for (int i = 0; i < args.length; i++){
+                            System.out.println(i + ": " + args[i]);
+                        }
+                        System.out.println("---");
+                        System.out.println("Usage:");
+                        System.out.println(USAGE);
+
+                        System.out.println("---");
+                        System.out.println("Exception:");
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                System.out.println("done " + files.size() + " files.");
+
+            }else{
+                File in = new File(args[0]);
+                String delim = args[1];
+                File out = new File(args[2]);
+                String outDelim = args[3];
+                boolean useSpeechMarks = false;
+                if(args.length > 4){
+                    if(args[4].equalsIgnoreCase("-s")){
+                        useSpeechMarks = true;
+                    }else{
+                        System.out.println("unrecognised argument: " + args[4] + "\n");
+                        System.out.println(USAGE);
+                    }
+                }
+
+                try{
+                    normaliseCSVFileFormat(in, delim, out, outDelim, useSpeechMarks);
+                    System.out.println("done.");
+                }catch(Exception e){
+                    System.out.println("Exception occured while trying to normalise: " + in.getAbsolutePath());
+                    System.out.println("Arguments received (minimum 4 required): ");
+                    for (int i = 0; i < args.length; i++){
+                        System.out.println(i + ": " + args[i]);
+                    }
+                    System.out.println("---");
+                    System.out.println("Usage:");
+                    System.out.println(USAGE);
+
+                    System.out.println("---");
+                    System.out.println("Exception:");
+                    throw new RuntimeException(e);
+                }
+            }
+
+        }catch(Exception e){
+            System.out.println("Exception occurred. Arguments received (minimum 4 required): ");
+            for (int i = 0; i < args.length; i++){
+                System.out.println(i + ": " + args[i]);
+            }
+            System.out.println("---");
+            System.out.println("Usage:");
+            System.out.println(USAGE);
+
+            System.out.println("---");
+            System.out.println("Exception:");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void normaliseCSVFileFormat(File inputFile, String delim, File outputFile, String outputDelim, boolean useSpeechMarks) throws IOException {
+        String[][] data = loadDelimTextData(inputFile, delim, -1);
+        writeStringDataToDelimTextFile(outputFile, outputDelim, data, useSpeechMarks);
+    }
+
     /**
      * Writes the a 2D array of String data to a deliminated text file.
      * @param theData The 2D string array of data to write to file. Indexed [row][column].
