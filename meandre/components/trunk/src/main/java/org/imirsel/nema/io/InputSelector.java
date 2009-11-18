@@ -42,7 +42,7 @@ public class InputSelector implements ExecutableComponent {
 			throws ComponentExecutionException {
 		out = ccp.getOutputConsole();
 		logger = ccp.getLogger();
-		logger.info("initializing the inputselector");
+		logger.info("initializing the inputselector2");
 		try {
 			processWorkingDir = ArtifactManagerImpl.getInstance()
 					.getProcessWorkingDirectory(
@@ -236,7 +236,7 @@ public class InputSelector implements ExecutableComponent {
 					+ " alredy exists locally, avoiding re-download.");
 		} else {
 			FileDownload.download(fileLocation, localFileName);
-			out.println("File downloaded to local path at  " + localFileName );
+			out.println("File downloaded to local path." );
 		}
 
 		return localFileName;
