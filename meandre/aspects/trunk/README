@@ -1,0 +1,23 @@
+November 18th 2009 -Amit Kumar for NEMA project
+
+This project contains aspects that are used to sanitize the third party libraries to remove
+System.exit command particularily. 
+
+The aspects are used in conjunction with the ajc compiler 
+
+<http://www.eclipse.org/aspectj/downloads.php>
+
+
+The ajc compiler allows to weave a binary jar file and it outputs a jar file with byte code modified with the
+aspects defined.
+
+
+In order to sanitize jAudio jar following command was used
+
+./ajc -injars jAudio-mod.jar -outjar jAudio-sanitized.jar 
+-sourceroots src/main/java/org/imirsel/aspects -showWeaveInfo -verbose
+
+where jAudio-mod.jar is the jar file without the crude such as build/* the installer files etc.
+
+The sanitized jar file is jAudio-sanitized.jar.
+
