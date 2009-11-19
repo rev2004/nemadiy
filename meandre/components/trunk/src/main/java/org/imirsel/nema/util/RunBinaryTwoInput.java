@@ -372,11 +372,14 @@ private void runCommand(final String inputFilename2, final String inputFilename1
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         String line;
+        
         while ((line = br.readLine()) != null) {
           cout.println("\t" + line);
         }
+        int exitStatus;
 		try {
-			process.waitFor();
+			exitStatus = process.waitFor();
+			cout.println("Exit status: " + exitStatus);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
