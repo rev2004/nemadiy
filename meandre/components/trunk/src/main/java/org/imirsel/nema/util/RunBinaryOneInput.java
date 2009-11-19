@@ -188,6 +188,8 @@ import org.imirsel.service.*;
 		if (!command.exists()) {
 			File command2 = new File(dir.getCanonicalPath() + File.separator + execName);
 			if (!command2.exists()) {
+				cout.println("External Command NOT FOUND!");
+				cout.flush();
 				throw new RuntimeException("External Integration module was unable to locate your command!\n" +
 						"File names tried:\n\t" + command.getCanonicalPath() + "\n\t" + command2.getCanonicalPath() + "\n" +
 						"Please ensure that your binaries are in the working directory set in the ExternalInteration " +
@@ -328,8 +330,10 @@ import org.imirsel.service.*;
         while ((line = br.readLine()) != null) {
           cout.println("\t" + line);
         }
+        int exitStatus;
 		try {
-			process.waitFor();
+			exitStatus = process.waitFor();
+			cout.println("Exit status: " + exitStatus);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
