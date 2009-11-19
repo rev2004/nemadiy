@@ -30,6 +30,8 @@ import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
+import org.imirsel.service.*;
+
 
 /** This executable component executes an external binary using the process builder.
  *
