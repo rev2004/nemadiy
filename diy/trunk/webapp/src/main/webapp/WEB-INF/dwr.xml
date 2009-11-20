@@ -4,10 +4,10 @@
 <dwr>
     <allow>
         <create creator="spring" javascript="UserManager">
-            <param name="class" value="edu.illinois.gslis.imirsel.service.UserManager"/>
+            <param name="class" value="org.imirsel.nema.service.UserManager"/>
             <param name="beanName" value="userManager"/>
             <include method="getUsers"/>
         </create>
-        <convert converter="bean" match="edu.illinois.gslis.imirsel.model.User"/>
+        <convert converter="bean" match="org.imirsel.nema.model.User"/>
     </allow>
 </dwr>
