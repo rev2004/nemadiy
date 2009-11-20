@@ -44,11 +44,11 @@
         <level value="WARN"/>
     </logger>
    
-    <logger name="edu.illinois.gslis.imirsel">
+    <logger name="org.imirsel.nema.webapp">
         <level value="DEBUG"/>
     </logger>
 
-    <logger name="edu.illinois.gslis.imirsel.webapp.filter.StaticFilter">
+    <logger name="org.imirsel.nema.webapp.filter.StaticFilter">
         <level value="INFO"/>
     </logger>
 

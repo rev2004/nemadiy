@@ -18,7 +18,7 @@ import java.util.List;
  * <p>As an example consider the following Spring bean configuration:
 
  * <pre>
- * &lt;bean class=&quot;edu.illinois.gslis.imirsel.webapp.spring.ValidatorExtensionPostProcessor&quot;&gt;
+ * &lt;bean class=&quot;org.imirsel.nema.webapp.spring.ValidatorExtensionPostProcessor&quot;&gt;
  *   &lt;property name=&quot;validationConfigLocations&quot;&gt;
  *     &lt;list&gt;
  *       &lt;value&gt;/WEB-INF/foo-validation.xml&lt;/value&gt;
