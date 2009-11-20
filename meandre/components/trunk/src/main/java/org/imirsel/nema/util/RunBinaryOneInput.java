@@ -99,6 +99,8 @@ import org.imirsel.service.*;
 	private String extension= ".result";
 
 	private String outfile;
+	private String processWorkingDir;
+	private String processResultsDir;
 
 	// log messages are here
 	private Logger _logger;
@@ -111,6 +113,22 @@ import org.imirsel.service.*;
 	public void initialize ( ComponentContextProperties ccp ) {
 		this._logger = ccp.getLogger();
 		cout = ccp.getOutputConsole();
+		try {
+			processWorkingDir = ArtifactManagerImpl.getInstance()
+					.getProcessWorkingDirectory(
+							ccp.getFlowExecutionInstanceID());
+			processResultsDir = ArtifactManagerImpl.getInstance()
+			.getResultLocationForJob(ccp.getFlowExecutionInstanceID());
+		} catch (IOException e1) {
+			try {
+				throw new ComponentExecutionException(e1);
+			} catch (ComponentExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+      
 	}
 
 	/** This method just pushes a concatenated version of the entry to the
@@ -163,21 +181,27 @@ import org.imirsel.service.*;
 	 * @param ccp The properties associated to a component context
 	 */
 	public void dispose ( ComponentContextProperties ccp ) {
-
+		cout.close();
 	}
 
 	private void runCommand(final String inputFilename, java.io.PrintStream cout) throws IOException, RuntimeException {
 		//System.out.println("External Code Integration Module \nby Kris West, University of East Anglia, UK, kristopher.west@uea.ac.uk");
 
 		// Create File to represent working directory
-		File dir = new File(workingDir);
+		File dir;
+		if (!workingDir.contentEquals("")) {
+			dir = new File(workingDir);
+		} else {
+			dir = new File (processWorkingDir);
+		}
+		File resdir = new File(processResultsDir);
 
 		// Get the output filename
 		if (addExtension == false) {
-			outfile = dir.getCanonicalPath() + File.separator + outputFileName;
+			outfile = resdir.getCanonicalPath() + File.separator + outputFileName;
 		} 
 		else {
-			outfile = dir.getCanonicalPath() + File.separator + (new File(inputFilename)).getName() + extension;            
+			outfile = resdir.getCanonicalPath() + File.separator + (new File(inputFilename)).getName() + extension;            
 		}
 
 		// Create command
