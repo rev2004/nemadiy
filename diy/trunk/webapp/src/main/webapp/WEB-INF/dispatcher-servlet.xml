@@ -15,23 +15,23 @@
 
     <bean id="filenameController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 
-    <bean id="fileUploadController" class="edu.illinois.gslis.imirsel.webapp.controller.FileUploadController">
+    <bean id="fileUploadController" class="org.imirsel.nema.webapp.controller.FileUploadController">
         <property name="validator" ref="beanValidator"/>
         <property name="cancelView" value="redirect:mainMenu.html"/>
         <property name="formView" value="uploadForm"/>
         <property name="successView" value="uploadDisplay"/>
     </bean>
 
-    <bean id="passwordHintController" class="edu.illinois.gslis.imirsel.webapp.controller.PasswordHintController">
+    <bean id="passwordHintController" class="org.imirsel.nema.webapp.controller.PasswordHintController">
         <property name="userManager" ref="userManager"/>
         <property name="messageSource" ref="messageSource"/>
         <property name="mailEngine" ref="mailEngine"/>
         <property name="message" ref="mailMessage"/>
     </bean>
 
-    <bean id="reloadController" class="edu.illinois.gslis.imirsel.webapp.controller.ReloadController"/>
+    <bean id="reloadController" class="org.imirsel.nema.webapp.controller.ReloadController"/>
 
-    <bean id="signupController" class="edu.illinois.gslis.imirsel.webapp.controller.SignupController">
+    <bean id="signupController" class="org.imirsel.nema.webapp.controller.SignupController">
         <property name="validator" ref="beanValidator"/>
         <property name="formView" value="signup"/>
         <property name="successView" value="redirect:mainMenu.html"/>
@@ -43,11 +43,11 @@
         <property name="templateName" value="accountCreated.vm"/>
     </bean>
 
-    <bean id="userController" class="edu.illinois.gslis.imirsel.webapp.controller.UserController">
+    <bean id="userController" class="org.imirsel.nema.webapp.controller.UserController">
         <property name="userManager" ref="userManager"/>
     </bean>
 
-    <bean id="userFormController" class="edu.illinois.gslis.imirsel.webapp.controller.UserFormController">
+    <bean id="userFormController" class="org.imirsel.nema.webapp.controller.UserFormController">
         <property name="validator" ref="beanValidator"/>
         <property name="formView" value="userForm"/>
         <property name="successView" value="redirect:users.html"/>
