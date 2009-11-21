@@ -64,12 +64,11 @@
         }
 
         div#branding h1 {
-            font-size: 2.6em;
+            font-size: 1.6em;
             letter-spacing: -1px;
-
             margin: 0;
             line-height: 1.5em;
-            color: #3e9ade;
+            color: #3a3c3e;
         }
 
         div#branding p {

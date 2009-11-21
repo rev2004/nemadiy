@@ -4,7 +4,6 @@
     body {
         margin: 0;
         padding: 0;
-        background: white url(images/background.gif) top left repeat-x;
         text-align: center;
     }
     div#page {
@@ -22,12 +21,11 @@
             height: 79px; /* needed by IE 7 */
         }
             div#switchLocale {
-                position: absolute;
                 right: 10px;
             }
         div#branding {
-            float: left;
-            width: 50%;
+        	float:left;
+            width: auto;
             margin: 0;
             padding: 10px 0 10px 30px;
             text-align: left;
