@@ -31,11 +31,6 @@
         display: none;
     }
     div#nav {
-        position: absolute;
-        top: -25px;
-        left: 0px;
-        width: 100%;
 
-        text-align: left;
     }
 /* END CONTENT */
