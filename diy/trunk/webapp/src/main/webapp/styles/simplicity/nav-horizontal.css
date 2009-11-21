@@ -3,13 +3,15 @@
 /* NAV */
  
   
-    div#nav div.wrapper {
+    div#nav {
         position: absolute;
         right: 20px;
         top: 6px;
     }
 	
+	  div#nav div.wrapper {
 
+    }
 
 
 /* Barry CSS overrides */	
