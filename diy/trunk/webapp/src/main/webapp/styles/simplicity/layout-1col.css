@@ -4,7 +4,6 @@
  
 /* NAV BAR AT THE TOP AND ONE COLUMN OF CONTENT */
     div#content {
-        position: relative;
         width: 701px;
         margin: 0 auto 20px auto;
         padding: 0;
