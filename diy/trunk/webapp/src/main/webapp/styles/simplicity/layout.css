@@ -19,6 +19,7 @@
             padding: 1px 0 1px 1px;
             text-align: left;
             height: 5px; /* needed by IE 7 */
+			border-top: solid 1px #9c9c9c
         }
             div#switchLocale {
                 right: 10px;
