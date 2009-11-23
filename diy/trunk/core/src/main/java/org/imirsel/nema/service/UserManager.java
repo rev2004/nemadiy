@@ -61,4 +61,6 @@ public interface UserManager extends UniversalManager {
      * @param userId the user's id
      */
     void removeUser(String userId);
+
+    User getCurrentUser();
 }
