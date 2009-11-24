@@ -12,7 +12,7 @@ ${job.description}
 
                     <div id="formcontainer_job">
                         <div class="form_job">
-                            <form id="theform" action="jobaction.html" enctype="multipart/form-data" method="post">
+                            
                                 <fieldset id="pt1">
 									<TABLE id="table">
 									<TR>
@@ -43,23 +43,29 @@ ${job.description}
 
                                 </fieldset>
 
-								<input name="id" type="hidden" value="${job.id}"/>
+								
                             </form>
                         </div>
                        
-
+		<form id="theform" action="jobaction.html" enctype="multipart/form-data" method="post">
                         <div class="form_job">
-                            <fieldset id="pt1">
-                                <input id="submitform" name="submit" tabindex="6" value="Stop This Job" type="submit">
-                            </fieldset>
-                            <fieldset id="pt2">
-                                <input id="submitform" tabindex="6" name="submit" value="Delete This Job" type="submit" disabled>
-                            </fieldset>
-
+                             <c:if test="${job.running}">
+                             <fieldset id="pt1">
+                               <input id="submitform" name="submit" tabindex="6" value="Abort This Job" type="submit" 
+                                 />
+                                
+                            </fieldset></c:if>
                             <fieldset id="pt3">
-                                <input id="submitform" tabindex="6" name="submit" value="View Job Results" type="submit" disabled>
+                                <input id="submitform" tabindex="6" name="submit" value="Delete This Job" type="submit" disabled/>
                             </fieldset>
+						  <c:if test="${job.done}">
+                            <fieldset id="pt4">
+                                <input id="submitform" tabindex="6" name="submit" value="View Job Results" type="submit" /> 
+                               
+                            </fieldset>
+                            </c:if>
                         </div>
-
+			<input name="id" type="hidden" value="${job.id}"/>
+		</form>
                     </div>
 </body>
