@@ -1,5 +1,7 @@
 package org.imirsel.nema.webapp.controller;
 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,7 +28,7 @@ public class FlowController extends MultiActionController{
 	
 	
 	public ModelAndView getFlowTemplates(HttpServletRequest req, HttpServletResponse res){
-		this.flowService.getFlowTemplates();
+		Set<Flow> flowSet=this.flowService.getFlowTemplates();
 		return null;
 	} 
 	

@@ -12,6 +12,20 @@
             </props>
         </property>
     </bean>
+    <!--  mock flow service -->
+    <bean id="flowService" class="org.imirsel.nema.mock.MockFlowServiceImpl">
+    </bean>
+    
+    <!-- flow controller -->
+    <bean id="flowController" class="org.imirsel.nema.webapp.controller.FlowController">
+    	<property name="flowService" ref="flowService"/>
+    </bean>
+
+	<!-- job controller -->
+ 	<bean id="jobController" class="org.imirsel.nema.webapp.controller.JobController">
+   		<property name="flowService" ref="flowService"/>
+    	 <property name="userManager" ref="userManager"/>
+    </bean>
 
     <bean id="filenameController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 
