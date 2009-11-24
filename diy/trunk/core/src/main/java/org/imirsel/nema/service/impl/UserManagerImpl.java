@@ -140,11 +140,14 @@ public class UserManagerImpl extends UniversalManagerImpl implements UserManager
 		User user = null;
 
 		if(obj!=null){
+			System.out.println("SecurityContextHolder.getContext().getAuthentication().getPrincipal() is null");
 			return null;
 		}if (obj instanceof UserDetails) {
+			System.out.println("Found user detail");
 			String username = ((UserDetails)obj).getUsername();
 			user = getUserByUsername(username);
 		}else{
+			System.out.println("===> obj is: "+ obj);
 			user = getUserByUsername(obj.toString());
 		}                                                                                                                                                              
 

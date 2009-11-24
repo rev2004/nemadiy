@@ -84,4 +84,23 @@ public class Constants {
      * The name of the CSS Theme setting.
      */
     public static final String CSS_THEME = "csstheme";
+
+    /**
+     * The name of the available flow list, a request scope attribute to display
+     * the list of template flows
+     */
+	public static final String FLOW_LIST = "flowList";
+	
+	/**
+	 * The name of the flow, a request scope attribute to display the flow metadata
+	 * and for the user to create a new flow based on this template
+	 */
+	public static final String FLOW = "flow";
+
+	/**
+	 * The name of the job, a request scope attribute to display the flow metadata
+	 */
+	public static final String JOB = "job";
+
+	public static final String JOBLIST = "jobList";
 }
