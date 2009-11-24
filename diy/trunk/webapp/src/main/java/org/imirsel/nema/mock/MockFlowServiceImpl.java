@@ -36,13 +36,13 @@ public class MockFlowServiceImpl implements FlowService{
 			Flow flow = new Flow();
 			flow.setCreatorId(100l);
 			flow.setDateCreated(new Date());
-			flow.setDescription("This is a test flow 1");
+			flow.setDescription("This flow extracts features from the music collection");
 			flow.setId(1l);
 			flow.setInstanceOf(null);
 			flow.setKeyWords("test, flow, feature extractor");
-			flow.setName("flow 1");
+			flow.setName("Feature Extractor Flow");
 			flow.setTemplate(true);
-			flow.setUrl("http://test.org/flow1");
+			flow.setUrl("http://test.org/extractor");
 			
 			Flow flow1 = new Flow();
 			flow1.setCreatorId(101l);
@@ -59,13 +59,27 @@ public class MockFlowServiceImpl implements FlowService{
 			Flow flow2 = new Flow();
 			flow2.setCreatorId(101l);
 			flow2.setDateCreated(new Date());
-			flow2.setDescription("This is a test flow 3");
+			flow2.setDescription("This flow applies classification algorithms");
 			flow2.setId(3l);
 			flow2.setInstanceOf(null);
 			flow2.setKeyWords("test, flow, algo");
-			flow2.setName("flow 3");
+			flow2.setName("Feature Classification Flow");
 			flow2.setTemplate(true);
-			flow2.setUrl("http://test.org/flow3");
+			flow2.setUrl("http://test.org/classification");
+			
+			Flow flow3 = new Flow();
+			flow3.setCreatorId(101l);
+			flow3.setDateCreated(new Date());
+			flow3.setDescription("This flow does evaluation of the results");
+			flow3.setId(4l);
+			flow3.setInstanceOf(null);
+			flow3.setKeyWords("test, flow, algo");
+			flow3.setName("Evaluation Flow");
+			flow3.setTemplate(true);
+			flow3.setUrl("http://test.org/evaluation");
+			
+			
+			
 			flowList.add(flow);
 			flowList.add(flow1);
 			flowList.add(flow2);
@@ -73,9 +87,9 @@ public class MockFlowServiceImpl implements FlowService{
 			
 			flowTemplates.add(flow);
 			flowTemplates.add(flow2);
+			flowTemplates.add(flow3);
 			
-			
-			getJobList();
+			//getJobList();
 	 }
 	    
   
@@ -270,7 +284,8 @@ public class MockFlowServiceImpl implements FlowService{
 		job.setDescription(description);
 		job.setName(name);
 		job.setId(count.incrementAndGet()+0l);
-		job.setFlow(flowList.get((int) flowInstanceId));
+		Flow flow = getFlow(flowInstanceId);
+		job.setFlow(flow);
 		job.setToken(token);
 		job.setPort(1024+count.get());
 		job.setExecPort(2024+count.get());
@@ -279,6 +294,7 @@ public class MockFlowServiceImpl implements FlowService{
 		job.setOwnerEmail(userEmail);
 		job.setOwnerId(userId);
 		job.setResults(getMockResults(count.get()));
+		job.setSubmitTimestamp(new Date());
 		jobMap.put(count.get()+0l, job);
 		return job;
 	}
@@ -380,6 +396,28 @@ public class MockFlowServiceImpl implements FlowService{
 		 if(job!=null){
 			 job.setStatusCode(Job.JobStatus.ABORTED.getCode());
 		 }
+	}
+
+
+
+	public Flow getFlow(long id) {
+		Iterator<Flow> it=flowList.iterator();
+		Flow flow = null;
+		while(it.hasNext()){
+			flow = it.next();
+			if(flow.getId()==id){
+				return flow;
+			}
+		}
+		
+		it=flowTemplates.iterator();
+		while(it.hasNext()){
+			flow = it.next();
+			if(flow.getId()==id){
+				return flow;
+			}
+		}
+		return null;
 	}
 
 

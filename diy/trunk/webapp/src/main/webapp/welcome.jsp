@@ -64,10 +64,7 @@
 	</c:when>
 
 	<c:otherwise>
-	</c:otherwise>
-</c:choose>
-
-<div style="margin-left:30px">
+	<div style="margin-left:30px">
 	<H3  align="left">NEMA Introduction</H3>
 	<p align="left">
 	Phase I of the Networked Environment for Music Analysis (NEMA) framework project is a multinational, 
@@ -100,4 +97,8 @@
 	<br>
 
 </div>
+	
+	</c:otherwise>
+</c:choose>
+
 
