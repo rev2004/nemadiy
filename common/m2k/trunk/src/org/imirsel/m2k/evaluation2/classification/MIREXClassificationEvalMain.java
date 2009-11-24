@@ -117,6 +117,11 @@ public class MIREXClassificationEvalMain {
     
     public void performEvaluation() {
 
+        boolean performStatSigTests = true;
+        if(systemNames.size() < 2){
+            performStatSigTests = false;
+        }
+
         //get each directory of results
         System.err.println("Determining location of results files for each system for each experiment fold...");
         ArrayList<ArrayList<File>> resultsFilesPerSystemPerFold = new ArrayList<ArrayList<File>>();
@@ -219,7 +224,7 @@ public class MIREXClassificationEvalMain {
         File summaryCSV = WriteResultFilesClass.prepSummaryResultData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", hierarchyFile != null, true);
 
         //run friedman test if matlab available?
-        if (getPerformMatlabStatSigTests()){
+        if (getPerformMatlabStatSigTests() && performStatSigTests){
             System.err.println("Performing Friedman's tests in Matlab...");
             String[] systemNamesArr = systemNames.toArray(new String[systemNames.size()]);
             
@@ -230,8 +235,6 @@ public class MIREXClassificationEvalMain {
                 performFriedmanTestWithClassAccuracy(rootEvaluationDir, discountedPerClassCSV, systemNamesArr);
                 performFriedmanTestWithFoldAccuracy(rootEvaluationDir, discountedPerFoldCSV, systemNamesArr);
             }
-
-
         }
     }
     
