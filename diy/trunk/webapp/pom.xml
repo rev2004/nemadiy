@@ -376,15 +376,8 @@
   			<artifactId>jena</artifactId>
   			<version>2.5.7</version>
 		</dependency>
-				
-      <dependency>
-       <groupId>mock</groupId>
-       <artifactId>nema-mockflow-service</artifactId>
-       <version>1.0.2-SNAPSHOT</version>
-     </dependency>
-
 	        
-       
+      
         
     </dependencies>
 
