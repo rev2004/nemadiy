@@ -227,10 +227,10 @@
     </servlet-mapping>
     
     <!-- Dispatching handled by StaticFilter -->
-    <!--<servlet-mapping>
+    <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.html</url-pattern>
-    </servlet-mapping>-->
+    </servlet-mapping>
 
     <session-config>
         <session-timeout>10</session-timeout>

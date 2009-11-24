@@ -92,4 +92,6 @@ public interface FlowService {
 	 */
    public Long storeFlowInstance(Flow instance);
 
+	public Flow getFlow(long id);
+
 }

@@ -98,6 +98,11 @@
                 /classification.html=filenameController
                 /evaluation.html=filenameController  
                 /passwordHint.html=passwordHintController
+                /flowlist.html=flowController
+                 /flowform.html=flowController
+                 /runjob.html=jobController
+                  /jobdetail.html=jobController
+                   /jobaction.html=jobController
                 /*.jsp=viewResolver
             </value>
         </property>
