@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -17,7 +16,6 @@ import org.imirsel.model.Job;
 import org.imirsel.model.JobResult;
 import org.imirsel.service.ArtifactManagerImpl;
 import org.imirsel.util.JndiHelper;
-import org.imirsel.util.JobStatus;
 import org.meandre.core.engine.Probe;
 
 
@@ -101,7 +99,7 @@ public class NemaFlowNotification implements Probe {
         	int indexOfSlash2 = sFlowUniqueID.substring(0,indexOfSlash1).lastIndexOf('/');
         	String token = sFlowUniqueID.substring(indexOfSlash2+1,indexOfSlash1);
 			updateTable= con.prepareStatement(sqlUpdate);
-        	updateTable.setInt(1, JobStatus.START);
+        	updateTable.setInt(1, Job.JobStatus.STARTED.getCode());
         	updateTable.setString(2, sFlowUniqueID);
 			updateTable.setString(3, token);
 			//updateTable.setTimestamp(4, new Timestamp(new Date().getTime()));
@@ -137,7 +135,8 @@ public class NemaFlowNotification implements Probe {
 	 */
 	public void probeFlowFinish(String sFlowUniqueID, Date ts){
 		logger.info("Flow Finished " + ts.toString()+ " " +sFlowUniqueID);
-		databaseQuery(sFlowUniqueID, JobStatus.FINISHED);
+		logger.info("Flow Finished: JobStatus.FINISHED "+ Job.JobStatus.FINISHED.getCode());
+		databaseQuery(sFlowUniqueID, Job.JobStatus.FINISHED.getCode());
 		int jobId = getJobIdFromFlowUniqueID(sFlowUniqueID);
 		System.out.println("Found job : "+ jobId);
 		if(jobId==-1){
@@ -168,7 +167,7 @@ public class NemaFlowNotification implements Probe {
 	 */
 	public void probeFlowAbort(String sFlowUniqueID, Date ts,String message){
 		System.out.println("Flow Aborted " + ts.toString()+ " " +sFlowUniqueID);
-		databaseQuery(sFlowUniqueID, JobStatus.ABORTED);
+		databaseQuery(sFlowUniqueID, Job.JobStatus.ABORTED.getCode());
 		int jobId = getJobIdFromFlowUniqueID(sFlowUniqueID);
 		if(jobId==-1){
 			return;
