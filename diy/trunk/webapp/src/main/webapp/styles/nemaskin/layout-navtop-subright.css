@@ -3,7 +3,12 @@
 @import url(nav-horizontal.css);
  
 /* NAV BAR AT THE TOP AND TWO COLUMNS OF CONTENT */
-    div#content {
+    
+    div#header {
+    	height:10px;
+    }
+	
+	div#content {
         width: 701px;
         margin: 0 auto 20px auto;
         padding: 0;
@@ -24,7 +29,10 @@
             margin: 0;
             margin-left: 10px;
         }
+		
     div#nav {
+        position: relative;
+		top: -0px;
 
     }
 	
