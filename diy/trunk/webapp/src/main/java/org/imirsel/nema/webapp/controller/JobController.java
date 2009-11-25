@@ -97,10 +97,18 @@ public class JobController extends MultiActionController {
 
 	public ModelAndView getUserJobs(HttpServletRequest req,
 			HttpServletResponse res) {
+		
 		User user = userManager.getCurrentUser();
+		logger.debug("USER IS ====> " + user);
+
+		if (user == null) {
+			user = userManager.getUserByUsername("admin");
+		}
 		long userId = user.getId();
-		List<Job> jobList = flowService.getUserJobs(userId);
-		return null;
+	
+		logger.debug("start to list the jobs of   "+ user);
+		List<Job> jobs = flowService.getUserJobs(userId);
+		return new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
 	}
 
 	public ModelAndView getUserNotifications(HttpServletRequest req,
