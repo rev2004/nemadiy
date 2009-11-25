@@ -11,21 +11,16 @@ div#branding p {
         font-size: 0.8em;
         border-bottom: 2px solid #c6c6c6;
     }
-	
-	  div#nav div.wrapper {
-		position:absolute;
-		top:-20px;
-		right: 0px;
-    }
-	
-	
-	
     * html div#nav {
         /* hide ie/mac \*/
         height: 1%;
         /* end hide */
     }
-    
+    div#nav div.wrapper {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
     div#nav ul {
         width: auto;
         margin: 0;

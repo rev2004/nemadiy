@@ -15,11 +15,11 @@
     
     /* HEADER */
         div#header {
-            margin: 0 0 5em 0;
-            padding: 1px 0 1px 1px;
+            margin: 0 0 3em 0;
+            padding: 0px 0 0px 40px;
             text-align: left;
             height: 5px; /* needed by IE 7 */
-			border-top: solid 1px #9c9c9c
+			
         }
             div#switchLocale {
                 right: 10px;
@@ -28,7 +28,7 @@
         	float:left;
             width: auto;
             margin: 0;
-            padding: 10px 0 10px 30px;
+            padding: 15px 0 10px 0px;
             text-align: left;
         }
         div#search {
@@ -50,6 +50,7 @@
         /* MAIN */
             div#main {
                 padding-left: 15px;
+				padding-top: 1em;
             }
                 div#main form ul li {
                     list-style-type: none;
