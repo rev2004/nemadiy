@@ -70,7 +70,8 @@ public class NemaFlowNotification implements Probe {
 	 * @param ts The time stamp
 	 */
 	public void probeFlowStart(String sFlowUniqueID, Date ts, String weburl){
-		System.out.println("Flow Started " + ts.toString()+ " " +sFlowUniqueID + "  " + weburl);
+		logger.info("Flow Started: " + ts.toString()+ " " +sFlowUniqueID + "  " + weburl);
+		logger.info("Flow Started: " + Job.JobStatus.STARTED.getCode());
 		// create the directories for this flow
 		try {
 			ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(sFlowUniqueID);
