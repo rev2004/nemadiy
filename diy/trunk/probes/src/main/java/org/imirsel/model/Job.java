@@ -7,6 +7,7 @@ import org.imirsel.annotations.SqlPersistence;
 
 
 
+
 @SqlPersistence(
 	select = "select * from job where token=?",	
 	create =  "create table IF NOT EXISTS job" +
@@ -38,7 +39,7 @@ import org.imirsel.annotations.SqlPersistence;
 public class Job {
 	
 	static public enum JobStatus {
-	      UNKNOWN(-1), SUBMITTED(0), STARTED(1), FINISHED(2), FAILED(3), ABORTED(4);
+	    UNKNOWN(-1), SCHEDULED(0), SUBMITTED(1), STARTED(2), FINISHED(3), FAILED(4), ABORTED(5);
 
 	    private final int code;
 
@@ -47,7 +48,7 @@ public class Job {
 	    public int getCode() { return code; }
 
 	    @Override
-		public String toString() {
+	    public String toString() {
 	         String name = null;
 	         switch (code) {
 
@@ -55,28 +56,33 @@ public class Job {
 	               name = "Unknown";
 	               break;
 	            }
-
+	         
 	            case 0: {
-	               name = "Submitted";
+	               name = "Scheduled";
 	               break;
 	            }
 
 	            case 1: {
-	               name = "Started";
+	               name = "Submitted";
 	               break;
 	            }
 
 	            case 2: {
-	               name = "Ended";
+	               name = "Started";
+	               break;
+	            }
+
+	            case 3: {
+	               name = "Finished";
 	               break;
 	            }
 	            
-	            case 3: {
-	                name = "Ended";
+	            case 4: {
+	                name = "Failed";
 	                break;
 	             }
 
-	            case 4: {
+	            case 5: {
 	                name = "Aborted";
 	                break;
 	             }
@@ -89,35 +95,41 @@ public class Job {
 	         JobStatus status = null;
 	         switch (code) {
 
-	            case -1: {
+	         case -1: {
 	               status = JobStatus.UNKNOWN;
 	               break;
 	            }
 
 	            case 0: {
+	               status = JobStatus.SCHEDULED;
+	               break;
+	             }
+	            
+	            case 1: {
 	               status = JobStatus.SUBMITTED;
 	               break;
 	            }
 
-	            case 1: {
+	            case 2: {
 	               status = JobStatus.STARTED;
 	               break;
 	            }
 
-	            case 2: {
+	            case 3: {
 	               status = JobStatus.FINISHED;
 	               break;
 	            }
 	            
-	            case 3: {
-	                status = JobStatus.FAILED;
-	                break;
+	            case 4: {
+	               status = JobStatus.FAILED;
+	               break;
 	             }
 	            
-	            case 4: {
-	                status = JobStatus.ABORTED;
-	                break;
+	            case 5: {
+	               status = JobStatus.ABORTED;
+	               break;
 	             }
+
 	            
 	         }
 	         return status;

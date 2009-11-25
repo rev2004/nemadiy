@@ -31,7 +31,7 @@ public class ProbeIntegrationTest {
 		Logger logger = Logger.getAnonymousLogger();
 		String sFlowUrl ="http://test.org/helloworld/";
 		String token = "tokenDD-"+System.currentTimeMillis();
-		MeandreClient meandreClient  = new MeandreClient("nema.lis.uiuc.edu", 11709);
+		MeandreClient meandreClient  = new MeandreClient("128.174.154.145", 11709);
 		meandreClient.setLogger(logger);
 		meandreClient.setCredentials("admin", "admin");
 		ExecResponse uriExecutionInstance=null;
