@@ -139,6 +139,13 @@
   <scope>test</scope>
   </dependency>
   
+     <dependency>
+       <groupId>org.apache.lucene</groupId>
+       <artifactId>lucene-core</artifactId>
+       <version>2.2.0</version>
+     </dependency>
+        
+  
   
   
         <dependency>
@@ -154,9 +161,17 @@
         </dependency>
       	<dependency>
             <groupId>org.meandre</groupId>
-            <artifactId>meandre-core</artifactId>
+            <artifactId>meandre-kernel</artifactId>
             <version>${meandre-server.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.meandre</groupId>
+            <artifactId>meandre-store</artifactId>
+            <version>${meandre-server.version}</version>
+        </dependency>
+        
+
+    
      
     
   </dependencies>
