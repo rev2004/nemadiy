@@ -101,9 +101,11 @@
                 /flowlist.html=flowController
                  /flowform.html=flowController
                  /runjob.html=jobController
+                  /abortJob.html=jobController
                   /jobdetail.html=jobController
                    /jobaction.html=jobController
                    /getUserJobs.html=jobController
+                   
                 /*.jsp=viewResolver
             </value>
         </property>
