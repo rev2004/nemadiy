@@ -8,7 +8,8 @@
     <version>1.0.2-SNAPSHOT</version>
     <name>Nema  Modular Application</name>
     <url>http://www.imirsel.org</url>
-
+    
+      
     <prerequisites>
         <maven>2.0.6</maven>
     </prerequisites>
@@ -154,8 +155,9 @@
         </repository>
         <repository>
           <id>jena</id>
-          <url>http://jena.hpl.hp.com/repo/</url>
+          <url>http://openjena.org/repo/</url>
         </repository>
+        
             <repository>
             <id>monk</id>
             <url>http://www.monkproject.org/maven2</url>
@@ -236,7 +238,7 @@
     <modules>
         <module>core</module>
         <module>web</module>
-    <module>probes</module>
+        <module>probes</module>
   </modules>
 <!--
     <reporting>
@@ -388,7 +390,30 @@
                 <cargo.container.url>http://easynews.dl.sourceforge.net/sourceforge/jboss/jboss-4.0.5.GA.zip</cargo.container.url>
             </properties>
         </profile>
+    
+          <profile>
+      		<id>meandre-dev</id>
+      		<properties>
+      			<meandre.host>128.174.154.145</meandre.host>
+      			<meandre.port>11709</meandre.port>
+      			<meandre.username>admin</meandre.username>
+      			<meandre.password>admin</meandre.password>
+      		</properties>
+     	 </profile>
+     	 
+     	  <profile>
+      		<id>meandre-production</id>
+      		<properties>
+      			<meandre.host>nema.lis.uiuc.edu</meandre.host>
+      			<meandre.port>11709</meandre.port>
+      			<meandre.username>admin</meandre.username>
+      			<meandre.password>admin</meandre.password>
+      		</properties>
+     	 </profile>
+     	 
     </profiles>
+    
+    
 
     <properties>
         <!-- Application settings -->
@@ -397,6 +422,9 @@
         <web.framework>spring</web.framework>
         <amp.genericCore>true</amp.genericCore>
         <amp.fullSource>true</amp.fullSource>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    
         
         <!-- Framework dependency versions -->
         <appfuse.version>2.0.2</appfuse.version>
