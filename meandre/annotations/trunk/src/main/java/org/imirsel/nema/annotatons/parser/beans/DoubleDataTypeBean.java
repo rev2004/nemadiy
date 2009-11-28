@@ -6,7 +6,7 @@ public class DoubleDataTypeBean implements DataTypeBean{
 	String renderer;
 	double max;
 	double min;
-	String className = this.getClass().getName();
+	String className = "org.imirsel.nema.annotatons.parser.beans.DoubleDataTypeBean";
 	
 	public double getMax() {
 		return max;
