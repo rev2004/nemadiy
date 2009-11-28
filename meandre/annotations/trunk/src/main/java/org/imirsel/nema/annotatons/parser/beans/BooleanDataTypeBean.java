@@ -3,7 +3,7 @@ package org.imirsel.nema.annotatons.parser.beans;
 
 public class BooleanDataTypeBean implements DataTypeBean{
 	String renderer;
-	String className = this.getClass().getName();
+	String className = "org.imirsel.nema.annotatons.parser.beans.BooleanDataTypeBean";
 	
 	boolean[] valueList = {true,false};
 	

@@ -4,7 +4,7 @@ package org.imirsel.nema.annotatons.parser.beans;
 public class StringDataTypeBean implements DataTypeBean{
 	String[] valueList;
 	String renderer;
-	String className = this.getClass().getName();
+	String className = "org.imirsel.nema.annotatons.parser.beans.StringDataTypeBean";
 	
 	public String[] getValueList() {
 		return valueList;

@@ -6,10 +6,14 @@ import java.lang.reflect.Method;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.imirsel.nema.annotations.*;
 import org.imirsel.nema.annotatons.parser.beans.*;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
 public class DataTypeAnnotationParser {
 	
@@ -98,39 +102,9 @@ public class DataTypeAnnotationParser {
 		}
 		return null;
 	}
-/*
 
-	public static void main(String[] args){
-		DataTypeAnnotationParser dtp = new DataTypeAnnotationParser();
-		HashMap<String,List<DataTypeBean>> hmap=dtp.getComponentDataType(DataTypeTestComponent.class);
+
 	
-		Iterator<String> itKey = hmap.keySet().iterator();
-		
-		while(itKey.hasNext()){
-			String key = itKey.next();
-			
-			System.out.println("Component Property: " + key);
-			List<DataTypeBean> list = hmap.get(key);
-			for(int i=0; i<list.size();i++ ){
-				System.out.println("**"+list.get(i));
-			}
-			
-			
-			
-		}
-		
-		Object ob = hmap.get("Feature Values Output File");
-		XStream xstream = new XStream(new JettisonMappedXmlDriver());
-        xstream.setMode(XStream.NO_REFERENCES);
-        //System.out.println(xstream.toXML(hmap.get("Feature Values Output File")));		
-	    System.out.println(xstream.toXML(hmap));		
-    	
-        
-		
-		
-		
-	}
 	
-	*/
 
 }

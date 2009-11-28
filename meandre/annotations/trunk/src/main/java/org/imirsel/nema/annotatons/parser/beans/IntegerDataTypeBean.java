@@ -6,7 +6,8 @@ public class IntegerDataTypeBean implements DataTypeBean{
 	String renderer;
 	int max;
 	int min;
-	String className = this.getClass().getName();
+	String className = "org.imirsel.nema.annotatons.parser.beans.IntegerDataTypeBean";
+	
 	
 	public int getMax() {
 		return max;
