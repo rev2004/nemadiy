@@ -86,7 +86,7 @@ public class TestMe {
 		Iterator<String> its = values.iterator();
 		
 		while(its.hasNext()){
-			System.out.println(its.next());
+			System.out.println("value: "+its.next());
 		}
 		
 		Map<String,String>s =propertiesDefn.getOtherProperties("SampleRate");
@@ -97,6 +97,14 @@ public class TestMe {
 		while(it1.hasNext()){
 			String key = it1.next();
 			System.out.println(key +"  " + s.get(key));
+		}
+		
+		Set<String> keyset=propertiesDefn.getKeys();
+		
+		Iterator<String> its1 = keyset.iterator();
+		
+		while(its1.hasNext()){
+			System.out.println("key is: "+its1.next());
 		}
 		
 		
