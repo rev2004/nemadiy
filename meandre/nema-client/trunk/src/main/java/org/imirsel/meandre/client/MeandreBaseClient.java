@@ -181,7 +181,7 @@ public class MeandreBaseClient{
 		    nvp = queryParams.toArray(nvp);
 		    get.setQueryString(nvp);
 		}
-		_log.fine("executing GET:  " + extractMethodsURIString(get));
+		//_log.fine("executing GET:  " + extractMethodsURIString(get));
 		int httpCode=0;
 		try{
 			getHttpClient().executeMethod(get);
@@ -225,7 +225,7 @@ public class MeandreBaseClient{
 		    get.setQueryString(nvp);
 		}
 		byte[] baResponse = null;
-		_log.fine("executing GET:  " + extractMethodsURIString(get));
+		//_log.fine("executing GET:  " + extractMethodsURIString(get));
 		try{
 			getHttpClient().executeMethod(get);
 			verifyResponseOK(get);
@@ -269,7 +269,7 @@ public class MeandreBaseClient{
             get.setQueryString(nvp);
         }
         InputStream insResponse = null;
-        _log.fine("executing GET:" + extractMethodsURIString(get));
+        //_log.fine("executing GET:" + extractMethodsURIString(get));
         try{
             getHttpClient().executeMethod(get);
 			verifyResponseOK(get);
@@ -324,8 +324,8 @@ public class MeandreBaseClient{
         post.getParams().setBooleanParameter(
 				HttpMethodParams.USE_EXPECT_CONTINUE, true);
         byte[] baResponse = null;
-        _log.fine("executing POST: " + extractMethodsURIString(post));
-        _log.finer("POST contents:\n" + post.toString());
+       //_log.fine("executing POST: " + extractMethodsURIString(post));
+        //_log.finer("POST contents:\n" + post.toString());
         try{
             getHttpClient().executeMethod(post);
 			verifyResponseOK(post);
@@ -349,7 +349,7 @@ public class MeandreBaseClient{
 			Set<NameValuePair> queryParams) throws TransmissionException {
 	   
         int httpCode=executeGetRequestNoBlock(sRestCommand, queryParams);
-        _log.finer("Response from GET -NoBlock:\n" + httpCode);
+        //_log.finer("Response from GET -NoBlock:\n" + httpCode);
         return httpCode;
 	}
 	
@@ -375,7 +375,7 @@ public class MeandreBaseClient{
 	        throw new TransmissionException(
 	                "Server response couldn't be converted to UTF-8 text", e);
 	    }
-        _log.finer("Response from GET:\n" + sRetrieved);
+        //_log.finer("Response from GET:\n" + sRetrieved);
         return sRetrieved;
 	}
 
