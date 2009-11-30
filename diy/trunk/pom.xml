@@ -42,10 +42,7 @@
     <name>Monk Snapshot Repository</name>
     <url>scp://monk.lis.illinois.edu/content/web/root/snapshot</url>
   </snapshotRepository>
-  
-  
-    <downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
-  
+  <downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
 </distributionManagement>
 
 
@@ -157,11 +154,17 @@
           <id>jena</id>
           <url>http://openjena.org/repo/</url>
         </repository>
-        
-            <repository>
+         <repository>
             <id>monk</id>
             <url>http://www.monkproject.org/maven2</url>
         </repository> 
+         <repository>
+            <id>snapshot</id>
+            <url>http://www.monkproject.org/snapshot</url>
+        </repository> 
+
+
+
     </repositories>
 
     <pluginRepositories>
