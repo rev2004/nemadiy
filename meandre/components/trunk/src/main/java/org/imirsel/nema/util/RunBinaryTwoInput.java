@@ -31,6 +31,7 @@ import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
 import org.imirsel.service.*;
+import org.imirsel.nema.util.ProcessOutputReceiverClass;
 
 
 /** This executable component executes an external binary using the process builder.
@@ -106,6 +107,8 @@ import org.imirsel.service.*;
 	private String outfile;
 	private String processWorkingDir;
 	private String processResultsDir;
+	private boolean isAborted = false;
+	Process process;
 
 	// log messages are here
 	private Logger _logger;
@@ -118,6 +121,10 @@ import org.imirsel.service.*;
 	public void initialize ( ComponentContextProperties ccp ) {
 		this._logger = ccp.getLogger();
 		cout = ccp.getOutputConsole();
+		if(process != null) {
+            process.destroy();
+        }
+		isAborted = false;
 		try {
 			processWorkingDir = ArtifactManagerImpl.getInstance().
 				getProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
@@ -164,6 +171,10 @@ import org.imirsel.service.*;
 		}
 
 		for (int i = 0; i < fileLists1.length; i++) {
+			
+			if(isAborted) {
+				break;
+			}
 
 			File inFile1 = new File(fileLists1[i][0]);
 			File inFile2 = new File(fileLists2[i][0]);
@@ -174,9 +185,13 @@ import org.imirsel.service.*;
 				outLists[i][1] = fileLists1[i][1];
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				cout.println("IOException");
+				cout.flush();
 				e.printStackTrace();
 			} catch (RuntimeException e) {
 				// TODO Auto-generated catch block
+				cout.println("RuntimeException");
+				cout.flush();
 				e.printStackTrace();
 			}
 		}
@@ -192,6 +207,11 @@ import org.imirsel.service.*;
 	 * @param ccp The properties associated to a component context
 	 */
 	public void dispose ( ComponentContextProperties ccp ) {
+		cout.close();
+		if(process != null) {
+            process.destroy();
+        }
+		isAborted = true;
 
 	}
 
@@ -206,6 +226,9 @@ private void runCommand(final String inputFilename2, final String inputFilename1
 		dir = new File (processWorkingDir);
 	}
 	File resdir = new File(processResultsDir);
+	cout.println("Sending results to:");
+	cout.println(resdir.getCanonicalPath());
+	cout.flush();
 
 	// Get the output filename
 	if (addExtension == false) {
@@ -389,8 +412,10 @@ private void runCommand(final String inputFilename2, final String inputFilename1
 		// env.put("VAR2", env.get("VAR1") + "suffix");
 		pb.directory(dir);
 		pb.redirectErrorStream(true);
-		Process process = pb.start();
+		process = pb.start();
 		InputStream is = process.getInputStream();
+		new Thread( new ProcessOutputReceiverClass( is, cout ) ).start();
+		/*
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         String line;
@@ -398,6 +423,7 @@ private void runCommand(final String inputFilename2, final String inputFilename1
         while ((line = br.readLine()) != null) {
           cout.println("\t" + line);
         }
+        */
         int exitStatus;
 		try {
 			exitStatus = process.waitFor();
@@ -406,6 +432,7 @@ private void runCommand(final String inputFilename2, final String inputFilename1
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		process.getErrorStream().close();
 		
 
 	}
