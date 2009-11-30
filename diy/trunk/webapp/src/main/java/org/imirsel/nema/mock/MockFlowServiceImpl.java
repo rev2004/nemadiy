@@ -42,7 +42,7 @@ public class MockFlowServiceImpl implements FlowService{
 			flow.setKeyWords("test, flow, feature extractor");
 			flow.setName("Feature Extractor Flow");
 			flow.setTemplate(true);
-			flow.setUrl("http://test.org/extractor");
+			flow.setUrl("http://test.org/helloworld/");
 			
 			Flow flow1 = new Flow();
 			flow1.setCreatorId(101l);
@@ -53,7 +53,7 @@ public class MockFlowServiceImpl implements FlowService{
 			flow1.setKeyWords("test, flow, feature extractor");
 			flow1.setName("flow 2");
 			flow1.setTemplate(false);
-			flow1.setUrl("http://test.org/flow2");
+			flow1.setUrl("http://test.org/helloworld/");
 			
 			
 			Flow flow2 = new Flow();
@@ -65,7 +65,7 @@ public class MockFlowServiceImpl implements FlowService{
 			flow2.setKeyWords("test, flow, algo");
 			flow2.setName("Feature Classification Flow");
 			flow2.setTemplate(true);
-			flow2.setUrl("http://test.org/classification");
+			flow2.setUrl("http://test.org/datatypetest/");
 			
 			Flow flow3 = new Flow();
 			flow3.setCreatorId(101l);
@@ -76,7 +76,7 @@ public class MockFlowServiceImpl implements FlowService{
 			flow3.setKeyWords("test, flow, algo");
 			flow3.setName("Evaluation Flow");
 			flow3.setTemplate(true);
-			flow3.setUrl("http://test.org/evaluation");
+			flow3.setUrl("http://test.org/helloworld/");
 			
 			
 			

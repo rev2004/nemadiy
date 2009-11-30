@@ -1,8 +1,9 @@
 package org.imirsel.nema.webapp.controller;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,10 +19,10 @@ import org.imirsel.nema.service.FlowMetadataService;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
-public class FlowController extends MultiActionController{
+public class FlowFormController extends MultiActionController{
 
 
-	private Logger log = Logger.getLogger(FlowController.class.getName());
+	private Logger log = Logger.getLogger(FlowFormController.class.getName());
 	private FlowService flowService = null;
 	private ComponentMetadataService componentMetadataService;
 	private FlowMetadataService flowMetadataService;
@@ -59,32 +60,18 @@ public class FlowController extends MultiActionController{
 		this.flowMetadataService = flowMetadataService;
 	}
 
-
-	public ModelAndView flowlist(HttpServletRequest req, HttpServletResponse res){
-		Set<Flow> flowSet=this.flowService.getFlowTemplates();
-		return new ModelAndView("flow/flowList", Constants.FLOW_LIST, flowSet);
-	} 
-
 	public ModelAndView storeFlowInstance(HttpServletRequest req, HttpServletResponse res){
 		Flow instance= null;
 		this.flowService.storeFlowInstance(instance);
 		return null;
 	} 
 
-	public ModelAndView flowform(HttpServletRequest req, HttpServletResponse res){
-		String _id=req.getParameter("id");
-		int id = Integer.parseInt(_id);
-		Flow flow=this.flowService.getFlow(id);
-
-		return new ModelAndView("flow/flowForm", Constants.FLOW, flow);
-	}
 
 	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res){
 		String _id=req.getParameter("id");
 		int id = Integer.parseInt(_id);
 		Flow flow=this.flowService.getFlow(id);
 		ModelAndView mav= new ModelAndView("flow/flowTemplate");
-		
 		List<Component> componentList=flowMetadataService.getComponents(flow.getUrl());
 		log.info("componentList: " + componentList.size());
 		HashMap<Component,HashMap<String, Property>> map = new HashMap<Component,HashMap<String, Property>>();
@@ -98,6 +85,24 @@ public class FlowController extends MultiActionController{
 	    mav.addObject(Constants.COMPONENTPROPERTYMAP,map);
 		return mav;
 	}
+	
+	public ModelAndView saveflow(HttpServletRequest req, HttpServletResponse res){
+		String flowId = req.getParameter("flowTemplateId");
+		String flowUri= req.getParameter("flowTemplateUri");
+		String[] modifiedComponentsUri = req.getParameterValues("modifiedComponents");
+		System.out.println("Number of modified Components Uri: " + modifiedComponentsUri.length);
+		Enumeration<String> paramNames=req.getParameterNames();
+		HashMap<String,String> paramMap = new HashMap<String,String>();
+		while(paramNames.hasMoreElements()){
+			String paramName= paramNames.nextElement();
+			paramMap.put(paramName, req.getParameter(paramName));
+		}
+
+		flowMetadataService.createNewFlow(paramMap,modifiedComponentsUri,flowUri);
+	
+		return null;
+	}
+
 
 
 }
