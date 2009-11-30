@@ -64,6 +64,10 @@ public class DataTypeAnnotationParser {
 		if(annotation instanceof BooleanDataType){
 			BooleanDataTypeBean bd = new BooleanDataTypeBean();
 			bd.setRenderer(((BooleanDataType)annotation).renderer().getName());
+			String visibilityRole = ((BooleanDataType)annotation).visibilityRole().getName();
+			boolean hidden=((BooleanDataType)annotation).hide();
+			bd.setVisibilityRole(visibilityRole);
+			bd.setHidden(hidden);
 			return bd;
 		}else if(annotation instanceof DoubleDataType){
 			DoubleDataTypeBean dd = new DoubleDataTypeBean();
@@ -71,11 +75,15 @@ public class DataTypeAnnotationParser {
 			double min=((DoubleDataType)annotation).min();
 			String rendererClass=((DoubleDataType)annotation).renderer().getName();
 			double[] list=((DoubleDataType)annotation).valueList();
+			String visibilityRole = ((DoubleDataType)annotation).visibilityRole().getName();
+			boolean hidden=((DoubleDataType)annotation).hide();
 			
 			dd.setMax(max);
 			dd.setMin(min);
 			dd.setRenderer(rendererClass);
 			dd.setValueList(list);
+			dd.setVisibilityRole(visibilityRole);
+			dd.setHidden(hidden);
 			return dd;
 			
 		}else if(annotation instanceof IntegerDataType){
@@ -85,19 +93,26 @@ public class DataTypeAnnotationParser {
 			int min=((IntegerDataType)annotation).min();
 			String className=((IntegerDataType)annotation).renderer().getName();
 			int valueList[] = ((IntegerDataType)annotation).valueList();
-			
+			String visibilityRole = ((IntegerDataType)annotation).visibilityRole().getName();
+			boolean hidden=((IntegerDataType)annotation).hide();
 			idt.setMax(max);
 			idt.setMin(min);
 			idt.setRenderer(className);
 			idt.setValueList(valueList);
+			idt.setVisibilityRole(visibilityRole);
+			idt.setHidden(hidden);
 			return idt;
 			
 		}else if(annotation instanceof StringDataType){
 			StringDataTypeBean sdt = new StringDataTypeBean();
 			String[]list=((StringDataType)annotation).valueList();
+			String visibilityRole = ((StringDataType)annotation).visibilityRole().getName();
 			String className=((StringDataType)annotation).renderer().getName();
+			boolean hidden=((StringDataType)annotation).hide();
 			sdt.setRenderer(className);
 			sdt.setValueList(list);
+			sdt.setVisibilityRole(visibilityRole);
+			sdt.setHidden(hidden);
 			return sdt;
 		}
 		return null;

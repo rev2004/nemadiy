@@ -2,11 +2,13 @@ package org.imirsel.nema.annotatons.parser.beans;
 
 
 public class DoubleDataTypeBean implements DataTypeBean{
+	String visibilityRole;
 	double[] valueList;
 	String renderer;
 	double max;
 	double min;
 	String className = "org.imirsel.nema.annotatons.parser.beans.DoubleDataTypeBean";
+	boolean hidden;
 	
 	public double getMax() {
 		return max;
@@ -38,6 +40,18 @@ public class DoubleDataTypeBean implements DataTypeBean{
 		return className;
 	}
 	
-
+	public String getVisibilityRole() {
+		return visibilityRole;
+	}
+	public void setVisibilityRole(String visibilityRole) {
+		this.visibilityRole = visibilityRole;
+	}
+	public boolean isHidden() {
+		return hidden;
+	}
+	public void setHidden(boolean hide) {
+		this.hidden = hide;
+	}
+	
 
 }
