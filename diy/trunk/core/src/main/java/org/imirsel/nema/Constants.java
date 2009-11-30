@@ -102,5 +102,20 @@ public class Constants {
 	 */
 	public static final String JOB = "job";
 
+	/**
+	 * The list of jobs -request scope
+	 */
 	public static final String JOBLIST = "jobList";
+
+	/**
+	 * The components that make up a flow
+	 */
+	public static final String COMPONENTLIST = "componentList";
+
+	/**
+	 * The property hashmap for all the components in a flow.
+	 * Keyed with the componentid, the value is a hashmap of property name and 
+	 * Property
+	 */
+	public static final String COMPONENTPROPERTYMAP = "componentPropertyMap";
 }
