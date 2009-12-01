@@ -19,6 +19,6 @@ public interface ComponentMetadataService{
 	 * @return HashMap of component properties and data type
 	 * @throws TransmissionException 
 	 */
-	public HashMap<String,Property> getComponentPropertyDataType(Component component, String flowUri) throws TransmissionException;
+	public HashMap<String,Property> getComponentPropertyDataType(final Component component, String flowUri) throws TransmissionException;
 	
 }
