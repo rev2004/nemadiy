@@ -6,7 +6,7 @@
 </head>
 
 <display:table name="jobList" cellspacing="0" cellpadding="0" requestURI="" 
-    defaultsort="1" id="jobs" pagesize="25" class="table" export="false" decorator="org.imirsel.nema.webapp.displaytag.JobDecorator">
+    defaultsort="1" id="jobs" pagesize="25" class="table" export="false" decorator="org.imirsel.nema.webapp.taglib.JobDecorator">
     <display:column property="name" escapeXml="true" sortable="true" titleKey="job.name" style="width: 25%"
         url="/jobdetail.html?from=list" paramId="id" paramProperty="id"/>
     <display:column property="description" escapeXml="true" sortable="true" titleKey="job.description" style="width: 25%"

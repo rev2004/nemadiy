@@ -158,6 +158,7 @@
                 /experimentStatusMenu.html=filenameController
                 /featureExtraction.html=filenameController
                 /classification.html=filenameController
+                /jobstype.html=filenameController
                 /evaluation.html=filenameController  
                 /passwordHint.html=passwordHintController
                 /flowlist.html=flowController

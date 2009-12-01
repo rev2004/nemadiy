@@ -1,8 +1,13 @@
-package org.imirsel.nema.webapp.displaytag;
+package org.imirsel.nema.webapp.taglib;
 
 import org.displaytag.decorator.TableDecorator;
 import org.imirsel.nema.model.Job;
 
+/**
+ * @author  Guojun 
+ * 
+ * For the display:table tag
+ */
 public class JobDecorator extends TableDecorator {
 
 	public String getNullValue(){
