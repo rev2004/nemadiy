@@ -43,6 +43,7 @@ class ProcessOutputReceiverClass implements Runnable
 			while ( ( line = br.readLine() ) != null )
 			{
 				cout.println( line );
+				cout.flush();
 			}
 			br.close();
 		}
