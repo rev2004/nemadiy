@@ -104,6 +104,13 @@ import org.imirsel.nema.util.ProcessOutputReceiverClass;
 			final static String DATA_PROPERTY_EXTENSION = "Output File Name Extension to Append";
 	private String extension= ".result";
 
+	@ComponentProperty(defaultValue="VAR_NAME,VAR_VAL",
+			description="The environment variable`s name and value separated by \",\"",
+			name="Environment Variable" )
+			final static String DATA_PROPERTY_ENV_VAR = "Environment Variable";
+	private String env_var= "VAR_NAME,VAR_VAL";
+
+	
 	private String outfile;
 	private String processWorkingDir;
 	private String processResultsDir;
@@ -158,12 +165,14 @@ import org.imirsel.nema.util.ProcessOutputReceiverClass;
 		execName = String.valueOf(cc.getProperty(DATA_PROPERTY_EXECNAME));
 		addExtension = Boolean.valueOf(cc.getProperty(DATA_PROPERTY_ADDEXTENSION));
 		extension = String.valueOf(cc.getProperty(DATA_PROPERTY_EXTENSION));
+		env_var = String.valueOf(cc.getProperty(DATA_PROPERTY_ENV_VAR));
+	
 		String[][] fileLists1 = (String[][])cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[][] fileLists2 = (String[][])cc.getDataComponentFromInput(DATA_INPUT_2);
 		String[][] outLists = new String[fileLists1.length][2];
 		cout.println("Starting Execution of External Binaries");
 		cout.flush();
-		
+
 		// sanity check that both filelists are same length
 		if (fileLists1.length != fileLists2.length) {
 			cout.println("ERROR: File lists for input1 and input2 are different lengths!");
@@ -406,10 +415,17 @@ private void runCommand(final String inputFilename2, final String inputFilename1
 		cout.println("in directory: " + dir.getCanonicalPath());
 		cout.flush();
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
-		// Map<String, String> env = pb.environment();
-		// env.put("VAR1", "myValue");
-		// env.remove("OTHERVAR");
-		// env.put("VAR2", env.get("VAR1") + "suffix");
+	    Map<String, String> env = pb.environment();
+		if (!env_var.contentEquals("VAR_NAME,VAR_VAL")){
+		     String[] env_pair = env_var.split(",");
+		     if (env_pair.length == 2){
+			     env.put(env_pair[0], env_pair[1]);
+			     cout.println("Environment variable " + env_pair[0] +"="+ env_pair[1]+ " succesfully set.");
+		     }
+		     else {
+		    	 cout.println("The environment variable " + env_var + " can not be parsed !!!");
+		     }
+		}
 		pb.directory(dir);
 		pb.redirectErrorStream(true);
 		process = pb.start();
