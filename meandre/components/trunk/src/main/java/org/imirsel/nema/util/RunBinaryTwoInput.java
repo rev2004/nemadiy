@@ -31,7 +31,7 @@ import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
 import org.imirsel.service.*;
-import org.imirsel.nema.util.ProcessOutputReceiverClass;
+import org.imirsel.nema.util.ProcessOutputReceiver;
 
 
 /** This executable component executes an external binary using the process builder.
@@ -182,6 +182,9 @@ import org.imirsel.nema.util.ProcessOutputReceiverClass;
 		for (int i = 0; i < fileLists1.length; i++) {
 			
 			if(isAborted) {
+				cout.println("");
+				cout.println("Execution of external binaries aborted");
+				cout.flush();
 				break;
 			}
 
@@ -235,6 +238,7 @@ private void runCommand(final String inputFilename2, final String inputFilename1
 		dir = new File (processWorkingDir);
 	}
 	File resdir = new File(processResultsDir);
+	cout.println("");
 	cout.println("Sending results to:");
 	cout.println(resdir.getCanonicalPath());
 	cout.flush();
@@ -407,12 +411,16 @@ private void runCommand(final String inputFilename2, final String inputFilename1
                 //System.out.println("short component: " + components[i]);
             }
         }
+        cout.println("");
 		cout.print("Running command: ");
 		for (int i=0;i<cmdArray.length;i++) {
 			cout.print(cmdArray[i] + " ");
 		}
 		cout.println("");
-		cout.println("in directory: " + dir.getCanonicalPath());
+		cout.println("");
+		cout.println("In directory: " + dir.getCanonicalPath());
+		cout.println("");
+		cout.println("");
 		cout.flush();
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
 	    Map<String, String> env = pb.environment();
@@ -430,7 +438,7 @@ private void runCommand(final String inputFilename2, final String inputFilename1
 		pb.redirectErrorStream(true);
 		process = pb.start();
 		InputStream is = process.getInputStream();
-		new Thread( new ProcessOutputReceiverClass( is, cout ) ).start();
+		new Thread( new ProcessOutputReceiver( is, cout ) ).start();
 		/*
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
@@ -443,7 +451,9 @@ private void runCommand(final String inputFilename2, final String inputFilename1
         int exitStatus;
 		try {
 			exitStatus = process.waitFor();
-			cout.println("Exit status: " + exitStatus);
+			cout.println("External Process Exit Status: " + exitStatus);
+			cout.println("");
+			cout.flush();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
