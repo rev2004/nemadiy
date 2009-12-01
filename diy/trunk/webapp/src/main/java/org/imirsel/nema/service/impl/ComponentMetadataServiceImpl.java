@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
 import org.imirsel.nema.annotatons.parser.beans.StringDataTypeBean;
 import org.imirsel.nema.model.Component;
@@ -57,7 +58,7 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 		this.meandreProxyWrapper = meandreProxyWrapper;
 	}
 
-	public void dd(){
+	public void dd() throws TransmissionException{
 		QueryableRepository qp= meandreProxyWrapper.getRepository();
 		Model model =getEmptyModel();
 		String flow_uri="http://test.org/datatypetest/";
@@ -96,7 +97,7 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 		
 	}
 
-	public HashMap<String, Property> getComponentPropertyDataType(Component component, String flowUri) {
+	public HashMap<String, Property> getComponentPropertyDataType(Component component, String flowUri) throws TransmissionException {
 		QueryableRepository qp= meandreProxyWrapper.getRepository();
 		Model model =getEmptyModel();
 		ExecutableComponentDescription ecd=qp.getExecutableComponentDescription(model.createResource(component.getUri()));

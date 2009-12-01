@@ -1,6 +1,7 @@
 package org.imirsel.nema.service.impl;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -9,6 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.imirsel.meandre.client.MeandreProxy;
+import org.imirsel.meandre.client.TransmissionException;
+import org.meandre.core.repository.ExecutableComponentDescription;
 import org.meandre.core.repository.FlowDescription;
 import org.meandre.core.repository.QueryableRepository;
 import org.springframework.core.io.ClassPathResource;
@@ -61,8 +64,10 @@ public class MeandreProxyWrapper {
 		String _port = meandreProperties.getProperty("port");
 		String username = meandreProperties.getProperty("username");
 		String password = meandreProperties.getProperty("password");
+		System.out.println("HOST CONNECTING TO: "+ host + ":"+_port );
 		int port = Integer.parseInt(_port);
 		meandreProxy = new MeandreProxy(username,password,host,port);
+		meandreProxy.setCredentials(username, password);
 		log.setLevel(Level.WARNING);
 		meandreProxy.setLogger(log);
 		System.out.println("connecting to " + host + ":"+_port);
@@ -82,7 +87,7 @@ public class MeandreProxyWrapper {
 		}
 	}
 	
-	public Set<Resource> getAvailableFlows(){
+	public Set<Resource> getAvailableFlows() throws TransmissionException{
 		if(!connected){
 			log.severe("meandre proxy is not connected to the meandre server");
 			return null;
@@ -92,7 +97,7 @@ public class MeandreProxyWrapper {
 		return resources;
 	}
 
-	public QueryableRepository getRepository() {
+	public QueryableRepository getRepository() throws TransmissionException{
 		if(!connected){
 			log.severe("meandre proxy is not connected to the meandre server");
 			return null;
@@ -101,7 +106,7 @@ public class MeandreProxyWrapper {
 		return qp;
 	}
 
-	public Map<String, FlowDescription> getAvailableFlowDescriptionsMap() {
+	public Map<String, FlowDescription> getAvailableFlowDescriptionsMap() throws TransmissionException{
 		if(!connected){
 			log.severe("meandre proxy is not connected to the meandre server");
 			return null;
@@ -109,6 +114,39 @@ public class MeandreProxyWrapper {
 		QueryableRepository qp= meandreProxy.getRepository();
 		Map<String, FlowDescription> map=qp.getAvailableFlowDescriptionsMap();
 		return map;
+	}
+
+	public boolean removeResource(String resourceURL) throws TransmissionException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void uploadFlow(FlowDescription flow, boolean overwrite) throws TransmissionException{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public FlowDescription retrieveFlowDescriptor(String flowURL) throws TransmissionException{
+		System.out.println("IS CONNECTED: " + this.meandreProxy.isReady());
+		System.out.println("USERNAME: "+this.meandreProxy.getUserName());
+		System.out.println("BASE URL: "+this.meandreProxy.getBaseURL());
+		return this.meandreProxy.retrieveFlowDescriptor(flowURL);
+	}
+
+	public Set<URI> retrieveFlowUris() throws TransmissionException{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ExecutableComponentDescription retrieveComponentDescriptor(
+			String componentURL) throws TransmissionException{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Set<URI> retrieveComponentUris() throws TransmissionException{
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

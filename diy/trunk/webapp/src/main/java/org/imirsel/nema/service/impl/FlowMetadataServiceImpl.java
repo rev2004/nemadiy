@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,15 +15,21 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 
+import org.imirsel.meandre.client.TransmissionException;
+import org.imirsel.nema.client.beans.repository.WBFlowDescription;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.service.FlowMetadataService;
+import org.meandre.core.repository.ExecutableComponentDescription;
 import org.meandre.core.repository.ExecutableComponentInstanceDescription;
 import org.meandre.core.repository.FlowDescription;
 import org.meandre.core.repository.PropertiesDescriptionDefinition;
 import org.meandre.core.repository.QueryableRepository;
 import org.meandre.core.repository.RepositoryImpl;
 import org.meandre.core.store.Store;
+import org.meandre.webapp.CorruptedFlowException;
+import org.meandre.webapp.MeandreCommunicationException;
+import org.meandre.webapp.Repository;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -41,6 +48,8 @@ import com.hp.hpl.jena.vocabulary.XSD;
  */
 public class FlowMetadataServiceImpl implements FlowMetadataService {
 	public MeandreProxyWrapper meandreProxyWrapper;
+	private Repository repository;
+	
 	private static final Logger log= Logger.getLogger(FlowMetadataService.class.getName());
 
 	
@@ -59,7 +68,13 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 	 * @return
 	 */
 	public List<Component> getComponents(String flowUri){
-		Map<String, FlowDescription> map=meandreProxyWrapper.getAvailableFlowDescriptionsMap();
+		Map<String, FlowDescription> map=null;
+		try {
+			map = meandreProxyWrapper.getAvailableFlowDescriptionsMap();
+		} catch (TransmissionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(map==null){
 			log.severe("Could not find components for the flowUri: "+ flowUri);
 			return null;
@@ -105,8 +120,10 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 		return false;
 	}
 	
-	private String[] getFlowUriList(){
-		Set<Resource> resources=meandreProxyWrapper.getAvailableFlows();
+	private String[] getFlowUriList() throws TransmissionException{
+		Set<Resource> resources = null;
+		resources = meandreProxyWrapper.getAvailableFlows();
+		
 		if(resources==null){
 			log.warning("Did not find any flow resources.");
 			return null;
@@ -131,15 +148,70 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 	 * the user has set based on a template flow and creates
 	 * a new flow.
 	 *  Returns the uri of the new flow.
+	 * @throws MeandreCommunicationException 
+	 * @throws CorruptedFlowException 
 	 */
-	public String createNewFlow(HashMap<String, String> paramMap, String[] modifiedComponentsUri, String flowUri) {
-		QueryableRepository qr = meandreProxyWrapper.getRepository();
-		Model m = getEmptyModel();
+	public String createNewFlow(HashMap<String, String> paramMap, String[] modifiedComponentsUri, String flowUri) throws MeandreCommunicationException, CorruptedFlowException {
+		
+		WBFlowDescription flowDesc=this.getRepository().retrieveFlowDescriptor(flowUri);
+		String name = flowDesc.getName();
+		name = name + System.currentTimeMillis();
+		flowDesc.setName(name);
+        flowDesc.setDescription("Derived from " +flowUri);
+		flowDesc.setRights("owned by user");
+		flowDesc.setCreationDate(new Date());
+		//flowDesc.setBaseURI(flowUri);
+		flowDesc.updateParameters(flowUri,paramMap);
+        
+        this.repository.uploadFlow(flowDesc, false);
+		
+        
+        
+		/*		Model m = getEmptyModel();
 	    FlowDescription flowDescOrignal = qr.getFlowDescription(m.createResource(flowUri));
 	    FlowDescription flowDescModified = new RepositoryImpl(flowDescOrignal.getModel()).getAvailableFlowDescriptions().iterator().next();
-		
-	    flowDescModified.setName(flowDescOrignal.getName()+System.currentTimeMillis());
+		Model m1 = getEmptyModel();
+		m1.add(flowDescOrignal.getModel());
+		for(ExecutableComponentInstanceDescription ecid:flowDescOrignal.getExecutableComponentInstances()){
+			ExecutableComponentDescription ecd = qr.getExecutableComponentDescription(ecid.getExecutableComponent());
+			m1.add(ecd.getModel());
+		}
+		try{
+		 String tempFolder= "/tmp";
+		 String fName = "orignal";
+		 Model flowModel = flowDescOrignal.getModel();
+		 FileOutputStream ntStream = new FileOutputStream(tempFolder + fName + ".nt");
+         flowModel.write(ntStream, "N-TRIPLE");
+         ntStream.close();
+
+         FileOutputStream ttlStream = new FileOutputStream(tempFolder + fName + ".ttl");
+         flowModel.write(ttlStream, "TTL");
+         ttlStream.close();
+         
+
+         FileOutputStream rdfStream = new FileOutputStream(tempFolder + fName + ".rdf");
+         flowModel.write(rdfStream, "RDF/XML-ABBREV");
+         rdfStream.close();
+		}catch(IOException ex){
+			System.out.println("Trouble dumping the flow to the tmp folder...");
+		}
 	    
+	    
+	   flowDescModified.setName(flowDescOrignal.getName()+System.currentTimeMillis());
+	   
+	   for(ExecutableComponentInstanceDescription ecid:flowDescOrignal.getExecutableComponentInstances()){
+		   String oldInstanceURI = ecid.getExecutableComponentInstance().getURI();
+		   System.out.println("flowUri is " + flowUri + " oldInstanceURI is: " + oldInstanceURI);
+		   if (oldInstanceURI.startsWith(flowUri)) {
+			   System.out.println(ecid.getExecutableComponentInstance());
+              // ecid.setExecutableComponentInstance(sResURI + oldInstanceURI.substring(flowUri.length()));
+               //removeExecutableComponentInstance(oldInstanceURI);
+              //addExecutableComponentInstance(ecid);
+           }
+		  
+	   }
+	  */
+	   /*
 	   for(String componentUri:modifiedComponentsUri){ 
 		   ExecutableComponentInstanceDescription ecid= flowDescModified.getExecutableComponentInstanceDescription(componentUri);
 		   ExecutableComponentInstanceDescription ecidNew =new ExecutableComponentInstanceDescription(ecid);
@@ -152,34 +224,30 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 		   }
 		   
 		   flowDescModified.removeExecutableComponentInstance(ecid);
-		   
 		   flowDescModified.addExecutableComponentInstance(ecidNew);
-		   
-		   
 	   }
 	  
-	
-	
-	   
-	   
-	   //System.out.println(flowDescModified.getModel().toString());
 	   m.add(flowDescModified.getModel());
-	   RDFWriter writer = m.getWriter();
-	   File file =new File("/tmp/test.rdf");
-	   //FileWriter writer;
-	   try {
-		//writer = new FileWriter(file);
-		   OutputStream out = new FileOutputStream(file);
-		   writer.write(m,out, flowUri+"test");
-	   } catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	   for(ExecutableComponentInstanceDescription ecid:flowDescModified.getExecutableComponentInstances()){
+		   ExecutableComponentDescription ecd = qr.getExecutableComponentDescription(ecid.getExecutableComponent());
+		   m.add(ecd.getModel());
 	   }
+	
+	    */
+	   
+	   /*
+	   			for ecid in flow_desc.getExecutableComponentInstances() :
+                ecd = qr.getExecutableComponentDescription(ecid.getExecutableComponent())
+                model.add(ecd.getModel())
+          
+	  
+	  
+	 */
+	  
+	   
+	   
 	    
-	  //  ExecutableComponentInstanceDescription ecid = 
-	   // new ExecutableComponentInstanceDescription(flowDescModified.getExecutableComponentInstanceDescription(ecidr));
-        
-		return null;
+		return flowDesc.getFlowURI();
 	}
 
 
@@ -199,6 +267,14 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 			model.setNsPrefix("rdfs",RDFS.getURI());
 			model.setNsPrefix("dc",DC.getURI());
 			return model;
+	}
+
+	public Repository getRepository() {
+		return repository;
+	}
+
+	public void setRepository(Repository repository) {
+		this.repository = repository;
 	}
 
 

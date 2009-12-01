@@ -13,6 +13,10 @@
         </property>
     </bean>
     
+    <bean id="repository" class="org.meandre.webapp.Repository">
+    	<property name="meandreProxyWrapper" ref="meandreProxy"/>
+    </bean>
+    
     
     <bean id="meandreProxy" class="org.imirsel.nema.service.impl.MeandreProxyWrapper" init-method="init">
    </bean>
@@ -27,6 +31,7 @@
      <!--  flow metadata manager service -->
     <bean id="flowMetadataService" class="org.imirsel.nema.service.impl.FlowMetadataServiceImpl">
     	<property name="meandreProxyWrapper" ref="meandreProxy"/>
+    	<property name="repository" ref="repository"/>
     </bean>
     
     

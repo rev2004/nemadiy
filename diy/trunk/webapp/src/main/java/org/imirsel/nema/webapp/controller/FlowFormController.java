@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.model.Component;
@@ -16,6 +17,8 @@ import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.service.ComponentMetadataService;
 import org.imirsel.nema.service.FlowMetadataService;
+import org.meandre.webapp.CorruptedFlowException;
+import org.meandre.webapp.MeandreCommunicationException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -67,7 +70,7 @@ public class FlowFormController extends MultiActionController{
 	} 
 
 
-	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res){
+	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res) throws TransmissionException{
 		String _id=req.getParameter("id");
 		int id = Integer.parseInt(_id);
 		Flow flow=this.flowService.getFlow(id);
@@ -76,8 +79,9 @@ public class FlowFormController extends MultiActionController{
 		log.info("componentList: " + componentList.size());
 		HashMap<Component,HashMap<String, Property>> map = new HashMap<Component,HashMap<String, Property>>();
 		for(int i=0;i<componentList.size();i++){
-			HashMap<String, Property> m=componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
-			map.put(componentList.get(i), m);
+			HashMap<String, Property> m=null;
+				m = componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
+				map.put(componentList.get(i), m);
 		}
 		log.info(Constants.COMPONENTPROPERTYMAP + " : " + map.size());
 		mav.addObject(Constants.FLOW, flow);
@@ -86,7 +90,7 @@ public class FlowFormController extends MultiActionController{
 		return mav;
 	}
 	
-	public ModelAndView saveflow(HttpServletRequest req, HttpServletResponse res){
+	public ModelAndView saveflow(HttpServletRequest req, HttpServletResponse res) throws TransmissionException, MeandreCommunicationException, CorruptedFlowException{
 		String flowId = req.getParameter("flowTemplateId");
 		String flowUri= req.getParameter("flowTemplateUri");
 		String[] modifiedComponentsUri = req.getParameterValues("modifiedComponents");
@@ -98,8 +102,9 @@ public class FlowFormController extends MultiActionController{
 			paramMap.put(paramName, req.getParameter(paramName));
 		}
 
-		flowMetadataService.createNewFlow(paramMap,modifiedComponentsUri,flowUri);
+		String newFlowUri=flowMetadataService.createNewFlow(paramMap,modifiedComponentsUri,flowUri);
 	
+		System.out.println("The new flow uri is: " + newFlowUri);
 		return null;
 	}
 

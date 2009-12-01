@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Property;
@@ -24,7 +25,7 @@ public class ComponentMetadataServiceTest extends BaseManagerTestCase{
 	}
 	
 	
-	public void testme(){
+	public void testme() throws TransmissionException{
 		componentMetadataManager.dd();
 	}
 
