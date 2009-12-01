@@ -161,14 +161,6 @@
             <artifactId>meandre-core</artifactId>
             <version>${meandre-server.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.meandre</groupId>
-            <artifactId>meandre-store</artifactId>
-            <version>${meandre-server.version}</version>
-        </dependency>
-        
-
-    
      
     
   </dependencies>
