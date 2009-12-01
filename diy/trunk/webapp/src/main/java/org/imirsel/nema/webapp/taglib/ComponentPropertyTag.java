@@ -40,8 +40,18 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 	public void setValue(Property property){
 		this.property=property;
 	}
-
 	
+	// the component instance uri
+	public void setComponent(String component) {
+		this.component = component;
+	}
+
+	public String getComponent() {
+		return component;
+	}
+	
+
+	// start of the tag
 	public void doTag() throws JspException {
 		JspWriter out = getJspContext().getOut();
 		StringWriter writer = new StringWriter();
@@ -233,15 +243,8 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 		return swriter.toString();
 	}
 
-	public void setComponent(String component) {
-		this.component = component;
-	}
 
-	public String getComponent() {
-		return component;
-	}
-	
-	public String getName(String propertyName){
+	private String getName(String propertyName){
 		if(this.component==null){
 			return propertyName;
 		}
