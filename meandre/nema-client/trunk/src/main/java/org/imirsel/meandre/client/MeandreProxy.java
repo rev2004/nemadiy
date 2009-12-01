@@ -88,7 +88,7 @@ public class MeandreProxy extends MeandreClient {
 	 */
 	public MeandreProxy ( String sUser, String sPasswd, String sServerHost,
 			int iServerPort ) {
-		super(sUser,iServerPort);
+		super(sServerHost,iServerPort);
 		setLogger(ClientLoggerFactory.getClientLogger());
 		update(sUser,sPasswd,sServerHost,iServerPort);
 	}

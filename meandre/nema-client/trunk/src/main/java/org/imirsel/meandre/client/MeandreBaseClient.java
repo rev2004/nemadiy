@@ -225,7 +225,6 @@ public class MeandreBaseClient{
 		    get.setQueryString(nvp);
 		}
 		byte[] baResponse = null;
-		//_log.fine("executing GET:  " + extractMethodsURIString(get));
 		try{
 			getHttpClient().executeMethod(get);
 			verifyResponseOK(get);
@@ -233,7 +232,7 @@ public class MeandreBaseClient{
 		}catch (TransmissionException te){
 			throw te;
 		}catch(Exception e){
-		    //e.printStackTrace();
+		    e.printStackTrace();
 			_log.severe("unanticipated exception performing http GET: " +
 			        extractMethodsURIString(get));
 			throw new TransmissionException(e);

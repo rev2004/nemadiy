@@ -19,21 +19,18 @@
     <!-- use the following if you're not using a snapshot version. -->
       <repository>
           <id>MonkRepository</id>
-              <name>Monk Repository</name>
-                  <url>scp://monk.lis.uiuc.edu/content/web/root/maven2</url>
-                    </repository>
-                      <!-- use the following if you ARE using a snapshot version. -->
-                        <snapshotRepository>
-                           <uniqueVersion>true</uniqueVersion>
-                               <id>MonkSnapshotRepository</id>
-                                   <name>Monk Snapshot Repository</name>
-                                       <url>scp://monk.lis.illinois.edu/content/web/root/snapshot</url>
-                </snapshotRepository>
-            <downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
-
+          <name>Monk Repository</name>
+          <url>scp://monk.lis.uiuc.edu/content/web/root/maven2</url>
+      </repository>
+                     <!-- use the following if you ARE using a snapshot version. -->
+            <snapshotRepository>
+                  <uniqueVersion>true</uniqueVersion>
+                  <id>MonkSnapshotRepository</id>
+                  <name>Monk Snapshot Repository</name>
+                  <url>scp://monk.lis.illinois.edu/content/web/root/snapshot</url>
+            </snapshotRepository>
+        <downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
         </distributionManagement>
-  
-  
    <build>
     <defaultGoal>install</defaultGoal>
   	<plugins>
@@ -161,7 +158,7 @@
         </dependency>
       	<dependency>
             <groupId>org.meandre</groupId>
-            <artifactId>meandre-kernel</artifactId>
+            <artifactId>meandre-core</artifactId>
             <version>${meandre-server.version}</version>
         </dependency>
         <dependency>
