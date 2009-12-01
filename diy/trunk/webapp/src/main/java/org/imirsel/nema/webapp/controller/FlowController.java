@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.model.Component;
@@ -89,7 +90,13 @@ public class FlowController extends MultiActionController{
 		log.info("componentList: " + componentList.size());
 		HashMap<Component,HashMap<String, Property>> map = new HashMap<Component,HashMap<String, Property>>();
 		for(int i=0;i<componentList.size();i++){
-			HashMap<String, Property> m=componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
+			HashMap<String, Property> m=null;
+			try {
+				m = componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
+			} catch (TransmissionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			map.put(componentList.get(i), m);
 		}
 		log.info(Constants.COMPONENTPROPERTYMAP + " : " + map.size());

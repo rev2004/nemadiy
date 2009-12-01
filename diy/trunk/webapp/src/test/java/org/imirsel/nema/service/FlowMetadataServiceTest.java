@@ -19,6 +19,8 @@ public class FlowMetadataServiceTest extends BaseManagerTestCase{
 		flowMetadataService.setMeandreProxyWrapper(meandreProxyWrapper);
 	}
 	
+
+	
 	public void testGetComponents(){
 		String flowUri="http://test.org/datatypetest/";
 		List<Component>componentList=flowMetadataService.getComponents(flowUri);
