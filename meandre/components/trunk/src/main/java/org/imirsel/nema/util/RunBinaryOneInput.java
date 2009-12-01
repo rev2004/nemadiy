@@ -91,6 +91,13 @@ import org.imirsel.nema.util.ProcessOutputReceiverClass;
 			final static String DATA_PROPERTY_ADDEXTENSION = "Add Extension to Input File Name to Generate Output File Name";
 	private boolean addExtension = true;
 
+	@ComponentProperty(defaultValue="VAR_NAME,VAR_VAL",
+			description="The environment variable`s name and value separated by \",\"",
+			name="Environment Variable" )
+			final static String DATA_PROPERTY_ENV_VAR = "Environment Variable";
+	private String env_var= "VAR_NAME,VAR_VAL";
+
+	
 	@ComponentProperty(defaultValue=".result",
 			description="The output file extension to add to the input file name to " +
 			"generate the output file name. Only used if 'Add Extension to Input File Name to Generate Output File Name' " +
@@ -99,6 +106,11 @@ import org.imirsel.nema.util.ProcessOutputReceiverClass;
 			final static String DATA_PROPERTY_EXTENSION = "Output File Name Extension to Append";
 	private String extension= ".result";
 
+
+		
+	
+	
+	
 	private String outfile;
 	private String processWorkingDir;
 	private String processResultsDir;
@@ -155,6 +167,7 @@ import org.imirsel.nema.util.ProcessOutputReceiverClass;
 		execName = String.valueOf(cc.getProperty(DATA_PROPERTY_EXECNAME));
 		addExtension = Boolean.valueOf(cc.getProperty(DATA_PROPERTY_ADDEXTENSION));
 		extension = String.valueOf(cc.getProperty(DATA_PROPERTY_EXTENSION));
+		env_var = String.valueOf(cc.getProperty(DATA_PROPERTY_ENV_VAR));
 		String[][] fileLists = (String[][])cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[][] outLists = new String[fileLists.length][2];
 		cout.println("Starting Execution of External Binaries");
@@ -361,8 +374,18 @@ import org.imirsel.nema.util.ProcessOutputReceiverClass;
 		cout.println("in directory: " + dir.getCanonicalPath());
 		cout.flush();
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
-		// Map<String, String> env = pb.environment();
-		// env.put("VAR1", "myValue");
+	    Map<String, String> env = pb.environment();
+		if (!env_var.contentEquals("VAR_NAME,VAR_VAL")){
+		     String[] env_pair = env_var.split(",");
+		     if (env_pair.length == 2){
+			     env.put(env_pair[0], env_pair[1]);
+			     cout.println("Environment variable " + env_pair[0] +"="+ env_pair[1]+ " succesfully set.");
+		     }
+		     else {
+		    	 cout.println("The environment variable " + env_var + " can not be parsed !!!");
+		     }
+		}
+		// 
 		// env.remove("OTHERVAR");
 		// env.put("VAR2", env.get("VAR1") + "suffix");
 		pb.directory(dir);
