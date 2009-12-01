@@ -122,14 +122,10 @@ public class MeandreProxyWrapper {
 	}
 
 	public void uploadFlow(FlowDescription flow, boolean overwrite) throws TransmissionException{
-		// TODO Auto-generated method stub
-		
+		this.meandreProxy.uploadFlow(flow, overwrite);
 	}
 
 	public FlowDescription retrieveFlowDescriptor(String flowURL) throws TransmissionException{
-		System.out.println("IS CONNECTED: " + this.meandreProxy.isReady());
-		System.out.println("USERNAME: "+this.meandreProxy.getUserName());
-		System.out.println("BASE URL: "+this.meandreProxy.getBaseURL());
 		return this.meandreProxy.retrieveFlowDescriptor(flowURL);
 	}
 

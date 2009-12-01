@@ -152,7 +152,6 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 	 * @throws CorruptedFlowException 
 	 */
 	public String createNewFlow(HashMap<String, String> paramMap, String[] modifiedComponentsUri, String flowUri) throws MeandreCommunicationException, CorruptedFlowException {
-		
 		WBFlowDescription flowDesc=this.getRepository().retrieveFlowDescriptor(flowUri);
 		String name = flowDesc.getName();
 		name = name + System.currentTimeMillis();
@@ -160,94 +159,10 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
         flowDesc.setDescription("Derived from " +flowUri);
 		flowDesc.setRights("owned by user");
 		flowDesc.setCreationDate(new Date());
-		//flowDesc.setBaseURI(flowUri);
 		flowDesc.updateParameters(flowUri,paramMap);
-        
-        this.repository.uploadFlow(flowDesc, false);
-		
-        
-        
-		/*		Model m = getEmptyModel();
-	    FlowDescription flowDescOrignal = qr.getFlowDescription(m.createResource(flowUri));
-	    FlowDescription flowDescModified = new RepositoryImpl(flowDescOrignal.getModel()).getAvailableFlowDescriptions().iterator().next();
-		Model m1 = getEmptyModel();
-		m1.add(flowDescOrignal.getModel());
-		for(ExecutableComponentInstanceDescription ecid:flowDescOrignal.getExecutableComponentInstances()){
-			ExecutableComponentDescription ecd = qr.getExecutableComponentDescription(ecid.getExecutableComponent());
-			m1.add(ecd.getModel());
-		}
-		try{
-		 String tempFolder= "/tmp";
-		 String fName = "orignal";
-		 Model flowModel = flowDescOrignal.getModel();
-		 FileOutputStream ntStream = new FileOutputStream(tempFolder + fName + ".nt");
-         flowModel.write(ntStream, "N-TRIPLE");
-         ntStream.close();
-
-         FileOutputStream ttlStream = new FileOutputStream(tempFolder + fName + ".ttl");
-         flowModel.write(ttlStream, "TTL");
-         ttlStream.close();
-         
-
-         FileOutputStream rdfStream = new FileOutputStream(tempFolder + fName + ".rdf");
-         flowModel.write(rdfStream, "RDF/XML-ABBREV");
-         rdfStream.close();
-		}catch(IOException ex){
-			System.out.println("Trouble dumping the flow to the tmp folder...");
-		}
-	    
-	    
-	   flowDescModified.setName(flowDescOrignal.getName()+System.currentTimeMillis());
-	   
-	   for(ExecutableComponentInstanceDescription ecid:flowDescOrignal.getExecutableComponentInstances()){
-		   String oldInstanceURI = ecid.getExecutableComponentInstance().getURI();
-		   System.out.println("flowUri is " + flowUri + " oldInstanceURI is: " + oldInstanceURI);
-		   if (oldInstanceURI.startsWith(flowUri)) {
-			   System.out.println(ecid.getExecutableComponentInstance());
-              // ecid.setExecutableComponentInstance(sResURI + oldInstanceURI.substring(flowUri.length()));
-               //removeExecutableComponentInstance(oldInstanceURI);
-              //addExecutableComponentInstance(ecid);
-           }
-		  
-	   }
-	  */
-	   /*
-	   for(String componentUri:modifiedComponentsUri){ 
-		   ExecutableComponentInstanceDescription ecid= flowDescModified.getExecutableComponentInstanceDescription(componentUri);
-		   ExecutableComponentInstanceDescription ecidNew =new ExecutableComponentInstanceDescription(ecid);
-		   String prefix=getPropertyPrefix(ecidNew.getExecutableComponentInstance().getURI());
-		   for(String key:paramMap.keySet()){
-			   if(key.startsWith(prefix)){
-				  String propertyName= key.substring(prefix.length()+1);
-				   ecidNew.getProperties().add(propertyName, paramMap.get(key));
-			   }
-		   }
-		   
-		   flowDescModified.removeExecutableComponentInstance(ecid);
-		   flowDescModified.addExecutableComponentInstance(ecidNew);
-	   }
-	  
-	   m.add(flowDescModified.getModel());
-	   for(ExecutableComponentInstanceDescription ecid:flowDescModified.getExecutableComponentInstances()){
-		   ExecutableComponentDescription ecd = qr.getExecutableComponentDescription(ecid.getExecutableComponent());
-		   m.add(ecd.getModel());
-	   }
-	
-	    */
-	   
-	   /*
-	   			for ecid in flow_desc.getExecutableComponentInstances() :
-                ecd = qr.getExecutableComponentDescription(ecid.getExecutableComponent())
-                model.add(ecd.getModel())
-          
-	  
-	  
-	 */
-	  
-	   
-	   
-	    
-		return flowDesc.getFlowURI();
+        boolean uploadSuccess=this.repository.uploadFlow(flowDesc, false);
+	    System.out.println("upload was "+ uploadSuccess);
+	   return flowDesc.getFlowURI();
 	}
 
 
