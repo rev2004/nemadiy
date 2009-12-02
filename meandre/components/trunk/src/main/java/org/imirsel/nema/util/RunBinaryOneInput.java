@@ -106,10 +106,6 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			final static String DATA_PROPERTY_EXTENSION = "Output File Name Extension to Append";
 	private String extension= ".result";
 
-
-		
-	
-	
 	
 	private String outfile;
 	private String processWorkingDir;
@@ -431,6 +427,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			e.printStackTrace();
 		}
 		process.getErrorStream().close();
+		is.close();
 	
 	}
 }
