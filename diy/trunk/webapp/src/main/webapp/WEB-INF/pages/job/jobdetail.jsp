@@ -21,7 +21,7 @@ ${job.description}
 									</TR>
 									<TR>
 										<TD>Job Status:</TD>
-										<TD>${job.statusCode}</TD>
+										<TD>${job.jobStatus}</TD>
 									</TR>
 									<TR>
 										<TD>Job Type:</TD>
