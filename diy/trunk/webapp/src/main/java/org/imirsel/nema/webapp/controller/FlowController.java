@@ -63,6 +63,7 @@ public class FlowController extends MultiActionController{
 
 	public ModelAndView flowlist(HttpServletRequest req, HttpServletResponse res){
 		Set<Flow> flowSet=this.flowService.getFlowTemplates();
+		log.info("done loading for flowlist");
 		return new ModelAndView("flow/flowType", Constants.FLOW_LIST, flowSet);
 	} 
 
