@@ -472,7 +472,7 @@ private void runCommand(final String inputFilename2, final String inputFilename1
 			e.printStackTrace();
 		}
 		process.getErrorStream().close();
-		
+		is.close();
 
 	}
 }
