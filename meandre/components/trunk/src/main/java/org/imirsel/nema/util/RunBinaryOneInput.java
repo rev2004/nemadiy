@@ -170,11 +170,17 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 		env_var = String.valueOf(cc.getProperty(DATA_PROPERTY_ENV_VAR));
 		String[][] fileLists = (String[][])cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[][] outLists = new String[fileLists.length][2];
-		cout.println("Starting Execution of External Binaries");
+		cout.println("");
+		cout.println("=============================================================");
+		cout.println("Starting execution of external binaries");
+		cout.println("=============================================================");
+		cout.println("Number of files to process: " + fileLists.length);
 		cout.flush();
 		File[] names = new File[fileLists.length];
 		for (int i = 0; i < fileLists.length; i++) {
-			
+			cout.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			cout.println("FILE:  " + (i+1) +"/" + fileLists.length);
+			cout.flush();
 			if(isAborted) {
 				cout.println("");
 				cout.println("Execution of external binaries aborted");
@@ -200,8 +206,9 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 				e.printStackTrace();
 			}
 		}
-		cout.println();
-		cout.println("Execution of External Binaries Complete");
+		cout.println("=============================================================");
+		cout.println("Execution of external binaries complete");
+		cout.println("=============================================================");
 		cout.flush();
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 	}
@@ -230,10 +237,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			dir = new File (processWorkingDir);
 		}
 		File resdir = new File(processResultsDir);
-		cout.println("");
-		cout.println("Sending results to:");
-		cout.println(resdir.getCanonicalPath());
-		cout.flush();
+		
 		// Get the output filename
 		if (addExtension == false) {
 			outfile = resdir.getCanonicalPath() + File.separator + outputFileName;
@@ -370,14 +374,17 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			}
 		}
 		cout.println("");
-		cout.print("Running command: ");
+		cout.println("Running command:");
 		for (int i=0;i<cmdArray.length;i++) {
 			cout.print(cmdArray[i] + " ");
 		}
 		cout.println("");
 		cout.println("");
-		cout.println("In directory: " + dir.getCanonicalPath());
+		cout.println("In directory:");
+		cout.println(dir.getCanonicalPath());
 		cout.println("");
+		cout.println("Sending results to:");
+		cout.println(resdir.getCanonicalPath());
 		cout.println("");
 		cout.flush();
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
@@ -399,6 +406,10 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 		pb.redirectErrorStream(true);
 		process = pb.start();
 		InputStream is = process.getInputStream();
+		cout.println("*******************************************");
+		cout.println("EXTERNAL PROCESS STDOUT AND STDERR:");
+		cout.println("");
+		cout.flush();
 		new Thread( new ProcessOutputReceiver( is, cout ) ).start();
         /*
 		InputStreamReader isr = new InputStreamReader(is);
@@ -411,8 +422,9 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
         int exitStatus;
 		try {
 			exitStatus = process.waitFor();
-			cout.println("External Process Exit Status: " + exitStatus);
 			cout.println("");
+			cout.println("EXTERNAL PROCESS EXIT STATUS: " + exitStatus);
+			cout.println("*******************************************");
 			cout.flush();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
