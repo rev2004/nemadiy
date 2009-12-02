@@ -170,17 +170,24 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 		String[][] fileLists1 = (String[][])cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[][] fileLists2 = (String[][])cc.getDataComponentFromInput(DATA_INPUT_2);
 		String[][] outLists = new String[fileLists1.length][2];
-		cout.println("Starting Execution of External Binaries");
-		cout.flush();
+		
 
 		// sanity check that both filelists are same length
 		if (fileLists1.length != fileLists2.length) {
 			cout.println("ERROR: File lists for input1 and input2 are different lengths!");
 			return;
 		}
+		cout.println("");
+		cout.println("=============================================================");
+		cout.println("Starting execution of external binaries");
+		cout.println("=============================================================");
+		cout.println("Number of files to process: " + fileLists1.length);
+		cout.flush();
 
 		for (int i = 0; i < fileLists1.length; i++) {
-			
+			cout.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			cout.println("FILE:  " + (i+1) +"/" + fileLists1.length);
+			cout.flush();
 			if(isAborted) {
 				cout.println("");
 				cout.println("Execution of external binaries aborted");
@@ -207,8 +214,9 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 				e.printStackTrace();
 			}
 		}
-		cout.println();
-		cout.println("Execution of External Binaries Complete");
+		cout.println("=============================================================");
+		cout.println("Execution of external binaries complete");
+		cout.println("=============================================================");
 		cout.flush();
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 	}
@@ -238,10 +246,7 @@ private void runCommand(final String inputFilename2, final String inputFilename1
 		dir = new File (processWorkingDir);
 	}
 	File resdir = new File(processResultsDir);
-	cout.println("");
-	cout.println("Sending results to:");
-	cout.println(resdir.getCanonicalPath());
-	cout.flush();
+	
 
 	// Get the output filename
 	if (addExtension == false) {
@@ -412,14 +417,17 @@ private void runCommand(final String inputFilename2, final String inputFilename1
             }
         }
         cout.println("");
-		cout.print("Running command: ");
+		cout.println("Running command:");
 		for (int i=0;i<cmdArray.length;i++) {
 			cout.print(cmdArray[i] + " ");
 		}
 		cout.println("");
 		cout.println("");
-		cout.println("In directory: " + dir.getCanonicalPath());
+		cout.println("In directory:");
+		cout.println(dir.getCanonicalPath());
 		cout.println("");
+		cout.println("Sending results to:");
+		cout.println(resdir.getCanonicalPath());
 		cout.println("");
 		cout.flush();
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
@@ -438,6 +446,10 @@ private void runCommand(final String inputFilename2, final String inputFilename1
 		pb.redirectErrorStream(true);
 		process = pb.start();
 		InputStream is = process.getInputStream();
+		cout.println("*******************************************");
+		cout.println("EXTERNAL PROCESS STDOUT AND STDERR:");
+		cout.println("");
+		cout.flush();
 		new Thread( new ProcessOutputReceiver( is, cout ) ).start();
 		/*
         InputStreamReader isr = new InputStreamReader(is);
@@ -451,8 +463,9 @@ private void runCommand(final String inputFilename2, final String inputFilename1
         int exitStatus;
 		try {
 			exitStatus = process.waitFor();
-			cout.println("External Process Exit Status: " + exitStatus);
 			cout.println("");
+			cout.println("EXTERNAL PROCESS EXIT STATUS: " + exitStatus);
+			cout.println("*******************************************");
 			cout.flush();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
