@@ -39,7 +39,7 @@ class ProcessOutputReceiver implements Runnable
 	{
 				try
 				{
-					final BufferedReader br = new BufferedReader( new InputStreamReader( is ), 1048576 );
+					final BufferedReader br = new BufferedReader( new InputStreamReader( is ));
 					String line;
 					while ( ( line = br.readLine() ) != null )
 					{
