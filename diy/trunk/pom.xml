@@ -492,6 +492,6 @@
         <velocity.version>1.4</velocity.version>
         <xfire.version>1.2.6</xfire.version>
         <meandre-server.version>1.4.8</meandre-server.version>
-        <commons.vaildator.version>1.3.1</commons.vaildator.version>
+        <commons.validator.version>1.3.1</commons.vaildator.version>
     </properties>
 </project>
