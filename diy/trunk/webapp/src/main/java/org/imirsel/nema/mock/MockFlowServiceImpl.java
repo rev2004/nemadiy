@@ -83,6 +83,7 @@ public class MockFlowServiceImpl implements FlowService{
 			flowList.add(flow);
 			flowList.add(flow1);
 			flowList.add(flow2);
+			flowList.add(flow3);
 			
 			
 			flowTemplates.add(flow);
