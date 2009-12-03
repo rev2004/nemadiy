@@ -63,29 +63,29 @@
     <!--  job scheduler end -->
     
     
-    
-    
-    <!--  mock flow service -->
-    <bean id="flowService" class="org.imirsel.nema.mock.MockFlowServiceImpl">
+      <!--  real flow service -->
+    <bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
+		<property name="serviceUrl" value="rmi://128.174.154.145:1099/"/>
+		<property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService"/>
     </bean>
     
       <!-- flow controller -->
     <bean id="flowFormController" class="org.imirsel.nema.webapp.controller.FlowFormController">
-    	<property name="flowService" ref="flowService"/>
+    	<property name="flowService" ref="realFlowService"/>
     	<property name="componentMetadataService" ref="componentMetadataService"/>
     	<property name="flowMetadataService" ref="flowMetadataService"/>
     </bean>
     
     <!-- flow controller -->
     <bean id="flowController" class="org.imirsel.nema.webapp.controller.FlowController">
-    	<property name="flowService" ref="flowService"/>
+    	<property name="flowService" ref="realFlowService"/>
     	<property name="componentMetadataService" ref="componentMetadataService"/>
     	<property name="flowMetadataService" ref="flowMetadataService"/>
     </bean>
 
 	<!-- job controller -->
  	<bean id="jobController" class="org.imirsel.nema.webapp.controller.JobController">
-   		<property name="flowService" ref="flowService"/>
+   		<property name="flowService" ref="realFlowService"/>
     	 <property name="userManager" ref="userManager"/>
     </bean>
 
