@@ -1,0 +1,102 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.imirsel</groupId>
+	<artifactId>nema-mock-flow</artifactId>
+	<name>NEMA Mock Flow Service</name>
+	<version>1.0.2-SNAPSHOT</version>
+
+
+
+	<scm>
+		<connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/client</connection>
+		<url>https://svn.lis.uiuc.edu/NEMA/application/trunk/mock-flowservice</url>
+	</scm>
+	<organization>
+		<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
+		<url>http://www.lis.illinois.edu</url>
+	</organization>
+
+	<distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<id>MonkRepository</id>
+			<name>Monk Repository</name>
+			<url>scp://monk.lis.uiuc.edu/content/web/root/maven2</url>
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		<snapshotRepository>
+			<uniqueVersion>true</uniqueVersion>
+			<id>MonkSnapshotRepository</id>
+			<name>Monk Snapshot Repository</name>
+			<url>scp://monk.lis.illinois.edu/content/web/root/snapshot</url>
+		</snapshotRepository>
+		<downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
+	</distributionManagement>
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+
+		</plugins>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+	</build>
+	<repositories>
+		<repository>
+			<id>central</id>
+			<url>http://repo1.maven.org/maven2</url>
+		</repository>
+		<repository>
+			<id>appfuse</id>
+			<url>http://static.appfuse.org/repository</url>
+		</repository>
+		<repository>
+			<id>monk</id>
+			<url>http://www.monkproject.org/maven2</url>
+		</repository>
+		<repository>
+			<id>taneshanet</id>
+			<url>http://tanesha.net/maven2</url>
+		</repository>
+		<repository>
+			<id>snapshot</id>
+			<url>http://www.monkproject.org/snapshot</url>
+		</repository>
+	
+	</repositories>
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.4.0.GA</version>
+		</dependency>
+
+	</dependencies>
+</project>
