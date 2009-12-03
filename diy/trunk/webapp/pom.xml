@@ -320,17 +320,9 @@
             <version>${jstl.version}</version>
         </dependency>
         <!--  MEANDRE DEPENDENCIES -->   
-
-        <dependency>
-            <groupId>org.meandre</groupId>
-            <artifactId>meandre-store</artifactId>
-            <version>${meandre-server.version}</version>
-        </dependency> 
-        
-
 	<dependency>
             <groupId>org.meandre</groupId>
-            <artifactId>meandre-kernel</artifactId>
+            <artifactId>meandre-core</artifactId>
             <version>${meandre-server.version}</version>
         </dependency>
         
@@ -372,7 +364,7 @@
         </dependency>
         
         
-                <dependency>
+        <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>nema-flow-service</artifactId>
             <version>1.0.2-SNAPSHOT</version>
@@ -397,10 +389,7 @@
             <artifactId>commons-validator</artifactId>
             <version>${commons.validator.version}</version>
         </dependency>
-        
-	
 
-     
     </dependencies>
 
     <profiles>
