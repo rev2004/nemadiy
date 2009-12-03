@@ -1,0 +1,331 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package org.imirsel.nema.repository;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * An interface defining the methods of a client to the temporary NEMA metadata
+ * repository.
+ *
+ * @author kriswest
+ */
+public interface RepositoryClientInterface {
+
+    /**
+     * Retrieves a list of NEMACollection Objects describing the available
+     * collections.
+     *
+     * @return a list of NEMACollection Objects describing the available
+     * collections.
+     *
+     * @throws SQLException
+     */
+    public List<NEMACollection> getCollections() throws SQLException;
+
+
+    /**
+     * Retrieves a Set containing Sets of NEMAMetadataEntry Objects which define
+     * the different file types that files in the collection are available in.
+     * The inner set defines a unique combination of different metadata values
+     * that appears in the collection. If one of more files with a particular
+     * combination of metadata values appears in the specified collection that
+     * combination will be returned by this method.
+     *
+     * @param collection The collection to retrieve the Set of versions for.
+     *
+     * @return A Set containing Sets of NEMAMetadataEntry Objects which define
+     * the different file types that files in the collection are available in.
+     *
+     * @throws SQLException
+     */
+    public Set<Set<NEMAMetadataEntry>> getCollectionVersions(NEMACollection collection) throws SQLException;
+    /**
+     * Retrieves a Set containing Sets of NEMAMetadataEntry Objects which define
+     * the different file types that files in the collection are available in.
+     * The inner set defines a unique combination of different metadata values
+     * that appears in the collection. If one of more files with a particular
+     * combination of metadata values appears in the specified collection that
+     * combination will be returned by this method.
+     *
+     * @param collectionId The collection id to retrieve the Set of versions for.
+     *
+     * @return A Set containing Sets of NEMAMetadataEntry Objects which define
+     * the different file types that files in the collection are available in.
+     *
+     * @throws SQLException
+     */
+    public Set<Set<NEMAMetadataEntry>> getCollectionVersions(int collectionId) throws SQLException;
+
+
+    /**
+     * Retrieves a List of NEMADataset Objects describing the datasets that are
+     * available for a particular Collection. No guarantee is given that the
+     * datasets described have complete audio file sets in any particular
+     * version.
+     *
+     * @param collection The collection to retrieve the list of datasets for.
+     *
+     * @return a List of NEMADataset Objects describing the datasets that are
+     * available for the specified Collection.
+     *
+     * @throws SQLException
+     */
+    public List<NEMADataset> getDatasets(NEMACollection collection) throws SQLException;
+    /**
+     * Retrieves a List of NEMADataset Objects describing the datasets that are
+     * available for a particular Collection. No guarantee is given that the
+     * datasets described have complete audio file sets in any particular
+     * version.
+     *
+     * @param collectionId The collection ID to retrieve the list of datasets
+     * for.
+     *
+     * @return a List of NEMADataset Objects describing the datasets that are
+     * available for the specified Collection.
+     *
+     * @throws SQLException
+     */
+    public List<NEMADataset> getDatasets(int collectionId) throws SQLException;
+
+    /**
+     * Retrieves a NEMASet Object describing the subset of a Collection that
+     * is relevant to a dataset. This may be resolved to a list of tracks using
+     * <code>getTracks(NEMASet set)</code> and that to a list of files using
+     * <code>getFiles(List<NEMATrack> trackList, Set<NEMAMetadataEntry> constraint)</code>.
+     * Finally, the file type versions (each defined by a set of metadata
+     * entries) that the dataset is available in may be retrieved using
+     * <code>getSetVersions(NEMASet set)</code>.
+     *
+     * @param dataset The dataset to retrieve the collection subset for.
+     *
+     * @return A NEMASet Object describing the collection subset.
+     *
+     * @throws SQLException
+     */
+    public NEMASet getCollectionSubset(NEMADataset dataset) throws SQLException;
+    /**
+     * Retrieves a NEMASet Object describing the subset of a Collection that
+     * is relevant to a dataset. This may be resolved to a list of tracks using
+     * <code>getTracks(NEMASet set)</code> and that to a list of files using
+     * <code>getFiles(List<NEMATrack> trackList, Set<NEMAMetadataEntry> constraint)</code>.
+     * Finally, the file type versions (each defined by a set of metadata
+     * entries) that the dataset is available in may be retrieved using
+     * <code>getSetVersions(NEMASet set)</code>.
+     *
+     * @param datasetId The dataset ID to retrieve the collection subset for.
+     *
+     * @return A NEMASet Object describing the collection subset.
+     *
+     * @throws SQLException
+     */
+    public NEMASet getCollectionSubset(int datasetId) throws SQLException;
+
+
+    /**
+     * Retrieves a Set containing Sets of NEMAMetadataEntry Objects which define
+     * the different file types that the <emph>complete</emph> set of tracks,
+     * corresponding to the NEMASet, are available in.
+     * The inner Set defines a unique combination of different metadata values
+     * that appears in the NEMASet. To be returned by this method a file
+     * with that combination of metadata values must exist for all tracks
+     * in the NEMASet.
+     *
+     * Can be used in conjunction with <code>getCollectionSubset(int datasetId)</code>
+     * to get the different versions that a complete dataset is available in.
+     *
+     * @param set The NEMASet to find complete file type version lists for.
+     *
+     * @return a Set containing Sets of NEMAMetadataEntry Objects which define
+     * the different file types that the <emph>complete</emph> set of tracks
+     * for the NEMASet are available in.
+     *
+     * @throws SQLException
+     */
+    public Set<Set<NEMAMetadataEntry>> getSetVersions(NEMASet set) throws SQLException;
+    /**
+     * Retrieves a Set containing Sets of NEMAMetadataEntry Objects which define
+     * the different file types that the <emph>complete</emph> set of tracks,
+     * corresponding to the NEMASet, are available in.
+     * The inner Set defines a unique combination of different metadata values
+     * that appears in the NEMASet. To be returned by this method a file
+     * with that combination of metadata values must exist for all tracks
+     * in the NEMASet.
+     *
+     * Can be used in conjunction with <code>getCollectionSubset(int datasetId)</code>
+     * to get the different versions that a complete dataset is available in.
+     * 
+     * @param setId The NEMASet ID to find complete file type version lists for.
+     *
+     * @return a Set containing Sets of NEMAMetadataEntry Objects which define
+     * the different file types that the <emph>complete</emph> set of tracks
+     * for the NEMASet are available in.
+     *
+     * @throws SQLException
+     */
+    public Set<Set<NEMAMetadataEntry>> getSetVersions(int setId) throws SQLException;
+
+
+    /**
+     * Retrieves a List of Lists of NEMASet Objects that describe the
+     * experimental track sets for each iteration of the experiment defined by
+     * the NEMADataset. The outer list enumerates the sets by iteration and the
+     * inner List groups the sets by relationship. Hence, for a 3-fold
+     * cross-validated classification experiment the outer list would
+     * contain 3 lists each containing two sets defining the test and training
+     * sets.
+     *
+     * @param dataset The dataset to retrieve the experiment sets for.
+     *
+     * @return a List of Lists of NEMASet Objects that describe the
+     * experimental track sets for each iteration of the experiment defined by
+     * the NEMADataset.
+     *
+     * @throws SQLException
+     */
+    public List<List<NEMASet>> getExperimentSets(NEMADataset dataset) throws SQLException;
+    /**
+     * Retrieves a List of Lists of NEMASet Objects that describe the
+     * experimental track sets for each iteration of the experiment defined by
+     * the NEMADataset corresponding to the datasetID passed. The outer list
+     * enumerates the sets by iteration and the inner List groups the sets by
+     * relationship. Hence, for a 3-fold cross-validated classification
+     * experiment the outer list would contain 3 lists each containing two sets
+     * defining the test and training sets.
+     *
+     * @param datasetID The dataset ID to retrieve the experiment sets for.
+     *
+     * @return a List of Lists of NEMASet Objects that describe the
+     * experimental track sets for each iteration of the experiment defined by
+     * the NEMADataset corresponding to the datasetID passed..
+     *
+     * @throws SQLException
+     */
+    public List<List<NEMASet>> getExperimentSets(int datasetID) throws SQLException;
+
+
+    /**
+     * Retrieves a List of NEMATrack Objects defining the tracks corresponding
+     * to a NEMASet Object.
+     *
+     * @param set The NEMASet to retreve a track list for.
+     *
+     * @return a List of NEMATrack Objects.
+     *
+     * @throws SQLException
+     */
+    public List<NEMATrack> getTracks(NEMASet set) throws SQLException;
+    /**
+     * Retrieves a List of NEMATrack Objects defining the tracks corresponding
+     * to a NEMASet Object.
+     *
+     * @param setId The NEMASet to retreve a track list for.
+     *
+     * @return a List of NEMATrack Objects.
+     *
+     * @throws SQLException
+     */
+    public List<NEMATrack> getTracks(int setId) throws SQLException;
+
+    /**
+     * Returns a NEMAFile matching the the NEMATrack specified and having
+     * the metadata values specified. If more than one NEMAFile matches the
+     * NEMATrack and constraint then no guarantee is provided as to which is
+     * returned. If no NEMAFile matches then null is returned.
+     *
+     * @param track The NEMATrack to retrieve a File for.
+     * @param constraint The File metadata based constraint used to select the
+     * NEMAFile.
+     *
+     * @return A NEMAFile matching the NEMATrack and File metadata constraint.
+     *
+     * @throws SQLException
+     */
+    public NEMAFile getFile(NEMATrack track, Set<NEMAMetadataEntry> constraint) throws SQLException;
+    /**
+     * Returns a NEMAFile matching the the NEMATrack specified and having
+     * the metadata values specified. If more than one NEMAFile matches the
+     * NEMATrack and constraint then no guarantee is provided as to which is
+     * returned. If no NEMAFile matches then null is returned.
+     *
+     * @param trackId The ID of the NEMATrack to retrieve a File for.
+     * @param constraint The File metadata based cpnstraint used to select the
+     * NEMAFile.
+     *
+     * @return A NEMAFile matching the NEMATrack and File metadata constraint.
+     *
+     * @throws SQLException
+     */
+    public NEMAFile getFile(int trackId, Set<NEMAMetadataEntry> constraint) throws SQLException;
+
+    /**
+     * Returns a map linking NEMAFile Objects (keys) to Sets of
+     * NEMAMetadataEntry Objects (values) which define the metadata of that NEMAFile
+     * Object. An entry in the map will be made for each file that matches
+     * the constraint passed. If the constrant is null or empty then entries
+     * will be given for each file that corresponds to the NEMATrack.
+     *
+     * @param track The NEMATrack to retrieve NEMAFile's for.
+     * @param constraint The File metadata based cpnstraint used to select the
+     * NEMAFile.
+     * @return A map where the keys are NEMAFile Objects matching the constraint
+     * and the specified NEMATrack, the values are Sets of NEMAMetadataEntry
+     * Objects defining describing the File type.
+     * @throws SQLException
+     */
+    public Map<NEMAFile,Set<NEMAMetadataEntry>> getFileFuzzy(NEMATrack track, Set<NEMAMetadataEntry> constraint) throws SQLException;
+    /**
+     * Returns a map linking NEMAFile Objects (keys) to Sets of
+     * NEMAMetadataEntry Objects (values) which define the metadata of that NEMAFile
+     * Object. An entry in the map will be made for each file that matches
+     * the constraint passed. If the constrant is null or empty then entries
+     * will be given for each file that corresponds to the NEMATrack.
+     *
+     * @param trackId The ID of the NEMATrack to retrieve NEMAFile's for.
+     * @param constraint The File metadata based cpnstraint used to select the
+     * NEMAFile.
+     * @return A map where the keys are NEMAFile Objects matching the constraint
+     * and the specified NEMATrack, the values are Sets of NEMAMetadataEntry
+     * Objects defining describing the File type.
+     * @throws SQLException
+     */
+    public Map<NEMAFile,Set<NEMAMetadataEntry>> getFileFuzzy(int trackId, Set<NEMAMetadataEntry> constraint) throws SQLException;
+
+    /**
+     * Returns a NEMAFile matching the the NEMATrack specified and having
+     * the metadata values specified for NEMATrack in the list passed.
+     * If more than one NEMAFile matches each NEMATrack and constraint then no
+     * guarantee is  provided as to which is returned. If no NEMAFile matches
+     * then null is returned (The ArrayList clas supports null entries).
+     *
+     * @param trackList The list of NEMATrack Objects to retrieve NEMAFiles for.
+     * @param constraint The file metadata constraint to use in selecting the
+     * files.
+     *
+     * @return A list of NEMAFile Objects corresponding to the NEMATrack Objects
+     * with null entires where no NEMAFile could be found that matched the
+     * constraint.
+     *
+     * @throws SQLException
+     */
+    public List<NEMAFile> getFiles(List<NEMATrack> trackList, Set<NEMAMetadataEntry> constraint) throws SQLException;
+
+    public List<NEMAMetadataEntry> getFileMetadataByID(int fileId) throws SQLException;
+    public List<NEMAMetadataEntry> getFileMetadata(NEMAFile file) throws SQLException;
+    public List<List<NEMAMetadataEntry>> getFileMetadataByID(List<Integer> fileIDs) throws SQLException;
+    public List<List<NEMAMetadataEntry>> getFileMetadata(List<NEMAFile> files) throws SQLException;
+
+    public List<NEMAMetadataEntry> getTrackMetadataByID(String trackId) throws SQLException;
+    public List<NEMAMetadataEntry> getTrackMetadata(NEMATrack track) throws SQLException;
+    public List<List<NEMAMetadataEntry>> getTrackMetadataByID(List<String> tracks) throws SQLException;
+    public List<List<NEMAMetadataEntry>> getTrackMetadata(List<NEMATrack> tracks) throws SQLException;
+
+
+
+}
