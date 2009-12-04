@@ -151,7 +151,7 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 	 * @throws MeandreCommunicationException 
 	 * @throws CorruptedFlowException 
 	 */
-	public synchronized String createNewFlow(HashMap<String, String> paramMap, String[] modifiedComponentsUri, String flowUri) throws MeandreCommunicationException, CorruptedFlowException {
+	public synchronized String createNewFlow(HashMap<String, String> paramMap,  String flowUri) throws MeandreCommunicationException, CorruptedFlowException {
 		WBFlowDescription flowDesc=this.getRepository().retrieveFlowDescriptor(flowUri);
 		String name = flowDesc.getName();
 		name = name + System.currentTimeMillis();

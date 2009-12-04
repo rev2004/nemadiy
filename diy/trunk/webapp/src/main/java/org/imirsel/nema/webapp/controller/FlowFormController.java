@@ -1,7 +1,10 @@
 package org.imirsel.nema.webapp.controller;
 
+import java.io.File;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import java.util.logging.Logger;
@@ -9,6 +12,10 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
@@ -19,6 +26,9 @@ import org.imirsel.nema.service.ComponentMetadataService;
 import org.imirsel.nema.service.FlowMetadataService;
 import org.meandre.webapp.CorruptedFlowException;
 import org.meandre.webapp.MeandreCommunicationException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -29,6 +39,7 @@ public class FlowFormController extends MultiActionController{
 	private FlowService flowService = null;
 	private ComponentMetadataService componentMetadataService;
 	private FlowMetadataService flowMetadataService;
+	private String uploadDirectory;
 
 
 
@@ -91,21 +102,110 @@ public class FlowFormController extends MultiActionController{
 	}
 	
 	public ModelAndView saveflow(HttpServletRequest req, HttpServletResponse res) throws TransmissionException, MeandreCommunicationException, CorruptedFlowException{
-		String flowId = req.getParameter("flowTemplateId");
-		String flowUri= req.getParameter("flowTemplateUri");
-		String[] modifiedComponentsUri = req.getParameterValues("modifiedComponents");
-		System.out.println("Number of modified Components Uri: " + modifiedComponentsUri.length);
-		Enumeration<String> paramNames=req.getParameterNames();
+		String token=System.currentTimeMillis()+"-token";
 		HashMap<String,String> paramMap = new HashMap<String,String>();
-		while(paramNames.hasMoreElements()){
-			String paramName= paramNames.nextElement();
-			paramMap.put(paramName, req.getParameter(paramName));
+		
+		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
+		if(!isMultipart){
+			log.severe("Error -this should be multipart");
 		}
+		
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+		ServletFileUpload upload = new ServletFileUpload(factory);
+		//upload.setSizeMax(yourMaxRequestSize);
+		String uploadDir = getServletContext().getRealPath("/"+ getUploadDirectory()) + "/" + req.getRemoteUser() + "/"+ token+"/";
 
-		String newFlowUri=flowMetadataService.createNewFlow(paramMap,modifiedComponentsUri,flowUri);
+		  
+	        // Create the directory if it doesn't exist
+	     File dirPath = new File(uploadDir);
+	     
+	      if (!dirPath.exists()) {
+	         dirPath.mkdirs();
+	      }
+	      String flowId =  null;
+			String flowUri= null;
+			
+		try {
+			List<FileItem> items = upload.parseRequest(req);
+			Iterator<FileItem> iter = items.iterator();
+			while (iter.hasNext()) {
+			    FileItem item = (FileItem) iter.next();
+			    if (item.isFormField()) {
+			    	String name = item.getFieldName();
+			        String value = item.getString();
+			        paramMap.put(name, value);
+			        if("flowTemplateId".equals(name)){
+			        	flowId = value;
+			        }else if("flowTemplateUri".equals(name)){
+			        	 flowUri = value;
+			        }
+			        
+			    } else {
+			    	String fieldName = item.getFieldName();
+			        String fileName = item.getName();
+			        String contentType = item.getContentType();
+			        boolean isInMemory = item.isInMemory();
+			        long sizeInBytes = item.getSize();
+			        if(fileName!=null && sizeInBytes>0 && fileName.length()>0){
+			        	File uploadedFile = new File(uploadDir+File.separator + fileName);
+			        	item.write(uploadedFile);
+			        	System.out.println("file uploaded: "+ fileName + uploadedFile.getAbsolutePath());
+			        	String webDir = uploadDir.substring(getServletContext().getRealPath("/").length());
+			        	paramMap.put(fieldName,"http://"+ req.getServerName()+":"+req.getServerPort()+File.separator+ webDir+File.separator+fileName);
+			        }
+			    }
+			}
+			
+		} catch (FileUploadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(flowId==null || flowUri==null){
+			log.severe("flowId or flowUri is null -some severe error happened...");
+		}
+		
+		
+		String newFlowUri=flowMetadataService.createNewFlow(paramMap,flowUri);
+		
+		Long longFlowId  =Long.parseLong(flowId);
+		Flow templateFlow = this.getFlowService().getFlow(longFlowId );
+		
+		String name = templateFlow.getName() + System.currentTimeMillis();
+		Flow instance = new Flow();
+		instance.setCreatorId(300l);
+		instance.setDateCreated(new Date());
+		instance.setInstanceOf(templateFlow);
+		instance.setKeyWords(templateFlow.getKeyWords());
+		instance.setName(name);
+		instance.setTemplate(false);
+		instance.setUrl(newFlowUri);
+		instance.setDescription("This is a derived Flow: " + instance.getDescription());
 	
+		
 		System.out.println("The new flow uri is: " + newFlowUri);
+	
+		
+		long instanceId=this.getFlowService().storeFlowInstance(instance);
+		
+		
+		this.getFlowService().executeJob(token, name, "some stuff here -job description", instanceId, 300l, "amitku@uiuc.edu");
+		
 		return null;
+	}
+
+
+
+	public String getUploadDirectory() {
+		return uploadDirectory;
+	}
+
+
+	public void setUploadDirectory(String uploadDirectory) {
+		this.uploadDirectory = uploadDirectory;
 	}
 
 

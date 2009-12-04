@@ -22,7 +22,6 @@
             <Item name="ViewUsers" title="menu.admin.users" page="/admin/users.html"/>
             <Item name="ActiveUsers" title="mainMenu.activeUsers" page="/admin/activeUsers.html"/>
             <Item name="ReloadContext" title="menu.admin.reload" page="/admin/reload.html"/>
-            <Item name="FileUpload" title="menu.selectFile" page="/fileupload.html"/>
             <Item name="FlushCache" title="menu.flushCache" page="/admin/flushCache.html"/>
             <Item name="Clickstream" title="menu.clickstream" page="/admin/clickstreams.jsp"/>
         </Menu>
