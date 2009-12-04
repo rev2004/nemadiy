@@ -173,6 +173,11 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
+    
+   <listener>
+    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+  </listener>
+    
 
     <listener>
         <listener-class>com.opensymphony.clickstream.ClickstreamListener</listener-class>

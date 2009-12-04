@@ -13,6 +13,7 @@
         </property>
     </bean>
     
+
     <bean id="repository" class="org.meandre.webapp.Repository">
     	<property name="meandreProxyWrapper" ref="meandreProxy"/>
     </bean>
@@ -65,7 +66,7 @@
     
       <!--  real flow service -->
     <bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
-		<property name="serviceUrl" value="rmi://128.174.154.145:1099/"/>
+		<property name="serviceUrl" value="rmi://128.174.154.145:1099/FlowService"/>
 		<property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService"/>
     </bean>
     
@@ -74,6 +75,7 @@
     	<property name="flowService" ref="realFlowService"/>
     	<property name="componentMetadataService" ref="componentMetadataService"/>
     	<property name="flowMetadataService" ref="flowMetadataService"/>
+    	<property name="uploadDirectory"  value="resources"/>
     </bean>
     
     <!-- flow controller -->
@@ -91,13 +93,7 @@
 
     <bean id="filenameController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 
-    <bean id="fileUploadController" class="org.imirsel.nema.webapp.controller.FileUploadController">
-        <property name="validator" ref="beanValidator"/>
-        <property name="cancelView" value="redirect:mainMenu.html"/>
-        <property name="formView" value="uploadForm"/>
-        <property name="successView" value="uploadDisplay"/>
-    </bean>
-
+  
     <bean id="passwordHintController" class="org.imirsel.nema.webapp.controller.PasswordHintController">
         <property name="userManager" ref="userManager"/>
         <property name="messageSource" ref="messageSource"/>
@@ -135,12 +131,12 @@
         <property name="templateName" value="accountCreated.vm"/>
     </bean>
 
-    <!-- Add additional controller beans here -->
+    <!-- Add additional controller beans here 
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="2097152"/>
     </bean>
-
+-->
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basename" value="ApplicationResources"/>
         <property name="useCodeAsDefaultMessage" value="true"/>
@@ -163,7 +159,6 @@
                 /passwordHint.html=passwordHintController
                 /flowlist.html=flowController
                 /flowform.html=flowController
-                
                 /runjob.html=jobController
                 /abortJob.html=jobController
                 /jobdetail.html=jobController

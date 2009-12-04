@@ -69,7 +69,7 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 			DataTypeBean dataTypeBean = ltb.get(0);
 			if(dataTypeBean instanceof StringDataTypeBean){
 				StringDataTypeBean sd = (StringDataTypeBean) dataTypeBean;
-				//if(sd.getRenderer()==null){
+				if(sd.getRenderer()==null){
 					if(sd.getValueList()!=null){
 						if(sd.getValueList().length>0){
 							htmlWidget=createSelectBox(property.getName(),cssWriter.toString(),property.getDefaultValue(),sd.getValueList(),property.getValue());
@@ -79,9 +79,9 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 					}else{
 						htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue());
 					}
-				//}else if(sd.getRenderer().endsWith("FileRenderer")){
-				//	htmlWidget=createInputBox(property.getName(),"file",cssWriter.toString(),property.getDefaultValue(),property.getValue());
-				//}
+				}else if(sd.getRenderer().endsWith("FileRenderer")){
+					htmlWidget=createInputBox(property.getName(),"file",cssWriter.toString(),property.getDefaultValue(),property.getValue());
+				}
 
 
 			}else if(dataTypeBean instanceof BooleanDataTypeBean){
