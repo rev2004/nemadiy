@@ -52,6 +52,27 @@
             
 
           </plugin>
+       
+       
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>nemaflowservice.properties</exclude>
+							</excludes>
+						</configuration>
+ 					</execution>
+				</executions>
+ 			</plugin>
+		
+          
 
         </plugins>
         </build>
@@ -262,6 +283,13 @@
         <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>imirsel-meandre-client</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        
+                <dependency>
+            <groupId>org.imirsel</groupId>
+            <artifactId>nema-mock-flowservice</artifactId>
             <version>1.0.2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
