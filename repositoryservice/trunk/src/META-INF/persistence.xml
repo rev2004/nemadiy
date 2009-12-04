@@ -15,8 +15,8 @@
     <properties>
       <property name="hibernate.connection.url" value="jdbc:mysql://nema.lis.uiuc.edu:3306/nemadatarepository"/>
       <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-      <property name="hibernate.connection.password" value="reduxer101"/>
-      <property name="hibernate.connection.username" value="nema_user"/>
+      <property name="hibernate.connection.password" value=""/>
+      <property name="hibernate.connection.username" value=""/>
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
     </properties>
   </persistence-unit>
