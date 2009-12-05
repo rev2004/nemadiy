@@ -27,8 +27,6 @@ public class RepositoryProperties {
         repoProps = new Properties();
         repoProps.setProperty(DB_LOCATOR, "jdbc:mysql://localhost:3306/");
         repoProps.setProperty(DB_NAME, "nemadatarepository");
-        repoProps.setProperty(DB_USER, "nema_user");
-        repoProps.setProperty(DB_PASS, "reduxer101");
         
         try {
             InputStream iStream = RepositoryProperties.class.getResourceAsStream("/RepositoryProperties.properties");
