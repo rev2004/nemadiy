@@ -14,12 +14,10 @@ import java.io.Serializable;
 public class NEMAMetadataEntry implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    private int typeId;
     private String type;
     private String value;
 
-    public NEMAMetadataEntry(int typeId, String type, String value){
-        this.typeId = typeId;
+    public NEMAMetadataEntry(String type, String value){
         this.type = type;
         this.value = value;
     }
@@ -68,20 +66,6 @@ public class NEMAMetadataEntry implements Serializable{
             return true;
         }
         return false;
-    }
-
-    /**
-     * @return the typeId
-     */
-    public int getTypeId(){
-        return typeId;
-    }
-
-    /**
-     * @param typeId the typeId to set
-     */
-    public void setTypeId(int typeId){
-        this.typeId = typeId;
     }
 
 }

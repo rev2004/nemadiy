@@ -56,7 +56,7 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
-    public Set<Set<NEMAMetadataEntry>> getCollectionVersions(NEMACollection collection) throws SQLException;
+    public List<List<NEMAMetadataEntry>> getCollectionVersions(NEMACollection collection) throws SQLException;
     /**
      * Retrieves a Set containing Sets of NEMAMetadataEntry Objects which define
      * the different file types that files in the collection are available in.
@@ -72,7 +72,7 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
-    public Set<Set<NEMAMetadataEntry>> getCollectionVersions(int collectionId) throws SQLException;
+    public List<List<NEMAMetadataEntry>> getCollectionVersions(int collectionId) throws SQLException;
 
 
     /**
@@ -189,7 +189,7 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
-    public Set<Set<NEMAMetadataEntry>> getSetVersions(NEMASet set) throws SQLException;
+    public List<List<NEMAMetadataEntry>> getSetVersions(NEMASet set) throws SQLException;
     /**
      * Retrieves a Set containing Sets of NEMAMetadataEntry Objects which define
      * the different file types that the <emph>complete</emph> set of tracks,
@@ -210,7 +210,7 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
-    public Set<Set<NEMAMetadataEntry>> getSetVersions(int setId) throws SQLException;
+    public List<List<NEMAMetadataEntry>> getSetVersions(int setId) throws SQLException;
 
 
     /**
@@ -320,7 +320,7 @@ public interface RepositoryClientInterface {
      * Objects defining describing the File type.
      * @throws SQLException
      */
-    public Map<NEMAFile,Set<NEMAMetadataEntry>> getFileFuzzy(NEMATrack track, Set<NEMAMetadataEntry> constraint) throws SQLException;
+    public Map<NEMAFile,List<NEMAMetadataEntry>> getFileFuzzy(NEMATrack track, Set<NEMAMetadataEntry> constraint) throws SQLException;
     /**
      * Returns a map linking NEMAFile Objects (keys) to Sets of
      * NEMAMetadataEntry Objects (values) which define the metadata of that NEMAFile
@@ -336,7 +336,7 @@ public interface RepositoryClientInterface {
      * Objects defining describing the File type.
      * @throws SQLException
      */
-    public Map<NEMAFile,Set<NEMAMetadataEntry>> getFileFuzzy(String trackId, Set<NEMAMetadataEntry> constraint) throws SQLException;
+    public Map<NEMAFile,List<NEMAMetadataEntry>> getFileFuzzy(String trackId, Set<NEMAMetadataEntry> constraint) throws SQLException;
 
     /**
      * Returns a NEMAFile matching the the NEMATrack specified and having
