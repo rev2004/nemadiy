@@ -4,7 +4,7 @@
         <Displayer name="Velocity" type="net.sf.navigator.displayer.VelocityMenuDisplayer"/>
     </Displayers>
     <Menus>
-        <Menu name="MainMenu" title="mainMenu.title" page="/getuserjobs.html" roles="ROLE_ADMIN,ROLE_USER"/>
+        <Menu name="MainMenu" title="mainMenu.title" page="/getuserjobs.html"/>
 		
 		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER">
             <Item name="JobType" title="Job Type" page="/flowlist.html"/>

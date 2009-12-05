@@ -8,8 +8,8 @@
 	<menu:displayMenu name="JobMenu"/>
     <menu:displayMenu name="UserMenu"/>
     <menu:displayMenu name="AdminMenu"/>
-    <menu:displayMenu name="helpMenu"/>
     <menu:displayMenu name="Logout"/>
+    <menu:displayMenu name="helpMenu"/>
 
 </ul>
 </menu:useMenuDisplayer>
