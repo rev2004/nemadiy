@@ -97,7 +97,7 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 		
 	}
 
-	public HashMap<String, Property> getComponentPropertyDataType(Component component, String flowUri) throws TransmissionException {
+	public Map<String, Property> getComponentPropertyDataType(Component component, String flowUri) throws TransmissionException {
 		QueryableRepository qp= meandreProxyWrapper.getRepository();
 		Model model =getEmptyModel();
 		ExecutableComponentDescription ecd=qp.getExecutableComponentDescription(model.createResource(component.getUri()));
@@ -114,7 +114,7 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 		PropertiesDescriptionDefinition propertiesDefn=ecd.getProperties();
 		Set<String> propertiesSet=propertiesDefn.getKeys();
 		Iterator<String> it = propertiesSet.iterator();
-		HashMap<String,Property> dataTypeMap = new HashMap<String,Property>();
+		Map<String,Property> dataTypeMap = new HashMap<String,Property>();
 		boolean foundDataType=Boolean.FALSE;
 		while(it.hasNext()){
 			String propertyName = it.next();

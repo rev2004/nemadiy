@@ -109,7 +109,7 @@ public class JobController extends MultiActionController {
 		return null;
 	}
 
-	public ModelAndView getUserJobs(HttpServletRequest req,
+	public ModelAndView getuserjobs(HttpServletRequest req,
 			HttpServletResponse res) {
 
 		User user = userManager.getCurrentUser();
@@ -122,6 +122,12 @@ public class JobController extends MultiActionController {
 
 		logger.debug("start to list the jobs of   " + user);
 		List<Job> jobs = flowService.getUserJobs(userId);
+	
+		for(Job job:jobs){
+			logger.debug(job.getId() +" " +job.getName() + " " + job.getJobStatus());
+		}
+		
+		
 		return new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
 	}
 

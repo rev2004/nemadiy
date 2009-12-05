@@ -10,16 +10,32 @@ ${flow.description}
 </p>
 
 
-					<div class="actionBox">
-                        <p class="actionBox">
-                      	Please enter the Job details the name and description, the collection information
-                      	to run the flow and the 
-                         </p>
-                    </div>
-                     <div id="formcontainer_job">
-                        <div class="form_job">
+<div class="actionBox">
+          <p class="actionBox">
+          Please enter the Job details the name and description and job parameters to run the flow.
+          </p>
+  </div>
+                    <br/>
+                    <br/>
+                    
+<div id="formcontainer_job">
+<div class="form_job">
 
 <form id="theform" action="saveflow.html" enctype="multipart/form-data" method="post">
+
+ <fieldset id="pt1">
+ <label>Name</label>
+<input name="name" type="text" value="${flow.name}"/>
+</fieldset>
+
+
+ <fieldset id="pt1">
+ <label>Description</label>
+<textarea name="description" rows="5" cols="50">${flow.description}</textarea>
+</fieldset>
+
+
+
 
 <c:forEach items="${componentPropertyMap}" var="entry">
 
@@ -48,7 +64,7 @@ ${flow.description}
 	<input type="hidden" name="flowTemplateId" value="${flow.id}"/>
      <input type="hidden" name="flowTemplateUri" value="${flow.url}"/>                  
                             <fieldset id="button">
-                                <input id="submitform" tabindex="6" value="Store Job" type="submit">
+                                <input id="submitform" tabindex="6" value="Run Job" type="submit">
                             </fieldset>
 
                         </div>

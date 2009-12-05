@@ -326,11 +326,12 @@
             <version>${meandre-server.version}</version>
         </dependency>
         
-         <dependency>
-            <groupId>org.monkproject</groupId>
-            <artifactId>json</artifactId>
-            <version>20080701</version>
-        </dependency>
+     <dependency>
+    	<groupId>org.json</groupId>
+    	<artifactId>json</artifactId>
+    	<version>20090211</version>
+	</dependency>
+
       
       <!--  Needed by the meandre -->  
       <dependency>

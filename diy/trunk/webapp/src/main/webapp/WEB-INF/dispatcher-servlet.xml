@@ -75,6 +75,7 @@
     	<property name="flowService" ref="realFlowService"/>
     	<property name="componentMetadataService" ref="componentMetadataService"/>
     	<property name="flowMetadataService" ref="flowMetadataService"/>
+    	 <property name="userManager" ref="userManager"/>
     	<property name="uploadDirectory"  value="resources"/>
     </bean>
     
@@ -149,21 +150,19 @@
                 /admin/flushCache.html=filenameController
                 /admin/reload.html=reloadController
                 /admin/users.html=userController
-                /mainMenu.html=filenameController
-                /experimentMenu.html=filenameController
-                /experimentStatusMenu.html=filenameController
-                /featureExtraction.html=filenameController
-                /classification.html=filenameController
-                /jobstype.html=filenameController
-                /evaluation.html=filenameController  
+              
                 /passwordHint.html=passwordHintController
-                /flowlist.html=flowController
+              
                 /flowform.html=flowController
                 /runjob.html=jobController
                 /abortJob.html=jobController
+                
+                
+                /flowlist.html=flowController
+                /jobstype.html=filenameController
                 /jobdetail.html=jobController
                 /jobaction.html=jobController
-                /getUserJobs.html=jobController
+                /getuserjobs.html=jobController
                 /saveflow.html=flowFormController
                 /flowtemplate.html=flowFormController
                 /*.jsp=viewResolver

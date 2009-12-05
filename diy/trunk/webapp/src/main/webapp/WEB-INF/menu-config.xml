@@ -4,20 +4,21 @@
         <Displayer name="Velocity" type="net.sf.navigator.displayer.VelocityMenuDisplayer"/>
     </Displayers>
     <Menus>
-        <Menu name="MainMenu" title="mainMenu.title" page="/flowlist.html" roles="ROLE_ADMIN,ROLE_USER"/>
-		<Menu name="Jobs" title="jobs.title" page="/jobs.jsp" roles="ROLE_ADMIN,ROLE_USER">
-            <Item name="JobType" title="Job Type" page="/jobstype.jsp"/>
-            <Item name="JobClassification" title="Classification Job Setup" page="/jobclassification.jsp"/>
-            <Item name="JobEvaluation" title="Evaluation Job Setup" page="/jobevaluation.jsp"/>
-            <Item name="JobExtraction" title="Extraction Job Setup" page="/jobextraction.jsp"/>
-            <Item name="JobStatus" title="Job Status" page="/jobstatus.jsp"/>
-            <Item name="JobDetails" title="Job Details" page="/jobdetails.jsp"/>			
-		</Menu>
-
+        <Menu name="MainMenu" title="mainMenu.title" page="/getuserjobs.html" roles="ROLE_ADMIN,ROLE_USER"/>
+		
+		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER">
+            <Item name="JobType" title="Job Type" page="/flowlist.html"/>
+            <Item name="JobTypeExtraction" title="Feature Extraction" page="/flowtemplate.html?id=3"/>
+            <Item name="JobTypeClassification" title="Classification" page="/flowtemplate.html?id=4"/>
+            <Item name="JobTypeEvaluation" title="Evaluation" page="/flowtemplate.html?id=5"/>
+   		</Menu>
+   
+   
+   
+   
         <Menu name="UserMenu" title="menu.user" description="User Menu" page="/userform.html" roles="ROLE_ADMIN,ROLE_USER"/>
-       <Menu name="ExperimentMenu" title="experimentMenu.title" page="/experimentMenu.html" roles="ROLE_ADMIN,ROLE_USER"/>
-        <Menu name="ExperimentStatusMenu" title="experimentStatusMenu.title" page="/experimentStatusMenu.html" roles="ROLE_ADMIN,ROLE_USER"/>
-  
+   
+   	
         <Menu name="AdminMenu" title="menu.admin" description="Admin Menu" roles="ROLE_ADMIN" width="120" page="/admin/users.html">
             <Item name="ViewUsers" title="menu.admin.users" page="/admin/users.html"/>
             <Item name="ActiveUsers" title="mainMenu.activeUsers" page="/admin/activeUsers.html"/>
@@ -26,9 +27,8 @@
             <Item name="Clickstream" title="menu.clickstream" page="/admin/clickstreams.jsp"/>
         </Menu>
 
-		<Menu name="welcomeMenu" title="welcomeMenu.title" page="/welcome.jsp" />
-		<Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" />
 		
+		<Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" />
 		<Menu name="Logout" title="user.logout" page="/logout.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
     </Menus>
 </MenuConfig>

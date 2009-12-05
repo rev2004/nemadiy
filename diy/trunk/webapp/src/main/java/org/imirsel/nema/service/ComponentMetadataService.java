@@ -1,6 +1,6 @@
 package org.imirsel.nema.service;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.nema.model.Component;
@@ -19,6 +19,6 @@ public interface ComponentMetadataService{
 	 * @return HashMap of component properties and data type
 	 * @throws TransmissionException 
 	 */
-	public HashMap<String,Property> getComponentPropertyDataType(final Component component, String flowUri) throws TransmissionException;
+	public Map<String,Property> getComponentPropertyDataType(final Component component, String flowUri) throws TransmissionException;
 	
 }
