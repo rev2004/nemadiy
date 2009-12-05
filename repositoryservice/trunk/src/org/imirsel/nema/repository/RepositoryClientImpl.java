@@ -50,6 +50,12 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_TRACK_METADATA_QUERY = "SELECT * FROM track_metadata where track_id=?";
     private PreparedStatement getTrackMetadata;
 
+    public static final String GET_FILE_FOR_TRACK = "SELECT file.* FROM file where file.track_id=?";
+    public static final String GET_CONSTRAINED_FILE_FOR_TRACK = "SELECT file.* from file WHERE file.id IN (SELECT file_id from file,file_file_metadata_link WHERE file.track_id=? AND file.id=file_file_metadata_link.file_id AND file_metadata_id ALL (SELECT id FROM file_metadata WHERE ";
+
+
+    //public static final String GET_VERSIONS_FOR_COLLECTION =
+
 
 
     //cached types maps
@@ -59,6 +65,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_SET_TYPES = "SELECT * set_type_definitions";
     private Map<Integer,String> trackMetadataTypeMap;
     private Map<Integer,String> fileMetadataTypeMap;
+    private Map<String,Integer> trackMetadataTypeMapRev;
+    private Map<String,Integer> fileMetadataTypeMapRev;
     private Map<Integer,String> taskTypeMap;
     private Map<Integer,String> setTypeMap;
 
@@ -91,6 +99,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         //init types maps
         trackMetadataTypeMap = populateTypesMap(GET_TRACK_METADATA_TYPES);
         fileMetadataTypeMap = populateTypesMap(GET_FILE_METADATA_TYPES);
+        trackMetadataTypeMapRev = reverseTypesMap(trackMetadataTypeMap);
+        fileMetadataTypeMapRev = reverseTypesMap(fileMetadataTypeMap);
         taskTypeMap = populateTypesMap(GET_TASK_TYPES);
         setTypeMap = populateTypesMap(GET_SET_TYPES);
     }
@@ -250,7 +260,23 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
 
 
-
+    private List<Map<String, String>> getFileData(Set<NEMAMetadataEntry> constraint,
+                                                  String trackId) throws SQLException{
+        String query = GET_FILE_FOR_TRACK;
+        NEMAMetadataEntry nemaMetadataEntry;
+        for (Iterator<NEMAMetadataEntry> it = constraint.iterator(); it.hasNext();){
+            nemaMetadataEntry = it.next();
+            query += "(metadata_type_id=" + fileMetadataTypeMapRev.get(nemaMetadataEntry.getType()) + " AND value='" + nemaMetadataEntry.getValue() + "')";
+            if (it.hasNext()){
+                query += " OR ";
+            }
+        }
+        query += "))";
+        PreparedStatement st = dbCon.con.prepareStatement(query);
+        List<Map<String, String>> results = executeStatement(st, trackId);
+        return results;
+    }
+    
     public NEMAFile getFile(NEMATrack track,
                             Set<NEMAMetadataEntry> constraint) throws SQLException{
         return getFile(track.getId(), constraint);
@@ -258,53 +284,70 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public NEMAFile getFile(String trackId,
                             Set<NEMAMetadataEntry> constraint) throws SQLException{
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<Map<String, String>> results = getFileData(constraint, trackId);
+
+        if(results.size() > 0){
+            return buildNEMAFile(results.get(0));
+        }else{
+            return null;
+        }
     }
 
-
-    public Map<NEMAFile, Set<NEMAMetadataEntry>> getFileFuzzy(NEMATrack track,
+    public Map<NEMAFile, List<NEMAMetadataEntry>> getFileFuzzy(NEMATrack track,
                                                               Set<NEMAMetadataEntry> constraint)
             throws SQLException{
         return getFileFuzzy(track.getId(), constraint);
     }
 
-    public Map<NEMAFile, Set<NEMAMetadataEntry>> getFileFuzzy(String trackId,
+    public Map<NEMAFile, List<NEMAMetadataEntry>> getFileFuzzy(String trackId,
                                                               Set<NEMAMetadataEntry> constraint)
             throws SQLException{
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<Map<String, String>> results = getFileData(constraint, trackId);
+
+        List<NEMAFile> files = buildNEMAFile(results);
+        Map<NEMAFile, List<NEMAMetadataEntry>> out = new HashMap<NEMAFile, List<NEMAMetadataEntry>>(files.size());
+        for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
+            NEMAFile nemaFile = it.next();
+            out.put(nemaFile, getFileMetadata(nemaFile));
+        }
+        return out;
     }
 
 
     public List<NEMAFile> getFiles(List<NEMATrack> trackList,
                                    Set<NEMAMetadataEntry> constraint) throws SQLException{
-        List<String> trackIDs = new ArrayList<String>(trackList.size());
+        List<NEMAFile> files = new ArrayList<NEMAFile>();
         for (Iterator<NEMATrack> it = trackList.iterator(); it.hasNext();){
-            trackIDs.add(it.next().getId());
+            files.add(getFile(it.next().getId(), constraint));
         }
-        return getFilesByID(trackIDs, constraint);
+        return files;
     }
 
     public List<NEMAFile> getFilesByID(List<String> trackIDList, Set<NEMAMetadataEntry> constraint) throws SQLException{
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<NEMAFile> files = new ArrayList<NEMAFile>();
+        for (Iterator<String> it = trackIDList.iterator(); it.hasNext();){
+            files.add(getFile(it.next(), constraint));
+        }
+        return files;
     }
 
 
 
-    public Set<Set<NEMAMetadataEntry>> getCollectionVersions(NEMACollection collection)
+    public List<List<NEMAMetadataEntry>> getCollectionVersions(NEMACollection collection)
             throws SQLException{
         return getCollectionVersions(collection.getId());
     }
 
-    public Set<Set<NEMAMetadataEntry>> getCollectionVersions(int collectionId)
+    public List<List<NEMAMetadataEntry>> getCollectionVersions(int collectionId)
             throws SQLException{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Set<Set<NEMAMetadataEntry>> getSetVersions(NEMASet set) throws SQLException{
+    public List<List<NEMAMetadataEntry>> getSetVersions(NEMASet set) throws SQLException{
         return getSetVersions(set.getId());
     }
 
-    public Set<Set<NEMAMetadataEntry>> getSetVersions(int setId) throws SQLException{
+    public List<List<NEMAMetadataEntry>> getSetVersions(int setId) throws SQLException{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -493,7 +536,6 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     private NEMAMetadataEntry buildNEMAMetadataEntry(Map<String, String> map, Map<Integer,String> typesMap){
         int type = Integer.parseInt(map.get("metadata_type_id"));
         return new NEMAMetadataEntry(
-                type,
                 typesMap.get(type),
                 map.get("value")
             );
@@ -525,5 +567,17 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             }
         }
         return retVal;
+    }
+
+    private Map<String,Integer> reverseTypesMap(Map<Integer,String> map) throws SQLException{
+        Map<String,Integer> rev = new HashMap<String, Integer>();
+        int key;
+        String val;
+        for (Iterator<Integer> it = map.keySet().iterator(); it.hasNext();){
+            key = it.next();
+            val = map.get(key);
+            rev.put(val,key);
+        }
+        return rev;
     }
 }
