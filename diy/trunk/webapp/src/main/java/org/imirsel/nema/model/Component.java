@@ -5,7 +5,7 @@ package org.imirsel.nema.model;
  * @author Amit Kumar
  *
  */
-public class Component {
+public class Component implements Comparable<Component>{
 	String name;
 	String description;
 	String uri;
@@ -42,6 +42,12 @@ public class Component {
 	}
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+	public int compareTo(Component o) {
+		if(o==null){
+			return 0;
+		}
+		return o.getInstanceUri().compareTo(this.getInstanceUri());
 	}
 
 }

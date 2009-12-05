@@ -2,6 +2,7 @@ package org.imirsel.nema.webapp.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -93,7 +94,7 @@ public class FlowController extends MultiActionController{
 		for(int i=0;i<componentList.size();i++){
 			HashMap<String, Property> m=null;
 			try {
-				m = componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
+				m = (HashMap<String, Property>) componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
 			} catch (TransmissionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

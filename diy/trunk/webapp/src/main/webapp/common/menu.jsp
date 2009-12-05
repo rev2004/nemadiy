@@ -4,8 +4,8 @@
 <ul id="primary-nav" class="menuList">
     <li class="pad">&nbsp;</li>
  
-	<menu:displayMenu name="welcomeMenu"/>
-	<menu:displayMenu name="MainMenu"/>
+ 	<menu:displayMenu name="MainMenu"/>
+	<menu:displayMenu name="JobMenu"/>
     <menu:displayMenu name="UserMenu"/>
     <menu:displayMenu name="AdminMenu"/>
     <menu:displayMenu name="helpMenu"/>

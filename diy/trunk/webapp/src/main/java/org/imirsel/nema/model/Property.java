@@ -9,7 +9,7 @@ import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
  * @author Amit Kumar
  *
  */
-public class Property {
+public class Property implements Comparable<Property>{
 	private List<DataTypeBean> dataTypeBeanList;
 	private Object defaultValue;
 	private String name;
@@ -44,6 +44,12 @@ public class Property {
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+	public int compareTo(Property o) {
+		if(o==null){
+			return 0;
+		}
+		return o.getName().compareTo(this.getName());
 	}
 
 }

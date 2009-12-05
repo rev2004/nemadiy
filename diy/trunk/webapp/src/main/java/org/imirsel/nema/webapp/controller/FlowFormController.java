@@ -1,11 +1,14 @@
 package org.imirsel.nema.webapp.controller;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.Map;
 
 import java.util.logging.Logger;
 
@@ -21,9 +24,12 @@ import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
+import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.Property;
+import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.ComponentMetadataService;
 import org.imirsel.nema.service.FlowMetadataService;
+import org.imirsel.nema.service.UserManager;
 import org.meandre.webapp.CorruptedFlowException;
 import org.meandre.webapp.MeandreCommunicationException;
 import org.springframework.web.multipart.MultipartException;
@@ -31,6 +37,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+import org.springframework.web.servlet.view.RedirectView;
 
 public class FlowFormController extends MultiActionController{
 
@@ -39,6 +46,8 @@ public class FlowFormController extends MultiActionController{
 	private FlowService flowService = null;
 	private ComponentMetadataService componentMetadataService;
 	private FlowMetadataService flowMetadataService;
+	private UserManager userManager = null;
+	
 	private String uploadDirectory;
 
 
@@ -87,12 +96,13 @@ public class FlowFormController extends MultiActionController{
 		Flow flow=this.flowService.getFlow(id);
 		ModelAndView mav= new ModelAndView("flow/flowTemplate");
 		List<Component> componentList=flowMetadataService.getComponents(flow.getUrl());
+		Collections.sort(componentList);
 		log.info("componentList: " + componentList.size());
-		HashMap<Component,HashMap<String, Property>> map = new HashMap<Component,HashMap<String, Property>>();
+		HashMap<Component,Map<String, Property>> map = new HashMap<Component,Map<String, Property>>();
 		for(int i=0;i<componentList.size();i++){
 			HashMap<String, Property> m=null;
-				m = componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
-				map.put(componentList.get(i), m);
+				m = (HashMap<String, Property>)componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
+				map.put(componentList.get(i), new TreeMap(m));
 		}
 		log.info(Constants.COMPONENTPROPERTYMAP + " : " + map.size());
 		mav.addObject(Constants.FLOW, flow);
@@ -174,27 +184,37 @@ public class FlowFormController extends MultiActionController{
 		Long longFlowId  =Long.parseLong(flowId);
 		Flow templateFlow = this.getFlowService().getFlow(longFlowId );
 		
-		String name = templateFlow.getName() + System.currentTimeMillis();
+		String name = paramMap.get("name");
+		String description = paramMap.get("description");
+		if(name ==null){
+			name =templateFlow.getName()+File.separator+token;
+		}
+		
+		if(description==null){
+			description = templateFlow.getDescription()+" for flow: "+token;
+		}
 		Flow instance = new Flow();
-		instance.setCreatorId(300l);
+		User user = userManager.getCurrentUser();
+		logger.debug("USER IS ====> " + user);
+
+		if (user == null) {
+			user = userManager.getUserByUsername("admin");
+		}
+		long userId = user.getId();
+		instance.setCreatorId(userId);
 		instance.setDateCreated(new Date());
 		instance.setInstanceOf(templateFlow);
 		instance.setKeyWords(templateFlow.getKeyWords());
 		instance.setName(name);
 		instance.setTemplate(false);
 		instance.setUrl(newFlowUri);
-		instance.setDescription("This is a derived Flow: " + instance.getDescription());
-	
-		
+		instance.setDescription(description);
 		System.out.println("The new flow uri is: " + newFlowUri);
-	
-		
 		long instanceId=this.getFlowService().storeFlowInstance(instance);
+		Job job=this.getFlowService().executeJob(token, name,description, instanceId, user.getId(), user.getEmail());
 		
-		
-		this.getFlowService().executeJob(token, name, "some stuff here -job description", instanceId, 300l, "amitku@uiuc.edu");
-		
-		return null;
+		ModelAndView mav= new ModelAndView(new RedirectView("/getUserJobs.html"));
+		return mav;
 	}
 
 
@@ -206,6 +226,16 @@ public class FlowFormController extends MultiActionController{
 
 	public void setUploadDirectory(String uploadDirectory) {
 		this.uploadDirectory = uploadDirectory;
+	}
+
+
+	public UserManager getUserManager() {
+		return userManager;
+	}
+
+
+	public void setUserManager(UserManager userManager) {
+		this.userManager = userManager;
 	}
 
 

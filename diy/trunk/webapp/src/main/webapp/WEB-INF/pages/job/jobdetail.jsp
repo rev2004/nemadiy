@@ -33,11 +33,11 @@ ${job.description}
 									</TR>
 									<TR>
 										<TD>End Time:</TD>
-										<TD> 10:30 09-08-09</TD>
+										<TD>${job.endTimestamp}</TD>
 									</TR>
 									<TR>
-										<TD>Elapsed Time:</TD>
-										<TD> 10:30 09-08-09</TD>
+										<TD>Submitted Time:</TD>
+										<TD>${job.submitTimestamp}</TD>
 									</TR>
 									</TABLE>
 

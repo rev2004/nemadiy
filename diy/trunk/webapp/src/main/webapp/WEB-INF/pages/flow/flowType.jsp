@@ -8,7 +8,7 @@
 <body id="jobstype"/>
 
 
-<h1><fmt:message key="flow.type"/></h1>
+
 <c:forEach items="${flowList}" var="flow">
                     <div class="actionBox">
                         <h2 class="actionBox"><c:out value="${flow.name}"/></h2>
