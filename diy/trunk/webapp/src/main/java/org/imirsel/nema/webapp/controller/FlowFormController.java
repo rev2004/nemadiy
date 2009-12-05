@@ -3,7 +3,6 @@ package org.imirsel.nema.webapp.controller;
 import java.io.File;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -213,7 +212,7 @@ public class FlowFormController extends MultiActionController{
 		long instanceId=this.getFlowService().storeFlowInstance(instance);
 		Job job=this.getFlowService().executeJob(token, name,description, instanceId, user.getId(), user.getEmail());
 		
-		ModelAndView mav= new ModelAndView(new RedirectView("/getUserJobs.html"));
+		ModelAndView mav= new ModelAndView(new RedirectView("/getuserjobs.html"));
 		return mav;
 	}
 

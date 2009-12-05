@@ -38,35 +38,18 @@ public class JobController extends MultiActionController {
 		this.userManager = userManager;
 	}
 
-	public ModelAndView runjob(HttpServletRequest req, HttpServletResponse res) {
-		User user = userManager.getCurrentUser();
-		System.out.println("USER IS ====> " + user);
 
-		if (user == null) {
-			user = userManager.getUserByUsername("admin");
-		}
-		long userId = user.getId();
-		String email = user.getEmail();
-		String token = userId + "-" + System.currentTimeMillis();
-		String name = req.getParameter("name");
-		String description = req.getParameter("description");
-		String _flowId = req.getParameter("flowId");
-		long flowId = Long.parseLong(_flowId);
-		System.out.println("JOB INFO IS: " + name + "  " + description + "  ");
-		Job job = flowService.executeJob(token, name, description, flowId,
-				userId, email);
-		List<Job> jobs = flowService.getUserJobs(userId);
-		return new ModelAndView("redirect:/getUserJobs.html");
-		//redirect to avoid the the displaytag (sorting) or refresh to resend the submission for again.  
-	}
 
 	public ModelAndView jobdetail(HttpServletRequest req,
 			HttpServletResponse res) {
 		String _jobId = req.getParameter("id");
 		long jobId = Long.parseLong(_jobId);
 		Job job = flowService.getJob(jobId);
-		System.out.println("Show Job: " + job.getName());
-		return new ModelAndView("job/jobdetail", Constants.JOB, job);
+		System.out.println("Show Job here: " + job.getName());
+		System.out.println("STATUS CODE: " + job.getStatusCode());
+		System.out.println("STATUS VAL: " + job.getJobStatus());
+		
+		return new ModelAndView("job/job", Constants.JOB, job);
 	}
 
 	public ModelAndView jobaction(HttpServletRequest req,
@@ -84,17 +67,7 @@ public class JobController extends MultiActionController {
 		}
 
 		System.out.println("HERE ACTION: " + req.getParameter(_submitType));
-		return new ModelAndView("job/jobdetail", Constants.JOB, job);
-	}
-
-	public ModelAndView abortJob(HttpServletRequest req, HttpServletResponse res) {
-		String _jobId = req.getParameter("id");
-		long jobId = Long.parseLong(_jobId);
-
-		Job job = flowService.getJob(jobId);
-		logger.debug("abort job:"+job.getId()+"("+job.getJobStatus()+","+job.getStatusCode()+")");
-		if (job.isRunning()) flowService.abortJob(job.getId());
-		return new ModelAndView("job/jobdetail", Constants.JOB, job);
+		return new ModelAndView("job/jobList", Constants.JOB, job);
 	}
 
 	public ModelAndView deleteJob(HttpServletRequest req,
