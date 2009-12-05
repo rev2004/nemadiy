@@ -13,14 +13,27 @@ import java.io.Serializable;
  */
 public class NEMASet implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private int id;
     private Integer datasetId;
     private Integer setTypeId;
+    private String setTypeName;
     private Integer splitNumber;
 
     public NEMASet(int id){
         this.id = id;
     }
+
+    public NEMASet(int id, int datasetId, int setTypeId, String setTypeName,
+                   int splitNumber){
+        this.id = id;
+        this.datasetId = datasetId;
+        this.setTypeId = setTypeId;
+        this.setTypeName = setTypeName;
+        this.splitNumber = splitNumber;
+    }
+
+
 
     public int getId(){
         return id;
@@ -74,6 +87,20 @@ public class NEMASet implements Serializable {
     @Override
     public String toString(){
         return "org.imirsel.nema.repository.NEMASet[id=" + id + "]";
+    }
+
+    /**
+     * @return the setTypeName
+     */
+    public String getSetTypeName(){
+        return setTypeName;
+    }
+
+    /**
+     * @param setTypeName the setTypeName to set
+     */
+    public void setSetTypeName(String setTypeName){
+        this.setTypeName = setTypeName;
     }
 
 }

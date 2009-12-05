@@ -12,8 +12,17 @@ import java.io.Serializable;
  * @author kriswest
  */
 public class NEMAMetadataEntry implements Serializable{
+    private static final long serialVersionUID = 1L;
+
+    private int typeId;
     private String type;
     private String value;
+
+    public NEMAMetadataEntry(int typeId, String type, String value){
+        this.typeId = typeId;
+        this.type = type;
+        this.value = value;
+    }
 
     /**
      * @return the type
@@ -25,8 +34,9 @@ public class NEMAMetadataEntry implements Serializable{
     /**
      * @param type the type to set
      */
-    public void setType(String type){
+    public void setType(String type, String value){
         this.type = type;
+        this.value = value;
     }
 
     /**
@@ -58,6 +68,20 @@ public class NEMAMetadataEntry implements Serializable{
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return the typeId
+     */
+    public int getTypeId(){
+        return typeId;
+    }
+
+    /**
+     * @param typeId the typeId to set
+     */
+    public void setTypeId(int typeId){
+        this.typeId = typeId;
     }
 
 }
