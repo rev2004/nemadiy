@@ -29,6 +29,17 @@ public interface RepositoryClientInterface {
      */
     public List<NEMACollection> getCollections() throws SQLException;
 
+    /**
+     * Retrieves a list of NEMATask Objects describing the available
+     * tasks.
+     *
+     * @return a list of NEMATask Objects describing the available
+     * tasks.
+     *
+     * @throws SQLException
+     */
+    public List<NEMATask> getTasks() throws SQLException;
+
 
     /**
      * Retrieves a Set containing Sets of NEMAMetadataEntry Objects which define
@@ -68,7 +79,7 @@ public interface RepositoryClientInterface {
      * Retrieves a List of NEMADataset Objects describing the datasets that are
      * available for a particular Collection. No guarantee is given that the
      * datasets described have complete audio file sets in any particular
-     * version.
+     * file version.
      *
      * @param collection The collection to retrieve the list of datasets for.
      *
@@ -77,12 +88,12 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
-    public List<NEMADataset> getDatasets(NEMACollection collection) throws SQLException;
+    public List<NEMADataset> getDatasetsForCollection(NEMACollection collection) throws SQLException;
     /**
      * Retrieves a List of NEMADataset Objects describing the datasets that are
      * available for a particular Collection. No guarantee is given that the
      * datasets described have complete audio file sets in any particular
-     * version.
+     * file version.
      *
      * @param collectionId The collection ID to retrieve the list of datasets
      * for.
@@ -92,7 +103,37 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
-    public List<NEMADataset> getDatasets(int collectionId) throws SQLException;
+    public List<NEMADataset> getDatasetsForCollection(int collectionId) throws SQLException;
+
+    /**
+     * Retrieves a List of NEMADataset Objects describing the datasets that are
+     * available for a particular task. No guarantee is given that the
+     * datasets described have complete audio file sets in any particular
+     * file version.
+     *
+     * @param task The task to retrieve the list of datasets for.
+     *
+     * @return a List of NEMADataset Objects describing the datasets that are
+     * available for the specified task.
+     *
+     * @throws SQLException
+     */
+    public List<NEMADataset> getDatasetsForTask(NEMATask task) throws SQLException;
+    /**
+     * Retrieves a List of NEMADataset Objects describing the datasets that are
+     * available for a particular task. No guarantee is given that the
+     * datasets described have complete audio file sets in any particular
+     * file version.
+     *
+     * @param taskId The task ID to retrieve the list of datasets
+     * for.
+     *
+     * @return a List of NEMADataset Objects describing the datasets that are
+     * available for the specified task.
+     *
+     * @throws SQLException
+     */
+    public List<NEMADataset> getDatasetsForTask(int taskId) throws SQLException;
 
     /**
      * Retrieves a NEMASet Object describing the subset of a Collection that
@@ -262,7 +303,7 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
-    public NEMAFile getFile(int trackId, Set<NEMAMetadataEntry> constraint) throws SQLException;
+    public NEMAFile getFile(String trackId, Set<NEMAMetadataEntry> constraint) throws SQLException;
 
     /**
      * Returns a map linking NEMAFile Objects (keys) to Sets of
@@ -295,11 +336,11 @@ public interface RepositoryClientInterface {
      * Objects defining describing the File type.
      * @throws SQLException
      */
-    public Map<NEMAFile,Set<NEMAMetadataEntry>> getFileFuzzy(int trackId, Set<NEMAMetadataEntry> constraint) throws SQLException;
+    public Map<NEMAFile,Set<NEMAMetadataEntry>> getFileFuzzy(String trackId, Set<NEMAMetadataEntry> constraint) throws SQLException;
 
     /**
      * Returns a NEMAFile matching the the NEMATrack specified and having
-     * the metadata values specified for NEMATrack in the list passed.
+     * the metadata values specified in the list passed.
      * If more than one NEMAFile matches each NEMATrack and constraint then no
      * guarantee is  provided as to which is returned. If no NEMAFile matches
      * then null is returned (The ArrayList clas supports null entries).
@@ -315,16 +356,34 @@ public interface RepositoryClientInterface {
      * @throws SQLException
      */
     public List<NEMAFile> getFiles(List<NEMATrack> trackList, Set<NEMAMetadataEntry> constraint) throws SQLException;
+    /**
+     * Returns a NEMAFile matching the the NEMATrack with the specified ID and
+     * having the metadata values specified in the list passed.
+     * If more than one NEMAFile matches each NEMATrack and constraint then no
+     * guarantee is  provided as to which is returned. If no NEMAFile matches
+     * then null is returned (The ArrayList clas supports null entries).
+     *
+     * @param trackIDList The list of IDs to retrieve NEMAFiles for.
+     * @param constraint The file metadata constraint to use in selecting the
+     * files.
+     *
+     * @return A list of NEMAFile Objects corresponding to the track IDs
+     * with null entries where no NEMAFile could be found that matched the
+     * constraint.
+     *
+     * @throws SQLException
+     */
+    public List<NEMAFile> getFilesByID(List<String> trackIDList, Set<NEMAMetadataEntry> constraint) throws SQLException;
 
     public List<NEMAMetadataEntry> getFileMetadataByID(int fileId) throws SQLException;
     public List<NEMAMetadataEntry> getFileMetadata(NEMAFile file) throws SQLException;
-    public List<List<NEMAMetadataEntry>> getFileMetadataByID(List<Integer> fileIDs) throws SQLException;
-    public List<List<NEMAMetadataEntry>> getFileMetadata(List<NEMAFile> files) throws SQLException;
+    public Map<Integer,List<NEMAMetadataEntry>> getFileMetadataByID(List<Integer> fileIDs) throws SQLException;
+    public Map<Integer,List<NEMAMetadataEntry>> getFileMetadata(List<NEMAFile> files) throws SQLException;
 
     public List<NEMAMetadataEntry> getTrackMetadataByID(String trackId) throws SQLException;
     public List<NEMAMetadataEntry> getTrackMetadata(NEMATrack track) throws SQLException;
-    public List<List<NEMAMetadataEntry>> getTrackMetadataByID(List<String> tracks) throws SQLException;
-    public List<List<NEMAMetadataEntry>> getTrackMetadata(List<NEMATrack> tracks) throws SQLException;
+    public Map<String,List<NEMAMetadataEntry>> getTrackMetadataByID(List<String> tracks) throws SQLException;
+    public Map<String,List<NEMAMetadataEntry>> getTrackMetadata(List<NEMATrack> tracks) throws SQLException;
 
 
 
