@@ -8,6 +8,10 @@
 </head>
 <body id="welcomeMenu"/>
 
+<%=request.getRemoteUser() %>
+<%=request.getRemoteUser() %>
+<%=request.getRemoteUser() %>
+
 <c:choose>
 	<c:when test="${empty pageContext.request.remoteUser}">
 

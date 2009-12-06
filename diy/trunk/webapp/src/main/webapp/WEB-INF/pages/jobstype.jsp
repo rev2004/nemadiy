@@ -10,6 +10,8 @@
 </p>
 
 <h1><fmt:message key="jobstype.title"/></h1>
+
+
                     <div class="actionBox">
                         <h2 class="actionBox">Classification</h2>
 						<form method="post" action="jobclassification.jsp" id="GoForm1">

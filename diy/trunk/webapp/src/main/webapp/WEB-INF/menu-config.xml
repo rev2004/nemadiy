@@ -4,13 +4,13 @@
         <Displayer name="Velocity" type="net.sf.navigator.displayer.VelocityMenuDisplayer"/>
     </Displayers>
     <Menus>
-        <Menu name="MainMenu" title="mainMenu.title" page="/getuserjobs.html"/>
+        <Menu name="MainMenu" title="mainMenu.title" page="/get/JobManager.getUserJobs"/>
 		
 		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER">
-            <Item name="JobType" title="Job Type" page="/flowlist.html"/>
-            <Item name="JobTypeExtraction" title="Feature Extraction" page="/flowtemplate.html?id=3"/>
-            <Item name="JobTypeClassification" title="Classification" page="/flowtemplate.html?id=4"/>
-            <Item name="JobTypeEvaluation" title="Evaluation" page="/flowtemplate.html?id=5"/>
+            <Item name="JobType" title="Job Type" page="/get/FlowManager.getFlowList"/>
+            <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/FlowFormManager.getFlowTemplate?id=3"/>
+            <Item name="JobTypeClassification" title="Classification" page="/get/FlowFormManager.getFlowTemplate?id=4"/>
+            <Item name="JobTypeEvaluation" title="Evaluation" page="/get/FlowFormManager.getFlowTemplate?id=5"/>
    		</Menu>
    
    
