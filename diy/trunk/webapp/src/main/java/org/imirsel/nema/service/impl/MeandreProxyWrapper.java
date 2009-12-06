@@ -90,7 +90,7 @@ public class MeandreProxyWrapper {
 	public Set<Resource> getAvailableFlows() throws TransmissionException{
 		if(!connected){
 			log.severe("meandre proxy is not connected to the meandre server");
-			return null;
+			throw new TransmissionException("Meandre Proxy is disconnected from the server");
 		}
 		QueryableRepository qp= meandreProxy.getRepository();
 		Set<Resource> resources=qp.getAvailableFlows();
@@ -100,7 +100,7 @@ public class MeandreProxyWrapper {
 	public QueryableRepository getRepository() throws TransmissionException{
 		if(!connected){
 			log.severe("meandre proxy is not connected to the meandre server");
-			return null;
+			throw new TransmissionException("Meandre Proxy is disconnected from the server");
 		}
 		QueryableRepository qp= meandreProxy.getRepository();
 		return qp;
@@ -109,7 +109,7 @@ public class MeandreProxyWrapper {
 	public Map<String, FlowDescription> getAvailableFlowDescriptionsMap() throws TransmissionException{
 		if(!connected){
 			log.severe("meandre proxy is not connected to the meandre server");
-			return null;
+			throw new TransmissionException("Meandre Proxy is disconnected from the server");
 		}
 		QueryableRepository qp= meandreProxy.getRepository();
 		Map<String, FlowDescription> map=qp.getAvailableFlowDescriptionsMap();
