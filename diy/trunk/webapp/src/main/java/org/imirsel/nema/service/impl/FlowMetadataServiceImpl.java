@@ -66,15 +66,12 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 	 * 
 	 * @param flowUrl
 	 * @return
+	 * @throws TransmissionException 
 	 */
-	public List<Component> getComponents(String flowUri){
+	public List<Component> getComponents(String flowUri) throws TransmissionException{
 		Map<String, FlowDescription> map=null;
-		try {
 			map = meandreProxyWrapper.getAvailableFlowDescriptionsMap();
-		} catch (TransmissionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		if(map==null){
 			log.severe("Could not find components for the flowUri: "+ flowUri);
 			return null;

@@ -1,8 +1,8 @@
 <%@ include file="/common/taglibs.jsp" %>
 
-<title>Remote Method Invocation Error</title>
+<title>Transmission Error</title>
 <head>
-    <meta name="heading" content="Remote Access Failure"/>
+    <meta name="heading" content="Transmission Failure"/>
     <meta name="menu" content="AdminMenu"/>
 </head>
 

@@ -21,7 +21,7 @@ ${flow.description}
 <div id="formcontainer_job">
 <div class="form_job">
 
-<form id="theform" action="saveflow.html" enctype="multipart/form-data" method="post">
+<form id="theform" action="/get/FlowFormManager.saveFlow" enctype="multipart/form-data" method="post">
 
  <fieldset id="pt1">
  <label>Name</label>

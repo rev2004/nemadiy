@@ -95,6 +95,10 @@ public class FlowFormController extends MultiActionController{
 		Flow flow=this.flowService.getFlow(id);
 		ModelAndView mav= new ModelAndView("flow/flowTemplate");
 		List<Component> componentList=flowMetadataService.getComponents(flow.getUrl());
+		if(componentList==null){
+			throw new TransmissionException("Error could not get any " +
+					"template flows from the Meandre Server.");
+		}
 		Collections.sort(componentList);
 		log.info("componentList: " + componentList.size());
 		HashMap<Component,Map<String, Property>> map = new HashMap<Component,Map<String, Property>>();

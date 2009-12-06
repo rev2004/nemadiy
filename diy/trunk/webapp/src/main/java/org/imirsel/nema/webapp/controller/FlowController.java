@@ -77,7 +77,7 @@ public class FlowController extends MultiActionController{
 
 	
 
-	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res){
+	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res) throws TransmissionException{
 		String _id=req.getParameter("id");
 		int id = Integer.parseInt(_id);
 		Flow flow=this.flowService.getFlow(id);
