@@ -12,6 +12,15 @@
                 <prop key="org.springframework.remoting.RemoteConnectFailureException">        
                     remoteAccessFailure
                 </prop>
+                 <prop key="org.imirsel.meandre.client.TransmissionException">        
+                   transmissionFailure
+                </prop>
+                <prop key="org.meandre.webapp.CorruptedFlowException">        
+                   flowCreationFailure
+                </prop>
+                <prop key="org.meandre.webapp.MeandreCommunicationException">        
+                   transmissionFailure
+                </prop>
             </props>
         </property>
     </bean>
@@ -55,7 +64,7 @@
     <bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
     	<property name="jobDetail" ref="jobDetail"/>
     	<!-- run every 20 seconds -->
-    	<property name="cronExpression" value="* * 5 * * ?"/>
+    	<property name="cronExpression" value="*/20 * * * * ?"/>
     </bean>
     
         

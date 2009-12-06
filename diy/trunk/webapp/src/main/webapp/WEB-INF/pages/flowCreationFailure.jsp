@@ -1,8 +1,8 @@
 <%@ include file="/common/taglibs.jsp" %>
 
-<title>Remote Method Invocation Error</title>
+<title>Flow Creation Failure</title>
 <head>
-    <meta name="heading" content="Remote Access Failure"/>
+    <meta name="heading" content="Flow Creation Failure"/>
     <meta name="menu" content="AdminMenu"/>
 </head>
 

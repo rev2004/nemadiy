@@ -14,7 +14,7 @@ public interface FlowMetadataService {
 	 * @param flowUrl
 	 * @return
 	 */
-	public List<Component> getComponents(String flowUrl);
+	public List<Component> getComponents(String flowUrl) throws TransmissionException;
 
 	/**Returns the uri of the new flow this would create after
 	 * merging the flowUri and the parameterMap

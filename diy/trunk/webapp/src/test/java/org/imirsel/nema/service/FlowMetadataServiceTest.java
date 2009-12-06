@@ -2,6 +2,7 @@ package org.imirsel.nema.service;
 
 import java.util.List;
 
+import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.service.BaseManagerTestCase;
 import org.imirsel.nema.service.impl.FlowMetadataServiceImpl;
@@ -21,7 +22,7 @@ public class FlowMetadataServiceTest extends BaseManagerTestCase{
 	
 
 	
-	public void testGetComponents(){
+	public void testGetComponents() throws TransmissionException{
 		String flowUri="http://test.org/datatypetest/";
 		List<Component>componentList=flowMetadataService.getComponents(flowUri);
 		for(int i=0;i< componentList.size();i++){
