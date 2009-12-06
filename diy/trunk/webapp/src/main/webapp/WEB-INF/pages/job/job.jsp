@@ -83,7 +83,7 @@ ${job.description}
                             </form>
                         </div>
                         
-		<form id="theform" action="jobaction.html" method="post">
+		<form id="theform" action="/get/JobManager.jobAction" method="post">
 				<input name="id" type="hidden" value="${job.id}"/>
                         <div class="form_job">
                              <c:if test="${job.statusCode==2}">

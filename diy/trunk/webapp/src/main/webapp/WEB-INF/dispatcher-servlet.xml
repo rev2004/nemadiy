@@ -9,6 +9,9 @@
                 <prop key="org.springframework.dao.DataAccessException">        
                     dataAccessFailure
                 </prop>
+                <prop key="org.springframework.remoting.RemoteConnectFailureException">        
+                    remoteAccessFailure
+                </prop>
             </props>
         </property>
     </bean>
