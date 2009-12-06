@@ -1,5 +1,6 @@
 package org.imirsel.nema.webapp.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import org.imirsel.nema.webapp.request.ExecuteJobRequest;
 import org.imirsel.nema.webapp.request.GetJobRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.hp.hpl.jena.graph.query.Rewrite;
 
@@ -36,6 +38,22 @@ public class JobController extends MultiActionController {
 
 	public void setUserManager(UserManager userManager) {
 		this.userManager = userManager;
+	}
+	
+	public ModelAndView hello(HttpServletRequest req,
+			HttpServletResponse res) {
+	
+		res.setContentType("text/xml");
+		try {
+			res.getWriter().write("<hello/>");
+			res.flushBuffer();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return null;
 	}
 
 
@@ -65,22 +83,11 @@ public class JobController extends MultiActionController {
 		} else if (_submitType.equals("Delete This Job")) {
 			flowService.deleteJob(job.getId());
 		}
-
-		System.out.println("HERE ACTION: " + req.getParameter(_submitType));
-		return new ModelAndView("job/jobList", Constants.JOB, job);
+		//, Constants.JOB, job
+		return new ModelAndView(new RedirectView("/JobManager.getUserJobs"));
 	}
 
-	public ModelAndView deleteJob(HttpServletRequest req,
-			HttpServletResponse res, GetJobRequest jobRequest) {
-		flowService.deleteJob(jobRequest.getJobId());
-		return null;
-	}
 
-	public ModelAndView getJob(HttpServletRequest req, HttpServletResponse res,
-			GetJobRequest jobRequest) {
-		Job job = flowService.getJob(jobRequest.getJobId());
-		return null;
-	}
 
 	public ModelAndView getuserjobs(HttpServletRequest req,
 			HttpServletResponse res) {

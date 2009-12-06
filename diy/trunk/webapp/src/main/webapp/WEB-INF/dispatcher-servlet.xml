@@ -76,20 +76,60 @@
     	<property name="componentMetadataService" ref="componentMetadataService"/>
     	<property name="flowMetadataService" ref="flowMetadataService"/>
     	 <property name="userManager" ref="userManager"/>
-    	<property name="uploadDirectory"  value="resources"/>
+    	 <property name="uploadDirectory"  value="resources"/>
+    	 <property name="methodNameResolver"  ref="flowFormMethodResolver" />
+           
     </bean>
+    
+    <bean id="flowFormMethodResolver"
+        class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+            <value>
+           	/FlowFormManager.saveFlow=saveflow
+            /FlowFormManager.getFlowTemplate=flowtemplate
+            </value>
+        </property>
+    </bean>
+    
+    
     
     <!-- flow controller -->
     <bean id="flowController" class="org.imirsel.nema.webapp.controller.FlowController">
     	<property name="flowService" ref="realFlowService"/>
     	<property name="componentMetadataService" ref="componentMetadataService"/>
     	<property name="flowMetadataService" ref="flowMetadataService"/>
+    	 <property name="methodNameResolver"  ref="flowMethodResolver" />
+    </bean>
+    
+    
+    
+    <bean id="flowMethodResolver"
+        class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+            <value>
+           	 /FlowManager.getFlowList=flowlist
+            </value>
+        </property>
     </bean>
 
 	<!-- job controller -->
  	<bean id="jobController" class="org.imirsel.nema.webapp.controller.JobController">
    		<property name="flowService" ref="realFlowService"/>
     	 <property name="userManager" ref="userManager"/>
+    	 <property name="methodNameResolver"  ref="jobMethodResolver" />
+    </bean>
+    
+    
+     <bean id="jobMethodResolver"
+        class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+           <value>
+            /JobManager.getUserJobs=getuserjobs
+            /JobManager.hello=hello
+           	/JobManager.jobDetail=jobdetail
+            /JobManager.jobAction=jobaction
+            </value>
+        </property>
     </bean>
 
     <bean id="filenameController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
@@ -146,25 +186,15 @@
     <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <value>
+           	   /JobManager.*=jobController
+           	    /FlowManager.*=flowController
+           	    /FlowFormManager.*=flowFormController
+           	    
                 /admin/activeUsers.html=filenameController
                 /admin/flushCache.html=filenameController
                 /admin/reload.html=reloadController
                 /admin/users.html=userController
-              
                 /passwordHint.html=passwordHintController
-              
-                /flowform.html=flowController
-                /runjob.html=jobController
-                /abortJob.html=jobController
-                
-                
-                /flowlist.html=flowController
-                /jobstype.html=filenameController
-                /jobdetail.html=jobController
-                /jobaction.html=jobController
-                /getuserjobs.html=jobController
-                /saveflow.html=flowFormController
-                /flowtemplate.html=flowFormController
                 /*.jsp=viewResolver
             </value>
         </property>

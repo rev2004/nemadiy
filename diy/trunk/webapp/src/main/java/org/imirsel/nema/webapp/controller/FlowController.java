@@ -15,6 +15,7 @@ import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Property;
+import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.ComponentMetadataService;
 import org.imirsel.nema.service.FlowMetadataService;
 import org.springframework.web.servlet.ModelAndView;
@@ -74,13 +75,7 @@ public class FlowController extends MultiActionController{
 		return null;
 	} 
 
-	public ModelAndView flowform(HttpServletRequest req, HttpServletResponse res){
-		String _id=req.getParameter("id");
-		int id = Integer.parseInt(_id);
-		Flow flow=this.flowService.getFlow(id);
-
-		return new ModelAndView("flow/flowForm", Constants.FLOW, flow);
-	}
+	
 
 	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res){
 		String _id=req.getParameter("id");

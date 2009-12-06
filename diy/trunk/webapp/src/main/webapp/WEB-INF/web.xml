@@ -81,7 +81,7 @@
             <param-name>logLevel</param-name>
             <param-value>log4j</param-value>
         </init-param>
-    </filter>
+ </filter>
     <filter>
         <filter-name>securityFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -90,6 +90,7 @@
             <param-value>springSecurityFilterChain</param-value>
         </init-param>
     </filter>
+    
     <filter>
         <filter-name>sitemesh</filter-name>
         <filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
@@ -115,6 +116,7 @@
         <filter-name>securityFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <!-- Commented out for 2 reasons: 1) it's a pain when developing JSPs, and
                                       2) it causes the Signup webtest to fail -->
     <!--filter-mapping>
@@ -234,8 +236,9 @@
     <!-- Dispatching handled by StaticFilter -->
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
-        <url-pattern>*.html</url-pattern>
+        <url-pattern>/get/*</url-pattern>
     </servlet-mapping>
+    
 
     <session-config>
         <session-timeout>10</session-timeout>
