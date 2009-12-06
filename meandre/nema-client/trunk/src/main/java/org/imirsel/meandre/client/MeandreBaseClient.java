@@ -50,7 +50,7 @@ public class MeandreBaseClient{
     private int _port;
 
 	/** logger for request/response contents*/
-	private Logger _log;
+	private Logger _log = Logger.getLogger(MeandreBaseClient.class.getName());
 	
 	/**
 	 * initialize a client that talks to a Meandre server located at the input
@@ -63,7 +63,7 @@ public class MeandreBaseClient{
 	 */
 	public MeandreBaseClient(String serverHost, int serversPort){
 		setServerAddress(serverHost, serversPort);
-		setLogger(ClientLoggerFactory.getClientLogger());
+		
 	}
 
 	/**
@@ -233,6 +233,13 @@ public class MeandreBaseClient{
 			throw te;
 		}catch(Exception e){
 		    e.printStackTrace();
+		    System.out.println("HERE>...... exception "+ e.getMessage());
+		    if(_log==null){
+		    	System.out.println("_log is null -check the damn CLIENT...");
+		    }else{
+		    	System.out.println("_log is not null.... good okay");
+		    }
+		  
 			_log.severe("unanticipated exception performing http GET: " +
 			        extractMethodsURIString(get));
 			throw new TransmissionException(e);

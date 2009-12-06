@@ -35,7 +35,7 @@ public class MeandreProxy extends MeandreClient {
 
 
 	/** The logger we'll write to */
-	protected Logger log = null;
+	protected Logger log = Logger.getLogger(MeandreProxy.class.getName());
 
 	/** the meandre client to handle the calls to the server */
 	private MeandreClient client;
@@ -73,8 +73,6 @@ public class MeandreProxy extends MeandreClient {
 	private MeandreProxy () {
 		super("",0);
 		ready = ok = false;
-		//set logger to default client logger
-		setLogger(ClientLoggerFactory.getClientLogger());
 		qrCached = new RepositoryImpl(ModelFactory.createDefaultModel());
 	}
 
@@ -89,7 +87,6 @@ public class MeandreProxy extends MeandreClient {
 	public MeandreProxy ( String sUser, String sPasswd, String sServerHost,
 			int iServerPort ) {
 		super(sServerHost,iServerPort);
-		setLogger(ClientLoggerFactory.getClientLogger());
 		update(sUser,sPasswd,sServerHost,iServerPort);
 	}
 
