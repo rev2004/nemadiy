@@ -1,5 +1,6 @@
 package org.imirsel.nema.io;
 
+//import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
 import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
 
 import java.util.StringTokenizer;
@@ -19,7 +20,12 @@ import org.imirsel.nema.util.FileDownload;
 import org.imirsel.service.ArtifactManagerImpl;
 import org.imirsel.nema.annotations.*;
 
-@Component(creator = "Mert Bay", description = "Reads an XML or CSV file from a local directory or an URL, with File location and  class  metadata. Output is a 2D String array that holds the fileLocation  in the first column and its class metadata in the second column. If the fileLocation is a URL, it will be downloaded  to a local path. The inputListfiles should be  properly formed. If individual file field is not empty, the file list will be ignored.", name = "InputSelector", tags = "input, file, URL,file download, CSV reader, XML reader", resources = "/home/mertbay/workspace/empty_meandre_component_project/lib/ACE.jar", firingPolicy = Component.FiringPolicy.all)
+@Component(creator = "Mert Bay", description = "Reads an XML or CSV file from a local directory or an URL, with File location and  class " +
+		" metadata. Output is a 2D String array that holds the fileLocation  in the first column and its " +
+		"class metadata in the second column. If the fileLocation is a URL, it will be downloaded  to a local path. " +
+		"The inputListfiles should be  properly formed. If individual file field is not empty, the file list" +
+		" will be ignored.", name = "InputSelector", tags = "input, file, URL,file download, CSV reader, XML reader",
+		 firingPolicy = Component.FiringPolicy.all)
 public class InputSelector implements ExecutableComponent {
 	
 	@ComponentOutput(description = "String[][] that holds the fileLocation for the audio in the first column and its class metadata in the second column", name = "inputFiles")
@@ -81,9 +87,9 @@ public class InputSelector implements ExecutableComponent {
 					|| uploadFile.contains("ftp")) {
 				 //String workingDirName = processWorkingDir;
 				String workingDirName = commonStorageDir;
-				inputFiles[0][0] = downloadFiles(individualFile, workingDirName);
+				inputFiles[0][0] = downloadFiles(uploadFile, workingDirName);
 			} else {
-				inputFiles[0][0] = individualFile;
+				inputFiles[0][0] = uploadFile;
 			}
 			inputFiles[0][1] = "";
 			out.println("no 1:\tFileName="
