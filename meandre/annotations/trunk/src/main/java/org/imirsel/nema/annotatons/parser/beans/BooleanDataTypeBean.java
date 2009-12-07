@@ -3,7 +3,7 @@ package org.imirsel.nema.annotatons.parser.beans;
 
 public class BooleanDataTypeBean implements DataTypeBean{
 	String renderer;
-	String visibilityRole;
+	String editRole;
 	boolean hidden;
 	String className = "org.imirsel.nema.annotatons.parser.beans.BooleanDataTypeBean";
 	
@@ -23,11 +23,11 @@ public class BooleanDataTypeBean implements DataTypeBean{
 	public String getClassName(){
 		return className;
 	}
-	public String getVisibilityRole() {
-		return visibilityRole;
+	public String getEditRole() {
+		return editRole;
 	}
-	public void setVisibilityRole(String visibilityRole) {
-		this.visibilityRole = visibilityRole;
+	public void setEditRole(String editRole) {
+		this.editRole = editRole;
 	}
 	public boolean isHidden() {
 		return hidden;

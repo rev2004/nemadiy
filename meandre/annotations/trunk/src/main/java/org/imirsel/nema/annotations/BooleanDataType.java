@@ -12,6 +12,6 @@ import org.imirsel.nema.renderers.Renderer;
 @Target({ElementType.FIELD})
 public @interface BooleanDataType{
 	Class<? extends Renderer> renderer() default BooleanRenderer.class;
-	Class<? extends RolePrincipal> visibilityRole() default RoleAdmin.class;
+	Class<? extends RolePrincipal> editRole() default RoleUser.class;
 	boolean hide() default false;
 }

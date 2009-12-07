@@ -17,6 +17,6 @@ public @interface DoubleDataType {
 	double max();
 	double[] valueList() default {};
 	Class<? extends Renderer> renderer() default DoubleRenderer.class;
-	Class<? extends RolePrincipal> visibilityRole() default RoleAdmin.class;
+	Class<? extends RolePrincipal> editRole() default RoleUser.class;
 	boolean hide() default false;
 }

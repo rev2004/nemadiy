@@ -2,7 +2,7 @@ package org.imirsel.nema.annotatons.parser.beans;
 
 
 public class DoubleDataTypeBean implements DataTypeBean{
-	String visibilityRole;
+	String editRole;
 	double[] valueList;
 	String renderer;
 	double max;
@@ -40,11 +40,11 @@ public class DoubleDataTypeBean implements DataTypeBean{
 		return className;
 	}
 	
-	public String getVisibilityRole() {
-		return visibilityRole;
+	public String getEditRole() {
+		return editRole;
 	}
-	public void setVisibilityRole(String visibilityRole) {
-		this.visibilityRole = visibilityRole;
+	public void setEditRole(String editRole) {
+		this.editRole = editRole;
 	}
 	public boolean isHidden() {
 		return hidden;
