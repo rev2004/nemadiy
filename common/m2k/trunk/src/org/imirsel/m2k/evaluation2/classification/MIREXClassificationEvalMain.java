@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
 import org.imirsel.m2k.util.MatlabCommandlineIntegrationClass;
 import org.imirsel.m2k.util.Signal;
@@ -32,16 +33,16 @@ public class MIREXClassificationEvalMain {
     private File gtFile;
     private File rootEvaluationDir;
     private File hierarchyFile = null;
-    private ArrayList<String> systemNames;
-    private ArrayList<File> resultsDirs;
+    private List<String> systemNames;
+    private List<File> resultsDirs;
     
     public MIREXClassificationEvalMain(boolean performMatlabStatSigTests_,
             String matlabPath_,
             String evaluationName_,
             File gtFile_,
             File rootEvaluationDir_,
-            ArrayList<String> systemNames_,
-            ArrayList<File> resultsDirs_){
+            List<String> systemNames_,
+            List<File> resultsDirs_){
         
         performMatlabStatSigTests = performMatlabStatSigTests_;
         matlabPath = matlabPath_;
