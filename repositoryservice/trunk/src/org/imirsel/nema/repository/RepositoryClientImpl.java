@@ -54,6 +54,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_CONSTRAINED_FILE_FOR_TRACK = "SELECT file.* from file WHERE file.id IN (SELECT file_id from file,file_file_metadata_link WHERE file.track_id=? AND file.id=file_file_metadata_link.file_id AND file_metadata_id ALL (SELECT id FROM file_metadata WHERE ";
 
 
+
     //public static final String GET_VERSIONS_FOR_COLLECTION =
 
 
@@ -105,7 +106,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         setTypeMap = populateTypesMap(GET_SET_TYPES);
     }
 
-    
+    public void close(){
+        dbCon.close();
+        dbCon = null;
+    }
 
 
     public List<NEMACollection> getCollections() throws SQLException{
@@ -342,6 +346,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             throws SQLException{
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    //this is not right it will return a row for ANY metadata rows for the collection
+    //SELECT DISTINCT * FROM file_metadata WHERE id IN (SELECT file_metadata_id FROM file_file_metadata_link WHERE file_id IN (SELECT id FROM file WHERE track_id IN (SELECT id FROM track WHERE collection_id=?)))
 
     public List<List<NEMAMetadataEntry>> getSetVersions(NEMASet set) throws SQLException{
         return getSetVersions(set.getId());
