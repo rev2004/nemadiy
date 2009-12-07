@@ -64,9 +64,9 @@ public class DataTypeAnnotationParser {
 		if(annotation instanceof BooleanDataType){
 			BooleanDataTypeBean bd = new BooleanDataTypeBean();
 			bd.setRenderer(((BooleanDataType)annotation).renderer().getName());
-			String visibilityRole = ((BooleanDataType)annotation).visibilityRole().getName();
+			String visibilityRole = ((BooleanDataType)annotation).editRole().getName();
 			boolean hidden=((BooleanDataType)annotation).hide();
-			bd.setVisibilityRole(visibilityRole);
+			bd.setEditRole(visibilityRole);
 			bd.setHidden(hidden);
 			return bd;
 		}else if(annotation instanceof DoubleDataType){
@@ -75,14 +75,14 @@ public class DataTypeAnnotationParser {
 			double min=((DoubleDataType)annotation).min();
 			String rendererClass=((DoubleDataType)annotation).renderer().getName();
 			double[] list=((DoubleDataType)annotation).valueList();
-			String visibilityRole = ((DoubleDataType)annotation).visibilityRole().getName();
+			String visibilityRole = ((DoubleDataType)annotation).editRole().getName();
 			boolean hidden=((DoubleDataType)annotation).hide();
 			
 			dd.setMax(max);
 			dd.setMin(min);
 			dd.setRenderer(rendererClass);
 			dd.setValueList(list);
-			dd.setVisibilityRole(visibilityRole);
+			dd.setEditRole(visibilityRole);
 			dd.setHidden(hidden);
 			return dd;
 			
@@ -93,25 +93,25 @@ public class DataTypeAnnotationParser {
 			int min=((IntegerDataType)annotation).min();
 			String className=((IntegerDataType)annotation).renderer().getName();
 			int valueList[] = ((IntegerDataType)annotation).valueList();
-			String visibilityRole = ((IntegerDataType)annotation).visibilityRole().getName();
+			String visibilityRole = ((IntegerDataType)annotation).editRole().getName();
 			boolean hidden=((IntegerDataType)annotation).hide();
 			idt.setMax(max);
 			idt.setMin(min);
 			idt.setRenderer(className);
 			idt.setValueList(valueList);
-			idt.setVisibilityRole(visibilityRole);
+			idt.setEditRole(visibilityRole);
 			idt.setHidden(hidden);
 			return idt;
 			
 		}else if(annotation instanceof StringDataType){
 			StringDataTypeBean sdt = new StringDataTypeBean();
 			String[]list=((StringDataType)annotation).valueList();
-			String visibilityRole = ((StringDataType)annotation).visibilityRole().getName();
+			String visibilityRole = ((StringDataType)annotation).editRole().getName();
 			String className=((StringDataType)annotation).renderer().getName();
 			boolean hidden=((StringDataType)annotation).hide();
 			sdt.setRenderer(className);
 			sdt.setValueList(list);
-			sdt.setVisibilityRole(visibilityRole);
+			sdt.setEditRole(visibilityRole);
 			sdt.setHidden(hidden);
 			return sdt;
 		}

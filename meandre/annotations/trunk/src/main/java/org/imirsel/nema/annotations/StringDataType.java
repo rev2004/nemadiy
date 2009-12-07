@@ -14,6 +14,6 @@ import org.imirsel.nema.renderers.StringRenderer;
 public @interface StringDataType {
 	String[] valueList() default {};
 	Class<? extends Renderer> renderer() default StringRenderer.class;
-	Class<? extends RolePrincipal> visibilityRole() default RoleAdmin.class;
+	Class<? extends RolePrincipal> editRole() default RoleUser.class;
 	boolean hide() default false;
 }

@@ -15,6 +15,6 @@ public @interface IntegerDataType {
 	int max() default Integer.MAX_VALUE;
 	int[] valueList() default {};
 	Class<? extends Renderer> renderer() default IntegerRenderer.class;
-	Class<? extends RolePrincipal> visibilityRole() default RoleAdmin.class;
+	Class<? extends RolePrincipal> editRole() default RoleUser.class;
 	boolean hide() default false;
 }
