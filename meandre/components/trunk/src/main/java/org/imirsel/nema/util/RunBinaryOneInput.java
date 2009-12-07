@@ -29,8 +29,11 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
+import org.meandre.core.security.Role;
 
 import org.imirsel.service.*;
+import org.imirsel.nema.annotations.*;
+import org.imirsel.nema.role.RoleAdmin;
 import org.imirsel.nema.util.ProcessOutputReceiver;
 /** This executable component executes an external binary using the process builder.
  *
@@ -53,12 +56,14 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 	@ComponentOutput(description="Java File Object Out", name="fileObjectOut")
 	final static String DATA_OUTPUT_1= "fileObjectOut";
 
+    @StringDataType(hide=true)
 	@ComponentProperty(defaultValue="/path/to/workingDir",
 			description="The Working Directory of the Executeable",
 			name="Working Directory")
 			final static String DATA_PROPERTY_WORKINGDIR = "Working Directory";
 	private String workingDir = "/path/to/workingDir";
 
+	@StringDataType()
 	@ComponentProperty(defaultValue="$m -anOption $i $o",
 			description="Command format string. $m is the binary/script name. $i represents the " +
 			"input file. $o represents the output file. Any number of command line options" +
@@ -69,12 +74,14 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			final static String DATA_PROPERTY_FORMATSTRING = "Command Format String";
 	private String commandFormattingStr = "$m -anOption $i $o";
 
+	@StringDataType(editRole=RoleAdmin.class)
 	@ComponentProperty(defaultValue="myExecutableName",
 			description="The name of the executable, e.g. bextract, extractFeatures, runtempo, etc.",
 			name="Executeable Name")
 			final static String DATA_PROPERTY_EXECNAME = "Executeable Name";
 	private String execName = "myExecutableName";
 
+	@StringDataType()
 	@ComponentProperty(defaultValue="outputFileName.txt",
 			description="The name of the output file (passed into the command format string to the $o field)." +
 			" This option is overriden if AddExtentionToInput is set to TRUE",
@@ -82,6 +89,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			final static String DATA_PROPERTY_OUPUTFILENAME = "Output File Name";
 	private String outputFileName = "outputFileName.txt";
 
+	@BooleanDataType()
 	@ComponentProperty(defaultValue="true",
 			description="Generate the output file name by adding the extention specified " +
 			"in the 'Output File Extension to Append' field to the input file name. (true/false). E.g. " +
@@ -91,13 +99,15 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			final static String DATA_PROPERTY_ADDEXTENSION = "Add Extension to Input File Name to Generate Output File Name";
 	private boolean addExtension = true;
 
+	
+	@StringDataType(hide=true)
 	@ComponentProperty(defaultValue="VAR_NAME,VAR_VAL",
 			description="The environment variable`s name and value separated by \",\"",
 			name="Environment Variable" )
 			final static String DATA_PROPERTY_ENV_VAR = "Environment Variable";
 	private String env_var= "VAR_NAME,VAR_VAL";
 
-	
+	@StringDataType()
 	@ComponentProperty(defaultValue=".result",
 			description="The output file extension to add to the input file name to " +
 			"generate the output file name. Only used if 'Add Extension to Input File Name to Generate Output File Name' " +
