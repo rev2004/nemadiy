@@ -1431,4 +1431,10 @@ public class MeandreClient extends MeandreBaseClient{
 		return response;
 	}
 
+
+
+	public void destroy() {
+		// here  cleanup resources...	
+	}
+
 }
