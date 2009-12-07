@@ -598,5 +598,10 @@ public class MeandreProxy extends MeandreClient {
 		return pluginString;
 	}
 
+	
+	public void detroy(){
+		log.info("destroy MeandreProxy -end of session");
+		this.client.destroy();
+	}
 
 }
