@@ -3,6 +3,7 @@ package org.imirsel.nema.service;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
@@ -29,14 +30,14 @@ public class ComponentMetadataServiceTest extends BaseManagerTestCase{
 		componentMetadataManager.dd();
 	}
 
-	/*
-	public void testGetComponentDataType(){
+	
+	public void testGetComponentDataType() throws TransmissionException{
 		String componentUri="meandre://seasr.org/components/datatypetestcomponent";
 		String instanceUri = "http://test.org/datatypetest/instance/datatypetestcomponent/1";
 		Component component= new Component();
 		component.setInstanceUri(instanceUri);
 		component.setUri(componentUri);
-		HashMap<String,Property> map=componentMetadataManager.getComponentPropertyDataType(component);
+		Map<String, Property> map=componentMetadataManager.getComponentPropertyDataType(component, instanceUri);
 		System.out.println("--> here "+ map.size());
 		Iterator<String> its = map.keySet().iterator();
 		while(its.hasNext()){
@@ -57,7 +58,7 @@ public class ComponentMetadataServiceTest extends BaseManagerTestCase{
 
 	
 	}
-	*/
+	
 	
 
 }
