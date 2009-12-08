@@ -25,7 +25,7 @@ public class RepositoryProperties {
     private static Properties repoProps;
     static {
         repoProps = new Properties();
-        repoProps.setProperty(DB_LOCATOR, "jdbc:mysql://localhost:3306/");
+        repoProps.setProperty(DB_LOCATOR, "jdbc:mysql://nema.lis.uiuc.edu:3306/");
         repoProps.setProperty(DB_NAME, "nemadatarepository");
         
         try {
