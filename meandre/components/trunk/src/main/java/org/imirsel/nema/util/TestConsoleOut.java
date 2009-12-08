@@ -28,22 +28,27 @@ public class TestConsoleOut implements ExecutableComponent {
 
     @ComponentProperty(defaultValue="Hello World !",
                       description="text to be displayed on console",
-                      name="text")
-    final static String DATA_PROPERTY_1 = "text";
+                      name="Text to Display")
+    final static String DATA_PROPERTY_1 = "Text to Display";
 
     @ComponentProperty(defaultValue="10",
                       description="Number of times to display the text",
-                      name="text")
-    final static String DATA_PROPERTY_2 = "number";
+                      name="Number of Times to Display Text")
+    final static String DATA_PROPERTY_2 = "Number of Times to Display Text";
     
+    @ComponentProperty(defaultValue="100",
+            description="wait time between message in miliseconds",
+            name="Wait Time in miliseconds Between Text Displays")
+            final static String DATA_PROPERTY_3 = "Wait Time in miliseconds Between Text Displays";
 
     
     
 
     
    
-    private String text = "Hello World";
-    private String number = "10";
+    private String text = "Hello World !";
+    private int number = 10;
+    private int wtime = 10;
     private Logger logger = null;
     private java.io.PrintStream out;
     
@@ -51,7 +56,8 @@ public class TestConsoleOut implements ExecutableComponent {
         out = ccp.getOutputConsole();
         logger = ccp.getLogger();
         text = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));	
-        number = String.valueOf(ccp.getProperty(DATA_PROPERTY_2));
+        number = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_2));
+        wtime = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_3));
         //logger.fine(e.printStack);
     }
     
@@ -65,10 +71,10 @@ public class TestConsoleOut implements ExecutableComponent {
 				
 		out.println("Here is the text output:\n");
 		
-		for (int i=0;i<Integer.parseInt(number);i++){
+		for (int i=0;i<number;i++){
 			out.println(i + ":\t"+ text+"\n");
 			out.flush();
-			wait(1);
+			wait(wtime);
 		}
 	}
 
@@ -79,7 +85,7 @@ public class TestConsoleOut implements ExecutableComponent {
         do{
             t1=System.currentTimeMillis();
         }
-        while (t1-t0<n*1000);
+        while (t1-t0<n);
 }
 
 	
