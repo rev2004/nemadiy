@@ -39,7 +39,10 @@ import jAudioFeatureExtractor.DataTypes.RecordingInfo;
 @Component(creator="Andreas F. Ehmann", description="Batch Executor for " +
                "jAudio Feature Extraction",
                name="JAudioFeatureExtractor",
-               tags="test ft please hello")
+               tags="batch, feature, extractor",
+               //resources="mp3plugin.jar,tritonus_remaining-0.3.6.jar,tritonus_share-0.3.6.jar,jhall.jar")
+               dependency={"mp3plugin.jar","tritonus_remaining-0.3.6.jar","tritonus_share-0.3.6.jar","jhall.jar"} )
+               
                public class JAudioFeatureExtractor implements ExecutableComponent {
 
 
