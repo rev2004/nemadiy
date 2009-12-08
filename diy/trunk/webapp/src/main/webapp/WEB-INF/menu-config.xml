@@ -4,10 +4,15 @@
         <Displayer name="Velocity" type="net.sf.navigator.displayer.VelocityMenuDisplayer"/>
     </Displayers>
     <Menus>
-        <Menu name="MainMenu" title="mainMenu.title" page="/get/JobManager.getUserJobs"/>
+     
+     
+      	
+	    <Menu name="welcomeMenu" title="welcomeMenu.title"  roles="ROLE_ADMIN,ROLE_USER" page="/welcome.jsp"/>
 		
-		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER">
-            <Item name="JobType" title="Job Type" page="/get/FlowManager.getFlowList"/>
+		
+		
+		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER" page="/get/FlowManager.getFlowList">
+		    <Item name="MyJobs" title="My Jobs" page="/get/JobManager.getUserJobs"/>
             <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/FlowFormManager.getFlowTemplate?id=3"/>
             <Item name="JobTypeClassification" title="Classification" page="/get/FlowFormManager.getFlowTemplate?id=4"/>
             <Item name="JobTypeEvaluation" title="Evaluation" page="/get/FlowFormManager.getFlowTemplate?id=5"/>
@@ -29,6 +34,8 @@
 
 		
 		<Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" />
+		
+		<Menu name="MainMenu" title="mainMenu.title" page="/login.jsp" roles="ROLE_ANONYMOUS"/> 
 		<Menu name="Logout" title="user.logout" page="/logout.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
     </Menus>
 </MenuConfig>

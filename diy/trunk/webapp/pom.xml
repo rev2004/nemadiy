@@ -390,6 +390,15 @@
             <artifactId>commons-validator</artifactId>
             <version>${commons.validator.version}</version>
         </dependency>
+     
+     
+     <dependency>
+    	<groupId>cglib</groupId>
+    	<artifactId>cglib</artifactId>
+    	<version>2.2</version>
+	</dependency>    
+        
+        
 
     </dependencies>
 

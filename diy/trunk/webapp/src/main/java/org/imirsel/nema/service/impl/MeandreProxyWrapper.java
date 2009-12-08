@@ -35,7 +35,14 @@ public class MeandreProxyWrapper {
 		
 	}
 	
+	public void cleanup(){
+		if(meandreProxy!=null){
+			meandreProxy.destroy();
+		}
+	}
+	
 	public void init(){
+		System.out.println("Initing meandre proxy wrapper....");
 		try {
 			available.acquire();
 		} catch (InterruptedException e) {
