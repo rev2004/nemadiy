@@ -49,7 +49,6 @@ public class InputSelector implements ExecutableComponent {
 	private String uploadFile = "";	
 	private String localListFilePath;
 	private Logger logger = null;
-	private String dir_prefix = "/data/raid4/audio/wavs/44s/full/m/";
 	private java.io.PrintStream out;
 	private String processWorkingDir;
 	private String commonStorageDir;
@@ -62,7 +61,6 @@ public class InputSelector implements ExecutableComponent {
 					.getProcessWorkingDirectory(
 							ccp.getFlowExecutionInstanceID());
 			commonStorageDir=ArtifactManagerImpl.getInstance().getCommonStorageLocation() + File.separator + "inputSelectorDownloadedFiles";
-			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			throw new ComponentExecutionException(e1);
@@ -87,6 +85,7 @@ public class InputSelector implements ExecutableComponent {
 					|| uploadFile.contains("ftp")) {
 				 //String workingDirName = processWorkingDir;
 				String workingDirName = commonStorageDir;
+				
 				inputFiles[0][0] = downloadFiles(uploadFile, workingDirName);
 			} else {
 				inputFiles[0][0] = uploadFile;
@@ -222,10 +221,7 @@ public class InputSelector implements ExecutableComponent {
 						} else {
 							inputFiles[i][0] = fileLocation;
 						}
-						inputFiles[i][0] = dir_prefix
-								+ inputFiles[i][0].subSequence(inputFiles[i][0]
-										.lastIndexOf("/") + 1, inputFiles[i][0]
-										.length());
+					//	inputFiles[i][0] = dir_prefix+ inputFiles[i][0].subSequence(inputFiles[i][0].lastIndexOf("/") + 1, inputFiles[i][0]						.length());
 						out.println("no "
 								+ (i + 1)
 								+ ":\tFileName="
@@ -233,6 +229,12 @@ public class InputSelector implements ExecutableComponent {
 										.lastIndexOf("/") + 1, inputFiles[i][0]
 										.length()) + "\t\tClassName="
 								+ classname + "\t\t  added to output.");
+						out.println("Debuggin no "
+								+ (i + 1)
+								+ ":\tFileName="
+								+ inputFiles[i][0] + "\t\tClassName="
+								+ classname + "\t\t  added to output.");
+						
 					}
 					ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
 				} else {
@@ -272,7 +274,6 @@ public class InputSelector implements ExecutableComponent {
 			FileDownload.download(fileLocation, localFileName);
 			out.println("File downloaded to local path." );
 		}
-
 		return localFileName;
 	}
 
