@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -55,6 +58,23 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
 
 
+    public static final String INSERT_TRACK = "INSERT IGNORE INTO track(id) VALUES(?)";
+    private PreparedStatement insertTrack;
+    public static final String INSERT_TRACK_COLLECTION_LINK = "INSERT IGNORE INTO collection_track_link(collection_id,track_id) VALUES(?,?)";
+    private PreparedStatement insertTrackCollectionLink;
+    public static final String INSERT_FILE = "INSERT INTO file(track_id,path) VALUES(?,?)";
+    private PreparedStatement insertFile;
+    public static final String INSERT_FILE_METADATA_DEFINITIONS = "INSERT IGNORE INTO file_metadata_definitions(name) VALUES(?)";
+    private PreparedStatement insertFileMetaDef;
+//    public static final String GET_FILE_METADATA_DEFINITIONS = "SELECT FROM  file_metadata_definitions";
+//    private PreparedStatement getFileMetaDefs;
+    public static final String INSERT_FILE_METADATA = "INSERT IGNORE INTO file_metadata(metadata_type_id,value) VALUES(?,?)";
+    private PreparedStatement insertFileMeta;
+    public static final String GET_FILE_METADATA = "SELECT * FROM file_metadata";
+    private PreparedStatement getFileMeta;
+    public static final String INSERT_FILE_METADATA_LINK = "INSERT INTO file_file_metadata_link(file_id,file_metadata_id) VALUES(?,?)";
+    private PreparedStatement insertFileMetaLink;
+
     //public static final String GET_VERSIONS_FOR_COLLECTION =
 
 
@@ -63,7 +83,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_TRACK_METADATA_TYPES = "SELECT * FROM track_metadata_definitions";
     public static final String GET_FILE_METADATA_TYPES = "SELECT * FROM file_metadata_definitions";
     public static final String GET_TASK_TYPES = "SELECT * FROM task_type";
-    public static final String GET_SET_TYPES = "SELECT * set_type_definitions";
+    public static final String GET_SET_TYPES = "SELECT * FROM set_type_definitions";
     private Map<Integer,String> trackMetadataTypeMap;
     private Map<Integer,String> fileMetadataTypeMap;
     private Map<String,Integer> trackMetadataTypeMapRev;
@@ -80,7 +100,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         dbCon = new DatabaseConnector(
                 RepositoryProperties.getProperty(RepositoryProperties.DB_NAME),
                 RepositoryProperties.getProperty(RepositoryProperties.DB_LOCATOR),
-                RepositoryProperties.getProperty(RepositoryProperties.DB_NAME),
+                RepositoryProperties.getProperty(RepositoryProperties.DB_USER),
                 RepositoryProperties.getProperty(RepositoryProperties.DB_PASS)
             );
         dbCon.connect();
@@ -96,8 +116,32 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         getFileMetadata = dbCon.con.prepareStatement(GET_FILE_METADATA_QUERY);
         getTrackMetadata = dbCon.con.prepareStatement(GET_TRACK_METADATA_QUERY);
 
+        insertTrack = dbCon.con.prepareStatement(INSERT_TRACK);
+        insertTrackCollectionLink = dbCon.con.prepareStatement(INSERT_TRACK_COLLECTION_LINK);
+        insertFile = dbCon.con.prepareStatement(INSERT_FILE, Statement.RETURN_GENERATED_KEYS);
+        insertFileMetaDef = dbCon.con.prepareStatement(INSERT_FILE_METADATA_DEFINITIONS);
+//        getFileMetaDefs = dbCon.con.prepareStatement(GET_FILE_METADATA_DEFINITIONS);
+        insertFileMeta = dbCon.con.prepareStatement(INSERT_FILE_METADATA);
+        getFileMeta = dbCon.con.prepareStatement(GET_FILE_METADATA);
+        insertFileMetaLink = dbCon.con.prepareStatement(INSERT_FILE_METADATA_LINK);
 
-        //init types maps
+        initTypesMaps();
+    }
+
+    public void close(){
+        dbCon.close();
+        dbCon = null;
+    }
+
+    public void setAutocommit(boolean val) throws SQLException{
+        dbCon.con.setAutoCommit(val);
+    }
+
+    public void commit() throws SQLException{
+        dbCon.con.commit();
+    }
+
+    public void initTypesMaps() throws SQLException{
         trackMetadataTypeMap = populateTypesMap(GET_TRACK_METADATA_TYPES);
         fileMetadataTypeMap = populateTypesMap(GET_FILE_METADATA_TYPES);
         trackMetadataTypeMapRev = reverseTypesMap(trackMetadataTypeMap);
@@ -106,10 +150,102 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         setTypeMap = populateTypesMap(GET_SET_TYPES);
     }
 
-    public void close(){
-        dbCon.close();
-        dbCon = null;
+
+    public void insertTrack(String id) throws SQLException{
+        insertTrack.setString(1, id);
+        insertTrack.executeUpdate();
     }
+
+    public void insertTrackCollectionLink(int collection_id, String track_id) throws SQLException{
+        insertTrackCollectionLink.setInt(1, collection_id);
+        insertTrackCollectionLink.setString(2, track_id);
+        insertTrackCollectionLink.executeUpdate();
+    }
+
+    public int insertFile(String track_id, String path) throws SQLException{
+        insertFile.setString(1, track_id);
+        insertFile.setString(2, path);
+        insertFile.executeUpdate();
+        ResultSet rs = insertFile.getGeneratedKeys();
+        if (rs.next()) {
+            return rs.getInt(1);
+        }else{
+            Logger.getLogger(RepositoryClientImpl.class.getName()).log(Level.SEVERE, "Failed to get id for inserted file: " + path);
+            return -1;
+        }
+    }
+
+    public void insertFileMetaDef(String name) throws SQLException{
+        System.out.println("Inserting File metadata type: " + name);
+        insertFileMetaDef.setString(1, name);
+        insertFileMetaDef.executeUpdate();
+    }
+
+//    public List<Map<String,String>> getFileMetaDefs() throws SQLException{
+//        return executePreparedStatement(getFileMetaDefs);
+//    }
+
+    public void insertFileMeta(int metadata_type_id, String value) throws SQLException{
+        System.out.println("Inserting file metadata value: " + metadata_type_id + "=" + value);
+        insertFileMeta.setInt(1, metadata_type_id);
+        insertFileMeta.setString(2, value);
+        insertFileMeta.executeUpdate();
+    }
+
+    public Map<Integer,Map<String,Integer>> getFileMetadataValueIDs() throws SQLException{
+        List<Map<String,String>> data = executePreparedStatement(getFileMeta);
+
+        Map<Integer,Map<String,Integer>> out = new HashMap<Integer,Map<String,Integer>>();
+
+        for (Iterator<Map<String, String>> it = data.iterator(); it.hasNext();){
+            Map<String, String> map = it.next();
+            int id = Integer.parseInt(map.get("id"));
+            int type_id = Integer.parseInt(map.get("metadata_type_id"));
+            String val = map.get("value");
+
+            Map<String,Integer> valueToID = out.get(type_id);
+            if (valueToID == null){
+                valueToID = new HashMap<String, Integer>();
+                out.put(type_id,valueToID);
+            }
+            valueToID.put(val, id);
+        }
+        return out;
+    }
+
+    public void insertFileMetaLink(int file_id, int file_metadata_id) throws SQLException{
+        insertFileMetaLink.setInt(1, file_id);
+        insertFileMetaLink.setInt(2, file_metadata_id);
+        insertFileMetaLink.executeUpdate();;
+    }
+
+
+
+
+    public String getTrackMetadataName(int typeId){
+        return trackMetadataTypeMap.get(typeId);
+    }
+
+    public String getFileMetadataName(int typeId){
+        return fileMetadataTypeMap.get(typeId);
+    }
+
+    public int getTrackMetadataID(String typeName){
+        return trackMetadataTypeMapRev.get(typeName);
+    }
+
+    public int getFileMetadataID(String typeName){
+        return fileMetadataTypeMapRev.get(typeName);
+    }
+
+    public String getTaskTypeName(int typeId){
+        return taskTypeMap.get(typeId);
+    }
+
+    public String getSetTypeName(int typeId){
+        return setTypeMap.get(typeId);
+    }
+
 
 
     public List<NEMACollection> getCollections() throws SQLException{
@@ -558,14 +694,18 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    private Map<Integer,String> populateTypesMap(String query) throws SQLException{
+    public Map<Integer,String> populateTypesMap(String query) throws SQLException{
+        System.out.println("Populating types map with query: " + query);
         PreparedStatement st = dbCon.con.prepareStatement(query);
         Map<Integer,String> retVal = new HashMap<Integer,String>();
         ResultSet rs = null;
         try {
             rs = st.executeQuery();
             while (rs.next()) {
-                retVal.put(rs.getInt("id"), rs.getString("name"));
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                System.out.println(id + ": " + name);
+                retVal.put(id, name);
             }
         } finally {
             if (rs != null) {
@@ -575,7 +715,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return retVal;
     }
 
-    private Map<String,Integer> reverseTypesMap(Map<Integer,String> map) throws SQLException{
+    public Map<String,Integer> reverseTypesMap(Map<Integer,String> map) throws SQLException{
         Map<String,Integer> rev = new HashMap<String, Integer>();
         int key;
         String val;

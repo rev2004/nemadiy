@@ -22,7 +22,11 @@ public class RepositoryClientConnectionPool {
     private LinkedBlockingQueue<RepositoryClientImpl> pool;
     
     private static RepositoryClientConnectionPool instance = new RepositoryClientConnectionPool();
-    
+
+    public static RepositoryClientConnectionPool getInstance() {
+        return instance;
+    }
+
     /**
      * Generates the pool (making all required DB connections), with the 
      * default pool size.
@@ -33,10 +37,6 @@ public class RepositoryClientConnectionPool {
         }catch(SQLException e){
             Logger.getLogger(LOG_CLASS_NAME).log(Level.SEVERE, "Failed to initialise RepositoryClientConnectionPool!",e);
         }
-    }
-    
-    public static RepositoryClientConnectionPool getInstance() {
-        return instance;
     }
     
     /**
