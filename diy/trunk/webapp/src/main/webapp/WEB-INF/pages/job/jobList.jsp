@@ -26,9 +26,3 @@
 <script type="text/javascript">
     highlightTableRows("jobs");
 </script>
- 
-
-
-<script type="text/javascript">
-    highlightTableRows("jobs");
-</script>
