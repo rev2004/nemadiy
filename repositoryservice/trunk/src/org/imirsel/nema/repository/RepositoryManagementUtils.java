@@ -15,12 +15,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.imirsel.nema.repository.migration.CbrowserClient;
 
 /**
  *
  * @author kriswest
  */
 public class RepositoryManagementUtils {
+
+    public static final String TRACK_TITLE = "Title";
+    public static final String TRACK_ARTIST = "Artist";
+    public static final String TRACK_ALBUM = "Album";
+    public static final String TRACK_GENRE = "Genre";
+
+
     static HashSet<String> audio_extensions;
     static{
         audio_extensions = new HashSet<String>();
@@ -228,44 +236,131 @@ public class RepositoryManagementUtils {
             }
 
             insertDirOfAudioFiles(new File(dir), meta, collection_id);
+        }else if (args[0].equals("-m")){
+            migrate_metadata();
         }else{
             System.out.println("Unrecognised argument: " + args[0]);
         }
+
+        System.out.println("--exit--");
     }
 
 
-//    public void migrate_metadata(){
-//        //get tracks from new DB
+    public static void migrate_metadata() {
+        RepositoryClientImpl client;
+        try{
+            client = new RepositoryClientImpl();
+        }catch (SQLException ex){
+            throw new RuntimeException("Failed to init conenctions to repository DB");
+        }
+
+        //get tracks from new DB
+        List<String> tracks;
+        try{
+            tracks = client.getAllTracks();
+        }catch (SQLException ex){
+            throw new RuntimeException("Failed to retrieve tracks from repository DB");
+        }
+
+        System.out.println("Inserting track metadata definitions");
+        try{
+            client.insertTrackMetaDef(TRACK_ALBUM);
+            client.insertTrackMetaDef(TRACK_ARTIST);
+            client.insertTrackMetaDef(TRACK_GENRE);
+            client.insertTrackMetaDef(TRACK_TITLE);
+        }catch (SQLException ex){
+            Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        int albumMetaId = client.getTrackMetadataID(TRACK_ALBUM);
+        int artistMetaId = client.getTrackMetadataID(TRACK_ARTIST);
+        int genreMetaId = client.getTrackMetadataID(TRACK_GENRE);
+        int titleMetaId = client.getTrackMetadataID(TRACK_TITLE);
+
+
+        System.out.println("Retrieving definitions");
+            try{
+                //retrieve ids of definitions
+                client.initTypesMaps();
+            }catch (SQLException ex){
+                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        int togo = 10;
+        while(togo > 0){
+            System.out.println("Commencing metadata migration in " + togo + " seconds");
+            togo -= 5;
+            try{
+                Thread.sleep(5000);
+            }catch (InterruptedException ex){
+                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        System.out.println("Migrating metadata for " + tracks.size() + " tracks");
+
+        CbrowserClient cb_client;
+        try{
+            cb_client = new CbrowserClient();
+        }catch (SQLException ex){
+            throw new RuntimeException("Failed to init conenctions to cbrowser DB");
+        }
+
+        String track;
+        Map<String,String> vals;
+        int valId;
+        int done = 0;
+        for (Iterator<String> it = tracks.iterator(); it.hasNext();){
+            track = it.next();
+            
+            try{
+                vals = cb_client.getTrackMetadata(track);
+                if(vals != null){
+                    //insert metadata values, get ids and link to track
+                    String album = vals.get(CbrowserClient.ALBUM);
+                    valId = client.insertTrackMeta(albumMetaId, album);
+                    client.insertTrackMetaLink(track, valId);
+
+                    String artist = vals.get(CbrowserClient.ARTIST);
+                    valId = client.insertTrackMeta(artistMetaId, artist);
+                    client.insertTrackMetaLink(track, valId);
+
+                    String title = vals.get(CbrowserClient.TITLE);
+                    valId = client.insertTrackMeta(titleMetaId, title);
+                    client.insertTrackMetaLink(track, valId);
+
+                    String genre = vals.get(CbrowserClient.GENRE);
+                    valId = client.insertTrackMeta(genreMetaId, genre);
+                    client.insertTrackMetaLink(track, valId);
+
+                }
+            }catch (SQLException ex){
+                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            done++;
+            if (done % 100 == 0){
+                System.out.println("done " + done + " of " + tracks.size());
+            }
+        }
+
+
+    }
+
+//    public int insert_dataset(File dataset_subset_file, NEMADataset dataset_description, List<File> testset_files){
+//        //read up subset tracks
 //
-//        //for each track get title artist album genre
-//        //SELECT cbrowser.tracks.track_title, cbrowser.artists.artist_name, cbrowser.albums.album_name, cbrowser.genres.genre_label
-//        //FROM cbrowser.tracks, cbrowser.artists, cbrowser.albums, cbrowser.genres
-//        //WHERE cbrowser.tracks.track_internal_id=?
-//        //AND cbrowser.tracks.track_artist=cbrowser.artists.artist_id
-//        //AND cbrowser.tracks.track_album=cbrowser.albums.album_id
-//        //AND cbrowser.tracks.track_genre=cbrowser.genres.genre_id
+//        //insert dataset description
 //
-//        //insert against track id
+//        //get dataset id
 //
-//        //report tracks with missing metadata
-//    }
+//        //for each split test set
 //
-//    public int insert_dataset(File dataset_subset_file, NEMADataset){
-//
-//
-//        //return dataset id
-//    }
-//
-//    public void insert_split_for_dataset(File testset_file, int dataset_id){
 //        //read up test set tracks
 //
-//        //get subset for dataset
-//
-//        //subtract test set tracks
+//        //subtract test set tracks from subset for dataset
 //
 //        //insert test and training sets
 //
 //    }
-
 
 }

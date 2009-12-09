@@ -60,20 +60,43 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public static final String INSERT_TRACK = "INSERT IGNORE INTO track(id) VALUES(?)";
     private PreparedStatement insertTrack;
+
     public static final String INSERT_TRACK_COLLECTION_LINK = "INSERT IGNORE INTO collection_track_link(collection_id,track_id) VALUES(?,?)";
     private PreparedStatement insertTrackCollectionLink;
+
     public static final String INSERT_FILE = "INSERT INTO file(track_id,path) VALUES(?,?)";
     private PreparedStatement insertFile;
+
     public static final String INSERT_FILE_METADATA_DEFINITIONS = "INSERT IGNORE INTO file_metadata_definitions(name) VALUES(?)";
     private PreparedStatement insertFileMetaDef;
-//    public static final String GET_FILE_METADATA_DEFINITIONS = "SELECT FROM  file_metadata_definitions";
-//    private PreparedStatement getFileMetaDefs;
+
     public static final String INSERT_FILE_METADATA = "INSERT IGNORE INTO file_metadata(metadata_type_id,value) VALUES(?,?)";
     private PreparedStatement insertFileMeta;
+
     public static final String GET_FILE_METADATA = "SELECT * FROM file_metadata";
     private PreparedStatement getFileMeta;
+
     public static final String INSERT_FILE_METADATA_LINK = "INSERT INTO file_file_metadata_link(file_id,file_metadata_id) VALUES(?,?)";
     private PreparedStatement insertFileMetaLink;
+
+    public static final String GET_ALL_TRACKS = "SELECT * FROM track";
+    private PreparedStatement getAllTracks;
+
+
+
+
+    public static final String INSERT_TRACK_METADATA_DEFINITIONS = "INSERT IGNORE INTO track_metadata_definitions(name) VALUES(?)";
+    private PreparedStatement insertTrackMetaDef;
+
+    public static final String INSERT_TRACK_METADATA = "INSERT INTO track_metadata(metadata_type_id,value) VALUES(?,?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)";
+    private PreparedStatement insertTrackMeta;
+
+    public static final String INSERT_TRACK_METADATA_LINK = "INSERT INTO track_track_metadata_link(track_id,track_metadata_id) VALUES(?,?)";
+    private PreparedStatement insertTrackMetaLink;
+
+
+
+
 
     //public static final String GET_VERSIONS_FOR_COLLECTION =
 
@@ -91,6 +114,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     private Map<Integer,String> taskTypeMap;
     private Map<Integer,String> setTypeMap;
 
+    
 
     DatabaseConnector dbCon;
 
@@ -124,6 +148,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         insertFileMeta = dbCon.con.prepareStatement(INSERT_FILE_METADATA);
         getFileMeta = dbCon.con.prepareStatement(GET_FILE_METADATA);
         insertFileMetaLink = dbCon.con.prepareStatement(INSERT_FILE_METADATA_LINK);
+        getAllTracks = dbCon.con.prepareStatement(GET_ALL_TRACKS);
+        insertTrackMetaDef = dbCon.con.prepareStatement(INSERT_TRACK_METADATA_DEFINITIONS);
+        insertTrackMeta = dbCon.con.prepareStatement(INSERT_TRACK_METADATA, Statement.RETURN_GENERATED_KEYS);
+        insertTrackMetaLink = dbCon.con.prepareStatement(INSERT_TRACK_METADATA_LINK);
 
         initTypesMaps();
     }
@@ -150,6 +178,40 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         setTypeMap = populateTypesMap(GET_SET_TYPES);
     }
 
+    public void insertTrackMetaDef(String name) throws SQLException{
+        System.out.println("Inserting Track metadata type: " + name);
+        insertTrackMetaDef.setString(1, name);
+        insertTrackMetaDef.executeUpdate();
+    }
+
+    public int insertTrackMeta(int metadata_type_id, String value) throws SQLException{
+        System.out.println("Inserting Track metadata value: " + metadata_type_id + "=" + value);
+        insertTrackMeta.setInt(1, metadata_type_id);
+        insertTrackMeta.setString(2, value);
+        insertTrackMeta.executeUpdate();
+        ResultSet rs = insertTrackMeta.getGeneratedKeys();
+        if (rs.next()) {
+            return rs.getInt(1);
+        }else{
+            Logger.getLogger(RepositoryClientImpl.class.getName()).log(Level.SEVERE, "Failed to get id for inserted track metadata " + metadata_type_id + "=" + value);
+            return -1;
+        }
+    }
+
+    public void insertTrackMetaLink(String track_id, int track_metadata_id) throws SQLException{
+        insertTrackMetaLink.setString(1, track_id);
+        insertTrackMetaLink.setInt(2, track_metadata_id);
+        insertTrackMetaLink.executeUpdate();;
+    }
+
+    public List<String> getAllTracks() throws SQLException{
+        ResultSet rs = getAllTracks.executeQuery();
+        ArrayList<String> tracks = new ArrayList<String>();
+        while(rs.next()){
+            tracks.add(rs.getString(1));
+        }
+        return tracks;
+    }
 
     public void insertTrack(String id) throws SQLException{
         insertTrack.setString(1, id);
@@ -181,15 +243,17 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         insertFileMetaDef.executeUpdate();
     }
 
-//    public List<Map<String,String>> getFileMetaDefs() throws SQLException{
-//        return executePreparedStatement(getFileMetaDefs);
-//    }
-
     public void insertFileMeta(int metadata_type_id, String value) throws SQLException{
         System.out.println("Inserting file metadata value: " + metadata_type_id + "=" + value);
         insertFileMeta.setInt(1, metadata_type_id);
         insertFileMeta.setString(2, value);
         insertFileMeta.executeUpdate();
+    }
+
+    public void insertFileMetaLink(int file_id, int file_metadata_id) throws SQLException{
+        insertFileMetaLink.setInt(1, file_id);
+        insertFileMetaLink.setInt(2, file_metadata_id);
+        insertFileMetaLink.executeUpdate();;
     }
 
     public Map<Integer,Map<String,Integer>> getFileMetadataValueIDs() throws SQLException{
@@ -213,11 +277,6 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return out;
     }
 
-    public void insertFileMetaLink(int file_id, int file_metadata_id) throws SQLException{
-        insertFileMetaLink.setInt(1, file_id);
-        insertFileMetaLink.setInt(2, file_metadata_id);
-        insertFileMetaLink.executeUpdate();;
-    }
 
 
 
