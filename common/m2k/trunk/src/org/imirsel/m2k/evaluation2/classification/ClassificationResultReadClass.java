@@ -8,9 +8,11 @@ package org.imirsel.m2k.evaluation2.classification;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationGroundTruthFileReader;
 import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
 import org.imirsel.m2k.util.Signal;
@@ -65,11 +67,11 @@ public class ClassificationResultReadClass {
                             File aPath = new File(splitted[0]);
                             String key = RemapMusicDBFilenamesClass.convertFileToMIREX_ID(aPath);
                             if(key.equals("")){
-                                throw new RuntimeException("Error: an emprty track name was read from file: " + toRead.getAbsolutePath());
+                                throw new RuntimeException("Error: an empty track name was read from file: " + toRead.getAbsolutePath());
                             }
                             String className = TagClassificationGroundTruthFileReader.cleanTag(splitted[1]);
                             if(className.equals("")){
-                                throw new RuntimeException("Error: an emprty class name was read from file: " + toRead.getAbsolutePath());
+                                throw new RuntimeException("Error: an empty class name was read from file: " + toRead.getAbsolutePath());
                             }
                             dataRead.put(key, className);
                         }
@@ -82,6 +84,51 @@ public class ClassificationResultReadClass {
                             String[] splitted = new String[2];
                             splitted = str.split("\t");
                             dataRead.put(splitted[0].trim(), splitted[1].trim());
+                        }
+                        str = br.readLine();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("exception in read in ground truth file.");
+            }
+            br.close();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataRead;
+    }
+
+    public static List<String> readClassificationFileAsList(File toRead, boolean MIREXMode){
+        List<String> dataRead = new ArrayList<String>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(toRead));
+            try {
+                String str = br.readLine(); // one line one sample
+                if(MIREXMode){
+                    while (str != null){
+                        str = str.trim();
+                        if (!str.equals("")) {
+                            String[] splitted = str.split("\\s+");
+                            File aPath = new File(splitted[0]);
+                            String key = RemapMusicDBFilenamesClass.convertFileToMIREX_ID(aPath);
+                            if(key.equals("")){
+                                throw new RuntimeException("Error: an empty track name was read from file: " + toRead.getAbsolutePath());
+                            }
+
+                            dataRead.add(key);
+                        }
+                        str = br.readLine();
+                    }
+                }else{
+                    while (str != null){
+                        str = str.trim();
+                        if (!str.equals("")) {
+                            String[] splitted = new String[2];
+                            splitted = str.split("\t");
+                            dataRead.add(splitted[0].trim());
                         }
                         str = br.readLine();
                     }
