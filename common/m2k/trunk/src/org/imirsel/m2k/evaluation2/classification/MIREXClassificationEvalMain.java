@@ -41,6 +41,7 @@ public class MIREXClassificationEvalMain {
             String evaluationName_,
             File gtFile_,
             File rootEvaluationDir_,
+            File hierarchyFile_,
             List<String> systemNames_,
             List<File> resultsDirs_){
         
@@ -49,6 +50,7 @@ public class MIREXClassificationEvalMain {
         evaluationName = evaluationName_;
         gtFile = gtFile_;
         rootEvaluationDir = rootEvaluationDir_;
+        hierarchyFile = hierarchyFile_;
         systemNames = systemNames_;
         resultsDirs = resultsDirs_;
     }
