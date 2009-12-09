@@ -149,11 +149,20 @@ public class NemaFlowNotification implements Probe {
 		String dirLoc=ArtifactManagerImpl.getInstance().getResultLocationForJob(sFlowUniqueID);
 		File dir = new File(dirLoc);
 		savejobResult(jobId,dir.getAbsolutePath(),"dir");
-		ResultListFilter filter = new ResultListFilter();
+		FileListFilter filter = new FileListFilter();
 		String list[]=dir.list(filter);
 			for(int i=0;i<list.length;i++){
 				savejobResult(jobId,list[i],"file");
 			}
+			
+			DirListFilter dir_filter = new DirListFilter();
+		    list=dir.list(dir_filter);
+			for(int i=0;i<list.length;i++){
+				savejobResult(jobId,list[i],"dir");
+			}
+			
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -177,11 +186,20 @@ public class NemaFlowNotification implements Probe {
 			String dirLoc=ArtifactManagerImpl.getInstance().getResultLocationForJob(sFlowUniqueID);
 			File dir = new File(dirLoc);
 			savejobResult(jobId,dir.getAbsolutePath(),"dir");
-			ResultListFilter filter = new ResultListFilter();
+			FileListFilter filter = new FileListFilter();
 			String list[]=dir.list(filter);
 				for(int i=0;i<list.length;i++){
 					savejobResult(jobId,list[i],"file");
 				}
+			
+				DirListFilter dir_filter = new DirListFilter();
+				    list=dir.list(dir_filter);
+					for(int i=0;i<list.length;i++){
+						savejobResult(jobId,list[i],"dir");
+					}
+				
+				
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

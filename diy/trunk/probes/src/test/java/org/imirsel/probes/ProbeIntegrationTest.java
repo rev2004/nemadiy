@@ -20,7 +20,6 @@ import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.model.Job;
 import org.imirsel.model.Job.JobStatus;
 
-
 public class ProbeIntegrationTest {
 	
 	private static Logger logger = Logger.getAnonymousLogger();
@@ -29,7 +28,7 @@ public class ProbeIntegrationTest {
 	
 	public static void main(String args[]){
 		Logger logger = Logger.getAnonymousLogger();
-		String sFlowUrl ="http://test.org/helloworld/";
+		String sFlowUrl ="http://test.org/datatypetest/";
 		String token = "tokenDD-"+System.currentTimeMillis();
 		MeandreClient meandreClient  = new MeandreClient("128.174.154.145", 11709);
 		meandreClient.setLogger(logger);
@@ -88,7 +87,7 @@ public class ProbeIntegrationTest {
 	
 	private static DataSource getDataSource() throws Exception {
 		String driver ="com.mysql.jdbc.Driver";//properties.getProperty("driver");
-		String jdbc_url = "jdbc:mysql://nema.lis.uiuc.edu:3306/flowservice?relaxAutoCommit=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;autoReconnectForPools=true";//properties.getProperty("jdbc_url");
+		String jdbc_url = "jdbc:mysql://128.174.154.145:3306/flowservice?relaxAutoCommit=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;autoReconnectForPools=true";//properties.getProperty("jdbc_url");
 		String user = "nema_user";
 		String password ="reduxer101";
 		
