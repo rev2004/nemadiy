@@ -133,7 +133,19 @@ public class MIREXClassificationEvalMain {
             File dir = it.next();
             System.out.println("\tretrieving files for " + dir.getAbsolutePath());
             File[] files = dir.listFiles();
+            ArrayList<File> filesToUse = new ArrayList<File>();
+
             System.out.println("\t\tgot " + files.length + " files");
+
+            for (int i = 0; i < files.length; i++){
+                File file = files[i];
+                if (!file.isDirectory()){
+                    filesToUse.add(file);
+                }
+            }
+
+            files = filesToUse.toArray(new File[filesToUse.size()]);
+
             //this should sort results consistenly across all submissions,
             //   if they use the same names for their results files 
             //   (otherwise there is no way to know if they are about the same test across different submissions)
