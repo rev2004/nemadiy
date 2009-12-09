@@ -12,6 +12,7 @@ import org.imirsel.nema.DefaultPreferenceInitializer;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.RoleManager;
+import org.imirsel.nema.service.SubmissionManager;
 import org.imirsel.nema.service.UserExistsException;
 import org.imirsel.nema.service.UserManager;
 
@@ -37,12 +38,14 @@ import java.util.Map;
  */
 public class UserFormController extends BaseFormController {
     private RoleManager roleManager;
-
+  
     public void setRoleManager(RoleManager roleManager) {
         this.roleManager = roleManager;
     }
     
-    public UserFormController() {
+
+
+	public UserFormController() {
         setCommandName("user");
         setCommandClass(User.class);
     }

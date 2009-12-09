@@ -140,8 +140,9 @@
 	<!-- job controller -->
  	<bean id="jobController" class="org.imirsel.nema.webapp.controller.JobController">
    		<property name="flowService" ref="realFlowService"/>
-    	 <property name="userManager" ref="userManager"/>
-    	 <property name="methodNameResolver"  ref="jobMethodResolver" />
+   		<property name="submissionManager" ref="submissionManager"/>
+    	<property name="userManager" ref="userManager"/>
+    	<property name="methodNameResolver"  ref="jobMethodResolver" />
     </bean>
     
     
@@ -150,9 +151,14 @@
         <property name="mappings">
            <value>
             /JobManager.getUserJobs=getuserjobs
+            /JobManager.getSubmissions=getSubmissions
+             /JobManager.getAllSubmissions=getAllSubmissions
+             /JobManager.submissionAction=submissionAction
+             /JobManager.submissionDetail=submissionDetail
             /JobManager.hello=hello
            	/JobManager.jobDetail=jobdetail
             /JobManager.jobAction=jobaction
+            /JobManager.selectJobForSubmission=selectJobForSubmission
             </value>
         </property>
     </bean>
@@ -214,7 +220,6 @@
            	   /JobManager.*=jobController
            	    /FlowManager.*=flowController
            	    /FlowFormManager.*=flowFormController
-           	    
                 /admin/activeUsers.html=filenameController
                 /admin/flushCache.html=filenameController
                 /admin/reload.html=reloadController
