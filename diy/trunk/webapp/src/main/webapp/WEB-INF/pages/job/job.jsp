@@ -33,6 +33,19 @@
     </table>
     </fieldset>
   </div>
+  
+    <form id="theform" action="/get/JobManager.selectJobForSubmission" method="post">
+    <input name="jobId" type="hidden" value="${job.id}" />
+    <div class="form_job">
+      <c:if test="${job.statusCode==3}">
+        <fieldset id="pt1">
+           <input id="submitform" name="submit" tabindex="6" value="Select As Submission" type="submit" />
+        </fieldset>
+      </c:if>
+    </div>
+  </form>
+  
+  
   <form id="theform" action="/get/JobManager.jobAction" method="post">
     <input name="id" type="hidden" value="${job.id}" />
     <div class="form_job">

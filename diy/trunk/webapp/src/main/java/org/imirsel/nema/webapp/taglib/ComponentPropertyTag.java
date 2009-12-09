@@ -67,6 +67,7 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 			htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue());
 		}else{
 			DataTypeBean dataTypeBean = ltb.get(0);
+			
 			if(dataTypeBean instanceof StringDataTypeBean){
 				StringDataTypeBean sd = (StringDataTypeBean) dataTypeBean;
 				if(sd.getRenderer()==null){
@@ -81,6 +82,8 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 					}
 				}else if(sd.getRenderer().endsWith("FileRenderer")){
 					htmlWidget=createInputBox(property.getName(),"file",cssWriter.toString(),property.getDefaultValue(),property.getValue());
+				}else{ // create input box for all others....
+					htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue());
 				}
 
 

@@ -13,6 +13,7 @@
 		
 		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER" page="/get/FlowManager.getFlowList">
 		    <Item name="MyJobs" title="My Jobs" page="/get/JobManager.getUserJobs"/>
+            <Item name="MySubmissions" title="My Submissions" page="/get/JobManager.getSubmissions"/>
             <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/FlowFormManager.getFlowTemplate?id=3"/>
             <Item name="JobTypeClassification" title="Classification" page="/get/FlowFormManager.getFlowTemplate?id=4"/>
             <Item name="JobTypeEvaluation" title="Evaluation" page="/get/FlowFormManager.getFlowTemplate?id=5"/>
