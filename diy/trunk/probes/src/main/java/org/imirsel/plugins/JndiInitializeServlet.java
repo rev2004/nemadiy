@@ -47,6 +47,8 @@ import org.meandre.plugins.MeandrePlugin;
  * @author Amit Kumar
  * Created on Sep 1 2009
  * @revised Amit Kumar -changed the autoCommit to false in the pooling data source.
+ * @modified Amit Kumar -throws runtime exception if the nemaflowproperties is not
+ * found
  *
  */
 public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin {
@@ -97,7 +99,7 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			logger.severe(e1.getMessage());
-			throw new ServletException(e1);
+			throw new RuntimeException("Cannot find nemaflowservice.properties");
 		}
 		try{
 			Hashtable env = new Hashtable();
