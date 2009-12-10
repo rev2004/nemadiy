@@ -5,6 +5,7 @@
 
 package org.imirsel.nema.repository;
 
+import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.imirsel.m2k.evaluation2.classification.ClassificationResultReadClass;
 
 /**
  *
@@ -95,8 +97,16 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     private PreparedStatement insertTrackMetaLink;
 
 
-
-
+    public static final String INSERT_DATASET = "INSERT INTO dataset(name,description,collection_id,subject_track_metadata_type_id,filter_track_metadata_type_id,task_id) values(?,?,?,?,?,?)";
+    private PreparedStatement insertDataset;
+    public static final String UPDATE_DATASET_WITH_SUBSET = "UPDATE dataset SET subset_set_id=? WHERE id=?";
+    private PreparedStatement updateDatasetWithSubset;
+    public static final String INSERT_SET = "INSERT INTO nemadatarepository.set(dataset_id, set_type_id, split_number) VALUES(?,?,?)";
+    private PreparedStatement insertSet;
+    public static final String INSERT_SET_TRACK_LINK = "INSERT INTO set_track_link(set_id,track_id) VALUES(?,?)";
+    private PreparedStatement insertSetTrackLink;
+    public static final String UPDATE_DATASET_WITH_NUM_SPLITS = "UPDATE dataset SET num_splits=?, num_set_per_split=? WHERE id=?";
+    private PreparedStatement updateDatasetWithNumSplits;
 
     //public static final String GET_VERSIONS_FOR_COLLECTION =
 
@@ -109,10 +119,12 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_SET_TYPES = "SELECT * FROM set_type_definitions";
     private Map<Integer,String> trackMetadataTypeMap;
     private Map<Integer,String> fileMetadataTypeMap;
-    private Map<String,Integer> trackMetadataTypeMapRev;
-    private Map<String,Integer> fileMetadataTypeMapRev;
     private Map<Integer,String> taskTypeMap;
     private Map<Integer,String> setTypeMap;
+    private Map<String,Integer> trackMetadataTypeMapRev;
+    private Map<String,Integer> fileMetadataTypeMapRev;
+    private Map<String,Integer> taskTypeMapRev;
+    private Map<String,Integer> setTypeMapRev;
 
     
 
@@ -152,6 +164,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         insertTrackMetaDef = dbCon.con.prepareStatement(INSERT_TRACK_METADATA_DEFINITIONS);
         insertTrackMeta = dbCon.con.prepareStatement(INSERT_TRACK_METADATA, Statement.RETURN_GENERATED_KEYS);
         insertTrackMetaLink = dbCon.con.prepareStatement(INSERT_TRACK_METADATA_LINK);
+        insertDataset = dbCon.con.prepareStatement(INSERT_DATASET, Statement.RETURN_GENERATED_KEYS);
+        updateDatasetWithSubset = dbCon.con.prepareStatement(UPDATE_DATASET_WITH_SUBSET);
+        insertSet = dbCon.con.prepareStatement(INSERT_SET, Statement.RETURN_GENERATED_KEYS);
+        insertSetTrackLink = dbCon.con.prepareStatement(INSERT_SET_TRACK_LINK);
+        updateDatasetWithNumSplits = dbCon.con.prepareStatement(UPDATE_DATASET_WITH_NUM_SPLITS);
 
         initTypesMaps();
     }
@@ -172,10 +189,13 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public void initTypesMaps() throws SQLException{
         trackMetadataTypeMap = populateTypesMap(GET_TRACK_METADATA_TYPES);
         fileMetadataTypeMap = populateTypesMap(GET_FILE_METADATA_TYPES);
-        trackMetadataTypeMapRev = reverseTypesMap(trackMetadataTypeMap);
-        fileMetadataTypeMapRev = reverseTypesMap(fileMetadataTypeMap);
         taskTypeMap = populateTypesMap(GET_TASK_TYPES);
         setTypeMap = populateTypesMap(GET_SET_TYPES);
+        trackMetadataTypeMapRev = reverseTypesMap(trackMetadataTypeMap);
+        fileMetadataTypeMapRev = reverseTypesMap(fileMetadataTypeMap);
+        taskTypeMapRev = reverseTypesMap(taskTypeMap);
+        setTypeMapRev = reverseTypesMap(setTypeMap);
+
     }
 
     public void insertTrackMetaDef(String name) throws SQLException{
@@ -201,7 +221,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public void insertTrackMetaLink(String track_id, int track_metadata_id) throws SQLException{
         insertTrackMetaLink.setString(1, track_id);
         insertTrackMetaLink.setInt(2, track_metadata_id);
-        insertTrackMetaLink.executeUpdate();;
+        insertTrackMetaLink.executeUpdate();
     }
 
     public List<String> getAllTracks() throws SQLException{
@@ -253,7 +273,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public void insertFileMetaLink(int file_id, int file_metadata_id) throws SQLException{
         insertFileMetaLink.setInt(1, file_id);
         insertFileMetaLink.setInt(2, file_metadata_id);
-        insertFileMetaLink.executeUpdate();;
+        insertFileMetaLink.executeUpdate();
     }
 
     public Map<Integer,Map<String,Integer>> getFileMetadataValueIDs() throws SQLException{
@@ -289,14 +309,6 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return fileMetadataTypeMap.get(typeId);
     }
 
-    public int getTrackMetadataID(String typeName){
-        return trackMetadataTypeMapRev.get(typeName);
-    }
-
-    public int getFileMetadataID(String typeName){
-        return fileMetadataTypeMapRev.get(typeName);
-    }
-
     public String getTaskTypeName(int typeId){
         return taskTypeMap.get(typeId);
     }
@@ -305,6 +317,198 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return setTypeMap.get(typeId);
     }
 
+    public int getTrackMetadataID(String typeName){
+        return trackMetadataTypeMapRev.get(typeName);
+    }
+
+    public int getFileMetadataID(String typeName){
+        return fileMetadataTypeMapRev.get(typeName);
+    }
+
+    public int getTaskTypeID(String typeName){
+        return taskTypeMapRev.get(typeName);
+    }
+
+    public int getSetTypeID(String typeName){
+        return setTypeMapRev.get(typeName);
+    }
+
+    public void insertTestOnlyDataset(String name,
+            String description,
+            int collection_id,
+            int subject_track_metadata_type_id,
+            int filter_track_metadata_type_id,
+            int task_id,
+            File dataset_subset_file,
+            File testsetFiles) throws SQLException{
+        //read up subset tracks
+        List<String> subsetList = ClassificationResultReadClass.readClassificationFileAsList(dataset_subset_file, true);
+
+        dbCon.con.setAutoCommit(false);
+        try{
+
+            //insert dataset description
+            int datasetId = insertDataset(name, description, collection_id, subject_track_metadata_type_id, filter_track_metadata_type_id, task_id, subsetList);
+
+            int testType = getSetTypeID("test");
+            int trainType = getSetTypeID("train");
+
+            //for each split test set
+            List<String> testList, trainList;
+
+            //read up test set tracks
+            testList = ClassificationResultReadClass.readClassificationFileAsList(testsetFiles, true);
+
+            System.out.println("Inserting test set size: " + testList.size());
+
+            //insert test and training sets
+            int testSetId = insertSetDescription(datasetId, testType, 1);
+            insertSetTracks(testSetId, testList);
+
+            //update dataset description with number of splits and number of sets per split
+            //UPDATE dataset SET num_splits=?, num_set_per_split=? WHERE id=?
+            updateDatasetWithNumSplits.setInt(1, 1);
+            updateDatasetWithNumSplits.setInt(2, 1);
+            updateDatasetWithNumSplits.setInt(3,datasetId);
+            updateDatasetWithNumSplits.executeUpdate();
+
+        }catch(SQLException e){
+            dbCon.con.rollback();
+            throw e;
+        }
+        dbCon.con.setAutoCommit(true);
+
+    }
+
+    public void insertTestTrainDataset(String name,
+            String description,
+            int collection_id,
+            int subject_track_metadata_type_id,
+            int filter_track_metadata_type_id,
+            int task_id,
+            File dataset_subset_file,
+            List<File> testset_files) throws SQLException{
+        //read up subset tracks
+        List<String> subsetList = ClassificationResultReadClass.readClassificationFileAsList(dataset_subset_file, true);
+
+        dbCon.con.setAutoCommit(false);
+        try{
+
+            //insert dataset description
+            int datasetId = insertDataset(name, description, collection_id, subject_track_metadata_type_id, filter_track_metadata_type_id, task_id, subsetList);
+
+            int testType = getSetTypeID("test");
+            int trainType = getSetTypeID("train");
+
+            //for each split test set
+            List<String> testList, trainList;
+            int setNum = 0;
+            for (Iterator<File> it = testset_files.iterator(); it.hasNext();){
+                File testSetFile = it.next();
+                //read up test set tracks
+                testList = ClassificationResultReadClass.readClassificationFileAsList(testSetFile, true);
+
+                //subtract test set tracks from subset for dataset
+                trainList = new ArrayList<String>(subsetList);
+                trainList.removeAll(testList);
+
+                System.out.println("Inserting training set size: " + trainList.size() + ", test set size: " + testList.size());
+
+                //insert test and training sets
+                int testSetId = insertSetDescription(datasetId, testType, setNum);
+                int trainSetId = insertSetDescription( datasetId, trainType, setNum);
+                insertSetTracks(testSetId, testList);
+                insertSetTracks(trainSetId, trainList);
+
+                setNum++;
+            }
+
+
+            //update dataset description with number of splits and number of sets per split
+            //UPDATE dataset SET num_splits=?, num_set_per_split=? WHERE id=?
+            updateDatasetWithNumSplits.setInt(1, setNum);
+            updateDatasetWithNumSplits.setInt(2, 2);
+            updateDatasetWithNumSplits.setInt(3,datasetId);
+            updateDatasetWithNumSplits.executeUpdate();
+
+        }catch(SQLException e){
+            dbCon.con.rollback();
+            throw e;
+        }
+        dbCon.con.setAutoCommit(true);
+
+    }
+
+
+    private int insertDataset(
+            String name,
+            String description,
+            int collection_id,
+            int subject_track_metadata_type_id,
+            int filter_track_metadata_type_id,
+            int task_id,
+            List<String> subsetList) throws SQLException{
+
+        int datasetId = -1;
+
+
+        insertDataset.setString(1, name);
+        insertDataset.setString(2, description);
+        insertDataset.setInt(3, collection_id);
+        insertDataset.setInt(4, subject_track_metadata_type_id);
+        insertDataset.setInt(5, filter_track_metadata_type_id);
+        insertDataset.setInt(6, task_id);
+        insertDataset.executeUpdate();
+
+        ResultSet rs = insertDataset.getGeneratedKeys();
+        if (rs.next()){
+            datasetId = rs.getInt(1);
+        }else{
+            throw new SQLException("The dataset insertion did not return an inserted id!");
+        }
+
+
+        //insert subset and link to Dataset
+        int setType = getSetTypeID("collection_subset");
+        int subsetId = insertSetDescription(datasetId, setType, -1);
+        insertSetTracks(subsetId, subsetList);
+
+        //link subset to dataset
+        updateDatasetWithSubset.setInt(1,subsetId);
+        updateDatasetWithSubset.setInt(2,datasetId);
+        updateDatasetWithSubset.executeUpdate();
+
+        dbCon.con.commit();
+
+        return datasetId;
+    }
+
+    private int insertSetDescription(int datasetId, int setTypeId, int splitNumber) throws SQLException{
+        //INSERT INTO set(dataset_id, set_type_id, split_number) VALUES(?,?,?)
+        insertSet.setInt(1,datasetId);
+        insertSet.setInt(2,setTypeId);
+        insertSet.setInt(3, splitNumber);
+        insertSet.executeUpdate();
+
+        int setId = -1;
+        ResultSet rs = insertSet.getGeneratedKeys();
+        if (rs.next()){
+            setId = rs.getInt(1);
+        }else{
+            throw new SQLException("The set insertion did not return an inserted id!");
+        }
+        return setId;
+    }
+
+    private void insertSetTracks(int subsetId, List<String> tracks) throws SQLException{
+        //INSERT INTO set_track_link(set_id,track_id) VALUES(?,?)
+        for (Iterator<String> it = tracks.iterator(); it.hasNext();){
+            String track = it.next();
+            insertSetTrackLink.setInt(1,subsetId);
+            insertSetTrackLink.setString(2,track);
+            insertSetTrackLink.executeUpdate();
+        }
+    }
 
 
     public List<NEMACollection> getCollections() throws SQLException{
