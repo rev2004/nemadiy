@@ -128,12 +128,10 @@ import org.imirsel.m2k.evaluation2.classification.*;
 		String matlabPath = "matlab";
 	    String evaluationName = evalName;
 	    File gtFile = new File(gtFileName[0][0]);
-	    File rootEvaluationDir = new File(processResultsDir);
+	    File rootEvaluationDir = new File(processResultsDir + File.pathSeparator + "evaluation");
 	    
 	    // create a directory to move the raw results to
-	    String classificationResultsDirName = processResultsDir + File.pathSeparator + "classifications";
-	    File classificationResultsDir = new File(classificationResultsDirName);
-	    classificationResultsDir.mkdir();
+	    File classificationResultsDir = new File(processResultsDir);
 	    File hierarchyFile;
 	    if (!hierarchyFileName.contentEquals("")) {
 	    	hierarchyFile = new File(hierarchyFileName);
@@ -142,19 +140,6 @@ import org.imirsel.m2k.evaluation2.classification.*;
 		}
 	    // move the classification files (e.g. fold.1.txt) to their own dir
 	    // so MIREXClassifier has them all alone
-	    File inFile;
-	    File mvdFileDest;
-	    for (int i = 0; i < fileLists.length; i++) {
-	    	inFile = new File(fileLists[i][0]);
-	    	try {
-				mvdFileDest = new File(classificationResultsDir.getCanonicalPath() + File.pathSeparator + inFile.getName());
-				inFile.renameTo(mvdFileDest);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-	    }
 	    
 	    List<String> systemNames = new ArrayList<String>();
         List<File> resultsDir = new ArrayList<File>();
@@ -167,6 +152,7 @@ import org.imirsel.m2k.evaluation2.classification.*;
                 evaluationName,
                 gtFile,
                 rootEvaluationDir,
+                hierarchyFile,
                 systemNames,
                 resultsDir);
         
@@ -174,8 +160,8 @@ import org.imirsel.m2k.evaluation2.classification.*;
         
         // output the raw results dir for reprocessing by the summarizer component
         String[][] outLists = new String[fileLists.length][2];
-        outLists[0][0] = classificationResultsDirName;
-		cc.pushDataComponentToOutput(processResultsDir, outLists);
+        outLists[0][0] = processResultsDir;
+		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 	}
 
 
