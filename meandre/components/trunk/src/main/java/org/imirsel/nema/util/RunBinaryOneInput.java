@@ -174,8 +174,8 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 		addExtension = Boolean.valueOf(cc.getProperty(DATA_PROPERTY_ADDEXTENSION));
 		extension = String.valueOf(cc.getProperty(DATA_PROPERTY_EXTENSION));
 		env_var = String.valueOf(cc.getProperty(DATA_PROPERTY_ENV_VAR));
-		String[][] fileLists = (String[][])cc.getDataComponentFromInput(DATA_INPUT_1);
-		String[][] outLists = new String[fileLists.length][2];
+		String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
+		String[] outLists = new String[fileLists.length];
 		cout.println("");
 		cout.println("=============================================================");
 		cout.println("Starting execution of external binaries");
@@ -194,12 +194,11 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 				break;
 			}
 
-			File inFile = new File(fileLists[i][0]);
+			File inFile = new File(fileLists[i]);
 
 			try {
 				runCommand(inFile.getCanonicalPath(),cout);
-				outLists[i][0] = outfile;
-				outLists[i][1] = fileLists[i][1];
+				outLists[i] = outfile;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				cout.println("IOException");
