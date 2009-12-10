@@ -63,13 +63,12 @@ import org.imirsel.m2k.evaluation2.classification.*;
 
 	@StringDataType(hide=true)
 	@ComponentProperty(defaultValue="",
-			description="The name of the output file (passed into the command format string to the $o field)." +
-			" This option is overriden if AddExtentionToInput is set to TRUE",
+			description="Path and name of the hierarchy file",
 			name="Hierarchy File Name")
 			final static String DATA_PROPERTY_HIERARCHYFILENAME = "Hierarchy File Name";
 	private String hierarchyFileName = "";
 	
-	@StringDataType(hide=true)
+	@StringDataType()
 	@ComponentProperty(defaultValue="MyEvaluation",
 			description="Name of the evaluation",
 			name="Evaluation Name" )
@@ -145,7 +144,9 @@ import org.imirsel.m2k.evaluation2.classification.*;
         List<File> resultsDir = new ArrayList<File>();
 	    systemNames.add(evalName);
         resultsDir.add(classificationResultsDir);
-		
+        cout.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+        cout.println("Evaluating...");
+        cout.flush();
         // call constructor and evaluation method
         MIREXClassificationEvalMain evaluator = new MIREXClassificationEvalMain(false,
                 matlabPath,
@@ -162,6 +163,10 @@ import org.imirsel.m2k.evaluation2.classification.*;
         String[][] outLists = new String[fileLists.length][2];
         outLists[0][0] = processResultsDir;
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
+		
+        cout.println("Evaluation Complete");
+        cout.flush();
+        cout.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 	}
 
 
