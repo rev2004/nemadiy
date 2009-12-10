@@ -104,7 +104,7 @@ public class FlowFormController extends MultiActionController{
 		}
 		Collections.sort(componentList);
 		log.info("componentList: " + componentList.size());
-		HashMap<Component,Map<String, Property>> map = new HashMap<Component,Map<String, Property>>();
+		TreeMap<Component,Map<String, Property>> map = new TreeMap<Component,Map<String, Property>>();
 		for(int i=0;i<componentList.size();i++){
 			HashMap<String, Property> m=null;
 				m = (HashMap<String, Property>)componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
