@@ -215,11 +215,7 @@ public class JobController extends MultiActionController {
 
 		User user = userManager.getCurrentUser();
 		logger.debug("USER IS ====> " + user);
-
-		if (user == null) {
-			user = userManager.getUserByUsername("admin");
-		}
-		long userId = user.getId();
+    	long userId = user.getId();
 
 		logger.debug("start to list the jobs of   " + user);
 		List<Job> jobs = flowService.getUserJobs(userId);
