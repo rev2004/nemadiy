@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.imirsel.m2k.evaluation2.classification.ClassificationResultReadClass;
 import org.imirsel.nema.repository.migration.CbrowserClient;
 
 /**
@@ -211,7 +212,15 @@ public class RepositoryManagementUtils {
 
 
     public static final String USAGE = "Insert directory tree of audio files\n" +
-            "-f /path/to/files/to/insert metakey1 metaval1 ... metakeyN metavalN";
+            "-f /path/to/files/to/insert metakey1 metaval1 ... metakeyN metavalN\n\n" +
+            "Migrate metadata from cbrowser\n" +
+            "-m\n\n" +
+            "Insert test/train dataset\n" +
+            "-dtt \"name\" \"description\" collection_id SubjectMetadata FilterMetadata(null if none) taskId /path/subset/file /path/test/set/file/1 ... /path/test/set/file/N\n\n" +
+            "Insert test only dataset\n" +
+            "-dt \"name\" \"description\" collection_id SubjectMetadata FilterMetadata(null if none) taskId /path/subset/file /path/test/set/file\n\n" +
+            "Insert track metadata from a tabbed list file\n" +
+            "-lf /path/to/list/file trackMetadataTypeName\n\n";
     public static void main(String[] args){
         if (args[0].equals("-f")){
             String dir = args[1];
@@ -219,12 +228,12 @@ public class RepositoryManagementUtils {
             try{
                 collection_id = Integer.parseInt(args[2]);
             }catch(NumberFormatException e){
-                throw new RuntimeException("Failed to parse collection id: " + args[2]);
+                throw new RuntimeException("Failed to parse collection id: " + args[2] + "\n" + USAGE);
             }
 
             List<String[]> meta = new ArrayList<String[]>();
             if (args.length % 2 != 1){
-                throw new RuntimeException("Wrong number of arguments received!");
+                throw new RuntimeException("Wrong number of arguments received!\n" + USAGE);
             }
             if(args.length <= 3){
                 System.out.println("WARNING: No metadata arguments received!");
@@ -238,6 +247,149 @@ public class RepositoryManagementUtils {
             insertDirOfAudioFiles(new File(dir), meta, collection_id);
         }else if (args[0].equals("-m")){
             migrate_metadata();
+        }else if (args[0].equals("-dtt")){
+            System.out.println("Inserting test/train dataset");
+            try{
+                RepositoryClientImpl client = new RepositoryClientImpl();
+                if (args.length < 9){
+                    throw new RuntimeException("Insufficent arguments!\n" + USAGE);
+
+                }
+
+                String name = args[1];
+                String description = args[2];
+                int collection_id = Integer.parseInt(args[3]);
+                int subject_track_metadata_type_id = client.getTrackMetadataID(args[4]);
+                int filter_track_metadata_type_id = -1;
+                if (!args[5].equalsIgnoreCase("null")){
+                    filter_track_metadata_type_id = client.getTrackMetadataID(args[5]);
+                }
+                int task_id = Integer.parseInt(args[6]);
+                File dataset_subset_file = new File(args[7]);
+                if (!dataset_subset_file.exists()){
+                    throw new RuntimeException("Data set subset file did not exist: " + dataset_subset_file.getAbsolutePath());
+                }
+                List<File> testset_files = new ArrayList<File>();
+
+                //get test files
+                for (int i = 8; i < args.length; i++){
+                    File aFile = new File(args[i]);
+                    testset_files.add(aFile);
+                    if (!aFile.exists()){
+                        throw new RuntimeException("Set file did not exist: " + aFile.getAbsolutePath());
+                    }
+                }
+
+                System.out.println("Name:                " + name);
+                System.out.println("Description:\n" + description);
+                System.out.println("Collection id:       " + collection_id);
+                System.out.println("Subject metadata:    " + args[4]);
+                System.out.println("Subject metadata id: " + subject_track_metadata_type_id);
+                System.out.println("Filter metadata:     " + args[5]);
+                System.out.println("Filter metadata id:  " + filter_track_metadata_type_id);
+                System.out.println("Task id:             " + task_id);
+                System.out.println("Subset file path:    " + dataset_subset_file.getAbsolutePath());
+                System.out.print(  "Test set files:\n");
+                for (Iterator<File> it = testset_files.iterator(); it.hasNext();){
+                    System.out.println(it.next().getAbsolutePath());
+                }
+
+                int togo = 10;
+                while(togo > 0){
+                    System.out.println("Commencing dataset insert in " + togo + " seconds");
+                    togo -= 5;
+                    try{
+                        Thread.sleep(5000);
+                    }catch (InterruptedException ex){
+                        Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+                client.insertTestTrainDataset(name, description, collection_id, subject_track_metadata_type_id, filter_track_metadata_type_id, task_id, dataset_subset_file, testset_files);
+            }catch (SQLException ex){
+                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }else if (args[0].equals("-dt")){
+            System.out.println("Inserting single test set dataset");
+
+            try{
+                RepositoryClientImpl client = new RepositoryClientImpl();
+                if (args.length < 9){
+                    System.out.println("Insufficent arguments!\n" + USAGE);
+                }
+
+                String name = args[1];
+                String description = args[2];
+                int collection_id = Integer.parseInt(args[3]);
+                int subject_track_metadata_type_id = client.getTrackMetadataID(args[4]);
+                int filter_track_metadata_type_id = -1;
+                if (!args[5].equalsIgnoreCase("null")){
+                    filter_track_metadata_type_id = client.getTrackMetadataID(args[5]);
+                }
+                int task_id = Integer.parseInt(args[6]);
+                File dataset_subset_file = new File(args[7]);
+                if (!dataset_subset_file.exists()){
+                    throw new RuntimeException("Data set subset file did not exist: " + dataset_subset_file.getAbsolutePath());
+                }
+                File testset_file = new File(args[8]);
+                if (!testset_file.exists()){
+                    throw new RuntimeException("Set file did not exist: " + testset_file.getAbsolutePath());
+                }
+
+                System.out.println("Name:                " + name);
+                System.out.println("Description:\n" + description);
+                System.out.println("Collection id:       " + collection_id);
+                System.out.println("Subject metadata:    " + args[4]);
+                System.out.println("Subject metadata id: " + subject_track_metadata_type_id);
+                System.out.println("Filter metadata:     " + args[5]);
+                System.out.println("Filter metadata id:  " + filter_track_metadata_type_id);
+                System.out.println("Task id:             " + task_id);
+                System.out.println("Subset file path:    " + dataset_subset_file.getAbsolutePath());
+                System.out.print(  "Test set files:      " + testset_file.getAbsolutePath());
+
+                int togo = 10;
+                while(togo > 0){
+                    System.out.println("Commencing dataset insert in " + togo + " seconds");
+                    togo -= 5;
+                    try{
+                        Thread.sleep(5000);
+                    }catch (InterruptedException ex){
+                        Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+                client.insertTestOnlyDataset(name, description, collection_id, subject_track_metadata_type_id, filter_track_metadata_type_id, task_id, dataset_subset_file, testset_file);
+            }catch (SQLException ex){
+                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }else if (args[0].equals("-lf")){
+            System.out.println("Inserting metadata from list file");
+            try{
+                RepositoryClientImpl client = new RepositoryClientImpl();
+                if (args.length < 3){
+                    throw new RuntimeException("Insufficent arguments!\n" + USAGE);
+
+                }
+
+                File listFile = new File(args[1]);
+                if (!listFile.exists()){
+                    throw new RuntimeException("The list file did not exist: " + listFile.getAbsolutePath());
+                }
+                String metadata = args[2];
+                System.out.println("List file path:      " + listFile.getAbsolutePath());
+                System.out.println("Subject metadata:    " + metadata);
+                int metadata_type_id = client.getTrackMetadataID(metadata);
+                System.out.println("Subject metadata id: " + metadata_type_id);
+
+                insertMetadataFromListFile(listFile, metadata);
+
+
+            }catch (SQLException ex){
+                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }else{
             System.out.println("Unrecognised argument: " + args[0]);
         }
@@ -245,6 +397,53 @@ public class RepositoryManagementUtils {
         System.out.println("--exit--");
     }
 
+    public static void insertMetadataFromListFile(File listFile, String metadatatype) throws SQLException{
+        RepositoryClientImpl client;
+        try{
+            client = new RepositoryClientImpl();
+        }catch (SQLException ex){
+            throw new RuntimeException("Failed to init conenctions to repository DB");
+        }
+
+        int metaId = client.getTrackMetadataID(metadatatype);
+        if (metaId == -1){
+            System.out.println("Inserting metadata definition for: " + metadatatype);
+
+            int togo = 10;
+            while(togo > 0){
+                System.out.println("Commencing metadata definition in " + togo + " seconds");
+                togo -= 5;
+                try{
+                    Thread.sleep(5000);
+                }catch (InterruptedException ex){
+                    Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            client.insertTrackMetaDef(metadatatype);
+            metaId = client.getTrackMetadataID(metadatatype);
+        }
+        Map<String,String> map = ClassificationResultReadClass.readClassificationFile(listFile, true);
+        System.out.println("got data for " + map.size() + " tracks");
+
+        int togo = 10;
+            while(togo > 0){
+            System.out.println("Commencing metadata insertion in " + togo + " seconds");
+            togo -= 5;
+            try{
+                Thread.sleep(5000);
+            }catch (InterruptedException ex){
+                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        String track;
+        int valId;
+        for (Iterator<String> it = map.keySet().iterator(); it.hasNext();){
+            track = it.next();
+            valId = client.insertTrackMeta(metaId, map.get(track));
+            client.insertTrackMetaLink(track, valId);
+        }
+    }
 
     public static void migrate_metadata() {
         RepositoryClientImpl client;
@@ -346,21 +545,8 @@ public class RepositoryManagementUtils {
 
     }
 
-//    public int insert_dataset(File dataset_subset_file, NEMADataset dataset_description, List<File> testset_files){
-//        //read up subset tracks
-//
-//        //insert dataset description
-//
-//        //get dataset id
-//
-//        //for each split test set
-//
-//        //read up test set tracks
-//
-//        //subtract test set tracks from subset for dataset
-//
-//        //insert test and training sets
-//
-//    }
+    
+
+
 
 }
