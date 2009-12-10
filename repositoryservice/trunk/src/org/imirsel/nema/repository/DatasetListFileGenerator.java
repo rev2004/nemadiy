@@ -27,13 +27,16 @@ public class DatasetListFileGenerator {
 
     
     /**
-     * Utility method to help build file type constraints.
+     * Utility method to help build file type constraints which are used to
+     * select audio files corresponding to each track with the specified
+     * encoding.
      * 
      * @param bitrate     valid values are: 128k, 96k
      * @param channels    valid values are: 1, 2
      * @param clip_type   valid values are: 30, full
      * @param encoding    valid values are: mp3, wav
      * @param sample_rate valid values are: 22050, 44100
+     *
      * @return Constraints that can be passed to retrieve file sets.
      */
     public static Set<NEMAMetadataEntry> buildConstraints(String bitrate, String channels, String clip_type, String encoding, String sample_rate){
@@ -58,12 +61,23 @@ public class DatasetListFileGenerator {
     }
 
     /**
+     * Writes out a set of files describing the test and training sets for each
+     * iteration of an experiment. For a single split a one entry list is
+     * returned. For an N-fold experiment an N-entry list is returned.
+     * The list contains an 2 entry array with the files written out indexed
+     * {train,test}.
      *
-     * @param dataset_id
-     * @param directory
+     * @param dataset_id The ID of the dataset to retrieve data from.
+     * @param delimiter The delimitter to use to separate the file path from
+     * the class name in the training file.
+     * @param directory The directory to write the files into.
+     * @param file_encoding_constraint The file metadata constraints to use to
+     * select audio files corresponding to each track.
+     *
      * @return a list of File object arrays where each entry in the list is
      * an array containing {/path/to/Train/File, /path/to/Test/File} for a
      * particular iteration
+     * @throws SQLException
      */
     public static List<File[]> writeOutExperimentSplitFiles(int dataset_id, String delimiter, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
         System.out.println("Writing out train and test files for dataset_id=" + dataset_id);
@@ -81,7 +95,6 @@ public class DatasetListFileGenerator {
         List<List<NEMASet>> sets = client.getExperimentSets(dataset);
         for (Iterator<List<NEMASet>> it = sets.iterator(); it.hasNext();){
             List<NEMASet> list = it.next();
-
             LinkedList<File> files = new LinkedList<File>();
             String setType;
             for (Iterator<NEMASet> it1 = list.iterator(); it1.hasNext();){
@@ -100,14 +113,20 @@ public class DatasetListFileGenerator {
         return out;
     }
 
-
     /**
+     * Writes out a ground-truth file and feature extraction list file for a
+     * dataset. These both list the paths to all the audio files in the
+     * collection (one per line). The ground-truth file also contains the
+     * class name of the track separated from the path by a delimiter string.
+     * Conventionally the delimitter is a tab '\t' or comma ','.
+     * @param dataset_id The ID of the dataset to retrieve data from.
+     * @param delimiter The delimitter to use to separate the file path from
+     * the class name in the ground-truth file.
+     * @param directory The directory to write the files into.
+     * @param file_encoding_constraint The file metadata constraints to use to
+     * select audio files corresponding to each track.
      *
-     * @param dataset_id
-     * @param delimiter
-     * @param directory
-     * @param file_encoding_constraint
-     * @return {gt_file,fl_file}
+     * @return An array indexed {gt_file,fl_file}
      * @throws SQLException
      */
     public static File[] writeOutGroundTruthAndExtractionListFile(int dataset_id, String delimiter, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
@@ -123,7 +142,6 @@ public class DatasetListFileGenerator {
         int subjectMetadata = dataset.getSubjectTrackMetadataId();
         return writeOutGTAndExtractListFiles(client, delimiter, subset, subjectMetadata, directory, file_encoding_constraint);
     }
-
 
     //==========================================================================
     //Private methods
