@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -81,7 +82,7 @@ public class DatasetListFileGenerator {
         for (Iterator<List<NEMASet>> it = sets.iterator(); it.hasNext();){
             List<NEMASet> list = it.next();
 
-            ArrayList<File> files = new ArrayList<File>();
+            LinkedList<File> files = new LinkedList<File>();
             String setType;
             for (Iterator<NEMASet> it1 = list.iterator(); it1.hasNext();){
                 NEMASet set = it1.next();
@@ -90,7 +91,7 @@ public class DatasetListFileGenerator {
                 if (setType.equalsIgnoreCase("test")){
                     files.add(writeOutSingleTestFile(client, setType, set.getId(), directory, file_encoding_constraint));
                 }else{
-                    files.add(writeOutGTFile(client, setType, delimiter, set.getId(), subjectMetadata, directory, file_encoding_constraint));
+                    files.addFirst(writeOutGTFile(client, setType, delimiter, set.getId(), subjectMetadata, directory, file_encoding_constraint));
                 }
             }
             out.add(files.toArray(new File[files.size()]));
@@ -106,7 +107,7 @@ public class DatasetListFileGenerator {
      * @param delimiter
      * @param directory
      * @param file_encoding_constraint
-     * @return
+     * @return {gt_file,fl_file}
      * @throws SQLException
      */
     public static File[] writeOutGroundTruthAndExtractionListFile(int dataset_id, String delimiter, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
