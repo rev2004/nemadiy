@@ -13,6 +13,7 @@ import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
+import org.imirsel.nema.model.JobResult;
 import org.imirsel.nema.model.Notification;
 import org.imirsel.nema.model.Submission;
 import org.imirsel.nema.model.User;
@@ -171,7 +172,11 @@ public class JobController extends MultiActionController {
 		System.out.println("Show Job here: " + job.getName());
 		System.out.println("STATUS CODE: " + job.getStatusCode());
 		System.out.println("STATUS VAL: " + job.getJobStatus());
-		
+		System.out.println("NUMBER of RESULTS: "+ job.getResults().size());
+		for(JobResult result:job.getResults()){
+			System.out.println("RESULT: " + result.getUrl() + "  "+ result.getId());
+			
+		}
 		return new ModelAndView("job/job", Constants.JOB, job);
 	}
 

@@ -38,14 +38,7 @@
             </div>
             </c:if>
             
-             <c:if test="${currentMenu == 'JobMenu'}">
-            <div id="sub">
-                <menu:useMenuDisplayer name="Velocity" config="cssVerticalMenu.vm" permissions="rolesAdapter">
-                    <menu:displayMenu name="JobMenu"/>
-                </menu:useMenuDisplayer>
-            </div>
-            </c:if>
-            
+        
 
             <div id="nav">
                 <div class="wrapper">
