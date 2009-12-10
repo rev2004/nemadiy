@@ -43,6 +43,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_DATA_SETS_FOR_TASK_QUERY = "SELECT * FROM dataset WHERE task_id=?";
     private PreparedStatement getDatasetsByTask;
 
+    public static final String GET_DATA_SET_BY_ID_QUERY = "SELECT * FROM dataset WHERE id=?";
+    private PreparedStatement getDatasetByID;
+
     public static final String GET_COLLECTION_SUBSET_FOR_DATASET_QUERY = "SELECT set.* FROM set,dataset WHERE dataset.id=? AND set.id=dataset.subset_set_id";
     private PreparedStatement getSubsetForDataset;
 
@@ -159,6 +162,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         getTasks = dbCon.con.prepareStatement(GET_TASKS_QUERY);
         getDatasetsByCollection = dbCon.con.prepareStatement(GET_DATA_SETS_FOR_COLLECTION_QUERY);
         getDatasets = dbCon.con.prepareStatement(GET_DATA_SETS_QUERY);
+        getDatasetByID = dbCon.con.prepareStatement(GET_DATA_SET_BY_ID_QUERY);
         getDatasetsByTask = dbCon.con.prepareStatement(GET_DATA_SETS_FOR_TASK_QUERY);
         getSubsetForDataset = dbCon.con.prepareStatement(GET_COLLECTION_SUBSET_FOR_DATASET_QUERY);
         getExpSetsForDataset = dbCon.con.prepareStatement(GET_EXPERIMENT_SETS_FOR_DATASET_QUERY);
@@ -552,6 +556,17 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         List<Map<String, String>> results = executePreparedStatement(getDatasets);
         return buildNEMADataset(results);
     }
+
+    public NEMADataset getDataset(int dataset_id) throws SQLException{
+        List<Map<String, String>> results = executeStatement(getDatasetByID, dataset_id);
+        if(results.size() > 0){
+            return buildNEMADataset(results.get(0));
+        }else{
+            return null;
+        }
+    }
+
+
 
 
     public List<NEMADataset> getDatasetsForTask(NEMATask task) throws SQLException{

@@ -89,6 +89,22 @@ public interface RepositoryClientInterface {
      * @throws SQLException
      */
     public List<NEMADataset> getDatasets() throws SQLException;
+
+    /**
+     * Retrieves a List of NEMADataset Objects describing the datasets that are
+     * available for a particular Collection. No guarantee is given that the
+     * datasets described have complete audio file sets in any particular
+     * file version.
+     *
+     * @param collection The collection to retrieve the list of datasets for.
+     *
+     * @return a List of NEMADataset Objects describing the datasets that are
+     * available for the specified Collection.
+     *
+     * @throws SQLException
+     */
+    public NEMADataset getDataset(int dataset_id) throws SQLException;
+
     /**
      * Retrieves a List of NEMADataset Objects describing the datasets that are
      * available for a particular Collection. No guarantee is given that the
