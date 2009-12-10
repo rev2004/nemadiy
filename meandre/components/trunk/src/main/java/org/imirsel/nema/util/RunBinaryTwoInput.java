@@ -31,6 +31,8 @@ import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
 import org.imirsel.service.*;
+import org.imirsel.nema.annotations.BooleanDataType;
+import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.util.ProcessOutputReceiver;
 
 
@@ -58,15 +60,17 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 	@ComponentOutput(description="Java File Object Out", name="fileObjectOut")
 	final static String DATA_OUTPUT_1= "fileObjectOut";
 
+	@StringDataType(hide=true)
 	@ComponentProperty(defaultValue="/path/to/workingDir",
 			description="The Working Directory of the Executeable",
 			name="Working Directory")
 			final static String DATA_PROPERTY_WORKINGDIR = "Working Directory";
 	private String workingDir = "/path/to/workingDir";
 
-	@ComponentProperty(defaultValue="$m -anOption $1 $2 $o",
+	@StringDataType()
+	@ComponentProperty(defaultValue="$m -anOption $s $1 $2 $o",
 			description="Command format string. $m is the binary/script name. $1 represents the " +
-			"input file 1. $2 represents input file2. $o represents the output file. Any number of command line options" +
+			"input file 1. $2 represents input file2. $o represents the output file. $s is a scratch directory (if needed). Any number of command line options" +
 			"can also be specified. Example: if from the command line you run: myProgramName " +
 			"-t 0.1 -fl 1024 <inputfile1> <inputfile2> -o <outputfile>, the proper format string would be: " +
 			"$m -t 0.1 -fl 1024 $1 $2 -o $o.",
@@ -74,12 +78,14 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			final static String DATA_PROPERTY_FORMATSTRING = "Command Format String";
 	private String commandFormattingStr = "$m -anOption $1 $2 $o";
 
+	@StringDataType()
 	@ComponentProperty(defaultValue="myExecutableName",
 			description="The name of the executable, e.g. bextract, extractFeatures, runtempo, etc.",
 			name="Executeable Name")
 			final static String DATA_PROPERTY_EXECNAME = "Executeable Name";
 	private String execName = "myExecutableName";
 
+	@StringDataType()
 	@ComponentProperty(defaultValue="outputFileName.txt",
 			description="The name of the output file (passed into the command format string to the $o field)." +
 			" This option is overriden if AddExtentionToInput is set to TRUE",
@@ -87,6 +93,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			final static String DATA_PROPERTY_OUPUTFILENAME = "Output File Name";
 	private String outputFileName = "outputFileName.txt";
 
+	@BooleanDataType()
 	@ComponentProperty(defaultValue="true",
 			description="Generate the output file name by adding the extention specified " +
 			"in the 'Output File Extension to Append' field to the input file 1 name. (true/false). E.g. " +
@@ -96,6 +103,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			final static String DATA_PROPERTY_ADDEXTENSION = "Add Extension to Input File Name to Generate Output File Name";
 	private boolean addExtension = true;
 
+	@StringDataType()
 	@ComponentProperty(defaultValue=".result",
 			description="The output file extension to add to the input file name to " +
 			"generate the output file name. Only used if 'Add Extension to Input File Name to Generate Output File Name' " +
@@ -104,6 +112,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			final static String DATA_PROPERTY_EXTENSION = "Output File Name Extension to Append";
 	private String extension= ".result";
 
+	@StringDataType(hide=true)
 	@ComponentProperty(defaultValue="VAR_NAME,VAR_VAL",
 			description="The environment variable`s name and value separated by \",\"",
 			name="Environment Variable" )
@@ -321,6 +330,13 @@ private void runCommand(final String inputFilename2, final String inputFilename1
                         //System.out.println("o component: " + components[i].substring(1));
                         break;
                         //default: ExternalCommand += components[i];
+                    case 's':
+    					commandLength++;
+    					if(!components[i].substring(1).trim().equals("")) {
+    						String[] comps = components[i].substring(1).trim().split(" ");
+    						commandLength += comps.length;
+    					}
+    					break;
                     default:
                         if(components[i].trim().equals("")) {
                             //commandLength--;
@@ -398,6 +414,18 @@ private void runCommand(final String inputFilename2, final String inputFilename1
                         }
                         //System.out.println("o component: " + components[i].substring(1));
                         break;
+                    case 's':
+    					//cmdArray[cmdCount] = "\"" + outfile + "\"";
+    					cmdArray[cmdCount] = processWorkingDir;
+    					cmdCount++;
+    					if(!components[i].substring(1).trim().equals("")) {
+    						String[] comps = components[i].substring(1).trim().split(" ");
+    						for (int j=0;j<comps.length;j++) {
+    							cmdArray[cmdCount] = comps[j].trim();
+    							cmdCount++;
+    						}
+    					}
+    					break;
                     default:
                         if(components[i].trim().equals("")) {
                             
