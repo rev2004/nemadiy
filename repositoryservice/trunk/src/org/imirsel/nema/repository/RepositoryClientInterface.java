@@ -375,6 +375,35 @@ public interface RepositoryClientInterface {
      */
     public List<NEMAFile> getFilesByID(List<String> trackIDList, Set<NEMAMetadataEntry> constraint) throws SQLException;
 
+    /**
+     * Logs a result directory path or identifier and system name against a 
+     * specific dataset to facilitate group evaluation and comparison of all
+     * published results for a dataset.
+     * 
+     * @param dataset_id The id of the dataset.
+     * @param systemName The system name, will be used to dentify the system in 
+     * evaluations.
+     * @param result_path The path or identifier that will be used to retrieve
+     * the reslt directory.
+     * 
+     * @throws SQLException
+     */
+    public void publishResultForDataset(int dataset_id, String systemName, String result_path) throws SQLException;
+
+    /**
+     * Returns a map of the published results for a dataset. The map keys are
+     * the system names and the values are the result directory paths or
+     * identifiers.
+     *
+     * @param dataset_id The id of the dataset
+     * @return a map of the published results for a dataset.
+     * @throws SQLException
+     */
+    public Map<String,String> getPublishedResultsForDataset(int dataset_id) throws SQLException;
+
+
+
+
     public List<NEMAMetadataEntry> getFileMetadataByID(int fileId) throws SQLException;
     public List<NEMAMetadataEntry> getFileMetadata(NEMAFile file) throws SQLException;
     public Map<Integer,List<NEMAMetadataEntry>> getFileMetadataByID(List<Integer> fileIDs) throws SQLException;

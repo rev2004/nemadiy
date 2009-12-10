@@ -108,6 +108,13 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String UPDATE_DATASET_WITH_NUM_SPLITS = "UPDATE dataset SET num_splits=?, num_set_per_split=? WHERE id=?";
     private PreparedStatement updateDatasetWithNumSplits;
 
+
+    public static final String INSERT_PUBLISHED_RESULT = "INSERT INTO published_results(dataset_id,name,result_path) VALUES(?,?,?);";
+    private PreparedStatement insertPublishedResult;
+
+    public static final String GET_PUBLISHED_RESULTS = "SELECT * FROM published_results WHERE dataset_id=?";
+    private PreparedStatement getPublishedResults;
+
     //public static final String GET_VERSIONS_FOR_COLLECTION =
 
 
@@ -197,6 +204,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         setTypeMapRev = reverseTypesMap(setTypeMap);
 
     }
+
+
 
     public void insertTrackMetaDef(String name) throws SQLException{
         System.out.println("Inserting Track metadata type: " + name);
@@ -988,5 +997,26 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             rev.put(val,key);
         }
         return rev;
+    }
+
+    public void publishResultForDataset(int dataset_id, String systemName,
+                                        String result_path) throws SQLException{
+        insertPublishedResult.setInt(1,dataset_id);
+        insertPublishedResult.setString(2, systemName);
+        insertPublishedResult.setString(3, result_path);
+        insertPublishedResult.executeUpdate();
+    }
+
+    public Map<String, String> getPublishedResultsForDataset(int dataset_id)
+            throws SQLException{
+        getPublishedResults.setInt(1,dataset_id);
+        ResultSet rs = getPublishedResults.executeQuery();
+        Map<String,String> out = new HashMap<String,String>();
+        while(rs.next()){
+            String  name = rs.getString("name");
+            String path = rs.getString("result_path");
+            out.put(name, path);
+        }
+        return out;
     }
 }

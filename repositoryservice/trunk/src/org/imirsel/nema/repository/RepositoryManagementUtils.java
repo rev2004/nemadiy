@@ -383,6 +383,8 @@ public class RepositoryManagementUtils {
                 int metadata_type_id = client.getTrackMetadataID(metadata);
                 System.out.println("Subject metadata id: " + metadata_type_id);
 
+                client.close();
+
                 insertMetadataFromListFile(listFile, metadata);
 
 
