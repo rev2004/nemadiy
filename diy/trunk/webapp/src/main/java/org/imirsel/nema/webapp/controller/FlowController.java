@@ -15,9 +15,11 @@ import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Property;
+import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.ComponentMetadataService;
 import org.imirsel.nema.service.FlowMetadataService;
+import org.imirsel.nema.service.UserManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -28,9 +30,7 @@ public class FlowController extends MultiActionController{
 	private FlowService flowService = null;
 	private ComponentMetadataService componentMetadataService;
 	private FlowMetadataService flowMetadataService;
-
-
-
+	
 	public FlowService getFlowService() {
 		return flowService;
 	}
@@ -39,6 +39,7 @@ public class FlowController extends MultiActionController{
 	public void setFlowService(FlowService flowService) {
 		this.flowService = flowService;
 	}
+
 
 
 
@@ -77,31 +78,7 @@ public class FlowController extends MultiActionController{
 
 	
 
-	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res) throws TransmissionException{
-		String _id=req.getParameter("id");
-		int id = Integer.parseInt(_id);
-		Flow flow=this.flowService.getFlow(id);
-		ModelAndView mav= new ModelAndView("flow/flowTemplate");
-		
-		List<Component> componentList=flowMetadataService.getComponents(flow.getUrl());
-		log.info("componentList: " + componentList.size());
-		HashMap<Component,HashMap<String, Property>> map = new HashMap<Component,HashMap<String, Property>>();
-		for(int i=0;i<componentList.size();i++){
-			HashMap<String, Property> m=null;
-			try {
-				m = (HashMap<String, Property>) componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
-			} catch (TransmissionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			map.put(componentList.get(i), m);
-		}
-		log.info(Constants.COMPONENTPROPERTYMAP + " : " + map.size());
-		mav.addObject(Constants.FLOW, flow);
-		mav.addObject(Constants.COMPONENTLIST,componentList);
-	    mav.addObject(Constants.COMPONENTPROPERTYMAP,map);
-		return mav;
-	}
+	
 
 
 }

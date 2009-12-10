@@ -50,7 +50,7 @@ ${flow.description}
                                     <label for="jobname">
                                         ${value_entry.key}
                                     </label>
-<render:componentproperty component="${entry.key.instanceUri}" value="${value_entry.value}" class="cssClass"/>
+<render:componentproperty roles="${userRoles}" component="${entry.key.instanceUri}" value="${value_entry.value}" class="cssClass"/>
 <font color="green">${value_entry.value.description}</font>
 
 
