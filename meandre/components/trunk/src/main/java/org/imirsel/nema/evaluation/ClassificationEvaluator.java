@@ -120,13 +120,13 @@ import org.imirsel.m2k.evaluation2.classification.*;
 		
 		hierarchyFileName = String.valueOf(cc.getProperty(DATA_PROPERTY_HIERARCHYFILENAME));
 		evalName = String.valueOf(cc.getProperty(DATA_PROPERTY_EVALNAME));
-		String[][] fileLists = (String[][])cc.getDataComponentFromInput(DATA_INPUT_1);
-		String[][] gtFileName = (String[][])cc.getDataComponentFromInput(DATA_INPUT_1);
+		String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
+		String[] gtFileName = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
 		
 		// initialize variables for MIREXClassificationEvalMain Constructor
 		String matlabPath = "matlab";
 	    String evaluationName = evalName;
-	    File gtFile = new File(gtFileName[0][0]);
+	    File gtFile = new File(gtFileName[0]);
 	    File rootEvaluationDir = new File(processResultsDir + File.pathSeparator + "evaluation");
 	    
 	    // create a directory to move the raw results to
@@ -160,8 +160,8 @@ import org.imirsel.m2k.evaluation2.classification.*;
         evaluator.performEvaluation();
         
         // output the raw results dir for reprocessing by the summarizer component
-        String[][] outLists = new String[fileLists.length][2];
-        outLists[0][0] = processResultsDir;
+        String[] outLists = new String[fileLists.length];
+        outLists[0] = processResultsDir;
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 		
         cout.println("Evaluation Complete");
