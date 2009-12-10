@@ -100,7 +100,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 		String[] TrainLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
 		String[] TestLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_3);
 		cout.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-		cout.println("Pushing Training and Testing Lists off for Training and Classification");
+		cout.println("GATEKEEPER: Pushing Training and Testing Lists off for Training and Classification");
 		cout.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		cout.flush();
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, TrainLists);
