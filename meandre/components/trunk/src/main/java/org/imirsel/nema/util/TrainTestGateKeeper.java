@@ -99,7 +99,10 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 		Object Trigger = cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[] TrainLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
 		String[] TestLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_3);
-
+		cout.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		cout.println("Pushing Training and Testing Lists off for Training and Classification");
+		cout.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		cout.flush();
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, TrainLists);
 		cc.pushDataComponentToOutput(DATA_OUTPUT_2, TestLists);
 	}
