@@ -9,6 +9,9 @@
 <div id="formcontainer_job">
   <div class="form_job">
     <fieldset id="pt1">
+    <table id="outertable" border="1">
+  
+  	<tr><td>
     <table id="table">
       <tr>
         <td>Job Status:</td>
@@ -31,6 +34,39 @@
         <td>${job.endTimestamp}</td>
       </tr>
     </table>
+    </td>
+    <td>
+    
+    <table>
+    
+    <c:forEach var="result" items="${job.results}" >
+    <tr>
+    <td>
+    ${result.url}
+    </td>
+     <td>
+    ${result.resultType}
+    </td>
+   
+    </tr>
+    
+    </c:forEach>
+    
+    </table>
+    
+    
+    
+    
+    
+    
+    </td>
+    
+    </tr>
+    
+    
+    </table>
+    
+    
     </fieldset>
   </div>
   

@@ -8,6 +8,7 @@ import org.imirsel.nema.service.impl.MeandreProxyWrapper;
  * it tries to connect to it again.
  * 
  * @author Amit Kumar
+ * @deprecated "no longer being used"
  *
  */
 public class CheckMeandreProxyAvailability {
