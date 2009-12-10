@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.Property;
+import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.ComponentMetadataService;
 import org.imirsel.nema.service.FlowMetadataService;
@@ -108,10 +110,21 @@ public class FlowFormController extends MultiActionController{
 				m = (HashMap<String, Property>)componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
 				map.put(componentList.get(i), new TreeMap(m));
 		}
+		Set<Role> roleList=this.userManager.getCurrentUser().getRoles();
+		int size=roleList.size();
+		
+		String[] roles = new String[size];
+		int i=0;
+		for(Role role:roleList){
+			roles[i]= role.getName();
+			i++;
+		}
+ 	   
 		log.info(Constants.COMPONENTPROPERTYMAP + " : " + map.size());
 		mav.addObject(Constants.FLOW, flow);
 		mav.addObject(Constants.COMPONENTLIST,componentList);
 	    mav.addObject(Constants.COMPONENTPROPERTYMAP,map);
+	    mav.addObject(Constants.USER_ROLES,roles);
 		return mav;
 	}
 	
