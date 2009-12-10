@@ -64,9 +64,9 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 	private String workingDir = "/path/to/workingDir";
 
 	@StringDataType()
-	@ComponentProperty(defaultValue="$m -anOption $i $o",
+	@ComponentProperty(defaultValue="$m $s -anOption $i $o",
 			description="Command format string. $m is the binary/script name. $i represents the " +
-			"input file. $o represents the output file. Any number of command line options" +
+			"input file. $o represents the output file. $s is a scratch directory (if needed). Any number of command line options" +
 			"can also be specified. Example: if from the command line you run: myProgramName " +
 			"-t 0.1 -fl 1024 -i <inputfile> -o <outputfile>, the proper format string would be: " +
 			"$m -t 0.1 -fl 1024 -i $i -o $o.",
@@ -302,6 +302,14 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 						commandLength += comps.length;
 					}
 					break;
+					
+				case 's':
+					commandLength++;
+					if(!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim().split(" ");
+						commandLength += comps.length;
+					}
+					break;
 					//default: ExternalCommand += components[i];
 				default:
 					if(components[i].trim().equals("")) {
@@ -354,6 +362,18 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 				case 'o':
 					//cmdArray[cmdCount] = "\"" + outfile + "\"";
 					cmdArray[cmdCount] = outfile;
+					cmdCount++;
+					if(!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim().split(" ");
+						for (int j=0;j<comps.length;j++) {
+							cmdArray[cmdCount] = comps[j].trim();
+							cmdCount++;
+						}
+					}
+					break;
+				case 's':
+					//cmdArray[cmdCount] = "\"" + outfile + "\"";
+					cmdArray[cmdCount] = processWorkingDir;
 					cmdCount++;
 					if(!components[i].substring(1).trim().equals("")) {
 						String[] comps = components[i].substring(1).trim().split(" ");
