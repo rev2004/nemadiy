@@ -121,7 +121,7 @@ import org.imirsel.m2k.evaluation2.classification.*;
 		hierarchyFileName = String.valueOf(cc.getProperty(DATA_PROPERTY_HIERARCHYFILENAME));
 		evalName = String.valueOf(cc.getProperty(DATA_PROPERTY_EVALNAME));
 		String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
-		String[] gtFileName = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
+		String[] gtFileName = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
 		
 		// initialize variables for MIREXClassificationEvalMain Constructor
 		String matlabPath = "matlab";
