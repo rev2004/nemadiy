@@ -58,8 +58,8 @@ import org.imirsel.m2k.evaluation2.classification.*;
 	@ComponentInput(description="Ground-truth File", name="Ground-truth File")
 	final static String DATA_INPUT_2= "Ground-truth File";
 
-	@ComponentOutput(description="Java File Object Out", name="fileObjectOut")
-	final static String DATA_OUTPUT_1= "fileObjectOut";
+	@ComponentOutput(description="Results Directory Ouput", name="Results Directory")
+	final static String DATA_OUTPUT_1= "Results Directory";
 
 	@StringDataType(hide=true)
 	@ComponentProperty(defaultValue="",
