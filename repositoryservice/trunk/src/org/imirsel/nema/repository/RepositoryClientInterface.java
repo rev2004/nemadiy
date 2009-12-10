@@ -88,6 +88,20 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
+    public List<NEMADataset> getDatasets() throws SQLException;
+    /**
+     * Retrieves a List of NEMADataset Objects describing the datasets that are
+     * available for a particular Collection. No guarantee is given that the
+     * datasets described have complete audio file sets in any particular
+     * file version.
+     *
+     * @param collection The collection to retrieve the list of datasets for.
+     *
+     * @return a List of NEMADataset Objects describing the datasets that are
+     * available for the specified Collection.
+     *
+     * @throws SQLException
+     */
     public List<NEMADataset> getDatasetsForCollection(NEMACollection collection) throws SQLException;
     /**
      * Retrieves a List of NEMADataset Objects describing the datasets that are
@@ -413,6 +427,11 @@ public interface RepositoryClientInterface {
     public List<NEMAMetadataEntry> getTrackMetadata(NEMATrack track) throws SQLException;
     public Map<String,List<NEMAMetadataEntry>> getTrackMetadataByID(List<String> tracks) throws SQLException;
     public Map<String,List<NEMAMetadataEntry>> getTrackMetadata(List<NEMATrack> tracks) throws SQLException;
+
+    public NEMAMetadataEntry getTrackMetadataByID(String trackId, int metadataId) throws SQLException;
+    public NEMAMetadataEntry getTrackMetadata(NEMATrack track, int metadataId) throws SQLException;
+    public Map<String,NEMAMetadataEntry> getTrackMetadataByID(List<String> tracks, int metadataId) throws SQLException;
+    public Map<String,NEMAMetadataEntry> getTrackMetadata(List<NEMATrack> tracks, int metadataId) throws SQLException;
 
 
 
