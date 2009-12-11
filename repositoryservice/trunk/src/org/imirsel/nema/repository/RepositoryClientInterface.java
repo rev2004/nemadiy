@@ -429,7 +429,22 @@ public interface RepositoryClientInterface {
      * @return a map of the published results for a dataset.
      * @throws SQLException
      */
-    public Map<String,String> getPublishedResultsForDataset(int dataset_id) throws SQLException;
+    public List<PublishedResult> getPublishedResultsForDataset(int dataset_id) throws SQLException;
+
+    /**
+     * Deletes a published result record from the DB.
+     *
+     * @param result_id The id of teh result to delete.
+     * @throws SQLException
+     */
+    public void deletePublishedResult(int result_id) throws SQLException;
+    /**
+     * Deletes a published result record from the DB.
+     *
+     * @param result The result to delete.
+     * @throws SQLException
+     */
+    public void deletePublishedResult(PublishedResult result) throws SQLException;
 
 
 

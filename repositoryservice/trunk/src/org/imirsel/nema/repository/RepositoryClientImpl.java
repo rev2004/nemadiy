@@ -124,6 +124,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_PUBLISHED_RESULTS = "SELECT * FROM published_results WHERE dataset_id=?";
     private PreparedStatement getPublishedResults;
 
+    public static final String DELETE_PUBLISHED_RESULT = "DELETE FROM published_results WHERE id=?";
+    private PreparedStatement deletePublishedResult;
+
+
     //public static final String GET_VERSIONS_FOR_COLLECTION =
 
 
@@ -188,6 +192,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         insertSet = dbCon.con.prepareStatement(INSERT_SET, Statement.RETURN_GENERATED_KEYS);
         insertSetTrackLink = dbCon.con.prepareStatement(INSERT_SET_TRACK_LINK);
         updateDatasetWithNumSplits = dbCon.con.prepareStatement(UPDATE_DATASET_WITH_NUM_SPLITS);
+
+        
+        insertPublishedResult = dbCon.con.prepareStatement(INSERT_PUBLISHED_RESULT);
+        getPublishedResults = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS);
+        deletePublishedResult = dbCon.con.prepareStatement(DELETE_PUBLISHED_RESULT);
 
         initTypesMaps();
     }
@@ -1071,18 +1080,29 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         insertPublishedResult.executeUpdate();
     }
 
-    public Map<String, String> getPublishedResultsForDataset(int dataset_id)
+    public List<PublishedResult> getPublishedResultsForDataset(int dataset_id)
             throws SQLException{
         getPublishedResults.setInt(1,dataset_id);
         ResultSet rs = getPublishedResults.executeQuery();
-        Map<String,String> out = new HashMap<String,String>();
+        List<PublishedResult> out = new ArrayList<PublishedResult>();
         while(rs.next()){
+            int id = rs.getInt("id");
             String  name = rs.getString("name");
             String path = rs.getString("result_path");
-            out.put(name, path);
+            out.add(new PublishedResult(id, name, path));
         }
         return out;
     }
+
+    public void deletePublishedResult(int result_id) throws SQLException{
+        deletePublishedResult.setInt(1, result_id);
+        deletePublishedResult.execute();
+    }
+
+    public void deletePublishedResult(PublishedResult result) throws SQLException{
+        deletePublishedResult(result.getId());
+    }
+
 
 
 }
