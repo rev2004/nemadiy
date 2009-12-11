@@ -6,14 +6,11 @@ import java.lang.reflect.Method;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.imirsel.nema.annotations.*;
 import org.imirsel.nema.annotatons.parser.beans.*;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
 public class DataTypeAnnotationParser {
 	
