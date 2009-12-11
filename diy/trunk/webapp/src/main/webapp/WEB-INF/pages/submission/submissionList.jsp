@@ -7,7 +7,7 @@
 Click on your submissions to view details, the associated results or to remove them.
 
 <display:table name="submissionList" cellspacing="0" cellpadding="0" requestURI="" 
-    id="submissions" pagesize="5" class="table" export="false" defaultsort="3" defaultorder="descending" >
+    id="submissions" pagesize="5" class="table" export="false" defaultsort="3" defaultorder="descending" sort="list">
       
       <display:column property="name" escapeXml="true" sortable="true" titleKey="submission.name" style="width: 25%"
         url="/get/JobManager.submissionDetail?from=list" paramId="id" paramProperty="id"/>    

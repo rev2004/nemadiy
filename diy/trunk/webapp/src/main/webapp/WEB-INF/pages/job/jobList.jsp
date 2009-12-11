@@ -5,7 +5,7 @@
 </title>
 <meta name="heading" content="${jobs.title}"/>
 </head>
-<display:table name="jobList" cellspacing="0" cellpadding="0" requestURI="" defaultsort="4" defaultorder="descending" id="jobs" pagesize="5" class="table" export="false">
+<display:table name="jobList" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="4" defaultorder="descending" id="jobs" pagesize="5" class="table" export="false">
   <display:column property="name" escapeXml="true" sortable="true" titleKey="job.name"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
   <display:column property="description" escapeXml="true" sortable="true" titleKey="job.description"
