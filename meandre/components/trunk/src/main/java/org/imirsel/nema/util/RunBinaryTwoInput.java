@@ -143,7 +143,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 		isAborted = false;
 		try {
 			processWorkingDir = ArtifactManagerImpl.getInstance().
-				getProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
+				getAbsoluteProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
 			processResultsDir = ArtifactManagerImpl.getInstance().
 				getResultLocationForJob(ccp.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
