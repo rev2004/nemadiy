@@ -52,7 +52,9 @@ public class ClassificationResultReadClass {
         
         return examples;
     }
-    
+
+
+
     public static HashMap<String,String> readClassificationFile(File toRead, boolean MIREXMode){
         HashMap<String,String> dataRead = new HashMap<String,String>();
         try {
