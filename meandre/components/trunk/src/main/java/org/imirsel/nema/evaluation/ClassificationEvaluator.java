@@ -127,7 +127,7 @@ import org.imirsel.m2k.evaluation2.classification.*;
 		String matlabPath = "matlab";
 	    String evaluationName = evalName;
 	    File gtFile = new File(gtFileName[0]);
-	    File rootEvaluationDir = new File(processResultsDir + File.pathSeparator + "evaluation");
+	    File rootEvaluationDir = new File(processResultsDir + File.separator + "evaluation");
 	    
 	    // create a directory to move the raw results to
 	    File classificationResultsDir = new File(processResultsDir);
