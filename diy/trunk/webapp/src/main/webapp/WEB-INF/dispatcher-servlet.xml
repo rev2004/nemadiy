@@ -133,6 +133,7 @@
         <property name="mappings">
             <value>
            	 /FlowManager.getFlowList=flowlist
+           	 
             </value>
         </property>
     </bean>
@@ -159,6 +160,7 @@
            	/JobManager.jobDetail=jobdetail
             /JobManager.jobAction=jobaction
             /JobManager.selectJobForSubmission=selectJobForSubmission
+            /JobManager.getNotification=getNotification
             </value>
         </property>
     </bean>
