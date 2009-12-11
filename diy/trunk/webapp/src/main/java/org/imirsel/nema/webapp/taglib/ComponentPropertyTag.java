@@ -84,13 +84,12 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 			DataTypeBean dataTypeBean = ltb.get(0);
 			editRole=dataTypeBean.getEditRole();
 			canEdit = allowedToEdit(editRole);
-			
 			if(dataTypeBean instanceof StringDataTypeBean){
 				StringDataTypeBean sd = (StringDataTypeBean) dataTypeBean;
 				if(sd.getRenderer()==null){
 					if(sd.getValueList()!=null){
 						if(sd.getValueList().length>0){
-							htmlWidget=createSelectBox(property.getName(),cssWriter.toString(),property.getDefaultValue(),sd.getValueList(),property.getValue(), sd.isHidden());
+							htmlWidget=createSelectBox(property.getName(),cssWriter.toString(),property.getDefaultValue(),sd.getValueList(),sd.getValueList(),property.getValue(), sd.isHidden());
 						}else{
 							htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
 						}
@@ -99,6 +98,15 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 					}
 				}else if(sd.getRenderer().endsWith("FileRenderer")){
 					htmlWidget=createInputBox(property.getName(),"file",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
+				}else if(sd.getRenderer().endsWith("CollectionRenderer")){
+					// this is a collection renderer...
+					if(property.getValueList().length>0){
+						htmlWidget=createSelectBox(property.getName(),cssWriter.toString(),property.getDefaultValue(),property.getLabelList(),property.getValueList(),property.getValue(), sd.isHidden());
+					}else{
+						// value list size is 0, let's display the input box...
+						htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
+					}
+			
 				}else{ // create input box for all others....
 					htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
 				}
@@ -106,7 +114,6 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 
 			}else if(dataTypeBean instanceof BooleanDataTypeBean){
 				BooleanDataTypeBean sd = (BooleanDataTypeBean) dataTypeBean;
-				
 				htmlWidget=createRadioBox(property.getName(),cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
 			}else if(dataTypeBean instanceof DoubleDataTypeBean){
 				DoubleDataTypeBean sd = (DoubleDataTypeBean)dataTypeBean;
@@ -167,7 +174,7 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 	}
 
 	private String createSelectBox(String name, String styleString,
-			Object defaultValue, String[] valueList, String value, boolean hidden) {
+			Object defaultValue, String[] labelList,Object[] valueList, String value, boolean hidden) {
 		if(hidden){
 			return " ";
 		}
@@ -188,10 +195,10 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 			if(defaultValue==null){
 				swriter.append("<option value='"+valueList[i]+"'>"+valueList[i]+"</option>");
 			}else{
-				if(defaultValue.toString().equalsIgnoreCase(valueList[i])){
-					swriter.append("<option selected='selected' value='"+valueList[i]+"'>"+valueList[i]+"</option>");
+				if(defaultValue.toString().equalsIgnoreCase(valueList[i].toString())){
+					swriter.append("<option selected='selected' value='"+valueList[i]+"'>"+labelList[i]+"</option>");
 				}else{
-					swriter.append("<option value='"+valueList[i]+"'>"+valueList[i]+"</option>");
+					swriter.append("<option value='"+valueList[i]+"'>"+labelList[i]+"</option>");
 				}
 			}
 		}

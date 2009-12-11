@@ -1,5 +1,6 @@
 package org.imirsel.nema.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
@@ -10,6 +11,9 @@ import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
  *
  */
 public class Property implements Comparable<Property>{
+	private ArrayList<Object> valueList = new ArrayList<Object>();
+	private ArrayList<String> labelList = new ArrayList<String>();
+	
 	private List<DataTypeBean> dataTypeBeanList;
 	private Object defaultValue;
 	private String name;
@@ -50,6 +54,20 @@ public class Property implements Comparable<Property>{
 			return 0;
 		}
 		return o.getName().compareTo(this.getName());
+	}
+	public void setEnumeratedValueList(ArrayList<String> labelList) {
+		this.labelList=labelList;
+		
+	}
+	public void setEnumneratedLabelList(ArrayList<Object> valueList) {
+		this.valueList=valueList;
+	}
+	
+	public Object[] getValueList() {
+		return valueList.toArray(new Object[0]);
+	}
+	public String[] getLabelList() {
+		return labelList.toArray(new String[0]);
 	}
 
 }
