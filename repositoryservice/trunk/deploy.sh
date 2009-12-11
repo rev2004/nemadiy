@@ -1,1 +1,1 @@
-mvn deploy:deploy-file -Durl=file:///content/workspace2009/nema-temp-repository -DrepositoryId=MonkSnapshotRepository -Dfile=dist/nema-repository-temp-0.1.jar -DpomFile=pom.xml
+mvn deploy:deploy-file -Durl=scp://monk.lis.uiuc.edu:/content/web/root/snapshot -DrepositoryId=MonkSnapshotRepository -Dfile=dist/nema-repository-temp-0.1-SNAPSHOT.jar -DpomFile=pom.xml -Dversion=0.1-SNAPSHOT
