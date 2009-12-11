@@ -278,11 +278,11 @@ import jAudioFeatureExtractor.DataTypes.RecordingInfo;
                cout.println("Adding File list to jAudio Feature Extraction Batch");
                cout.flush();
                // Pull input, create the list of files to populate Batch object with
-               String[][] fileLists = (String[][])cc.getDataComponentFromInput(DATA_INPUT_1);
+               String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
                RecordingInfo[] recording_info = new RecordingInfo[fileLists.length];
                File[] names = new File[fileLists.length];
                for (int i = 0; i < names.length; i++) {
-                       names[i] = new File(fileLists[i][0]);
+                       names[i] = new File(fileLists[i]);
                }
                // Go through the files one by one
                for (int i = 0; i < names.length; i++) {
