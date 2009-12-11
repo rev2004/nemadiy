@@ -128,6 +128,7 @@ public class MIREXClassificationEvalMain {
         //get each directory of results
         System.err.println("Determining location of results files for each system for each experiment fold...");
         ArrayList<ArrayList<File>> resultsFilesPerSystemPerFold = new ArrayList<ArrayList<File>>();
+        
         int numFolds = -1;
         for (Iterator<File> it = resultsDirs.iterator(); it.hasNext();) {
             File dir = it.next();
