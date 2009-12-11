@@ -756,7 +756,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
                 query += " OR ";
             }
         }
-        query += "))";
+//        query += "))";
         System.out.println("Executing constructed query: " + query);
         PreparedStatement st = dbCon.con.prepareStatement(query);
         List<Map<String, String>> results = executeStatement(st, trackId);
