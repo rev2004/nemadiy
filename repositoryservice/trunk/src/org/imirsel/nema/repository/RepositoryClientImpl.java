@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.print.attribute.Size2DSyntax;
 import org.imirsel.m2k.evaluation2.classification.ClassificationResultReadClass;
 
 /**
@@ -847,9 +848,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
     public List<NEMAFile> getFilesByID(List<String> trackIDList, Set<NEMAMetadataEntry> constraint) throws SQLException{
+        System.out.println("Resolving files for " + trackIDList.size() + " tracks");
         Set<String> trackSet = new HashSet<String>(trackIDList);
         Map<String,NEMAFile> fileMap = new HashMap<String, NEMAFile>(trackIDList.size());
         List<Map<String, String>> data = getFileData(constraint);
+        System.out.println("Query returned data on " + data.size() + " files, filtering");
         Map<String, String> map;
         String trackID;
         for (Iterator<Map<String, String>> it = data.iterator(); it.hasNext();){
@@ -860,10 +863,14 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             }
         }
 
+        System.out.println("mapped " + fileMap.size() + " files to tracks");
+
         List<NEMAFile> out = new ArrayList<NEMAFile>();
         for (Iterator<String> it = trackIDList.iterator(); it.hasNext();){
             out.add(fileMap.get(it.next()));
         }
+
+        System.out.println("returning file list length: " + out.size());
 
         return out;
     }
