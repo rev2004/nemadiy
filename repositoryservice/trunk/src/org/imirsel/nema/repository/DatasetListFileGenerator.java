@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -180,7 +181,11 @@ public class DatasetListFileGenerator {
         Object obj;
         NEMAFile file;
         NEMAMetadataEntry meta;
+        String path;
+        String metaVal;
         int idx = 0;
+
+        Map<String,NEMAMetadataEntry> trackToMeta = client.getTrackMetadataByID(tracks, metadata_id);
         for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
             obj = it.next();
             if (obj == null){
@@ -188,8 +193,10 @@ public class DatasetListFileGenerator {
                 out.add(null);
             }else{
                 file = (NEMAFile)obj;
-                meta = client.getTrackMetadataByID(file.getTrackId(), metadata_id);
-                out.add(new String[]{file.getPath(),meta.getValue()});
+                meta = trackToMeta.get(file.getTrackId());
+                path = file.getPath();
+                metaVal = meta.getValue();
+                out.add(new String[]{path,metaVal});
             }
 
             idx++;

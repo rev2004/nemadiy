@@ -57,14 +57,20 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_SET_TRACKS_QUERY = "SELECT track_id FROM set_track_link where set_id=?";
     private PreparedStatement getSetTracks;
 
-    public static final String GET_FILE_METADATA_QUERY = "SELECT * FROM file_metadata where file_id=?";
+    public static final String GET_FILE_METADATA_QUERY = "SELECT ffml.file_id, fm.metadata_type_id,fm.value FROM file_file_metadata_link ffml, file_metadata fm WHERE ffml.file_id=? AND ffml.file_metadata_id=fm.id";
     private PreparedStatement getFileMetadata;
 
-    public static final String GET_TRACK_METADATA_QUERY = "SELECT * FROM track_metadata where track_id=?";
+    public static final String GET_TRACK_METADATA_QUERY = "SELECT tm.metadata_type_id, tm.value FROM track_track_metadata_link ttml, track_metadata tm WHERE ttml.track_id=? AND ttml.track_metadata_id=tm.id";
     private PreparedStatement getTrackMetadata;
 
-    public static final String GET_TRACK_METADATA_SPECIFIC_QUERY = "SELECT * FROM track_metadata where track_id=? AND metadata_type_id=?";
+    public static final String GET_ALL_TRACK_METADATA_QUERY = "SELECT ttml.track_id, tm.metadata_type_id,tm.value FROM track_track_metadata_link ttml, track_metadata tm WHERE ttml.track_metadata_id=tm.id";
+    private PreparedStatement getAllTrackMetadata;
+
+    public static final String GET_TRACK_METADATA_SPECIFIC_QUERY = "SELECT tm.metadata_type_id, tm.value FROM track_track_metadata_link ttml, track_metadata tm WHERE ttml.track_id=? AND tm.metadata_type_id=? AND ttml.track_metadata_id=tm.id";
     private PreparedStatement getTrackMetadataSpecific;
+
+    public static final String GET_ALL_TRACK_METADATA_SPECIFIC_QUERY = "SELECT ttml.track_id, tm.metadata_type_id, tm.value FROM track_track_metadata_link ttml, track_metadata tm WHERE tm.metadata_type_id=? AND ttml.track_metadata_id=tm.id";
+    private PreparedStatement getAllTrackMetadataSpecific;
 
 //    public static final String GET_FILE_FOR_TRACK = "SELECT file.* FROM file WHERE file.track_id=? AND ";
     public static final String GET_CONSTRAINED_FILE_FOR_TRACK = 
@@ -180,7 +186,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         getSetTracks = dbCon.con.prepareStatement(GET_SET_TRACKS_QUERY);
         getFileMetadata = dbCon.con.prepareStatement(GET_FILE_METADATA_QUERY);
         getTrackMetadata = dbCon.con.prepareStatement(GET_TRACK_METADATA_QUERY);
+        getAllTrackMetadata = dbCon.con.prepareStatement(GET_ALL_TRACK_METADATA_QUERY);
         getTrackMetadataSpecific = dbCon.con.prepareStatement(GET_TRACK_METADATA_SPECIFIC_QUERY);
+        getAllTrackMetadataSpecific = dbCon.con.prepareStatement(GET_ALL_TRACK_METADATA_SPECIFIC_QUERY);
 
         insertTrack = dbCon.con.prepareStatement(INSERT_TRACK);
         insertTrackCollectionLink = dbCon.con.prepareStatement(INSERT_TRACK_COLLECTION_LINK);
@@ -655,7 +663,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         List<Map<String, String>> results = executeStatement(getSetTracks, setId);
         List<String> ids = new ArrayList<String>(results.size());
         for (Iterator<Map<String, String>> it = results.iterator(); it.hasNext();){
-            ids.add(it.next().get("id"));
+            String id = it.next().get("track_id");
+//            System.out.println(id);
+            ids.add(id);
         }
         return ids;
     }
@@ -718,10 +728,24 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public Map<String,List<NEMAMetadataEntry>> getTrackMetadataByID(List<String> tracks)
             throws SQLException{
         HashMap<String,List<NEMAMetadataEntry>> out = new HashMap<String, List<NEMAMetadataEntry>>();
-        String id;
-        for (Iterator<String> it = tracks.iterator(); it.hasNext();){
-            id = it.next();
-            out.put(id, getTrackMetadataByID(id));
+        Set<String> trackSet = new HashSet<String>(tracks);
+
+        List<Map<String, String>> results = executePreparedStatement(getAllTrackMetadata);
+        NEMAMetadataEntry entry;
+        List<NEMAMetadataEntry> list;
+        String track_id;
+        for (Iterator<Map<String, String>> it = results.iterator(); it.hasNext();){
+            Map<String, String> map = it.next();
+            track_id = map.get("track_id");
+            if (trackSet.contains(track_id)){
+                entry = buildNEMAMetadataEntry(map, trackMetadataTypeMap);
+                list = out.get(track_id);
+                if (list == null){
+                    list = new ArrayList<NEMAMetadataEntry>(5);
+                    out.put(track_id,list);
+                }
+                list.add(entry);
+            }
         }
         return out;
     }
@@ -730,7 +754,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public NEMAMetadataEntry getTrackMetadataByID(String trackId, int metadataId) throws SQLException{
         getTrackMetadataSpecific.setString(1, trackId);
         getTrackMetadataSpecific.setInt(2, metadataId);
-        List<Map<String, String>> results = executePreparedStatement(getTrackMetadata);
+        List<Map<String, String>> results = executePreparedStatement(getTrackMetadataSpecific);
         if (results.size() > 0){
             return buildNEMAMetadataEntry(results.get(0), trackMetadataTypeMap);
         }else{
@@ -744,10 +768,17 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public Map<String,NEMAMetadataEntry> getTrackMetadataByID(List<String> tracks, int metadataId) throws SQLException{
         HashMap<String,NEMAMetadataEntry> out = new HashMap<String, NEMAMetadataEntry>();
-        String id;
-        for (Iterator<String> it = tracks.iterator(); it.hasNext();){
-            id = it.next();
-            out.put(id, getTrackMetadataByID(id, metadataId));
+        Set<String> trackSet = new HashSet<String>(tracks);
+
+        getAllTrackMetadataSpecific.setInt(1, metadataId);
+        List<Map<String, String>> results = executePreparedStatement(getAllTrackMetadataSpecific);
+        String trackId;
+        for (Iterator<Map<String, String>> it = results.iterator(); it.hasNext();){
+            Map<String, String> map = it.next();
+            trackId = map.get("track_id");
+            if (trackSet.contains(trackId)){
+                out.put(trackId, buildNEMAMetadataEntry(map, trackMetadataTypeMap));
+            }
         }
         return out;
     }
@@ -774,7 +805,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             }
         }
         query += ")";
-        System.out.println("Executing constructed query: " + query);
+//        System.out.println("Executing constructed query: " + query);
         PreparedStatement st = dbCon.con.prepareStatement(query);
         List<Map<String, String>> results = executePreparedStatement(st);
 
@@ -793,7 +824,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             }
         }
         query += ")";
-        System.out.println("Executing constructed query: " + query);
+//        System.out.println("Executing constructed query: " + query);
         PreparedStatement st = dbCon.con.prepareStatement(query);
         List<Map<String, String>> results = executeStatement(st, trackId);
 
@@ -849,15 +880,34 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public List<NEMAFile> getFilesByID(List<String> trackIDList, Set<NEMAMetadataEntry> constraint) throws SQLException{
         System.out.println("Resolving files for " + trackIDList.size() + " tracks");
-        Set<String> trackSet = new HashSet<String>(trackIDList);
+        Set<String> trackSet = new HashSet<String>();
+        trackSet.addAll(trackIDList);
+//        int idx = 0;
+        System.out.println("tracks in set:");
+        for (Iterator<String> it = trackSet.iterator(); it.hasNext();){
+            String string = it.next();
+//            System.out.println(string);
+//            if (idx > 100){
+//                break;
+//            }
+//            idx++;
+        }
         Map<String,NEMAFile> fileMap = new HashMap<String, NEMAFile>(trackIDList.size());
         List<Map<String, String>> data = getFileData(constraint);
         System.out.println("Query returned data on " + data.size() + " files, filtering");
         Map<String, String> map;
         String trackID;
+//        idx = 0;
         for (Iterator<Map<String, String>> it = data.iterator(); it.hasNext();){
             map = it.next();
             trackID = map.get("track_id");
+//
+//
+//            if (idx < 100){
+//                System.out.println(trackID);
+//            }
+//            idx++;
+
             if(trackSet.contains(trackID)){
                 fileMap.put(trackID, buildNEMAFile(map));
             }
