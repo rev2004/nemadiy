@@ -157,10 +157,10 @@ public class ParseAndPlotConfusionMatrix {
         }
 
         final ConfusionMatrixPlot plot = new ConfusionMatrixPlot("Confusion matrix - " + algorithmName,classNames.toArray(new String[classNames.size()]),conf);
-        plot.pack();
-        RefineryUtilities.centerFrameOnScreen(plot);
-        plot.setVisible(true);
-        
+//        plot.pack();
+//        RefineryUtilities.centerFrameOnScreen(plot);
+//        plot.setVisible(true);
+//        
         return plot;
     }
     
