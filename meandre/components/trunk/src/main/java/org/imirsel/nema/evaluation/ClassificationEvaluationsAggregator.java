@@ -119,7 +119,7 @@ import org.imirsel.m2k.evaluation2.classification.*;
 		String[] nameLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
 		String[] gtFileName = (String[])cc.getDataComponentFromInput(DATA_INPUT_3);
 		// initialize variables for MIREXClassificationEvalMain Constructor
-		String matlabPath = "matlab";
+		String matlabPath = "/usr/local/bin/matlab";
 		String evaluationName = "OverallPublishedResults";
 	    File gtFile = new File(gtFileName[0]);
 	    File rootEvaluationDir = new File(processResultsDir + File.separator + "overallresults");
