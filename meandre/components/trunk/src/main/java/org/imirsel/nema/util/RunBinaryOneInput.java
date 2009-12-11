@@ -400,9 +400,18 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 		}
 		cout.println("");
 		cout.println("Running command:");
+
+		
 		for (int i=0;i<cmdArray.length;i++) {
 			cout.print(cmdArray[i] + " ");
 		}
+	
+
+
+		
+//		for (int i=0;i<cmdArray.length;i++) {
+//			cout.print(cmdArray[i] + " ");
+//		}
 		cout.println("");
 		cout.println("");
 		cout.println("In directory:");
@@ -413,7 +422,9 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 		cout.println("");
 		cout.flush();
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
-	    Map<String, String> env = pb.environment();
+//		ProcessBuilder pb = new ProcessBuilder(cmdArrayWithShell);
+
+		Map<String, String> env = pb.environment();
 		if (!env_var.contentEquals("VAR_NAME,VAR_VAL")){
 		     String[] env_pair = env_var.split(",");
 		     if (env_pair.length == 2){

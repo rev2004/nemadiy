@@ -1,6 +1,7 @@
 package org.imirsel.nema.io;
 
 import java.io.*;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -13,8 +14,6 @@ import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentProperty;
 import org.imirsel.nema.renderers.CollectionRenderer;
-import org.imirsel.nema.renderers.FileRenderer;
-import org.imirsel.nema.util.FileDownload;
 import org.imirsel.service.ArtifactManagerImpl;
 import org.imirsel.nema.annotations.*;
 import org.imirsel.nema.repository.DatasetListFileGenerator;
@@ -24,17 +23,17 @@ import java.sql.SQLException;
 
 @Component(creator = "Mert Bay", description = "Selects a Train / Test dataset from NEMA servers. Outputs 4 objects: " +
 				"1) a Feature Extraction list file path 2) Ground-truth file path 3) an array of train file paths " +
-				"4) an array of test file paths", name = "CollectionSelector",
+				"4) an array of test file paths", name = "CollectionSelector",resources={"../../../../RepositoryProperties.properties"},
 					tags = "input, collection, train/test", firingPolicy = Component.FiringPolicy.all)
 	
 	public class TrainTestCollectionInputSelector implements ExecutableComponent {
 
 	
 	
-	@ComponentOutput(description = "String that holds the file location for the feature extraction list file", name = "featExtList")
+	@ComponentOutput(description = "String[] that holds the file locations for the feature extraction list file", name = "featExtList")
 	public final static String DATA_OUTPUT_FeatExtList = "featExtList";
 	
-	@ComponentOutput(description = "String that holds the ground-truth file location", name = "groundtruth")
+	@ComponentOutput(description = "String[] that holds the ground-truth file locations", name = "groundtruth")
 	public final static String DATA_OUTPUT_GT = "groundtruth";
 	
 	@ComponentOutput(description = "String[] that holds the train list files file location", name = "train_files")
@@ -93,13 +92,15 @@ import java.sql.SQLException;
      * @return Constraints that can be passed to retrieve file sets.
      */
 	
-	private String[] featExtList = {"/data/raid3/collections/audioclassification/monolists/audiomood.all.txt"};
-	private String[] groundtruth = {"/data/raid3/collections/audioclassification/monolists/audiomood.all.gt.txt"};
-	private String[] train_files  ={"/data/raid3/collections/audioclassification/monolists/audiomood.train.bc.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ac.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ab.txt"}; 
-	private String[] test_files ={"/data/raid3/collections/audioclassification/monolists/audiomood.test.a.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.b.txt","/data/raid3/collections/audioclassification/monolistsaudiomood.test.c.txt"};
+	private String[] featExtList ;//= {"/data/raid3/collections/audioclassification/monolists/audiomood.all.txt"};
+	private String[] groundtruth ;//= {"/data/raid3/collections/audioclassification/monolists/audiomood.all.gt.txt"};
+	private String[] train_files  ;//={"/data/raid3/collections/audioclassification/monolists/audiomood.train.bc.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ac.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ab.txt"}; 
+	private String[] test_files ;//={"/data/raid3/collections/audioclassification/monolists/audiomood.test.a.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.b.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.c.txt"};
 	private String commonStorageDirName;
 	private File commonStorageDir;
-	
+	private List<File[]> traintest_split_files;
+	private File[] gt_and_featExt_files;
+	private Set<NEMAMetadataEntry>  file_encoding_constraint;
 	
 	private java.io.PrintStream cout;
 
@@ -135,16 +136,41 @@ import java.sql.SQLException;
 	public void execute(ComponentContext ccp)
 	throws ComponentExecutionException, ComponentContextException{
 		
-		DatasetListFileGenerator dataset = new DatasetListFileGenerator();
+		//DatasetListFileGenerator dataset = new DatasetListFileGenerator();
 		
-		Set<NEMAMetadataEntry>  file_encoding_constraint = DatasetListFileGenerator.buildConstraints(bitRate, channels, clip_type, encoding, sample_rate);
-		
-		try {
-			List<File[]> traintest_split_files = dataset.writeOutExperimentSplitFiles(datasetID, delim, commonStorageDir, file_encoding_constraint);
+	    file_encoding_constraint = DatasetListFileGenerator.buildConstraints(bitRate, channels, clip_type, encoding, sample_rate);		
+	    /*
+	    try {
+			traintest_split_files = DatasetListFileGenerator.writeOutExperimentSplitFiles(datasetID, delim, commonStorageDir, file_encoding_constraint);									
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		train_files = new String[traintest_split_files.size()];
+		test_files = new String[traintest_split_files.size()];
+		
+		int ctr = 0;
+		for (File[] thisFile:traintest_split_files ){
+			cout.println("Train File: " + thisFile[0].getAbsolutePath() );
+			cout.println("Test File: " + thisFile[1].getAbsolutePath() );
+			train_files[ctr] = thisFile[0].getAbsolutePath();
+			test_files[ctr] = thisFile[0].getAbsolutePath();			
+		}
+		*/
+		
+		
+		try {
+			gt_and_featExt_files = DatasetListFileGenerator.writeOutGroundTruthAndExtractionListFile(datasetID, delim, commonStorageDir, file_encoding_constraint);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+
+		 groundtruth[0] = gt_and_featExt_files[0].getAbsolutePath();
+		 featExtList[0] = gt_and_featExt_files[1].getAbsolutePath();
 		
 		//Print info about the data
 		for (int i=0;i<featExtList.length;i++){
