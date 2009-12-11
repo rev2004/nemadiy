@@ -46,10 +46,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_DATA_SET_BY_ID_QUERY = "SELECT * FROM dataset WHERE id=?";
     private PreparedStatement getDatasetByID;
 
-    public static final String GET_COLLECTION_SUBSET_FOR_DATASET_QUERY = "SELECT set.* FROM set,dataset WHERE dataset.id=? AND set.id=dataset.subset_set_id";
+    public static final String GET_COLLECTION_SUBSET_FOR_DATASET_QUERY = "SELECT nemadatarepository.set.* FROM nemadatarepository.set,dataset WHERE dataset.id=? AND nemadatarepository.set.id=dataset.subset_set_id";
     private PreparedStatement getSubsetForDataset;
 
-    public static final String GET_EXPERIMENT_SETS_FOR_DATASET_QUERY = "SELECT set.* FROM set,dataset WHERE set.dataset_id=? AND dataset.id=set.dataset_id AND set.id!=dataset.subset_set_id";
+    public static final String GET_EXPERIMENT_SETS_FOR_DATASET_QUERY = "SELECT nemadatarepository.set.* FROM nemadatarepository.set,dataset WHERE set.dataset_id=? AND dataset.id=set.dataset_id AND nemadatarepository.set.id!=dataset.subset_set_id";
     private PreparedStatement getExpSetsForDataset;
 
     public static final String GET_SET_TRACKS_QUERY = "SELECT track_id FROM set_track_link where set_id=?";
