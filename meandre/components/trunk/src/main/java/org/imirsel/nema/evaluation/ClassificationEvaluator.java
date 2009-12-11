@@ -102,7 +102,7 @@ import org.imirsel.m2k.evaluation2.classification.*;
 				e.printStackTrace();
 			}
 		}
-		System.setProperty("java.awt.headless", "true");
+		//System.setProperty("java.awt.headless", "true");
       
 	}
 
