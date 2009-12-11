@@ -97,7 +97,13 @@ public class JobController extends MultiActionController {
 	public ModelAndView getAllSubmissions(HttpServletRequest req,	HttpServletResponse res){
 		String userIdString = req.getParameter("userId");
 		List<Submission> list=null;
-		if(userIdString!=null){
+		
+		if(userIdString==null){
+			userIdString="";
+		}
+		userIdString = userIdString.trim();
+		
+		if(userIdString.length()>0){
 			list = this.submissionManager.getSubmissions(this.userManager.getUser(userIdString));
 		}else{
 			list=this.submissionManager.getAllSubmissions();
