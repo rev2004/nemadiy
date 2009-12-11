@@ -2,6 +2,7 @@ package org.imirsel.nema.webapp.controller;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -236,10 +237,14 @@ public class JobController extends MultiActionController {
     	long userId = user.getId();
 		logger.debug("start to list the jobs of   " + user);
 		List<Job> jobs = flowService.getUserJobs(userId);
+		/** SO FUGLY **/
+		HashMap<Long,Job> jobMap = new HashMap<Long,Job>();
+		
 		for(Job job:jobs){
+			jobMap.put(job.getId(), job);
 			logger.debug(job.getId() +" " +job.getName() + " " + job.getJobStatus());
 		}
-		return new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
+		return new ModelAndView("job/jobList", Constants.JOBLIST, jobMap.values());
 	}
 
 	
