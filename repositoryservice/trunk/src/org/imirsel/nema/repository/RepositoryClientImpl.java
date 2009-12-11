@@ -14,6 +14,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +70,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             "SELECT file.* from file WHERE file.id IN (\n" +
             "SELECT file_id from file,file_metadata,file_file_metadata_link WHERE file.track_id='?' AND file.id=file_file_metadata_link.file_id \n";
 
+    public static final String GET_CONSTRAINED_FILES =
+            "SELECT file.* from file WHERE file.id IN (\n" +
+            "SELECT file_id from file,file_metadata,file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id \n";
 
 
     public static final String INSERT_TRACK = "INSERT IGNORE INTO track(id) VALUES(?)";
@@ -642,6 +646,19 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return buildNEMATrack(results);
     }
 
+    public List<String> getTrackIDs(NEMASet set) throws SQLException{
+        return getTrackIDs(set.getId());
+    }
+
+    public List<String> getTrackIDs(int setId) throws SQLException{
+        List<Map<String, String>> results = executeStatement(getSetTracks, setId);
+        List<String> ids = new ArrayList<String>(results.size());
+        for (Iterator<Map<String, String>> it = results.iterator(); it.hasNext();){
+            ids.add(it.next().get("id"));
+        }
+        return ids;
+    }
+
 
     public List<NEMAMetadataEntry> getFileMetadata(NEMAFile file) throws SQLException{
         return getFileMetadataByID(file.getId());
@@ -745,7 +762,23 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
+    private List<Map<String, String>> getFileData(Set<NEMAMetadataEntry> constraint) throws SQLException{
+        String query = GET_CONSTRAINED_FILES;
+        NEMAMetadataEntry nemaMetadataEntry;
+        for (Iterator<NEMAMetadataEntry> it = constraint.iterator(); it.hasNext();){
+            nemaMetadataEntry = it.next();
+            query += "AND EXISTS (SELECT file_id FROM file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id AND file_file_metadata_link.file_metadata_id=(SELECT id FROM file_metadata WHERE metadata_type_id=" + fileMetadataTypeMapRev.get(nemaMetadataEntry.getType()) + " AND value='" + nemaMetadataEntry.getValue() + "')) ";
+            if (it.hasNext()){
+                query += "\n";
+            }
+        }
+        query += ")";
+        System.out.println("Executing constructed query: " + query);
+        PreparedStatement st = dbCon.con.prepareStatement(query);
+        List<Map<String, String>> results = executePreparedStatement(st);
 
+        return results;
+    }
 
     private List<Map<String, String>> getFileData(Set<NEMAMetadataEntry> constraint,
                                                   String trackId) throws SQLException{
@@ -805,19 +838,34 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public List<NEMAFile> getFiles(List<NEMATrack> trackList,
                                    Set<NEMAMetadataEntry> constraint) throws SQLException{
-        List<NEMAFile> files = new ArrayList<NEMAFile>();
+        List<String> trackIDList = new ArrayList<String>(trackList.size());
         for (Iterator<NEMATrack> it = trackList.iterator(); it.hasNext();){
-            files.add(getFile(it.next().getId(), constraint));
+            trackIDList.add(it.next().getId());
         }
-        return files;
+        
+        return getFilesByID(trackIDList, constraint);
     }
 
     public List<NEMAFile> getFilesByID(List<String> trackIDList, Set<NEMAMetadataEntry> constraint) throws SQLException{
-        List<NEMAFile> files = new ArrayList<NEMAFile>();
-        for (Iterator<String> it = trackIDList.iterator(); it.hasNext();){
-            files.add(getFile(it.next(), constraint));
+        Set<String> trackSet = new HashSet<String>(trackIDList);
+        Map<String,NEMAFile> fileMap = new HashMap<String, NEMAFile>(trackIDList.size());
+        List<Map<String, String>> data = getFileData(constraint);
+        Map<String, String> map;
+        String trackID;
+        for (Iterator<Map<String, String>> it = data.iterator(); it.hasNext();){
+            map = it.next();
+            trackID = map.get("track_id");
+            if(trackSet.contains(trackID)){
+                fileMap.put(trackID, buildNEMAFile(map));
+            }
         }
-        return files;
+
+        List<NEMAFile> out = new ArrayList<NEMAFile>();
+        for (Iterator<String> it = trackIDList.iterator(); it.hasNext();){
+            out.add(fileMap.get(it.next()));
+        }
+
+        return out;
     }
 
 

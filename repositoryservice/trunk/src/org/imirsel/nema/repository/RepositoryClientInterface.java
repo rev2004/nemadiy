@@ -305,6 +305,29 @@ public interface RepositoryClientInterface {
     public List<NEMATrack> getTracks(int setId) throws SQLException;
 
     /**
+     * Retrieves a List of NEMATrack Objects defining the tracks corresponding
+     * to a NEMASet Object.
+     *
+     * @param set The NEMASet to retreve a track list for.
+     *
+     * @return a List of NEMATrack Objects.
+     *
+     * @throws SQLException
+     */
+    public List<String> getTrackIDs(NEMASet set) throws SQLException;
+    /**
+     * Retrieves a List of NEMATrack Objects defining the tracks corresponding
+     * to a NEMASet Object.
+     *
+     * @param setId The NEMASet to retreve a track list for.
+     *
+     * @return a List of NEMATrack Objects.
+     *
+     * @throws SQLException
+     */
+    public List<String> getTrackIDs(int setId) throws SQLException;
+
+    /**
      * Returns a NEMAFile matching the the NEMATrack specified and having
      * the metadata values specified. If more than one NEMAFile matches the
      * NEMATrack and constraint then no guarantee is provided as to which is

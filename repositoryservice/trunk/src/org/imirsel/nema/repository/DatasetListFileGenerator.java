@@ -148,8 +148,8 @@ public class DatasetListFileGenerator {
     //==========================================================================
 
     private static List<String> getTestData(RepositoryClientInterface client, int set_id, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
-        List<NEMATrack> tracks = client.getTracks(set_id);
-        List<NEMAFile> files = client.getFiles(tracks, file_encoding_constraint);
+        List<String> tracks = client.getTrackIDs(set_id);
+        List<NEMAFile> files = client.getFilesByID(tracks, file_encoding_constraint);
         List<String> out = new ArrayList<String>();
         for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
             out.add(it.next().getPath());
@@ -158,8 +158,8 @@ public class DatasetListFileGenerator {
     }
 
     private static List<String[]> getGroundtruthData(RepositoryClientInterface client, int set_id, int metadata_id, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
-        List<NEMATrack> tracks = client.getTracks(set_id);
-        List<NEMAFile> files = client.getFiles(tracks, file_encoding_constraint);
+        List<String> tracks = client.getTrackIDs(set_id);
+        List<NEMAFile> files = client.getFilesByID(tracks, file_encoding_constraint);
         List<String[]> out = new ArrayList<String[]>();
         NEMAFile file;
         NEMAMetadataEntry meta;
