@@ -156,10 +156,14 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 	}
 
 	private boolean allowedToEdit(String editRole) {
+		int i = editRole.lastIndexOf('.');
+		editRole = editRole.substring(i+1);
+		editRole = editRole.toUpperCase();
 		if(this.roles==null){
 			return false;
 		}
 		for(String role:this.roles){
+			role = role.replace("_", "").toUpperCase();
 			if(role.equalsIgnoreCase(editRole)){
 				return true;
 			}
