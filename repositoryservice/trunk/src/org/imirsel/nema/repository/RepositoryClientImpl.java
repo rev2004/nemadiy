@@ -65,7 +65,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     private PreparedStatement getTrackMetadataSpecific;
 
 //    public static final String GET_FILE_FOR_TRACK = "SELECT file.* FROM file WHERE file.track_id=? AND ";
-    public static final String GET_CONSTRAINED_FILE_FOR_TRACK = "SELECT file.* from file WHERE file.id IN (SELECT file_id from file,file_file_metadata_link WHERE file.track_id=? AND file.id=file_file_metadata_link.file_id AND file_metadata_id ALL (SELECT id FROM file_metadata WHERE ";
+    public static final String GET_CONSTRAINED_FILE_FOR_TRACK = 
+            "SELECT file.* from file WHERE file.id IN (\n" +
+            "SELECT file_id from file,file_metadata,file_file_metadata_link WHERE file.track_id='?' AND file.id=file_file_metadata_link.file_id \n";
 
 
 
@@ -751,12 +753,12 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         NEMAMetadataEntry nemaMetadataEntry;
         for (Iterator<NEMAMetadataEntry> it = constraint.iterator(); it.hasNext();){
             nemaMetadataEntry = it.next();
-            query += "(metadata_type_id=" + fileMetadataTypeMapRev.get(nemaMetadataEntry.getType()) + " AND value='" + nemaMetadataEntry.getValue() + "')";
+            query += "AND EXISTS (SELECT file_id FROM file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id AND file_file_metadata_link.file_metadata_id=(SELECT id FROM file_metadata WHERE metadata_type_id=" + fileMetadataTypeMapRev.get(nemaMetadataEntry.getType()) + " AND value='" + nemaMetadataEntry.getValue() + "')) ";
             if (it.hasNext()){
-                query += " OR ";
+                query += "\n";
             }
         }
-        query += "))";
+        query += ")";
         System.out.println("Executing constructed query: " + query);
         PreparedStatement st = dbCon.con.prepareStatement(query);
         List<Map<String, String>> results = executeStatement(st, trackId);
