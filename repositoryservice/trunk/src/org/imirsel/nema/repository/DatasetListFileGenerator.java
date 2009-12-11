@@ -148,25 +148,51 @@ public class DatasetListFileGenerator {
     //==========================================================================
 
     private static List<String> getTestData(RepositoryClientInterface client, int set_id, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
+        System.out.println("Retrieving test file paths for set: " + set_id);
         List<String> tracks = client.getTrackIDs(set_id);
+        System.out.println("Got " + tracks.size() + " tracks, resolving to files") ;
         List<NEMAFile> files = client.getFilesByID(tracks, file_encoding_constraint);
+        System.out.println("Got file list length: " + files.size() + ", preparing output");
         List<String> out = new ArrayList<String>();
+        int idx = 0;
+        Object file;
         for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
-            out.add(it.next().getPath());
+            file = it.next();
+            if (file == null){
+                System.out.println("WARNING: a file could not be found for track: " + tracks.get(idx));
+                out.add(null);
+            }else{
+                out.add(((NEMAFile)file).getPath());
+            }
+
+            idx++;
         }
         return out;
     }
 
     private static List<String[]> getGroundtruthData(RepositoryClientInterface client, int set_id, int metadata_id, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
+        System.out.println("Retrieving ground-truth data and file paths for set: " + set_id);
         List<String> tracks = client.getTrackIDs(set_id);
+        System.out.println("Got " + tracks.size() + " tracks, resolving to files") ;
         List<NEMAFile> files = client.getFilesByID(tracks, file_encoding_constraint);
+        System.out.println("Got file list length: " + files.size() + ", retrieving metadata");
         List<String[]> out = new ArrayList<String[]>();
+        Object obj;
         NEMAFile file;
         NEMAMetadataEntry meta;
+        int idx = 0;
         for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
-            file = it.next();
-            meta = client.getTrackMetadataByID(file.getTrackId(), metadata_id);
-            out.add(new String[]{file.getPath(),meta.getValue()});
+            obj = it.next();
+            if (obj == null){
+                System.out.println("WARNING: a file could not be found for track: " + tracks.get(idx));
+                out.add(null);
+            }else{
+                file = (NEMAFile)obj;
+                meta = client.getTrackMetadataByID(file.getTrackId(), metadata_id);
+                out.add(new String[]{file.getPath(),meta.getValue()});
+            }
+
+            idx++;
         }
         return out;
 
