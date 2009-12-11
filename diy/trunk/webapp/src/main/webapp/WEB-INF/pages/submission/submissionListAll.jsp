@@ -4,10 +4,12 @@
     <title><fmt:message key="submissions.title"/></title>
     <meta name="heading" content="${submissions.title}"/>
 </head>
-Click on your submissions to view details, the associated results or to remove them.
+
+Below are all the submissions for the selected user
+
 
 <display:table name="submissionList" cellspacing="0" cellpadding="0" requestURI="" 
-    id="submissions" pagesize="5" class="table" export="false" defaultsort="3" defaultorder="descending" >
+    defaultsort="1" id="submissions" pagesize="5" class="table" export="false" >
       
       <display:column property="name" escapeXml="true" sortable="true" titleKey="submission.name" style="width: 25%"
         url="/get/JobManager.submissionDetail?from=list" paramId="id" paramProperty="id"/>    
@@ -23,6 +25,18 @@ Click on your submissions to view details, the associated results or to remove t
    
         
  </display:table>
+ 
+ 
+<form id="theform" action="/get/JobManager.getAllSubmissions" method="post">
+<select name="userId">
+<option value="">All</option>
+<c:forEach var="user" items="${userList}">
+<option <c:if test="${user.id == userForm}">selected</c:if> value="${user.id}">${user.username}</option>
+</c:forEach>
+</select>
+<input type="submit" name="submit" value="submit"/>
+</form>
+ 
 
 
 <script type="text/javascript">
