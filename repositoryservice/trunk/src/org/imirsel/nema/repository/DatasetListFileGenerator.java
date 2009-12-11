@@ -184,7 +184,7 @@ public class DatasetListFileGenerator {
         for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
             obj = it.next();
             if (obj == null){
-                System.out.println("WARNING: a file could not be found for track: " + tracks.get(idx));
+                //System.out.println("WARNING: a file could not be found for track: " + tracks.get(idx));
                 out.add(null);
             }else{
                 file = (NEMAFile)obj;
