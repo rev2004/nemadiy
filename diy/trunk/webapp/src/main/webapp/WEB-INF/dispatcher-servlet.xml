@@ -44,10 +44,15 @@
      <aop:scoped-proxy/>
     
    </bean>
+   
+   <bean id="repositoryClientInterface" class="org.imirsel.nema.repository.RepositoryClientImpl">
+   
+   </bean>
     
         <!--  component metadata manager service -->
     <bean id="componentMetadataService" class="org.imirsel.nema.service.impl.ComponentMetadataServiceImpl">
     	<property name="meandreProxyWrapper" ref="meandreProxy"/>
+    	<property name="repositoryClientInterface" ref="repositoryClientInterface"/>
     </bean>
     
     

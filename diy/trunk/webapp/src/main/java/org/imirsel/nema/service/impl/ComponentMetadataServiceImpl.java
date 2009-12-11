@@ -1,5 +1,6 @@
 package org.imirsel.nema.service.impl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,10 +10,14 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.imirsel.meandre.client.TransmissionException;
+import org.imirsel.nema.Constants;
 import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
 import org.imirsel.nema.annotatons.parser.beans.StringDataTypeBean;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Property;
+import org.imirsel.nema.renderers.CollectionRenderer;
+import org.imirsel.nema.repository.NEMADataset;
+import org.imirsel.nema.repository.RepositoryClientInterface;
 import org.imirsel.nema.service.ComponentMetadataService;
 
 import org.meandre.core.repository.ExecutableComponentDescription;
@@ -42,62 +47,38 @@ import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
  */
 public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 	
+	private static final String DATATYPE_KEY="DATATYPE";
 	private static final Logger log = Logger.getLogger(ComponentMetadataService.class.getName());
 	private MeandreProxyWrapper meandreProxyWrapper;
 	private XStream xstream;
-   
+    private RepositoryClientInterface repositoryClientInterface;
 	
 	public ComponentMetadataServiceImpl(){
 		 xstream = new XStream(new JettisonMappedXmlDriver());
 		 xstream.setMode(XStream.NO_REFERENCES);
 	}
-   
+
+
+	public RepositoryClientInterface getRepositoryClientInterface() {
+		return repositoryClientInterface;
+	}
+
+
+
+	public void setRepositoryClientInterface(
+			RepositoryClientInterface repositoryClientInterface) {
+		this.repositoryClientInterface = repositoryClientInterface;
+	}
+
 
 
 	public void setMeandreProxyWrapper(MeandreProxyWrapper meandreProxyWrapper) {
 		this.meandreProxyWrapper = meandreProxyWrapper;
 	}
 
-	public void dd() throws TransmissionException{
-		QueryableRepository qp= meandreProxyWrapper.getRepository();
-		Model model =getEmptyModel();
-		String flow_uri="http://test.org/datatypetest/";
-		FlowDescription fd=qp.getFlowDescription(model.createResource(flow_uri));
-		List<ExecutableComponentInstanceDescription> flowComponents=fd.getExecutableComponentInstancesOrderedByName();
-		Iterator<ExecutableComponentInstanceDescription> it =  flowComponents.iterator();
-		
-		
-		System.out.println("List of components making this particular flow: ");
-		while(it.hasNext()){
-			ExecutableComponentInstanceDescription ecid = it.next();
-			ExecutableComponentDescription ecd = qp.getAvailableExecutableComponentDescriptionsMap().get(ecid.getExecutableComponent().getURI());
-			System.out.println(ecid.getExecutableComponent().getURI()+"--"+ecid.getExecutableComponentInstance().getURI()+"\n\n");
-			
-			PropertiesDescription props =  ecd.getProperties();
-			
-			 for(String key:props.getKeys()){
-				 String val = ecid.getProperties().getValue(key);
-				 System.out.println(key + ": 1 " +val);
-				 System.out.println(key + ": 2 " + props.getValue(key));
-				
-			 }
-			 
-		}
-		
-		
-		
-		Model m = this.getEmptyModel();
-	
-		ExecutableComponentInstanceDescription e = fd.getExecutableComponentInstanceDescription(m.createResource("http://test.org/datatypetest/instance/datatypetestcomponent/1"));
-		
-		System.out.println("name: " + e.getName());
-		System.out.println("==>"+e.getProperties().getValue("SampleRate"));
-		
-		
-		
-	}
 
-	public Map<String, Property> getComponentPropertyDataType(Component component, String flowUri) throws TransmissionException {
+	public Map<String, Property> getComponentPropertyDataType(Component component, String flowUri) throws TransmissionException, SQLException {
+		List<NEMADataset> nemaDatasets = this.getRepositoryClientInterface().getDatasets();
 		QueryableRepository qp= meandreProxyWrapper.getRepository();
 		Model model =getEmptyModel();
 		ExecutableComponentDescription ecd=qp.getExecutableComponentDescription(model.createResource(component.getUri()));
@@ -125,7 +106,6 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 			String description = propertiesDefn.getDescription(propertyName);
 			String defaultValue=propertiesDefn.getValue(propertyName);
 			String value =ecid.getProperties().getValue(propertyName);
-			System.out.println(propertyName+ " "+"value: " + value + " defaultValue: " + defaultValue);
 			if(value!=null){
 				property.setValue(value);
 			}else{
@@ -138,16 +118,16 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 				Iterator<String> it1 = otherPropertyMap.keySet().iterator();
 				while(it1.hasNext()){
 					String key = it1.next();
-					if(key.endsWith(propertyName+"DATATYPE")){
+					if(key.endsWith(propertyName+DATATYPE_KEY)){
 						String value1 =otherPropertyMap.get(key);
 						dataTypes = getDataTypeBeanFromJson(value1);
+						updatePropertyWithCollectionMetadata(property,dataTypes);
 						property.setDataTypeBeanList(dataTypes);
 						foundDataType= true;
 					}
 				}
-				
+				// add the default data type
 				if(!foundDataType){
-					// add the default data type?
 					dataTypes = getDefaultDataTypeBean();
 					property.setDataTypeBeanList(dataTypes);
 				}
@@ -166,6 +146,37 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 		
 		return dataTypeMap;
 	}
+
+	private void updatePropertyWithCollectionMetadata(Property property,
+			List<DataTypeBean> dataTypes) {
+			for(DataTypeBean dtb:dataTypes){
+				if(dtb.getRenderer().equals(CollectionRenderer.class.getName())){
+					// this is a collection
+					ArrayList<String> labelList = new ArrayList<String>();
+					ArrayList<Object> valueList = new ArrayList<Object>();
+					try {
+						List<NEMADataset> ltb=this.getRepositoryClientInterface().getDatasets();
+						for(NEMADataset dataset:ltb){
+							String label=dataset.getName();
+							int value=dataset.getId();
+							labelList.add(label);
+							valueList.add(value);
+						}
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					
+					if(labelList.size()>0){
+						property.setEnumeratedValueList(labelList);
+						property.setEnumneratedLabelList(valueList);
+					}
+					
+					
+				}
+			}
+		
+	}
+
 
 	private List<DataTypeBean> getDefaultDataTypeBean() {
 		List<DataTypeBean> list = new ArrayList<DataTypeBean>();

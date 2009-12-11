@@ -1,6 +1,7 @@
 package org.imirsel.nema.webapp.controller;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,15 +29,14 @@ import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
+import org.imirsel.nema.repository.NEMADataset;
+import org.imirsel.nema.repository.RepositoryClientInterface;
 import org.imirsel.nema.service.ComponentMetadataService;
 import org.imirsel.nema.service.FlowMetadataService;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.util.FlowTypeUtils;
 import org.meandre.webapp.CorruptedFlowException;
 import org.meandre.webapp.MeandreCommunicationException;
-import org.springframework.web.multipart.MultipartException;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -49,9 +49,21 @@ public class FlowFormController extends MultiActionController{
 	private ComponentMetadataService componentMetadataService;
 	private FlowMetadataService flowMetadataService;
 	private UserManager userManager = null;
+	private RepositoryClientInterface repositoryClientInterface;
 	
 	private String uploadDirectory;
 
+
+
+	public RepositoryClientInterface getRepositoryClientInterface() {
+		return repositoryClientInterface;
+	}
+
+
+	public void setRepositoryClientInterface(
+			RepositoryClientInterface repositoryClientInterface) {
+		this.repositoryClientInterface = repositoryClientInterface;
+	}
 
 
 	public FlowService getFlowService() {
@@ -92,7 +104,7 @@ public class FlowFormController extends MultiActionController{
 	} 
 
 
-	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res) throws TransmissionException{
+	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res) throws TransmissionException, SQLException{
 		String _id=req.getParameter("id");
 		int id = Integer.parseInt(_id);
 		Flow flow=this.flowService.getFlow(id);
@@ -125,6 +137,7 @@ public class FlowFormController extends MultiActionController{
 		mav.addObject(Constants.COMPONENTLIST,componentList);
 	    mav.addObject(Constants.COMPONENTPROPERTYMAP,map);
 	    mav.addObject(Constants.USER_ROLES,roles);
+
 		return mav;
 	}
 	

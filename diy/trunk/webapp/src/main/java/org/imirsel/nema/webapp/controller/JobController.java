@@ -19,13 +19,10 @@ import org.imirsel.nema.model.Submission;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.SubmissionManager;
 import org.imirsel.nema.service.UserManager;
-import org.imirsel.nema.webapp.request.ExecuteJobRequest;
-import org.imirsel.nema.webapp.request.GetJobRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.hp.hpl.jena.graph.query.Rewrite;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
@@ -34,7 +31,8 @@ public class JobController extends MultiActionController {
 	static protected Log logger=LogFactory.getLog(JobController.class);
 	private UserManager userManager = null;
 	private FlowService flowService = null;
-    private SubmissionManager submissionManager;
+    private SubmissionManager submissionManager = null;
+    
 
     public void setSubmissionManager(SubmissionManager submissionManager) {
 		this.submissionManager = submissionManager;
@@ -97,8 +95,21 @@ public class JobController extends MultiActionController {
 	 * @return
 	 */
 	public ModelAndView getAllSubmissions(HttpServletRequest req,	HttpServletResponse res){
-		List<Submission> list=this.submissionManager.getAllSubmissions();
-		return new ModelAndView("submission/submissionAllList", Constants.SUBMISSIONLIST, list);
+		String userIdString = req.getParameter("userId");
+		List<Submission> list=null;
+		if(userIdString!=null){
+			list = this.submissionManager.getSubmissions(this.userManager.getUser(userIdString));
+		}else{
+			list=this.submissionManager.getAllSubmissions();
+		}
+		List<User> userList=this.userManager.getUsers(new User(null));
+		ModelAndView  mav = new ModelAndView("submission/submissionListAll");
+		mav.addObject(Constants.SUBMISSIONLIST, list);
+		mav.addObject(Constants.USER_LIST, userList);
+		mav.addObject(Constants.USER_KEY, userIdString);
+		System.out.println("users.... " + userList);
+		System.out.println("number of users: " + userList.size());
+		return mav;
 	}
 	
 	
@@ -214,31 +225,17 @@ public class JobController extends MultiActionController {
 
 	public ModelAndView getuserjobs(HttpServletRequest req,
 			HttpServletResponse res) {
-
 		User user = userManager.getCurrentUser();
 		logger.debug("USER IS ====> " + user);
     	long userId = user.getId();
-
 		logger.debug("start to list the jobs of   " + user);
 		List<Job> jobs = flowService.getUserJobs(userId);
-	
 		for(Job job:jobs){
 			logger.debug(job.getId() +" " +job.getName() + " " + job.getJobStatus());
 		}
-		
-		
 		return new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
 	}
 
-	public ModelAndView getUserNotifications(HttpServletRequest req,
-			HttpServletResponse res) {
-		User user = userManager.getCurrentUser();
-		long userId = user.getId();
-		List<Notification> notificationList = flowService
-				.getUserNotifications(userId);
-		return null;
-	}
-	
 	
 	public ModelAndView getNotification(HttpServletRequest req, HttpServletResponse res){
 		User user=this.userManager.getCurrentUser();

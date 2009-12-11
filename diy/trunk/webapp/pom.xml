@@ -372,6 +372,15 @@
             <scope>compile</scope>
         </dependency>
         
+       <dependency>
+            <groupId>org.imirsel</groupId>
+            <artifactId>nema-temp-repository</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        
+        
      <dependency>
       <groupId>opensymphony</groupId>
       <artifactId>quartz</artifactId>
