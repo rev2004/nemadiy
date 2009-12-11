@@ -26,6 +26,8 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.hp.hpl.jena.graph.query.Rewrite;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
 public class JobController extends MultiActionController {
 
@@ -235,6 +237,23 @@ public class JobController extends MultiActionController {
 		List<Notification> notificationList = flowService
 				.getUserNotifications(userId);
 		return null;
+	}
+	
+	
+	public ModelAndView getNotification(HttpServletRequest req, HttpServletResponse res){
+		User user=this.userManager.getCurrentUser();
+		List<Notification> notifications=this.flowService.getUserNotifications(user.getId());
+		XStream xstream = new XStream(new JettisonMappedXmlDriver());
+        xstream.setMode(XStream.NO_REFERENCES);
+        String xmlString=xstream.toXML(notifications);
+		 try {
+			 res.setContentType("application/json");
+			 res.getOutputStream().print(xmlString);
+			 } catch (IOException e) {
+			 
+			 logger.error(e,e);
+			 }
+ 		return null;
 	}
 
 }
