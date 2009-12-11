@@ -64,7 +64,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_TRACK_METADATA_SPECIFIC_QUERY = "SELECT * FROM track_metadata where track_id=? AND metadata_type_id=?";
     private PreparedStatement getTrackMetadataSpecific;
 
-    public static final String GET_FILE_FOR_TRACK = "SELECT file.* FROM file where file.track_id=?";
+    public static final String GET_FILE_FOR_TRACK = "SELECT file.* FROM file WHERE file.track_id=? ";
     public static final String GET_CONSTRAINED_FILE_FOR_TRACK = "SELECT file.* from file WHERE file.id IN (SELECT file_id from file,file_file_metadata_link WHERE file.track_id=? AND file.id=file_file_metadata_link.file_id AND file_metadata_id ALL (SELECT id FROM file_metadata WHERE ";
 
 
