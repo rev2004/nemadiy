@@ -38,7 +38,7 @@ public class TestDataListFileGenerator {
 		
 	    file_encoding_constraint = DatasetListFileGenerator.buildConstraints(bitRate, channels, clip_type, encoding, sample_rate);		
 
-		File  commonStorageDir = new File("/tmp");
+		File  commonStorageDir = new File("/Users/kriswest/Desktop/test");
 		try {
 			gt_and_featExt_files = DatasetListFileGenerator.writeOutGroundTruthAndExtractionListFile(datasetID, delim, commonStorageDir, file_encoding_constraint);
 		} catch (SQLException e) {
