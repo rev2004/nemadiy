@@ -22,15 +22,13 @@ import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYZDataset;
-import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RefineryUtilities;
 import org.jfree.ui.TextAnchor;
 
 /**
  *
  * @author kriswest
  */
-public class ConfusionMatrixPlot extends ApplicationFrame {
+public class ConfusionMatrixPlot  {
 
     String[] seriesNames;
     String[] categoryNames;
@@ -40,6 +38,8 @@ public class ConfusionMatrixPlot extends ApplicationFrame {
     private DecimalFormat formatter;
 
     JFreeChart chart;
+
+    private String title;
     
     /**
      * 
@@ -48,8 +48,7 @@ public class ConfusionMatrixPlot extends ApplicationFrame {
      * @param confusionDbl
      */
     public ConfusionMatrixPlot(final String title, final String[] algorithmNames, double[][] confusionDbl) {
-
-        super(title);
+        this.title = title;
         
         seriesNames = algorithmNames;
         categoryNames = algorithmNames;
@@ -98,7 +97,7 @@ public class ConfusionMatrixPlot extends ApplicationFrame {
         chart = createChart();
         final ChartPanel panel = new ChartPanel(chart, true, true, true, true, true);
         panel.setPreferredSize(new java.awt.Dimension(900, 850));
-        setContentPane(panel);
+//        setContentPane(panel);
 
     }
 
@@ -240,9 +239,23 @@ public class ConfusionMatrixPlot extends ApplicationFrame {
         
         
         final ConfusionMatrixPlot plot = new ConfusionMatrixPlot("Confusion matrix test",names,conf);
-        plot.pack();
-        RefineryUtilities.centerFrameOnScreen(plot);
-        plot.setVisible(true);
+//        plot.pack();
+//        RefineryUtilities.centerFrameOnScreen(plot);
+//        plot.setVisible(true);
         
+    }
+
+    /**
+     * @return the title
+     */
+    public String getTitle(){
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title){
+        this.title = title;
     }
 }
