@@ -1,5 +1,6 @@
 package org.imirsel.nema.service;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,13 +26,10 @@ public class ComponentMetadataServiceTest extends BaseManagerTestCase{
 		componentMetadataManager.setMeandreProxyWrapper(meandreProxyWrapper);
 	}
 	
-	
-	public void testme() throws TransmissionException{
-		componentMetadataManager.dd();
-	}
+
 
 	
-	public void testGetComponentDataType() throws TransmissionException{
+	public void testGetComponentDataType() throws TransmissionException, SQLException{
 		String componentUri="meandre://seasr.org/components/datatypetestcomponent";
 		String instanceUri = "http://test.org/datatypetest/instance/datatypetestcomponent/1";
 		Component component= new Component();
