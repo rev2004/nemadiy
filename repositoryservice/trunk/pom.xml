@@ -4,9 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <version>0.1-SNAPSHOT</version>
-    
     <groupId>org.imirsel</groupId>
-    
     <artifactId>nema-temp-repository</artifactId>
     <packaging>jar</packaging>
     <name>NEMA Temp Repository</name>
