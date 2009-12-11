@@ -45,7 +45,8 @@ import org.imirsel.m2k.evaluation2.classification.*;
  */
 @Component(creator="Andreas F. Ehmann", description="Evaluates Multi-fold Classification Results", 
 		name="ClassificationEvaluator",
-		tags="test ft please hello")
+		tags="test ft please hello",
+		dependency={"jfreechart-1.0.9.jar", "swing-layout-1.0.jar", "jcommon-1.0.12.jar"})
 		public class ClassificationEvaluator implements ExecutableComponent {
 
 
@@ -101,7 +102,7 @@ import org.imirsel.m2k.evaluation2.classification.*;
 				e.printStackTrace();
 			}
 		}
-
+		System.setProperty("java.awt.headless", "true");
       
 	}
 
