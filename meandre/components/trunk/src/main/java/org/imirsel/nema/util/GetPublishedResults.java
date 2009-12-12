@@ -26,7 +26,7 @@ import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 
 
 @Component(creator = "Mert Bay", description = "Takes the collection ID and pushes the names, paths for the publised results for the collection and associated groundtruth", name = "PublishedResults",resources={"../../../../RepositoryProperties.properties"},
-					tags = "dataset, published, results", firingPolicy = Component.FiringPolicy.all)
+		tags = "dataset, published, results", firingPolicy = Component.FiringPolicy.all)
 	
 	public class GetPublishedResults implements ExecutableComponent {
 
