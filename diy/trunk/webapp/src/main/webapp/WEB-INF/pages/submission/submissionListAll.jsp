@@ -12,22 +12,22 @@ Below are all the submissions for the selected user
     defaultsort="1" id="submissions" pagesize="5" class="table" export="false" >
       
       <display:column property="name" escapeXml="true" sortable="true" titleKey="submission.name" style="width: 25%"
-        url="/get/JobManager.submissionDetail?from=list" paramId="id" paramProperty="id"/>    
+        url="<c:url value='/get/JobManager.submissionDetail?from=list'/>" paramId="id" paramProperty="id"/>    
    
    
      
       <display:column property="type" escapeXml="true" sortable="true" titleKey="submission.type" style="width: 25%"
-        url="/get/JobManager.submissionDetail?from=list" paramId="id" paramProperty="id"/>    
+        url="<c:url value='/get/JobManager.submissionDetail?from=list'/>" paramId="id" paramProperty="id"/>    
    
    
       <display:column property="dateCreated" escapeXml="true" sortable="true" titleKey="submission.dateCreated" style="width: 25%"
-        url="/get/JobManager.submissionDetail?from=list" paramId="id" paramProperty="id"/>    
+        url="<c:url value='/get/JobManager.submissionDetail?from=list'/>" paramId="id" paramProperty="id"/>    
    
         
  </display:table>
  
  
-<form id="theform" action="/get/JobManager.getAllSubmissions" method="post">
+<form id="theform" action="<c:url value='/get/JobManager.getAllSubmissions'/>" method="post">
 <select name="userId">
 <option value="">All</option>
 <c:forEach var="user" items="${userList}">

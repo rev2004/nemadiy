@@ -83,7 +83,7 @@ ${job.description}
                             </form>
                         </div>
                         
-		<form id="theform" action="/get/JobManager.submissionAction" method="post">
+		<form id="theform" action="<c:url value='/get/JobManager.submissionAction'/>" method="post">
 				<input name="id" type="hidden" value="${submission.id}"/>
                         <div class="form_job">
                             <fieldset id="pt3">
