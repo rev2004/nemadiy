@@ -7,23 +7,25 @@
     <link rel="stylesheet" type="text/css" media="all" href="<c:url value='/styles/${appConfig["csstheme"]}/layout-1col.css'/>" />
     <script src="/scripts/prototype.js" type="text/javascript"></script>
     <script type="text/javascript">
-    Ajax.Responders.register({
-  onSuccess:function(transport){
-     var notificationList = transport.responseText.evalJSON();
-     if(json!=null){
-     var start="<table id=\"notification\">";
-     var end="</table>";
-     var noteTable="";
-     notificationList.each(function(item){
-        noteTable=noteTable+"<tr><td>"+item.dateCreated+"</td><td>"+item.message+"</td></tr>\n";
-     });
-     Element.replace("notification", start+noteTable+end);
-     }
-   }
-	});
+
     new PeriodicalExecuter(function(){
   
-    new Ajax.request("/get/JobManager.getNotification");
+    new Ajax.Request("/get/JobManager.getNotification",{
+    
+      onSuccess:function(transport){
+     var notificationList = transport.responseText.evalJSON();
+     
+     if(notificationList!=null){
+     var start="<table id=\"notification\" border=\"1\">";
+     var end="</table>";
+     var noteTable="";
+     
+     notificationList.list.each(function(item){
+        noteTable=noteTable+"<tr><td>"+item.dateCreated.$+"</td><td>"+item.message+"</td></tr>\n";
+     });
+     $('notification').replace( start+noteTable+end);
+     }
+   }});
     },10);
     </script>
 </head>
