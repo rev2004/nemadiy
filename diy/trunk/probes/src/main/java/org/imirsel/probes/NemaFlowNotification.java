@@ -150,15 +150,16 @@ public class NemaFlowNotification implements Probe {
 		File dir = new File(dirLoc);
 		savejobResult(jobId,dir.getAbsolutePath(),"dir");
 		FileListFilter filter = new FileListFilter();
-		String list[]=dir.list(filter);
+		File list[]=dir.listFiles(filter);
+		
 			for(int i=0;i<list.length;i++){
-				savejobResult(jobId,list[i],"file");
+				savejobResult(jobId,list[i].getAbsolutePath(),"file");
 			}
 			
 			DirListFilter dir_filter = new DirListFilter();
-		    list=dir.list(dir_filter);
+		    list=dir.listFiles(dir_filter);
 			for(int i=0;i<list.length;i++){
-				savejobResult(jobId,list[i],"dir");
+				savejobResult(jobId,list[i].getAbsolutePath(),"dir");
 			}
 			
 			
@@ -187,15 +188,15 @@ public class NemaFlowNotification implements Probe {
 			File dir = new File(dirLoc);
 			savejobResult(jobId,dir.getAbsolutePath(),"dir");
 			FileListFilter filter = new FileListFilter();
-			String list[]=dir.list(filter);
+			File list[]=dir.listFiles(filter);
 				for(int i=0;i<list.length;i++){
-					savejobResult(jobId,list[i],"file");
+					savejobResult(jobId,list[i].getAbsolutePath(),"file");
 				}
 			
 				DirListFilter dir_filter = new DirListFilter();
-				    list=dir.list(dir_filter);
+				    list=dir.listFiles(dir_filter);
 					for(int i=0;i<list.length;i++){
-						savejobResult(jobId,list[i],"dir");
+						savejobResult(jobId,list[i].getAbsolutePath(),"dir");
 					}
 				
 				
