@@ -199,12 +199,21 @@ public class JobController extends MultiActionController {
 		System.out.println("NUMBER of RESULTS: "+ job.getResults().size());
 		for(JobResult result:job.getResults()){
 			System.out.println("RESULT: " + result.getUrl() + "  "+ result.getId());
+			result.setUrl(processUrl(result.getUrl()));
 			
 		}
 		return new ModelAndView("job/job", Constants.JOB, job);
 	}
 
 	
+	private String processUrl(String url) {
+		String identifier="published_resources/nema";
+		int index = url.indexOf(identifier);
+		String resultFolder = url.substring(index+identifier.length());
+		return "http://nema.lis.uiuc.edu/nema_out"+resultFolder;
+		
+	}
+
 	public ModelAndView submissionAction(HttpServletRequest req,
 			HttpServletResponse res) {
 		String _submissionId = req.getParameter("id");

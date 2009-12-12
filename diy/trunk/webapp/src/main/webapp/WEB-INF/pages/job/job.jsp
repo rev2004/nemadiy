@@ -9,7 +9,7 @@
 <div id="formcontainer_job">
   <div class="form_job">
     <fieldset id="pt1">
-    <table id="outertable" border="1">
+    <table id="outertable">
   
   	<tr><td>
     <table id="table">
@@ -39,18 +39,18 @@
     
     <table>
     
-    <c:forEach var="result" items="${job.results}" >
     <tr>
     <td>
-    ${result.url}
+    <ul>
+    <c:forEach var="result" items="${job.results}" >
+     <li><a href="${result.url}">Result</a></li>
+    </c:forEach>
+    </ul>
     </td>
-     <td>
-    ${result.resultType}
-    </td>
-   
+    
     </tr>
     
-    </c:forEach>
+    
     
     </table>
     
@@ -97,3 +97,4 @@
   </form>
 </div>
 </body>
+
