@@ -109,6 +109,24 @@
                 </configuration>                                                                                                                                                                     
             </plugin>
      
+     
+        <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3</version>
+   <!-- This plugin is used to create the jar file used by the meandre server.
+   The property file is present in the classpath and we don't want to
+   package it in the jar.
+	 -->  
+        <configuration>
+          <excludes>
+            <exclude>**/nemaflowservice.properties</exclude>
+          </excludes>
+        </configuration>
+      
+      </plugin>
+        
+     
               
             </plugins>
          <resources>
@@ -124,6 +142,10 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
+        
+   
+        
+        
     </build>
 <repositories>
 <repository>
