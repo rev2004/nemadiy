@@ -48,10 +48,10 @@ import java.sql.SQLException;
 	final static String DATA_PROPERTY_DATASET_ID = "datasetID";
 	private int datasetID = 5;
 	
-	@StringDataType(valueList={"96k","128k"})
-	@ComponentProperty(defaultValue = "96k", description = "bit rate for the mp3 files", name = "BitRate")
+	@StringDataType(valueList={"","96k","128k"})
+	@ComponentProperty(defaultValue = "", description = "bit rate for the mp3 files", name = "BitRate")
 	final static String DATA_PROPERTY_BIT_RATE = "BitRate";
-	private String bitRate = "128k";
+	private String bitRate = "";
 	
 	@StringDataType(valueList={"1","2"})
 	@ComponentProperty(defaultValue = "1", description = "Number of channels. 1 for mono 2 for stereo", name = "Channels")
@@ -78,6 +78,8 @@ import java.sql.SQLException;
 	@StringDataType(valueList={"\t",","})
 	@ComponentProperty(defaultValue = "\t", description = "Delimiter for the ground-truth files", name = "Delim")
 	final static String DATA_PROPERTY_DELIM = "Delim";
+
+	private static final String IOexception = null;
 	private String delim = "\t";
 	
 	
@@ -92,12 +94,13 @@ import java.sql.SQLException;
      * @return Constraints that can be passed to retrieve file sets.
      */
 	
-	private String[] featExtList ;//= {"/data/raid3/collections/audioclassification/monolists/audiomood.all.txt"};
-	private String[] groundtruth ;//= {"/data/raid3/collections/audioclassification/monolists/audiomood.all.gt.txt"};
-	private String[] train_files  ;//={"/data/raid3/collections/audioclassification/monolists/audiomood.train.bc.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ac.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ab.txt"}; 
-	private String[] test_files ;//={"/data/raid3/collections/audioclassification/monolists/audiomood.test.a.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.b.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.c.txt"};
-	private String commonStorageDirName;
-	private File commonStorageDir;
+	private String[] featExtList = {"/data/raid3/collections/audioclassification/monolists/audiomood.all.txt"};
+	private String[] groundtruth = {"/data/raid3/collections/audioclassification/monolists/audiomood.all.gt.txt"};
+	private String[] train_files  ={"/data/raid3/collections/audioclassification/monolists/audiomood.train.bc.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ac.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ab.txt"}; 
+	private String[] test_files ={"/data/raid3/collections/audioclassification/monolists/audiomood.test.a.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.b.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.c.txt"};
+	private String processWorkingDirName;
+	private File processWorkingDir;
+
 	private List<File[]> traintest_split_files;
 	private File[] gt_and_featExt_files;
 	private Set<NEMAMetadataEntry>  file_encoding_constraint;
@@ -116,11 +119,15 @@ import java.sql.SQLException;
 		delim = String.valueOf(cc.getProperty(DATA_PROPERTY_DELIM));					
 		cout = cc.getOutputConsole();			
 		try {
-			commonStorageDirName=ArtifactManagerImpl.getInstance().getCommonStorageLocation() + File.separator + "TrainTestCollections";
+			processWorkingDirName=ArtifactManagerImpl.getInstance()
+			.getProcessWorkingDirectory(
+					cc.getFlowExecutionInstanceID());				
 		} catch (IOException e1) {
 			throw new ComponentExecutionException(e1);
 		}
-		commonStorageDir = new File(commonStorageDirName);
+		cout.println("Process working dir: " + processWorkingDirName);
+		
+		processWorkingDir = new File(processWorkingDirName);
 		
 		cout.println("Dataset ID " + datasetID + " is selected ");
 		cout.println("Dataset properties are:\nbitRate=" + bitRate
@@ -139,29 +146,36 @@ import java.sql.SQLException;
 		//DatasetListFileGenerator dataset = new DatasetListFileGenerator();
 		
 	    file_encoding_constraint = DatasetListFileGenerator.buildConstraints(bitRate, channels, clip_type, encoding, sample_rate);		
-	    /*
+	    
 	    try {
-			traintest_split_files = DatasetListFileGenerator.writeOutExperimentSplitFiles(datasetID, delim, commonStorageDir, file_encoding_constraint);									
+			traintest_split_files = DatasetListFileGenerator.writeOutExperimentSplitFiles(datasetID, delim, processWorkingDir, file_encoding_constraint);									
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 		
 		train_files = new String[traintest_split_files.size()];
 		test_files = new String[traintest_split_files.size()];
 		
-		int ctr = 0;
-		for (File[] thisFile:traintest_split_files ){
-			cout.println("Train File: " + thisFile[0].getAbsolutePath() );
-			cout.println("Test File: " + thisFile[1].getAbsolutePath() );
-			train_files[ctr] = thisFile[0].getAbsolutePath();
-			test_files[ctr] = thisFile[0].getAbsolutePath();			
+		
+		try{
+			int ctr = 0;
+			for (File[] thisFile:traintest_split_files ){
+				//cout.println("Train File: " + thisFile[0].getCanonicalPath());
+				//cout.println("Test File: " + thisFile[1].getCanonicalPath());
+				train_files[ctr] = thisFile[0].getCanonicalPath();
+				test_files[ctr] = thisFile[1].getCanonicalPath();		
+				ctr++;
+			}
+			}
+		catch (IOException e){
+			e.printStackTrace();
 		}
-		*/
+	
 		
 		
 		try {
-			gt_and_featExt_files = DatasetListFileGenerator.writeOutGroundTruthAndExtractionListFile(datasetID, delim, commonStorageDir, file_encoding_constraint);
+			gt_and_featExt_files = DatasetListFileGenerator.writeOutGroundTruthAndExtractionListFile(datasetID, delim, processWorkingDir, file_encoding_constraint);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -169,8 +183,14 @@ import java.sql.SQLException;
 		
 
 
-		 groundtruth[0] = gt_and_featExt_files[0].getAbsolutePath();
-		 featExtList[0] = gt_and_featExt_files[1].getAbsolutePath();
+		 try {
+			groundtruth[0] = gt_and_featExt_files[0].getCanonicalPath();
+			featExtList[0] = gt_and_featExt_files[1].getCanonicalPath();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//Print info about the data
 		for (int i=0;i<featExtList.length;i++){
