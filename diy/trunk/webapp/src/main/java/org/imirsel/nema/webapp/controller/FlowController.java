@@ -1,5 +1,6 @@
 package org.imirsel.nema.webapp.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,20 +65,54 @@ public class FlowController extends MultiActionController{
 	}
 
 
+	/**Returns all the template flows
+	 * 
+	 * @param req
+	 * @param res
+	 * @return
+	 */
 	public ModelAndView flowlist(HttpServletRequest req, HttpServletResponse res){
 		Set<Flow> flowSet=this.flowService.getFlowTemplates();
 		log.info("done loading for flowlist");
-		return new ModelAndView("flow/flowType", Constants.FLOW_LIST, flowSet);
-	} 
-
-	public ModelAndView storeFlowInstance(HttpServletRequest req, HttpServletResponse res){
-		Flow instance= null;
-		this.flowService.storeFlowInstance(instance);
-		return null;
+		ModelAndView mav=new ModelAndView("flow/flowType");
+		mav.addObject(Constants.FLOW_LIST, flowSet);
+		mav.addObject(Constants.FLOW_TYPE, "all");
+		return mav;
 	} 
 
 	
-
+	/**Returns a view that displays Template Flows
+	 * 
+	 * @param req
+	 * @param res
+	 * @return
+	 */
+	public ModelAndView getTemplateFlows(HttpServletRequest req, HttpServletResponse res){
+		String type = req.getParameter("type");
+		if(type==null){
+			type="all";
+		}
+		Set<Flow> flowSet=this.flowService.getFlowTemplates();
+		ModelAndView mav=new ModelAndView("flow/flowType");
+		
+		if(!type.equalsIgnoreCase("all")){
+		ArrayList<Flow> list = new ArrayList<Flow>();
+		for(Flow flow:flowSet){
+			if(flow.getType().toUpperCase().indexOf(type.toUpperCase())!=-1){
+				System.out.println("adding: " + flow.getName() + "     "+flow.getType());
+				list.add(flow);
+			}
+		}
+		log.info("done loading for flowlist");
+		mav.addObject(Constants.FLOW_LIST, list);
+		}else{
+		log.info("done loading for flowlist");
+		mav.addObject(Constants.FLOW_LIST, flowSet);
+		}
+	
+		mav.addObject(Constants.FLOW_TYPE, type);
+		return mav;
+	} 
 	
 
 
