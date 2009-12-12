@@ -2,6 +2,7 @@
 <head>
 <title>
 <fmt:message key="joblist.title"/>
+<meta http-equiv="refresh" content="10" />
 </title>
 <meta name="heading" content="${jobs.title}"/>
 </head>
