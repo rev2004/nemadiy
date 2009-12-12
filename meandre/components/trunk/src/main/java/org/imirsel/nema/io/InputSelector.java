@@ -29,7 +29,7 @@ import org.imirsel.nema.annotations.*;
 		 firingPolicy = Component.FiringPolicy.all)
 public class InputSelector implements ExecutableComponent {
 	
-	@ComponentOutput(description = "String[][] that holds the fileLocation for the audio in the first column and its class metadata in the second column", name = "inputFiles")
+	@ComponentOutput(description = "String[] that holds the fileLocations for the audio", name = "inputFiles")
 	public final static String DATA_OUTPUT = "inputFiles";
 	
 	
@@ -83,41 +83,44 @@ public class InputSelector implements ExecutableComponent {
 		SingleFileURL = String.valueOf(ccp.getProperty(DATA_PROPERTY_2));
 		uploadFile = String.valueOf(ccp.getProperty(DATA_PROPERTY_3));
 
+		
 		if (!uploadFile.contentEquals("")) {
-			String[][] inputFiles = new String[1][2];
+			String[] inputFiles = new String[1];
 			out.println("File upload is selected");
 			if (uploadFile.contains("http")
 					|| uploadFile.contains("ftp")) {
 				 //String workingDirName = processWorkingDir;
 				String workingDirName = commonStorageDir;
 				
-				inputFiles[0][0] = downloadFiles(uploadFile, workingDirName);
+				inputFiles[0] = downloadFiles(uploadFile, workingDirName);
 			} else {
-				inputFiles[0][0] = uploadFile;
+				inputFiles[0] = uploadFile;
 			}
-			inputFiles[0][1] = "";
+			//inputFiles[0][1] = "";
 			out.println("no 1:\tFileName="
 					+ uploadFile.subSequence(uploadFile
-							.lastIndexOf("/") + 1, uploadFile.length())
-					+ "\t\tClassName= " + "\t\t added to output");
+							.lastIndexOf("/") + 1, uploadFile.length()));
+				//	+ "\t\tClassName= " + "\t\t added to output");
+			
 			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
 		} 
 		else if (!SingleFileURL.contentEquals("")) {
-			String[][] inputFiles = new String[1][2];
+			String[] inputFiles = new String[1];
 			out.println("Individual file is selected");
 			if (SingleFileURL.contains("http")
 					|| SingleFileURL.contains("ftp")) {
 				 //String workingDirName = processWorkingDir;
 				String workingDirName = commonStorageDir;
-				inputFiles[0][0] = downloadFiles(SingleFileURL, workingDirName);
+				inputFiles[0] = downloadFiles(SingleFileURL, workingDirName);
 			} else {
-				inputFiles[0][0] = SingleFileURL;
+				inputFiles[0] = SingleFileURL;
 			}
-			inputFiles[0][1] = "";
+		//	inputFiles[0][1] = "";
 			out.println("no 1:\tFileName="
 					+ SingleFileURL.subSequence(SingleFileURL
-							.lastIndexOf("/") + 1, SingleFileURL.length())
-					+ "\t\tClassName= " + "\t\t added to output");
+							.lastIndexOf("/") + 1, SingleFileURL.length()));
+			//		+ "\t\tClassName= " + "\t\t added to output");
+			
 			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);			
 		}
 		else {
@@ -161,7 +164,7 @@ public class InputSelector implements ExecutableComponent {
 							+ " records in the collection");
 					// Read the header info from the file
 					String Header = textBuffer.readLine();
-					String[][] inputFiles = new String[noLines][2];
+					String[] inputFiles = new String[noLines];
 					for (int i = 0; i < noLines; i++) {
 						String line = textBuffer.readLine();
 						StringTokenizer str = new StringTokenizer(line, ",");
@@ -182,10 +185,10 @@ public class InputSelector implements ExecutableComponent {
 						if (fileLocation.contains("http")
 								|| fileLocation.contains("ftp")) {
 							String workingDirName = commonStorageDir;
-							inputFiles[i][0] = downloadFiles(fileLocation,
+							inputFiles[i] = downloadFiles(fileLocation,
 									workingDirName);
 						} else {
-							inputFiles[i][0] = fileLocation;
+							inputFiles[i] = fileLocation;
 						}
 						out.println("no "
 								+ (i + 1)
@@ -194,7 +197,7 @@ public class InputSelector implements ExecutableComponent {
 										.lastIndexOf("/") + 1, fileLocation
 										.length()) + "\t\tClassName="
 								+ classname + "\t\t added to output");
-						inputFiles[i][1] = classname;
+					//	inputFiles[i][1] = classname;
 					}
 					ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
 				}
@@ -207,7 +210,7 @@ public class InputSelector implements ExecutableComponent {
 					out.println("The collection format is xml");
 					out.println("There are " + inputXML.length
 							+ " records in the collection.");
-					String[][] inputFiles = new String[inputXML.length][2];
+					String[] inputFiles = new String[inputXML.length];
 					for (int i = 0; i < inputXML.length; i++) {
 						String[] classes = inputXML[i].classifications;
 						String fileLocation = inputXML[i].identifier;
@@ -221,23 +224,22 @@ public class InputSelector implements ExecutableComponent {
 						if (fileLocation.contains("http")
 								|| fileLocation.contains("ftp")) {
 							String workingDirName = commonStorageDir;
-							inputFiles[i][0] = downloadFiles(fileLocation,
+							inputFiles[i] = downloadFiles(fileLocation,
 									workingDirName);
 						} else {
-							inputFiles[i][0] = fileLocation;
+							inputFiles[i] = fileLocation;
 						}
 					//	inputFiles[i][0] = dir_prefix+ inputFiles[i][0].subSequence(inputFiles[i][0].lastIndexOf("/") + 1, inputFiles[i][0]						.length());
 						out.println("no "
 								+ (i + 1)
 								+ ":\tFileName="
-								+ inputFiles[i][0].subSequence(inputFiles[i][0]
-										.lastIndexOf("/") + 1, inputFiles[i][0]
-										.length()) + "\t\tClassName="
+								+ inputFiles[i].subSequence(inputFiles[i]
+										.lastIndexOf("/") + 1, inputFiles[i].length()) + "\t\tClassName="
 								+ classname + "\t\t  added to output.");
 						out.println("Debuggin no "
 								+ (i + 1)
 								+ ":\tFileName="
-								+ inputFiles[i][0] + "\t\tClassName="
+								+ inputFiles[i] + "\t\tClassName="
 								+ classname + "\t\t  added to output.");
 						
 					}
