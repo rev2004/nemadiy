@@ -11,5 +11,7 @@ public interface SubmissionDao extends GenericDao<Submission, Long> {
 
 	 List<Submission> getSubmissions(User user);
 
+	 Submission getSubmission(User user, String type);
+
 
 }

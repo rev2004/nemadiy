@@ -36,6 +36,16 @@ public class SubmissionManagerImpl extends UniversalManagerImpl implements Submi
 		return submissionDao.getAllDistinct();
 	}
 
+	public Submission getSubmission(User user, String type) {
+		return submissionDao.getSubmission(user, type);
+	
+	}
+	
+	
+	public Submission getSubmission(long submissionId) {
+		return submissionDao.get(submissionId);
+	}
+
 	
 
 }

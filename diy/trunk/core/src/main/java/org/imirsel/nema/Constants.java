@@ -118,4 +118,15 @@ public class Constants {
 	 * Property
 	 */
 	public static final String COMPONENTPROPERTYMAP = "componentPropertyMap";
+
+	public static final String SUBMISSIONLIST = "submissionList";
+
+	public static final String SUBMISSION = "submission";
+
+	public static final String RESULTSET = "resultSet";
+
+	// used to share Dataset information with the form
+	public static final String REP_DATASET = "repDataset";
+
+	public static final String FLOW_TYPE = "flowType";
 }
