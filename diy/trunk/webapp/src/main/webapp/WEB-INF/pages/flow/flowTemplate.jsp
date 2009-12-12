@@ -18,7 +18,7 @@ description and job parameters to run the flow.</p>
 <div id="formcontainer_job">
 <div class="form_job">
 
-<form id="theform" action="/get/FlowFormManager.saveFlow"
+<form id="theform" action="<c:url value='/get/FlowFormManager.saveFlow'/>"
 	enctype="multipart/form-data" method="post">
 
 <fieldset id="pt1"><label>Name</label> <input name="name"

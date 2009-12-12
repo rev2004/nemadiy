@@ -19,7 +19,7 @@ ${flow.description}
 
                     <div id="formcontainer_job">
                         <div class="form_job">
-                            <form id="theform" action="runjob.html" enctype="multipart/form-data" method="post">
+                            <form id="theform" action="<c:url value='/runjob.html'/>" enctype="multipart/form-data" method="post">
                                 <fieldset id="pt1">
                                     <label for="jobname">
                                         Job name

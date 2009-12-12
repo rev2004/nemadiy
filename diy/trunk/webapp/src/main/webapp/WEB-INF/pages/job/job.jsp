@@ -70,7 +70,7 @@
     </fieldset>
   </div>
   
-    <form id="theform" action="/get/JobManager.selectJobForSubmission" method="post">
+    <form id="theform" action="<c:url value='/get/JobManager.selectJobForSubmission'/>" method="post">
     <input name="jobId" type="hidden" value="${job.id}" />
     <div class="form_job">
       <c:if test="${job.statusCode==3}">
@@ -82,7 +82,7 @@
   </form>
   
   
-  <form id="theform" action="/get/JobManager.jobAction" method="post">
+  <form id="theform" action="<c:url value='/get/JobManager.jobAction'/>" method="post">
     <input name="id" type="hidden" value="${job.id}" />
     <div class="form_job">
       <c:if test="${job.statusCode==2}">

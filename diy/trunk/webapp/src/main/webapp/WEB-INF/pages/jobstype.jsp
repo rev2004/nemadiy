@@ -14,7 +14,7 @@
 
                     <div class="actionBox">
                         <h2 class="actionBox">Classification</h2>
-						<form method="post" action="jobclassification.jsp" id="GoForm1">
+						<form method="post" action="<c:url value='jobclassification.jsp'/>" id="GoForm1">
 						<input type="submit" name="go1" value="GO">
 						</form>
 
@@ -30,7 +30,7 @@
                     <div class="actionBox">
                         <h2 class="actionBox">Extraction</h2>
 						
-						<form method="post" action="jobextraction.jsp" id="GoForm2">
+						<form method="post" action="<c:url value='jobextraction.jsp'/>" id="GoForm2">
 						<input type="submit" name="go2" value="GO">
 						</form>
 
@@ -46,7 +46,7 @@
 
                         <h2 class="actionBox">Evaluation</h2>
 
-						<form method="post" action="jobevaluation.jsp" id="GoForm3">
+						<form method="post" action="<c:url value='jobevaluation.jsp'/>" id="GoForm3">
 						<input type="submit" name="go3" value="GO">
 						</form>
 
