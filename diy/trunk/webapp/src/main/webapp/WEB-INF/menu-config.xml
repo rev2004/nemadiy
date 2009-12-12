@@ -7,19 +7,19 @@
      
      
       	
-	    <Menu name="welcomeMenu" title="welcomeMenu.title"  roles="ROLE_ADMIN,ROLE_USER" page="/welcome.jsp"/>
+	    <Menu name="welcomeMenu" title="welcomeMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/welcome.jsp"/>
 		
 		
 		
 		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/FlowManager.getFlowList">
-		    <Item name="MyJobs" title="My Jobs" page="/get/JobManager.getUserJobs" width="100"/>
-            <Item name="MySubmissions" title="My Submissions" page="/get/JobManager.getSubmissions" width="100"/>
-            <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/FlowFormManager.getFlowTemplate?id=3" width="100"/>
-            <Item name="JobTypeClassification" title="Classification" page="/get/FlowFormManager.getFlowTemplate?id=4" width="100"/>
-            <Item name="JobTypeEvaluation" title="Evaluation" page="/get/FlowFormManager.getFlowTemplate?id=5" width="100"/>
-   		</Menu>
-   
-   
+		    <Item name="MyJobs" title="My Jobs" page="/get/JobManager.getUserJobs" width="120"/>
+            <Item name="MySubmissions" title="My Submissions" page="/get/JobManager.getSubmissions" width="120"/>
+            <Item name="JobTypeTest" title="TEST FLOW" page="/get/FlowFormManager.getFlowTemplate?id=1" width="120"/>
+            <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/FlowManager.getTemplateFlows?type=extraction" width="120"/>
+            <Item name="JobTypeClassification" title="Classification" page="/get/FlowManager.getTemplateFlows?type=classification" width="120"/>
+     	    <Item name="JobTypeEvaluation" title="Evaluation" page="/get/FlowManager.getTemplateFlows?type=evaluation" width="120"/>
+            <Item name="JobTypeAnalysis" title="Analysis" page="/get/FlowManager.getTemplateFlows?type=analysis" width="120"/>
+     	</Menu>
    
    
         <Menu name="UserMenu" title="menu.user" description="User Menu" page="/userform.html" roles="ROLE_ADMIN,ROLE_USER"/>
@@ -37,7 +37,7 @@
 		
 		<Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" />
 		
-		<Menu name="MainMenu" title="mainMenu.title" page="/login.jsp" roles="ROLE_ANONYMOUS"/> 
+		<Menu name="MainMenu" title="mainMenu.title" page="/login.jsp" /> 
 		<Menu name="Logout" title="user.logout" page="/logout.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
     </Menus>
 </MenuConfig>

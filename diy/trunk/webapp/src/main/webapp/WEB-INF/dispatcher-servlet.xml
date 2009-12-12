@@ -138,7 +138,7 @@
         <property name="mappings">
             <value>
            	 /FlowManager.getFlowList=flowlist
-           	 
+           	 /FlowManager.getTemplateFlows=getTemplateFlows
             </value>
         </property>
     </bean>
