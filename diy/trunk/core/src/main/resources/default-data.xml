@@ -123,24 +123,28 @@
     
         <table name="submission">
         <column>id</column>
+        <column>name</column>
         <column>type</column>
         <column>jobId</column>
         <column>userId</column>
         <row>
         <value description="id">1</value>
             <value description="type">Inherits</value>
+            <value description="name">First Submission</value>
             <value description="jobId">1</value>
             <value description="userId">-2</value>
         </row>
          <row>
          <value description="id">2</value>
             <value description="type">Feature Extraction</value>
+            <value description="name">Second Submission</value>
             <value description="jobId">2</value>
             <value description="userId">-2</value>
         </row>
       <row>
       <value description="id">3</value>
             <value description="type">Classification</value>
+            <value description="name">Third Submission</value>
             <value description="jobId">3</value>
             <value description="userId">-2</value>
         </row>
@@ -148,6 +152,7 @@
          <row>
          <value description="id">4</value>
             <value description="type">Evaluation</value>
+            <value description="name">Fourth Submission</value>
             <value description="jobId">4</value>
             <value description="userId">-2</value>
         </row>
@@ -155,6 +160,7 @@
          <row>
          <value description="id">5</value>
             <value description="type">Analysis</value>
+            <value description="name">Fifth Submission</value>
             <value description="jobId">5</value>
             <value description="userId">-2</value>
         </row>

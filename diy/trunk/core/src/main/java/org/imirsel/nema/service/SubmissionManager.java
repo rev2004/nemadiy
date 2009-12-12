@@ -11,5 +11,7 @@ public interface SubmissionManager {
 	public Submission saveSubmission(Submission submission);
 	List<Submission> getSubmissions(User user);
 	List<Submission> getAllSubmissions();
+	public Submission getSubmission(User user, String type);
+	public Submission getSubmission(long submissionId);
 
 }

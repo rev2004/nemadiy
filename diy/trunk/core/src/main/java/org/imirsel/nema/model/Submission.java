@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenerationTime;
@@ -18,6 +20,12 @@ import org.hibernate.annotations.GenerationTime;
 
 @Entity
 @Table(name="submission")
+@NamedQueries ({
+    @NamedQuery(
+        name = "findSubmissionByUserAndType",
+        query = "select s from Submission s where s.type = ?"
+        )
+})
 public class Submission extends BaseObject implements Serializable{
 	/**
 	 * 
@@ -34,10 +42,18 @@ public class Submission extends BaseObject implements Serializable{
 	
 	private Date dateCreated;
 	
+	// same as the job name
+	private String name;
+	
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	 public Long getId() {
 	    return id;
 	 }
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 
 	@JoinColumn(name = "userId")
@@ -66,8 +82,7 @@ public class Submission extends BaseObject implements Serializable{
 	}
 	
 	
-	@Column(name="dateCreated",updatable=false,insertable=false)
-	@org.hibernate.annotations.Generated(GenerationTime.ALWAYS)
+	@Column(name="dateCreated")
 	public Date getDateCreated() {
 		return dateCreated;
 	}
@@ -75,6 +90,16 @@ public class Submission extends BaseObject implements Serializable{
 
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
+	}
+
+	@Column(nullable=false)
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 
