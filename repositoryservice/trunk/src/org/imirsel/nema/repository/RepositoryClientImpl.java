@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1198,7 +1199,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             int id = rs.getInt("id");
             String  name = rs.getString("name");
             String path = rs.getString("result_path");
-            out.add(new PublishedResult(id, name, path));
+            Timestamp time = rs.getTimestamp("timestamp");
+            out.add(new PublishedResult(id, name, path, time));
         }
         return out;
     }
