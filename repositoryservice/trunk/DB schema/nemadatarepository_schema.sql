@@ -4,7 +4,7 @@
 #
 # Host: nema.lis.uiuc.edu (MySQL 5.0.22)
 # Database: nemadatarepository
-# Generation Time: 2009-12-10 02:58:43 +0000
+# Generation Time: 2009-12-14 17:51:11 +0000
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -105,7 +105,7 @@ CREATE TABLE `file_file_metadata_link` (
   `file_metadata_id` int(11) NOT NULL default '-1',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `file_id` (`file_id`,`file_metadata_id`),
-  KEY `file_metadata_id` (`file_metadata_id`),
+  UNIQUE KEY `file_metadata_id` (`file_metadata_id`,`file_id`),
   CONSTRAINT `file_id` FOREIGN KEY (`file_id`) REFERENCES `file` (`id`),
   CONSTRAINT `file_metadata_id` FOREIGN KEY (`file_metadata_id`) REFERENCES `file_metadata` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -123,6 +123,7 @@ CREATE TABLE `file_metadata` (
   `value` varchar(180) NOT NULL default '',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `metadata_type_id` (`metadata_type_id`,`value`),
+  UNIQUE KEY `value` (`value`,`metadata_type_id`),
   CONSTRAINT `file_metadata_metadata_type_id` FOREIGN KEY (`metadata_type_id`) REFERENCES `file_metadata_definitions` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -139,6 +140,23 @@ CREATE TABLE `file_metadata_definitions` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table published_results
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `published_results`;
+
+CREATE TABLE `published_results` (
+  `id` int(11) NOT NULL auto_increment,
+  `dataset_id` int(11) NOT NULL default '-1',
+  `system_name` varchar(128) NOT NULL,
+  `result_path` varchar(512) NOT NULL,
+  `timestamp` timestamp NOT NULL default '0000-00-00 00:00:00',
+  PRIMARY KEY  (`id`),
+  KEY `dataset_id` (`dataset_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
 
@@ -280,7 +298,6 @@ CREATE TABLE `track_track_metadata_link` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `track_id` (`track_id`,`track_metadata_id`),
   KEY `track_metadata_id` (`track_metadata_id`),
-  KEY `track_id_2` (`track_id`),
   CONSTRAINT `track_track_metadata_link_track_id` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`),
   CONSTRAINT `track_track_metadata_link_track_metadata_id` FOREIGN KEY (`track_metadata_id`) REFERENCES `track_metadata` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
