@@ -154,6 +154,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 				e.printStackTrace();
 			}
 		}
+		System.out.println("RUNBINARY: PROCESS WORKING DIR: " + processWorkingDir);
 
 	}
 
