@@ -119,6 +119,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 	
 	private String outfile;
 	private String processWorkingDir;
+	private String processWorkingDirName;
 	private String processResultsDir;
 	private boolean isAborted = false;
 	Process process;
@@ -153,7 +154,6 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			}
 		}
 
-      
 	}
 
 	/** This method just pushes a concatenated version of the entry to the
