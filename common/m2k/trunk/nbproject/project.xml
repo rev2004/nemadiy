@@ -94,7 +94,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">lib/jahmm-0.3.3.jar:lib/jl1.0.jar:lib/weka.jar:lib/swing-layout-1.0.jar:lib/jahmm-0.3.3.jar:lib/Jama-1.0.2.jar:lib/JID3.jar:lib/jl1.0.jar:lib/weka-src.jar:lib/jcommon-1.0.12.jar:lib/jfreechart-1.0.9.jar</classpath>
+                <classpath mode="compile">lib/jahmm-0.3.3.jar:lib/jl1.0.jar:lib/weka.jar:lib/swing-layout-1.0.jar:lib/jahmm-0.3.3.jar:lib/Jama-1.0.2.jar:lib/JID3.jar:lib/jl1.0.jar:lib/weka-src.jar:lib/jcommon-1.0.12.jar:lib/jfreechart-1.0.9.jar:lib/commons-compress-1.0.jar</classpath>
                 <built-to>dist/m2k_core_1_3.jar</built-to>
                 <javadoc-built-to>dist/api</javadoc-built-to>
                 <source-level>1.5</source-level>

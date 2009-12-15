@@ -16,7 +16,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.imirsel.m2k.evaluation.resultPages.FileListItem;
+import org.imirsel.m2k.evaluation.resultPages.ImageItem;
+import org.imirsel.m2k.evaluation.resultPages.Page;
+import org.imirsel.m2k.evaluation.resultPages.PageItem;
+import org.imirsel.m2k.evaluation.resultPages.ResultPageUtilities;
+import org.imirsel.m2k.evaluation.resultPages.TableItem;
 import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
+import org.imirsel.m2k.io.file.IOUtil;
 import org.imirsel.m2k.util.MatlabCommandlineIntegrationClass;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
@@ -35,7 +42,10 @@ public class MIREXClassificationEvalMain {
     private File hierarchyFile = null;
     private List<String> systemNames;
     private List<File> resultsDirs;
-    
+
+    public static final String EVAL_SIGNAL_EXT = ".evalData.ser";
+    public static final String EVAL_REPORT_EXT = ".eval.txt";
+
     public MIREXClassificationEvalMain(boolean performMatlabStatSigTests_,
             String matlabPath_,
             String evaluationName_,
@@ -181,16 +191,17 @@ public class MIREXClassificationEvalMain {
         System.err.println("Performing individual classification evals...");
         //run SignalArrayAccuracyClass2 on each system
         File[] resultFiles = new File[resultData.length];
-        ArrayList<Signal[]> resultSignals = new ArrayList(resultData.length);
+        File[] systemDirs = new File[resultData.length];
+        ArrayList<Signal[]> resultSignals = new ArrayList<Signal[]>(resultData.length);
         for (int i = 0; i < resultData.length; i++) {
             System.out.println("\tevaluating " + systemNames.get(i));
-            File systemOutputDir = new File(rootEvaluationDir.getAbsolutePath() + File.separator + systemNames.get(i));
-            systemOutputDir.mkdirs();
+            systemDirs[i] = new File(rootEvaluationDir.getAbsolutePath() + File.separator + systemNames.get(i));
+            systemDirs[i].mkdirs();
             SignalArrayAccuracyClass2 evaluator = null;
             if(hierarchyFile == null){
-                evaluator = new SignalArrayAccuracyClass2(systemNames.get(i), ".eval.txt", ".evalData.ser", systemOutputDir.getAbsolutePath(), null, true);
+                evaluator = new SignalArrayAccuracyClass2(systemNames.get(i), EVAL_REPORT_EXT, EVAL_SIGNAL_EXT, systemDirs[i].getAbsolutePath(), null, true);
             }else{
-                evaluator = new SignalArrayAccuracyClass2(systemNames.get(i), ".eval.txt", ".evalData.ser", systemOutputDir.getAbsolutePath(), hierarchyFile.getAbsolutePath(), true);
+                evaluator = new SignalArrayAccuracyClass2(systemNames.get(i), EVAL_REPORT_EXT, EVAL_SIGNAL_EXT, systemDirs[i].getAbsolutePath(), hierarchyFile.getAbsolutePath(), true);
             }
             Signal[] resultSignalArr = null;
             for (int j = 0; j < numFolds; j++) {
@@ -211,10 +222,11 @@ public class MIREXClassificationEvalMain {
 
         //plot confusion matrices
         System.err.println("Plotting overall confusion matrices...");
-        ParseAndPlotConfusionMatrix confPlotter = new ParseAndPlotConfusionMatrix();
+        File[] confusionFiles = new File[resultData.length];
         for (int i = 0; i < resultFiles.length; i++) {
             try {
-                confPlotter.loadPlotAndSaveConfusion(resultFiles[i], new File(resultFiles[i].getAbsolutePath() + ".conf.png"));
+                confusionFiles[i] = new File(resultFiles[i].getAbsolutePath() + ".conf.png");
+                ParseAndPlotConfusionMatrix.loadPlotAndSaveConfusion(resultFiles[i], confusionFiles[i]);
             } catch (IOException ex) {
                 Logger.getLogger(MIREXClassificationEvalMain.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -223,38 +235,188 @@ public class MIREXClassificationEvalMain {
 
         System.err.println("Writing out CSV result files over whole task...");
         //prep result test data CSV file over classes and folds
-        File perClassCSV = WriteResultFilesClass.prepFriedmanTestDataOverClasses(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_ACC_PER_CLASS, ".csv", true);
+        File perClassCSV = WriteResultFilesClass.prepFriedmanTestDataOverClassesCSV(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_ACC_PER_CLASS, ".csv", true);
 
         //prep result test data CSV file over folds only
-        File perFoldCSV = WriteResultFilesClass.prepFriedmanTestData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_ACC, ".csv", true);
+        File perFoldCSV = WriteResultFilesClass.prepFriedmanTestDataCSV(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_ACC, ".csv", true);
 
         File discountedPerClassCSV = null;
         File discountedPerFoldCSV = null;
 
         if (hierarchyFile != null){
-            discountedPerClassCSV = WriteResultFilesClass.prepFriedmanTestDataOverClasses(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_DISCOUNTED_ACC_PER_CLASS, ".csv", true);
-            discountedPerFoldCSV = WriteResultFilesClass.prepFriedmanTestData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_DISCOUNTED_ACC, ".csv", true);
+            discountedPerClassCSV = WriteResultFilesClass.prepFriedmanTestDataOverClassesCSV(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_DISCOUNTED_ACC_PER_CLASS, ".csv", true);
+            discountedPerFoldCSV = WriteResultFilesClass.prepFriedmanTestDataCSV(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_DISCOUNTED_ACC, ".csv", true);
         }
 
         //write out results summary
-        File summaryCSV = WriteResultFilesClass.prepSummaryResultData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", hierarchyFile != null, true);
+        File summaryCSV = WriteResultFilesClass.prepSummaryResultDataCSV(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", hierarchyFile != null, true);
+
 
         //run friedman test if matlab available?
+        File friedmanClassTablePNG = null;
+        File friedmanClassTable = null;
+        File friedmanFoldTablePNG = null;
+        File friedmanFoldTable = null;
+        File friedmanDiscountClassTablePNG = null;
+        File friedmanDiscountClassTable = null;
+        File friedmanDiscountFoldTablePNG = null;
+        File friedmanDiscountFoldTable = null;
         if (getPerformMatlabStatSigTests() && performStatSigTests){
             System.err.println("Performing Friedman's tests in Matlab...");
             String[] systemNamesArr = systemNames.toArray(new String[systemNames.size()]);
             
-            performFriedmanTestWithClassAccuracy(rootEvaluationDir, perClassCSV, systemNamesArr);
-            performFriedmanTestWithFoldAccuracy(rootEvaluationDir, perFoldCSV, systemNamesArr);
+            File[] tmp = performFriedmanTestWithClassAccuracy(rootEvaluationDir, perClassCSV, systemNamesArr);
+            friedmanClassTablePNG = tmp[0];
+            friedmanClassTable = tmp[1];
+
+            tmp = performFriedmanTestWithFoldAccuracy(rootEvaluationDir, perFoldCSV, systemNamesArr);
+            friedmanFoldTablePNG = tmp[0];
+            friedmanFoldTable = tmp[1];
 
             if (hierarchyFile != null){
-                performFriedmanTestWithClassAccuracy(rootEvaluationDir, discountedPerClassCSV, systemNamesArr);
-                performFriedmanTestWithFoldAccuracy(rootEvaluationDir, discountedPerFoldCSV, systemNamesArr);
+                tmp = performFriedmanTestWithClassAccuracy(rootEvaluationDir, discountedPerClassCSV, systemNamesArr);
+                friedmanDiscountClassTablePNG = tmp[0];
+                friedmanDiscountClassTable = tmp[1];
+                
+                tmp = performFriedmanTestWithFoldAccuracy(rootEvaluationDir, discountedPerFoldCSV, systemNamesArr);
+                friedmanDiscountFoldTablePNG = tmp[0];
+                friedmanDiscountFoldTable = tmp[1];
             }
         }
+
+        //create tarballs of individual result dirs
+        System.err.println("Preparing evaluation data tarballs...");
+        File[] tgzFiles = new File[resultData.length];
+        for (int i = 0; i < resultData.length; i++) {
+            tgzFiles[i] = IOUtil.tarAndGzip(systemDirs[i],new String[]{EVAL_SIGNAL_EXT});
+            System.out.println("done " + systemDirs[i] + " -> " + tgzFiles[i]);
+        }
+
+        //create result pages
+        System.err.println("Creating result HTML files...");
+
+        List<Page> resultPages = new ArrayList<Page>();
+        List<PageItem> items;
+        Page aPage;
+
+
+        //do summary page
+        {
+        items = new ArrayList<PageItem>();
+        WriteResultFilesClass.Table summaryTable = WriteResultFilesClass.prepSummaryTable(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, ".csv", hierarchyFile != null, true);
+        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
+        aPage = new Page("summary", "Summary", items, false);
+        resultPages.add(aPage);
+        }
+
+        //do per class page
+        {
+            items = new ArrayList<PageItem>();
+            WriteResultFilesClass.Table perClassTable = WriteResultFilesClass.prepTableDataOverClasses(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_ACC_PER_CLASS, ".csv", true);
+            items.add(new TableItem("acc_class", "Accuracy per Class", perClassTable.getColHeaders(), perClassTable.getRows()));
+            if (hierarchyFile != null){
+                WriteResultFilesClass.Table perDiscClassTable = WriteResultFilesClass.prepTableDataOverClasses(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_DISCOUNTED_ACC_PER_CLASS, ".csv", true);
+                items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Class", perDiscClassTable.getColHeaders(), perDiscClassTable.getRows()));
+            }
+            aPage = new Page("acc_per_class", "Accuracy per Class", items, false);
+            resultPages.add(aPage);
+        }
+
+        //do per fold page
+        {
+            items = new ArrayList<PageItem>();
+            WriteResultFilesClass.Table perFoldTable = WriteResultFilesClass.prepTableData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_ACC_PER_CLASS, ".csv", true);
+            items.add(new TableItem("acc_class", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
+            if (hierarchyFile != null){
+                WriteResultFilesClass.Table perDiscFoldTable = WriteResultFilesClass.prepTableData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_DISCOUNTED_ACC_PER_CLASS, ".csv", true);
+                items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
+            }
+            aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);
+            resultPages.add(aPage);
+        }
+        
+        //do significance tests
+        if (getPerformMatlabStatSigTests() && performStatSigTests){
+            items = new ArrayList<PageItem>();
+            items.add(new ImageItem("friedmanClassTablePNG", "Accuracy Per Class: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanClassTablePNG, rootEvaluationDir)));
+            items.add(new ImageItem("friedmanFoldTablePNG", "Accuracy Per Fold: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanFoldTablePNG, rootEvaluationDir)));
+            if(friedmanDiscountClassTable != null){
+                items.add(new ImageItem("friedmanDiscountClassTablePNG", "Discounted Accuracy Per Class: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanDiscountClassTablePNG, rootEvaluationDir)));
+            }
+            if(friedmanDiscountFoldTable != null){
+                items.add(new ImageItem("friedmanDiscountFoldTablePNG", "Accuracy Per Fold: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanDiscountFoldTablePNG, rootEvaluationDir)));
+            }
+            aPage = new Page("sig_tests", "Significance Tests", items, true);
+            resultPages.add(aPage);
+        }
+
+        //do confusion matrices
+        {
+            items = new ArrayList<PageItem>();
+            for (int i = 0; i < confusionFiles.length; i++){
+                items.add(new ImageItem("confusion_" + i, systemNames.get(i), IOUtil.makeRelative(confusionFiles[i], rootEvaluationDir)));
+            }
+            aPage = new Page("confusion", "Confusion Matrices", items, true);
+            resultPages.add(aPage);
+        }
+
+        //do files page
+        {
+            items = new ArrayList<PageItem>();
+
+            //CSVs
+            List<String> CSVPaths = new ArrayList<String>(4);
+            CSVPaths.add(IOUtil.makeRelative(perClassCSV,rootEvaluationDir));
+            CSVPaths.add(IOUtil.makeRelative(perFoldCSV,rootEvaluationDir));
+            if (hierarchyFile != null){
+                CSVPaths.add(IOUtil.makeRelative(discountedPerClassCSV,rootEvaluationDir));
+                CSVPaths.add(IOUtil.makeRelative(discountedPerFoldCSV,rootEvaluationDir));
+            }
+            items.add(new FileListItem("dataCSVs", "CSV result files", CSVPaths));
+
+            //Friedman's tables and plots
+            if (getPerformMatlabStatSigTests() && performStatSigTests){
+                //Friedmans tables
+                List<String> sigCSVPaths = new ArrayList<String>(4);
+                sigCSVPaths.add(IOUtil.makeRelative(friedmanClassTable, rootEvaluationDir));
+                sigCSVPaths.add(IOUtil.makeRelative(friedmanFoldTable, rootEvaluationDir));
+                if(friedmanDiscountClassTable != null){
+                    sigCSVPaths.add(IOUtil.makeRelative(friedmanDiscountClassTable, rootEvaluationDir));
+                }
+                if(friedmanDiscountFoldTable != null){
+                    sigCSVPaths.add(IOUtil.makeRelative(friedmanDiscountFoldTable, rootEvaluationDir));
+                }
+                items.add(new FileListItem("sigCSVs", "Significance test CSVs", sigCSVPaths));
+
+                //Friedmans plots
+                List<String> sigPNGPaths = new ArrayList<String>(4);
+                sigPNGPaths.add(IOUtil.makeRelative(friedmanClassTablePNG, rootEvaluationDir));
+                sigPNGPaths.add(IOUtil.makeRelative(friedmanFoldTablePNG, rootEvaluationDir));
+                if(friedmanDiscountClassTable != null){
+                    sigPNGPaths.add(IOUtil.makeRelative(friedmanDiscountClassTablePNG, rootEvaluationDir));
+                }
+                if(friedmanDiscountFoldTable != null){
+                    sigPNGPaths.add(IOUtil.makeRelative(friedmanDiscountFoldTablePNG, rootEvaluationDir));
+                }
+                items.add(new FileListItem("sigPNGs", "Significance test plots", sigPNGPaths));
+            }
+
+            //System Tarballs
+            List<String> tarballPaths = new ArrayList<String>(4);
+            for (int i = 0; i < tgzFiles.length; i++){
+                tarballPaths.add(IOUtil.makeRelative(tgzFiles[i],rootEvaluationDir));
+            }
+            items.add(new FileListItem("tarballs", "Per algorithm evaluation tarball", tarballPaths));
+            aPage = new Page("files", "Raw data files", items, true);
+            resultPages.add(aPage);
+        }
+
+        ResultPageUtilities.writeResultPages(evaluationName, rootEvaluationDir, resultPages);
     }
+
+
     
-    private void performFriedmanTestWithClassAccuracy(File outputDir, File CSVResultFile, String[] systemNames) {
+    private File[] performFriedmanTestWithClassAccuracy(File outputDir, File CSVResultFile, String[] systemNames) {
         //make sure readtext is in the working directory for matlab
         File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
         CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
@@ -387,10 +549,10 @@ public class MIREXClassificationEvalMain {
         } catch (InterruptedException ex) {
             Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        return new File[]{new File(matlabPlotPath),new File(friedmanTablePath)};
     }
     
-    private void performFriedmanTestWithFoldAccuracy(File outputDir, File CSVResultFile, String[] systemNames) {
+    private File[] performFriedmanTestWithFoldAccuracy(File outputDir, File CSVResultFile, String[] systemNames) {
         //make sure readtext is in the working directory for matlab
         File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
         CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
@@ -524,7 +686,7 @@ public class MIREXClassificationEvalMain {
         } catch (InterruptedException ex) {
             Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        return new File[]{new File(matlabPlotPath),new File(friedmanTablePath)};
     }
 
     public boolean getPerformMatlabStatSigTests() {

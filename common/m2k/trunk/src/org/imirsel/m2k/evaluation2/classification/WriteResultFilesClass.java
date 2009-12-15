@@ -13,7 +13,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
 
@@ -22,6 +22,96 @@ import org.imirsel.m2k.util.noMetadataException;
  * @author kriswest
  */
 public class WriteResultFilesClass {
+
+    static class Table{
+        private String[] colHeaders;
+        private List<String[]> rows;
+
+        public Table(String[] colHeaders,
+                     List<String[]> rows){
+            this.colHeaders = colHeaders;
+            this.rows = rows;
+        }
+
+        /**
+         * @return the colHeaders
+         */
+        public String[] getColHeaders(){
+            return colHeaders;
+        }
+
+        /**
+         * @param colHeaders the colHeaders to set
+         */
+        public void setColHeaders(String[] colHeaders){
+            this.colHeaders = colHeaders;
+        }
+
+        /**
+         * @return the rows
+         */
+        public List<String[]> getRows(){
+            return rows;
+        }
+
+        /**
+         * @param rows the rows to set
+         */
+        public void setRows(List<String[]> rows){
+            this.rows = rows;
+        }
+    }
+
+    public static Table prepTableDataOverClasses(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
+        //sort systems alphabetically
+        HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
+        for (int i = 0; i < sigStore.size(); i++) {
+            try {
+                sigArrMap.put((sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), sigStore.get(i));
+            } catch (noMetadataException ex) {
+                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + ex);
+            }
+        }
+        String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
+        Arrays.sort(keys);
+
+        sigStore.clear();
+        for (int i = 0; i < keys.length; i++) {
+            sigStore.add(sigArrMap.get(keys[i]));
+        }
+
+        int numAlgos = sigStore.size();
+        int numRuns = sigStore.get(0).length;
+
+        String[] colNames = new String[numAlgos + 1];
+        colNames[0] = "Class";
+        for (int i = 0; i < numAlgos; i++) {
+            try {
+                colNames[i+1] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME).replaceAll(",", " ");
+            } catch (noMetadataException e) {
+                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
+            }
+        }
+
+        List<String[]> rows = new ArrayList<String[]>();
+        String[] classNames = sigStore.get(0)[0].getStringArrayMetadata(Signal.PROP_CLASSES);
+        for (int c = 0; c < classNames.length; c++) {
+            String[] row = new String[numAlgos + 1];
+            row[0] = classNames[c].replaceAll(",", " ");
+
+            for (int j = 0 ; j < numAlgos; j++){
+                double avg = 0.0;
+                for (int i = 0; i < numRuns; i++) {
+                    avg += sigStore.get(j)[i].getDoubleArrayMetadata(perfMetadataKey)[c];
+                }
+                avg /= numRuns;
+
+                row[j+1] = "" + avg;
+            }
+            rows.add(row);
+        }
+        return new Table(colNames, rows);
+    }
 
     /**
      * A utility function that takes an ArrayList of Signal arrays containing algorithm 
@@ -40,7 +130,7 @@ public class WriteResultFilesClass {
      * as well.
      * @return A File Object indicating where the output CSV file was written to.
      */
-    public static File prepFriedmanTestDataOverClasses(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
+    public static File prepFriedmanTestDataOverClassesCSV(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
         //sort systems alphabetically
         HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
         for (int i = 0; i < sigStore.size(); i++) {
@@ -129,7 +219,52 @@ public class WriteResultFilesClass {
         }
         return testFile;
     }
-    
+
+    public static Table prepTableData(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
+        //sort systems alphabetically
+        HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
+        for (int i = 0; i < sigStore.size(); i++) {
+            try {
+                sigArrMap.put((sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), sigStore.get(i));
+            } catch (noMetadataException ex) {
+                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + ex);
+            }
+        }
+        String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
+        Arrays.sort(keys);
+
+        sigStore.clear();
+        for (int i = 0; i < keys.length; i++) {
+            sigStore.add(sigArrMap.get(keys[i]));
+        }
+
+        int numAlgos = sigStore.size();
+        int numRuns = sigStore.get(0).length;
+
+        String[] colNames = new String[numAlgos + 1];
+        colNames[0] = "Classification fold";
+        for (int i = 0; i < numAlgos; i++) {
+            try {
+                colNames[i+1] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME).replaceAll(",", " ");
+            } catch (noMetadataException e) {
+                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
+            }
+        }
+
+        List<String[]> rows = new ArrayList<String[]>();
+        String[] classNames = sigStore.get(0)[0].getStringArrayMetadata(Signal.PROP_CLASSES);
+        for (int r = 0; r < numRuns; r++) {
+            String[] row = new String[numAlgos + 1];
+            row[0] = "" + (r+1);
+
+            for (int j = 0 ; j < numAlgos; j++){
+                row[j+1] = "" + sigStore.get(j)[r].getDoubleMetadata(perfMetadataKey);
+            }
+            rows.add(row);
+        }
+        return new Table(colNames, rows);
+    }
+
     /**
      * A utility function that takes an ArrayList of Signal arrays containing 
      * algorithm name and performance metadata and outputs the data into a CSV 
@@ -146,7 +281,7 @@ public class WriteResultFilesClass {
      * as well.
      * @return A File Object indicating where the output CSV file was written to.
      */
-    public static File prepFriedmanTestData(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
+    public static File prepFriedmanTestDataCSV(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
         //sort systems alphabetically
         HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
         for (int i = 0; i < sigStore.size(); i++) {
@@ -224,7 +359,101 @@ public class WriteResultFilesClass {
         }
         return testFile;
     }
-    
+
+    public static Table prepSummaryTable(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean usingAHierarchy, boolean verbose) {
+        //sort systems alphabetically
+        HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
+        for (int i = 0; i < sigStore.size(); i++) {
+            try {
+                sigArrMap.put(((Signal[]) sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), (Signal[]) sigStore.get(i));
+            } catch (noMetadataException ex) {
+                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + ex);
+            }
+        }
+        String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
+        Arrays.sort(keys);
+
+
+        double[][] means = null;
+        if(usingAHierarchy){
+            means = new double[keys.length][4];
+        }else{
+            means = new double[keys.length][2];
+        }
+
+        sigStore.clear();
+        for (int i = 0; i < keys.length; i++) {
+            sigStore.add(sigArrMap.get(keys[i]));
+        }
+
+        int numAlgos = sigStore.size();
+        int numRuns = sigStore.get(0).length;
+        String EvaluationOutput = "";
+        String[] runNames = new String[numAlgos];
+        for (int i = 0; i < numAlgos; i++) {
+            try {
+                runNames[i] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME);
+            } catch (noMetadataException e) {
+                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
+            }
+            if (sigStore.get(i).length != numRuns){
+                throw new RuntimeException(runNames[i] + " had a different number of results (" + sigStore.get(i).length + ") to " + runNames[0] + " (" + numRuns + ")");
+            }
+        }
+        for (int i = 0; i < numRuns; i++) {
+            for (int j = 0 ; j < numAlgos; j++){
+                try{
+                    means[j][0] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_ACC);
+                    means[j][1] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_NORM_ACC);
+                    if(usingAHierarchy){
+                        means[j][2] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_DISCOUNTED_ACC);
+                        means[j][3] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_NORM_DISCOUNTED_ACC);
+                    }
+                } catch (noMetadataException e) {
+                    throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
+                }
+            }
+        }
+        int numMetrics = 2;
+        if(usingAHierarchy){
+            numMetrics = 4;
+        }
+        for (int i = 0; i < numAlgos; i++) {
+            for (int j = 0; j < numMetrics; j++){
+                means[i][j] /= numRuns;
+            }
+        }
+
+
+        String[] colNames;
+        if(usingAHierarchy){
+            colNames = new String[numAlgos+3];
+            colNames[0] = "Participant";
+            colNames[1] = "Mean Accuracy";
+            colNames[2] = "Mean Discounted Accuracy";
+        }else{
+            colNames = new String[numAlgos+2];
+            colNames[0] = "Participant";
+            colNames[1] = "Mean Accuracy";
+        }
+
+        DecimalFormat dec = new DecimalFormat();
+        dec.setMaximumFractionDigits(2);
+
+        List<String[]> rows = new ArrayList<String[]>();
+        for (int i = 0; i < numAlgos; i++) {
+            String[] row = new String[colNames.length];
+            row[0] += runNames[i];
+            //for (int j = 0; j < numMetrics; j++){
+            //TODO: undo this hack
+            for (int j = 0; j < numMetrics; j++){
+                row[j+1] += dec.format(means[i][j*2] * 100.0) + "%";
+            }
+            rows.add(row);
+        }
+        return new Table(colNames, rows);
+    }
+
     /**
      * A utility function that takes an ArrayList of Signal arrays containing 
      * algorithm name and performance metadata and outputs the mean of each 
@@ -240,7 +469,7 @@ public class WriteResultFilesClass {
      * as well.
      * @return A File Object indicating where the output CSV file was written to.
      */
-    public static File prepSummaryResultData(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean usingAHierarchy, boolean verbose) {
+    public static File prepSummaryResultDataCSV(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean usingAHierarchy, boolean verbose) {
         //sort systems alphabetically
         HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
         for (int i = 0; i < sigStore.size(); i++) {
