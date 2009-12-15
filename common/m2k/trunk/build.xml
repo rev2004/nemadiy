@@ -19,6 +19,8 @@
   <property name="javadoc_dir"  location="${dist}/api"/>
   <property name="javadoc_check_dir"  location="${dist}/doccheck"/>
   <property name="version_info"  value="M2K Alpha 1.2"/>
+  <property name="source.files.tocopy"
+        value="**/*.properties,**/*.css,**/*.gif,**/*.jpg,**/*.png,**/*.m" />
 
   <!--<property file="build.properties"/>
   
@@ -67,10 +69,15 @@
 
     <!-- Compile the java code from ${src} into ${build} -->
     <javac source="1.5" srcdir="${src}" destdir="${build}" debug="${debug.flag}" >
+        <!-- includes="**/*.java,**/*.png,**/*.m,**/*.css,**/*.gif,**/*.properties"  -->
         <classpath refid="libs"/>
         <!-- the lint argument causes javac to report about possible errors -->
         <!-- <compilerarg value="-Xlint"/> -->
     </javac>
+    <copy todir="${build}">
+        <fileset dir="src" includes="${source.files.tocopy}"/>
+    </copy>
+
   </target>
 
     <!-- ********************************************************** -->

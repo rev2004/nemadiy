@@ -107,7 +107,7 @@ public class SignalArrayAccuracyClass2 {
         }
         
         //Prepare for output
-        File StorageDir = new File(this.storageDirectory);
+        File StorageDir = new File(this.getStorageDirectory());
         String modelFile = this.getModelName().replace(" ", "_");
         File resultFile = new File(StorageDir.getCanonicalPath() + File.separator + modelFile + this.resultFileExt);
         if(verbose) {
@@ -611,7 +611,7 @@ public class SignalArrayAccuracyClass2 {
                 output.close();
             }
         }
-        File copyToDirFile = new File(storageDirectory);
+        File copyToDirFile = new File(getStorageDirectory());
         if (!copyToDirFile.isDirectory()) {
             if (!copyToDirFile.mkdirs()) {
                 throw new RuntimeException("Could not create the output folder.");
@@ -619,7 +619,7 @@ public class SignalArrayAccuracyClass2 {
         }
         
         //output signal array
-        File theDir = new File(this.storageDirectory + File.separator + "evalData");
+        File theDir = new File(this.getStorageDirectory() + File.separator + "evalData");
         if (!theDir.isDirectory()) {
             if (!theDir.mkdirs()) {
                 throw new RuntimeException("Could not create the output folder.");
@@ -842,6 +842,20 @@ public class SignalArrayAccuracyClass2 {
 
     File getReportFile() {
         return reportFile;
+    }
+
+    /**
+     * @return the storageDirectory
+     */
+    public String getStorageDirectory(){
+        return storageDirectory;
+    }
+
+    /**
+     * @param storageDirectory the storageDirectory to set
+     */
+    public void setStorageDirectory(String storageDirectory){
+        this.storageDirectory = storageDirectory;
     }
 
     

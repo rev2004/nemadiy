@@ -14,8 +14,11 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
@@ -26,6 +29,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 /**
  *
@@ -36,6 +42,170 @@ public class IOUtil {
     private static final DecimalFormat MEMORY_FORMAT = new DecimalFormat("###,###,###,###.#");
     private static final double MEGABYTE_DIVISOR = 1024 * 1024;
 
+    public static void writeStringToFile(File file, String string, String encoding) throws UnsupportedEncodingException, FileNotFoundException{
+        BufferedWriter out = null;
+        try{
+            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "utf-8"));
+            out.write(string);
+            out.flush();
+        }catch (IOException ex){
+            Logger.getLogger(IOUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            if(out != null){
+                try{
+                    out.close();
+                }catch (IOException ex){}
+            }
+        }
+        
+    }
+
+    private static long addTarEntry(File toTar, String name,
+                                    TarArchiveOutputStream tarOut) throws IOException{
+        long len = toTar.length();
+        TarArchiveEntry entry = new TarArchiveEntry(name);
+        entry.setSize(len);
+        tarOut.putArchiveEntry(entry);
+        tarOut.write(getBytesFromFile(toTar));
+        tarOut.closeArchiveEntry();
+        return len;
+    }
+
+    private static byte[] getBytesFromFile(File file) throws IOException{
+        InputStream is = new FileInputStream(file);
+
+        // Get the size of the file
+        long length = file.length();
+
+        // Create the byte array to hold the data
+        byte[] bytes = new byte[(int)length];
+
+        // Read in the bytes
+        int offset = 0;
+        int numRead = 0;
+        while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0){
+            offset += numRead;
+        }
+
+        // Ensure all the bytes have been read in
+        if (offset < bytes.length){
+            throw new IOException("Could not completely read file " + file.getName());
+        }
+
+        // Close the input stream and return bytes
+        is.close();
+        return bytes;
+    }
+
+    public static String makeRelative(File toModify, File base){
+        return toModify.getAbsolutePath().replaceFirst(base.getAbsolutePath(), "");
+    }
+    
+    public static File tarAndGzip(File toTar){
+        File out = new File(toTar.getAbsolutePath() + ".tar.gz");
+        tarAndGzip(toTar,out,null);
+        return out;
+    }
+
+    public static File tarAndGzip(File toTar, String[] skipExts){
+        File out = new File(toTar.getAbsolutePath() + ".tar.gz");
+        tarAndGzip(toTar,out,skipExts);
+        return out;
+    }
+
+    public static boolean checkName(String[] keywords, String name){
+        for (int i = 0; i < keywords.length; i++){
+            String string = keywords[i];
+            if (name.indexOf(keywords[i]) != 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void tarAndGzip(File toTar, File outfile, String[] keywords){
+        TarArchiveOutputStream tarOut = null;
+        long uncompressedSize = 0L;
+
+        FileOutputStream tarFout = null;
+        File tempTar = null;
+        try{
+            tempTar = File.createTempFile(toTar.getName(), ".tar");
+            tempTar.deleteOnExit();
+            tarFout = new FileOutputStream(tempTar);
+            tarOut = new TarArchiveOutputStream(tarFout);
+
+            //String base = toTar.getAbsolutePath();
+            if (toTar.isDirectory()){
+                LinkedList<File> todo = new LinkedList<File>();
+                todo.add(toTar);
+                while(!todo.isEmpty()){
+                    File aFile = todo.removeFirst();
+                    String name = makeRelative(aFile,toTar);
+
+                    if (aFile.isDirectory()){
+                        name += "/";
+                        File[] files = aFile.listFiles();
+                        for (int i = 0; i < files.length; i++){
+                            todo.add(files[i]);
+                        }
+
+                    }else{
+                        if(keywords!=null&&!checkName(keywords, name)){
+                            uncompressedSize += addTarEntry(aFile, name, tarOut);
+                        }
+                    }
+
+                }
+
+
+            }else{
+                uncompressedSize += addTarEntry(toTar, toTar.getName(), tarOut);
+            }
+
+            tarOut.finish();
+            tarOut.flush();
+            
+
+        }catch (FileNotFoundException ex){
+            Logger.getLogger(IOUtil.class.getName()).log(Level.SEVERE, "Exception occured while attempting to compress " + toTar.getAbsolutePath() + " to a temp tar file", ex);
+        }catch (IOException e){
+            Logger.getLogger(IOUtil.class.getName()).log(Level.SEVERE,"Exception occured while attempting to compress " + toTar.getAbsolutePath() + " to a temp tar file", e);
+        }finally{
+            try{
+                if (tarOut!=null){
+                    tarOut.close();
+                }
+            }catch (IOException ex){}
+        }
+
+        long tarSize = tempTar.length();
+
+        FileOutputStream gzFout = null;
+        GZIPOutputStream gzOut = null;
+        try{
+            gzFout = new FileOutputStream(outfile);
+            gzOut = new GZIPOutputStream(gzFout);
+            gzOut.write(getBytesFromFile(tempTar));
+            gzOut.finish();
+            gzOut.flush();
+        }catch (FileNotFoundException ex){
+            Logger.getLogger(IOUtil.class.getName()).log(Level.SEVERE, "Exception occured while attempting to Gzip the temp tar file: " + tempTar.getAbsolutePath(), ex);
+        }catch (IOException ex){
+            Logger.getLogger(IOUtil.class.getName()).log(Level.SEVERE, "Exception occured while attempting to Gzip the Document tar file: " + tempTar.getAbsolutePath(), ex);
+        }finally{
+            try{
+                gzOut.close();
+            }catch (IOException ex){}
+        }
+
+        long gzSize = outfile.length();
+
+        Logger.getLogger(IOUtil.class.getName()).log(Level.INFO, "Created zipped tarball from: " + toTar.getAbsolutePath() + ", archive: " + outfile.getAbsolutePath() + "\n" +
+                "Original file size:     " + uncompressedSize + " bytes\n" +
+                "Tar file size:          " + tarSize + " bytes\n" +
+                ".tar.gz file size:      " + gzSize + " bytes");
+    }
 
     /**
      * Serializes an Object to file and returns true if successful, false
