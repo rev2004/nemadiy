@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.m2k.evaluation.resultPages;
+package org.imirsel.m2k.evaluation2.resultPages;
 
 /**
  *
@@ -38,16 +38,16 @@ public class ImageItem extends PageItem{
 
     @Override
     public String getBodyData(boolean topLink){
-        String out = "<a name=\"" + getName() + "\"></a>\n" +
-                "<h4>" + getCaption();
+        String out = "\t<a name=\"" + getName() + "\"></a>\n" +
+                "\t<h4>" + getCaption();
         if (topLink){
-            out += "s&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"toplink\"><a href=\"#top\">[top]</a></span>";
+            out += "&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"toplink\"><a href=\"#top\">[top]</a></span>";
         }
         out += "</h4>\n";
-        out += "<a href=\"" + imagePath + "\">\n";
-	out += "\t<img width=\"710\" src=\"" + imagePath + "\">\n";
-	out += "</a>\n";
-        out += "<br>\n\n";
+        out += "\t<a href=\"" + imagePath + "\">\n";
+	out += "\t\t<img width=\"710\" src=\"" + imagePath + "\">\n";
+	out += "\t</a>\n";
+        out += "\t<br><br>\n\n";
         return out;
     }
 

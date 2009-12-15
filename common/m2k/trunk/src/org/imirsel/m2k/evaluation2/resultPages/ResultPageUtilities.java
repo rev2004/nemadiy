@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.m2k.evaluation.resultPages;
+package org.imirsel.m2k.evaluation2.resultPages;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,19 +45,19 @@ public class ResultPageUtilities {
 
         //copy over resource files
         File rscFile = new File(directory.getAbsolutePath() + File.separator + "tableft.gif");
-        CopyFileFromClassPathToDisk.copy("org.imirsel.m2k.evaluation.resultPages/resources/tableft.gif", rscFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/resultPages/resources/tableft.gif", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "tabright.gif");
-        CopyFileFromClassPathToDisk.copy("org.imirsel.m2k.evaluation.resultPages/resources/tabright.gif", rscFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/resultPages/resources/tabright.gif", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "logo.png");
-        CopyFileFromClassPathToDisk.copy("org.imirsel.m2k.evaluation.resultPages/resources/logo.png", rscFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/resultPages/resources/logo.png", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "tableblue.css");
-        CopyFileFromClassPathToDisk.copy("org.imirsel.m2k.evaluation.resultPages/resources/tableblue.css", rscFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/resultPages/resources/tableblue.css", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "menu.css");
-        CopyFileFromClassPathToDisk.copy("org.imirsel.m2k.evaluation.resultPages/resources/menu.css", rscFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/resultPages/resources/menu.css", rscFile);
 
 
         it = pages.iterator();
@@ -103,10 +103,10 @@ public class ResultPageUtilities {
     }
 
     private static String createHeader(String set_name, String title){
-        String out = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" +
-        "<html xmlns=\"http://www.w3.org/1999/xhtml\">" +
-        "<head>" +
-        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />" +
+        String out = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
+        "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
+        "<head>\n" +
+        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />\n" +
         "<title>";
         out += set_name + " - " + title;
         out += "</title>\n\n";
@@ -125,10 +125,10 @@ public class ResultPageUtilities {
         String out = "</head>\n\n";
         out += "<body>\n\n";
         out += "<table id=\"h2table\">\n";
-        out += "\t<tr>";
+        out += "\t<tr>\n";
         out += "\t\t<td><img src=\"logo.png\" width=\"160\"></td>\n";
         out += "\t\t<td><h2>" + set_name  + "</h2></td>\n";
-        out += "\t<tr>\n";
+        out += "\t</tr>\n";
         out += "</table>\n\n";
         return out;
     }
@@ -153,7 +153,7 @@ public class ResultPageUtilities {
             idx++;
         }
         out += "\t</ul>\n";
-        out += "</div>\n\n<br>\n\n";
+        out += "</div>\n\n<br><a name=\"top\"></a>\n\n";
 
         return out;
     }

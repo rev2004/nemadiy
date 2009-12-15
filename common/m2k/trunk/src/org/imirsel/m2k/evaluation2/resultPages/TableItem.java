@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.m2k.evaluation.resultPages;
+package org.imirsel.m2k.evaluation2.resultPages;
 
 import java.util.Iterator;
 import java.util.List;
@@ -55,16 +55,16 @@ public class TableItem extends PageItem{
     @Override
     public String getHeadData(){
         String out = "<script>\n";
-        out += "\t" + getName() + " = {\n";
-        out += "\t\ttable: [\n";
+        out += getName() + " = {\n";
+        out += "\ttable: [\n";
         for (Iterator<String[]> it = dataRows.iterator(); it.hasNext();){
             String[] rowVals = it.next();
-            out +="\t\t\t{ ";
+            out +="\t\t{ ";
             for (int c = 0; c < colNames.length; c++){
                 if(c > 0){
                     out += ", ";
                 }
-                out += "\t\t{ \"" + colNames[c] + "\":\"" + rowVals[c] + "\"";
+                out += "\"" + colNames[c] + "\":\"" + rowVals[c] + "\"";
             }
             out += " }";
             if (it.hasNext()){
@@ -114,12 +114,12 @@ public class TableItem extends PageItem{
 
     @Override
     public String getBodyData(boolean topLink){
-        String out = "<a name=\"" + getName() + "\"></a>\n" +
+        String out = "\t<a name=\"" + getName() + "\"></a>\n" +
                 "\t<div id=\"" + getName() + "\"></div>\n";
         if (topLink){
             out += "<span class=\"toplink\"><a href=\"#top\">[top]</a></span>\n";
         }
-	out += "<br><br>\n";
+	out += "\t<br><br>\n";
         return out;
     }
 
