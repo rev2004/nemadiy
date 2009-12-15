@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.imirsel.m2k.evaluation.resultPages.FileListItem;
-import org.imirsel.m2k.evaluation.resultPages.ImageItem;
-import org.imirsel.m2k.evaluation.resultPages.Page;
-import org.imirsel.m2k.evaluation.resultPages.PageItem;
-import org.imirsel.m2k.evaluation.resultPages.ResultPageUtilities;
-import org.imirsel.m2k.evaluation.resultPages.TableItem;
+import org.imirsel.m2k.evaluation2.resultPages.FileListItem;
+import org.imirsel.m2k.evaluation2.resultPages.ImageItem;
+import org.imirsel.m2k.evaluation2.resultPages.Page;
+import org.imirsel.m2k.evaluation2.resultPages.PageItem;
+import org.imirsel.m2k.evaluation2.resultPages.ResultPageUtilities;
+import org.imirsel.m2k.evaluation2.resultPages.TableItem;
 import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
 import org.imirsel.m2k.io.file.IOUtil;
 import org.imirsel.m2k.util.MatlabCommandlineIntegrationClass;
@@ -325,10 +325,10 @@ public class MIREXClassificationEvalMain {
         //do per fold page
         {
             items = new ArrayList<PageItem>();
-            WriteResultFilesClass.Table perFoldTable = WriteResultFilesClass.prepTableData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_ACC_PER_CLASS, ".csv", true);
+            WriteResultFilesClass.Table perFoldTable = WriteResultFilesClass.prepTableData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_ACC, ".csv", true);
             items.add(new TableItem("acc_class", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
             if (hierarchyFile != null){
-                WriteResultFilesClass.Table perDiscFoldTable = WriteResultFilesClass.prepTableData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_DISCOUNTED_ACC_PER_CLASS, ".csv", true);
+                WriteResultFilesClass.Table perDiscFoldTable = WriteResultFilesClass.prepTableData(resultSignals, rootEvaluationDir.getAbsolutePath(), evaluationName, Signal.PROP_PERF_DISCOUNTED_ACC, ".csv", true);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
             }
             aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);

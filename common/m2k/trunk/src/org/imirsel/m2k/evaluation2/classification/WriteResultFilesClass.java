@@ -93,6 +93,9 @@ public class WriteResultFilesClass {
             }
         }
 
+        DecimalFormat dec = new DecimalFormat();
+        dec.setMaximumFractionDigits(2);
+
         List<String[]> rows = new ArrayList<String[]>();
         String[] classNames = sigStore.get(0)[0].getStringArrayMetadata(Signal.PROP_CLASSES);
         for (int c = 0; c < classNames.length; c++) {
@@ -106,7 +109,7 @@ public class WriteResultFilesClass {
                 }
                 avg /= numRuns;
 
-                row[j+1] = "" + avg;
+                row[j+1] = dec.format(100.0 * avg);
             }
             rows.add(row);
         }
@@ -251,6 +254,9 @@ public class WriteResultFilesClass {
             }
         }
 
+        DecimalFormat dec = new DecimalFormat();
+        dec.setMaximumFractionDigits(2);
+
         List<String[]> rows = new ArrayList<String[]>();
         String[] classNames = sigStore.get(0)[0].getStringArrayMetadata(Signal.PROP_CLASSES);
         for (int r = 0; r < numRuns; r++) {
@@ -258,7 +264,7 @@ public class WriteResultFilesClass {
             row[0] = "" + (r+1);
 
             for (int j = 0 ; j < numAlgos; j++){
-                row[j+1] = "" + sigStore.get(j)[r].getDoubleMetadata(perfMetadataKey);
+                row[j+1] = dec.format(100.0 * sigStore.get(j)[r].getDoubleMetadata(perfMetadataKey));
             }
             rows.add(row);
         }
@@ -367,7 +373,7 @@ public class WriteResultFilesClass {
             try {
                 sigArrMap.put(((Signal[]) sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), (Signal[]) sigStore.get(i));
             } catch (noMetadataException ex) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + ex);
+                throw new RuntimeException("prepSummaryTable: Required metadata not found!\n" + ex);
             }
         }
         String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
@@ -388,13 +394,12 @@ public class WriteResultFilesClass {
 
         int numAlgos = sigStore.size();
         int numRuns = sigStore.get(0).length;
-        String EvaluationOutput = "";
         String[] runNames = new String[numAlgos];
         for (int i = 0; i < numAlgos; i++) {
             try {
                 runNames[i] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME);
             } catch (noMetadataException e) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
+                throw new RuntimeException("prepSummaryTable: Required metadata not found!\n" + e);
             }
             if (sigStore.get(i).length != numRuns){
                 throw new RuntimeException(runNames[i] + " had a different number of results (" + sigStore.get(i).length + ") to " + runNames[0] + " (" + numRuns + ")");
@@ -410,7 +415,7 @@ public class WriteResultFilesClass {
                         means[j][3] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_NORM_DISCOUNTED_ACC);
                     }
                 } catch (noMetadataException e) {
-                    throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
+                    throw new RuntimeException("prepSummaryTable: Required metadata not found!\n" + e);
                 }
             }
         }
@@ -427,7 +432,7 @@ public class WriteResultFilesClass {
 
         String[] colNames;
         if(usingAHierarchy){
-            colNames = new String[numAlgos+3];
+            colNames = new String[3];
             colNames[0] = "Participant";
             colNames[1] = "Mean Accuracy";
             colNames[2] = "Mean Discounted Accuracy";
@@ -443,11 +448,12 @@ public class WriteResultFilesClass {
         List<String[]> rows = new ArrayList<String[]>();
         for (int i = 0; i < numAlgos; i++) {
             String[] row = new String[colNames.length];
-            row[0] += runNames[i];
+            row[0] = runNames[i];
             //for (int j = 0; j < numMetrics; j++){
             //TODO: undo this hack
-            for (int j = 0; j < numMetrics; j++){
-                row[j+1] += dec.format(means[i][j*2] * 100.0) + "%";
+            int idx = 1;
+            for (int j = 0; j < numMetrics; j+=2){
+                row[idx++] = dec.format(means[i][j] * 100.0) + "%";
             }
             rows.add(row);
         }

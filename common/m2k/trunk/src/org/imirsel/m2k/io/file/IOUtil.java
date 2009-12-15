@@ -62,12 +62,23 @@ public class IOUtil {
 
     private static long addTarEntry(File toTar, String name,
                                     TarArchiveOutputStream tarOut) throws IOException{
-        long len = toTar.length();
         TarArchiveEntry entry = new TarArchiveEntry(name);
+        long len = toTar.length();
         entry.setSize(len);
         tarOut.putArchiveEntry(entry);
-        tarOut.write(getBytesFromFile(toTar));
+
+        if (toTar.isDirectory()){
+            //do something with dirs?
+//            System.out.println("Created entry for directory: " + toTar.getAbsolutePath());
+        }else{
+//            System.out.println("Reading " + len + " bytes from file: " + toTar.getAbsolutePath());
+            byte[] bytes = getBytesFromFile(toTar);
+            tarOut.write(bytes);
+            len = bytes.length;
+//            System.out.println("got " + len + " bytes from file: " + toTar.getAbsolutePath());
+        }
         tarOut.closeArchiveEntry();
+        
         return len;
     }
 
@@ -97,32 +108,60 @@ public class IOUtil {
         return bytes;
     }
 
+    /**
+     * Returns the relative path from the first File to the second File.
+     * @param toModify The FIle path to make relative.
+     * @param base The base path the returned path should be relative to.
+     * @return The relative path.
+     */
     public static String makeRelative(File toModify, File base){
-        return toModify.getAbsolutePath().replaceFirst(base.getAbsolutePath(), "");
+        return toModify.getAbsolutePath().replaceFirst(base.getAbsolutePath()+ File.separator, "");
     }
     
+    /**
+     * Creates a zipped tarball from the File or Directory indicated and writes
+     * it out to a file name created from the source file with .tar.gz added.
+     *
+     * @param toTar The File or Directory to compress.
+     * @return Returns the location the tarball was written to.
+     */
     public static File tarAndGzip(File toTar){
         File out = new File(toTar.getAbsolutePath() + ".tar.gz");
         tarAndGzip(toTar,out,null);
         return out;
     }
 
-    public static File tarAndGzip(File toTar, String[] skipExts){
+    /**
+     * Creates a zipped tarball from the File or Directory indicated and writes
+     * it out to a file name created from the source file with .tar.gz added. 
+     * Files containing the specified keywords are ignored.
+     * @param toTar The File or Directory to compress.
+     * @param keywords Ignore files containing any of the specified strings.
+     * @return Returns the location the tarball was written to.
+     */
+    public static File tarAndGzip(File toTar, String[] keywords){
         File out = new File(toTar.getAbsolutePath() + ".tar.gz");
-        tarAndGzip(toTar,out,skipExts);
+        tarAndGzip(toTar,out,keywords);
         return out;
     }
 
-    public static boolean checkName(String[] keywords, String name){
+    private static boolean checkName(String[] keywords, String name){
         for (int i = 0; i < keywords.length; i++){
-            String string = keywords[i];
-            if (name.indexOf(keywords[i]) != 0){
+            if (name.indexOf(keywords[i]) != -1){
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     * Creates a zipped tarball from the File or Directory indicated and writes
+     * it out to the specified file. Files containing the specified keywords
+     * are ignored.
+     * @param toTar The File or Directory to compress.
+     * @param outfile The location to write the output to.
+     * @param keywords Ignore files containing any of the specified strings.
+     */
     public static void tarAndGzip(File toTar, File outfile, String[] keywords){
         TarArchiveOutputStream tarOut = null;
         long uncompressedSize = 0L;
@@ -130,7 +169,7 @@ public class IOUtil {
         FileOutputStream tarFout = null;
         File tempTar = null;
         try{
-            tempTar = File.createTempFile(toTar.getName(), ".tar");
+            tempTar = File.createTempFile(outfile.getName() + "_" + toTar.getName(), ".tar");
             tempTar.deleteOnExit();
             tarFout = new FileOutputStream(tempTar);
             tarOut = new TarArchiveOutputStream(tarFout);
@@ -144,21 +183,20 @@ public class IOUtil {
                     String name = makeRelative(aFile,toTar);
 
                     if (aFile.isDirectory()){
-                        name += "/";
+//                        name += "/";
+//                        uncompressedSize += addTarEntry(aFile, name, tarOut);
                         File[] files = aFile.listFiles();
                         for (int i = 0; i < files.length; i++){
                             todo.add(files[i]);
                         }
 
                     }else{
-                        if(keywords!=null&&!checkName(keywords, name)){
+                        if(keywords==null||!checkName(keywords, name)){
                             uncompressedSize += addTarEntry(aFile, name, tarOut);
                         }
                     }
 
                 }
-
-
             }else{
                 uncompressedSize += addTarEntry(toTar, toTar.getName(), tarOut);
             }

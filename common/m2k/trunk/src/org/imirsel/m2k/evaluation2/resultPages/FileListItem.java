@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.m2k.evaluation.resultPages;
+package org.imirsel.m2k.evaluation2.resultPages;
 
 import java.io.File;
 import java.util.Iterator;
@@ -46,20 +46,20 @@ public class FileListItem extends PageItem{
     }
 
     public String getBodyData(boolean topLink){
-        String out = "<a name=\"" + getName() + "\"></a>\n" +
-                "<h4>" + getCaption();
+        String out = "\t<a name=\"" + getName() + "\"></a>\n" +
+                "\t<h4>" + getCaption();
         if (topLink){
-            out += "s&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"toplink\"><a href=\"#top\">[top]</a></span>";
+            out += "&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"toplink\"><a href=\"#top\">[top]</a></span>";
         }
         out += "</h4>\n";
-        out += "<ul>\n";
+        out += "\t<ul>\n";
         String path;
         for (Iterator<String> it = paths.iterator(); it.hasNext();){
             path = it.next();
-            out += "\t<li><a href=\"" + path + "\">" + path + "</a>\n";
+            out += "\t\t<li><a href=\"" + path + "\">" + path + "</a>\n";
         }
-	out += "</ul>\n";
-	out += "<br>\n\n";
+	out += "\t</ul>\n";
+	out += "\t<br>\n\n";
 	return out;
     }
 
