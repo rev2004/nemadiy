@@ -437,7 +437,7 @@ public class WriteResultFilesClass {
             colNames[1] = "Mean Accuracy";
             colNames[2] = "Mean Discounted Accuracy";
         }else{
-            colNames = new String[numAlgos+2];
+            colNames = new String[2];
             colNames[0] = "Participant";
             colNames[1] = "Mean Accuracy";
         }
