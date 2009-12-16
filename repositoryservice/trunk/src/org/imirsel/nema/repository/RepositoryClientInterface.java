@@ -434,14 +434,16 @@ public interface RepositoryClientInterface {
      * published results for a dataset.
      * 
      * @param dataset_id The id of the dataset.
-     * @param systemName The system name, will be used to dentify the system in 
+     * @param systemName The system name, will be used to identify the system in
      * evaluations.
+     * @param systemName The user name, will be used to list the published
+     * results for a user.
      * @param result_path The path or identifier that will be used to retrieve
      * the reslt directory.
      * 
      * @throws SQLException
      */
-    public void publishResultForDataset(int dataset_id, String systemName, String result_path) throws SQLException;
+    public void publishResultForDataset(int dataset_id, String username, String systemName, String result_path) throws SQLException;
 
     /**
      * Returns a list of the published results for a username.
