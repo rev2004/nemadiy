@@ -132,11 +132,14 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     private PreparedStatement updateDatasetWithNumSplits;
 
 
-    public static final String INSERT_PUBLISHED_RESULT = "INSERT INTO published_results(dataset_id,name,result_path) VALUES(?,?,?);";
+    public static final String INSERT_PUBLISHED_RESULT = "INSERT INTO published_results(dataset_id,username,system_name,result_path) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE result_path=VALUES(result_path)";
     private PreparedStatement insertPublishedResult;
 
-    public static final String GET_PUBLISHED_RESULTS = "SELECT * FROM published_results WHERE dataset_id=?";
-    private PreparedStatement getPublishedResults;
+    public static final String GET_PUBLISHED_RESULTS_FOR_DATASET = "SELECT * FROM published_results WHERE dataset_id=?";
+    private PreparedStatement getPublishedResultsForDataset;
+
+    public static final String GET_PUBLISHED_RESULTS_FOR_USERNAME = "SELECT * FROM published_results WHERE username=?";
+    private PreparedStatement getPublishedResultsForUsername;
 
     public static final String DELETE_PUBLISHED_RESULT = "DELETE FROM published_results WHERE id=?";
     private PreparedStatement deletePublishedResult;
@@ -211,7 +214,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
         
         insertPublishedResult = dbCon.con.prepareStatement(INSERT_PUBLISHED_RESULT);
-        getPublishedResults = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS);
+        getPublishedResultsForDataset = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS_FOR_DATASET);
+        getPublishedResultsForUsername = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS_FOR_USERNAME);
         deletePublishedResult = dbCon.con.prepareStatement(DELETE_PUBLISHED_RESULT);
 
         initTypesMaps();
@@ -1192,15 +1196,32 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public List<PublishedResult> getPublishedResultsForDataset(int dataset_id)
             throws SQLException{
-        getPublishedResults.setInt(1,dataset_id);
-        ResultSet rs = getPublishedResults.executeQuery();
+        getPublishedResultsForDataset.setInt(1,dataset_id);
+        ResultSet rs = getPublishedResultsForDataset.executeQuery();
         List<PublishedResult> out = new ArrayList<PublishedResult>();
         while(rs.next()){
             int id = rs.getInt("id");
-            String  name = rs.getString("name");
+            String username = rs.getString("username");
+            String name = rs.getString("name");
             String path = rs.getString("result_path");
             Timestamp time = rs.getTimestamp("timestamp");
-            out.add(new PublishedResult(id, name, path, time));
+            out.add(new PublishedResult(id, username, name, path, time));
+        }
+        return out;
+    }
+
+    public List<PublishedResult> getPublishedResultsForDataset(String username)
+            throws SQLException{
+        getPublishedResultsForUsername.setString(1,username);
+        ResultSet rs = getPublishedResultsForUsername.executeQuery();
+        List<PublishedResult> out = new ArrayList<PublishedResult>();
+        while(rs.next()){
+            int id = rs.getInt("id");
+            String username2 = rs.getString("username");
+            String name = rs.getString("name");
+            String path = rs.getString("result_path");
+            Timestamp time = rs.getTimestamp("timestamp");
+            out.add(new PublishedResult(id, username2, name, path, time));
         }
         return out;
     }
@@ -1212,6 +1233,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public void deletePublishedResult(PublishedResult result) throws SQLException{
         deletePublishedResult(result.getId());
+    }
+
+    public List<PublishedResult> getPublishedResultsForUsername(String username)
+            throws SQLException{
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 

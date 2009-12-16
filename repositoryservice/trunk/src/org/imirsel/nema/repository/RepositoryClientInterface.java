@@ -444,12 +444,19 @@ public interface RepositoryClientInterface {
     public void publishResultForDataset(int dataset_id, String systemName, String result_path) throws SQLException;
 
     /**
-     * Returns a map of the published results for a dataset. The map keys are
-     * the system names and the values are the result directory paths or
-     * identifiers.
+     * Returns a list of the published results for a username.
+     *
+     * @param username The user retrieve published results for.
+     * @return a list of the published results for a username.
+     * @throws SQLException
+     */
+    public List<PublishedResult> getPublishedResultsForUsername(String username) throws SQLException;
+
+    /**
+     * Returns a list of the published results for a dataset.
      *
      * @param dataset_id The id of the dataset
-     * @return a map of the published results for a dataset.
+     * @return a list of the published results for a dataset.
      * @throws SQLException
      */
     public List<PublishedResult> getPublishedResultsForDataset(int dataset_id) throws SQLException;
