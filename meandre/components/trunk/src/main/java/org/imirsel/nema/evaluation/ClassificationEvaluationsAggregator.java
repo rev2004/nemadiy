@@ -122,7 +122,15 @@ import org.imirsel.m2k.evaluation2.classification.*;
 		String matlabPath = "/usr/local/bin/matlab";
 		String evaluationName = "OverallPublishedResults";
 	    File gtFile = new File(gtFileName[0]);
-	    File rootEvaluationDir = new File(processResultsDir + File.separator + "overallresults");
+	    File procResDir = new File(processResultsDir);
+	    String processResultsDirName = processResultsDir;
+		try {
+			processResultsDirName = procResDir.getCanonicalPath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    File rootEvaluationDir = new File(processResultsDirName + File.separator + "overall");
 
 	    List<String> systemNames = new ArrayList<String>();
         List<File> resultsDirs = new ArrayList<File>();
