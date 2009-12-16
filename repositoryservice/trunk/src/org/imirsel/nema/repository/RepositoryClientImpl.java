@@ -1204,7 +1204,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             String username = rs.getString("username");
             String name = rs.getString("name");
             String path = rs.getString("result_path");
-            Timestamp time = rs.getTimestamp("timestamp");
+            Timestamp time = rs.getTimestamp("last_updated");
             out.add(new PublishedResult(id, username, name, path, time));
         }
         return out;
@@ -1220,7 +1220,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             String username2 = rs.getString("username");
             String name = rs.getString("name");
             String path = rs.getString("result_path");
-            Timestamp time = rs.getTimestamp("timestamp");
+            Timestamp time = rs.getTimestamp("last_updated");
             out.add(new PublishedResult(id, username2, name, path, time));
         }
         return out;
