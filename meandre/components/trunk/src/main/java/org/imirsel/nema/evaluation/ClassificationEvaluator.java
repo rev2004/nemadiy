@@ -127,10 +127,18 @@ import org.imirsel.m2k.evaluation2.classification.*;
 		String matlabPath = "/usr/local/bin/matlab";
 	    String evaluationName = evalName;
 	    File gtFile = new File(gtFileName[0]);
-	    File rootEvaluationDir = new File(processResultsDir + File.separator + "evaluation");
+	    File procResDir = new File(processResultsDir);
+	    String processResultsDirName = processResultsDir;
+		try {
+			processResultsDirName = procResDir.getCanonicalPath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
 	    
 	    // create a directory to move the raw results to
-	    File classificationResultsDir = new File(processResultsDir);
+	    File classificationResultsDir = new File(processResultsDirName);
 	    File hierarchyFile;
 	    if (!hierarchyFileName.contentEquals("")) {
 	    	hierarchyFile = new File(hierarchyFileName);
@@ -165,6 +173,8 @@ import org.imirsel.m2k.evaluation2.classification.*;
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 		
         cout.println("Evaluation Complete");
+        cout.println("Written to:");
+        cout.println(rootEvaluationDir.getAbsolutePath());
         cout.flush();
         cout.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 	}
