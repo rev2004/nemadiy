@@ -1186,11 +1186,12 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return rev;
     }
 
-    public void publishResultForDataset(int dataset_id, String systemName,
+    public void publishResultForDataset(int dataset_id, String username, String systemName,
                                         String result_path) throws SQLException{
         insertPublishedResult.setInt(1,dataset_id);
-        insertPublishedResult.setString(2, systemName);
-        insertPublishedResult.setString(3, result_path);
+        insertPublishedResult.setString(2, username);
+        insertPublishedResult.setString(3, systemName);
+        insertPublishedResult.setString(4, result_path);
         insertPublishedResult.executeUpdate();
     }
 
