@@ -436,7 +436,7 @@ public interface RepositoryClientInterface {
      * @param dataset_id The id of the dataset.
      * @param systemName The system name, will be used to identify the system in
      * evaluations.
-     * @param systemName The user name, will be used to list the published
+     * @param username The user name, will be used to list the published
      * results for a user.
      * @param result_path The path or identifier that will be used to retrieve
      * the reslt directory.
