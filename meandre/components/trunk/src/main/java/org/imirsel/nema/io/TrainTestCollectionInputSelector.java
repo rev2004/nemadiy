@@ -94,10 +94,10 @@ import java.sql.SQLException;
      * @return Constraints that can be passed to retrieve file sets.
      */
 	
-	private String[] featExtList = {"/data/raid3/collections/audioclassification/monolists/audiomood.all.txt"};
-	private String[] groundtruth = {"/data/raid3/collections/audioclassification/monolists/audiomood.all.gt.txt"};
-	private String[] train_files  ={"/data/raid3/collections/audioclassification/monolists/audiomood.train.bc.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ac.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ab.txt"}; 
-	private String[] test_files ={"/data/raid3/collections/audioclassification/monolists/audiomood.test.a.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.b.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.c.txt"};
+	private String[] featExtList;// = {"/data/raid3/collections/audioclassification/monolists/audiomood.all.txt"};
+	private String[] groundtruth;// = {"/data/raid3/collections/audioclassification/monolists/audiomood.all.gt.txt"};
+	private String[] train_files;//  ={"/data/raid3/collections/audioclassification/monolists/audiomood.train.bc.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ac.txt","/data/raid3/collections/audioclassification/monolists/audiomood.train.ab.txt"}; 
+	private String[] test_files;// ={"/data/raid3/collections/audioclassification/monolists/audiomood.test.a.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.b.txt","/data/raid3/collections/audioclassification/monolists/audiomood.test.c.txt"};
 	private String processWorkingDirName;
 	private File processWorkingDir;
 
@@ -119,9 +119,15 @@ import java.sql.SQLException;
 		delim = String.valueOf(cc.getProperty(DATA_PROPERTY_DELIM));					
 		cout = cc.getOutputConsole();			
 		try {
-			processWorkingDirName=ArtifactManagerImpl.getInstance()
-			.getProcessWorkingDirectory(
-					cc.getFlowExecutionInstanceID());				
+			//processWorkingDirName=ArtifactManagerImpl.getInstance()
+			//.getAbsoluteProcessWorkingDirectory(
+			//		cc.getFlowExecutionInstanceID());				
+			
+			processWorkingDirName=ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
+		
+		
+			
+			
 		} catch (IOException e1) {
 			throw new ComponentExecutionException(e1);
 		}
@@ -181,8 +187,9 @@ import java.sql.SQLException;
 			e.printStackTrace();
 		}
 		
-
-
+		groundtruth = new String[gt_and_featExt_files.length / 2];
+		featExtList = new String[gt_and_featExt_files.length / 2];
+		cout.println("the size of gt " + gt_and_featExt_files.length);
 		 try {
 			groundtruth[0] = gt_and_featExt_files[0].getCanonicalPath();
 			featExtList[0] = gt_and_featExt_files[1].getCanonicalPath();
@@ -194,15 +201,15 @@ import java.sql.SQLException;
 		
 		//Print info about the data
 		for (int i=0;i<featExtList.length;i++){
-			cout.println("Feature Extraction file no." +i +":" + featExtList[i]);		
+			System.out.println("Feature Extraction file no." +i +":" + featExtList[i]);		
 		}			
 		for (int i=0;i<groundtruth.length;i++){
-			cout.println("Ground-truth file no." +i +":"+ groundtruth[i]);
+			System.out.println("Ground-truth file no." +i +":"+ groundtruth[i]);
 		}					
 		cout.println("Train/Test files:");
 		for (int i=0;i<train_files.length;i++){
-			cout.println("Train  no." +i +":"+ train_files[i]);
-			cout.println("Test  no." +i +":"+ test_files[i]);			
+			System.out.println("Train  no." +i +":"+ train_files[i]);
+			System.out.println("Test  no." +i +":"+ test_files[i]);			
 		}		
 		
 		//Push the data out
