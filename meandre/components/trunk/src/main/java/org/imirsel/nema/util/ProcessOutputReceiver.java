@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 
-class ProcessOutputReceiver implements Runnable
+public class ProcessOutputReceiver implements Runnable
 {
 	// ------------------------------ FIELDS ------------------------------
 
@@ -25,7 +25,7 @@ class ProcessOutputReceiver implements Runnable
 	 *
 	 * @param is stream to receive data from child
 	 */
-	ProcessOutputReceiver( InputStream is, PrintStream cout )
+	public ProcessOutputReceiver( InputStream is, PrintStream cout )
 	{
 		this.is = is;
 		this.cout = cout;
