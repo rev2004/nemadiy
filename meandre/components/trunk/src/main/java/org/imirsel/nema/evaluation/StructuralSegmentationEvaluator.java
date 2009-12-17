@@ -65,7 +65,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 
 	@StringDataType()
 	@ComponentProperty(defaultValue="evalstruct.sh",
-			description="The name of the executable, e.g. bextract, extractFeatures, runtempo, etc.",
+			description="The name of the evalscript, called as: evalscript gtfile algofile pngoutfile csvoutfile",
 			name="Executeable Name")
 			final static String DATA_PROPERTY_EXECNAME = "Executeable Name";
 	private String execName = "evalstruct.sh";
