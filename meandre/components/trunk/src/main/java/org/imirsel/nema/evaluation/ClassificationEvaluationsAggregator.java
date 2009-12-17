@@ -46,8 +46,8 @@ import org.imirsel.m2k.evaluation2.classification.*;
 @Component(creator="Andreas F. Ehmann", description="Evaluates all Multi-fold Classification " +
 		"Results of a single task, constructs a summary table/leader board, and performs significance tests ", 
 		name="ClassificationEvaluationsAggregator",
-		tags="test ft please hello",
-		dependency={"jfreechart-1.0.9.jar", "swing-layout-1.0.jar", "jcommon-1.0.12.jar"})
+		tags="test ft please hello"
+		)
 		public class ClassificationEvaluationsAggregator implements ExecutableComponent {
 
 
