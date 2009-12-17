@@ -25,14 +25,16 @@ import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 
 
-@Component(creator = "Mert Bay", description = "Takes the collection ID and pushes the names, paths for the publised results for the collection and associated groundtruth", name = "PublishedResults",resources={"../../../../RepositoryProperties.properties"},
+@Component(creator = "Mert Bay", description = "Takes the collection ID and pushes the names, paths for the publised results for the collection and associated groundtruth", name = "GetPublishedResults",resources={"../../../../RepositoryProperties.properties"},
 		tags = "dataset, published, results", firingPolicy = Component.FiringPolicy.all)
 	
 	public class GetPublishedResults implements ExecutableComponent {
 
-	@ComponentOutput(description = "integer datasetID", name = "datasetID")
+	@StringDataType(renderer=CollectionRenderer.class)
+	@ComponentProperty(description = "integer datasetID", name = "datasetID", defaultValue = "5")
 	public final static String DATA_INPUT_ID = "datasetID";
-	
+	private int datasetid = 5;
+
 	
 	@ComponentOutput(description = "String[] that holds the file names of subs published for the collection", name = "Names")
 	public final static String DATA_OUTPUT_NAMES = "Names";
@@ -41,7 +43,7 @@ import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 	public final static String DATA_OUTPUT_RESULTS = "Results";
 	
 
-	@ComponentOutput(description = "String[] that holds the file location for the groundtruth for the collection", name = "CollectionGroundtruth")
+	@ComponentOutput(description = "String[] that holds the file paths for the groundtruth for the collection", name = "CollectionGroundtruth")
 	public final static String DATA_OUTPUT_GROUNDTRUTH = "CollectionGroundtruth";
 
 	
@@ -54,17 +56,28 @@ import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 	private String processWorkingDirName;
 	private File processWorkingDir;
 
+	private String bitRate = "";
+	private String channels = "1";	
+	private String clip_type = "30";
+	private String encoding = "wav";
+	private String sample_rate = "22050";
+	private String delim = "\t";
+
+	
+	
+	
 	
 	public void initialize(ComponentContextProperties cc) throws  ComponentExecutionException {
 		cout = cc.getOutputConsole();		
 		try {
-			processWorkingDirName=ArtifactManagerImpl.getInstance()
-			.getProcessWorkingDirectory(
-					cc.getFlowExecutionInstanceID());				
+			processWorkingDirName=ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
 			throw new ComponentExecutionException(e1);
 		}
 		processWorkingDir = new File(processWorkingDirName);
+		System.out.println("Process working dir name: "  + processWorkingDir.getAbsolutePath());
+		datasetid = Integer.parseInt(String.valueOf(cc.getProperty(DATA_INPUT_ID))) ;
+
 
 
 	}
@@ -76,23 +89,23 @@ import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 	public void execute(ComponentContext ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		
-        String ID = (String)ccp.getDataComponentFromInput(DATA_INPUT_ID);
-        int datasetID = Integer.parseInt(ID);
+       // String ID = (String)ccp.getDataComponentFromInput(DATA_INPUT_ID);
+     //   int datasetID = Integer.parseInt(ID);
 		RepositoryClientConnectionPool pool = RepositoryClientConnectionPool.getInstance();
 		RepositoryClientImpl client = pool.getFromPool();
 		List<PublishedResult> resultList = null;
 		try{
-		   resultList = client.getPublishedResultsForDataset(datasetID);
+		   resultList = client.getPublishedResultsForDataset(datasetid);
 		   names = new String[resultList.size()];
 		   paths = new String[resultList.size()];
 		   int ctr =0;
 			for (PublishedResult thisResult:resultList ){
 				//cout.println("Train File: " + thisFile[0].getCanonicalPath());
 				//cout.println("Test File: " + thisFile[1].getCanonicalPath());
-				names[ctr]=thisResult.getResult_path();
-				paths[ctr]=thisResult.getName();
-				cout.println("Name " + ctr + ":" + names[ctr]);
-				cout.println("Path " + ctr + ":" + paths[ctr]);				
+				paths[ctr]=thisResult.getResult_path();
+				names[ctr]=thisResult.getName();
+				System.out.println("Name " + ctr + ":" + names[ctr]);
+				System.out.println("Path " + ctr + ":" + paths[ctr]);				
 				ctr++;
 			}	
 		   
@@ -104,15 +117,16 @@ import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 		   pool.returnToPool(client);
 		}
 
-	    file_encoding_constraint = DatasetListFileGenerator.buildConstraints("", "1", "30", "wav", "220050");		
-
+	    file_encoding_constraint = DatasetListFileGenerator.buildConstraints(bitRate, channels, clip_type, encoding, sample_rate);		
 		try {
-			gt_and_featExt_files = DatasetListFileGenerator.writeOutGroundTruthAndExtractionListFile(datasetID, "\t", processWorkingDir, file_encoding_constraint);
+			gt_and_featExt_files = DatasetListFileGenerator.writeOutGroundTruthAndExtractionListFile(datasetid, delim, processWorkingDir, file_encoding_constraint);
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		groundtruth = new String[gt_and_featExt_files.length / 2];
 		 try {
 				groundtruth[0] = gt_and_featExt_files[0].getCanonicalPath();
 		 } catch (IOException e) {
