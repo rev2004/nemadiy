@@ -34,7 +34,7 @@ import org.imirsel.service.*;
 import org.imirsel.nema.annotations.BooleanDataType;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.util.ProcessOutputReceiver;
-
+import org.imirsel.m2k.evaluation2.resultPages.WriteResultPagePerFile;
 
 /** This executable component executes an external binary using the process builder.
  *
@@ -118,7 +118,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 	 *         access was detected
 
 	 */
-	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
+	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException{
 		//File inFile = (File)cc.getDataComponentFromInput(DATA_INPUT_1);
 		workingDir = String.valueOf(cc.getProperty(DATA_PROPERTY_WORKINGDIR));
 		execName = String.valueOf(cc.getProperty(DATA_PROPERTY_EXECNAME));
@@ -139,7 +139,19 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 		cout.println("=============================================================");
 		cout.println("Number of files to process: " + fileLists1.length);
 		cout.flush();
-
+		
+		File[] csvFiles = new File[fileLists1.length];
+		File[] pngFiles = new File[fileLists1.length];
+		String[] pageNames = new String[fileLists1.length];
+		File resultsDirT = new File(processResultsDir);
+		String processResultsDirName = processResultsDir;
+		try {
+			processResultsDirName = resultsDirT.getCanonicalPath();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		File resultsDir = new File(processResultsDirName);
 		for (int i = 0; i < fileLists1.length; i++) {
 			cout.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 			cout.println("FILE:  " + (i+1) +"/" + fileLists1.length);
@@ -167,6 +179,16 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 				cout.flush();
 				e.printStackTrace();
 			}
+			
+			csvFiles[i] = new File(outfileCSV);
+			pngFiles[i] = new File(outfilePNG);
+			pageNames[i] = inFile1.getName().split(".wav")[0];
+		}
+		try {
+			WriteResultPagePerFile.writeResultsHTML("Structural Segmentation Evaluation", pageNames, csvFiles, pngFiles, resultsDir);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		cout.println("=============================================================");
 		cout.println("Evaluation of structural segmentation complete");
