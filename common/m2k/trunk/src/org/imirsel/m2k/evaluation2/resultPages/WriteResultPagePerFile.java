@@ -48,7 +48,7 @@ public class WriteResultPagePerFile {
         List<PageItem> items;
         Page aPage;
 
-        String[][][] csvData = null;
+        String[][][] csvData = new String[pageNames.length][][];
         //do a page per file
         for (int i = 0; i < pageNames.length; i++){
             items = new ArrayList<PageItem>();
