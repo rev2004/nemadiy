@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
 import org.imirsel.m2k.io.file.IOUtil;
 
@@ -20,13 +22,17 @@ public class WriteResultPagePerFile {
 
     /**
      * Writes out a set of result HTML pages. Each page has a single table of
-     * evaluation metrics and an image. One additional page is provided providing
-     * links to each of the data files.
+     * evaluation metrics and an image. One additional page is provided 
+     * providing links to each of the data files.
      *
+     * @param evaluationName The name of the evaluation to put in the result
+     * page headers.
      * @param pageNames The names for each page. Do not add any file extension.
      * @param CSVFiles Array of CSV files to plt on the result pages
-     * @param imagePaths An array of image file paths to plot on the result pages.
+     * @param imagePaths An array of image file paths to plot on the result
+     * pages.
      * @param outputDirectory The directory to output the HTML pages to.
+     * @throws IOException Thrown if there is a problem reading the CSV files.
      */
     public static void writeResultsHTML(String evaluationName, String[] pageNames, File[] CSVFiles, File[] imagePaths, File outputDirectory) throws IOException{
         //create result pages
@@ -42,18 +48,19 @@ public class WriteResultPagePerFile {
         List<PageItem> items;
         Page aPage;
 
+        String[][][] csvData = null;
         //do a page per file
         for (int i = 0; i < pageNames.length; i++){
             items = new ArrayList<PageItem>();
             String cleanName = pageNames[i].replaceAll("\\s", "_");
 
             //add table from CSV files
-            String[][] csvData = DeliminatedTextFileUtilities.loadDelimTextData(CSVFiles[i], ",", -1);
-            ArrayList<String[]> rows = new ArrayList<String[]>(csvData.length-1);
+            csvData[i] = DeliminatedTextFileUtilities.loadDelimTextData(CSVFiles[i], ",", -1);
+            ArrayList<String[]> rows = new ArrayList<String[]>(csvData[i].length-1);
             for (int j = 1; j < csvData.length; j++){
-                rows.add(csvData[j]);
+                rows.add(csvData[i][j]);
             }
-            items.add(new TableItem("evalMetrics", "Evaluation Metrics", csvData[0], rows));
+            items.add(new TableItem("evalMetrics", "Evaluation Metrics", csvData[i][0], rows));
 
             //add evaluation plot
             items.add(new ImageItem("plot", "Plot", IOUtil.makeRelative(imagePaths[i], outputDirectory)));
@@ -61,6 +68,40 @@ public class WriteResultPagePerFile {
             //add the page
             aPage = new Page(cleanName, pageNames[i], items, true);
             resultPages.add(aPage);
+        }
+
+        //do mean results page
+        if(csvData.length > 1){
+            items = new ArrayList<PageItem>();
+            
+            try{
+                //average tables
+                double[] averages = new double[csvData[0].length-1];
+                for (int i = 0; i < csvData.length; i++){
+                    for (int j = 0; j < averages.length; j++){
+                        averages[j] += Double.parseDouble(csvData[i][j+1][1]);
+                    }
+                }
+                for (int i = 0; i < averages.length; i++){
+                    averages[i] /= csvData.length;
+                }
+                
+                ArrayList<String[]> rows = new ArrayList<String[]>(averages.length);
+                
+                for (int r = 0; r < averages.length; r++){
+                    rows.add(new String[]{csvData[0][r+1][0],""+averages[r]});
+                }
+                
+                items.add(new TableItem("meanEvalMetrics", "Mean Evaluation Metrics", csvData[0][0], rows));
+
+                //add the page
+                aPage = new Page("mean_scores", "Mean scores", items, false);
+                resultPages.add(aPage);
+            }catch(Exception e){
+                Logger.getLogger(WriteResultPagePerFile.class.getName()).log(Level.WARNING, "Was unable to produce mean scores from second column of CCSV tables!",e);
+            }
+            
+            
         }
 
 
