@@ -42,9 +42,11 @@ public class InputSelector implements ExecutableComponent {
 	@ComponentProperty(defaultValue = "", description = "A URL or local path of an individual file instead of the file list. If a URL is entered, the file will be downloaded. If this property is filled, the input file list will be ignored. ", name = "SingleFileURL")
 	final static String DATA_PROPERTY_2 = "SingleFileURL";
 
+	
 	@StringDataType(renderer=FileRenderer.class)
 	@ComponentProperty(defaultValue = "", description = "Upload a file. If this is chosen, the input file list will or the individual file property will be ignored. ", name = "uploadFile")
 	final static String DATA_PROPERTY_3 = "uploadFile";	
+	
 	
 
 	
