@@ -114,8 +114,8 @@ public class IOUtil {
      * @param base The base path the returned path should be relative to.
      * @return The relative path.
      */
-    public static String makeRelative(File toModify, File base){
-        return toModify.getAbsolutePath().replaceFirst(base.getAbsolutePath()+ File.separator, "");
+    public static String makeRelative(File toModify, File base) throws IOException{
+        return toModify.getCanonicalPath().replaceFirst(base.getCanonicalPath()+ File.separator, "");
     }
     
     /**
