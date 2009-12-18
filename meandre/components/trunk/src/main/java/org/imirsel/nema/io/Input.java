@@ -34,16 +34,16 @@ public class Input implements ExecutableComponent {
 	
 	
 	@StringDataType()
-	@ComponentProperty(defaultValue = "http://nema.lis.uiuc.edu/example_wavs/mirex05FileList.xml", description = "A file with a list of audio files with  \"file URL\" and  class metadata, indicating the "
+	@ComponentProperty(defaultValue = "", description = "A file with a list of audio files with  \"file URL\" and  class metadata, indicating the "
 			+ "location of the corresponding audio file and also its class", name = "FileListURL")
 	final static String DATA_PROPERTY_1 = "FileListURL";
 
 	@StringDataType()
-	@ComponentProperty(defaultValue = "", description = "A URL or local path of an individual file instead of the file list. If a URL is entered, the file will be downloaded. If this property is filled, the input file list will be ignored. ", name = "SingleFileURL")
+	@ComponentProperty(defaultValue = "http://nema.lis.uiuc.edu/example_wavs/ctpt03.wav", description = "A URL or local path of an individual file instead of the file list. If a URL is entered, the file will be downloaded. If this property is filled, the input file list will be ignored. ", name = "SingleFileURL")
 	final static String DATA_PROPERTY_2 = "SingleFileURL";
 
 
-	@StringDataType(valueList={"/data/raid3/RWC/notes/bassoon_RWC/f/rbn300.3.wav","/data/raid3/RWC/notes/clar_RWC/f/rcl409.3.wav","/data/raid3/RWC/notes/flute_RWC/f/rfl506.3.wav","/data/raid3/RWC/notes/horn_RWC/f/rhn404.3.wav","/data/raid3/RWC/notes/oboe_RWC/f/rob509.3.wav"})
+	@StringDataType(labelList = {"Bassoon C3","Clarinet A4","Flute F#4","French Horn E4", "Oboe A5"},valueList={"/data/raid3/RWC/notes/bassoon_RWC/f/rbn300.3.wav","/data/raid3/RWC/notes/clar_RWC/f/rcl409.3.wav","/data/raid3/RWC/notes/flute_RWC/f/rfl506.3.wav","/data/raid3/RWC/notes/horn_RWC/f/rhn404.3.wav","/data/raid3/RWC/notes/oboe_RWC/f/rob509.3.wav"})
 	@ComponentProperty(defaultValue = "", description = "Select a file from the dataset. If this is chosen, the FileListURL or the SingleFileURL  properties will be ignored. ", name = "selectFile")
 	final static String DATA_PROPERTY_3 = "selectFile";	
 	
@@ -57,8 +57,8 @@ public class Input implements ExecutableComponent {
 	
 	
 	
-	private String FileListURL = "http://nema.lis.uiuc.edu/example_wavs/mirex05FileList.xml";
-	private String SingleFileURL = "";
+	private String FileListURL = "";
+	private String SingleFileURL = "http://nema.lis.uiuc.edu/example_wavs/ctpt03.wav";
 	private String uploadFile = "";	
 	private String selectFile = "";	
 	
