@@ -19,7 +19,7 @@ public class RepositoryClientConnectionPool {
     private static final int DEFAULT_POOL_SIZE = 10;
     private static final String LOG_CLASS_NAME = RepositoryClientConnectionPool.class.getName();
     private int poolSize = DEFAULT_POOL_SIZE;
-    private LinkedBlockingQueue<RepositoryClientImpl> pool;
+    private LinkedBlockingQueue<RepositoryClientInterface> pool;
     
     private static RepositoryClientConnectionPool instance = new RepositoryClientConnectionPool();
 
@@ -62,7 +62,7 @@ public class RepositoryClientConnectionPool {
     }
     
     public void close(){
-        RepositoryClientImpl[] utils = pool.toArray(new RepositoryClientImpl[pool.size()]);
+        RepositoryClientInterface[] utils = pool.toArray(new RepositoryClientInterface[pool.size()]);
         for (int i = 0; i < utils.length; i++){
             synchronized(utils[i]){
                 utils[i].close();
@@ -77,7 +77,7 @@ public class RepositoryClientConnectionPool {
      * Initializes the pool.
      */
     private void initPool() throws SQLException{
-        pool = new LinkedBlockingQueue<RepositoryClientImpl>();
+        pool = new LinkedBlockingQueue<RepositoryClientInterface>();
         for (int i = 0; i < poolSize; i++) {
             pool.add(new RepositoryClientImpl());
         }
@@ -87,8 +87,8 @@ public class RepositoryClientConnectionPool {
      * 
      * @return A RepositoryClientImpl Object from the pool.
      */
-    public RepositoryClientImpl getFromPool(){
-        RepositoryClientImpl util = null;
+    public RepositoryClientInterface getFromPool(){
+        RepositoryClientInterface util = null;
         try {
             util = pool.poll(30, TimeUnit.SECONDS);
         } catch (InterruptedException ex) {
@@ -103,7 +103,7 @@ public class RepositoryClientConnectionPool {
      * will be depleted.
      * @param util A RepositoryClientImpl Object to return to the pool.
      */
-    public void returnToPool(RepositoryClientImpl util){
+    public void returnToPool(RepositoryClientInterface util){
         pool.add(util);
     }
     
