@@ -35,22 +35,22 @@ public class Input implements ExecutableComponent {
 	
 	@StringDataType()
 	@ComponentProperty(defaultValue = "", description = "A file with a list of audio files with  \"file URL\" and  class metadata, indicating the "
-			+ "location of the corresponding audio file and also its class", name = "FileListURL")
+			+ "location of the corresponding audio file and also its class", name = "File list URL")
 	final static String DATA_PROPERTY_1 = "File list URL";
 
 	@StringDataType()
-	@ComponentProperty(defaultValue = "http://nema.lis.uiuc.edu/example_wavs/ctpt03.wav", description = "A URL or local path of an individual file instead of the file list. If a URL is entered, the file will be downloaded. If this property is filled, the input file list will be ignored. ", name = "SingleFileURL")
+	@ComponentProperty(defaultValue = "http://nema.lis.uiuc.edu/example_wavs/ctpt03.wav", description = "A URL or local path of an individual file instead of the file list. If a URL is entered, the file will be downloaded. If this property is filled, the input file list will be ignored. ", name = "Single file URL")
 	final static String DATA_PROPERTY_2 = "Single file URL";
 
 
 	
 	@StringDataType(labelList = {"Please Select","Bassoon C3","Clarinet A4","Flute F#4","French Horn E4", "Oboe A5"},valueList={"","/data/raid3/RWC/notes/bassoon_RWC/f/rbn300.3.wav","/data/raid3/RWC/notes/clar_RWC/f/rcl409.3.wav","/data/raid3/RWC/notes/flute_RWC/f/rfl506.3.wav","/data/raid3/RWC/notes/horn_RWC/f/rhn404.3.wav","/data/raid3/RWC/notes/oboe_RWC/f/rob509.3.wav"})
-	@ComponentProperty(defaultValue = "", description = "Select a file from the dataset. If this is chosen, the FileListURL or the SingleFileURL  properties will be ignored. ", name = "selectFile")
+	@ComponentProperty(defaultValue = "", description = "Select a file from the dataset. If this is chosen, the FileListURL or the SingleFileURL  properties will be ignored. ", name = "Select a file")
 	final static String DATA_PROPERTY_3 = "Select a file";	
 	
 	
 	@StringDataType(renderer=FileRenderer.class)
-	@ComponentProperty(defaultValue = "", description = "Upload a file. If this is chosen, the FileListURL, the SingleFileURL  or the selectFile properties will be ignored. ", name = "uploadFile")
+	@ComponentProperty(defaultValue = "", description = "Upload a file. If this is chosen, the FileListURL, the SingleFileURL  or the selectFile properties will be ignored. ", name = "Upload a file")
 	final static String DATA_PROPERTY_4 = "Upload a file";	
 
 	
