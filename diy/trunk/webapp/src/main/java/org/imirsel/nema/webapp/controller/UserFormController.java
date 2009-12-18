@@ -135,7 +135,7 @@ public class UserFormController extends BaseFormController {
                 saveMessage(request, getText("user.saved", user.getFullName(), locale));
 
                 // return to main Menu
-                return new ModelAndView(new RedirectView("mainMenu.html"));
+                return new ModelAndView(new RedirectView("welcome.jsp"));
             } else {
                 if (StringUtils.isBlank(request.getParameter("version"))) {
                     saveMessage(request, getText("user.added", user.getFullName(), locale));
