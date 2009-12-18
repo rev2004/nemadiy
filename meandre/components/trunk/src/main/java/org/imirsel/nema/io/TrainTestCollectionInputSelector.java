@@ -124,17 +124,29 @@ import java.sql.SQLException;
 			//		cc.getFlowExecutionInstanceID());				
 			
 			processWorkingDirName=ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
-		
-		
-			
-			
+	
 		} catch (IOException e1) {
 			throw new ComponentExecutionException(e1);
 		}
-		cout.println("Process working dir: " + processWorkingDirName);
-		
-		processWorkingDir = new File(processWorkingDirName);
-		
+	//	cout.println("Process working dir: " + processWorkingDirName);	
+		String datasetidtxt = processWorkingDirName + File.pathSeparator + "datasetID.txt";		
+		try
+		{
+			processWorkingDir = new File(processWorkingDirName);
+		    // Open an output stream
+			FileOutputStream fout;		
+		    fout = new FileOutputStream ("datasetid.txt");			
+		    // Print a line of text
+		    new PrintStream(fout).println (datasetID);
+		    // Close our output stream
+		    fout.close();		
+		}
+		// Catches any error conditions
+		catch (IOException e)
+		{
+			System.err.println ("Unable to write to files " + processWorkingDirName  + " or " + datasetidtxt );
+			System.exit(-1);
+		}
 		cout.println("Dataset ID " + datasetID + " is selected ");
 		cout.println("Dataset properties are:\nbitRate=" + bitRate
 				+ "\nChannles=" + channels + "\nClip Type=" + clip_type
