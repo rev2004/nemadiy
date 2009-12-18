@@ -124,8 +124,8 @@ public class MeandreProxyWrapper {
 	}
 
 	public boolean removeResource(String resourceURL) throws TransmissionException {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result=meandreProxy.removeResource(resourceURL);
+		return result;
 	}
 
 	public void uploadFlow(FlowDescription flow, boolean overwrite) throws TransmissionException{

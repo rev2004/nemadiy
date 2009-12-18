@@ -17,6 +17,8 @@ import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.renderers.CollectionRenderer;
 import org.imirsel.nema.repository.NEMADataset;
+import org.imirsel.nema.repository.RepositoryClientConnectionPool;
+import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.imirsel.nema.repository.RepositoryClientInterface;
 import org.imirsel.nema.service.ComponentMetadataService;
 
@@ -51,24 +53,20 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 	private static final Logger log = Logger.getLogger(ComponentMetadataService.class.getName());
 	private MeandreProxyWrapper meandreProxyWrapper;
 	private XStream xstream;
-    private RepositoryClientInterface repositoryClientInterface;
+	private RepositoryClientConnectionPool repositoryClientConnectionPool;
 	
+    
 	public ComponentMetadataServiceImpl(){
 		 xstream = new XStream(new JettisonMappedXmlDriver());
 		 xstream.setMode(XStream.NO_REFERENCES);
 	}
 
 
-	public RepositoryClientInterface getRepositoryClientInterface() {
-		return repositoryClientInterface;
+	public RepositoryClientImpl getRepositoryClient() {
+		return repositoryClientConnectionPool.getFromPool();
 	}
 
 
-
-	public void setRepositoryClientInterface(
-			RepositoryClientInterface repositoryClientInterface) {
-		this.repositoryClientInterface = repositoryClientInterface;
-	}
 
 
 
@@ -77,8 +75,20 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 	}
 
 
+	public RepositoryClientConnectionPool getRepositoryClientConnectionPool() {
+		return repositoryClientConnectionPool;
+	}
+
+
+	public void setRepositoryClientConnectionPool(
+			RepositoryClientConnectionPool repositoryClientConnectionPool) {
+		this.repositoryClientConnectionPool = repositoryClientConnectionPool;
+	}
+
+
 	public Map<String, Property> getComponentPropertyDataType(Component component, String flowUri) throws TransmissionException, SQLException {
-		List<NEMADataset> nemaDatasets = this.getRepositoryClientInterface().getDatasets();
+		RepositoryClientImpl rpi=this.getRepositoryClient();
+		List<NEMADataset> nemaDatasets = rpi.getDatasets();
 		QueryableRepository qp= meandreProxyWrapper.getRepository();
 		Model model =getEmptyModel();
 		ExecutableComponentDescription ecd=qp.getExecutableComponentDescription(model.createResource(component.getUri()));
@@ -87,6 +97,7 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 	
 		if(ecd==null){
 			log.severe("component: " + component.getUri()+ " could not be found.");
+			repositoryClientConnectionPool.returnToPool(rpi);
 			return null;
 		}
 		Model m = this.getEmptyModel();
@@ -142,8 +153,7 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 			// reset to false for the next property
 			foundDataType=Boolean.FALSE;
 		}
-		
-		
+		repositoryClientConnectionPool.returnToPool(rpi);
 		return dataTypeMap;
 	}
 
@@ -154,8 +164,9 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 					// this is a collection
 					ArrayList<String> labelList = new ArrayList<String>();
 					ArrayList<Object> valueList = new ArrayList<Object>();
+					RepositoryClientImpl rpi=this.getRepositoryClient();
 					try {
-						List<NEMADataset> ltb=this.getRepositoryClientInterface().getDatasets();
+						List<NEMADataset> ltb=rpi.getDatasets();
 						for(NEMADataset dataset:ltb){
 							String label=dataset.getName();
 							int value=dataset.getId();
@@ -164,6 +175,8 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 						}
 					} catch (SQLException e) {
 						e.printStackTrace();
+					}finally{
+						this.getRepositoryClientConnectionPool().returnToPool(rpi);
 					}
 					
 					if(labelList.size()>0){

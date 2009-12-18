@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.model.Flow;
@@ -19,6 +20,7 @@ import org.imirsel.nema.model.JobResult;
 import org.imirsel.nema.model.Notification;
 import org.imirsel.nema.model.Submission;
 import org.imirsel.nema.model.User;
+import org.imirsel.nema.service.FlowMetadataService;
 import org.imirsel.nema.service.SubmissionManager;
 import org.imirsel.nema.service.UserManager;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,10 +39,20 @@ public class JobController extends MultiActionController {
 	private UserManager userManager = null;
 	private FlowService flowService = null;
     private SubmissionManager submissionManager = null;
+    private FlowMetadataService flowMetadataService;
+	
     
 
     public void setSubmissionManager(SubmissionManager submissionManager) {
 		this.submissionManager = submissionManager;
+	}
+
+	public FlowMetadataService getFlowMetadataService() {
+		return flowMetadataService;
+	}
+
+	public void setFlowMetadataService(FlowMetadataService flowMetadataService) {
+		this.flowMetadataService = flowMetadataService;
 	}
 
 	public FlowService getFlowService() {
@@ -158,7 +170,7 @@ public class JobController extends MultiActionController {
 			Submission s=this.submissionManager.saveSubmission(submission);
 			logger.info("submission found: removing it " +thisSubmission.getId()+" and adding new submission id is " + s.getId());
 		}
-		return new ModelAndView(new RedirectView("/get/JobManager.getSubmissions"));
+		return new ModelAndView(new RedirectView("JobManager.getSubmissions",true));
 	
 	}
 
@@ -219,13 +231,13 @@ public class JobController extends MultiActionController {
 		String _submissionId = req.getParameter("id");
 		long submissionId = Long.parseLong(_submissionId);
 		this.submissionManager.removeSubmission(submissionId);
-		return new ModelAndView(new RedirectView("/get/JobManager.getSubmissions"));
+		return new ModelAndView(new RedirectView("JobManager.getSubmissions",true));
 	}
 
 	
 	
 	public ModelAndView jobaction(HttpServletRequest req,
-			HttpServletResponse res) {
+			HttpServletResponse res) throws TransmissionException {
 		String _jobId = req.getParameter("id");
 		long jobId = Long.parseLong(_jobId);
 
@@ -236,9 +248,11 @@ public class JobController extends MultiActionController {
 			flowService.abortJob(job.getId());
 		} else if (_submitType.equals("Delete This Job")) {
 			flowService.deleteJob(job.getId());
+			logger.info("deleting flow: "+ job.getFlow().getUrl());
+			getFlowMetadataService().removeFlow(job.getFlow().getUrl());
 		}
 		//, Constants.JOB, job
-		return new ModelAndView(new RedirectView("/get/JobManager.getUserJobs"));
+		return new ModelAndView(new RedirectView("JobManager.getUserJobs",true));
 	}
 
 
