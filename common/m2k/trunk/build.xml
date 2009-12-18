@@ -90,7 +90,7 @@
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}"/>
     <jar jarfile="${dist}/m2k_core_1_3.jar" basedir="${build}">
-        <zipgroupfileset dir="lib" includes="*.jar" /> 
+        <zipgroupfileset dir="lib" includes="*.jar" excludes="*weka*"/>
         <manifest>
             <attribute name="Main-Class" value="org.imirsel.m2k.evaluation.OnsetDetectionEvaluatorClass"/>
         </manifest>
