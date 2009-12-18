@@ -44,20 +44,47 @@ public class TestDataListFileGenerator {
 		 String[] paths;
 			
 		
-	//    file_encoding_constraint = DatasetListFileGenerator.buildConstraints(bitRate, channels, clip_type, encoding, sample_rate);		
+	 //   file_encoding_constraint = DatasetListFileGenerator.buildConstraints(bitRate, channels, clip_type, encoding, sample_rate);		
 
-		File  commonStorageDir = new File("./tmp");
-/*		try {
+/*		File  commonStorageDir = new File("./tmp");
+		System.out.println("storage dir canonical path: " + commonStorageDir.getCanonicalPath() );
+		System.out.println("storage dir absoulte path: " + commonStorageDir.getAbsolutePath() );
+
+		try {
 			gt_and_featExt_files = DatasetListFileGenerator.writeOutGroundTruthAndExtractionListFile(datasetID, delim, commonStorageDir, file_encoding_constraint);
-			System.out.println("ground truth file: " + gt_and_featExt_files[0].getCanonicalPath() );
+			System.out.println("ground truth file canonical path: " + gt_and_featExt_files[0].getCanonicalPath() );
+			System.out.println("ground truth file absoulte path: " + gt_and_featExt_files[0].getAbsolutePath() );
+
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} */
 		
-		
-		
+		 //Testing publish a result
+/*		int dataset_id = 3;
+		String username = "nutcracker";
+		String systemName = "imirsel";
+		String result_path = "/tmp/nutcrakcer";
+			RepositoryClientConnectionPool pool = RepositoryClientConnectionPool.getInstance();
+			RepositoryClientImpl client = pool.getFromPool();
+			try{
+			   
+			   
+			   client.publishResultForDataset(dataset_id, username, systemName, result_path);	   
+			   
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			finally{
+			   pool.returnToPool(client);
+			} 
+			*/
+			
+		 
+		 
+		//Testing getting results for dataset id 
 		RepositoryClientConnectionPool pool = RepositoryClientConnectionPool.getInstance();
 		RepositoryClientImpl client = pool.getFromPool();
 		List<PublishedResult> resultList = null;
@@ -69,8 +96,8 @@ public class TestDataListFileGenerator {
 			for (PublishedResult thisResult:resultList ){
 				//cout.println("Train File: " + thisFile[0].getCanonicalPath());
 				//cout.println("Test File: " + thisFile[1].getCanonicalPath());
-				names[ctr]=thisResult.getResult_path();
-				paths[ctr]=thisResult.getName();
+				paths[ctr]=thisResult.getResult_path();
+				names[ctr]=thisResult.getName();
 				System.out.println("names " + ctr + " " + names[ctr]);
 				System.out.println("paths " + ctr + " " + paths[ctr]);				
 				ctr++;
@@ -82,7 +109,43 @@ public class TestDataListFileGenerator {
 		}
 		finally{
 		   pool.returnToPool(client);
+		} 
+		
+		//Testing delete results 
+/*		RepositoryClientConnectionPool pool = RepositoryClientConnectionPool.getInstance();
+		RepositoryClientImpl client = pool.getFromPool();
+		List<PublishedResult> resultList = null;
+		try{
+		   resultList = client.getPublishedResultsForDataset(dataset_id);
+		   names = new String[resultList.size()];
+		   paths = new String[resultList.size()];
+		   int ctr =0;
+			for (PublishedResult thisResult:resultList ){
+				//cout.println("Train File: " + thisFile[0].getCanonicalPath());
+				//cout.println("Test File: " + thisFile[1].getCanonicalPath());
+				paths[ctr]=thisResult.getResult_path();
+				names[ctr]=thisResult.getName();
+				System.out.println("names " + ctr + " " + names[ctr]);
+				System.out.println("paths " + ctr + " " + paths[ctr]);				
+				ctr++;
+			}		   
+		   
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		finally{
+		   pool.returnToPool(client);
+		} */
+
+		
+		
+		
+		
+		
+
+		
+		
 		
 	//	 String groundtruth = gt_and_featExt_files[0].getAbsolutePath();
 //		 String featExtList = gt_and_featExt_files[1].getAbsolutePath();
