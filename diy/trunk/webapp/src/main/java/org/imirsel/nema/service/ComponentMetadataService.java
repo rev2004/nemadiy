@@ -22,4 +22,5 @@ public interface ComponentMetadataService{
 	 */
 	public Map<String,Property> getComponentPropertyDataType(final Component component, String flowUri) throws TransmissionException, SQLException;
 	
+	
 }

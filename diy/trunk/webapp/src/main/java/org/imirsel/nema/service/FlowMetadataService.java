@@ -27,4 +27,11 @@ public interface FlowMetadataService {
 	 */
 	public String createNewFlow(final HashMap<String, String> paramMap, String flowUri) throws TransmissionException, MeandreCommunicationException, CorruptedFlowException;
 	
+	/** Removes the flow
+	 * 
+	 * @param uri
+	 * @return
+	 * @throws TransmissionException
+	 */
+	public boolean removeFlow(String uri) throws TransmissionException;
 }

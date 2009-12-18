@@ -1,6 +1,7 @@
 package org.imirsel.nema.webapp.controller;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Date;
@@ -153,7 +154,8 @@ public class FlowFormController extends MultiActionController{
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		//upload.setSizeMax(yourMaxRequestSize);
-		String uploadDir = getServletContext().getRealPath("/"+ getUploadDirectory()) + "/" + req.getRemoteUser() + "/"+ token+"/";
+		
+		String uploadDir = getServletContext().getRealPath(getUploadDirectory()) + "/" + req.getRemoteUser() + "/"+ token+"/";
 
 		  
 	        // Create the directory if it doesn't exist
@@ -191,7 +193,7 @@ public class FlowFormController extends MultiActionController{
 			        	item.write(uploadedFile);
 			        	System.out.println("file uploaded: "+ fileName + uploadedFile.getAbsolutePath());
 			        	String webDir = uploadDir.substring(getServletContext().getRealPath("/").length());
-			        	paramMap.put(fieldName,"http://"+ req.getServerName()+":"+req.getServerPort()+File.separator+ webDir+File.separator+fileName);
+			        	paramMap.put(fieldName,"http://"+ req.getServerName()+":"+req.getServerPort()+ req.getContextPath()+webDir+fileName);
 			        }
 			    }
 			}
@@ -245,7 +247,7 @@ public class FlowFormController extends MultiActionController{
 		long instanceId=this.getFlowService().storeFlowInstance(instance);
 		Job job=this.getFlowService().executeJob(token, name,description, instanceId, user.getId(), user.getEmail());
 		
-		ModelAndView mav= new ModelAndView(new RedirectView("/get/JobManager.getUserJobs"));
+		ModelAndView mav= new ModelAndView(new RedirectView("JobManager.getUserJobs",true));
 		return mav;
 	}
 

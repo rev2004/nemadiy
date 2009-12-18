@@ -45,14 +45,14 @@
     
    </bean>
    
-   <bean id="repositoryClientInterface" class="org.imirsel.nema.repository.RepositoryClientImpl">
+   <bean id="repositoryClientConnectionPool" class="org.imirsel.nema.repository.RepositoryClientConnectionPool">
    
    </bean>
     
         <!--  component metadata manager service -->
     <bean id="componentMetadataService" class="org.imirsel.nema.service.impl.ComponentMetadataServiceImpl">
     	<property name="meandreProxyWrapper" ref="meandreProxy"/>
-    	<property name="repositoryClientInterface" ref="repositoryClientInterface"/>
+    	<property name="repositoryClientConnectionPool" ref="repositoryClientConnectionPool"/>
     </bean>
     
     
@@ -185,7 +185,7 @@
     <bean id="signupController" class="org.imirsel.nema.webapp.controller.SignupController">
         <property name="validator" ref="beanValidator"/>
         <property name="formView" value="signup"/>
-        <property name="successView" value="redirect:mainMenu.html"/>
+        <property name="successView" value="redirect:welcome.jsp"/>
         <property name="userManager" ref="userManager"/>
         <property name="roleManager" ref="roleManager"/>
         <property name="preferenceValueManager" ref="preferenceValueManager"/>
@@ -202,7 +202,7 @@
         <property name="validator" ref="beanValidator"/>
         <property name="formView" value="userForm"/>
         <property name="successView" value="redirect:users.html"/>
-        <property name="cancelView" value="redirect:mainMenu.html"/>
+        <property name="cancelView" value="redirect:welcome.jsp"/>
         <property name="userManager" ref="userManager"/>
         <property name="roleManager" ref="roleManager"/>
         <property name="mailEngine" ref="mailEngine"/>

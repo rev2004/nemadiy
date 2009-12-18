@@ -10,16 +10,16 @@ Click on your submissions to view details, the associated results or to remove t
     id="submissions" pagesize="5" class="table" export="false" defaultsort="3" defaultorder="descending" sort="list">
       
       <display:column property="name" escapeXml="true" sortable="true" titleKey="submission.name" style="width: 25%"
-        url="<c:url value='/get/JobManager.submissionDetail?from=listi'/>" paramId="id" paramProperty="id"/>    
+        url="/get/JobManager.submissionDetail?from=list" paramId="id" paramProperty="id"/>    
    
    
      
       <display:column property="type" escapeXml="true" sortable="true" titleKey="submission.type" style="width: 25%"
-        url="<c:url value='/get/JobManager.submissionDetail?from=list'/>" paramId="id" paramProperty="id"/>    
+        url="/get/JobManager.submissionDetail?from=list" paramId="id" paramProperty="id"/>    
    
    
       <display:column property="dateCreated" escapeXml="true" sortable="true" titleKey="submission.dateCreated" style="width: 25%"
-        url="<c:url value='/get/JobManager.submissionDetail?from=list'/>" paramId="id" paramProperty="id"/>    
+        url="/get/JobManager.submissionDetail?from=list" paramId="id" paramProperty="id"/>    
    
         
  </display:table>

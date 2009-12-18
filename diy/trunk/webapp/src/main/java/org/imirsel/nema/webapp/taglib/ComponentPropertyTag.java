@@ -86,14 +86,19 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 			canEdit = allowedToEdit(editRole);
 			if(dataTypeBean instanceof StringDataTypeBean){
 				StringDataTypeBean sd = (StringDataTypeBean) dataTypeBean;
-				if(sd.getRenderer()==null){
+				System.out.println("Came here.... String DatsTypeBean "+ sd.getRenderer());
+				if(sd.getRenderer()==null || sd.getRenderer().endsWith("StringRenderer")){
+					System.out.println("1");
 					if(sd.getValueList()!=null){
 						if(sd.getValueList().length>0){
-							htmlWidget=createSelectBox(property.getName(),cssWriter.toString(),property.getDefaultValue(),sd.getValueList(),sd.getValueList(),property.getValue(), sd.isHidden());
+							System.out.println("2");
+							htmlWidget=createSelectBox(property.getName(),cssWriter.toString(),property.getDefaultValue(),sd.getLabelList(),sd.getValueList(),property.getValue(), sd.isHidden());
 						}else{
+							System.out.println("2-other");
 							htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
 						}
 					}else{
+						System.out.println("1-other");
 						htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
 					}
 				}else if(sd.getRenderer().endsWith("FileRenderer")){
@@ -185,6 +190,11 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 		if(hidden){
 			return " ";
 		}
+		System.out.println("name: " + name );
+		System.out.println("Label List len: " + labelList.length );
+		System.out.println("Value List len: " + valueList.length );
+		
+		
 		
 		StringWriter swriter = new StringWriter();
 		if(value!=null){
@@ -203,9 +213,17 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 				swriter.append("<option value='"+valueList[i]+"'>"+valueList[i]+"</option>");
 			}else{
 				if(defaultValue.toString().equalsIgnoreCase(valueList[i].toString())){
+					if(labelList!=null&&i<labelList.length){
 					swriter.append("<option selected='selected' value='"+valueList[i]+"'>"+labelList[i]+"</option>");
+					}else{
+					swriter.append("<option selected='selected' value='"+valueList[i]+"'>"+valueList[i]+"</option>");
+					}
 				}else{
-					swriter.append("<option value='"+valueList[i]+"'>"+labelList[i]+"</option>");
+					if(labelList!=null&&i<labelList.length){
+						swriter.append("<option value='"+valueList[i]+"'>"+labelList[i]+"</option>");
+					}else{
+						swriter.append("<option value='"+valueList[i]+"'>"+labelList[i]+"</option>");
+					}
 				}
 			}
 		}

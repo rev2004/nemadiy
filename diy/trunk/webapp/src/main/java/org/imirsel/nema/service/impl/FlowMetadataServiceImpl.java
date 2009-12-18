@@ -111,7 +111,9 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 	 * @return
 	 */
 	private boolean isHiddenComponentForFlow(String flowUri, String componentInstanceUri){
-			if(componentInstanceUri.indexOf("fork")!=-1 || componentInstanceUri.indexOf("printobject")!=-1){
+			if(componentInstanceUri.indexOf("fork")!=-1 || componentInstanceUri.indexOf("printobject")!=-1
+			|| componentInstanceUri.indexOf("runbinary") !=-1		
+			){
 			return true;
 		}
 		return false;
@@ -160,6 +162,12 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
         boolean uploadSuccess=this.repository.uploadFlow(flowDesc, false);
 	    System.out.println("upload was "+ uploadSuccess);
 	   return flowDesc.getFlowURI();
+	}
+	
+	
+	public synchronized boolean removeFlow(String uri) throws TransmissionException{
+		boolean result=this.meandreProxyWrapper.removeResource(uri);
+		return result;
 	}
 
 
