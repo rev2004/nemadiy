@@ -123,8 +123,9 @@ import java.sql.SQLException;
 			//.getAbsoluteProcessWorkingDirectory(
 			//		cc.getFlowExecutionInstanceID());				
 			
-			processWorkingDirName=ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
-	
+			processWorkingDirName=ArtifactManagerImpl.getInstance().getResultLocationForJob(cc.getFlowExecutionInstanceID());//.getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
+			
+			
 		} catch (IOException e1) {
 			throw new ComponentExecutionException(e1);
 		}
@@ -135,9 +136,9 @@ import java.sql.SQLException;
 			processWorkingDir = new File(processWorkingDirName);
 		    // Open an output stream
 			FileOutputStream fout;		
-		    fout = new FileOutputStream ("datasetid.txt");			
+		    fout = new FileOutputStream("datasetid.txt");			
 		    // Print a line of text
-		    new PrintStream(fout).println (datasetID);
+		    new PrintStream(fout).println(datasetID);
 		    // Close our output stream
 		    fout.close();		
 		}
