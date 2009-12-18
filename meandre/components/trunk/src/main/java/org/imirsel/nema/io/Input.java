@@ -25,7 +25,7 @@ import org.imirsel.nema.annotations.*;
 		" metadata. Output is a 2D String array that holds the fileLocation  in the first column and its " +
 		"class metadata in the second column. If the fileLocation is a URL, it will be downloaded  to a local path. " +
 		"The inputListfiles should be  properly formed. If individual file field is not empty, the file list" +
-		" will be ignored.", name = "Input", tags = "input, file, URL,file download, CSV reader, XML reader",
+		" will be ignored.", name = "Phase Vocoder Input", tags = "input, file, URL,file download, CSV reader, XML reader",
 		 firingPolicy = Component.FiringPolicy.all)
 public class Input implements ExecutableComponent {
 	
@@ -36,21 +36,22 @@ public class Input implements ExecutableComponent {
 	@StringDataType()
 	@ComponentProperty(defaultValue = "", description = "A file with a list of audio files with  \"file URL\" and  class metadata, indicating the "
 			+ "location of the corresponding audio file and also its class", name = "FileListURL")
-	final static String DATA_PROPERTY_1 = "FileListURL";
+	final static String DATA_PROPERTY_1 = "File list URL";
 
 	@StringDataType()
 	@ComponentProperty(defaultValue = "http://nema.lis.uiuc.edu/example_wavs/ctpt03.wav", description = "A URL or local path of an individual file instead of the file list. If a URL is entered, the file will be downloaded. If this property is filled, the input file list will be ignored. ", name = "SingleFileURL")
-	final static String DATA_PROPERTY_2 = "SingleFileURL";
+	final static String DATA_PROPERTY_2 = "Single file URL";
 
 
-	@StringDataType(labelList = {"Bassoon C3","Clarinet A4","Flute F#4","French Horn E4", "Oboe A5"},valueList={"/data/raid3/RWC/notes/bassoon_RWC/f/rbn300.3.wav","/data/raid3/RWC/notes/clar_RWC/f/rcl409.3.wav","/data/raid3/RWC/notes/flute_RWC/f/rfl506.3.wav","/data/raid3/RWC/notes/horn_RWC/f/rhn404.3.wav","/data/raid3/RWC/notes/oboe_RWC/f/rob509.3.wav"})
+	
+	@StringDataType(labelList = {"Please Select","Bassoon C3","Clarinet A4","Flute F#4","French Horn E4", "Oboe A5"},valueList={"","/data/raid3/RWC/notes/bassoon_RWC/f/rbn300.3.wav","/data/raid3/RWC/notes/clar_RWC/f/rcl409.3.wav","/data/raid3/RWC/notes/flute_RWC/f/rfl506.3.wav","/data/raid3/RWC/notes/horn_RWC/f/rhn404.3.wav","/data/raid3/RWC/notes/oboe_RWC/f/rob509.3.wav"})
 	@ComponentProperty(defaultValue = "", description = "Select a file from the dataset. If this is chosen, the FileListURL or the SingleFileURL  properties will be ignored. ", name = "selectFile")
-	final static String DATA_PROPERTY_3 = "selectFile";	
+	final static String DATA_PROPERTY_3 = "Select a file";	
 	
 	
 	@StringDataType(renderer=FileRenderer.class)
 	@ComponentProperty(defaultValue = "", description = "Upload a file. If this is chosen, the FileListURL, the SingleFileURL  or the selectFile properties will be ignored. ", name = "uploadFile")
-	final static String DATA_PROPERTY_4 = "uploadFile";	
+	final static String DATA_PROPERTY_4 = "Upload a file";	
 
 	
 
@@ -91,7 +92,7 @@ public class Input implements ExecutableComponent {
 			throws ComponentExecutionException, ComponentContextException {
 		FileListURL = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));
 		SingleFileURL = String.valueOf(ccp.getProperty(DATA_PROPERTY_2));
-		selectFile = String.valueOf(ccp.getProperty(DATA_PROPERTY_4));
+		selectFile = String.valueOf(ccp.getProperty(DATA_PROPERTY_3));
 		uploadFile = String.valueOf(ccp.getProperty(DATA_PROPERTY_4));
 
 		
