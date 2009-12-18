@@ -426,6 +426,7 @@ public class MIREXClassificationEvalMain {
         String name = CSVResultFile.getName().replaceAll(".csv", "");
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
         String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.png";
+        String matlabPlotRelPath = "." + File.separator + name + ".friedman.tukeyKramerHSD.png";
         String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.csv";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
@@ -504,7 +505,7 @@ public class MIREXClassificationEvalMain {
             textOut.newLine();
             textOut.write("set(gca,'position',newpos);");
             textOut.newLine();
-            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+            textOut.write("saveas(fig,'" + matlabPlotRelPath + "');");
             textOut.newLine();
             textOut.write("fidFriedman=fopen('" + friedmanTablePath + "','w+');");
             textOut.newLine();
@@ -562,6 +563,7 @@ public class MIREXClassificationEvalMain {
         String name = CSVResultFile.getName().replaceAll(".csv", "");
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
         String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.png";
+        String matlabPlotRelPath = "." + File.separator + name + ".friedman.tukeyKramerHSD.png";
         String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.csv";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
@@ -640,7 +642,7 @@ public class MIREXClassificationEvalMain {
             textOut.newLine();
             textOut.write("set(gca,'position',newpos);");
             textOut.newLine();
-            textOut.write("saveas(fig,'" + matlabPlotPath + "');");
+            textOut.write("saveas(fig,'" + matlabPlotRelPath + "');");
             textOut.newLine();
             textOut.write("fidFriedman=fopen('" + friedmanTablePath + "','w+');");
             textOut.newLine();
