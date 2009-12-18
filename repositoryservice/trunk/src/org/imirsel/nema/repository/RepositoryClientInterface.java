@@ -19,6 +19,11 @@ import java.util.Set;
 public interface RepositoryClientInterface {
 
     /**
+     * Close any DB connections held.
+     */
+    public void close();
+
+    /**
      * Retrieves a list of NEMACollection Objects describing the available
      * collections.
      *
