@@ -11,7 +11,7 @@
         onclick="location.href='<c:url value="/userform.html?method=Add&from=list"/>'"
         value="<fmt:message key="button.add"/>"/>
 
-    <input type="button" onclick="location.href='<c:url value="/mainMenu.html"/>'"
+    <input type="button" onclick="location.href='<c:url value="/welcome.jsp"/>'"
         value="<fmt:message key="button.done"/>"/>
 </c:set>
 

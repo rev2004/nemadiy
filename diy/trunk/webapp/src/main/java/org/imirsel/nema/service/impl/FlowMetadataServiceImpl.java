@@ -164,7 +164,9 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 	   return flowDesc.getFlowURI();
 	}
 	
-	
+	/**This method removes a flow from meandre
+	 * 
+	 */
 	public synchronized boolean removeFlow(String uri) throws TransmissionException{
 		boolean result=this.meandreProxyWrapper.removeResource(uri);
 		return result;

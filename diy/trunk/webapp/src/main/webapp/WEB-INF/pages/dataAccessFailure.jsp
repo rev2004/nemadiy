@@ -17,4 +17,4 @@ ex.printStackTrace(new java.io.PrintWriter(out));
 %>
 -->
 
-<a href="mainMenu.html" onclick="history.back();return false">&#171; Back</a>
+<a href="welcome.jsp" onclick="history.back();return false">&#171; Back</a>

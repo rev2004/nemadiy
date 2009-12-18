@@ -5,7 +5,7 @@
 </head>
 <body id="jobstype"/>
 <p class="breadcrumbs" >
-<A class="breadcrumbs" HREF="/mainMenu.html"><fmt:message key="mainMenu.title"/></A>
+<A class="breadcrumbs" HREF="/welcome.jsp"><fmt:message key="mainMenu.title"/></A>
  > <span class="breadcrumbs"><fmt:message key="jobstype.title"/></span>
 </p>
 

@@ -148,6 +148,7 @@
    		<property name="flowService" ref="realFlowService"/>
    		<property name="submissionManager" ref="submissionManager"/>
     	<property name="userManager" ref="userManager"/>
+    	<property name="flowMetadataService" ref="flowMetadataService"/>
     	<property name="methodNameResolver"  ref="jobMethodResolver" />
     </bean>
     
@@ -216,7 +217,7 @@
         <property name="maxUploadSize" value="2097152"/>
     </bean>
 -->
-    <bean id="paSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basename" value="ApplicationResources"/>
         <property name="useCodeAsDefaultMessage" value="true"/>
     </bean>
