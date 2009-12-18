@@ -57,7 +57,7 @@ public class WriteResultPagePerFile {
             //add table from CSV files
             csvData[i] = DeliminatedTextFileUtilities.loadDelimTextData(CSVFiles[i], ",", -1);
             ArrayList<String[]> rows = new ArrayList<String[]>(csvData[i].length-1);
-            for (int j = 1; j < csvData.length; j++){
+            for (int j = 1; j < csvData[i].length; j++){
                 rows.add(csvData[i][j]);
             }
             items.add(new TableItem("evalMetrics", "Evaluation Metrics", csvData[i][0], rows));
