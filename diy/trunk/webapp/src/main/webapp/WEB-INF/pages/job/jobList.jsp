@@ -6,7 +6,12 @@
 </title>
 <meta name="heading" content="${jobs.title}"/>
 </head>
-<display:table name="jobList" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="4" defaultorder="descending" id="jobs" pagesize="5" class="table" export="false">
+
+<h3> This page is refreshed every 10 seconds.   <input type="button" value="Refresh Now" onClick="window.location.reload()">
+
+</h3>
+<display:table name="jobList" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="4" 
+defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10">
   <display:column property="name" escapeXml="true" sortable="true" titleKey="job.name"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
   <display:column property="description" escapeXml="true" sortable="true" titleKey="job.description"
@@ -22,7 +27,7 @@
   <display:column property="host" escapeXml="true" sortable="true" titleKey="job.host"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
   <display:column property="port" escapeXml="true" sortable="true" titleKey="job.port"
-        url="/get/JobManager.jobDetail?from=list"/>" paramId="id" paramProperty="id"/>
+        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
 </display:table>
 <script type="text/javascript">
     highlightTableRows("jobs");

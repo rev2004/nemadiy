@@ -75,8 +75,7 @@ public class JobController extends MultiActionController {
 			res.getWriter().write("<hello/>");
 			res.flushBuffer();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e,e);
 		}
 		
 		
@@ -161,17 +160,28 @@ public class JobController extends MultiActionController {
 		logger.info("Creating a submission with job:" + jobId + " and type: " + type);
 		Submission thisSubmission=this.submissionManager.getSubmission(user,type);
 		logger.info("Found a submission : "+ thisSubmission);
+		boolean success=false;
 		if(thisSubmission==null){
 			Submission s=this.submissionManager.saveSubmission(submission);
-			logger.info("submission not found -adding new submission the id is " + s.getId());
+			if (s!=null)  {
+				logger.info("submission not found -adding new submission the id is " + s.getId());
+				success=true;
+			}
 		}else{
 			// remove the existing submission and add the new submission
 			this.submissionManager.removeSubmission(thisSubmission.getId());
 			Submission s=this.submissionManager.saveSubmission(submission);
-			logger.info("submission found: removing it " +thisSubmission.getId()+" and adding new submission id is " + s.getId());
+			if (s!=null) {
+				success=true;
+				logger.info("submission found: removing it " +thisSubmission.getId()+" and adding new submission id is " + s.getId());
+			}
 		}
-		return new ModelAndView(new RedirectView("JobManager.getSubmissions",true));
-	
+		//return new ModelAndView(new RedirectView("/get/JobManager.getSubmissions"));
+		ModelAndView mav= new  ModelAndView("job/job");
+		mav.addObject("jobForSubmission",success);
+		mav.addObject(Constants.JOB, job);
+		logger.debug("change job "+job.getId()+"with "+job.getResults()+" to submission: "+success);
+		return mav;
 	}
 
 	

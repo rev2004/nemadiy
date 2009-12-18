@@ -6,6 +6,20 @@
 <body id="jobdetails">
 <h1>${job.name}</h1>
 <p>${job.description}</p>
+
+<div>
+<c:url value="/get/JobManager.getSubmissions" var="submissionUrl"></c:url>
+<c:if test="${!(empty jobForSubmission)}">
+ <c:choose>
+ 	<c:when test="${jobForSubmission}"> <fmt:message key="job.forSubmission.success"/></c:when>
+ 	<c:otherwise><fmt:message key="job.forSubmission.fail"/></c:otherwise>
+ 	
+ </c:choose>
+ Check out <a href="${submissionUrl}">all current submission</a>
+ 
+</c:if>
+</div>
+<br/>
 <div id="formcontainer_job">
   <div class="form_job">
     <fieldset id="pt1">
