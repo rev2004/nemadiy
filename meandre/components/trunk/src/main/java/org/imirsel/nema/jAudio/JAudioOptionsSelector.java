@@ -55,6 +55,7 @@ import jAudioFeatureExtractor.DataTypes.RecordingInfo;
        @ComponentOutput(description="jAudio Batch Object", name="BatchObjectOut")
        final static String DATA_OUTPUT_1= "BatchObjectOut";
 
+       @StringDataType(hide=true)
        @ComponentProperty(defaultValue="jAudioFiles/features.xml",
                        description="jAudio features.xml path, contains what features extractors are available",
                        name="Features List File")
