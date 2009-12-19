@@ -2,11 +2,16 @@
 <head>
    <title><fmt:message key="jobdetails.title" /></title>
    <meta name="menu" content="jobdetails" />
+   
+   <c:if test="${(job.statusCode==2)||(job.statusCode==1)||(job.statusCode==0)}">
      <meta http-equiv="refresh" content="10" />
-  
+  </c:if>
 </head>
 <body id="jobdetails">
+  <c:if test="${(job.statusCode==2)||(job.statusCode==1)||(job.statusCode==0)}" >
+ 
 <h4>This page autorefreshes every 10 seconds</h4>
+</c:if>
 <h1>${job.name}</h1>
 <p>${job.description}</p>
 <c:if test="${!(empty jobForSubmission)}">
