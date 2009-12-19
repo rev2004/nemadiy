@@ -2,6 +2,7 @@
 <head>
    <title><fmt:message key="jobdetails.title" /></title>
    <meta name="menu" content="jobdetails" />
+   <meta http-equiv="refresh" content="10" />
 </head>
 <body id="jobdetails">
 <h1>${job.name}</h1>
@@ -56,8 +57,8 @@
     <tr>
     <td>
     <ul>
-    <c:forEach var="result" items="${job.results}" >
-     <li><a href="${result.url}">Result</a></li>
+    <c:forEach var="result" items="${resultList}" >
+     <li><a href="${result.url}"><c:out value="${result.displayString}"/></a></li>
     </c:forEach>
     </ul>
     </td>
@@ -68,10 +69,7 @@
     
     </table>
     
-    
-    
-    
-    
+  
     
     </td>
     
