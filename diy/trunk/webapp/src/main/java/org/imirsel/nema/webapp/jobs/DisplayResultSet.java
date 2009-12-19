@@ -7,7 +7,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.model.JobResult;
-import org.imirsel.nema.webapp.controller.JobController;
+
 /**
  * 
  * @author Guojun Zhu
@@ -18,12 +18,15 @@ import org.imirsel.nema.webapp.controller.JobController;
 public class DisplayResultSet {
 	private List<DisplayResult> children;
 	private DisplayResult root;
-	final String ROOT_TOKEN = "result path";
+	final String ROOT_TOKEN = "result directory";
+	final String INDEX_TOKEN="results";
 	final String CHILD_TOKEN = "item";
 	static protected Log logger = LogFactory.getLog(DisplayResultSet.class);
 
 	public DisplayResultSet(Set<JobResult> results) {
 		if ((results != null) && (results.size() > 0)) {
+			String index=testIndexType(results);
+			if (index==null){
 			JobResult[] resultArray = results.toArray(new JobResult[0]);
 			int jroot = findRoot(resultArray);
 			this.root = new DisplayResult(resultArray[jroot].getUrl(),
@@ -38,14 +41,19 @@ public class DisplayResultSet {
 					if (displayable(url)) {
 						type = "img";
 						displayString = "<img width='150' src='" + url
-								+ "' alt='" + CHILD_TOKEN + count + "'/>";
+								+ "' alt='" + shorten(url) + "'/>";
 					} else {
-						type = "file";
-						displayString = CHILD_TOKEN + count;
+						type = resultArray[i].getResultType();
+						displayString = shorten(url);
 					}
 					children.add(new DisplayResult(url, displayString, type));
 					count++;
 				}
+			}
+			}
+			else {
+				this.root=new DisplayResult(index,INDEX_TOKEN,"index");
+				this.children=new ArrayList<DisplayResult>();
 			}
 		}
 	}
@@ -56,6 +64,21 @@ public class DisplayResultSet {
 
 	public DisplayResult getRoot() {
 		return root;
+	}
+	
+	
+	//test whether the result is the type with one index.html file linked to everything
+	private String testIndexType(Set<JobResult> results){
+		for (JobResult s:results){
+			String url=s.getUrl();
+			if (strip(url).equalsIgnoreCase("index.htm")){
+				return url;
+			}else if(s.getResultType().equalsIgnoreCase("dir") && (strip(url).equalsIgnoreCase("evaluation"))){
+				if (url.charAt(url.length()-1)=='/') return url+"index.htm";
+				else return url+"/index.htm";
+			}
+		}
+		return null;
 	}
 
 	// note that the root node is also removed from the results.
@@ -106,5 +129,18 @@ public class DisplayResultSet {
 			return true;
 		} else
 			return false;
+	}
+	
+	private String shorten(String url){
+		String shortUrl=strip(url);
+		if (shortUrl.length()<20) return shortUrl;
+		else {
+			String s=shortUrl.substring(0,5)+"..."+shortUrl.substring(shortUrl.length()-6);
+			return s;
+		}
+	}
+	public static void main(String[] arg){
+		DisplayResultSet ds=new DisplayResultSet(null);
+		System.out.print(ds.strip("fjdsakjf;asd/fasdjf;dasjf/"));
 	}
 }

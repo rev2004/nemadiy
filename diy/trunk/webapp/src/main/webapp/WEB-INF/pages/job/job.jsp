@@ -9,10 +9,11 @@
 <h4>This page autorefreshes every 10 seconds</h4>
 <h1>${job.name}</h1>
 <p>${job.description}</p>
-
-<div id="message">
-<c:url value="/get/JobManager.getSubmissions" var="submissionUrl"></c:url>
 <c:if test="${!(empty jobForSubmission)}">
+<div class="actionBox">
+<p class="actionBox">
+<c:url value="/get/JobManager.getSubmissions" var="submissionUrl"></c:url>
+
  <c:choose>
  	<c:when test="${jobForSubmission}"> <fmt:message key="job.forSubmission.success"/></c:when>
  	<c:otherwise><fmt:message key="job.forSubmission.fail"/></c:otherwise>
@@ -20,9 +21,11 @@
  </c:choose>
  Check out <a href="${submissionUrl}">all current submission</a>
  
-</c:if>
+
+</p>
 </div>
-<br/>
+</c:if>
+
 <div id="formcontainer_job">
   <div class="form_job">
     <fieldset id="pt1">
