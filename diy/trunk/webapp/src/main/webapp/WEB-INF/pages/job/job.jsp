@@ -8,7 +8,7 @@
 <h1>${job.name}</h1>
 <p>${job.description}</p>
 
-<div>
+<div id="message">
 <c:url value="/get/JobManager.getSubmissions" var="submissionUrl"></c:url>
 <c:if test="${!(empty jobForSubmission)}">
  <c:choose>
@@ -56,11 +56,15 @@
     
     <tr>
     <td>
+   
+    <c:if test="${job.done}">
+    <a target="_blank" href="${resultSet.root.url}"><c:out value="${resultSet.root.displayString}" escapeXml="false"/></a>
     <ul>
-    <c:forEach var="result" items="${resultList}" >
-     <li><a href="${result.url}"><c:out value="${result.displayString}"/></a></li>
+    <c:forEach var="result" items="${resultSet.children}" >
+     <li><a target="_blank" href="${result.url}"><c:out value="${result.displayString}" escapeXml="false"/></a></li>
     </c:forEach>
     </ul>
+    </c:if>
     </td>
     
     </tr>

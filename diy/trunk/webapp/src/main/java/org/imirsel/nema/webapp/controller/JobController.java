@@ -25,6 +25,7 @@ import org.imirsel.nema.service.FlowMetadataService;
 import org.imirsel.nema.service.SubmissionManager;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResult;
+import org.imirsel.nema.webapp.jobs.DisplayResultSet;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -207,11 +208,8 @@ public class JobController extends MultiActionController {
 		
 		
 		
-		List<DisplayResult> resultList=new ArrayList<DisplayResult>();
-		for (JobResult result:job.getResults()){
-			resultList.add(new DisplayResult(result));
-		}
-		mav.addObject("resultList", resultList);
+		DisplayResultSet resultSet=new DisplayResultSet(job.getResults());
+		mav.addObject("resultSet", resultSet);
 		return mav;
 	}
 	
@@ -235,13 +233,8 @@ public class JobController extends MultiActionController {
 		
 		
 		logger.debug("start to render displayed results");
-		List<DisplayResult> resultList=new ArrayList<DisplayResult>();
-		for (JobResult result:job.getResults()){
-			logger.debug("generate result of "+result.getUrl()+" into ");
-			resultList.add(new DisplayResult(result));
-			
-		}
-		mav.addObject("resultList", resultList);
+		DisplayResultSet resultSet=new DisplayResultSet(job.getResults());
+		mav.addObject("resultSet", resultSet);
 		return mav;
 	}
 
