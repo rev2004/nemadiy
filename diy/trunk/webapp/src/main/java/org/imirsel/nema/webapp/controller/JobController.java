@@ -109,10 +109,6 @@ public class JobController extends MultiActionController {
 		if(submissions!=null){
 			logger.info("submission size is: " + submissions.size());
 		}
-		
-		
-		
-		
 		return new ModelAndView("submission/submissionList", Constants.SUBMISSIONLIST, submissions);
 	}
 	
@@ -282,7 +278,8 @@ public class JobController extends MultiActionController {
 			result.setUrl(processUrl(result.getUrl()));
 			
 		}
-		ModelAndView mav= new ModelAndView("job/job", Constants.JOB, job);
+		ModelAndView mav= new ModelAndView("job/job");
+		mav.addObject(Constants.JOB, job);
 		
 		
 		logger.debug("start to render displayed results");
@@ -370,6 +367,28 @@ public class JobController extends MultiActionController {
 			 logger.error(e,e);
 			 }
  		return null;
+	}
+	
+	
+	
+	/**Returns the console
+	 * 
+	 * @param req
+	 * @param res
+	 * @return
+	 * @throws TransmissionException 
+	 */
+	public ModelAndView getConsole(HttpServletRequest request, HttpServletResponse response) throws TransmissionException{
+		String uri = request.getParameter("uri");
+		String text=this.getFlowMetadataService().getConsole(uri);
+		try {
+			response.setContentType("text/plain");
+			response.getOutputStream().println(text);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public void setRepositoryClientConnectionPool(

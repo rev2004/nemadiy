@@ -157,11 +157,12 @@
         class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
         <property name="mappings">
            <value>
+           	/JobManager.getConsole=getConsole
             /JobManager.getUserJobs=getuserjobs
             /JobManager.getSubmissions=getSubmissions
-             /JobManager.getAllSubmissions=getAllSubmissions
-             /JobManager.submissionAction=submissionAction
-             /JobManager.submissionDetail=submissionDetail
+            /JobManager.getAllSubmissions=getAllSubmissions
+            /JobManager.submissionAction=submissionAction
+            /JobManager.submissionDetail=submissionDetail
             /JobManager.hello=hello
            	/JobManager.jobDetail=jobdetail
             /JobManager.jobAction=jobaction

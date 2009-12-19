@@ -12,7 +12,7 @@
 		
 		
 		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/FlowManager.getFlowList">
-		    <Item name="MyJobs" title="My Jobs" page="/get/JobManager.getUserJobs" width="120"/>
+		    <Item name="MyJobs" title="My Tasks" page="/get/JobManager.getUserJobs" width="120"/>
             <Item name="MySubmissions" title="My Submissions" page="/get/JobManager.getSubmissions" width="120"/>
             <Item name="JobTypeTest" title="TEST FLOW" page="/get/FlowFormManager.getFlowTemplate?id=1" width="120"/>
             <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/FlowManager.getTemplateFlows?type=extraction" width="120"/>

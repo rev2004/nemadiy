@@ -172,6 +172,13 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 		return result;
 	}
 
+	
+
+	public String getConsole(String uri) throws TransmissionException {
+		String text=this.meandreProxyWrapper.getConsole(uri);
+		return text;
+	}
+	
 
 	private String getPropertyPrefix(String uri) {
 			int index = uri.lastIndexOf("/");
@@ -198,6 +205,7 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 	}
+
 
 
 

@@ -7,9 +7,10 @@
 <meta name="heading" content="${jobs.title}"/>
 </head>
 
-<h3> This page is refreshed every 10 seconds.   <input type="button" value="Refresh Now" onClick="window.location.reload()">
+<h4>
+ This page is refreshed every 10 seconds.   <input type="button" value="Refresh Now" onClick="window.location.reload()">
+</h4>	
 
-</h3>
 <display:table name="jobList" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="4" 
 defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10">
   <display:column property="name" escapeXml="true" sortable="true" titleKey="job.name"
