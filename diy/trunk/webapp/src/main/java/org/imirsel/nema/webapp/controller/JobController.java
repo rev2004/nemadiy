@@ -1,11 +1,16 @@
 package org.imirsel.nema.webapp.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Writer;
+import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +41,10 @@ import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.json.JsonWriter;
 
+import org.imirsel.nema.repository.RepositoryClientConnectionPool;
+import org.imirsel.nema.repository.RepositoryClientInterface;
+	
+
 public class JobController extends MultiActionController {
 
 	static protected Log logger=LogFactory.getLog(JobController.class);
@@ -43,6 +52,7 @@ public class JobController extends MultiActionController {
 	private FlowService flowService = null;
     private SubmissionManager submissionManager = null;
     private FlowMetadataService flowMetadataService;
+    private RepositoryClientConnectionPool repositoryClientConnectionPool;
 	
     
 
@@ -140,13 +150,16 @@ public class JobController extends MultiActionController {
 	
 	
 
+
 	/**selects the job for submission
 	 * 
 	 * @param req
 	 * @param res
 	 * @return
+	 * @throws SQLException 
+	 * @throws IOException 
 	 */
-	public ModelAndView selectJobForSubmission(HttpServletRequest req,	HttpServletResponse res){
+	public ModelAndView selectJobForSubmission(HttpServletRequest req,	HttpServletResponse res) throws SQLException, IOException{
 		String _jobId = req.getParameter("jobId");
 		Long jobId = Long.parseLong(_jobId);
 		Job job=this.flowService.getJob(jobId);
@@ -178,8 +191,48 @@ public class JobController extends MultiActionController {
 				success=true;
 				logger.info("submission found: removing it " +thisSubmission.getId()+" and adding new submission id is " + s.getId());
 			}
+		
 		}
-		//return new ModelAndView(new RedirectView("/get/JobManager.getSubmissions"));
+		
+		
+		Set<JobResult> results=job.getResults();
+		
+		boolean isADatasetResult=Boolean.FALSE;
+		String dataSetResultUrl = null;
+		JobResult eresult = null; 
+		for(JobResult result:results){
+			if(result.getUrl().endsWith("datasetid.txt")){
+				isADatasetResult = true;
+				dataSetResultUrl= result.getUrl();
+				eresult= result;
+				break;
+			}
+			
+		}
+		
+		if(isADatasetResult && dataSetResultUrl!=null){
+			
+			URL url = new URL(dataSetResultUrl);
+			BufferedReader in = new BufferedReader(	new InputStreamReader(url.openStream()));
+		
+			String _dataset_id_str="-1";
+			String username = this.userManager.getCurrentUser().getUsername();
+			while ((_dataset_id_str = in.readLine()) != null){
+				System.out.println("Data Set id read is: "+_dataset_id_str);
+			}  
+			Integer dataset_id = Integer.parseInt(_dataset_id_str);
+			int removeLen="/home/meandre/apps/projects/Meandre-Infrastructure-1.4.8/./published_resources/nema/".length();
+			String rurl = "http://nema.lis.uiuc.edu/nema_out/"+eresult.getUrl().substring(removeLen);
+			System.out.println("URL is "+ rurl);	
+			RepositoryClientInterface client=this.getRepositoryClient();
+			try{
+			    client.publishResultForDataset(dataset_id, username, username + eresult.getJob().getName(),rurl);       
+			}finally{
+				this.repositoryClientConnectionPool.returnToPool(client);
+			} 
+        }
+		
+		
 		ModelAndView mav= new  ModelAndView("job/job");
 		mav.addObject("jobForSubmission",success);
 		mav.addObject(Constants.JOB, job);
@@ -318,5 +371,19 @@ public class JobController extends MultiActionController {
 			 }
  		return null;
 	}
+	
+	public void setRepositoryClientConnectionPool(
+			RepositoryClientConnectionPool repositoryClientConnectionPool) {
+		this.repositoryClientConnectionPool = repositoryClientConnectionPool;
+	}
+
+	public RepositoryClientConnectionPool getRepositoryClientConnectionPool() {
+		return repositoryClientConnectionPool;
+	}
+	
+	public RepositoryClientInterface getRepositoryClient() {
+		return repositoryClientConnectionPool.getFromPool();
+	}
+
 
 }
