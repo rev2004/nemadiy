@@ -62,7 +62,7 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 	}
 
 
-	public RepositoryClientImpl getRepositoryClient() {
+	public RepositoryClientInterface getRepositoryClient() {
 		return repositoryClientConnectionPool.getFromPool();
 	}
 
@@ -87,7 +87,7 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 
 
 	public Map<String, Property> getComponentPropertyDataType(Component component, String flowUri) throws TransmissionException, SQLException {
-		RepositoryClientImpl rpi=this.getRepositoryClient();
+		RepositoryClientInterface rpi=this.getRepositoryClient();
 		List<NEMADataset> nemaDatasets = rpi.getDatasets();
 		QueryableRepository qp= meandreProxyWrapper.getRepository();
 		Model model =getEmptyModel();
@@ -164,7 +164,7 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 					// this is a collection
 					ArrayList<String> labelList = new ArrayList<String>();
 					ArrayList<Object> valueList = new ArrayList<Object>();
-					RepositoryClientImpl rpi=this.getRepositoryClient();
+					RepositoryClientInterface rpi=this.getRepositoryClient();
 					try {
 						List<NEMADataset> ltb=rpi.getDatasets();
 						for(NEMADataset dataset:ltb){
