@@ -20,9 +20,10 @@ import org.imirsel.nema.renderers.FileRenderer;
 import org.imirsel.nema.util.FileDownload;
 import org.imirsel.service.ArtifactManagerImpl;
 import org.imirsel.nema.annotations.*;
+import org.imirsel.nema.util.FileCopy;
 
 @Component(creator = "Mert Bay", description = "Reads an XML or CSV file from a local directory or an URL, with File location and  class " +
-		" metadata. Output is a 2D String array that holds the fileLocation  in the first column and its " +
+		" metadata. Output is a 1D String array that holds the fileLocation  in the first column and its " +
 		"class metadata in the second column. If the fileLocation is a URL, it will be downloaded  to a local path. " +
 		"The inputListfiles should be  properly formed. If individual file field is not empty, the file list" +
 		" will be ignored.", name = "Phase Vocoder Input", tags = "input, file, URL,file download, CSV reader, XML reader",
@@ -126,7 +127,15 @@ public class Input implements ExecutableComponent {
 				String workingDirName = commonStorageDir;
 				inputFiles[0] = downloadFiles(selectFile, workingDirName);
 			} else {
-				inputFiles[0] = selectFile;
+				String dstname = commonStorageDir + File.separator +  selectFile.substring(selectFile.lastIndexOf("/")+1, selectFile.length());
+				try {
+					String copiedFile = FileCopy.copy(selectFile, dstname);
+					inputFiles[0] = copiedFile;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		//	inputFiles[0][1] = "";
 			out.println("no 1:\tFileName="
@@ -145,7 +154,15 @@ public class Input implements ExecutableComponent {
 				String workingDirName = commonStorageDir;
 				inputFiles[0] = downloadFiles(SingleFileURL, workingDirName);
 			} else {
-				inputFiles[0] = SingleFileURL;
+				String dstname = commonStorageDir + File.separator + selectFile.substring(SingleFileURL.lastIndexOf("/")+1, SingleFileURL.length());
+				try {
+					String copiedFile = FileCopy.copy(SingleFileURL, dstname);
+					inputFiles[0] = copiedFile;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	
 			}
 		//	inputFiles[0][1] = "";
 			out.println("no 1:\tFileName="
