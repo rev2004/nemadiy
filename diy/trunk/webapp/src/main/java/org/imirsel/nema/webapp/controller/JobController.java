@@ -2,6 +2,7 @@ package org.imirsel.nema.webapp.controller;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.FlowMetadataService;
 import org.imirsel.nema.service.SubmissionManager;
 import org.imirsel.nema.service.UserManager;
+import org.imirsel.nema.webapp.jobs.DisplayResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -205,7 +207,11 @@ public class JobController extends MultiActionController {
 		
 		
 		
-		
+		List<DisplayResult> resultList=new ArrayList<DisplayResult>();
+		for (JobResult result:job.getResults()){
+			resultList.add(new DisplayResult(result));
+		}
+		mav.addObject("resultList", resultList);
 		return mav;
 	}
 	
@@ -219,12 +225,24 @@ public class JobController extends MultiActionController {
 		System.out.println("STATUS CODE: " + job.getStatusCode());
 		System.out.println("STATUS VAL: " + job.getJobStatus());
 		System.out.println("NUMBER of RESULTS: "+ job.getResults().size());
+		
 		for(JobResult result:job.getResults()){
 			System.out.println("RESULT: " + result.getUrl() + "  "+ result.getId());
 			result.setUrl(processUrl(result.getUrl()));
 			
 		}
-		return new ModelAndView("job/job", Constants.JOB, job);
+		ModelAndView mav= new ModelAndView("job/job", Constants.JOB, job);
+		
+		
+		logger.debug("start to render displayed results");
+		List<DisplayResult> resultList=new ArrayList<DisplayResult>();
+		for (JobResult result:job.getResults()){
+			logger.debug("generate result of "+result.getUrl()+" into ");
+			resultList.add(new DisplayResult(result));
+			
+		}
+		mav.addObject("resultList", resultList);
+		return mav;
 	}
 
 	
