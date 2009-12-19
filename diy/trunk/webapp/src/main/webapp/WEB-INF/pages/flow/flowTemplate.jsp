@@ -9,8 +9,8 @@
 
 
 <div class="actionBox">
-<p class="actionBox">Please enter the Job details the name and
-description and job parameters to run the flow.</p>
+<p class="actionBox">Please enter the Task details, the name and
+description and the parameters to run the flow.</p>
 </div>
 <br />
 <br />
@@ -21,11 +21,11 @@ description and job parameters to run the flow.</p>
 <form id="theform" action="<c:url value='/get/FlowFormManager.saveFlow'/>"
 	enctype="multipart/form-data" method="post">
 
-<fieldset id="pt1"><label>Name</label> <input name="name"
+<fieldset id="pt1"><label>Please enter Task Name:</label> <input name="name"
 	type="text" value="${flow.name}" /></fieldset>
 
 
-<fieldset id="pt1"><label>Description</label> <textarea
+<fieldset id="pt1"><label>Please enter Task Description:</label> <textarea
 	name="description" rows="5" cols="50">${flow.description}</textarea></fieldset>
 
 

@@ -34,4 +34,12 @@ public interface FlowMetadataService {
 	 * @throws TransmissionException
 	 */
 	public boolean removeFlow(String uri) throws TransmissionException;
+
+	/**Gets the console
+	 * 
+	 * @param uri
+	 * @return
+	 * @throws TransmissionException
+	 */
+	public String getConsole(String uri) throws TransmissionException;
 }

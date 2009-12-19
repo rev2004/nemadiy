@@ -12,8 +12,8 @@ ${flow.description}
 
 					<div class="actionBox">
                         <p class="actionBox">
-                      	Please enter the Job details the name and description, the collection information
-                      	to run the flow and the 
+                      	Please enter the Task details the name, the description and the collection information
+                      	to run the flow 
                          </p>
                     </div>
 

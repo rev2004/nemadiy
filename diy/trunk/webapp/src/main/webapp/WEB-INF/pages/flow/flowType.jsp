@@ -8,7 +8,7 @@
 <body id="jobstype"/>
 
 <p>
-HELLO The flows of type ${flowType} available to execute are:
+The flows of type ${flowType} available to execute are:
 </p>
 
 <c:forEach items="${flowList}" var="flow">

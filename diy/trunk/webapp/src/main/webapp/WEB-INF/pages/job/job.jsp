@@ -2,9 +2,11 @@
 <head>
    <title><fmt:message key="jobdetails.title" /></title>
    <meta name="menu" content="jobdetails" />
-   <meta http-equiv="refresh" content="10" />
+     <meta http-equiv="refresh" content="10" />
+  
 </head>
 <body id="jobdetails">
+<h4>This page autorefreshes every 10 seconds</h4>
 <h1>${job.name}</h1>
 <p>${job.description}</p>
 
@@ -47,6 +49,10 @@
       <tr>
         <td>End Time:</td>
         <td>${job.endTimestamp}</td>
+      </tr>
+        <tr>
+        <td>Execution Id:</td>
+        <td>${job.executionInstanceId}</td>
       </tr>
     </table>
     </td>
@@ -111,6 +117,21 @@
       </fieldset>
     </div>
   </form>
+  
+
+    <c:if test="${job.statusCode!=0}">
+  	<script>
+    new Ajax.PeriodicalUpdater('console', "<c:url value='/get/JobManager.getConsole'/>",
+		  {
+		    method: 'get',
+		    parameters: {uri:"${job.executionInstanceId}" },
+		    frequency: 5
+		});
+    </script>
+  </c:if>
+  <div id="console">(getting console...)</div>
+  
+  
 </div>
 </body>
 

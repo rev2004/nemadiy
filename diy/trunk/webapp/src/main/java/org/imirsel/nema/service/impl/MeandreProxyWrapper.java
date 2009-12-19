@@ -151,6 +151,11 @@ public class MeandreProxyWrapper {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public String getConsole(String uri) {
+		return this.meandreProxy.getJobConsole(uri);
+		
+	}
 	
 	
 

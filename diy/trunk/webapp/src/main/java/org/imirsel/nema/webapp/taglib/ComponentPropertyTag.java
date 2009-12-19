@@ -222,7 +222,7 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 					if(labelList!=null&&i<labelList.length){
 						swriter.append("<option value='"+valueList[i]+"'>"+labelList[i]+"</option>");
 					}else{
-						swriter.append("<option value='"+valueList[i]+"'>"+labelList[i]+"</option>");
+						swriter.append("<option value='"+valueList[i]+"'>"+valueList[i]+"</option>");
 					}
 				}
 			}
