@@ -37,7 +37,7 @@ ul>li.error {
 }
 
 div.message p, div.message p {
-    margin-bottom: 0;
+    margin: 5px;
 }
 
 img.validationWarning, div.error img.icon, div.message img.icon, li.error img.icon {
