@@ -111,8 +111,13 @@ public class FlowMetadataServiceImpl implements FlowMetadataService {
 	 * @return
 	 */
 	private boolean isHiddenComponentForFlow(String flowUri, String componentInstanceUri){
-			if(componentInstanceUri.indexOf("fork")!=-1 || componentInstanceUri.indexOf("printobject")!=-1
-			|| componentInstanceUri.indexOf("runbinary") !=-1		
+			if(componentInstanceUri.indexOf("fork")!=-1 || 
+		     componentInstanceUri.indexOf("printobject")!=-1 ||
+			 componentInstanceUri.indexOf("runbinary") !=-1|| 
+			 componentInstanceUri.indexOf("StructuralSegmentationEvaluator".toLowerCase())!=-1	||
+			 componentInstanceUri.indexOf("TrainTestGateKeeper".toLowerCase())!=-1	||
+			 componentInstanceUri.indexOf("ClassificationEvaluator".toLowerCase())!=-1||	
+			 componentInstanceUri.indexOf("ClassificationEvaluationsAggregator".toLowerCase())!=-1	
 			){
 			return true;
 		}
