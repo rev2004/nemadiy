@@ -35,7 +35,7 @@
      </target>
 
     <target name="dist" depends="compile"> 
-    <jar destfile="${dist}/nema-repository-temp-0.1-SNAPSHOT.jar" basedir="${build}"/>
+    <jar destfile="${dist}/nema-temp-repository-0.1-SNAPSHOT.jar" basedir="${build}"/>
     </target>
 	
 
