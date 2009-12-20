@@ -8,7 +8,7 @@
 </head>
 
 <h4>
- This page is refreshed every 10 seconds.   <input type="button" value="Refresh Now" onClick="window.location.reload()">
+ This page is refreshes every 10 seconds.   <input type="button" value="Click to Refresh Now" onClick="window.location.reload()">
 </h4>	
 
 <display:table name="jobList" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="4" 

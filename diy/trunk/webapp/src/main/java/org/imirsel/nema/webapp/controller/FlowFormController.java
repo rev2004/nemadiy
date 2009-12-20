@@ -249,6 +249,9 @@ public class FlowFormController extends MultiActionController{
 		
 		
 		ModelAndView mav= new ModelAndView(new RedirectView("JobManager.getUserJobs",true));
+		
+		//ModelAndView mav = new ModelAndView("job/job");
+		//mav.addObject(Constants.JOB, job);
 		return mav;
 	}
 

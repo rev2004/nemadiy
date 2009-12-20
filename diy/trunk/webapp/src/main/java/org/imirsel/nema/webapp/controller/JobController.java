@@ -41,6 +41,7 @@ import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.json.JsonWriter;
 
+import org.imirsel.nema.repository.PublishedResult;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repository.RepositoryClientInterface;
 	
@@ -159,6 +160,9 @@ public class JobController extends MultiActionController {
 		String _jobId = req.getParameter("jobId");
 		Long jobId = Long.parseLong(_jobId);
 		Job job=this.flowService.getJob(jobId);
+		String username = this.userManager.getCurrentUser().getUsername();
+		
+		String submissionName = username+" "+ job.getName();
 		Flow instanceOfFlow=job.getFlow().getInstanceOf();
 		logger.info("getting job's flow "+ instanceOfFlow);
 		User user=this.userManager.getCurrentUser();
@@ -168,7 +172,7 @@ public class JobController extends MultiActionController {
 		submission.setUser(user);
 		submission.setJobId(jobId);
 		submission.setType(type);
-		submission.setName(job.getName());
+		submission.setName(submissionName);
 		logger.info("Creating a submission with job:" + jobId + " and type: " + type);
 		Submission thisSubmission=this.submissionManager.getSubmission(user,type);
 		logger.info("Found a submission : "+ thisSubmission);
@@ -193,36 +197,52 @@ public class JobController extends MultiActionController {
 		
 		Set<JobResult> results=job.getResults();
 		
-		boolean isADatasetResult=Boolean.FALSE;
 		String dataSetResultUrl = null;
 		JobResult eresult = null; 
+		String token = null;
+		String path = null;
 		for(JobResult result:results){
-			if(result.getUrl().endsWith("datasetid.txt")){
-				isADatasetResult = true;
-				dataSetResultUrl= result.getUrl();
-				eresult= result;
+			if(result.getUrl().endsWith("results") && result.getResultType().equals("dir")){
+				eresult = result;
+				path = result.getUrl();
+				String[] list=path.split("/");
+				int count = list.length;
+				System.out.println("$$$$$$len is: " + count);
+				int tokenLoc = count-2;
+				for(String s:list){System.out.println("ssss---> "+ s);}
+				token = list[tokenLoc];
 				break;
 			}
-			
+		}
+
+
+		dataSetResultUrl = "http://nema.lis.uiuc.edu/nema_out/"+ token+"/"+"datasetid.txt";
+		
+		URL url = new URL(dataSetResultUrl);
+		BufferedReader in = new BufferedReader(	new InputStreamReader(url.openStream()));
+	
+		String _dataset_id_str="-1";
+		
+		String line=null;
+		while ((line = in.readLine()) != null){
+			_dataset_id_str=line;
+			System.out.println("Data Set id read is: "+_dataset_id_str);
 		}
 		
-		if(isADatasetResult && dataSetResultUrl!=null){
-			
-			URL url = new URL(dataSetResultUrl);
-			BufferedReader in = new BufferedReader(	new InputStreamReader(url.openStream()));
 		
-			String _dataset_id_str="-1";
-			String username = this.userManager.getCurrentUser().getUsername();
-			while ((_dataset_id_str = in.readLine()) != null){
-				System.out.println("Data Set id read is: "+_dataset_id_str);
-			}  
-			Integer dataset_id = Integer.parseInt(_dataset_id_str);
-			int removeLen="/home/meandre/apps/projects/Meandre-Infrastructure-1.4.8/./published_resources/nema/".length();
-			String rurl = "http://nema.lis.uiuc.edu/nema_out/"+eresult.getUrl().substring(removeLen);
-			System.out.println("URL is "+ rurl);	
+		Integer dataset_id = -1;
+		try{
+		dataset_id= Integer.parseInt(_dataset_id_str);
+		}catch(Exception ex){
+			System.out.println("ERROR: could not convert  " + _dataset_id_str + " to an integer");
+		}finally{
+			in.close();
+		}
+		
+		if(dataset_id!=-1){
 			RepositoryClientInterface client=this.getRepositoryClient();
 			try{
-			    client.publishResultForDataset(dataset_id, username, username + eresult.getJob().getName(),rurl);       
+			    client.publishResultForDataset(dataset_id, username,  submissionName ,path);       
 			}finally{
 				this.repositoryClientConnectionPool.returnToPool(client);
 			} 
@@ -281,7 +301,6 @@ public class JobController extends MultiActionController {
 		ModelAndView mav= new ModelAndView("job/job");
 		mav.addObject(Constants.JOB, job);
 		
-		
 		logger.debug("start to render displayed results");
 		DisplayResultSet resultSet=new DisplayResultSet(job.getResults());
 		mav.addObject("resultSet", resultSet);
@@ -298,9 +317,35 @@ public class JobController extends MultiActionController {
 	}
 
 	public ModelAndView submissionAction(HttpServletRequest req,
-			HttpServletResponse res) {
+			HttpServletResponse res) throws SQLException {
 		String _submissionId = req.getParameter("id");
 		long submissionId = Long.parseLong(_submissionId);
+		Submission submission=this.submissionManager.getSubmission(submissionId);
+		String username= this.userManager.getCurrentUser().getUsername();
+		String submissionName = submission.getName();
+		
+		RepositoryClientInterface rci = null;
+		
+		try{
+			rci=this.getRepositoryClient();
+			List<PublishedResult> resultList=rci.getPublishedResultsForDataset(username);
+			if(!resultList.isEmpty()){
+				int id =-1;
+				for(PublishedResult pr:resultList){
+					if(pr.getName().equals(submissionName)){
+						id = pr.getId();
+					}
+				}
+				if(id!=-1){
+					rci.deletePublishedResult(id);
+				}
+			}
+		}finally{
+		this.getRepositoryClientConnectionPool().returnToPool(rci);
+		
+		}
+		
+
 		this.submissionManager.removeSubmission(submissionId);
 		return new ModelAndView(new RedirectView("JobManager.getSubmissions",true));
 	}

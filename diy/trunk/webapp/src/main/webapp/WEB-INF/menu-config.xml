@@ -10,11 +10,12 @@
 	    <Menu name="welcomeMenu" title="welcomeMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/welcome.jsp"/>
 		
 		
+		<Menu name="mirexMenu" title="mirexMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/get/FlowFormManager.getFlowTemplate?id=10"/>
+		
 		
 		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/FlowManager.getFlowList">
 		    <Item name="MyJobs" title="My Tasks" page="/get/JobManager.getUserJobs" width="120"/>
             <Item name="MySubmissions" title="My Submissions" page="/get/JobManager.getSubmissions" width="120"/>
-            <Item name="JobTypeTest" title="TEST FLOW" page="/get/FlowFormManager.getFlowTemplate?id=1" width="120"/>
             <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/FlowManager.getTemplateFlows?type=extraction" width="120"/>
             <Item name="JobTypeClassification" title="Classification" page="/get/FlowManager.getTemplateFlows?type=classification" width="120"/>
      	    <Item name="JobTypeEvaluation" title="Evaluation" page="/get/FlowManager.getTemplateFlows?type=evaluation" width="120"/>
@@ -36,7 +37,6 @@
 
 		
 		<Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" />
-		
 		<Menu name="MainMenu" title="mainMenu.title" page="/login.jsp" /> 
 		<Menu name="Logout" title="user.logout" page="/logout.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
     </Menus>

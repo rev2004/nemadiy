@@ -145,6 +145,7 @@
 
 	<!-- job controller -->
  	<bean id="jobController" class="org.imirsel.nema.webapp.controller.JobController">
+ 	 	<property name="repositoryClientConnectionPool" ref="repositoryClientConnectionPool"/>
    		<property name="flowService" ref="realFlowService"/>
    		<property name="submissionManager" ref="submissionManager"/>
     	<property name="userManager" ref="userManager"/>
