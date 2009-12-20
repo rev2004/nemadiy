@@ -450,6 +450,14 @@ public interface RepositoryClientInterface {
      */
     public void publishResultForDataset(int dataset_id, String username, String systemName, String result_path) throws SQLException;
 
+    /**This is a HACK it returns all the published results for a user.
+     * It might be from any dataset. Added by Amit at the last minute.
+     * 
+     * @param username
+     * @return
+     * @throws SQLException
+     */
+    public List<PublishedResult> getPublishedResultsForDataset(String username) throws SQLException;;
     /**
      * Returns a list of the published results for a username.
      *

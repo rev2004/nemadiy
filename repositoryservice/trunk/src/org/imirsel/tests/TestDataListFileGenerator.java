@@ -11,7 +11,7 @@ import org.imirsel.nema.repository.DatasetListFileGenerator;
 import org.imirsel.nema.repository.NEMAMetadataEntry;
 import org.imirsel.nema.repository.PublishedResult;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
-import org.imirsel.nema.repository.RepositoryClientImpl;
+import org.imirsel.nema.repository.RepositoryClientInterface;
 
 public class TestDataListFileGenerator {
 
@@ -86,7 +86,7 @@ public class TestDataListFileGenerator {
 		 
 		//Testing getting results for dataset id 
 		RepositoryClientConnectionPool pool = RepositoryClientConnectionPool.getInstance();
-		RepositoryClientImpl client = pool.getFromPool();
+		RepositoryClientInterface client = pool.getFromPool();
 		List<PublishedResult> resultList = null;
 		try{
 		   resultList = client.getPublishedResultsForDataset(datasetID);
