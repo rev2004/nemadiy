@@ -7,20 +7,24 @@
         width: 701px;
         margin: 0 auto 20px auto;
         padding: 0;
-        text-align: left;
+        text-align: justify;
     }
     div#main {
         width: 97% !important;
+/*
         text-align: center;
+*/
         margin: 0;
     }
         div#main h1 {
-            margin-left: -330px;
+            margin-left: 1em;
         }
         div#main p {
             margin-top: 10px;
             margin-bottom: 0;
+			margin-right: 30px;
             padding-bottom: 0;
+			text-align: left;
         }
 
     div#local {
