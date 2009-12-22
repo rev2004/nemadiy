@@ -1,49 +1,48 @@
 
 
 /*
-#breadcrumbs {
-	font-size: .8em;
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-	font-weight: 600;
-	margin-top: .5em;
-}
-
-#breadcrumbs a{
-	font-size: .7em;
-	color: #0000ff;
-}
-*/
-
-
+ #breadcrumbs {
+ font-size: .8em;
+ font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+ font-weight: 600;
+ margin-top: .5em;
+ }
+ 
+ #breadcrumbs a{
+ font-size: .7em;
+ color: #0000ff;
+ }
+ */
 div.actionBox {
-	background-color: #dddddd;
-	width: 80%;
-	margin: 0 auto;
-	margin-top: 2em; 
-	text-align : justify;
-	padding: 1em;
-	padding-left:1.5em;
-	text-align: left;
-	border: solid 1px;
+    background-color: #dddddd;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 2em;
+    text-align: justify;
+    padding: 1em;
+    padding-left: 1.5em;
+    text-align: left;
+    border: solid 1px;
 }
 
 #actionbutton, #GoForm1, #GoForm2, #GoForm3 {
-	float: right;
-	display:inline;
-	margin-left: 2em;
-	margin-right: 1.5em;
 
+   float:left;
+    display: inline;
+    margin-left: 474px;
+    margin-right: 1.5em;
+	margin-top:.5em;
+	clear:left;
 }
 
-
-
 h2.actionBox {
-	display:inline;
-	width:auto;
+	font-size:1.5em;
+    position:absolute;
+    width: auto;
 }
 
 p.actionBox {
-	text-align:justify;
+    text-align: justify;
 }
 
 
