@@ -27,11 +27,11 @@ div.actionBox {
 #actionbutton, #GoForm1, #GoForm2, #GoForm3 {
 
    float:left;
-    display: inline;
-    margin-left: 474px;
-    margin-right: 1.5em;
+    display:block;
+    margin-left: 585px;
+    margin-right: 5em;
 	margin-top:.5em;
-	clear:left;
+	clear:right;
 }
 
 h2.actionBox {
