@@ -48,6 +48,5 @@ public class SubmissionDaoHibernate extends GenericDaoHibernate<Submission, Long
 		  return submissionList.get(0);
 	}
 
-	
 
 }
