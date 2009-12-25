@@ -12,6 +12,10 @@ public interface SubmissionDao extends GenericDao<Submission, Long> {
 	 List<Submission> getSubmissions(User user);
 
 	 Submission getSubmission(User user, String type);
+	 Submission save(Submission submission);
+	 Submission get(Long submissionId);
+	 List<Submission> getAllDistinct();
+	 void remove(Long l);
 
 
 }

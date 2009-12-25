@@ -1,5 +1,6 @@
 package org.imirsel.nema.dao;
 
+import org.imirsel.nema.model.Submission;
 import org.imirsel.nema.model.User;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UsernameNotFoundException;
@@ -46,4 +47,7 @@ public interface UserDao extends GenericDao<User, Long> {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     String getUserPassword(String username);
     
+    List<User> getAllDistinct();
+    User get(Long userId);
+    void remove(Long l);
 }
