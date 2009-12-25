@@ -73,7 +73,10 @@ public class DisplayResultSet {
 			String url=s.getUrl();
 			if (strip(url).equalsIgnoreCase("index.htm")){
 				return url;
-			}else if(s.getResultType().equalsIgnoreCase("dir") && (strip(url).equalsIgnoreCase("evaluation"))){
+			}else if(s.getResultType().equalsIgnoreCase("dir") && 
+					((strip(url).equalsIgnoreCase("evaluation")))    ||  
+					((strip(url).equalsIgnoreCase("overall")))		
+			){
 				if (url.charAt(url.length()-1)=='/') return url+"index.htm";
 				else return url+"/index.htm";
 			}

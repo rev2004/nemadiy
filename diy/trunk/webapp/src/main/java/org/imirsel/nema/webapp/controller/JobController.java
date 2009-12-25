@@ -207,7 +207,6 @@ public class JobController extends MultiActionController {
 				path = result.getUrl();
 				String[] list=path.split("/");
 				int count = list.length;
-				System.out.println("$$$$$$len is: " + count);
 				int tokenLoc = count-2;
 				for(String s:list){System.out.println("ssss---> "+ s);}
 				token = list[tokenLoc];
