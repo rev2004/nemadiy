@@ -164,6 +164,10 @@
 <id>taneshanet</id>
 <url>http://tanesha.net/maven2</url>
 </repository>
+<repository>
+<id>snapshot</id>
+<url>http://www.monkproject.org/snapshot</url>
+</repository>
 </repositories>
   
   
