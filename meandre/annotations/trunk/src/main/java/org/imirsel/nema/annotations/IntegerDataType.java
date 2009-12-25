@@ -14,6 +14,7 @@ public @interface IntegerDataType {
 	int min() default Integer.MIN_VALUE;
 	int max() default Integer.MAX_VALUE;
 	int[] valueList() default {};
+	String[] labelList() default {};
 	Class<? extends Renderer> renderer() default IntegerRenderer.class;
 	Class<? extends RolePrincipal> editRole() default RoleUser.class;
 	boolean hide() default false;
