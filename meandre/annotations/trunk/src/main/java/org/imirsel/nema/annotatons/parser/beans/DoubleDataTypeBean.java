@@ -4,6 +4,7 @@ package org.imirsel.nema.annotatons.parser.beans;
 public class DoubleDataTypeBean implements DataTypeBean{
 	String editRole;
 	double[] valueList;
+	String[] labelList;
 	String renderer;
 	double max;
 	double min;
@@ -52,6 +53,12 @@ public class DoubleDataTypeBean implements DataTypeBean{
 	public void setHidden(boolean hide) {
 		this.hidden = hide;
 	}
-	
+	public void setLabelList(String[] labelList) {
+		this.labelList = labelList;
+		
+	}
+	public String[] getLabelList(){
+		return this.labelList;
+	}
 
 }

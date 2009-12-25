@@ -4,6 +4,7 @@ package org.imirsel.nema.annotatons.parser.beans;
 public class StringDataTypeBean implements DataTypeBean{
 	String editRole;
 	String[] valueList;
+	String[] labelList;
 	String renderer;
 	String className = "org.imirsel.nema.annotatons.parser.beans.StringDataTypeBean";
 	boolean hidden;
@@ -36,7 +37,13 @@ public class StringDataTypeBean implements DataTypeBean{
 	public void setHidden(boolean hide) {
 		this.hidden = hide;
 	}
+	public void setLabelList(String[] labelList2) {
+		this.labelList= labelList2;
+	}
 	
+	public String[] getLabelList(){
+		return this.labelList;
+	}
 
 	
 }

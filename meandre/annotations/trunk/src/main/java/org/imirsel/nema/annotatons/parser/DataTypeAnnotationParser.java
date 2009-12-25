@@ -71,6 +71,7 @@ public class DataTypeAnnotationParser {
 			double max=((DoubleDataType)annotation).max();
 			double min=((DoubleDataType)annotation).min();
 			String rendererClass=((DoubleDataType)annotation).renderer().getName();
+			String[] labelList = ((DoubleDataType)annotation).labelList();
 			double[] list=((DoubleDataType)annotation).valueList();
 			String visibilityRole = ((DoubleDataType)annotation).editRole().getName();
 			boolean hidden=((DoubleDataType)annotation).hide();
@@ -81,6 +82,7 @@ public class DataTypeAnnotationParser {
 			dd.setValueList(list);
 			dd.setEditRole(visibilityRole);
 			dd.setHidden(hidden);
+			dd.setLabelList(labelList);
 			return dd;
 			
 		}else if(annotation instanceof IntegerDataType){
@@ -90,6 +92,7 @@ public class DataTypeAnnotationParser {
 			int min=((IntegerDataType)annotation).min();
 			String className=((IntegerDataType)annotation).renderer().getName();
 			int valueList[] = ((IntegerDataType)annotation).valueList();
+			String[] labelList = ((IntegerDataType)annotation).labelList();
 			String visibilityRole = ((IntegerDataType)annotation).editRole().getName();
 			boolean hidden=((IntegerDataType)annotation).hide();
 			idt.setMax(max);
@@ -98,11 +101,13 @@ public class DataTypeAnnotationParser {
 			idt.setValueList(valueList);
 			idt.setEditRole(visibilityRole);
 			idt.setHidden(hidden);
+			idt.setLabelList(labelList);
 			return idt;
 			
 		}else if(annotation instanceof StringDataType){
 			StringDataTypeBean sdt = new StringDataTypeBean();
 			String[]list=((StringDataType)annotation).valueList();
+			String[] labelList = ((StringDataType)annotation).labelList();
 			String visibilityRole = ((StringDataType)annotation).editRole().getName();
 			String className=((StringDataType)annotation).renderer().getName();
 			boolean hidden=((StringDataType)annotation).hide();
@@ -110,6 +115,7 @@ public class DataTypeAnnotationParser {
 			sdt.setValueList(list);
 			sdt.setEditRole(visibilityRole);
 			sdt.setHidden(hidden);
+			sdt.setLabelList(labelList);
 			return sdt;
 		}
 		return null;

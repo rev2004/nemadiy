@@ -16,6 +16,7 @@ public @interface DoubleDataType {
 	double min();
 	double max();
 	double[] valueList() default {};
+	String[] labelList() default {};
 	Class<? extends Renderer> renderer() default DoubleRenderer.class;
 	Class<? extends RolePrincipal> editRole() default RoleUser.class;
 	boolean hide() default false;
