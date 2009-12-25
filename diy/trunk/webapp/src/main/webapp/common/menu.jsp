@@ -5,6 +5,7 @@
     <li class="pad">&nbsp;</li>
  
  	<menu:displayMenu name="MainMenu"/>
+ 	<menu:displayMenu name="MirexMenu"/>
 	<menu:displayMenu name="JobMenu"/>
     <menu:displayMenu name="UserMenu"/>
     <menu:displayMenu name="AdminMenu"/>

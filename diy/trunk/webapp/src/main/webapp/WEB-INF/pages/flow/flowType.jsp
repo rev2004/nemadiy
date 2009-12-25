@@ -19,9 +19,9 @@ The flows of type ${flowType} available to execute are:
 						<input type="hidden" id="id" name="id" value="${flow.id}"/>
 						</form>
 
-                        <p class="actionBox">
-                            <c:out value="${flow.description}"/>
-                        </p>
+                       <br/>
+                       	<i>Keywords:</i> <c:out value="${flow.keyWords}"/><br/><br/>
+                       <i>Description:</i> <c:out value="${flow.description}"/>
                         </div>
 </c:forEach>
                 

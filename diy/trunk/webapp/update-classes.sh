@@ -6,3 +6,4 @@ scp -r target/classes/org meandre@nema.lis.uiuc.edu:/home/meandre/apps/jetty/jet
 mvn war:war -Dmaven.test.skip=true
 scp -r ./target/nema-webapp-1.0.2-SNAPSHOT/WEB-INF/pages meandre@nema.lis.uiuc.edu:/home/meandre/apps/jetty/jetty-6.1.22/webapps/diy/WEB-INF
 scp  ./target/nema-webapp-1.0.2-SNAPSHOT/WEB-INF/classes/ApplicationResources.properties meandre@nema.lis.uiuc.edu:/home/meandre/apps/jetty/jetty-6.1.22/webapps/diy/WEB-INF/classes/ApplicationResources.properties
+scp  ./target/nema-webapp-1.0.2-SNAPSHOT/WEB-INF/menu-config.xml meandre@nema.lis.uiuc.edu:/home/meandre/apps/jetty/jetty-6.1.22/webapps/diy/WEB-INF/menu-config.xml

@@ -58,10 +58,6 @@
         <td>End Time:</td>
         <td>${job.endTimestamp}</td>
       </tr>
-        <tr>
-        <td>Execution Id:</td>
-        <td>${job.executionInstanceId}</td>
-      </tr>
     </table>
     </td>
     <td>
@@ -72,6 +68,7 @@
     <td>
    
     <c:if test="${job.done}">
+    <p>Explore Results <br/>
     <a target="_blank" href="${resultSet.root.url}"><c:out value="${resultSet.root.displayString}" escapeXml="false"/></a>
     <ul>
     <c:forEach var="result" items="${resultSet.children}" >
@@ -79,6 +76,7 @@
     </c:forEach>
     </ul>
     </c:if>
+    </p>
     </td>
     
     </tr>
