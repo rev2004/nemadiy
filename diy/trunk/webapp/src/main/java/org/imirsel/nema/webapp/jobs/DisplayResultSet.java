@@ -21,9 +21,12 @@ public class DisplayResultSet {
 	final String ROOT_TOKEN = "result directory";
 	final String INDEX_TOKEN="results";
 	final String CHILD_TOKEN = "item";
+	final String NONE_TOKEN="no result";
 	static protected Log logger = LogFactory.getLog(DisplayResultSet.class);
 
 	public DisplayResultSet(Set<JobResult> results) {
+		this.children = new ArrayList<DisplayResult>();
+
 		if ((results != null) && (results.size() > 0)) {
 			String index=testIndexType(results);
 			if (index==null){
@@ -31,7 +34,6 @@ public class DisplayResultSet {
 			int jroot = findRoot(resultArray);
 			this.root = new DisplayResult(resultArray[jroot].getUrl(),
 					ROOT_TOKEN, "path");
-			this.children = new ArrayList<DisplayResult>();
 			int count = 1;
 			String url, displayString, type;
 			for (int i = 0; i < resultArray.length; i++) {
@@ -53,8 +55,9 @@ public class DisplayResultSet {
 			}
 			else {
 				this.root=new DisplayResult(index,INDEX_TOKEN,"index");
-				this.children=new ArrayList<DisplayResult>();
 			}
+		}else{
+			this.root=new DisplayResult("",NONE_TOKEN,"none");
 		}
 	}
 
