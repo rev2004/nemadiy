@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.model.*;
-import org.imirsel.nema.model.JobResult;
+import org.imirsel.util.JobTypeUtils;
 
 /**This server mocks the FlowService that Andrew is working on.
  * 
@@ -170,7 +170,8 @@ public class MockFlowServiceImpl implements FlowService{
 			 		job.setPort(200+name_index); ;
 			 		job.setResults(getMockResults(name_index)); 
 			 		job.setStartTimestamp(getDate(-10*name_index)); 
-			 		job.setToken("token-"+name_index); 
+			 		job.setToken("token-"+name_index);
+			 		job.setToken(JobTypeUtils.DEFAULT_TYPE);
 			 		job.setUpdateTimestamp(getDate(-10*name_index+3)); 
 			 		job.setStatusCode(Job.JobStatus.SCHEDULED.getCode());
 			

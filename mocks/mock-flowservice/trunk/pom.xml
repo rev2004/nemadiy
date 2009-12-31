@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.imirsel</groupId>
-	<artifactId>nema-mock-flow</artifactId>
+	<artifactId>nema-mock-flowservice</artifactId>
 	<name>NEMA Mock Flow Service</name>
 	<version>1.0.2-SNAPSHOT</version>
 
