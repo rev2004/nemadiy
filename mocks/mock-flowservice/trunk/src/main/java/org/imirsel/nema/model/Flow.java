@@ -33,6 +33,7 @@ public class Flow implements Serializable {
     private Date dateCreated;
     private String keyWords;
     private Boolean template = false;
+    private String type;
     private String url;
     private Long creatorId;
     private Flow instanceOf = null;
@@ -81,6 +82,13 @@ public class Flow implements Serializable {
 	}
 	public void setTemplate(Boolean template) {
 		this.template = template;
+	}
+	@Column(name="type",nullable=false)
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 	@Column(name="url",nullable=false)
 	public String getUrl() {

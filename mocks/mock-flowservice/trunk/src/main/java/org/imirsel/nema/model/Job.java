@@ -219,6 +219,7 @@ public class Job implements Serializable, Cloneable {
 	public void setToken(String token) {
 		this.token = token;
 	}
+
 	@Column(name="name",nullable=false)
 	public String getName() {
 		return name;
