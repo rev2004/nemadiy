@@ -82,7 +82,7 @@ public class DisplayResultSetTest {
 		assertEquals(set.getRoot().getUrl(), "http://domain.com/test/tste1/");
 		assertEquals(set.getRoot().getDisplayString(), "result directory");
 		List<DisplayResult> children = set.getChildren();
-		assertEquals(children.size(), 5);
+		assertTrue(children.size()==5);
 		
 		Set<String> urlSet = new HashSet<String>();
 		Set<String> displaySet = new HashSet<String>();
@@ -101,7 +101,7 @@ public class DisplayResultSetTest {
 		assertEquals("",setNull.getRoot().getUrl());
 		assertEquals("no result",setNull.getRoot().getDisplayString());
 		assertNotNull(setNull.getChildren());
-		assertEquals(0,setNull.getChildren().size());
+		assertTrue(0==setNull.getChildren().size());
 		
 		
 		//test for special index type 
@@ -111,7 +111,7 @@ public class DisplayResultSetTest {
 		assertEquals(PATH+"INDEX.htm",indexSet.getRoot().getUrl());
 		assertEquals("results",indexSet.getRoot().getDisplayString());
 		assertNotNull(indexSet.getChildren());
-		assertEquals(0,indexSet.getChildren().size());
+		assertTrue(0==indexSet.getChildren().size());
 		
 		//with evaluation path. 
 		final String PATH2="http://domain.com/fjaskfl/dfjldks;jfds/evaluation/";
@@ -126,7 +126,7 @@ public class DisplayResultSetTest {
 		assertEquals(PATH2+"index.htm",indexSet.getRoot().getUrl());
 		assertEquals("results",indexSet.getRoot().getDisplayString());
 		assertNotNull(indexSet.getChildren());
-		assertEquals(0,indexSet.getChildren().size());
+		assertTrue(0==indexSet.getChildren().size());
 		
 		
 	}
