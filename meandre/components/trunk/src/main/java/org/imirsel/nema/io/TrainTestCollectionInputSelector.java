@@ -133,9 +133,9 @@ import java.sql.SQLException;
 		String datasetidtxt = processWorkingDirName + File.pathSeparator + "datasetID.txt";		
 		try
 		{
-			processWorkingDir = new File(processWorkingDirName);
+		    processWorkingDir = new File(processWorkingDirName);
 		    // Open an output stream
-			FileOutputStream fout;		
+		    FileOutputStream fout;		
 		    fout = new FileOutputStream(processWorkingDirName + File.separator + "datasetid.txt");			
 		    // Print a line of text
 		    new PrintStream(fout).println(datasetID);
