@@ -240,7 +240,7 @@
     
     <modules>
         <module>core</module>
-        <module>web</module>
+        <module>webapp</module>
         <module>probes</module>
   </modules>
 <!--
