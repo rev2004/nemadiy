@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<nodeSet  version="1.1">
+	<node uin="18mt4wfzh4tkqmr0h1ce">
+		<property name="$metaclass" value="erPhysicalUdtContainer"/>
+		<property name="$name" value="User datatypes"/>
+	</node>
+	<node uin="-kxpr2xfzh59kwx-zgq9jd">
+		<property name="$metaclass" value="erPhysicalEntity"/>
+		<property name="$name" value="app_user"/>
+		<property name="ers.mysql_4.entity.Type" value="INNODB"/>
+		<property name="ers.mysql_4.entity.CharSet" value="latin1"/>
+		<node uin="eh3w48fzh5grc4bb4q58">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="id"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="of3lt0fzh5grc9mddqj5">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="erPkGroup" value="true"/>
+			<property name="$name" value="PK_app_user"/>
+			<link uin="ieje0rfzh5grcj263iaw">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzh5grc9mddqj5:-kxpr2xfzh59kwx-zgq9jd" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzh5grc4bb4q58:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="eh3w48fzh5ilpmouukbd">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="version"/>
+			<property name="erPhysicalType" value="INTEGER"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalSize" value="11"/>
+			<property name="erPhysicalDefaultValue" value="NULL"/>
+		</node>
+		<node uin="izz11fzh5mdbc-8424lz">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="username"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="50"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="eh3w48fzh5lbzygr7rdc">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="password"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="255"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="bgaswfzh6bgd6-fo2pkg">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="password_hint"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="255"/>
+			<property name="erPhysicalDefaultValue" value="NULL"/>
+		</node>
+		<node uin="bewyifzh6bik6vseglg">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="email"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="255"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="cb6xfzh6bopv-8hpksc">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="first_name"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="50"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="id1wpfzh6bqosnksc56">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="last_name"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="50"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="eh3w48fzh5lzxa-6e4j43">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="account_enabled"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalType" value="BIT"/>
+			<property name="erPhysicalSize" value="1"/>
+			<property name="erPhysicalDefaultValue" value="NULL"/>
+		</node>
+		<node uin="8qv3bfzh5z2o9-sdr1lq">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="$name" value="username"/>
+			<link uin="ieje0rfzh601p8-aces5w">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::8qv3bfzh5z2o9-sdr1lq:-kxpr2xfzh59kwx-zgq9jd" role="Client"></participant>
+				<participant referencedUin="design:node:::izz11fzh5mdbc-8424lz:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="eh3w48fzh5wasx-v5jwjb">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="account_expired"/>
+			<property name="erPhysicalType" value="BIT"/>
+			<property name="erPhysicalSize" value="1"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="eh3w48fzh5wktk-r22d41">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="account_locked"/>
+			<property name="erPhysicalType" value="BIT"/>
+			<property name="erPhysicalSize" value="1"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="eh3w48fzh5y0tp-em9pea">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="credentials_expired"/>
+			<property name="erPhysicalType" value="BIT"/>
+			<property name="erPhysicalSize" value="1"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="of3lt0fzh60d8u-cxn2g0">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="$name" value="email"/>
+			<link uin="ieje0rfzh60pi2-jtakt6">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzh60d8u-cxn2g0:-kxpr2xfzh59kwx-zgq9jd" role="Client"></participant>
+				<participant referencedUin="design:node:::bewyifzh6bik6vseglg:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+	<node uin="-kxpr2xfzh5dgaa70swyv">
+		<property name="$metaclass" value="erPhysicalEntity"/>
+		<property name="$name" value="preference_value"/>
+		<node uin="eh3w48fzh687cgajdrl">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="of3lt0fzh687cnn2vkpv">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="erPkGroup" value="true"/>
+			<property name="$name" value="PK_preference_value"/>
+			<link uin="ieje0rfzh687cv-lb4ep1">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzh687cnn2vkpv:-kxpr2xfzh5dgaa70swyv" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzh687cgajdrl:-kxpr2xfzh5dgaa70swyv" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="hepu6fzh6bd3va2vtz">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="value"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="100"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="eh3w48fzh68tsf-i5f6yc">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="mkey"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="100"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+	</node>
+	<node uin="-kxpr2xfzh5dohp-p1rh9y">
+		<property name="$metaclass" value="erPhysicalEntity"/>
+		<property name="$name" value="role"/>
+		<node uin="uj1kfzh6bagm-6t1evz">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="eh3w48fzh6aor2d7uspq">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalDefaultValue" value="NULL"/>
+			<property name="$name" value="name"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="20"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="of3lt0fzh6at6m750own">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="erPkGroup" value="true"/>
+			<property name="$name" value="PK_role"/>
+			<link uin="ieje0rfzh6at76-n10mlx">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzh6at6m750own:-kxpr2xfzh5dohp-p1rh9y" role="Client"></participant>
+				<participant referencedUin="design:node:::uj1kfzh6bagm-6t1evz:-kxpr2xfzh5dohp-p1rh9y" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="eh3w48fzh6cu6y-1ldl3l">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="description"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="64"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalDefaultValue" value="NULL"/>
+		</node>
+	</node>
+	<node uin="-kxpr2xfzh5dz7w-4xav4g">
+		<property name="$metaclass" value="erPhysicalEntity"/>
+		<property name="$name" value="user_prefs"/>
+		<node uin="eh3w48fzh6ggoac7rhyb">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="user_id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="eh3w48fzh6goq6-k261yp">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="preferences_id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="of3lt0fzmu6gm5lfoc0j">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="erPkGroup" value="true"/>
+			<property name="$name" value="PK_user_prefs"/>
+			<link uin="ieje0rfzmu6gmcuaga6o">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmu6gm5lfoc0j:-kxpr2xfzh5dz7w-4xav4g" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzh6ggoac7rhyb:-kxpr2xfzh5dz7w-4xav4g" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzmu6j16xuc3fb">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmu6gm5lfoc0j:-kxpr2xfzh5dz7w-4xav4g" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzh6goq6-k261yp:-kxpr2xfzh5dz7w-4xav4g" role="Supplier"></participant>
+			</link>
+		</node>
+		<link uin="ieje0rfzmu6n90-unzt57">
+			<property name="erExactCardinality" value="1"/>
+			<property name="$metaclass" value="erPhysicalRelationship"/>
+			<property name="$name" value="fk3"/>
+			<link uin="ieje0rfzmuduot-8u4agd">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::ieje0rfzmu6n90-unzt57:-kxpr2xfzh5dz7w-4xav4g" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzh687cnn2vkpv:-kxpr2xfzh5dgaa70swyv" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzmuduoywb0cwt">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="ieje0rfzmudup2sp6nyp">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::ieje0rfzmuduoywb0cwt:ieje0rfzmu6n90-unzt57:-kxpr2xfzh5dz7w-4xav4g" role="Client"></participant>
+					<participant referencedUin="design:node:::eh3w48fzh687cgajdrl:-kxpr2xfzh5dgaa70swyv" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::ieje0rfzmu6n90-unzt57:-kxpr2xfzh5dz7w-4xav4g" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzh6goq6-k261yp:-kxpr2xfzh5dz7w-4xav4g" role="Supplier"></participant>
+			</link>
+			<participant referencedUin="design:node:::-kxpr2xfzh5dz7w-4xav4g" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzh5dgaa70swyv" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfzmu88d1kylj8n">
+			<property name="erExactCardinality" value="1"/>
+			<property name="$metaclass" value="erPhysicalRelationship"/>
+			<property name="$name" value="fk4"/>
+			<link uin="ieje0rfzmu8jq4-xtbaqk">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::ieje0rfzmu88d1kylj8n:-kxpr2xfzh5dz7w-4xav4g" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzh5grc9mddqj5:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzmu8jq6-rheqff">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="ieje0rfzmu8jq8p4dnd4">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::ieje0rfzmu8jq6-rheqff:ieje0rfzmu88d1kylj8n:-kxpr2xfzh5dz7w-4xav4g" role="Client"></participant>
+					<participant referencedUin="design:node:::eh3w48fzh5grc4bb4q58:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::ieje0rfzmu88d1kylj8n:-kxpr2xfzh5dz7w-4xav4g" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzh6ggoac7rhyb:-kxpr2xfzh5dz7w-4xav4g" role="Supplier"></participant>
+			</link>
+			<participant referencedUin="design:node:::-kxpr2xfzh5dz7w-4xav4g" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="-kxpr2xfzh5ecg8-ehg624">
+		<property name="$metaclass" value="erPhysicalEntity"/>
+		<property name="$name" value="user_role"/>
+		<node uin="eh3w48fzh6hwwy-tg2tmm">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="user_id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="eh3w48fzh6i5cp-99pzj1">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="role_id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="of3lt0fzmu0z8y-b7uxr3">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="erPkGroup" value="true"/>
+			<property name="$name" value="PK_user_role"/>
+			<link uin="ieje0rfzmu0z98p79z51">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmu0z8y-b7uxr3:-kxpr2xfzh5ecg8-ehg624" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzh6hwwy-tg2tmm:-kxpr2xfzh5ecg8-ehg624" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzmu14q83nyylq">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmu0z8y-b7uxr3:-kxpr2xfzh5ecg8-ehg624" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzh6i5cp-99pzj1:-kxpr2xfzh5ecg8-ehg624" role="Supplier"></participant>
+			</link>
+		</node>
+		<link uin="ieje0rfzmu2aul-n58moi">
+			<property name="erExactCardinality" value="1"/>
+			<property name="$metaclass" value="erPhysicalRelationship"/>
+			<property name="$name" value="fk1"/>
+			<link uin="ieje0rfzmu2kyh-nkv4cj">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::ieje0rfzmu2aul-n58moi:-kxpr2xfzh5ecg8-ehg624" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzh5grc9mddqj5:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzmu2kyk-gegqv9">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="ieje0rfzmu2kyn-5wqk2g">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::ieje0rfzmu2kyk-gegqv9:ieje0rfzmu2aul-n58moi:-kxpr2xfzh5ecg8-ehg624" role="Client"></participant>
+					<participant referencedUin="design:node:::eh3w48fzh5grc4bb4q58:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::ieje0rfzmu2aul-n58moi:-kxpr2xfzh5ecg8-ehg624" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzh6hwwy-tg2tmm:-kxpr2xfzh5ecg8-ehg624" role="Supplier"></participant>
+			</link>
+			<participant referencedUin="design:node:::-kxpr2xfzh5ecg8-ehg624" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfzmu2uc9-9riuok">
+			<property name="erExactCardinality" value="1"/>
+			<property name="$metaclass" value="erPhysicalRelationship"/>
+			<property name="$name" value="fk2"/>
+			<link uin="ieje0rfzmu34y6-ca1k19">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::ieje0rfzmu2uc9-9riuok:-kxpr2xfzh5ecg8-ehg624" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzh6at6m750own:-kxpr2xfzh5dohp-p1rh9y" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzmu34ya-84apdu">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="ieje0rfzmu34yfobosyx">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::ieje0rfzmu34ya-84apdu:ieje0rfzmu2uc9-9riuok:-kxpr2xfzh5ecg8-ehg624" role="Client"></participant>
+					<participant referencedUin="design:node:::uj1kfzh6bagm-6t1evz:-kxpr2xfzh5dohp-p1rh9y" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::ieje0rfzmu2uc9-9riuok:-kxpr2xfzh5ecg8-ehg624" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzh6i5cp-99pzj1:-kxpr2xfzh5ecg8-ehg624" role="Supplier"></participant>
+			</link>
+			<participant referencedUin="design:node:::-kxpr2xfzh5ecg8-ehg624" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzh5dohp-p1rh9y" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="-kxpr2xfzha9gos-u2yv1h">
+		<property name="$metaclass" value="erPhysicalEntity"/>
+		<property name="$name" value="music_collection"/>
+		<node uin="j8ox8fzmtb4tgk3n1h0">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="eh3w48fzmsqygv5hroa1">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="name"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="50"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="eh3w48fzmst2h6baze1r">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="description"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
+		</node>
+		<node uin="eh3w48fzmstnjml6klez">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="date_created"/>
+			<property name="erPhysicalSize" value="5"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalType" value="TIMESTAMP"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="eh3w48fzmsvsgsnsec7v">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="creator_id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="eh3w48fzmsw7c5-l20ozm">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="key_words"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="eh3w48fzmswkdr-u2b9t1">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="is_private"/>
+			<property name="erPhysicalType" value="BIT"/>
+			<property name="erPhysicalSize" value="1"/>
+		</node>
+		<node uin="of3lt0fzmtbxnobyv78a">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="erPkGroup" value="true"/>
+			<property name="$name" value="PK_music_collection"/>
+			<link uin="ieje0rfzmtbxo52j2i71">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmtbxnobyv78a:-kxpr2xfzha9gos-u2yv1h" role="Client"></participant>
+				<participant referencedUin="design:node:::j8ox8fzmtb4tgk3n1h0:-kxpr2xfzha9gos-u2yv1h" role="Supplier"></participant>
+			</link>
+		</node>
+		<link uin="ieje0rfzmtkgjib9ld4p">
+			<property name="erExactCardinality" value="1"/>
+			<property name="$metaclass" value="erPhysicalRelationship"/>
+			<property name="$name" value="fk5"/>
+			<link uin="ieje0rfzmtlbm8eugc0w">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::ieje0rfzmtkgjib9ld4p:-kxpr2xfzha9gos-u2yv1h" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzh5grc9mddqj5:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzmtlbmcv1ghod">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="ieje0rfzmtlbmhgip6j5">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::ieje0rfzmtlbmcv1ghod:ieje0rfzmtkgjib9ld4p:-kxpr2xfzha9gos-u2yv1h" role="Client"></participant>
+					<participant referencedUin="design:node:::eh3w48fzh5grc4bb4q58:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::ieje0rfzmtkgjib9ld4p:-kxpr2xfzha9gos-u2yv1h" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzmsvsgsnsec7v:-kxpr2xfzha9gos-u2yv1h" role="Supplier"></participant>
+			</link>
+			<participant referencedUin="design:node:::-kxpr2xfzha9gos-u2yv1h" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="-kxpr2xfzhaa0li-22e9qh">
+		<property name="$metaclass" value="erPhysicalEntity"/>
+		<property name="$name" value="song"/>
+		<node uin="9vfrkfzmtidsz-6kqsbm">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="eh3w48fzmtao30hnv2xh">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="name"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="255"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="of3lt0fzmti0na-8cbtbw">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="erPkGroup" value="true"/>
+			<property name="$name" value="PK_song"/>
+			<link uin="ieje0rfzmti0nd-pg1pkj">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmti0na-8cbtbw:-kxpr2xfzhaa0li-22e9qh" role="Client"></participant>
+				<participant referencedUin="design:node:::9vfrkfzmtidsz-6kqsbm:-kxpr2xfzhaa0li-22e9qh" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="eh3w48fzmtvm2p-nbjixf">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erNotNull" value="true"/>
+			<property name="$name" value="url"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="of3lt0fzmvso6r-5530hq">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="$name" value="local_path"/>
+			<link uin="ieje0rfzmvswpugrhw3s">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmvso6r-5530hq:-kxpr2xfzhaa0li-22e9qh" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzmtvm2p-nbjixf:-kxpr2xfzhaa0li-22e9qh" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+	<node uin="-kxpr2xfzmtm1rnrxxiko">
+		<property name="$metaclass" value="erPhysicalEntity"/>
+		<property name="$name" value="song_to_music_collection"/>
+		<node uin="eh3w48fzmtnu17763gwj">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="music_collection_id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="eh3w48fzmtnx2n-outees">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="song_id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="of3lt0fzmu3s7n-rlfvj1">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="erPkGroup" value="true"/>
+			<property name="$name" value="PK_song_to_music_collection"/>
+			<link uin="ieje0rfzmu3s7ynvlx84">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmu3s7n-rlfvj1:-kxpr2xfzmtm1rnrxxiko" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzmtnu17763gwj:-kxpr2xfzmtm1rnrxxiko" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzmu3xld-kdiz8i">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmu3s7n-rlfvj1:-kxpr2xfzmtm1rnrxxiko" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzmtnx2n-outees:-kxpr2xfzmtm1rnrxxiko" role="Supplier"></participant>
+			</link>
+		</node>
+		<link uin="ieje0rfzmu4285-4mdfti">
+			<property name="erExactCardinality" value="1"/>
+			<property name="$metaclass" value="erPhysicalRelationship"/>
+			<property name="$name" value="fk6"/>
+			<link uin="ieje0rfzmu4l4jtbg1so">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::ieje0rfzmu4285-4mdfti:-kxpr2xfzmtm1rnrxxiko" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzmtbxnobyv78a:-kxpr2xfzha9gos-u2yv1h" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzmu4l4k-kq9b1r">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="ieje0rfzmu4l4m-x75h0o">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::ieje0rfzmu4l4k-kq9b1r:ieje0rfzmu4285-4mdfti:-kxpr2xfzmtm1rnrxxiko" role="Client"></participant>
+					<participant referencedUin="design:node:::j8ox8fzmtb4tgk3n1h0:-kxpr2xfzha9gos-u2yv1h" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::ieje0rfzmu4285-4mdfti:-kxpr2xfzmtm1rnrxxiko" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzmtnu17763gwj:-kxpr2xfzmtm1rnrxxiko" role="Supplier"></participant>
+			</link>
+			<participant referencedUin="design:node:::-kxpr2xfzmtm1rnrxxiko" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzha9gos-u2yv1h" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rfzmu45b1-sys7mh">
+			<property name="erExactCardinality" value="1"/>
+			<property name="$metaclass" value="erPhysicalRelationship"/>
+			<property name="$name" value="fk7"/>
+			<link uin="ieje0rfzmu5dq4-qia9ka">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::ieje0rfzmu45b1-sys7mh:-kxpr2xfzmtm1rnrxxiko" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzmti0na-8cbtbw:-kxpr2xfzhaa0li-22e9qh" role="Supplier"></participant>
+			</link>
+			<link uin="ieje0rfzmu5dq98xtrcu">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="ieje0rfzmu5dqdzh7zho">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::ieje0rfzmu5dq98xtrcu:ieje0rfzmu45b1-sys7mh:-kxpr2xfzmtm1rnrxxiko" role="Client"></participant>
+					<participant referencedUin="design:node:::9vfrkfzmtidsz-6kqsbm:-kxpr2xfzhaa0li-22e9qh" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::ieje0rfzmu45b1-sys7mh:-kxpr2xfzmtm1rnrxxiko" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzmtnx2n-outees:-kxpr2xfzmtm1rnrxxiko" role="Supplier"></participant>
+			</link>
+			<participant referencedUin="design:node:::-kxpr2xfzmtm1rnrxxiko" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzhaa0li-22e9qh" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="gdclxfzmufvn1691mlo">
+		<property name="$metaclass" value="erPhysicalEntity"/>
+		<property name="$name" value="feature_set"/>
+		<node uin="fdhiefzmufvn1o3tig8">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="d1pfofzmufvn1-gk6ka3">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="name"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="50"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="fb1j0fzmufvn1-zh90l">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="description"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
+		</node>
+		<node uin="arfwrfzmufvn2-y65h6y">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="date_created"/>
+			<property name="erPhysicalSize" value="5"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalType" value="TIMESTAMP"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="5tfbsfzmufvn2-l2mgqe">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="creator_id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="357jsfzmufvn2mwgnh6">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="key_words"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="cvk70fzmufvn2-46brq3">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="is_private"/>
+			<property name="erPhysicalType" value="BIT"/>
+			<property name="erPhysicalSize" value="1"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="2y7uqfzmufvn3-w5kaih">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="erPkGroup" value="true"/>
+			<property name="$name" value="PK_feature_set"/>
+			<link uin="54228fzmufvn3-y9gna8">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::2y7uqfzmufvn3-w5kaih:gdclxfzmufvn1691mlo" role="Client"></participant>
+				<participant referencedUin="design:node:::fdhiefzmufvn1o3tig8:gdclxfzmufvn1691mlo" role="Supplier"></participant>
+			</link>
+		</node>
+		<link uin="67cubfzmufvn3-aj1nfj">
+			<property name="erExactCardinality" value="1"/>
+			<property name="$metaclass" value="erPhysicalRelationship"/>
+			<property name="$name" value="fk5"/>
+			<link uin="ear1wfzmufvn3-km0sq1">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::67cubfzmufvn3-aj1nfj:gdclxfzmufvn1691mlo" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzh5grc9mddqj5:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+			</link>
+			<link uin="8sbw4fzmufvn4u5al58">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="931dwfzmufvn4kh3ddz">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::8sbw4fzmufvn4u5al58:67cubfzmufvn3-aj1nfj:gdclxfzmufvn1691mlo" role="Client"></participant>
+					<participant referencedUin="design:node:::eh3w48fzh5grc4bb4q58:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::67cubfzmufvn3-aj1nfj:gdclxfzmufvn1691mlo" role="Client"></participant>
+				<participant referencedUin="design:node:::5tfbsfzmufvn2-l2mgqe:gdclxfzmufvn1691mlo" role="Supplier"></participant>
+			</link>
+			<participant referencedUin="design:node:::gdclxfzmufvn1691mlo" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+		</link>
+		<node uin="eh3w48fzmumr0lho4cpa">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erNotNull" value="true"/>
+			<property name="$name" value="url"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="of3lt0fzmvr7mb-5vf0ny">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="$name" value="local_path"/>
+			<link uin="ieje0rfzmvrt0jwfv8q2">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmvr7mb-5vf0ny:gdclxfzmufvn1691mlo" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzmumr0lho4cpa:gdclxfzmufvn1691mlo" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+	<node uin="53wifzmuh250siwin7">
+		<property name="$metaclass" value="erPhysicalEntity"/>
+		<property name="$name" value="ground_truth"/>
+		<node uin="7lvsgfzmuh250uf4x4y">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+		</node>
+		<node uin="9q1ewfzmuh250ohw81u">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="name"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalType" value="VARCHAR"/>
+			<property name="erPhysicalSize" value="50"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="48vzzfzmuh250b5dpop">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="description"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
+		</node>
+		<node uin="ifyrwfzmuh251e8dzep">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="date_created"/>
+			<property name="erPhysicalSize" value="5"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="erPhysicalType" value="TIMESTAMP"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="9w5twfzmuh251t0wos4">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="creator_id"/>
+			<property name="erPhysicalType" value="BIGINT"/>
+			<property name="erPhysicalSize" value="20"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="5wskkfzmuh251-dsj0g4">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="$name" value="key_words"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="h8jfjfzmuh251z7mvf2">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erPhysicalScale" value="0"/>
+			<property name="$name" value="is_private"/>
+			<property name="erPhysicalType" value="BIT"/>
+			<property name="erPhysicalSize" value="1"/>
+			<property name="erNotNull" value="true"/>
+		</node>
+		<node uin="czolufzmuh252-crgbo2">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="erPkGroup" value="true"/>
+			<property name="$name" value="PK_ground_truth"/>
+			<link uin="9s4y8fzmuh252-6ocd2r">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::czolufzmuh252-crgbo2:53wifzmuh250siwin7" role="Client"></participant>
+				<participant referencedUin="design:node:::7lvsgfzmuh250uf4x4y:53wifzmuh250siwin7" role="Supplier"></participant>
+			</link>
+		</node>
+		<link uin="4xtlkfzmuh252vkfan8">
+			<property name="erExactCardinality" value="1"/>
+			<property name="$metaclass" value="erPhysicalRelationship"/>
+			<property name="$name" value="fk5"/>
+			<link uin="bzr64fzmuh252-cxnuum">
+				<property name="$metaclass" value="erReferenceLink"/>
+				<participant referencedUin="design:link:::4xtlkfzmuh252vkfan8:53wifzmuh250siwin7" role="Client"></participant>
+				<participant referencedUin="design:node:::of3lt0fzh5grc9mddqj5:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+			</link>
+			<link uin="h2ij0fzmuh253psrebx">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<link uin="gx9xxfzmuh253-pmgp4e">
+					<property name="$metaclass" value="erReferenceLink"/>
+					<participant referencedUin="design:link:::h2ij0fzmuh253psrebx:4xtlkfzmuh252vkfan8:53wifzmuh250siwin7" role="Client"></participant>
+					<participant referencedUin="design:node:::eh3w48fzh5grc4bb4q58:-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+				</link>
+				<participant referencedUin="design:link:::4xtlkfzmuh252vkfan8:53wifzmuh250siwin7" role="Client"></participant>
+				<participant referencedUin="design:node:::9w5twfzmuh251t0wos4:53wifzmuh250siwin7" role="Supplier"></participant>
+			</link>
+			<participant referencedUin="design:node:::53wifzmuh250siwin7" role="Client"></participant>
+			<participant referencedUin="design:node:::-kxpr2xfzh59kwx-zgq9jd" role="Supplier"></participant>
+		</link>
+		<node uin="eh3w48fzmunuwcpbdivk">
+			<property name="$metaclass" value="erPhysicalAttribute"/>
+			<property name="erNotNull" value="true"/>
+			<property name="$name" value="url"/>
+			<property name="erPhysicalType" value="TEXT"/>
+			<property name="erPhysicalSize" value="2"/>
+			<property name="erPhysicalScale" value="0"/>
+		</node>
+		<node uin="of3lt0fzmvs3vf-dh0pts">
+			<property name="$metaclass" value="erPhysicalKeyGroup"/>
+			<property name="$name" value="local_path"/>
+			<link uin="ieje0rfzmvtivpyavkj6">
+				<property name="$metaclass" value="erAssociationLink"/>
+				<participant referencedUin="design:node:::of3lt0fzmvs3vf-dh0pts:53wifzmuh250siwin7" role="Client"></participant>
+				<participant referencedUin="design:node:::eh3w48fzmunuwcpbdivk:53wifzmuh250siwin7" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+</nodeSet>
