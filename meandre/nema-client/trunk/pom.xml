@@ -3,12 +3,12 @@
   <groupId>org.imirsel</groupId>
   <artifactId>imirsel-meandre-client</artifactId>
   <name>NEMA: Meandre Client</name>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   
 
 <scm>
-  	<connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/client</connection>
-  	<url>https://svn.lis.uiuc.edu/NEMA/application/trunk/client</url>
+  	<connection>scm:svn:https://nemadiy.googlecode.com/meandre/nema-client/trunk</connection>
+  	<url>https://nemadiy.googlecode.com/meandre/nema-client/trunk</url>
   </scm>
   <organization>
   	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
