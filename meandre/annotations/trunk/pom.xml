@@ -3,14 +3,14 @@
   <groupId>org.imirsel</groupId>
   <artifactId>nema-annotations</artifactId>
   <name>NEMA: Annotations</name>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <description>NEMA Annotations for Datatyping</description>
   
   
   
 <scm>
-  	<connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/annotations</connection>
-  	<url>https://svn.lis.uiuc.edu/NEMA/application/trunk/annotations</url>
+  	<connection>scm:svn:https://nemadiy.googlecode.com/meandre/annotations/trunk</connection>
+  	<url>https://nemadiy.googlecode.com/meandre/annotations/trunk</url>
   </scm>
   <organization>
   	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
