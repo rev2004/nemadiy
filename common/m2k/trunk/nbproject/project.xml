@@ -3,11 +3,11 @@
     <type>org.netbeans.modules.ant.freeform</type>
     <configuration>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
-            <name>M2K_core_1_3</name>
+            <name>M2K_core</name>
         </general-data>
         <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
             <!-- Do not use Project Properties customizer when editing this file manually. -->
-            <name>M2K_core_1_3</name>
+            <name>M2K_core</name>
             <properties/>
             <folders>
                 <source-folder>
@@ -68,7 +68,7 @@
             </ide-actions>
             <export>
                 <type>jar</type>
-                <location>dist/m2k_core_1_3.jar</location>
+                <location>dist/m2k_core.jar</location>
                 <build-target>dist</build-target>
             </export>
             <view>
@@ -94,11 +94,14 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">lib/jahmm-0.3.3.jar:lib/jl1.0.jar:lib/weka.jar:lib/swing-layout-1.0.jar:lib/jahmm-0.3.3.jar:lib/Jama-1.0.2.jar:lib/JID3.jar:lib/jl1.0.jar:lib/weka-src.jar:lib/jcommon-1.0.12.jar:lib/jfreechart-1.0.9.jar:lib/commons-compress-1.0.jar</classpath>
-                <built-to>dist/m2k_core_1_3.jar</built-to>
+                <classpath mode="compile">lib/commons-compress-1.0.jar:lib/doccheck.jar:lib/jahmm-0.3.3.jar:lib/Jama-1.0.2.jar:lib/jcommon-1.0.12.jar:lib/jfreechart-1.0.9.jar:lib/JID3.jar:lib/jl1.0.jar:lib/swing-layout-1.0.jar:lib/weka.jar</classpath>
+                <built-to>dist/m2k_core.jar</built-to>
                 <javadoc-built-to>dist/api</javadoc-built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
+        <preferences xmlns="http://www.netbeans.org/ns/auxiliary-configuration-preferences/1">
+            <module name="org-netbeans-modules-editor-indent"/>
+        </preferences>
     </configuration>
 </project>
