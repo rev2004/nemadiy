@@ -22,7 +22,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.print.attribute.Size2DSyntax;
+import org.imirsel.nema.repositoryservice.*;
+import org.imirsel.nema.model.*;
 import org.imirsel.m2k.evaluation2.classification.ClassificationResultReadClass;
 
 /**
