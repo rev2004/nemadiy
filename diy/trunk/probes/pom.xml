@@ -3,11 +3,11 @@
   <groupId>org.imirsel</groupId>
   <artifactId>probes</artifactId>
   <name>NEMA: Probes and Plugin</name>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
 
 <scm>
-  	<connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/probes</connection>
-  	<url>https://svn.lis.uiuc.edu/NEMA/application/trunk/probes</url>
+  	<connection>scm:svn:https://nemadiy.googlecode.com/svn/diy/trunk/probes</connection>
+  	<url>https://nemadiy.googlecode.com/svn/diy/trunk/probes</url>
   </scm>
   <organization>
   	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>

@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
     
     <parent>
         <groupId>org.imirsel</groupId>
         <artifactId>nema</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
-        <relativePath>../nema/pom.xml</relativePath>
+        <version>0.5-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>org.imirsel</groupId>
     
@@ -18,10 +18,10 @@
     <name>NEMA Modular Application - Core</name>
     
     <scm>
-    <connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/core</connection>
-    <developerConnection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/core</developerConnection>
+    <connection>scm:svn:https://nemadiy.googlecode.com/svn/diy/trunk/core</connection>
+    <developerConnection>scm:svn:https://nemadiy.googlecode.com/svn/diy/trunk/core</developerConnection>
     <tag>HEAD</tag>
-    <url>https://svn.lis.uiuc.edu/NEMA/application/trunk/core</url>
+    <url>https://nemadiy.googlecode.com/svn/diy/trunk/core</url>
     </scm>
     <organization>
     	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
