@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.imirsel</groupId>
         <artifactId>nema</artifactId>
-        <version>0.5-SNAPSHOT</version>
+        <version>0.5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     
@@ -352,7 +352,7 @@
 	     <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>imirsel-meandre-client</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>0.5.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         
@@ -360,7 +360,7 @@
         <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>nema-annotations</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>0.5.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         
@@ -368,7 +368,7 @@
         <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>nema-flow-service</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>0.5.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         
