@@ -3,7 +3,7 @@
 <!-- * ant build file for m2k                                 * -->
 <!-- *                                                        * -->
 <!-- ********************************************************** -->
-<project name="M2K_core_1_3" default="dist" basedir=".">
+<project name="M2K_core" default="dist" basedir=".">
     <description>
         build file for m2k
     </description>
@@ -18,7 +18,7 @@
   <property name="dist"  location="dist"/>
   <property name="javadoc_dir"  location="${dist}/api"/>
   <property name="javadoc_check_dir"  location="${dist}/doccheck"/>
-  <property name="version_info"  value="M2K Alpha 1.2"/>
+  <property name="version_info"  value="M2K 1.4"/>
   <property name="source.files.tocopy"
         value="**/*.properties,**/*.css,**/*.gif,**/*.jpg,**/*.png,**/*.m" />
 
@@ -89,7 +89,7 @@
         description="build the m2k.jar file" >
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}"/>
-    <jar jarfile="${dist}/m2k_core_1_3.jar" basedir="${build}">
+    <jar jarfile="${dist}/m2k_core.jar" basedir="${build}">
         <zipgroupfileset dir="lib" includes="*.jar" excludes="*weka*"/>
         <manifest>
             <attribute name="Main-Class" value="org.imirsel.m2k.evaluation.OnsetDetectionEvaluatorClass"/>
