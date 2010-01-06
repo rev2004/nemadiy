@@ -3,7 +3,7 @@
   <groupId>org.imirsel</groupId>
   <artifactId>probes</artifactId>
   <name>NEMA: Probes and Plugin</name>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.5.0-SNAPSHOT</version>
 
 <scm>
   	<connection>scm:svn:https://nemadiy.googlecode.com/svn/diy/trunk/probes</connection>
@@ -302,14 +302,14 @@
         <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>components-api</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>0.5.0-SNAPSHOT</version>
         </dependency>
         
                
         <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>imirsel-meandre-client</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>0.5.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
        <!-- 
