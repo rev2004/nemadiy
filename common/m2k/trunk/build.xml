@@ -13,7 +13,7 @@
     <!-- * Sets properties for the build                          * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-  <property name="src" location="src"/>
+  <property name="src" location="src/main/java"/>
   <property name="build" location="build"/>
   <property name="dist"  location="dist"/>
   <property name="javadoc_dir"  location="${dist}/api"/>
