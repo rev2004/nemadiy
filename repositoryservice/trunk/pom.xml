@@ -3,11 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <groupId>org.imirsel</groupId>
-    <artifactId>nema-temp-repository</artifactId>
+    <artifactId>nema-repositoryservice</artifactId>
     <packaging>jar</packaging>
-    <name>NEMA Temp Repository</name>
+    <name>NEMA Repository Service Implementation</name>
     
     <scm>
     <connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</connection>
@@ -20,7 +20,100 @@
     	<url>http://www.lis.illinois.edu</url>
     </organization>
     
+    
+  <distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<id>MonkRepository</id>
+			<name>Monk Repository</name>
+			<url>scp://monk.lis.uiuc.edu/content/web/root/maven2</url>
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		<snapshotRepository>
+			<uniqueVersion>true</uniqueVersion>
+			<id>MonkSnapshotRepository</id>
+			<name>Monk Snapshot Repository</name>
+			<url>scp://monk.lis.illinois.edu/content/web/root/snapshot</url>
+		</snapshotRepository>
+		<downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
+
+	</distributionManagement>
+
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<additionalProjectnatures>
+						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+					</additionalProjectnatures>
+					<additionalBuildcommands>
+						<buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+					</additionalBuildcommands>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+					<wtpversion>1.5</wtpversion>
+				</configuration>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+	</build>
+	<repositories>
+		<repository>
+			<id>central</id>
+			<url>http://repo1.maven.org/maven2</url>
+		</repository>
+		<repository>
+			<id>appfuse</id>
+			<url>http://static.appfuse.org/repository</url>
+		</repository>
+		<repository>
+			<id>monk</id>
+			<url>http://www.monkproject.org/maven2</url>
+		</repository>
+		<repository>
+			<id>snapshot</id>
+			<url>http://www.monkproject.org/snapshot</url>
+		</repository>
+	</repositories>
+    
+    
 
     <dependencies>
+    <dependency>
+			<groupId>org.imirsel</groupId>
+			<artifactId>nema-repositoryservice-interface</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+			<scope>compile</scope>
+    </dependency>
+    <dependency>
+			<groupId>org.imirsel</groupId>
+			<artifactId>m2k</artifactId>
+			<version>1.3.0-SNAPSHOT</version>
+			<scope>compile</scope>
+    </dependency>
     </dependencies>
 </project>

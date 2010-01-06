@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.imirsel.nema.repository.DatasetListFileGenerator;
-import org.imirsel.nema.repository.NEMAMetadataEntry;
-import org.imirsel.nema.repository.PublishedResult;
+import org.imirsel.nema.model.NEMAMetadataEntry;
+import org.imirsel.nema.model.PublishedResult;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
-import org.imirsel.nema.repository.RepositoryClientInterface;
+import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 
 public class TestDataListFileGenerator {
 
