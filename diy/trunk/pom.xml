@@ -5,7 +5,7 @@
     <groupId>org.imirsel</groupId>
     <artifactId>nema</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
     <name>Nema  Modular Application</name>
     <url>http://www.imirsel.org</url>
     
@@ -22,10 +22,10 @@
     </licenses>
 
     <scm>
-    <connection>scm:svn:https://svn.lis.illinois.edu/NEMA/application/trunk</connection>
-    <developerConnection>scm:svn:https://svn.lis.illinois.edu/NEMA/application/trunk</developerConnection>
+    <connection>scm:svn:http://nemadiy.googlecode.com/svn/diy/trunk</connection>
+    <developerConnection>scm:svn:https://nemadiy.googlecode.com/svn/diy/trunk</developerConnection>
     <tag>HEAD</tag>
-    <url>https://svn.lis.illinois.edu/NEMA/application/trunk</url>
+    <url>https://nemadiy.googlecode.com/svn/diy/trunk</url>
     </scm>
     
 <distributionManagement>
@@ -462,9 +462,6 @@
         <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
         <jdbc.url><![CDATA[jdbc:mysql://localhost/nema_diy?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
         <flowservice.jdbc.url><![CDATA[jdbc:mysql://127.0.0.1/flowservice?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></flowservice.jdbc.url>
-     <!--    <jdbc.username>${jdbc.user}</jdbc.username>
-        <jdbc.password>${jdbc.password}</jdbc.password>
-     -->
         <!-- Properties calculated by AppFuse when running full-source plugin -->
         <aspectj.version>1.6.0</aspectj.version>
         <clickstream.version>1.0.2</clickstream.version>
