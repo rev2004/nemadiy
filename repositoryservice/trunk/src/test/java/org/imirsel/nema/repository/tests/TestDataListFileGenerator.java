@@ -1,4 +1,4 @@
-package org.imirsel.tests;
+package org.imirsel.nema.repository.tests;
 
 
 import java.io.File;
