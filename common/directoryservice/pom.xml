@@ -3,6 +3,6 @@
   <groupId>org.imirsel.nema.service.directory</groupId>
   <artifactId>directoryservice</artifactId>
   <name>NEMA Directory Service</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.5.0-SNAPSHOT</version>
   <description>NEMA Directory Service -used to expose JNDI services to the flow and the middleware</description>
 </project>
