@@ -6,22 +6,24 @@
 package org.imirsel.m2k.evaluation2.classification;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.imirsel.m2k.evaluation2.tagsClassification.*;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.imirsel.m2k.evaluation2.resultPages.FileListItem;
 import org.imirsel.m2k.evaluation2.resultPages.ImageItem;
 import org.imirsel.m2k.evaluation2.resultPages.Page;
 import org.imirsel.m2k.evaluation2.resultPages.PageItem;
 import org.imirsel.m2k.evaluation2.resultPages.ResultPageUtilities;
 import org.imirsel.m2k.evaluation2.resultPages.TableItem;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationAffinityEvaluator;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryEvaluator;
 import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
 import org.imirsel.m2k.io.file.IOUtil;
 import org.imirsel.m2k.util.MatlabCommandlineIntegrationClass;
@@ -157,7 +159,7 @@ public class MIREXClassificationEvalMain {
 
             files = filesToUse.toArray(new File[filesToUse.size()]);
 
-            //this should sort results consistenly across all submissions,
+            //this should sort results consistently across all submissions,
             //   if they use the same names for their results files 
             //   (otherwise there is no way to know if they are about the same test across different submissions)
             Arrays.sort(files);
