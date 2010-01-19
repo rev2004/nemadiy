@@ -14,23 +14,25 @@
   	<url>http://www.lis.illinois.edu</url>
   </organization>
 
-  <distributionManagement>
-    <!-- use the following if you're not using a snapshot version. -->
-      <repository>
-          <id>MonkRepository</id>
-              <name>Monk Repository</name>
-                  <url>scp://monk.lis.uiuc.edu/content/web/root/maven2</url>
-                    </repository>
-                      <!-- use the following if you ARE using a snapshot version. -->
-                        <snapshotRepository>
-                           <uniqueVersion>true</uniqueVersion>
-                               <id>MonkSnapshotRepository</id>
-                                   <name>Monk Snapshot Repository</name>
-                                       <url>scp://monk.lis.illinois.edu/content/web/root/snapshot</url>
-                </snapshotRepository>
-            <downloadUrl>http://www.monkproject.org/maven2</downloadUrl>
+ <distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<name>IMIRSEL Releases</name>
+			<id>nema.lis.uiuc.edu-releases</id>
+			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
+			
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		
+			<snapshotRepository>
+				<id>nema.lis.uiuc.edu-snapshots</id>
+				<name>IMIRSEL Snapshots</name>
+				<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-snapshots-local</url>
+			</snapshotRepository>
+		
+		<downloadUrl>http://nema.lis.uiuc.edu/artifactory/</downloadUrl>
+	</distributionManagement>
 
-        </distributionManagement>
 
         <profiles>
 
@@ -82,7 +84,15 @@
         </profiles>
   
   
-   <build>
+   	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav</artifactId>
+				<version>1.0-beta-2</version>
+			</extension>
+		</extensions>
+
     <defaultGoal>install</defaultGoal>
   	<plugins>
             <plugin>
@@ -157,17 +167,17 @@
 <url>http://static.appfuse.org/repository</url>
 </repository>
 <repository>
-<id>monk</id>
-<url>http://www.monkproject.org/maven2</url>
-</repository>
-<repository>
 <id>taneshanet</id>
 <url>http://tanesha.net/maven2</url>
 </repository>
-<repository>
-<id>snapshot</id>
-<url>http://www.monkproject.org/snapshot</url>
-</repository>
+	<repository>
+			<id>nema-artifactory-repo</id>
+			<url>http://nema.lis.uiuc.edu/artifactory/repo</url>
+		</repository>
+		<repository>
+			<id>nema-artifactory-remote</id>
+			<url>http://nema.lis.uiuc.edu/artifactory/remote-repos</url>
+		</repository>
 </repositories>
   
   
@@ -301,9 +311,16 @@
     
         <dependency>
             <groupId>org.imirsel</groupId>
-            <artifactId>components-api</artifactId>
+            <artifactId>nema-directoryservice</artifactId>
             <version>0.5.0-SNAPSHOT</version>
         </dependency>
+        
+           <dependency>
+            <groupId>org.imirsel</groupId>
+            <artifactId>nema-artifactservice</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
+        
         
                
         <dependency>
