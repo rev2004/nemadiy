@@ -14,8 +14,8 @@ import javax.sql.DataSource;
 import org.imirsel.annotations.SqlPersistence;
 import org.imirsel.model.Job;
 import org.imirsel.model.JobResult;
-import org.imirsel.service.ArtifactManagerImpl;
-import org.imirsel.util.JndiHelper;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.directoryservice.JndiHelper;
 import org.meandre.core.engine.Probe;
 
 
