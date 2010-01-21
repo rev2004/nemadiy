@@ -374,8 +374,8 @@
         
        <dependency>
             <groupId>org.imirsel</groupId>
-            <artifactId>nema-temp-repository</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <artifactId>nema-repositoryservice</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         
