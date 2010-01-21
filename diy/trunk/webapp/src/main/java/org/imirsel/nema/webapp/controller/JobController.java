@@ -41,9 +41,9 @@ import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.json.JsonWriter;
 
-import org.imirsel.nema.repository.PublishedResult;
+import org.imirsel.nema.model.PublishedResult;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
-import org.imirsel.nema.repository.RepositoryClientInterface;
+import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 	
 
 public class JobController extends MultiActionController {
@@ -166,7 +166,7 @@ public class JobController extends MultiActionController {
 		Flow instanceOfFlow=job.getFlow().getInstanceOf();
 		logger.info("getting job's flow "+ instanceOfFlow);
 		User user=this.userManager.getCurrentUser();
-		String type =  instanceOfFlow.getType();
+		String type =  instanceOfFlow.getTypeName();
 		Submission submission = new Submission();
 		submission.setDateCreated(new Date());
 		submission.setUser(user);

@@ -30,8 +30,8 @@ import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
-import org.imirsel.nema.repository.NEMADataset;
-import org.imirsel.nema.repository.RepositoryClientInterface;
+import org.imirsel.nema.model.NEMADataset;
+import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.imirsel.nema.service.ComponentMetadataService;
 import org.imirsel.nema.service.FlowMetadataService;
 import org.imirsel.nema.service.UserManager;
@@ -241,7 +241,7 @@ public class FlowFormController extends MultiActionController{
 		instance.setTemplate(false);
 		instance.setUrl(newFlowUri);
 		instance.setDescription(description);
-		instance.setType(FlowTypeUtils.DEFAULT_TYPE);
+		instance.setType(FlowTypeUtils.DEFAULT_FLOW);
 		
 		System.out.println("The new flow uri is: " + newFlowUri);
 		long instanceId=this.getFlowService().storeFlowInstance(instance);
