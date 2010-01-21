@@ -72,22 +72,6 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>central</id>
-			<url>http://repo1.maven.org/maven2</url>
-		</repository>
-		<repository>
-			<id>appfuse</id>
-			<url>http://static.appfuse.org/repository</url>
-		</repository>
-		<repository>
-			<id>monk</id>
-			<url>http://www.monkproject.org/maven2</url>
-		</repository>
-		<repository>
-			<id>taneshanet</id>
-			<url>http://tanesha.net/maven2</url>
-		</repository>
-		<repository>
 			<id>nema-artifactory-repo</id>
 			<url>http://nema.lis.uiuc.edu/artifactory/repo</url>
 		</repository>
@@ -95,8 +79,6 @@
 			<id>nema-artifactory-remote</id>
 			<url>http://nema.lis.uiuc.edu/artifactory/remote-repos</url>
 		</repository>
-		
-	
 	</repositories>
 
 
