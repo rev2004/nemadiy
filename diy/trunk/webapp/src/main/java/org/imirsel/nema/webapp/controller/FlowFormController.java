@@ -248,10 +248,9 @@ public class FlowFormController extends MultiActionController{
 		Job job=this.getFlowService().executeJob(token, name,description, instanceId, user.getId(), user.getEmail());
 		
 		
-		ModelAndView mav= new ModelAndView(new RedirectView("JobManager.getUserJobs",true));
-		
-		//ModelAndView mav = new ModelAndView("job/job");
-		//mav.addObject(Constants.JOB, job);
+		//ModelAndView mav= new ModelAndView(new RedirectView("JobManager.jobDetail",true));
+		ModelAndView mav = new ModelAndView("job/job");
+		mav.addObject(Constants.JOB, job);
 		return mav;
 	}
 
