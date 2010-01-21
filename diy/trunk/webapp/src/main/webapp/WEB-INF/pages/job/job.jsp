@@ -125,17 +125,18 @@
   </form>
   
 
-    <c:if test="${job.statusCode!=0}">
+    <c:if test="${job.statusCode==2}">
   	<script>
     new Ajax.PeriodicalUpdater('console', "<c:url value='/get/JobManager.getConsole'/>",
 		  {
 		    method: 'get',
 		    parameters: {uri:"${job.executionInstanceId}" },
 		    frequency: 5
+		    decay:2
 		});
     </script>
   </c:if>
-  <div id="console">(getting console...)</div>
+  <textarea id="console" rows='100'>(getting console...)</textarea>
   
   
 </div>
