@@ -11,7 +11,7 @@ import java.util.logging.LogRecord;
  * @author Amit Kumar
  * Modified by Xavier Llor&agrave;
  * Created on Jul 18, 2008 11:53:22 PM
- *
+ * testing
  */
 public class MeandreFormatter extends Formatter {
 	
