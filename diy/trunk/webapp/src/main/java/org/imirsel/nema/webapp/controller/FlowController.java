@@ -98,7 +98,7 @@ public class FlowController extends MultiActionController{
 		if(!type.equalsIgnoreCase("all")){
 		ArrayList<Flow> list = new ArrayList<Flow>();
 		for(Flow flow:flowSet){
-			if(flow.getType().toUpperCase().indexOf(type.toUpperCase())!=-1){
+			if(flow.getTypeName().toUpperCase().indexOf(type.toUpperCase())!=-1){
 				System.out.println("adding: " + flow.getName() + "     "+flow.getType());
 				list.add(flow);
 			}

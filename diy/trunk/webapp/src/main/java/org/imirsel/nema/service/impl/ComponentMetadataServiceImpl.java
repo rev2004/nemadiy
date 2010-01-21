@@ -16,10 +16,10 @@ import org.imirsel.nema.annotatons.parser.beans.StringDataTypeBean;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.renderers.CollectionRenderer;
-import org.imirsel.nema.repository.NEMADataset;
+import org.imirsel.nema.model.NEMADataset;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repository.RepositoryClientImpl;
-import org.imirsel.nema.repository.RepositoryClientInterface;
+import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.imirsel.nema.service.ComponentMetadataService;
 
 import org.meandre.core.repository.ExecutableComponentDescription;
