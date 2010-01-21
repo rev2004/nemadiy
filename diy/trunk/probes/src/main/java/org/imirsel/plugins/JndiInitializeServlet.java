@@ -35,8 +35,8 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.imirsel.annotations.SqlPersistence;
 import org.imirsel.model.Job;
 import org.imirsel.model.JobResult;
-import org.imirsel.service.ArtifactManagerImpl;
-import org.imirsel.util.PluginConstants;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.directoryservice.PluginConstants;
 import org.meandre.configuration.CoreConfiguration;
 import org.meandre.plugins.MeandrePlugin;
 
