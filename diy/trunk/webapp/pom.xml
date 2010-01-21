@@ -379,6 +379,12 @@
             <scope>compile</scope>
         </dependency>
         
+       <dependency>
+            <groupId>org.imirsel</groupId>
+            <artifactId>nema-repositoryservice-interface</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
         
         
      <dependency>
