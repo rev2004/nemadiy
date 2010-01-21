@@ -14,5 +14,11 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/flowservice-interface/flowservice-interface">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/repositoryservice-interface/repositoryservice-interface">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/m2k/m2k">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
 </wb-module>
 </project-modules>
