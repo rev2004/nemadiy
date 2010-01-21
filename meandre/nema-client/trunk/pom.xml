@@ -18,22 +18,24 @@
 		<url>http://www.lis.illinois.edu</url>
 	</organization>
 
-<distributionManagement>
+	<distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
 			<name>IMIRSEL Releases</name>
 			<id>nema.lis.uiuc.edu-releases</id>
-			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
-			
+			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/
+			</url>
+
 		</repository>
 		<!-- use the following if you ARE using a snapshot version. -->
-		
-			<snapshotRepository>
-				<id>nema.lis.uiuc.edu-snapshots</id>
-				<name>IMIRSEL Snapshots</name>
-				<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-snapshots-local</url>
-			</snapshotRepository>
-		
+
+		<snapshotRepository>
+			<id>nema.lis.uiuc.edu-snapshots</id>
+			<name>IMIRSEL Snapshots</name>
+			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-snapshots-local
+			</url>
+		</snapshotRepository>
+
 		<downloadUrl>http://nema.lis.uiuc.edu/artifactory/</downloadUrl>
 	</distributionManagement>
 	<build>
