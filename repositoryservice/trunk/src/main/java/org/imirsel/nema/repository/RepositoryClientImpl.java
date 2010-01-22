@@ -1155,23 +1155,26 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
 
     public Map<Integer,String> populateTypesMap(String query) throws SQLException{
-        System.out.println("Populating types map with query: " + query);
+        //System.out.println("Populating types map with query: " + query);
         PreparedStatement st = dbCon.con.prepareStatement(query);
         Map<Integer,String> retVal = new HashMap<Integer,String>();
         ResultSet rs = null;
+        int count=0;
         try {
             rs = st.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String name = rs.getString("name");
-                System.out.println(id + ": " + name);
+                //System.out.println(id + ": " + name);
                 retVal.put(id, name);
+                count++;
             }
         } finally {
             if (rs != null) {
                 rs.close();
             }
         }
+        System.out.println("cached "+ count + " objects with query "+ query);
         return retVal;
     }
 
