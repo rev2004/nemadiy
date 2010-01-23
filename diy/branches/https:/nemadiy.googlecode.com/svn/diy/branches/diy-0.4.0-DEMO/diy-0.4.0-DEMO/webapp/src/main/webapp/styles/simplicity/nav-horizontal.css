@@ -1,0 +1,29 @@
+/* A CSS Framework by Mike Stenhouse of Content with Style */
+
+/* NAV */
+ 
+  
+    div#nav {
+        position: absolute;
+        right: 20px;
+        top: 6px;
+    }
+	
+	  div#nav div.wrapper {
+
+    }
+
+
+/* Barry CSS overrides */	
+
+
+#nav ul li {
+    width: auto;
+    display: inline;
+    list-style: none;
+	padding-left: 7px;
+}
+
+
+/* END NAV */
+
