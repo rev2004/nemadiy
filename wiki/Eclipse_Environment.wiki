@@ -7,6 +7,13 @@ Add your content here.
 
 = Details =
 
+Eclipse version: 3.4.2 or greater
+Required plugins:
+  * Spring IDE (http://dist.springframework.org/release/IDE)
+  * M2Eclipse (http://m2eclipse.sonatype.org/update/)
+  * FindBugs (http://findbugs.cs.umd.edu/eclipse)
+
+
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
   * Headings, paragraphs, and lists
