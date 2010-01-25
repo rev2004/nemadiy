@@ -1,0 +1,258 @@
+				    <h2><a name="DocumentationStandards-Forward"></a>Forward</h2>
+
+<p>Substantial portions of this document are taken directly from the <a href="http://ptolemy.berkeley.edu/ptolemyII/">Ptolemy II</a> project documentation (Volume 1: Introduction to Ptolemy II). The source code documentation in the Ptolemy II project is exemplary, and should serve as a baseline from which to judge the quality of our own comments.</p>
+
+<h2><a name="DocumentationStandards-Introduction"></a>Introduction</h2>
+
+<p>Good comments are essential to easily readable and maintainable code. Good comments actually extend the life of code because well-commented code is more likely to be reused rather than rewritten. For open source projects, well-documented code communicates to casual observers and potential contributors that the project is committed to producing mature, quality code.</p>
+
+<p>It is critical that documentation be written at the time of development when details are still fresh in your mind, rather than six months later as an afterthought. Likewise, when code is modified and/or extended, the comments and other documentation about the code should be immediately updated to reflect the changes.</p>
+
+<p>Code comments fall into two categories:</p>
+<ul>
+	<li>Javadoc comments, which become part of the auto-generated documentation.
+	<ul>
+		<li>Provides an overview of the whole project (overview.html)</li>
+		<li>Explains the purpose of packages (package-info.java)</li>
+		<li>Explains the interface contract of classes (in each class file)</li>
+
+	</ul>
+	</li>
+	<li>Code comments, which are available only by looking at the source code.
+	<ul>
+		<li>Explains how the code works</li>
+	</ul>
+	</li>
+</ul>
+
+
+<p><br clear="all" /></p>
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>All Javadoc and code comments should be complete thoughts, capitalized at the beginning and with a period at the end. <ins>Spelling and grammar should be correct&#33;</ins></td></tr></table></div>
+
+<h2><a name="DocumentationStandards-Javadoc"></a>Javadoc</h2>
+
+<p>Javadoc is a program distributed with Java that generates HTML documentation files from Java source code files. Javadoc comments begin with /*&#42; and end with &#42;/. The comment immediately preceding a code construct (method, member, or class) documents that code construct. Javadoc documentation should be provided for all projects, packages, classes, interfaces, enums and all public, protected, and private members and methods contained therein.</p>
+
+<p>Please take the time to familiarize yourself with the finer points of Javadoc at this URL: <a href="http://java.sun.com/javase/6/docs/technotes/guides/javadoc/index.html">http://java.sun.com/javase/6/docs/technotes/guides/javadoc/index.html</a></p>
+
+<div class='panelMacro'><table class='noteMacro'><colgroup><col width='24'><col></colgroup><tr><td valign='top'><img src="images/icons/emoticons/warning.gif" width="16" height="16" align="absmiddle" alt="" border="0"></td><td>When writing Javadoc comments, pay special attention to the first sentence of each Javadoc comment. This first sentence is used as a summary in the Javadocs. It is extremely helpful if the first sentence is a cogent and complete summary.</td></tr></table></div>
+<p>Javadoc comments can include embedded HTML formatting. Please use HTML comments sparingly, and make sure the markup is well-formed. FIXME: NAME THE LEGAL HTML HERE. Any code included in comments should be wrapped in code tags: &lt;code&gt;i = 1&lt;/code&gt;.</p>
+
+<p>The Javadoc program gives extensive diagnostics when run on a source file. Comments should be formatted until there are no Javadoc warnings.</p>
+
+<h2><a name="DocumentationStandards-ClassDocumentation"></a>Class Documentation</h2>
+
+<p>The class documentation is the Javadoc comment that immediately precedes the class definition line. It is a particularly important part of the documentation. It should describe what the class does and how it is intended to be used. When writing it, put yourself in the mind of the user of your class. What does that person need to know to clearly understand what the class is for? A clear explanation is especially important when a person doesn't have a clear understanding of the larger system. Usually, it is of little help to explain implementation details of the class.</p>
+
+<p>A class may be intended to be a base class that is extended by other programmers. In this case, there may be two distinct sections to the class documentation. The first section should describe how a user of the class should use the class. The second section should describe how a programmer can meaningfully extend the class. Only the second section should reference protected members or methods. The first section has no use for them. Of course, if the class is abstract, it cannot be used directly and the first section can be omitted.</p>
+
+<p>Each class comment should also include the following Javadoc tags:</p>
+<ul>
+	<li>@author
+	<ul>
+		<li>The @author tag should name the creator of the class or interface. For example:
+<br clear="all" />  <tt>@author shirk</tt><br clear="all" /></li>
+		<li>SVN logins should be used for author/s, not the full name. If a class has been authored by multiple developers, their SVN logins should be included as well, on subsequent lines:<br/>
+
+  <tt>@author shirk</tt><br clear="all" />
+  <tt>@author goren</tt><br clear="all" /></li>
+	</ul>
+	</li>
+	<li>@since
+	<ul>
+		<li>The @since tag refers the release that the class first appeared in. For example:
+<br clear="all" />  <tt>@since 0.5 beta</tt><br clear="all" />
+
+Note that the @since tag can also be used when a method is added to an existing class, which will help users notice new features in older code.</li>
+	</ul>
+	</li>
+	<li>@proposedRating
+	<ul>
+		<li>Custom javadoc tag. See the section below for further explanation.</li>
+	</ul>
+	</li>
+	<li>@acceptedRating
+	<ul>
+
+		<li>Custom javadoc tag. See the section below for further explanation.</li>
+	</ul>
+	</li>
+</ul>
+
+
+<h2><a name="DocumentationStandards-CodeRatings"></a>Code Ratings</h2>
+
+<p>The Javadoc tags <tt>@proposedRating</tt> and <tt>@acceptedRating</tt> contain code rating information. Each tag includes the color (one of red, yellow, green, or blue) and the SVN login of the person responsible for the proposed or accepted rating level, for example:</p>
+
+<ul class="alternate" type="square">
+	<li><tt>@proposedRating blue shirk</tt></li>
+	<li><tt>@acceptedRating green goren</tt></li>
+</ul>
+
+
+<p>The intent of the code rating is to clearly identify to readers of the file the level of maturity of the contents. Early implementations of new specifications, or major refactorings of already existing implementations, will usually involve creating immature code, or even "throw-away" code. Such code is <b>red</b>.</p>
+
+<p>The basic idea is that the author proposes that a class advance a level. The reviewer is then responsible for examining the class and the test cases (with the help of other reviewers, if necessary) and either accepting or rejecting the proposed advancement. The reviewer needs to provide specific and concrete reasons for rejection; the author is obliged to make needed modifications and re-submit the code.</p>
+
+<p>Code rating values are defined as follows:</p>
+<ul class="alternate" type="square">
+	<li><b>Red</b> code is untrusted code. This means that we have no confidence in the design or implementation (if there is one) of this code or design, and that anyone that uses it can expect it to change substantially and without notice. All code starts at red.</li>
+	<li><b>Yellow</b> code is code with a trusted design. We have a reasonable degree of confidence in the design, and do not expect it to change in any substantial way. However, we do expect the API to shift around a little during development.</li>
+	<li><b>Green</b> code is code with a trusted implementation. We have confidence that the implementation is sound, based on test suites and practical application of the code. If possible, we try not to release important code unless it is green.</li>
+
+	<li><b>Blue</b> marks polished and complete code, and also represents a firm commitment to backwards-compatibility. Blue code is completely reviewed, tested, documented, and stressed in actual usage.</li>
+</ul>
+
+
+<h2><a name="DocumentationStandards-ConstructorDocumentation"></a>Constructor Documentation</h2>
+
+<p>Constructor documentation usually begins with the phrase "Constructs an instance that ..." and goes on to give the properties of that instance. As with class documentation, it is important to communicate the specifics of the constructor behavior in the first sentence as this is the one that will show up in method summary.</p>
+
+<h2><a name="DocumentationStandards-MethodDocumentation"></a>Method Documentation</h2>
+
+<p>Method documentation needs to state what the method does and how it should be used. It is almost never useful to simply provide an English translation of the code. This is a good example of the type of method documentation that is expected:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">
+/**
+ * Marks <span class="code-keyword">this</span> object invalid, indicating that when a method
+ * is next called to get information from the object, that
+ * information needs to be reconstructed from the database.
+ */
+<span class="code-keyword">public</span> void invalidate() {
+   valid = <span class="code-keyword">false</span>;
+}
+</pre>
+</div></div>
+<p>By contrast, here is a poor method comment:</p>
+
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">
+/**
+ * Sets the variable valid to <span class="code-keyword">false</span>.
+ */
+<span class="code-keyword">public</span> void invalidate() {
+   valid = <span class="code-keyword">false</span>;
+}
+</pre>
+</div></div>
+<p>While this certainly describes what the method does from the perspective of the coder, it says nothing useful from the perspective of the user of the class, who cannot see the (presumably private) variable <tt>valid</tt> nor how that variable is used. On closer examination, this comment describes <em>how</em> the method is accomplishing what it does, but it does not describe <em>what</em> it accomplishes.</p>
+
+<p>Here is an even worse method comment:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">
+/**
+ * Invalidates <span class="code-keyword">this</span> object.
+ */
+<span class="code-keyword">public</span> void invalidate() {
+   valid = <span class="code-keyword">false</span>;
+}
+</pre>
+</div></div>
+<p>This is no more helpful than reading the method name.</p>
+
+<p>Comments for base class methods that are intended to be overridden should include information about what the method generally does, plus information that a programmer may need to override it. If the derived class uses the base class method (by calling <tt>super.methodName()</tt>), but then appends to its behavior, then the documentation in the derived class should describe <em>both</em> what the base class does and what the derived class does.</p>
+
+<h2><a name="DocumentationStandards-Referringtomethodsincomments"></a>Referring to methods in comments</h2>
+
+<p>By convention, method names are set in the default font, but followed by empty parentheses, as in:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">
+/** The doit() method is called when ... */
+
+</pre>
+</div></div>
+<p>The parentheses are empty even if the method takes arguments. The arguments are not shown. If the method is overloaded (has several versions with different argument sets), then the text of the documentation needs to distinguish which version is being used.</p>
+
+<p>Other methods of the same class may be linked with the {<tt>@link ...</tt>} Javadoc tag. For example, to link to a <tt>foo()</tt> method that takes a String:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">
+/** Unlike the {@link #foo(<span class="code-object">String</span>)} method, <span class="code-keyword">this</span> method... */
+
+</pre>
+</div></div>
+<p>Methods and members in the same package should have an octothorpe (# sign) prepended. Methods and members in other classes should use the fully qualified class name:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">
+{@link ctpp.util.PropertiesLoader.load(<span class="code-object">String</span>)}
+</pre>
+</div></div>
+<p>Links to methods should include the types of arguments.</p>
+
+<h2><a name="DocumentationStandards-Referringtoclassesincomments"></a>Referring to classes in comments</h2>
+
+<p>&nbsp;FIXME</p>
+
+<h2><a name="DocumentationStandards-Includingcodeincomments"></a>Including code in comments</h2>
+
+<p>FIXME</p>
+
+
+<h2><a name="DocumentationStandards-Tagsinmethoddocumentation"></a>Tags in method documentation</h2>
+
+<p>All methods (default, private, protected, public) should include the following Javadoc tags:</p>
+<ul>
+
+	<li>@param
+	<ul>
+		<li>One should be provided for each parameter no matter how trivial it seems at the time.</li>
+		<li>The annotation should meaningfully explain what the method does, and should address the larger implications of its use. (See previous <tt>invalidate()</tt> example)</li>
+		<li>Although the annotations do not need to be complete sentences, they should always begin with a capitol letter and end it with a period.</li>
+	</ul>
+
+	</li>
+	<li>@return
+	<ul>
+		<li>Unless the return type is void, this tag should always be used.</li>
+		<li>As with @param, the comment should meaningfully explain what is being returned.</li>
+		<li>@returns is not a valid Javadoc tag.</li>
+	</ul>
+	</li>
+
+	<li>@throws
+	<ul>
+		<li>One should be provided for each checked exception that is thrown.</li>
+		<li>One should also be provided for each runtime exception that might be thrown as a result of some parameter that has been passed to the method. Such information is important to document because it is part of the entire interface contract. For example, if the value of a certain numeric parameter is checked by the method code to be within a certain range, and an <tt>IllegalArgumentException</tt> is thrown if it is not, this exception needs to be documented and the legal range of values should be specified.</li>
+		<li>An @throws tag should read like this:
+		<ul>
+			<li>@throws IllegalArgumentException If the value of the &lt;code&gt;cost&lt;/code&gt; parameter is a negative number.</li>
+
+			<li>Always start the comment with "If blah blah..."</li>
+			<li>Note the capital at the beginning of the documentation and the period at the end.</li>
+			<li>In the case of an interface or base class that does not throw the exception, documentation should still be provided. The exception still has to be declared so that derived classes can throw it:
+			<ul>
+				<li><tt>@throws SomeException Not thrown in this base class. Derived classes may throw it if such and such happens.</tt></li>
+			</ul>
+			</li>
+		</ul>
+
+		</li>
+	</ul>
+	</li>
+</ul>
+
+
+<h2><a name="DocumentationStandards-FIXMEannotations"></a>FIXME annotations</h2>
+
+<p>We use the keyword "FIXME" in comments to mark places in the code with known problems. For example:</p>
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent">
+<pre class="code-java">
+<span class="code-comment">// FIXME: The following <span class="code-keyword">cast</span> may not always be safe.
+
+</span>Foo foo = (Foo)bar;
+</pre>
+</div></div>
+<p>Modern IDEs such as Eclipse can be configured to highlight FIXMEs.</p>
+
+				    
+                    			    </td>
+		    </tr>
+	    </table>
+	    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+			<tr>
+				<td height="12" background="https://wiki.ctpp.uiuc.edu//images/border/border_bottom.gif"><img src="images/border/spacer.gif" width="1" height="1" border="0"/></td>
+
+			</tr>
+		    <tr>
+			    <td align="center"><font color="grey">Document generated by Confluence on Nov 11, 2009 16:53</font></td>
+		    </tr>
+	    </table>
