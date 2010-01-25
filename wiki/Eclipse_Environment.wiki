@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Documents the Eclipse configuration required to work on the NEMA code base.
 
 = Introduction =
 
