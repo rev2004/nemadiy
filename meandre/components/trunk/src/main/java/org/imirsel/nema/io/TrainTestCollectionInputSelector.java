@@ -123,7 +123,10 @@ import java.sql.SQLException;
 			//.getAbsoluteProcessWorkingDirectory(
 			//		cc.getFlowExecutionInstanceID());				
 			
-			processWorkingDirName=ArtifactManagerImpl.getInstance().getResultLocationForJob(cc.getFlowExecutionInstanceID());//.getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
+		
+			//Debugging 01/26/2010
+			//processWorkingDirName=ArtifactManagerImpl.getInstance().getResultLocationForJob(cc.getFlowExecutionInstanceID());//.getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
+			processWorkingDirName=ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
 			
 			
 		} catch (IOException e1) {
