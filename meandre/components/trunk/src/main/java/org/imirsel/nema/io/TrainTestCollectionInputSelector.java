@@ -23,7 +23,7 @@ import java.sql.SQLException;
 
 @Component(creator = "Mert Bay", description = "Selects a Train / Test dataset from NEMA servers. Outputs 4 objects: " +
 				"1) a Feature Extraction list file path 2) Ground-truth file path 3) an array of train file paths " +
-				"4) an array of test file paths", name = "CollectionSelector",resources={"RepositoryProperties.properties"},
+				"4) an array of test file paths", name = "CollectionSelector",//resources={"RepositoryProperties.properties"},
 					tags = "input, collection, train/test", firingPolicy = Component.FiringPolicy.all)
 	
 	public class TrainTestCollectionInputSelector implements ExecutableComponent {
