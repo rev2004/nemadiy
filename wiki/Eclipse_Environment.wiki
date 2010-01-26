@@ -14,7 +14,9 @@ The NEMA Eclipse environment requires the following Eclipse plugins:
   * Google code connector for Mylyn
   * Find Bugs
 
-Ordinarily, one would download the Eclipse IDE for Java EE developers from the Eclipse site (http://www.eclipse.org/downloads/), and then download and install each plugin individually. This can be a time consuming and error prone process. 
+One way to configure your Eclipse environment is to download the "Eclipse IDE for Java EE Developers" from the Eclipse site (http://www.eclipse.org/downloads/), and then download and install each plugin individually. However, this can be a time consuming and error prone process.
+
+Instead, we recommend you download and install the SpringSource Tool Suite, a SpringSource branded Eclipse environment that comes preinstalled with Spring IDE and M2 Eclipse.
 
 Eclipse version: 3.4.2 or greater
 Required plugins:
