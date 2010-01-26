@@ -44,6 +44,7 @@ import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
  * along with the datatype information for the various component properties
  * that make the flow.
  * 
+ * @modified January 26th hide collections that don't start with small demo
  * @author Amit Kumar
  *
  */
@@ -169,9 +170,15 @@ public class ComponentMetadataServiceImpl implements ComponentMetadataService {
 						List<NEMADataset> ltb=rpi.getDatasets();
 						for(NEMADataset dataset:ltb){
 							String label=dataset.getName();
-							int value=dataset.getId();
-							labelList.add(label);
-							valueList.add(value);
+							/*this is a hack for the demo setup*/
+							if(label!=null){
+								if(label.toLowerCase().indexOf("small demo")!=-1){
+									int value=dataset.getId();
+									labelList.add(label);
+									valueList.add(value);
+								}
+							}
+							
 						}
 					} catch (SQLException e) {
 						e.printStackTrace();
