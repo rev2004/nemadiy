@@ -297,6 +297,13 @@ public class JobController extends MultiActionController {
 			result.setUrl(processUrl(result.getUrl()));
 			
 		}
+		String uri=req.getRequestURI();
+		if (uri.substring(uri.length()-4).equalsIgnoreCase ("json")){
+			ModelAndView mav=new ModelAndView("jsonView");
+			mav.addObject(Constants.JOB,job);
+			return mav;
+		}
+		else{
 		ModelAndView mav= new ModelAndView("job/job");
 		mav.addObject(Constants.JOB, job);
 		
@@ -304,6 +311,7 @@ public class JobController extends MultiActionController {
 		DisplayResultSet resultSet=new DisplayResultSet(job.getResults());
 		mav.addObject("resultSet", resultSet);
 		return mav;
+		}
 	}
 
 	
