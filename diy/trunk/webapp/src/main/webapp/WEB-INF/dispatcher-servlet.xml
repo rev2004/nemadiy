@@ -169,6 +169,8 @@
             /JobManager.jobAction=jobaction
             /JobManager.selectJobForSubmission=selectJobForSubmission
             /JobManager.getNotification=getNotification
+            
+            /JobManager.jobDetail.json=jobdetail
             </value>
         </property>
     </bean>
@@ -244,7 +246,14 @@
     <bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
         <property name="order" value="1"/>
     </bean>
+    
+    
+    <!-- View Resolver for json and other stuff -->
 
+	<bean id="xmlResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
+	<property name="order" value="1"/>
+	</bean>
+	
     <!-- View Resolver for JSPs -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="requestContextAttribute" value="rc"/>

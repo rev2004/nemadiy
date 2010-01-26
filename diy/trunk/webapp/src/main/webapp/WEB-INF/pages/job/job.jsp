@@ -131,12 +131,12 @@
 		  {
 		    method: 'get',
 		    parameters: {uri:"${job.executionInstanceId}" },
-		    frequency: 5
+		    frequency: 5,
 		    decay:2
 		});
     </script>
   </c:if>
-  <textarea id="console" rows='100'>(getting console...)</textarea>
+  <textarea id="console" cols='90' rows='100'>(getting console...)</textarea>
   
   
 </div>
