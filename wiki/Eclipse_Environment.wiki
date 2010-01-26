@@ -16,8 +16,11 @@ The NEMA Eclipse environment requires the following Eclipse plugins:
 
 One way to configure your Eclipse environment is to download the "Eclipse IDE for Java EE Developers" from the Eclipse site (http://www.eclipse.org/downloads/), and then download and install each plugin individually. However, this can be a time consuming and error prone process.
 
-Instead, we recommend you download and install the Spring Source Tool Suite, a Spring branded Eclipse environment that comes pre-installed with Spring IDE and M2 Eclipse.
+Instead, we recommend you download and install the Spring Source Tool Suite, a Spring branded Eclipse environment that comes pre-installed with Spring IDE and M2 Eclipse. Then, you can install the remaining plugins.
 
+Here are the complete steps for setting up your Eclipse environment.
+
+  * Download and install the Spring Source Tool Suite (http://www.springsource.com/products/eclipse-downloads)
 
   * FindBugs (http://findbugs.cs.umd.edu/eclipse)
 
