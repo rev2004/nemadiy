@@ -1,8 +1,8 @@
-#summary Documents the Eclipse configuration required to work on the NEMA code base.
+#summary Documents how to setup an Eclipse development environment to work on the NEMA code base.
 
 = Introduction =
 
-Add your content here.
+In addition to the base Eclipse environment, a number of third-party plugins are required to properly configure an Eclipse environment for the NEMA code base. This document will help you through the complete process of installation.
 
 
 = Details =
