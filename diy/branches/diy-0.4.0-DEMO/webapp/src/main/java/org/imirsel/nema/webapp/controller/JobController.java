@@ -248,10 +248,11 @@ public class JobController extends MultiActionController {
         }
 		
 		
-		ModelAndView mav= new  ModelAndView("job/job");
-		mav.addObject("jobForSubmission",success);
-		mav.addObject(Constants.JOB, job);
-		logger.debug("change job "+job.getId()+"with "+job.getResults()+" to submission: "+success);
+//		ModelAndView mav= new  ModelAndView("job/job");
+//		mav.addObject("jobForSubmission",success);
+//		mav.addObject(Constants.JOB, job);
+//		logger.debug("change job "+job.getId()+"with "+job.getResults()+" to submission: "+success);
+		ModelAndView mav= new ModelAndView(new RedirectView("FlowFormManager.getFlowTemplate?id=10",true));
 		return mav;
 	}
 
