@@ -23,7 +23,7 @@ import java.sql.SQLException;
 
 @Component(creator = "Mert Bay", description = "Selects a Train / Test dataset from NEMA servers. Outputs 4 objects: " +
 				"1) a Feature Extraction list file path 2) Ground-truth file path 3) an array of train file paths " +
-				"4) an array of test file paths", name = "CollectionSelector",resources={"../../../../RepositoryProperties.properties"},
+				"4) an array of test file paths", name = "CollectionSelector",resources={"RepositoryProperties.properties"},
 					tags = "input, collection, train/test", firingPolicy = Component.FiringPolicy.all)
 	
 	public class TrainTestCollectionInputSelector implements ExecutableComponent {
@@ -44,38 +44,38 @@ import java.sql.SQLException;
 
 	
 	@StringDataType(renderer=CollectionRenderer.class)
-	@ComponentProperty(defaultValue = "5", description = "", name = "datasetID")
-	final static String DATA_PROPERTY_DATASET_ID = "datasetID";
+	@ComponentProperty(defaultValue = "5", description = "", name = "dataset")
+	final static String DATA_PROPERTY_DATASET_ID = "dataset";
 	private int datasetID = 5;
 	
-	@StringDataType(valueList={"","96k","128k"})
+	@StringDataType(hide=true)//valueList={"","96k","128k"})
 	@ComponentProperty(defaultValue = "", description = "bit rate for the mp3 files", name = "BitRate")
 	final static String DATA_PROPERTY_BIT_RATE = "BitRate";
 	private String bitRate = "";
 	
-	@StringDataType(valueList={"1","2"})
+	@StringDataType(hide=true)//valueList={"1","2"})
 	@ComponentProperty(defaultValue = "1", description = "Number of channels. 1 for mono 2 for stereo", name = "Channels")
 	final static String DATA_PROPERTY_CHANNELS = "Channels";
 	private String channels = "1";
 	
-	@StringDataType(valueList={"30","full"})
+	@StringDataType(hide=true)//valueList={"30","full"})
 	@ComponentProperty(defaultValue = "30", description = "30 sec clips or the full audio files", name = "Clip_Type")
 	final static String DATA_PROPERTY_CLIP_TYPE = "Clip_Type";
 	private String clip_type = "30";
 	
 	
-	@StringDataType(valueList={"mp3","wav"})
+	@StringDataType(hide=true)//valueList={"mp3","wav"})
 	@ComponentProperty(defaultValue = "wav", description = "Encoding type: mp3 or wav", name = "Encoding")
 	final static String DATA_PROPERTY_ENCODING = "Encoding";
 	private String encoding = "wav";
 	
 	
-	@StringDataType(valueList={"22050","44100"})
+	@StringDataType(hide=true)//valueList={"22050","44100"})
 	@ComponentProperty(defaultValue = "22050", description = "Sampling rate: 22050 or 44100", name = "Sample_Rate")
 	final static String DATA_PROPERTY_SAMPLE_RATE = "Sample_Rate";
 	private String sample_rate = "22050";
 	
-	@StringDataType(valueList={"\t",","})
+	@StringDataType(hide=true)//valueList={"\t",","})
 	@ComponentProperty(defaultValue = "\t", description = "Delimiter for the ground-truth files", name = "Delim")
 	final static String DATA_PROPERTY_DELIM = "Delim";
 
