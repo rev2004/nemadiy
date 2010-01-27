@@ -95,3 +95,60 @@ Incorrect:
 
     * {{{spinner()}}}
     * {{{$kite()}}}
+
+== Method Parameters ==
+
+As with method names, parameter names should communicate meaningful information to the reader. Do not use single characters or abbreviations. No special characters should prefix method names. Use {{{lowerCamelCase}}} always.
+
+Correct:
+
+    * {{{pageNumber}}}
+    * {{{absolutePath}}}
+
+Incorrect:
+
+    * {{{NumberOfTimes}}}
+    * {{{c}}}
+
+== Local Variables ==
+
+The same rules for method parameters apply to local variables. However, exceptions are allowed for variables used strictly for looping through a collection, {{{for(int i=0;i<10;i++)}}} for example. Local variables referring to collections should describe what the collection contains, and should be pluralized.
+
+Correct:
+
+    * {{{productCount}}}
+    * {{{isAvailable}}}
+    * {{{carParts}}}
+
+Incorrect:
+
+    * {{{list}}}
+    * {{{al}}}
+
+== Instance Variables ==
+
+Name instance variables with great care paying special attention to reducing ambiguity. Try and place yourself in the mind of a programmer totally unfamiliar with your class implementation to help you determine if your variable name is clear enough.
+
+Instance variables should be set in {{{lowerCamelCase}}}.
+
+Correct:
+
+    * {{{selectedFiles}}}
+    * {{{currentAnalysisTechnique}}}
+
+Incorrect:
+
+    * {{{OpenConnection}}}
+    * {{{fileDao}}}
+
+== Public Class Constants ==
+
+Public class constants should be set in all caps with underscores separating words.
+
+Correct:
+
+    * {{{READ_METHOD}}}
+
+Incorrect:
+
+    * {{{write_method}}}
