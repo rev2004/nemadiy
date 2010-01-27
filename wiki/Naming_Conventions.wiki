@@ -55,7 +55,7 @@ Incorrect
     * {{{Execute}}}
     * {{{Transfer}}}
 
-Enums
+== Enums ==
 
 As of Java 5, enumerations no longer have to be simulated using a class or interface; they are now their own full-fledged type:
 
