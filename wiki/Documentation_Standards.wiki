@@ -9,7 +9,7 @@ It is critical that documentation be written at the time of development when det
 Code comments fall into two categories:
 
     * Javadoc comments, which become part of the auto-generated documentation.
-          * Provides an overview of the whole project (overview.html)
+    * Provides an overview of the whole project (overview.html)
           * Explains the purpose of packages (package-info.java)
           * Explains the interface contract of classes (in each class file)
     * Code comments, which are available only by looking at the source code.
