@@ -1,0 +1,13 @@
+#summary Documents the NEMA naming conventions for code.
+
+= Introduction =
+
+Good naming conventions and practices are as important (one might argue more important) than good code comments. Naming is perhaps the single most important factor that affects readability of code. This document is intended to address two aspects of naming: appearance and content.
+
+= Details =
+
+When you name a class, interface, method or constant, use a name that is, and will remain, meaningful to those programmers who must eventually read your code. Use meaningful words to create names. Avoid using a single character or generic names that do little to define the purpose of the entities they name. Use full words; do not attempt to shorten words by removing vowels. Strive for names that promote self documenting code.
+
+Generally speaking, {{{CamelCase}}} will be used to name classes, and {{{lowerCamelCase}}} will be used to name methods and variables.
+
+Acronyms should be avoided, but if they must be part of an identifier, capitalize only the first letter, {{{loadXml()}}} for example. If the acronym comes at the beginning of the identifier, the acronym should also start with a lowercase letter, {{{xmlLoader}}} for example.
