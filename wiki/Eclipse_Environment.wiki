@@ -25,7 +25,8 @@ Here are the complete steps for setting up your Eclipse environment.
   # Now install the SVN plugin, Subversive. Open the Spring Source Tool Suite, and go to Help->Install New Software
   # In the "Work with:" field, type "http://download.eclipse.org/releases/galileo/"
   # Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Subversive Update Site" then click "OK".
-  # In the categorized list of plugins that appears, expand the "Collaboration" tree node and select the "Subversive SVN Integration for the Mylyn Project" and the "Subversive SVN Team Provider" plugins.
+  # In the categorized list of plugins that appears, expand the "Collaboration" tree node and select the "Subversive SVN Integration for the Mylyn Project" and the "Subversive SVN Team Provider" plugins. Complete the installation by following the buttons.
+  # To complete the Subversive installation, you will need to restart Eclipse. When Eclipse restarts, Subversive will ask you to choose an SVN connector to install. Choose SVNKit 1.3.0.
 
   * FindBugs (http://findbugs.cs.umd.edu/eclipse)
 
