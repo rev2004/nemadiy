@@ -10,7 +10,7 @@ In addition to the base Eclipse environment, a number of third-party plugins are
 The NEMA Eclipse environment requires the following Eclipse plugins:
   * Spring IDE
   * M2 Eclipse
-  * Subversion SVN connector
+  * Subversive SVN connector
   * Google code connector for Mylyn
   * Find Bugs
 
@@ -21,7 +21,7 @@ Instead, we recommend you download and install the Spring Source Tool Suite, a S
 Here are the complete steps for setting up your Eclipse environment.
 
   # Download and install the Spring Source Tool Suite (http://www.springsource.com/products/eclipse-downloads)
-  # Open the Spring Source Tool Suite, and go to Help->Install New Software
+  # Now install the SVN plugin, Subversive. Open the Spring Source Tool Suite, and go to Help->Install New Software
   # In the "Work with:" field, type "http://download.eclipse.org/releases/galileo/"
   * FindBugs (http://findbugs.cs.umd.edu/eclipse)
 
