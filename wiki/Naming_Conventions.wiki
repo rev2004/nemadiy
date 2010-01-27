@@ -11,3 +11,31 @@ When you name a class, interface, method or constant, use a name that is, and wi
 Generally speaking, {{{CamelCase}}} will be used to name classes, and {{{lowerCamelCase}}} will be used to name methods and variables.
 
 Acronyms should be avoided, but if they must be part of an identifier, capitalize only the first letter, {{{loadXml()}}} for example. If the acronym comes at the beginning of the identifier, the acronym should also start with a lowercase letter, {{{xmlLoader}}} for example.
+
+== Packages ==
+
+Package names should consist of only lowercase letters and periods. Abbreviations should only be used if they are commonly known or part of a defined vocabulary, i.e. "ui" for user interface. Plurals should be avoided.
+
+All NEMA packages should begin with {{{org.imirsel.nema.}}} then the rest of the package name.
+
+Correct:
+
+    * {{{org.imirsel.nema.persistence.bean}}}
+
+Incorrect:
+
+    * {{{org.imirsel.nema.persistenceLayer.bean}}}
+    * {{{org.imirsel.nema.persistence.beans}}}
+
+== Classes ==
+
+Class names begin with an uppercase letter and should not be pluralized unless it groups related items together. Classes represent entities, and thus should always be named using nouns, not verbs. Avoid making a noun out of a verb, example {{{DivideClass}}}. If you are having difficulty naming a class then perhaps it is a design problem and not a naming problem.
+
+Correct:
+
+    * {{{UrlParser}}}
+
+Incorrect:
+
+    * {{{URLParser}}}
+    * {{{UrlParse}}}
