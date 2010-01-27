@@ -30,6 +30,7 @@ Here are the complete steps for setting up your Eclipse environment.
   # Now install the Google Code Mylyn Connector. Open the Spring Source Tool Suite, and go to Help->Install New Software
   # In the "Work with:" field, type "http://knittig.de/googlecode-mylyn-connector/update/"
   # Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Google Code Mylyn Connector" then click "OK".
+  # In the list of plugins that appears, expand the "Nightly Builds" tree node and select the "Google Code Mylyn Connector Feature" plugin. Complete the installation by following the buttons.
 
   * FindBugs (http://findbugs.cs.umd.edu/eclipse)
 
