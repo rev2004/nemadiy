@@ -79,7 +79,7 @@ Incorrect:
 
 == Methods ==
 
-Methods perform actions. Choose method names that clearly and meaningfully describe the actions that will be performed, without including any implementation details. Sometimes a simple verb will suffice. Other times a longer phrase-like method name is needed to adequately communicate details and enhance clarity, {{{getJobSummary() for example. A descriptive method is a self-documenting method. That said, don't overdo it. You should consider renaming method names over 25-30 characters long.
+Methods perform actions. Choose method names that clearly and meaningfully describe the actions that will be performed, without including any implementation details. Sometimes a simple verb will suffice. Other times a longer phrase-like method name is needed to adequately communicate details and enhance clarity, {{{getJobSummary()}}} for example. A descriptive method is a self-documenting method. That said, don't overdo it. You should consider renaming method names over 25-30 characters long.
 
 Methods that return a boolean type should usually be phrased as an assertion.
 
