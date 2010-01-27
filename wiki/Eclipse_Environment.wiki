@@ -17,7 +17,7 @@ The NEMA Eclipse environment requires the following Eclipse plugins:
 
 One way to configure your Eclipse environment is to download the "Eclipse IDE for Java EE Developers" from the Eclipse site (http://www.eclipse.org/downloads/), and then download and install each plugin individually. However, this can be a time consuming and error prone process.
 
-Instead, we recommend you download and install the Spring Source Tool Suite, a Spring branded Eclipse environment that comes pre-installed with Spring IDE and M2 Eclipse. Then, you can install the remaining plugins.
+Instead, we recommend you download and install the Spring Source Tool Suite, a Spring branded Eclipse environment that comes pre-installed with Spring IDE, Mylyn, and M2 Eclipse. Then, you can install the remaining plugins.
 
 Here are the complete steps for setting up your Eclipse environment.
 
@@ -27,6 +27,9 @@ Here are the complete steps for setting up your Eclipse environment.
   # Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Subversive Update Site" then click "OK".
   # In the categorized list of plugins that appears, expand the "Collaboration" tree node and select the "Subversive SVN Integration for the Mylyn Project" and the "Subversive SVN Team Provider" plugins. Complete the installation by following the buttons.
   # To complete the Subversive installation, you will need to restart Eclipse. When Eclipse restarts, Subversive will ask you to choose an SVN connector to install. Choose SVNKit 1.3.0.
+  # Now install the Google Code Mylyn Connector. Open the Spring Source Tool Suite, and go to Help->Install New Software
+  # In the "Work with:" field, type "http://knittig.de/googlecode-mylyn-connector/update/"
+  # Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Google Code Mylyn Connector" then click "OK".
 
   * FindBugs (http://findbugs.cs.umd.edu/eclipse)
 
