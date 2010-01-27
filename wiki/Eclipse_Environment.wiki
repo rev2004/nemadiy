@@ -20,8 +20,9 @@ Instead, we recommend you download and install the Spring Source Tool Suite, a S
 
 Here are the complete steps for setting up your Eclipse environment.
 
-  * Download and install the Spring Source Tool Suite (http://www.springsource.com/products/eclipse-downloads)
-
+  # Download and install the Spring Source Tool Suite (http://www.springsource.com/products/eclipse-downloads)
+  # Open the Spring Source Tool Suite, and go to Help->Install New Software
+  # In the "Work with:" field, type "http://download.eclipse.org/releases/galileo/"
   * FindBugs (http://findbugs.cs.umd.edu/eclipse)
 
 
