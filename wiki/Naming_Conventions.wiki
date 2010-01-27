@@ -39,3 +39,40 @@ Incorrect:
 
     * {{{URLParser}}}
     * {{{UrlParse}}}
+
+
+== Interfaces ==
+
+Like class names, interface names should be set in {{{CamelCase}}} and should not be pluralized unless it is meant to group related items together. Use nouns to name interfaces that act as service declarations, {{{ActionListener}}} for example. Use adjectives to name interfaces that act as descriptions of capabilities. Most interfaces that describe capabilities use an adjective created by tacking on "able" or "ible" suffix onto the end of a verb, Runnable or Accessible for example.
+
+Correct:
+
+    * {{{Calculable}}}
+    * {{{PageableItems}}}
+
+Incorrect
+
+    * {{{Execute}}}
+    * {{{Transfer}}}
+
+Enums
+
+As of Java 5, enumerations no longer have to be simulated using a class or interface; they are now their own full-fledged type:
+
+{{{public enum Day {SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY}}}}
+
+Therefore, like classes and interfaces, their names should be set in {{{CamelCase}}}. Even though enums contain a collection of items, they should never be pluralized. This is mainly because of how they are used:
+
+{{{Day humpDay = Day.WEDNESDAY;}}}
+
+Enums contain constants, which should be always be capitalized. Because they are implicitly public, no special letter or symbol should be prepended to the constant name.
+
+Correct:
+
+    * {{{enum Size {SMALL, MEDIUM, LARGE}}}}
+    * {{{enum Animal {DOG, CAT, BIRD, RABBIT}}}}
+
+Incorrect:
+
+    * {{{enum Roles {admin, user, guest}}}}
+    * {{{enum Sweets {candyBar, sodaPop, gobstopper}}}}
