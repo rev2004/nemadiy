@@ -27,6 +27,7 @@ Here are the complete steps for setting up your Eclipse environment.
   # Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Subversive Update Site" then click "OK".
   # In the categorized list of plugins that appears, expand the "Collaboration" tree node and select the "Subversive SVN Integration for the Mylyn Project" and the "Subversive SVN Team Provider" plugins. Complete the installation by following the buttons.
   # To complete the Subversive installation, you will need to restart Eclipse. When Eclipse restarts, Subversive will ask you to choose an SVN connector to install. Choose SVNKit 1.3.0.
+  # Now add the NEMA SVN repository by switching to the "SVN Repository Exploring" perspective and creating a new repository location with the following URL: https://nemadiy.googlecode.com/svn. Enter your user and password, and select "Save password" to avoid being prompted each time you browse the repository.
   # Now install the Google Code Mylyn Connector. Open the Spring Source Tool Suite, and go to Help->Install New Software
   # In the "Work with:" field, type "http://knittig.de/googlecode-mylyn-connector/update/"
   # Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Google Code Mylyn Connector" then click "OK".
