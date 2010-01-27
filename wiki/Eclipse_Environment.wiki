@@ -34,7 +34,8 @@ Here are the complete steps for setting up your Eclipse environment.
   # In the list of plugins that appears, expand the "Nightly Builds" tree node and select the "Google Code Mylyn Connector Feature" plugin. Complete the installation by following the buttons.
   # Now you need to add the NEMA Google Code Task Repository. In Eclipse, go to Window->Show View->Other... Expand the "Tasks" node and then select "Task Repositories". The view should appear at the bottom of the IDE window.
   # Right click within the Task Repositories view, and select "Add Task Repository". In the dialog box that appears, choose "Google Code" and then click next. In the next window, add "https://code.google.com/p/nemadiy" in the Project field. Give the task repository a name of your choice. Finally, check "Anonymous" then the "Finish" button.
-  # 
+  # You should now be able to add a task query to the "Task List" view. Right click on the view pane, and select New->Query. Choose the NEMA task repository, then choose the predefined "All Issues" query. When you're done, all the repository task should display in the Task List.
+
   * FindBugs (http://findbugs.cs.umd.edu/eclipse)
 
 Add your content here.  Format your content with:
