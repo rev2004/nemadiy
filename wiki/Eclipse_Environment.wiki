@@ -24,10 +24,10 @@ Here are the complete steps for setting up your Eclipse environment.
   # Download and install the Spring Source Tool Suite (http://www.springsource.com/products/eclipse-downloads)
   # Now install the SVN plugin, Subversive. Open the Spring Source Tool Suite, and go to Help->Install New Software
   # In the "Work with:" field, type "http://download.eclipse.org/releases/galileo/"
-  * FindBugs (http://findbugs.cs.umd.edu/eclipse)
   # Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Subversive Update Site" then click "OK".
   # In the categorized list of plugins that appears, expand the "Collaboration" tree node and select the "Subversive SVN Integration for the Mylyn Project" and the "Subversive SVN Team Provider" plugins.
 
+  * FindBugs (http://findbugs.cs.umd.edu/eclipse)
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
