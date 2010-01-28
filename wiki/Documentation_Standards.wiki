@@ -103,7 +103,7 @@ All methods (default, private, protected, public) should include the following J
 
     * `@param`
       * One should be provided for each parameter no matter how trivial it seems at the time.
-      * The annotation should meaningfully explain what the method does, and should address the larger implications of its use. (See previous invalidate() example)
+      * The annotation should meaningfully explain what the method does, and should address the larger implications of its use. (See previous `invalidate()` example)
       * Although the annotations do not need to be complete sentences, they should always begin with a capitol letter and end it with a period.
     * `@return`
       * Unless the return type is void, this tag should always be used.
