@@ -11,7 +11,7 @@ import java.util.logging.LogRecord;
  * Created on Jul 18, 2008 11:53:22 PM
  *
  */
-public class NEMALogFormatter extends Formatter {
+public class NemaLogFormatter extends Formatter {
 	
 	/** The maximum lenght of a thread name */
 	private final static int MAX_THREAD_NAME_LENGTH = 40;
@@ -26,7 +26,7 @@ public class NEMALogFormatter extends Formatter {
 	private boolean bClass = true;
 
 	/** Creates the default formater */
-	public NEMALogFormatter () {
+	public NemaLogFormatter () {
 		bClass = true;
 	}
 	
@@ -34,7 +34,7 @@ public class NEMALogFormatter extends Formatter {
 	 * 
 	 * @param bShowClass Should the class be shown?
 	 */
-	public NEMALogFormatter ( boolean bShowClass ) {
+	public NemaLogFormatter ( boolean bShowClass ) {
 		bClass = bShowClass;
 	}
 	
