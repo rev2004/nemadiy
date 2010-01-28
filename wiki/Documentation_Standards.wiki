@@ -134,7 +134,7 @@ Other methods of the same class may be linked with the {@link ...} Javadoc tag. 
 /** Unlike the {@link #foo(String)} method, this method... */
 }}}
 
-Methods and members in the same package should have an octothorpe (# sign) prepended. Methods and members in other classes should use the fully qualified class name:
+Methods and members in the same package should have an octothorpe (# sign) prepended. Methods and members in other classes should use the fully qualified class name if the class has not been imported:
 
 {{{
 {@link org.imirsel.nema.util.PropertiesLoader.load(String)}
