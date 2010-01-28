@@ -1,0 +1,157 @@
+<!-- ********************************************************** -->
+<!-- *                                                        * -->
+<!-- * ant build file for m2k                                 * -->
+<!-- *                                                        * -->
+<!-- ********************************************************** -->
+<project name="M2K_core_1_3" default="dist" basedir=".">
+    <description>
+        build file for m2k
+    </description>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Sets properties for the build                          * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="dist"  location="dist"/>
+  <property name="javadoc_dir"  location="${dist}/api"/>
+  <property name="javadoc_check_dir"  location="${dist}/doccheck"/>
+  <property name="version_info"  value="M2K Alpha 1.2"/>
+  <property name="source.files.tocopy"
+        value="**/*.properties,**/*.css,**/*.gif,**/*.jpg,**/*.png,**/*.m" />
+
+  <!--<property file="build.properties"/>
+  
+    <condition property="d2k.dir" value="/Applications/D2KToolkit">
+      <os family="mac"/>
+    </condition>
+    <condition property="d2k.dir" value="C:\Program Files\D2KToolkit">
+      <os family="windows"/>
+    </condition>
+    <condition property="d2k.dir" value="${user.home}/D2KToolkit">
+      <os family="unix"/>
+    </condition>
+    
+    <property file="build.properties"/>-->
+    
+    <path id="libs">
+        <fileset dir="lib" includes="*.jar"/>
+    </path>
+
+    <path id="runtime">
+        <!--<fileset dir="${d2k.dir}/lib" includes="*.jar"/>-->
+        <fileset dir="dist" includes="*.jar"/>
+    </path>
+
+ 
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Gets things ready                                      * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+  <target name="init">
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Compiles the source                                    * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+  <target name="compile_src" depends="init"
+        description="compile the source " >
+        <property name="debug.flag" value="true"/>
+        <!--<echo>D2K dir: ${d2k.dir}</echo>-->
+
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac source="1.5" srcdir="${src}" destdir="${build}" debug="${debug.flag}" >
+        <!-- includes="**/*.java,**/*.png,**/*.m,**/*.css,**/*.gif,**/*.properties"  -->
+        <classpath refid="libs"/>
+        <!-- the lint argument causes javac to report about possible errors -->
+        <!-- <compilerarg value="-Xlint"/> -->
+    </javac>
+    <copy todir="${build}">
+        <fileset dir="src" includes="${source.files.tocopy}"/>
+    </copy>
+
+  </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Builds the m2k.jar file                                * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+  <target name="dist" depends="compile_src"
+        description="build the m2k.jar file" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}"/>
+    <jar jarfile="${dist}/m2k_core_1_3.jar" basedir="${build}">
+        <zipgroupfileset dir="lib" includes="*.jar" excludes="*weka*"/>
+        <manifest>
+            <attribute name="Main-Class" value="org.imirsel.m2k.evaluation.OnsetDetectionEvaluatorClass"/>
+        </manifest>
+    </jar>
+  </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Cleans out everthing that can be built from scratch    * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Builds the javadocs                                    * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="javadoc" description="Generate javadoc">
+        <mkdir dir="${javadoc_dir}"/>
+        <javadoc sourcepath="${src}"
+                 packagenames="org.imirsel.m2k.*"
+	         source="1.5"
+		 additionalparam="-breakiterator"
+		 destdir="${javadoc_dir}" 
+		 overview="${src}/overview.html"
+		 windowtitle="${version_info}"
+                 doctitle="${version_info}">
+	    <classpath refid="libs"/>
+        </javadoc>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Checks the javadocs for errors                         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="javadoc_check" 	    
+	    description="checks the javadocs">
+        <mkdir dir="${javadoc_check_dir}"/>
+        <javadoc sourcepath="${src}"
+		 additionalparam="-source 1.5"
+		 packagenames="org.imirsel.m2k.*"
+		 destdir="${javadoc_check_dir}" 
+		 overview="${src}/overview.html"
+                 doclet="com.sun.tools.doclets.doccheck.DocCheck"
+                 docletpath="lib/doccheck.jar" >
+	    <classpath refid="libs"/>
+        </javadoc>
+    </target>
+
+    
+    <target name="-post-jar">
+        <jar update="true" destfile="${dist.jar}">
+            <zipfileset src="${libs.swing-layout.classpath}"/>
+        </jar>
+    </target>
+
+</project>

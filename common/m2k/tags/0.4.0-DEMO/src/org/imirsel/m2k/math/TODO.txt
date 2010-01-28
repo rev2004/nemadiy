@@ -1,0 +1,3 @@
+Andreas to populate TODO file
+
+Add skip list from SignalSegmentedMeansAndVariances to SignalWindowedMeansAndVariances
