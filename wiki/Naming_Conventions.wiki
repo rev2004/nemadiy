@@ -99,6 +99,8 @@ Incorrect:
 
     * `spinner()`
     * `$kite()`
+    * `open_file()`
+    * `count_nodes()'
 
 == Method Parameters ==
 
@@ -113,6 +115,7 @@ Incorrect:
 
     * `NumberOfTimes`
     * `c`
+    * 'file_path'
 
 == Local Variables ==
 
@@ -128,6 +131,7 @@ Incorrect:
 
     * `list`
     * `al`
+    * `node_counter`
 
 == Instance Variables ==
 
@@ -143,7 +147,8 @@ Correct:
 Incorrect:
 
     * `OpenConnection`
-    * `fileDao`
+    * `fileDAO`
+    * `color_picker`
 
 == Public Class Constants ==
 
