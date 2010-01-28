@@ -137,8 +137,11 @@
         class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
         <property name="mappings">
             <value>
-           	 /FlowManager.getFlowList=flowlist
+           	 /FlowManager.getFlowList=getTemplateFlows
            	 /FlowManager.getTemplateFlows=getTemplateFlows
+           	 
+           	 /FlowManager.getFlowList.json=getTemplateFlows
+           	 /FlowManager.getTemplateFlows.json=getTemplateFlows
             </value>
         </property>
     </bean>
@@ -171,6 +174,9 @@
             /JobManager.getNotification=getNotification
             
             /JobManager.jobDetail.json=jobdetail
+            /JobManager.getUserJobs.json=getuserjobs
+            /JobManager.getSubmissions.json=getSubmissions
+            
             </value>
         </property>
     </bean>

@@ -70,11 +70,19 @@ public class FlowController extends MultiActionController{
 	 * @param req
 	 * @param res
 	 * @return
+	 * @deprecated for getTemplateFlows 
 	 */
 	public ModelAndView flowlist(HttpServletRequest req, HttpServletResponse res){
 		Set<Flow> flowSet=this.flowService.getFlowTemplates();
 		log.info("done loading for flowlist");
-		ModelAndView mav=new ModelAndView("flow/flowType");
+		
+		ModelAndView mav;
+		String uri = req.getRequestURI();
+		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
+			mav = new ModelAndView("jsonView");
+		} else {
+			mav =new ModelAndView("flow/flowType");
+		}
 		mav.addObject(Constants.FLOW_LIST, flowSet);
 		mav.addObject(Constants.FLOW_TYPE, "all");
 		return mav;
@@ -93,7 +101,13 @@ public class FlowController extends MultiActionController{
 			type="all";
 		}
 		Set<Flow> flowSet=this.flowService.getFlowTemplates();
-		ModelAndView mav=new ModelAndView("flow/flowType");
+		ModelAndView mav;
+		String uri = req.getRequestURI();
+		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
+			mav = new ModelAndView("jsonView");
+		} else {
+			mav =new ModelAndView("flow/flowType");
+		}
 		
 		if(!type.equalsIgnoreCase("all")){
 		ArrayList<Flow> list = new ArrayList<Flow>();
