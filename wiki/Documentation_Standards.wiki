@@ -131,10 +131,12 @@ When referring to methods and members of the current class, as well as methods a
 A link to an outside method would look like:
 
 {{{
-{@link org.imirsel.nema.flowservice.FlowService#getJob(long)}
+/** Unlike the {@link org.imirsel.nema.flowservice.FlowService#getJob(long)} method, this method... */
 }}}
 
 Note the octothorpe (# sign) instead of a dot operator between the class and the member.
+
+Eclipse provides typing assistance when creating links such as these. Start typing your class name, then type ctrl+space to activate the auto-completion. If there is ambiguity, Eclipse will prompt you to make a selection from a menu of options.
 
 == Referring to classes in comments ==
 
