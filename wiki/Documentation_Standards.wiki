@@ -15,4 +15,4 @@ Code comments fall into two categories:
     * Code comments, which are available only by looking at the source code.
       * Explains how the code works
 
-*All Javadoc and code comments should be complete thoughts, capitalized at the beginning and with a period at the end. Spelling and grammar should be correct!*
+*All Javadoc and code comments should be complete thoughts, capitalized at the beginning and with a period at the end. Spelling and grammar should be correct.*
