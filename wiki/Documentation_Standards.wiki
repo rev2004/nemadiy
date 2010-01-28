@@ -49,3 +49,50 @@ Each class comment should also include the following Javadoc tags:
       * The @since tag refers the release that the class first appeared in. For example:
         * @since 0.5 beta
       * Note that the @since tag can also be used when a method is added to an existing class, which will help users notice new features in older code.
+
+== Constructor Documentation ==
+
+Constructor documentation usually begins with the phrase "Constructs an instance that ..." and goes on to give the properties of that instance. As with class documentation, it is important to communicate the specifics of the constructor behavior in the first sentence as this is the one that will show up in method summary.
+
+== Method Documentation ==
+
+Method documentation needs to state what the method does and how it should be used. It is almost never useful to simply provide an English translation of the code. This is a good example of the type of method documentation that is expected:
+
+{{{
+/**
+ * Marks this object invalid, indicating that when a method
+ * is next called to get information from the object, that
+ * information needs to be reconstructed from the database.
+ */
+public void invalidate() {
+   valid = false;
+}
+}}}
+
+By contrast, here is a poor method comment:
+
+{{{
+/**
+ * Sets the variable valid to false.
+ */
+public void invalidate() {
+   valid = false;
+}
+}}}
+
+While this certainly describes what the method does from the perspective of the coder, it says nothing useful from the perspective of the user of the class, who cannot see the (presumably private) variable valid nor how that variable is used. On closer examination, this comment describes how the method is accomplishing what it does, but it does not describe what it accomplishes.
+
+Here is an even worse method comment:
+
+{{{
+/**
+ * Invalidates this object.
+ */
+public void invalidate() {
+   valid = false;
+}
+}}}
+
+This is no more helpful than reading the method name.
+
+Comments for base class methods that are intended to be overridden should include information about what the method generally does, plus information that a programmer may need to override it. If the derived class uses the base class method (by calling `super.methodName()`), but then appends to its behavior, then the documentation in the derived class should describe both what the base class does and what the derived class does.
