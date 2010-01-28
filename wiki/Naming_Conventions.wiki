@@ -100,7 +100,7 @@ Incorrect:
     * `spinner()`
     * `$kite()`
     * `open_file()`
-    * `count_nodes()'
+    * `count_nodes()`
 
 == Method Parameters ==
 
@@ -115,7 +115,7 @@ Incorrect:
 
     * `NumberOfTimes`
     * `c`
-    * 'file_path'
+    * `file_path`
 
 == Local Variables ==
 
