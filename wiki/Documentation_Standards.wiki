@@ -17,7 +17,7 @@ Code comments fall into two categories:
 
 *All Javadoc and code comments should be complete thoughts, capitalized at the beginning and with a period at the end. Spelling and grammar should be correct.*
 
-= Javadoc =
+== Javadoc ==
 
 Javadoc is a program distributed with Java that generates HTML documentation files from Java source code files. Javadoc comments begin with /** and end with */. The comment immediately preceding a code construct (method, member, or class) documents that code construct. Javadoc documentation should be provided for all projects, packages, classes, interfaces, enums and all public, protected, and private members and methods contained therein.
 
