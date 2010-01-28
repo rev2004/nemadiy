@@ -141,3 +141,17 @@ Methods and members in the same package should have an octothorpe (# sign) prepe
 }}}
 
 Links to methods should include the types of arguments.
+
+== Referring to classes in comments ==
+
+When referring to domain objects, entities, and other types of classes in comments, try to always use the @link tag rather than just using the class's name. When done consistently and properly, renaming and refactoring of code is much simpler because Eclipse will automatically change the name of the class everywhere it is used with the link tag. Maintenance therefore is automatically performed by the IDE, thus saving a ton of time. For example:
+
+{{{
+/**
+  * Kill a running {@link Job}.
+  * 
+  * @param jobId Unique ID of the {@link Job} to kill.
+  * @throws IllegalStateException if the {@link Job} is not running.
+  */
+public void abortJob(long jobId) throws IllegalStateException;
+}}}
