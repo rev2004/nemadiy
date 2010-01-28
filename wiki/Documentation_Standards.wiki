@@ -30,3 +30,22 @@ When writing Javadoc comments, pay special attention to the first sentence of ea
 Javadoc comments can include embedded HTML formatting. Please use HTML comments sparingly, and make sure the markup is well-formed. Any code included in comments should be wrapped in code tags: {{{<code>i = 1</code>}}}.
 
 The Javadoc program gives extensive diagnostics when run on a source file. Comments should be formatted until there are no Javadoc warnings.
+
+== Class Documentation ==
+
+The class documentation is the Javadoc comment that immediately precedes the class definition line. It is a particularly important part of the documentation. It should describe what the class does and how it is intended to be used. When writing it, put yourself in the mind of the user of your class. What does that person need to know to clearly understand what the class is for? A clear explanation is especially important when a person doesn't have a clear understanding of the larger system. *Usually, it is of little help to explain implementation details of the class.*
+
+A class may be intended to be a base class that is extended by other programmers. In this case, there may be two distinct sections to the class documentation. The first section should describe how a user of the class should use the class. The second section should describe how a programmer can meaningfully extend the class. Only the second section should reference protected members or methods. The first section has no use for them. Of course, if the class is abstract, it cannot be used directly and the first section can be omitted.
+
+Each class comment should also include the following Javadoc tags:
+
+    * @author
+      * The @author tag should name the creator of the class or interface. For example:
+            @author shirk
+      * SVN logins should be used for author/s, not the full name. If a class has been authored by multiple developers, their SVN logins should be included as well, on subsequent lines:
+            @author shirk
+            @author goren
+    * @since
+      * The @since tag refers the release that the class first appeared in. For example:
+            @since 0.5 beta
+            Note that the @since tag can also be used when a method is added to an existing class, which will help users notice new features in older code.
