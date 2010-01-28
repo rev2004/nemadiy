@@ -156,4 +156,4 @@ When referring to domain objects, entities, and other types of classes in commen
 public void abortJob(long jobId) throws IllegalStateException;
 }}}
 
-Here, Job is an entity. The Job type is not referenced in the method itself, only the Javadoc. But by using the @link tag, if the Job class is renamed to JobDetails for example, all Javadoc references to Job will be updated with the new name.
+Here, `Job` is an entity. The `Job` type is not referenced in the method itself, only the Javadoc. But by using the @link tag, if the `Job` class is renamed to `JobDetails` for example, all Javadoc references to `Job` will be updated with the new name.
