@@ -137,7 +137,7 @@ Other methods of the same class may be linked with the {@link ...} Javadoc tag. 
 Methods and members in the same package should have an octothorpe (# sign) prepended. Methods and members in other classes should use the fully qualified class name:
 
 {{{
-{@link ctpp.util.PropertiesLoader.load(String)}
+{@link org.imirsel.nema.util.PropertiesLoader.load(String)}
 }}}
 
 Links to methods should include the types of arguments.
