@@ -43,9 +43,9 @@ Each class comment should also include the following Javadoc tags:
       * The @author tag should name the creator of the class or interface. For example:
         * @author shirk
       * SVN logins should be used for author/s, not the full name. If a class has been authored by multiple developers, their SVN logins should be included as well, on subsequent lines:
-            {{{@author shirk}}}
-            {{{@author amitku}}}
+      * @author shirk
+      * @author amitku
     * @since
       * The @since tag refers the release that the class first appeared in. For example:
-            @since 0.5 beta
-            Note that the @since tag can also be used when a method is added to an existing class, which will help users notice new features in older code.
+        * @since 0.5 beta
+      * Note that the @since tag can also be used when a method is added to an existing class, which will help users notice new features in older code.
