@@ -1,6 +1,6 @@
 #summary Documents the standards and conventions for code comments.
 
-= Introduction =
+== Introduction ==
 
 Good comments are essential to easily readable and maintainable code. Good comments actually extend the life of code because well-commented code is more likely to be reused rather than rewritten. For open source projects, well-documented code communicates to casual observers and potential contributors that the project is committed to producing mature, quality code.
 
@@ -19,7 +19,7 @@ Code comments fall into two categories:
 
 == Javadoc ==
 
-Javadoc is a program distributed with Java that generates HTML documentation files from Java source code files. Javadoc comments begin with /** and end with */. The comment immediately preceding a code construct (method, member, or class) documents that code construct. Javadoc documentation should be provided for all projects, packages, classes, interfaces, enums and all public, protected, and private members and methods contained therein.
+Javadoc is a program distributed with Java that generates HTML documentation files from Java source code files. Javadoc comments begin with `/`*`* and end with `*`/. The comment immediately preceding a code construct (method, member, or class) documents that code construct. Javadoc documentation should be provided for all projects, packages, classes, interfaces, enums and all public, protected, and private members and methods contained therein.
 
 Please take the time to familiarize yourself with the finer points of Javadoc at this URL: http://java.sun.com/javase/6/docs/technotes/guides/javadoc/index.html
 	When writing Javadoc comments, pay special attention to the first sentence of each Javadoc comment. This first sentence is used as a summary in the Javadocs. It is extremely helpful if the first sentence is a cogent and complete summary.
