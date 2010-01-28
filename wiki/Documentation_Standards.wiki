@@ -96,3 +96,48 @@ public void invalidate() {
 This is no more helpful than reading the method name.
 
 Comments for base class methods that are intended to be overridden should include information about what the method generally does, plus information that a programmer may need to override it. If the derived class uses the base class method (by calling `super.methodName()`), but then appends to its behavior, then the documentation in the derived class should describe both what the base class does and what the derived class does.
+
+== Tags in method documentation ==
+
+All methods (default, private, protected, public) should include the following Javadoc tags:
+
+    * `@param`
+      * One should be provided for each parameter no matter how trivial it seems at the time.
+      * The annotation should meaningfully explain what the method does, and should address the larger implications of its use. (See previous invalidate() example)
+      * Although the annotations do not need to be complete sentences, they should always begin with a capitol letter and end it with a period.
+    * `@return`
+      * Unless the return type is void, this tag should always be used.
+      * As with `@param`, the comment should meaningfully explain what is being returned.
+      * `@returns` is not a valid Javadoc tag.
+    * `@throws`
+      * One should be provided for each checked exception that is thrown.
+      * One should also be provided for each runtime exception that might be thrown as a result of some parameter that has been passed to the method. Such information is important to document because it is part of the entire interface contract. For example, if the value of a certain numeric parameter is checked by the method code to be within a certain range, and an `IllegalArgumentException` is thrown if it is not, this exception needs to be documented and the legal range of values should be specified.
+      * An `@throws` tag should read like this:
+        * `@throws IllegalArgumentException if the value of the <code>cost</code> parameter is a negative number.`
+        * Always start the comment with "if blah blah..."
+        * Note the lower case "if" at the beginning of the documentation and the period at the end. This is the only Javadoc case where a sentence should begin with a lower case letter. This is because the Javadoc tool converts the comment to a properly formed and punctuated sentence when it compiles the documentation.
+        * In the case of an interface or base class that does not throw the exception, documentation should still be provided. The exception still has to be declared so that derived classes can throw it:
+          * `@throws SomeException in some derived classes. Derived classes may throw it if such and such happens.`
+
+
+== Referring to methods in comments ==
+
+By convention, method names are set in the default font, but followed by empty parentheses, as in:
+
+/** The doit() method is called when ... */
+
+The parentheses are empty even if the method takes arguments. The arguments are not shown. If the method is overloaded (has several versions with different argument sets), then the text of the documentation needs to distinguish which version is being used.
+
+Other methods of the same class may be linked with the {@link ...} Javadoc tag. For example, to link to a foo() method that takes a String:
+
+{{{
+/** Unlike the {@link #foo(String)} method, this method... */
+}}}
+
+Methods and members in the same package should have an octothorpe (# sign) prepended. Methods and members in other classes should use the fully qualified class name:
+
+{{{
+{@link ctpp.util.PropertiesLoader.load(String)}
+}}}
+
+Links to methods should include the types of arguments.
