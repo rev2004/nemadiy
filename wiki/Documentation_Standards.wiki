@@ -122,25 +122,19 @@ All methods (default, private, protected, public) should include the following J
 
 == Referring to methods in comments ==
 
-By convention, method names are set in the default font, but followed by empty parentheses, as in:
-
-/** The doit() method is called when ... */
-
-The parentheses are empty even if the method takes arguments. The arguments are not shown. If the method is overloaded (has several versions with different argument sets), then the text of the documentation needs to distinguish which version is being used.
-
-Other methods of the same class may be linked with the {@link ...} Javadoc tag. For example, to link to a foo() method that takes a String:
+When referring to methods and members of the current class, as well as methods and members of outside classes, try to always use the @link tag rather than just using the method or member's name. When done consistently and properly, renaming and refactoring of code is much simpler because Eclipse will automatically change the name of the method or member everywhere it is used with the link tag. Maintenance therefore is automatically performed by the IDE, thus saving a ton of time. For example, a link to a local method would look like:
 
 {{{
 /** Unlike the {@link #foo(String)} method, this method... */
 }}}
 
-Methods and members in the same package should have an octothorpe (# sign) prepended. Methods and members in other classes should use the fully qualified class name if the class has not been imported:
+A link to an outside method would look like:
 
 {{{
-{@link org.imirsel.nema.util.PropertiesLoader.load(String)}
+{@link org.imirsel.nema.flowservice.FlowService#getJob(long)}
 }}}
 
-Links to methods should include the types of arguments.
+Note the octothorpe (# sign) instead of a dot operator between the class and the member.
 
 == Referring to classes in comments ==
 
