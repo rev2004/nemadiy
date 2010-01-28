@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="M2K 1.2-IDE">
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-src">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <ant antfile="build.xml" inheritall="false" target="deploy"/>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="lib/jahmm-0.3.3.jar:lib/jl1.0.jar:lib/weka.jar:lib/swing-layout-1.0.jar:lib/jahmm-0.3.3.jar:lib/Jama-1.0.2.jar:lib/JID3.jar:lib/jl1.0.jar:/Users/kriswest/Documents/code/D2KToolkit/lib/d2kinfrastructure-4.1.2.jar:lib/weka-src.jar:lib/jcommon-1.0.12.jar:lib/jfreechart-1.0.9.jar"/>
+                <pathelement location="dist/m2k.jar"/>
+            </classpath>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#compilesingle) -->
+    <target name="compile-selected-files-in-src">
+        <fail unless="files">Must set property 'files'</fail>
+        <!-- TODO decide on and define some value for ${build.classes.dir} -->
+        <mkdir dir="${build.classes.dir}"/>
+        <javac destdir="${build.classes.dir}" includes="${files}" source="1.5" srcdir="src">
+            <classpath path="lib/jahmm-0.3.3.jar:lib/jl1.0.jar:lib/weka.jar:lib/swing-layout-1.0.jar:lib/jahmm-0.3.3.jar:lib/Jama-1.0.2.jar:lib/JID3.jar:lib/jl1.0.jar:/Users/kriswest/Documents/code/D2KToolkit/lib/d2kinfrastructure-4.1.2.jar:lib/weka-src.jar:lib/jcommon-1.0.12.jar:lib/jfreechart-1.0.9.jar"/>
+        </javac>
+    </target>
+</project>
