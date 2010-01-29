@@ -2,6 +2,7 @@ package org.imirsel.nema.flowservice;
 
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
+//import org.imirsel.nema.model.MeandreServerConfiguration;
 import org.imirsel.nema.model.Notification;
 
 import java.util.List;
@@ -97,5 +98,12 @@ public interface FlowService {
     * @param flowId flowId of the flow to be returned
     */
    public Flow getFlow(long flowId);
+   
+   
+   /**
+    * Returns {@link MeandreJobSchedulerConfig} for the server
+    */
+  // public List<MeandreServerConfig> getSchedulerConfig();
+   
 
 }
