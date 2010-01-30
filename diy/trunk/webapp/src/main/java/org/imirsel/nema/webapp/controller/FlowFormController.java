@@ -1,7 +1,6 @@
 package org.imirsel.nema.webapp.controller;
 
 import java.io.File;
-import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Date;
@@ -30,14 +29,8 @@ import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
-import org.imirsel.nema.model.NEMADataset;
-import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
-import org.imirsel.nema.service.ComponentMetadataService;
-import org.imirsel.nema.service.FlowMetadataService;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.util.FlowTypeUtils;
-import org.meandre.webapp.CorruptedFlowException;
-import org.meandre.webapp.MeandreCommunicationException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -47,25 +40,9 @@ public class FlowFormController extends MultiActionController{
 
 	private Logger log = Logger.getLogger(FlowFormController.class.getName());
 	private FlowService flowService = null;
-	private ComponentMetadataService componentMetadataService;
-	private FlowMetadataService flowMetadataService;
 	private UserManager userManager = null;
-	private RepositoryClientInterface repositoryClientInterface;
-	
+
 	private String uploadDirectory;
-
-
-
-	public RepositoryClientInterface getRepositoryClientInterface() {
-		return repositoryClientInterface;
-	}
-
-
-	public void setRepositoryClientInterface(
-			RepositoryClientInterface repositoryClientInterface) {
-		this.repositoryClientInterface = repositoryClientInterface;
-	}
-
 
 	public FlowService getFlowService() {
 		return flowService;
@@ -76,27 +53,6 @@ public class FlowFormController extends MultiActionController{
 		this.flowService = flowService;
 	}
 
-
-
-	public ComponentMetadataService getComponentMetadataService() {
-		return componentMetadataService;
-	}
-
-
-	public void setComponentMetadataService(
-			ComponentMetadataService componentMetadataService) {
-		this.componentMetadataService = componentMetadataService;
-	}
-
-
-	public FlowMetadataService getFlowMetadataService() {
-		return flowMetadataService;
-	}
-
-
-	public void setFlowMetadataService(FlowMetadataService flowMetadataService) {
-		this.flowMetadataService = flowMetadataService;
-	}
 
 	public ModelAndView storeFlowInstance(HttpServletRequest req, HttpServletResponse res){
 		Flow instance= null;
@@ -110,7 +66,7 @@ public class FlowFormController extends MultiActionController{
 		int id = Integer.parseInt(_id);
 		Flow flow=this.flowService.getFlow(id);
 		ModelAndView mav= new ModelAndView("flow/flowTemplate");
-		List<Component> componentList=flowMetadataService.getComponents(flow.getUrl());
+		List<Component> componentList=flowService.getComponents(flow.getUrl());
 		if(componentList==null){
 			throw new TransmissionException("Error could not get any " +
 					"template flows from the Meandre Server.");
@@ -120,7 +76,7 @@ public class FlowFormController extends MultiActionController{
 		TreeMap<Component,Map<String, Property>> map = new TreeMap<Component,Map<String, Property>>();
 		for(int i=0;i<componentList.size();i++){
 			HashMap<String, Property> m=null;
-				m = (HashMap<String, Property>)componentMetadataService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
+				m = (HashMap<String, Property>)flowService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
 				map.put(componentList.get(i), new TreeMap(m));
 		}
 		Set<Role> roleList=this.userManager.getCurrentUser().getRoles();
@@ -142,7 +98,7 @@ public class FlowFormController extends MultiActionController{
 		return mav;
 	}
 	
-	public ModelAndView saveflow(HttpServletRequest req, HttpServletResponse res) throws TransmissionException, MeandreCommunicationException, CorruptedFlowException{
+	public ModelAndView saveflow(HttpServletRequest req, HttpServletResponse res){
 		String token=System.currentTimeMillis()+"-token";
 		HashMap<String,String> paramMap = new HashMap<String,String>();
 		
@@ -211,7 +167,7 @@ public class FlowFormController extends MultiActionController{
 		}
 		
 		
-		String newFlowUri=flowMetadataService.createNewFlow(paramMap,flowUri);
+		String newFlowUri=flowService.createNewFlow(paramMap,flowUri);
 		
 		Long longFlowId  =Long.parseLong(flowId);
 		Flow templateFlow = this.getFlowService().getFlow(longFlowId );
@@ -248,9 +204,9 @@ public class FlowFormController extends MultiActionController{
 		Job job=this.getFlowService().executeJob(token, name,description, instanceId, user.getId(), user.getEmail());
 		
 		
-		//ModelAndView mav= new ModelAndView(new RedirectView("JobManager.jobDetail",true));
-		ModelAndView mav = new ModelAndView("job/job");
-		mav.addObject(Constants.JOB, job);
+		ModelAndView mav= new ModelAndView(new RedirectView("JobManager.jobDetail",true));
+		//ModelAndView mav = new ModelAndView("job/job");
+		mav.addObject("id", job.getId());
 		return mav;
 	}
 

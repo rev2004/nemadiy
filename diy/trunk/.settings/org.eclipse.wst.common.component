@@ -11,7 +11,13 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-client/nema-client">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/annotations/annotations">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/flowservice-interface/flowservice-interface">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/repositoryservice/repositoryservice">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/repositoryservice-interface/repositoryservice-interface">

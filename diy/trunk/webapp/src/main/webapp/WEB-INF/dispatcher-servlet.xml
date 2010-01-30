@@ -92,14 +92,6 @@
  -->
     <!--  job scheduler end -->
     
-    
-      <!--  real flow service -->
-    <bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
-		<property name="serviceUrl" value="rmi://nema.lis.uiuc.edu:1099/FlowService"/>
-		<property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService"/>
-		<property name="refreshStubOnConnectFailure" value="true"/>
-    </bean>
-    
       <!-- flow controller -->
     <bean id="flowFormController" class="org.imirsel.nema.webapp.controller.FlowFormController">
     	<property name="flowService" ref="realFlowService"/>
@@ -162,14 +154,13 @@
         <property name="mappings">
            <value>
            	/JobManager.getConsole=getConsole
-            /JobManager.getUserJobs=getuserjobs
+            /JobManager.getUserJobs=getUserJobs
             /JobManager.getSubmissions=getSubmissions
             /JobManager.getAllSubmissions=getAllSubmissions
             /JobManager.submissionAction=submissionAction
             /JobManager.submissionDetail=submissionDetail
-            /JobManager.hello=hello
-           	/JobManager.jobDetail=jobdetail
-            /JobManager.jobAction=jobaction
+           	/JobManager.jobDetail=getJobDetail
+            /JobManager.jobAction=doJobAction
             /JobManager.selectJobForSubmission=selectJobForSubmission
             /JobManager.getNotification=getNotification
             
