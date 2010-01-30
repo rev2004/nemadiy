@@ -2,15 +2,15 @@ package org.imirsel.nema.model;
 
 /** Component is represented using this bean
  * 
- * @author Amit Kumar
- *
+ * @author kumaramit01
+ * @since 0.5.0
  */
 public class Component implements Comparable<Component>{
-	String name;
-	String description;
-	String uri;
-	String instanceUri;
-	boolean hidden;
+	private String name;
+	private String description;
+	private String uri;
+	private String instanceUri;
+	private boolean hidden;
 	
 	public String getUri() {
 		return uri;

@@ -10,10 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.JoinColumn;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenerationTime;
@@ -23,7 +23,7 @@ import org.hibernate.annotations.Proxy;
  * Represents a NEMA DIY job.
  * 
  * @author shirk
- * @since 1.0
+ * @since 0.4.0
  */
 @Entity
 @Table(name="job")

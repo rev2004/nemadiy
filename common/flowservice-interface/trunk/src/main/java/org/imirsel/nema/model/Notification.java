@@ -3,12 +3,12 @@ package org.imirsel.nema.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Column;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Proxy;
@@ -17,7 +17,7 @@ import org.hibernate.annotations.Proxy;
  * Represents a notification to be sent to an end user.
  * 
  * @author shirk
- * @since 1.0
+ * @since 0.4.0
  */
 @Entity
 @Table(name="notification")

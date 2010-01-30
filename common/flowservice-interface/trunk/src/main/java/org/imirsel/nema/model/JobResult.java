@@ -18,7 +18,7 @@ import org.hibernate.annotations.Proxy;
  * Represents an output resulting from a job execution.
  * 
  * @author shirk
- * @since 1.0
+ * @since 0.4.0
  */
 @Entity
 @Table(name="jobResult")

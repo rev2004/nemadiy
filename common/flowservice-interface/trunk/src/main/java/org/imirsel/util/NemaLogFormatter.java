@@ -7,30 +7,30 @@ import java.util.logging.LogRecord;
 
 /** This class is used to display the formatted logs.
  * 
- * @author Amit Kumar
- * Created on Jul 18, 2008 11:53:22 PM
+ * @author kumaramit01
+ * @since 0.4.0
  *
  */
 public class NemaLogFormatter extends Formatter {
 	
-	/** The maximum lenght of a thread name */
+	/** The maximum length of a thread name */
 	private final static int MAX_THREAD_NAME_LENGTH = 40;
 	
 	/** The new line separator */
 	private final static String NEW_LINE = System.getProperty("line.separator");
 	
-	/** The date formater */
+	/** The date formatter */
 	private final static SimpleDateFormat FORMATER = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS");
 	
 	/** Should the class be reported */
 	private boolean bClass = true;
 
-	/** Creates the default formater */
+	/** Creates the default formatter */
 	public NemaLogFormatter () {
 		bClass = true;
 	}
 	
-	/** Creates the default formater allowing to choos is the reporting class should be reported.
+	/** Creates the default formatter allowing to choose is the reporting class should be reported.
 	 * 
 	 * @param bShowClass Should the class be shown?
 	 */
@@ -43,7 +43,8 @@ public class NemaLogFormatter extends Formatter {
 	 * @param record The log record to format
 	 * @return The formated record
 	 */
-	  public String format(LogRecord record) {
+	  @Override
+	public String format(LogRecord record) {
 		  String className = record.getSourceClassName();
 		  
 		  String threadName = Thread.currentThread().getName();
