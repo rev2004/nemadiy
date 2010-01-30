@@ -7,7 +7,8 @@ import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
 
 /**Component Property is represented using this bean
  * 
- * @author Amit Kumar
+ * @author kumaramit01
+ * @since 0.5.0
  *
  */
 public class Property implements Comparable<Property>{

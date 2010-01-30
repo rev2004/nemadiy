@@ -5,9 +5,12 @@ import org.imirsel.nema.model.Flow.FlowType;
 
 /**List of selected job types
  * 
- * @author amitku
+ * @author kumaramit01
+ * @since 0.4.0
+ * @deprecated
  *
  */
+@Deprecated
 public class FlowTypeUtils {
 	
 	public static FlowType DEFAULT_FLOW=Flow.FlowType.INHERITS;
