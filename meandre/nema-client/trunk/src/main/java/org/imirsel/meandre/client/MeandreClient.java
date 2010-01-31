@@ -28,8 +28,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
-
 import org.meandre.core.repository.ExecutableComponentDescription;
 import org.meandre.core.repository.FlowDescription;
 import org.meandre.core.repository.LocationBean;
@@ -82,6 +80,8 @@ public class MeandreClient extends MeandreBaseClient{
 	 * http://<meandre_host>:<meandre_port>/services/about/installation.rdf
 	 *
 	 * TODO: need a java object instance to represent installation properties
+	 * @return JSONObject
+	 * @throws TransmissionException 
 	 */
 	public JSONObject retrieveInstallationProperties()
 	throws TransmissionException{
@@ -135,6 +135,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 * the roles, not Role objects.
 	 *
 	 * @return list of all valid roles
+	 * @throws TransmissionException 
 	 */
 	public Set<String> retrieveValidRoles() throws TransmissionException{
 		try {
@@ -166,6 +167,8 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/locations/list.json
+	 * @return Set<LocationBean>
+	 * @throws TransmissionException 
 	 */
 	public Set<LocationBean> retrieveLocations() throws TransmissionException{
 		try {
@@ -206,6 +209,10 @@ public class MeandreClient extends MeandreBaseClient{
 	 * http://<meandre_host>:<meandre_port>/services/locations/add.json
 	 *
 	 * TODO: Handle possible bad_request errors in http response
+	 * @param sLocationUrl 
+	 * @param description 
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean addLocation(String sLocationUrl, String description)
 	throws TransmissionException{
@@ -244,6 +251,9 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/locations/remove.json
+	 * @param sUrl 
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean removeLocation(String sUrl) throws TransmissionException{
 		String sRestCommand = "services/locations/remove.json";
@@ -279,6 +289,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 * http://<meandre_host>:<meandre_port/services/repository/dump.nt
+	 * @return repository Jena's QueryableRepository
 	 * @throws TransmissionException
 	 */
 	public QueryableRepository retrieveRepository() throws TransmissionException {
@@ -295,6 +306,8 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/repository/regenerate.json
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean regenerate() throws TransmissionException{
 		try {
@@ -315,6 +328,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/repository/list_components.json
+	 * @return Set<URI> set of URI
 	 * @throws TransmissionException
 	 */
 	public Set<URI> retrieveComponentUris() throws TransmissionException {
@@ -337,6 +351,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/repository/list_flows.json
+	 * @return Set<URI> set of uri
 	 * @throws TransmissionException
 	 */
 	public Set<URI> retrieveFlowUris() throws TransmissionException {
@@ -360,6 +375,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/services/repository/tags.json
+	 * @return Set<String>
 	 * @throws TransmissionException
 	 *
 	 * TODO:return tag objects instead of strings
@@ -384,6 +400,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/services/repository/tags_components.json
+	 * @return Set<String>
 	 * @throws TransmissionException
 	 * TODO:return tag objects instead of strings
 	 */
@@ -407,6 +424,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/services/repository/tags_flows.json
+	 * @return Set<String>
 	 * @throws TransmissionException
 	 * TODO:return tag objects instead of strings
 	 */
@@ -430,6 +448,8 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/services/repository/components_by_tag.json
+	 * @param sTag 
+	 * @return Set<URI>
 	 * @throws TransmissionException
 	 * TODO:input a tag object instead of string
 	 */
@@ -456,6 +476,8 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/services/repository/flows_by_tag.json
+	 * @param sTag query tag
+	 * @return  Set<URI>
 	 * @throws TransmissionException
 	 * TODO:input a tag object instead of string
 	 */
@@ -483,6 +505,8 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/services/repository/describe_component.nt
+	 * @param sComponentUrl 
+	 * @return ExecutableComponentDescription
 	 * @throws TransmissionException
 	 */
 	public ExecutableComponentDescription retrieveComponentDescriptor(
@@ -512,6 +536,8 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/services/repository/describe_flow.nt
+	 * @param sFlowUrl 
+	 * @return FlowDescription
 	 * @throws TransmissionException
 	 */
 	public FlowDescription retrieveFlowDescriptor(String sFlowUrl) throws TransmissionException {
@@ -540,6 +566,8 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/services/repository/search_components.json
+	 * @param sQuery 
+	 * @return Set<URI>
 	 * @throws TransmissionException
 	 */
 	public Set<URI> retrieveComponentUrlsByQuery(String sQuery)
@@ -567,6 +595,8 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/services/repository/search_flows.json
+	 * @param sQuery 
+	 * @return Set<URI>
 	 * @throws TransmissionException
 	 */
 	public Set<URI> retrieveFlowUrlsByQuery(String sQuery)
@@ -594,6 +624,10 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 * <p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/repository/add.nt
+	 * @param flow 
+	 * @param overwrite 
+	 * @return success
+	 * @throws TransmissionException 
 	 *
 	 */
 	public boolean uploadFlow(FlowDescription flow, boolean overwrite)
@@ -609,6 +643,10 @@ public class MeandreClient extends MeandreBaseClient{
 	 * <p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/repository/add.nt
 	 * TODO:Need test
+	 * @param flows 
+	 * @param overwrite 
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean uploadFlowBatch(Set<FlowDescription> flows, boolean overwrite)
 	throws TransmissionException{
@@ -626,6 +664,11 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 * <p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/repository/add.nt
+	 * @param component 
+	 * @param jarFileContexts 
+	 * @param overwrite 
+	 * @return success
+	 * @throws TransmissionException 
 	 *
 	 */
 	public boolean uploadComponent(ExecutableComponentDescription component,
@@ -642,6 +685,11 @@ public class MeandreClient extends MeandreBaseClient{
 	 * <p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/repository/add.nt
 	 * TODO:Need test
+	 * @param comps 
+	 * @param jarFileContexts 
+	 * @param overwrite 
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean uploadComponentBatch(Set<ExecutableComponentDescription> comps,
 			Set<File> jarFileContexts, boolean overwrite)
@@ -666,6 +714,11 @@ public class MeandreClient extends MeandreBaseClient{
 	 * <p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/repository/add.nt
 	 * TODO:Need test
+	 * @param repo 
+	 * @param jarFileContexts 
+	 * @param overwrite 
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean uploadRepository(QueryableRepository repo,
 			Set<File> jarFileContexts, boolean overwrite)
@@ -702,6 +755,11 @@ public class MeandreClient extends MeandreBaseClient{
 	 * <p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/repository/add.nt
 	 * TODO:Need test
+	 * @param msResourceModels 
+	 * @param jarFileContexts 
+	 * @param overwrite 
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean uploadModelBatch(Set<Model> msResourceModels,
 			Set<File> jarFileContexts, boolean overwrite)
@@ -758,6 +816,10 @@ public class MeandreClient extends MeandreBaseClient{
 	 * <p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/repository/add.nt
 	 * TODO:Need test
+	 * @param files 
+	 * @param overwrite 
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean uploadFiles(Set<File> files, boolean overwrite)
 	throws TransmissionException {
@@ -775,6 +837,9 @@ public class MeandreClient extends MeandreBaseClient{
 	 *http://<meandre_host>:<meandre_port>/services/repository/remove.json
 	 * TODO: need more specific error reporting when the server returns an empty
 	 * json string
+	 * @param sResourceUrl 
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean removeResource(String sResourceUrl) throws TransmissionException{
 		String sRestCommand = "services/repository/remove.json";
@@ -811,6 +876,9 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/publish/publish.json
+	 * @param sResourceUrl 
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean publish(String sResourceUrl) throws TransmissionException {
 		try {
@@ -843,6 +911,9 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/services/publish/unpublish.json
+	 * @param sResourceUrl 
+	 * @return success
+	 * @throws TransmissionException 
 	 */
 	public boolean unpublish(String sResourceUrl) throws TransmissionException {
 		try {
@@ -877,6 +948,10 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/execute/flow.txt
+	 * @param sFlowUrl 
+	 * @param verbose 
+	 * @return response as string
+	 * @throws TransmissionException 
 	 */
 
 	public String runFlow(String sFlowUrl, boolean verbose)
@@ -894,8 +969,9 @@ public class MeandreClient extends MeandreBaseClient{
 	/**Executes the flow with the list of probes that will be turned on.
 	 * 
 	 * @param sFlowUrl
+	 * @param token 
 	 * @param probeList
-	 * @return
+	 * @return response as string
 	 * @throws TransmissionException
 	 * <p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/execute/flow.txt
@@ -929,7 +1005,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 * @param sFlowUrl
 	 * @param token
 	 * @param probeList
-	 * @return
+	 * @return success
 	 * @throws TransmissionException
 	 */
 	public boolean runAsyncFlow(String sFlowUrl, String token,HashMap<String, String> probeList) throws TransmissionException {
@@ -959,6 +1035,9 @@ public class MeandreClient extends MeandreBaseClient{
 	 * <p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/execute/repository.txt
 	 * TODO:Need test
+	 * @param model 
+	 * @return response as string
+	 * @throws TransmissionException 
 	 */
 	public String runRepository(Model model)
 	throws TransmissionException {
@@ -994,6 +1073,10 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 * http://<meandre_host>:<meandre_port>/services/execute/flow.txt
+	 * @param sFlowUrl 
+	 * @param verbose 
+	 * @return InputStream
+	 * @throws TransmissionException 
 	 */
 
 	public InputStream runFlowStreamOutput(String sFlowUrl, boolean verbose)
@@ -1073,6 +1156,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 * webui_url is the key and the not-always-unique flow intance url is
 	 * the value. requires a server side change.
 	 * FIXME: This is totally untested.
+	 * @throws TransmissionException 
 	 */
 	public Map<URI,URI> retrieveRunningFlows() throws TransmissionException{
 		try {
@@ -1107,6 +1191,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 * webui_url is the key and the not-always-unique flow intance url is
 	 * the value. requires a server side change.
 	 * FIXME: This is totally untested.
+	 * @throws TransmissionException 
 	 */
 	public Map<URI,Map<String,URI>> retrieveRunningFlowsInformation() throws TransmissionException{
 		try {
@@ -1141,6 +1226,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 * webui_url is the key and the not-always-unique flow intance url is
 	 * the value. requires a server side change.
 	 * FIXME: This is totally untested.
+	 * @throws TransmissionException 
 	 */
 	public Vector<Map<String,String>> retrieveJobStatuses() throws TransmissionException{
 		try {
@@ -1177,6 +1263,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 * webui_url is the key and the not-always-unique flow intance url is
 	 * the value. requires a server side change.
 	 * FIXME: This is totally untested.
+	 * @throws TransmissionException 
 	 */
 	public String retrieveJobConsole(String sFUID) throws TransmissionException{
 		try {
@@ -1202,6 +1289,7 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 * http://<meandre_host>:<meandre_port>/public/services/repository.nt
+	 * @return QueryableRepository
 	 * @throws TransmissionException
 	 */
 	public QueryableRepository retrievePublicRepository()
@@ -1219,6 +1307,8 @@ public class MeandreClient extends MeandreBaseClient{
 	 *
 	 *<p> calls:
 	 *http://<meandre_host>:<meandre_port>/public/services/demo_repository.nt
+	 * @return QueryableRepository
+	 * @throws TransmissionException 
 	 */
 	public QueryableRepository retrieveDemoRepository()
 	throws TransmissionException {
@@ -1249,6 +1339,9 @@ public class MeandreClient extends MeandreBaseClient{
 	 *<p> calls:
 	 *http://<meandre_host>:<webui_port>/admin/abort.txt
 	 * FIXME: This is totally untested.
+	 * @param iRunningFlowPort 
+	 * @return  success
+	 * @throws TransmissionException 
 	 */
 	public boolean abortFlow(int iRunningFlowPort)
 	throws TransmissionException {
@@ -1287,6 +1380,9 @@ public class MeandreClient extends MeandreBaseClient{
 	 * "bean" can be read and written to/from json, and StatisticsProbeImpl
 	 * simply constructs the bean.
 	 * FIXME: This is totally untested.
+	 * @param iRunningFlowPort 
+	 * @return JSONObject
+	 * @throws TransmissionException 
 	 */
 	public JSONObject retrieveRunningFlowStatisitics(int iRunningFlowPort)
 	throws TransmissionException{
@@ -1345,7 +1441,7 @@ public class MeandreClient extends MeandreBaseClient{
 
 	/** Return the JSON content describing the plugins available.
 	 *
-	 * @return The JSON string
+	 * @return JSONString  string
 	 * @throws TransmissionException Fail to retrieve the plugins' information
 	 */
 	public String getServerPlugins() throws TransmissionException {
@@ -1374,6 +1470,7 @@ public class MeandreClient extends MeandreBaseClient{
 	/** Pings the server
 	 *
 	 *	@return True if it successfully pinged the server
+	 * @throws TransmissionException 
 	 */
 	public boolean ping() throws TransmissionException {
 		String sRestCommand = "public/services/ping.txt";
@@ -1388,7 +1485,7 @@ public class MeandreClient extends MeandreBaseClient{
 	/**Reads the flow properties for a token and returns the flow execution instance Id
 	 * 
 	 * @param token
-	 * @return
+	 * @return ExecResponse
 	 * @throws TransmissionException
 	 */
 	public ExecResponse getFlowExecutionInstanceId(String token) throws TransmissionException{

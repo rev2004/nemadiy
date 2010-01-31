@@ -25,12 +25,15 @@ public class TransmissionException extends Exception {
 
     /** contains a message and wraps another type of exception (eg an 
      * exception thrown by a parser of the response from the server).
+     * @param message 
+     * @param sourceException 
      */
     public TransmissionException(String message, Throwable sourceException) {
         super(message, sourceException);
     }
 
-    /** contains a message about the problem. */
+    /** contains a message about the problem. 
+     * @param message */
     public TransmissionException(String message) {
         super(message);
         
@@ -38,6 +41,7 @@ public class TransmissionException extends Exception {
 
     /** contains another exception that caused the original problem 
      * (timeout exception, exception from parsing the server's response, etc).
+     * @param sourceException 
      */
     public TransmissionException(Throwable sourceException) {
         super(sourceException);
