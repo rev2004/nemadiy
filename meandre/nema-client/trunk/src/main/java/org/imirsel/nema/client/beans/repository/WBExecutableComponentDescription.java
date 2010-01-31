@@ -129,6 +129,7 @@ public class WBExecutableComponentDescription  {
      * @param setOutputs The set of output data ports
      * @param pddProperties
      * @param tagDesc
+     * @param resMode 
      */
     public WBExecutableComponentDescription (
             String sResURI,

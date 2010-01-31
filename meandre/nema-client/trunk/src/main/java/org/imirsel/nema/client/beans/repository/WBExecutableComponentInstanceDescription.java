@@ -81,11 +81,13 @@ public class WBExecutableComponentInstanceDescription implements  Cloneable {
    }
 
    /** Create a executable component instance description instance
-    *
+    * @param sResExecutableComponentInstanceURI 
+    * @param sResComponentURI 
     * @param resExecutableComponentInstance The resource identifying this instance
     * @param resComponent The component this instance belongs to
     * @param sName The name of the flow
     * @param sDescription The description of the flow
+    * @param pdProperties 
     * @param description The instance properties
     */
    public WBExecutableComponentInstanceDescription (
@@ -104,6 +106,7 @@ public class WBExecutableComponentInstanceDescription implements  Cloneable {
 
 
     /** Sets the instance resource.
+     * @param sResURI 
      *
      * @param res The instance resources
      */
@@ -120,6 +123,7 @@ public class WBExecutableComponentInstanceDescription implements  Cloneable {
     }
 
     /** Set the executable component resource.
+     * @param sResURI 
      *
      * @param res The resource
      */
@@ -186,13 +190,14 @@ public class WBExecutableComponentInstanceDescription implements  Cloneable {
     /**
      * Returns a deep copy of this object
      */
-    public WBExecutableComponentInstanceDescription clone() {
+    @Override
+	public WBExecutableComponentInstanceDescription clone() {
         return new WBExecutableComponentInstanceDescription(
                 this.sResExecutableComponentInstaceURI,
                 this.sResComponentURI,
                 this.sName,
                 this.sDescription,
-                (WBPropertiesDescription) this.pdProperties.clone()
+                this.pdProperties.clone()
                 );
     }
 }

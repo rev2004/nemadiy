@@ -73,6 +73,7 @@ public class MeandreBaseClient{
      * @param serverHost just the hostname, e.g. "localhost", 
      *      NOT "http://localhost"
      * @param serversPort the port on the serverhost that the server is listening
+	 * @param log 
 	 */
 	public MeandreBaseClient(String serverHost, int serversPort, Logger log){
 		setServerAddress(serverHost, serversPort);
@@ -84,6 +85,8 @@ public class MeandreBaseClient{
      * set the username and password that this client will use when sending
      * requests to the server. must be set before any server calls requiring
      * authentication are made.
+     * @param userName 
+     * @param password 
      */
     public void setCredentials(String userName, String password){
 		_credentials = new UsernamePasswordCredentials(userName, password);
@@ -94,6 +97,8 @@ public class MeandreBaseClient{
      * Note that this does not reset the credentials - the same credentials
      * used on the old serverHost will be used on the new server until 
      * you call setCredentials.
+     * @param serverHost 
+     * @param serversPort 
      */
     public void setServerAddress(String serverHost, int serversPort){
         _serverHost = serverHost;
@@ -168,6 +173,7 @@ public class MeandreBaseClient{
 	 * an acceptable value for this set if no params are needed.
 	 * 
 	 * @return The raw content bytes of the server's response
+     * @throws TransmissionException 
 	 */
 	public int executeGetRequestNoBlock(String sRestCommand, 
 			Set<NameValuePair> queryParams)
@@ -211,6 +217,7 @@ public class MeandreBaseClient{
 	 * an acceptable value for this set if no params are needed.
 	 * 
 	 * @return The raw content bytes of the server's response
+     * @throws TransmissionException 
 	 */
 	public byte[] executeGetRequestBytes(String sRestCommand, 
 			Set<NameValuePair> queryParams)
@@ -261,6 +268,7 @@ public class MeandreBaseClient{
      * an acceptable value for this set if no params are needed.
      * 
      * @return The raw content bytes of the server's response as a stream
+     * @throws TransmissionException 
      */
     public InputStream executeGetRequestStream(String sRestCommand, 
             Set<NameValuePair> queryParams)
@@ -302,6 +310,7 @@ public class MeandreBaseClient{
 	 * 					Files to upload.
 	 *
 	 * @return The raw content bytes of the server's response
+     * @throws TransmissionException 
 	 */
 
 	public byte[] executePostRequestBytes(String sRestCommand, 
@@ -349,6 +358,10 @@ public class MeandreBaseClient{
 	/**
 	 * performs a GET request and returns the response data as a string.
      * see <code>executePostRequestBytes</code> for info on params
+	 * @param sRestCommand 
+	 * @param queryParams 
+	 * @return httpCode
+	 * @throws TransmissionException 
 	 *
 	 */
 	public int executeGetRequestNoWait(String sRestCommand,
@@ -368,6 +381,10 @@ public class MeandreBaseClient{
 	/**
 	 * performs a GET request and returns the response data as a string.
      * see <code>executePostRequestBytes</code> for info on params
+	 * @param sRestCommand 
+	 * @param queryParams 
+	 * @return response as string
+	 * @throws TransmissionException 
 	 *
 	 */
 	public String executeGetRequestString(String sRestCommand,
@@ -389,6 +406,10 @@ public class MeandreBaseClient{
 	 * performs a GET request and returns the response in json format.
 	 * returns null if the response was an empty string.
      * see <code>executePostRequestBytes</code> for info on params
+	 * @param sRestCommand 
+	 * @param queryParams 
+	 * @return  JSONTokener
+	 * @throws TransmissionException 
 	 *  
 	 */
 	public JSONTokener executeGetRequestJSON(String sRestCommand, 
@@ -407,6 +428,10 @@ public class MeandreBaseClient{
 	 * Jena Model. The sRestCommand must request the model data in 
 	 * the N-Triple format (*.nt file)
      * see <code>executePos1tRequestBytes</code> for info on params
+	 * @param sRestCommand 
+	 * @param queryParams 
+	 * @return model RDF model
+	 * @throws TransmissionException 
 	 *
 	 */
 	public Model executeGetRequestModel(String sRestCommand,
@@ -476,7 +501,7 @@ public class MeandreBaseClient{
 	 * 
 	 * @param method an HttpMethod, usually a POST or GET with all it's
 	 * parameters set.
-	 * @return the url the http method visited as a String
+	 * @return url the http method visited as a String
 	 */
     private String extractMethodsURIString(HttpMethod method) {
         String sFailedUrl = "";

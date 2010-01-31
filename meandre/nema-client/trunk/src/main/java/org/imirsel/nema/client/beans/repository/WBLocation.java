@@ -80,6 +80,7 @@ public class WBLocation {
     }
 
     /** Sets the location description
+     * @param sDescription 
      *
      * @param description the sDescription to set
      */
@@ -99,10 +100,11 @@ public class WBLocation {
      * tests if this bean has equivalent values to another one.
      *
      * @param other
-     * @return
+     * @return success
      */
 
-    public boolean equals(Object otherLocation){
+    @Override
+	public boolean equals(Object otherLocation){
         boolean isEqual = true;
         WBLocation otherBean = null;
         try{
@@ -119,7 +121,8 @@ public class WBLocation {
     /**
      * returns a pretty print version of this location's url and description
      */
-    public String toString(){
+    @Override
+	public String toString(){
         StringBuffer sb = new StringBuffer();
         sb.append("LocationURL=\'");
         sb.append(getLocation());
@@ -131,7 +134,8 @@ public class WBLocation {
     }
 
     /** a hashcode derived from the internal url and description. used by hashmaps. */
-    public int hashCode(){
+    @Override
+	public int hashCode(){
         int hc = this.getLocation().hashCode();
         hc += this.getDescription().hashCode();
         return hc;

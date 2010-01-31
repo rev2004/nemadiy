@@ -363,11 +363,10 @@ public class WBFlowDescription implements Cloneable {
     }
 
     /** Sets the creation date of the component.
-     *
      * @param date The date
      */
-    public void setCreationDate  ( Date d ) {
-        dateCreation = d;
+    public void setCreationDate  ( Date date ) {
+        dateCreation = date;
     }
 
     /** Returns the creation date of the component.
@@ -435,6 +434,7 @@ public class WBFlowDescription implements Cloneable {
     /** Removes an executable component instance.
      *
      * @param ecd The executable component instances to remove
+     * @return success
      */
     public boolean removeExecutableComponentInstance ( WBExecutableComponentInstanceDescription ecd ) {
         htExecutableComponentInstances.remove(ecd.getExecutableComponentInstance());
@@ -469,14 +469,16 @@ public class WBFlowDescription implements Cloneable {
      *
      * @return A simple text description
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return sName+" ("+sResFlowURI+")";
     }
 
     /**
      * Returns a deep copy of this object
      */
-    public WBFlowDescription clone() {
+    @Override
+	public WBFlowDescription clone() {
         Set<WBExecutableComponentInstanceDescription> execCompInstances =
             new HashSet<WBExecutableComponentInstanceDescription>();
         for (WBExecutableComponentInstanceDescription ecid : this.setExecutableComponentInstances)

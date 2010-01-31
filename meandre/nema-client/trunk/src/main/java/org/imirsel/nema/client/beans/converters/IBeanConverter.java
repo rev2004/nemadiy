@@ -46,6 +46,8 @@ package org.imirsel.nema.client.beans.converters;
  * Generic converter interface
  *
  * @author Boris Capitanu
+ * @param <SRC> 
+ * @param <TARGET> 
  *
  */
 public interface IBeanConverter<SRC, TARGET> {

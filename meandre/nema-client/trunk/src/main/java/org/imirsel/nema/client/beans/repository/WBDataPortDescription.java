@@ -42,6 +42,8 @@
 
 package org.imirsel.nema.client.beans.repository;
 
+import org.meandre.core.repository.CorruptedDescriptionException;
+
 
 public class WBDataPortDescription{
 
@@ -60,6 +62,7 @@ public class WBDataPortDescription{
     public WBDataPortDescription() {}
 
     /** Creates a data port description based on the given information.
+     * @param sResURI 
      *
      * @param res The resource locator
      * @param sIdent The relative port identifier
