@@ -10,8 +10,8 @@ JSP pages are in /src/main/webapp/WEB-INF
 To make the page accessible
 
     * URL map the page in dispatcher-servlet.xml in the `<bean id="urlMapping">` in the property attribute named mappings
-    * If it is a JSP page then the mapping is automatic because the /*.jsp is mapped to a viewResolver
-    * If it is a JSP page but you want a different mapping such as /xxx.html to resolve to /xxx.jsp -map the /xxx.jsp to the `filenameController`.
+    * If it is a JSP page then the mapping is automatic because the `/*.jsp` is mapped to a `viewResolver`
+    * If it is a JSP page but you want a different mapping such as `/xxx.html` to resolve to `/xxx.jsp` -map the `/xxx.jsp` to the `filenameController`.
     * By default all the pages in the WEB-INF/pages require authentication. You can modify the behavior by editing the security.xml file.
     * If you want the pages to be world readable -place them in the root /src/main/webapp
 
