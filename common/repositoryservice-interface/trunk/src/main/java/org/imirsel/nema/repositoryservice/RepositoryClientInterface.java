@@ -6,6 +6,7 @@
 package org.imirsel.nema.repositoryservice;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,8 +21,8 @@ import org.imirsel.nema.model.NEMATrack;
 import org.imirsel.nema.model.PublishedResult;
 
 /**
- * An interface defining the methods of a client to the temporary NEMA metadata
- * repository.
+ * An interface defining the methods of a query client for the temporary NEMA metadata
+ * repository. Additionally, result publicaiton methods are defined.
  *
  * @author kriswest
  */
@@ -120,81 +121,85 @@ public interface RepositoryClientInterface {
      */
     public NEMADataset getDataset(int dataset_id) throws SQLException;
 
-    /**
-     * Retrieves a List of NEMADataset Objects describing the datasets that are
-     * available for a particular Collection. No guarantee is given that the
-     * datasets described have complete audio file sets in any particular
-     * file version.
-     *
-     * @param collection The collection to retrieve the list of datasets for.
-     *
-     * @return a List of NEMADataset Objects describing the datasets that are
-     * available for the specified Collection.
-     *
-     * @throws SQLException
-     */
-    public List<NEMADataset> getDatasetsForCollection(NEMACollection collection) throws SQLException;
-    /**
-     * Retrieves a List of NEMADataset Objects describing the datasets that are
-     * available for a particular Collection. No guarantee is given that the
-     * datasets described have complete audio file sets in any particular
-     * file version.
-     *
-     * @param collectionId The collection ID to retrieve the list of datasets
-     * for.
-     *
-     * @return a List of NEMADataset Objects describing the datasets that are
-     * available for the specified Collection.
-     *
-     * @throws SQLException
-     */
-    public List<NEMADataset> getDatasetsForCollection(int collectionId) throws SQLException;
-
-    /**
-     * Retrieves a List of NEMADataset Objects describing the datasets that are
-     * available for a particular task. No guarantee is given that the
-     * datasets described have complete audio file sets in any particular
-     * file version.
-     *
-     * @param task The task to retrieve the list of datasets for.
-     *
-     * @return a List of NEMADataset Objects describing the datasets that are
-     * available for the specified task.
-     *
-     * @throws SQLException
-     */
-    public List<NEMADataset> getDatasetsForTask(NEMATask task) throws SQLException;
-    /**
-     * Retrieves a List of NEMADataset Objects describing the datasets that are
-     * available for a particular task. No guarantee is given that the
-     * datasets described have complete audio file sets in any particular
-     * file version.
-     *
-     * @param taskId The task ID to retrieve the list of datasets
-     * for.
-     *
-     * @return a List of NEMADataset Objects describing the datasets that are
-     * available for the specified task.
-     *
-     * @throws SQLException
-     */
-    public List<NEMADataset> getDatasetsForTask(int taskId) throws SQLException;
-
-    /**
-     * Retrieves a NEMASet Object describing the subset of a Collection that
-     * is relevant to a dataset. This may be resolved to a list of tracks using
-     * <code>getTracks(NEMASet set)</code> and that to a list of files using
-     * <code>getFiles(List<NEMATrack> trackList, Set<NEMAMetadataEntry> constraint)</code>.
-     * Finally, the file type versions (each defined by a set of metadata
-     * entries) that the dataset is available in may be retrieved using
-     * <code>getSetVersions(NEMASet set)</code>.
-     *
-     * @param dataset The dataset to retrieve the collection subset for.
-     *
-     * @return A NEMASet Object describing the collection subset.
-     *
-     * @throws SQLException
-     */
+    //Deprecated these as currently dataset links to task, where task should link to dataset;
+    //    dataset 1 -> * task
+    // and collection is really just an organisational unit and datasets should be able to span collections
+//    /**
+//     * Retrieves a List of NEMADataset Objects describing the datasets that are
+//     * available for a particular Collection. No guarantee is given that the
+//     * datasets described have complete audio file sets in any particular
+//     * file version.
+//     *
+//     * @param collection The collection to retrieve the list of datasets for.
+//     *
+//     * @return a List of NEMADataset Objects describing the datasets that are
+//     * available for the specified Collection.
+//     *
+//     * @throws SQLException
+//     */
+//    public List<NEMADataset> getDatasetsForCollection(NEMACollection collection) throws SQLException;
+//    /**
+//     * Retrieves a List of NEMADataset Objects describing the datasets that are
+//     * available for a particular Collection. No guarantee is given that the
+//     * datasets described have complete audio file sets in any particular
+//     * file version.
+//     *
+//     * @param collectionId The collection ID to retrieve the list of datasets
+//     * for.
+//     *
+//     * @return a List of NEMADataset Objects describing the datasets that are
+//     * available for the specified Collection.
+//     *
+//     * @throws SQLException
+//     */
+//    public List<NEMADataset> getDatasetsForCollection(int collectionId) throws SQLException;
+//
+//    /**
+//     * Retrieves a List of NEMADataset Objects describing the datasets that are
+//     * available for a particular task. No guarantee is given that the
+//     * datasets described have complete audio file sets in any particular
+//     * file version.
+//     *
+//     * @param task The task to retrieve the list of datasets for.
+//     *
+//     * @return a List of NEMADataset Objects describing the datasets that are
+//     * available for the specified task.
+//     *
+//     * @throws SQLException
+//     */
+//    public List<NEMADataset> getDatasetsForTask(NEMATask task) throws SQLException;
+//    /**
+//     * Retrieves a List of NEMADataset Objects describing the datasets that are
+//     * available for a particular task. No guarantee is given that the
+//     * datasets described have complete audio file sets in any particular
+//     * file version.
+//     *
+//     * @param taskId The task ID to retrieve the list of datasets
+//     * for.
+//     *
+//     * @return a List of NEMADataset Objects describing the datasets that are
+//     * available for the specified task.
+//     *
+//     * @throws SQLException
+//     */
+//    public List<NEMADataset> getDatasetsForTask(int taskId) throws SQLException;
+//
+//    /**
+//     * Retrieves a NEMASet Object describing the subset of a Collection that
+//     * is relevant to a dataset. This may be resolved to a list of tracks using
+//     * <code>getTracks(NEMASet set)</code> and that to a list of files using
+//     * <code>getFiles(List<NEMATrack> trackList, Set<NEMAMetadataEntry> constraint)</code>.
+//     * Finally, the file type versions (each defined by a set of metadata
+//     * entries) that the dataset is available in may be retrieved using
+//     * <code>getSetVersions(NEMASet set)</code>.
+//     *
+//     * @param dataset The dataset to retrieve the collection subset for.
+//     *
+//     * @return A NEMASet Object describing the collection subset.
+//     *
+//     * @throws SQLException
+//     */
+    
     public NEMASet getCollectionSubset(NEMADataset dataset) throws SQLException;
     /**
      * Retrieves a NEMASet Object describing the subset of a Collection that
@@ -503,22 +508,180 @@ public interface RepositoryClientInterface {
 
 
 
-
+    /**
+     * Retrieve File metadata values for a specified file id.
+     * @param fileId The ID of the file to get metadata values for.
+     * @return A List of the metdata values, represented as <code><NEMAMetadataEntry/code> Objects, for the file id.
+     * @throws SQLException
+     */
     public List<NEMAMetadataEntry> getFileMetadataByID(int fileId) throws SQLException;
+    /**
+     * Retrieve File metadata values for a specified <code>NEMAFile</code> Object.
+     * @param file The <code>NEMAFile</code> to retrieve metadata values for.
+     * @return A List of the metdata values, represented as <code><NEMAMetadataEntry/code> Objects, for the file id.
+     * @throws SQLException
+     */
     public List<NEMAMetadataEntry> getFileMetadata(NEMAFile file) throws SQLException;
+    
+    /**
+     * Retrieve File metadata values for a specified List of file IDs.
+     * @param fileIDs A List of the IDs to get metadata values for.
+     * @return A Map from file ID to a List of the metdata values, represented as <code><NEMAMetadataEntry/code> Objects, for the file id.
+     * @throws SQLException
+     */
     public Map<Integer,List<NEMAMetadataEntry>> getFileMetadataByID(List<Integer> fileIDs) throws SQLException;
+    /**
+     * Retrieve File metadata values for a specified List of <code>NEMAFile</code> Object.
+     * @param files A List of the <code>NEMAFile</code> Objects to retrieve metadata values for.
+     * @return A Map from file ID to a List of the metdata values, represented as <code><NEMAMetadataEntry/code> Objects, for the file id.
+     * @throws SQLException
+     */
     public Map<Integer,List<NEMAMetadataEntry>> getFileMetadata(List<NEMAFile> files) throws SQLException;
 
+    /**
+     * Retrieve Track metadata values for a specified Track id.
+     * @param trackId The ID of the track to get metadata values for.
+     * @return A List of the metdata values, represented as <code><NEMAMetadataEntry/code> Objects, for the track id.
+     * @throws SQLException
+     */
     public List<NEMAMetadataEntry> getTrackMetadataByID(String trackId) throws SQLException;
+    /**
+     * Retrieve File metadata values for a specified <code>NEMATrack</code> Object.
+     * @param track The <code>NEMATrack</code> to retrieve metadata values for.
+     * @return A List of the metdata values, represented as <code><NEMAMetadataEntry/code> Objects, for the track id.
+     * @throws SQLException
+     */
     public List<NEMAMetadataEntry> getTrackMetadata(NEMATrack track) throws SQLException;
+    
+    /**
+     * Retrieve Track metadata values for a specified List of track IDs.
+     * @param tracks A List of the IDs to get metadata values for.
+     * @return A Map from track ID to a List of the metdata values, represented as <code><NEMAMetadataEntry/code> Objects, for the track id.
+     * @throws SQLException
+     */
     public Map<String,List<NEMAMetadataEntry>> getTrackMetadataByID(List<String> tracks) throws SQLException;
+    /**
+     * Retrieve Track metadata values for a specified List of <code>NEMATrack</code> Object.
+     * @param tracks A List of the <code>NEMATrack</code> Objects to retrieve metadata values for.
+     * @return A Map from track ID to a List of the metdata values, represented as <code><NEMAMetadataEntry/code> Objects, for the track id.
+     * @throws SQLException
+     */
     public Map<String,List<NEMAMetadataEntry>> getTrackMetadata(List<NEMATrack> tracks) throws SQLException;
 
+    /**
+     * Retrieve the first metadata of a particular type for a track.
+     * @param trackId The track ID to retrieve data for.
+     * @param metadataId The metadata type ID to retrieve.
+     * @return The metadata value represented as a <code>NEMAMetadataEntry</code> Object.
+     * @throws SQLException
+     */
     public NEMAMetadataEntry getTrackMetadataByID(String trackId, int metadataId) throws SQLException;
+    
+    /**
+     * Retrieve the first metadata of a particular type for a track.
+     * @param track the <code>NEMATrack</code> Object to retreive metadata for.
+     * @param metadataId The metadata type ID to retrieve.
+     * @return The metadata value represented as a <code>NEMAMetadataEntry</code> Object.
+     * @throws SQLException
+     */
     public NEMAMetadataEntry getTrackMetadata(NEMATrack track, int metadataId) throws SQLException;
+    
+    /**
+     * Retrieve the first metadata of a particular type for each of a list of tracks.
+     * @param tracks The list of track IDs to retrieve data for.
+     * @param metadataId The metadata type ID to retrieve.
+     * @return A map of track ID to the metadata value represented as a <code>NEMAMetadataEntry</code> Object.
+     * @throws SQLException
+     */
     public Map<String,NEMAMetadataEntry> getTrackMetadataByID(List<String> tracks, int metadataId) throws SQLException;
+    /**
+     * Retrieve the first metadata of a particular type for each of a list of tracks.
+     * @param tracks The list of <code>NEMATrack</code> Objects to retrieve data for.
+     * @param metadataId The metadata type ID to retrieve.
+     * @return A map of track ID to the metadata value represented as a <code>NEMAMetadataEntry</code> Object.
+     * @throws SQLException
+     */
     public Map<String,NEMAMetadataEntry> getTrackMetadata(List<NEMATrack> tracks, int metadataId) throws SQLException;
 
+    /**
+     * Returns an unmodifiable map linking track metadata type names to their IDs.
+     * @return an unmodifiable map.
+     */
+    public Map<String,Integer> getTrackMetadataNameMap();
+    
+    /**
+     * Returns an unmodifiable map linking file metadata type names to their IDs.
+     * @return an unmodifiable map.
+     */
+    public Map<String,Integer> getFileMetadataNameMap();
+    
+    /**
+     * Returns an unmodifiable map linking task type names to their IDs.
+     * @return an unmodifiable map.
+     */
+    public Map<String,Integer> getTaskTypeMap();
+    
+    /**
+     * Returns an unmodifiable map linking set type names to their IDs.
+     * @return an unmodifiable map.
+     */
+    public Map<String,Integer> getSetTypeMap();
+    
+    /**
+     * Returns the name for a track metadata type ID.
+     * @param typeId metadata type ID to retrieve name for.
+     * @return metadata type name.
+     */
+    public String getTrackMetadataName(int typeId);
+
+    /**
+     * Returns the name for a file metadata type ID.
+     * @param typeId metadata type ID to retrieve name for.
+     * @return metadata type name.
+     */
+    public String getFileMetadataName(int typeId);
+
+    /**
+     * Returns the name for a task metadata type ID.
+     * @param typeId metadata type ID to retrieve name for.
+     * @return metadata type name.
+     */
+    public String getTaskTypeName(int typeId);
+
+    /**
+     * Returns the name for a set metadata type ID.
+     * @param typeId metadata type ID to retrieve name for.
+     * @return metadata type name.
+     */
+    public String getSetTypeName(int typeId);
+
+    /**
+     * Returns the integer ID for the specified Track metadata type name.
+     * @param typeName metadata type name to retrieve ID for.
+     * @return metadata type ID.
+     */
+    public int getTrackMetadataID(String typeName);
+
+    /**
+     * Returns the integer ID for the specified File metadata type name.
+     * @param typeName metadata type name to retrieve ID for.
+     * @return metadata type ID.
+     */
+    public int getFileMetadataID(String typeName);
+
+    /**
+     * Returns the integer ID for the specified Task metadata type name.
+     * @param typeName metadata type name to retrieve ID for.
+     * @return metadata type ID.
+     */
+    public int getTaskTypeID(String typeName);
+
+    /**
+     * Returns the integer ID for the specified Set metadata type name.
+     * @param typeName metadata type name to retrieve ID for.
+     * @return metadata type ID.
+     */
+    public int getSetTypeID(String typeName);
 
 
 }
