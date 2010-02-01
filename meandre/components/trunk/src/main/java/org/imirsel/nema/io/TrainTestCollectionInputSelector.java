@@ -1,24 +1,26 @@
 package org.imirsel.nema.io;
 
-import java.io.*;
-import java.util.Iterator;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
+import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.renderers.CollectionRenderer;
+import org.imirsel.nema.repository.DatasetListFileGenerator;
+import org.imirsel.nema.repository.NEMAMetadataEntry;
+import org.imirsel.service.ArtifactManagerImpl;
+import org.meandre.annotations.Component;
+import org.meandre.annotations.ComponentOutput;
+import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
-import org.meandre.annotations.Component;
-import org.meandre.annotations.ComponentOutput;
-import org.meandre.annotations.ComponentProperty;
-import org.imirsel.nema.renderers.CollectionRenderer;
-import org.imirsel.service.ArtifactManagerImpl;
-import org.imirsel.nema.annotations.*;
-import org.imirsel.nema.repository.DatasetListFileGenerator;
-import org.imirsel.nema.repository.NEMAMetadataEntry;
-import java.sql.SQLException;
 
 
 @Component(creator = "Mert Bay", description = "Selects a Train / Test dataset from NEMA servers. Outputs 4 objects: " +
@@ -83,16 +85,7 @@ import java.sql.SQLException;
 	private String delim = "\t";
 	
 	
-    /**
-     * Utility method to help build file type constraints.
-     * 
-     * @param bitrate     valid values are: 128k, 96k
-     * @param channels    valid values are: 1, 2
-     * @param clip_type   valid values are: 30, full
-     * @param encoding    valid values are: mp3, wav
-     * @param sample_rate valid values are: 22050, 44100
-     * @return Constraints that can be passed to retrieve file sets.
-     */
+
 	
 	private String[] featExtList;// = {"/data/raid3/collections/audioclassification/monolists/audiomood.all.txt"};
 	private String[] groundtruth;// = {"/data/raid3/collections/audioclassification/monolists/audiomood.all.gt.txt"};
