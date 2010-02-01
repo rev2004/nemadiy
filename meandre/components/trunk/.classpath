@@ -7,12 +7,9 @@
 	<classpathentry kind="lib" path="lib/ACE.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/jAudio-sanitized-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/jcommon-1.0.12.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.9.jar"/>
 	<classpathentry kind="lib" path="lib/m2k_core_1_3.jar"/>
 	<classpathentry kind="lib" path="lib/nema-annotations-1.0.2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/nema-repository-temp-0.1.jar"/>
-	<classpathentry kind="lib" path="lib/swing-layout-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/components-api-1.0.2-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin/target/classes"/>
 </classpath>

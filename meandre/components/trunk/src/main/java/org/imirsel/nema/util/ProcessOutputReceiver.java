@@ -1,6 +1,5 @@
 package org.imirsel.nema.util;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +22,8 @@ public class ProcessOutputReceiver implements Runnable
 	/**
 	 * constructor
 	 *
-	 * @param is stream to receive data from child
+	 * @param is inputstream to receive data from child
+	 * @param cout PrintStream
 	 */
 	public ProcessOutputReceiver( InputStream is, PrintStream cout )
 	{
