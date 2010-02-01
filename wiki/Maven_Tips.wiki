@@ -12,8 +12,10 @@ mvn exec:java -Dexec.mainClass=org.imirsel.sample.MainClass -Dexec.args="arg1"
 }}}
 To run tests
 {{{
-mvn test  runs all the tests **/Test*.java **/*Test.java **/*TestCase.java. The reports are in target/sunfire-reports
+mvn test
 }}}
+
+The above runs all the tests `**/Test*.java **/*Test.java **/*TestCase.java`. The reports are in `target/sunfire-reports`.
 
 == Flags ==
 Use -o flag if you are not connected to web -maven will use only local repository
