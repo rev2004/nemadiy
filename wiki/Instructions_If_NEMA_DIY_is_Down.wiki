@@ -1,6 +1,6 @@
 #summary Troubleshooting NEMA DIY being down.
 
-= Details =
+== Details ==
 
 1) Check mysql server running: mysql -u nema_user -p
 if not: /etc/init.d/mysqld restart
