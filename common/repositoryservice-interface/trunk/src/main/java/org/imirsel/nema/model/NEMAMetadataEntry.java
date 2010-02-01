@@ -31,6 +31,7 @@ public class NEMAMetadataEntry implements Serializable{
 
     /**
      * @param type the type to set
+     * @param value 
      */
     public void setType(String type, String value){
         this.type = type;

@@ -190,7 +190,7 @@ public class NEMADataset implements Serializable {
     }
 
     /**
-     * @param filterFilterMetadataName the filterTrackMetadataName to set
+     * @param filterTrackMetadataName the filterTrackMetadataName to set
      */
     public void setFilterTrackMetadataName(String filterTrackMetadataName){
         this.filterTrackMetadataName = filterTrackMetadataName;
