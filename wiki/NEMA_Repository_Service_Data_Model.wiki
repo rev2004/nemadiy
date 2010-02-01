@@ -37,58 +37,58 @@ Hence, the user selects only collection, file type and dataset and making new da
 This can all be represented in DB tables along the lines of:
 
     * tracks
-          o track name
-          o track_id -> IMIRSEL hash
+      * track name
+      * track_id -> IMIRSEL hash
     * file type definitions
-          o file_type_id
-          o name
-          o any flags for special handling of metadata (e.g. full track F0 may be little help on a 30 sec clip with no detail on start/end time of the clip)
+      * file_type_id
+      * name
+      * any flags for special handling of metadata (e.g. full track F0 may be little help on a 30 sec clip with no detail on start/end time of the clip)
     * metadata type definitions
-          o metdata_type_id
-          o name (such as length, genre, artist, tags, moodtags, onset times, F0)
-          o value type (could all be string encoded initially although types, i.e. string, string sequence, string seq with timestamps, numeric, numeric sequence, numeric seq with timestamps, might be better - although this can still be string encoded, e.g. in XML or some arbitrary syntax, to go in the DB
+      * metdata_type_id
+      * name (such as length, genre, artist, tags, moodtags, onset times, F0)
+      * value type (could all be string encoded initially although types, i.e. string, string sequence, string seq with timestamps, numeric, numeric sequence, numeric seq with timestamps, might be better - although this can still be string encoded, e.g. in XML or some arbitrary syntax, to go in the DB
     * track metadata
-          o track_id
-          o metadata_type_id
-          o value (string)
+      * track_id
+      * metadata_type_id
+      * value (string)
     * file
-          o file_id
-          o track_id
-          o file type id
-          o path
+      * file_id
+      * track_id
+      * file type id
+      * path
     * collection
-          o collection_id
-          o name
-          o description
+      * collection_id
+      * name
+      * description
     * collection_track_link
-          o collection_id
-          o track_id
+      * collection_id
+      * track_id
     * dataset
-          o dataset_id
-          o collection_id
-          o name
-          o description
-          o split details and parameters
-                + num sets
-                + set names
-                + num iterations
-                + split class
-                + target metadata
-                + filter metadata
-                + split seed
+      * dataset_id
+      * collection_id
+      * name
+      * description
+      * split details and parameters
+        * num sets
+        * set names
+        * num iterations
+        * split class
+        * target metadata
+        * filter metadata
+        * split seed
     * set type
-          o set_type_id
-          o name (train, test, validation, single etc.)
+      * set_type_id
+      * name (train, test, validation, single etc.)
     * set
-          o dataset_id
-          o set_id
-          o set_name
-          o set_type_id
-          o iteration_number
+      * dataset_id
+      * set_id
+      * set_name
+      * set_type_id
+      * iteration_number
     * set_track_link
-          o set_id
-          o track_id
-          o seq_number (in case tracks need to be ordered)
+      * set_id
+      * track_id
+      * seq_number (in case tracks need to be ordered)
 
 
 Queries will be fairly easy to write that can retrieve data based on user parameters of collection, file version type and dataset that can be used to knock out different list file types for each set in the dataset as needed. Doing this on the on the fly will take no more than a second or two.
@@ -96,7 +96,7 @@ Queries will be fairly easy to write that can retrieve data based on user parame
 Simple queries can also be used to determine:
 
     * the file types available for the collection (by joining with track and file tables),
-          o what percentage of each collection is available in each version type?
-          o which datasets have complete file sets on each version.
+      * what percentage of each collection is available in each version type?
+      * which datasets have complete file sets on each version.
     * Metadata types available for each collection
     * Datasets for each collection
