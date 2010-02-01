@@ -9,7 +9,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
+ * Class representing a published result for an algorithm against a dataset. 
+ * 
  * @author kriswest
  */
 public class PublishedResult implements Serializable{
@@ -21,6 +22,16 @@ public class PublishedResult implements Serializable{
     private String result_path;
     private Date date;
 
+    /**
+     * Constructor. An ID for the result, the username of the publishing user, an algorithm name,
+     * a path to the results on the filesystem and date of publication must be specified.
+     * 
+     * @param id The result ID.
+     * @param username The username of the publishing user.
+     * @param name The name of the system or algorithm that produced the result.
+     * @param result_path The path to the results directory on the filesystem/
+     * @param date The date of publication.
+     */
     public PublishedResult(int id, String username, String name, String result_path, Date date){
         this.id = id;
         this.username = username;

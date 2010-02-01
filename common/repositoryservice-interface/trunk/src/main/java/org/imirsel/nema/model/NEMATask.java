@@ -8,7 +8,7 @@ package org.imirsel.nema.model;
 import java.io.Serializable;
 
 /**
- *
+ * To be redesigned.... probably with a linked dataset and evaluator type.
  * @author kriswest
  */
 public class NEMATask implements Serializable {
