@@ -15,7 +15,8 @@ public interface ArtifactManager {
 	 * directory. A flow can have multiple executable files.
 	 *
 	 * @param jobId
-	 * @returns Absolute path to the working directory
+	 * @throws IOException 
+	 * @return StringAbsolute path to the working directory
 	 */
 	public String getAbsoluteProcessWorkingDirectory(String jobId) throws IOException;
 	
@@ -26,20 +27,23 @@ public interface ArtifactManager {
 	 * directory. A flow can have multiple executable files.
 	 * 
 	 * @param jobId
-	 * @return
+	 * @return processWorkingDirectory
+	 * @throws IOException 
 	 */
 	public String getProcessWorkingDirectory(String jobId) throws IOException;
 	
 	/**The results of the flow are stored in this directory
 	 * 
 	 * @param jobId
-	 * @return
+	 * @return resultLocation
+	 * @throws IOException 
 	 */
 	public String getResultLocationForJob(String jobId) throws IOException;
 	
 	
 	/**
-	 * @return common storage
+	 * @return commonstorage location as string
+	 * @throws IOException 
 	 */
 	public String getCommonStorageLocation() throws IOException;
 

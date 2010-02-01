@@ -28,7 +28,7 @@ public class ArtifactManagerImpl implements ArtifactManager {
 	
 	/**Returns the instance of the artifact manager impl
 	 * 
-	 * @return
+	 * @return ArtifactManager instance
 	 */
 	public static ArtifactManager getInstance(){
 		if(!inited){
