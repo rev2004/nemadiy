@@ -31,7 +31,7 @@ public class JndiHelper {
 
 	/**Returns the DataSource for the job status database -used by the probe
 	 * 
-	 * @return
+	 * @return DataSource
 	 * @throws Exception
 	 */
 	public static DataSource getJobStatusDataSource() throws Exception{
