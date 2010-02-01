@@ -12,7 +12,7 @@ Please post resources, documentation, links etc. related to binary code and VAMP
   * Sourceforge:     http://vamp.sourceforge.net/
   * Project contact:
 
-== VamPy ==
+== VamPY ==
   * Home:            http://vamp-plugins.org/vampy.html
   * Example plugin:  http://vamp.svn.sourceforge.net/viewvc/vamp/vamp-vampy/trunk/Example%20VamPy%20plugins/PySpectralFeatures.py?content-type=text%2Fplain
   * Project contact:
@@ -35,5 +35,3 @@ Please post resources, documentation, links etc. related to binary code and VAMP
 == Greenstone ==
   * Home:            http://www.greenstone.org/
   * Project contact:
-
-
