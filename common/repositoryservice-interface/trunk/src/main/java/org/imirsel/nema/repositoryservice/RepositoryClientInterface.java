@@ -10,7 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.imirsel.nema.model.*;
+import org.imirsel.nema.model.NEMACollection;
+import org.imirsel.nema.model.NEMADataset;
+import org.imirsel.nema.model.NEMAFile;
+import org.imirsel.nema.model.NEMAMetadataEntry;
+import org.imirsel.nema.model.NEMASet;
+import org.imirsel.nema.model.NEMATask;
+import org.imirsel.nema.model.NEMATrack;
+import org.imirsel.nema.model.PublishedResult;
 
 /**
  * An interface defining the methods of a client to the temporary NEMA metadata
@@ -102,6 +109,7 @@ public interface RepositoryClientInterface {
      * available for a particular Collection. No guarantee is given that the
      * datasets described have complete audio file sets in any particular
      * file version.
+     * @param dataset_id 
      *
      * @param collection The collection to retrieve the list of datasets for.
      *
@@ -456,7 +464,7 @@ public interface RepositoryClientInterface {
      * It might be from any dataset. Added by Amit at the last minute.
      * 
      * @param username
-     * @return
+     * @return List<PublishedResult> list of published results
      * @throws SQLException
      */
     public List<PublishedResult> getPublishedResultsForDataset(String username) throws SQLException;;
