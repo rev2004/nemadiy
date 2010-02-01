@@ -1,34 +1,27 @@
 #summary List of current Issues for Triage
 
--Run Meandre nodes on cluster.
--Race condition with the flow service.
--Memory issue with the Meandre nodes.
--Memory lost when flow is canceled.
--Move the services provided by the FlowMetadataServiceImpl and ComponentMetadataServiceImpl to the flow service
--External binary code integration, upload user's own binary code
+  * Run Meandre nodes on cluster.
+  * Race condition with the flow service.
+  * Memory issue with the Meandre nodes.
+  * Memory lost when flow is canceled.
+  * Move the services provided by the FlowMetadataServiceImpl and ComponentMetadataServiceImpl to the flow service
+  * External binary code integration, upload user's own binary code
 
-    Andy/Mert and Kris to make a list of all the external integration code and there dependencies
-    Let's classify them and ask Dan to create Vitual machines with those dependencies in them.
-    See if we can have a few kinds of VM image or if all the dependencies can be satisfied in one VM
-    image.
+Andy/Mert and Kris to make a list of all the external integration code and there dependencies. Let's classify them and ask Dan to create Vitual machines with those dependencies in them. See if we can have a few kinds of VM image or if all the dependencies can be satisfied in one VM image.
     
-    We need to write an XML RPC based component head and tail that would work on these vm's
-    so that the component can be execute there.
+We need to write an XML RPC based component head and tail that would work on these vm's
+so that the component can be execute there.
     
+A service needs to be created to support external integration module, this service will expose endpoints (input,output,streams) to the external integration.
     
-    A service needs to be created to support external integration module, this service will expose
-    endpoints (input,output,streams) to the external integration.
+We need to write some parser code to parse the results from the external integration modules to populate the data model for the result.
     
 
-    We need to write some parser code to parse the results from the external integration modules to
-    populate the data model for the result.
-    
-
--Extend the Flow Model to store component property lists based on repository.
+  * Extend the Flow Model to store component property lists based on repository.
 For example in a Phase Vocoder flow we only want to show datasets 1,2 and 3 not all
 of the datasets available
--Create an interface to support the flow specific properties, addition of property values/removal etc.
+  * Create an interface to support the flow specific properties, addition of property values/removal etc.
 
 
--Result Model needs to be created and parsers that would take output from the external user submitted
+  * Result Model needs to be created and parsers that would take output from the external user submitted
 code and add the result to the database need to be written.
