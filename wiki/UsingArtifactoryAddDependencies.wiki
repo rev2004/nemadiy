@@ -1,7 +1,7 @@
 #labels Documentation,Artifactory
 #Using Artifactory to Add Dependencies to the POM
 
-[View  http://nema.lis.uiuc.edu/help/documentation/artifactory-dependency.mov]
+[http://nema.lis.uiuc.edu/help/documentation/artifactory-dependency.mov How To do it -movie]
 
 = Introduction =
 
