@@ -10,16 +10,16 @@
 
 package org.imirsel.nema.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.imirsel.nema.annotations.BooleanDataType;
+import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.role.RoleAdmin;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
@@ -29,12 +29,7 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
-import org.meandre.core.security.Role;
 
-import org.imirsel.service.*;
-import org.imirsel.nema.annotations.*;
-import org.imirsel.nema.role.RoleAdmin;
-import org.imirsel.nema.util.ProcessOutputReceiver;
 /** This executable component executes an external binary using the process builder.
  *
  * @author Andreas F. Ehmann;
@@ -87,7 +82,7 @@ import org.imirsel.nema.util.ProcessOutputReceiver;
 			" This option is overriden if AddExtentionToInput is set to TRUE",
 			name="Output File Name")
 			final static String DATA_PROPERTY_OUPUTFILENAME = "Output File Name";
-	private String outputFileName = "outputFileName.txt";
+	private final String outputFileName = "outputFileName.txt";
 
 	@BooleanDataType()
 	@ComponentProperty(defaultValue="true",

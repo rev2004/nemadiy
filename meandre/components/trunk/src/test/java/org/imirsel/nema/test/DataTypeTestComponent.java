@@ -1,12 +1,14 @@
 package org.imirsel.nema.test;
 
 import java.io.IOException;
-import java.lang.Boolean;
 
-import org.imirsel.nema.annotations.*;
-import org.imirsel.nema.renderers.*;
-
-import org.imirsel.service.ArtifactManagerImpl;
+import org.imirsel.nema.annotations.BooleanDataType;
+import org.imirsel.nema.annotations.DoubleDataType;
+import org.imirsel.nema.annotations.IntegerDataType;
+import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.renderers.DoubleRenderer;
+import org.imirsel.nema.renderers.FileRenderer;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;

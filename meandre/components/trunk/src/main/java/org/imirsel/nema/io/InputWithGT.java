@@ -3,24 +3,25 @@ package org.imirsel.nema.io;
 //import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
 import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.StringTokenizer;
-import java.util.logging.Logger; //import java.net.*;
-import java.io.*;
+import java.util.logging.Logger;
 
+import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.util.FileCopy;
+import org.imirsel.nema.util.FileDownload;
+import org.meandre.annotations.Component;
+import org.meandre.annotations.ComponentOutput;
+import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
-import org.meandre.annotations.Component;
-import org.meandre.annotations.ComponentOutput;
-import org.meandre.annotations.ComponentProperty;
-import org.imirsel.nema.renderers.CollectionRenderer;
-import org.imirsel.nema.renderers.FileRenderer;
-import org.imirsel.nema.util.FileDownload;
-import org.imirsel.service.ArtifactManagerImpl;
-import org.imirsel.nema.annotations.*;
-import org.imirsel.nema.util.FileCopy;
 
 @Component(creator = "Mert Bay", description = "Input component that outputs both the audio and ground-truth file locations.", name = "Structure Input", tags = "input, file, URL,file download, CSV reader, XML reader",
 		 firingPolicy = Component.FiringPolicy.all)
@@ -60,9 +61,9 @@ public class InputWithGT implements ExecutableComponent {
 	
 	
 	
-	private String FileListURL = "";
-	private String SingleFileURL = "";
-	private String uploadFile = "";	
+	private final String FileListURL = "";
+	private final String SingleFileURL = "";
+	private final String uploadFile = "";	
 	private String selectFile = "/data/raid3/collections/segmentation/wavs/01__a_hard_days_night.wav,/data/raid3/collections/segmentation/groundtruth/01__a_hard_days_night.txt";	
 	
 	private String localListFilePath;
