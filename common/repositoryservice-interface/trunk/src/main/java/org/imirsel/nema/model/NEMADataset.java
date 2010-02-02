@@ -8,6 +8,15 @@ package org.imirsel.nema.model;
 import java.io.Serializable;
 
 /**
+ * A class representing a NEMA dataset. <code>NEMADataset</code>s have an ID, name, description, 
+ * a link to a <code>NEMASet</code> defining the tracks in the set, a number of splits in the set 
+ * (e.g. a number of paired test and train sets), a number of sets per split (e.g. 2 for a classic
+ * train/test classification experiment, 1 for an analysis dataset), a subject metadata type id (e.g.
+ * 1 for genre, -1 for none) which experiments based on the dataset will be based on (e.g. genre
+ * for genre classification) and the split will have been optimised for (i.e. making sure that all
+ * class in the dataset have examples in both the test and training sets), a filter metadata type id 
+ * (e.g. 2 for artist, -1 for none) which was used to filter the split (i.e. making sure the artist
+ * only appears in either train or test sets). 
  *
  * @author kriswest
  */
@@ -17,7 +26,6 @@ public class NEMADataset implements Serializable {
     private int id;
     private String name;
     private String description;
-    private int collectionId;
     private int subsetSetId;
     private int numSplits;
     private int numSetPerSplit;
@@ -27,38 +35,68 @@ public class NEMADataset implements Serializable {
     private String subjectTrackMetadataName;
     private int filterTrackMetadataId;
     private String filterTrackMetadataName;
-    private int taskId;
-    private String taskName;
 
+
+    /**
+     * Constructor. The ID is specified, all other fields are null and must be set manually if
+     * they are to be used.
+     * 
+     * @param id The dataset ID to set.
+     */
     public NEMADataset(int id){
         this.id = id;
     }
 
-    public NEMADataset(int id, String name, String description,
-                       int collectionId, int numSplits,
-                       int subjectTrackMetadataId, String subjectTrackMetadataName, 
-                       int taskId, String taskName){
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.collectionId = collectionId;
-        this.numSplits = numSplits;
-        this.subjectTrackMetadataId = subjectTrackMetadataId;
-        this.subjectTrackMetadataName = subjectTrackMetadataName;
-        this.taskId = taskId;
-        this.taskName = taskName;
-    }
+//    /**
+//     * Full constructor.
+//     * 
+//     * @param id The dataset ID.
+//     * @param name The dataset name.
+//     * @param description The description of the dataset.
+//     * @param numSplits The number of splits in the dataset, 1 or more.
+//     * @param subjectTrackMetadataId
+//     * @param subjectTrackMetadataName
+//     */
+//    public NEMADataset(int id, String name, String description,
+//                       int numSplits,
+//                       int subjectTrackMetadataId, String subjectTrackMetadataName){
+//        this.id = id;
+//        this.name = name;
+//        this.description = description;
+//        this.numSplits = numSplits;
+//        this.subjectTrackMetadataId = subjectTrackMetadataId;
+//        this.subjectTrackMetadataName = subjectTrackMetadataName;
+//    }
 
-    public NEMADataset(int id, String name, String description, int collectionId,
+    /**
+     * Full constructor.
+     * * @param id The dataset ID.
+     * @param name The dataset name.
+     * @param description The description of the dataset.
+     * @param subsetSetId the ID of the subset defining the tracks in the subset.
+     * @param numSplits The number of splits in the dataset, 1 or more.
+     * @param numSetPerSplit The number of sets in each split, 1 or more.
+     * @param splitClass Placeholder to be used to hold the method used to produce the split.
+     * @param splitParametersString Placeholder to be used to hold the parameters of the split 
+     * method used to produce the split.
+     * @param subjectTrackMetadataId a subject metadata type id (e.g.
+	 * 1 for genre, -1 for none) which experiments based on the dataset will be based on (e.g. genre
+	 * for genre classification) and the split will have been optimised for (i.e. making sure that all
+	 * class in the dataset have examples in both the test and training sets).
+     * @param subjectTrackMetadataName The subject metadata type name.
+     * @param filterTrackMetadataId a filter metadata type id 
+	 * (e.g. 2 for artist, -1 for none) which was used to filter the split (i.e. making sure the artist
+	 * only appears in either train or test sets). 
+     * @param filterTrackMetadataName The filter metadata type name.
+     */
+    public NEMADataset(int id, String name, String description, 
                        int subsetSetId, int numSplits, int numSetPerSplit,
                        String splitClass, String splitParametersString,
                        int subjectTrackMetadataId, String subjectTrackMetadataName,
-                       int filterTrackMetadataId, String filterTrackMetadataName,
-                       int taskId, String taskName){
+                       int filterTrackMetadataId, String filterTrackMetadataName){
         this.id = id;
         this.name = name;
         this.description = description;
-        this.collectionId = collectionId;
         this.subsetSetId = subsetSetId;
         this.numSplits = numSplits;
         this.numSetPerSplit = numSetPerSplit;
@@ -68,140 +106,220 @@ public class NEMADataset implements Serializable {
         this.filterTrackMetadataId = filterTrackMetadataId;
         this.subjectTrackMetadataName = subjectTrackMetadataName;
         this.filterTrackMetadataName = filterTrackMetadataName;
-        this.taskId = taskId;
-        this.taskName = taskName;
     }
 
+    /**
+     * Returns the dataset ID.
+     * @return the dataset ID.
+     */
     public int getId(){
         return id;
     }
 
+    /**
+     * Sets the dataset ID.
+     * @param id the dataset ID to set.
+     */
     public void setId(Integer id){
         this.id = id;
     }
 
+    /**
+     * Returns the dataset name.
+     * @return the dataset name.
+     */
     public String getName(){
         return name;
     }
 
+    /**
+     * Sets the dataset name.
+     * @param name the dataset name to set.
+     */
     public void setName(String name){
         this.name = name;
     }
 
+    /**
+     * Returns the dataset description.
+     * @return the dataset description.
+     */
     public String getDescription(){
         return description;
     }
 
+    /**
+     * Sets the data description.
+     * @param description The description to set.
+     */
     public void setDescription(String description){
         this.description = description;
     }
 
-    public int getCollectionId(){
-        return collectionId;
-    }
-
-    public void setCollectionId(int collectionId){
-        this.collectionId = collectionId;
-    }
-
+    /**
+     * Returns the ID of the <code>NEMASet</code> defining the subset of tracks under the NEMA repository 
+     * in the dataset.
+     * @return The ID of the <code>NEMASet</code> defining the subset of tracks.
+     */
     public int getSubsetSetId(){
         return subsetSetId;
     }
 
+    /**
+     * Sets the ID of the <code>NEMASet</code> defining the subset of tracks under the NEMA repository 
+     * in the dataset.
+     * @param subsetSetId Sets the ID of the <code>NEMASet</code> defining the subset of tracks.
+     */
     public void setSubsetSetId(int subsetSetId){
         this.subsetSetId = subsetSetId;
     }
 
+    /**
+     * Returns the number of splits.
+     * @return the number of splits.
+     */
     public int getNumSplits(){
         return numSplits;
     }
 
+    /**
+     * Sets the number of splits in the dataset. Must be kept in sync with the split numbers
+     * stored against the NEMASet Objects linked to the dataset in the repository.
+     * @param numSplits the number of splits in the dataset to set.
+     */
     public void setNumSplits(int numSplits){
         this.numSplits = numSplits;
     }
 
+    /**
+     * Returns the number of sets in each split of the dataset.
+     * @return the number of sets in each split of the dataset.
+     */
     public int getNumSetPerSplit(){
         return numSetPerSplit;
     }
 
+    /**
+     * Sets the number of sets in each split of the dataset. Must be kept in sync with the 
+     * NEMASet Objects linked to the dataset in the repository.
+     * @param numSetPerSplit the number of sets in each split of the dataset to set.
+     */
     public void setNumSetPerSplit(int numSetPerSplit){
         this.numSetPerSplit = numSetPerSplit;
     }
 
+    /**
+     * Placeholder for returning the split method used to produce the dataset.
+     * @return name of the split class.
+     */
     public String getSplitClass(){
         return splitClass;
     }
 
+    /**
+     * Placeholder for returning the split method used to produce the dataset.
+     * @param splitClass the split class to set.
+     */
     public void setSplitClass(String splitClass){
         this.splitClass = splitClass;
     }
 
+    /**
+     * Placeholder for returning the parameters of the split method used to produce the dataset.
+     * @return The parameters of the split method.
+     */
     public String getSplitParametersString(){
         return splitParametersString;
     }
 
+    /**
+     * Placeholder for setting the parameters of the split method used to produce the dataset.
+     * @param splitParametersString The parameters of the split method to set.
+     */
     public void setSplitParametersString(String splitParametersString){
         this.splitParametersString = splitParametersString;
     }
 
+    /**
+     * Returns the ID of the subject track metadata.
+     * @return the ID of the subject track metadata.
+     */
     public int getSubjectTrackMetadataId(){
         return subjectTrackMetadataId;
     }
 
+    /**
+     * Sets the ID of the subject track metadata.
+     * @param subjectTrackMetadataId the ID of the subject track metadata to set.
+     */
     public void setSubjectTrackMetadataId(int subjectTrackMetadataId){
         this.subjectTrackMetadataId = subjectTrackMetadataId;
     }
 
+    /**
+     * Returns the ID of the filter track metadata.
+     * @return the ID of the filter track metadata.
+     */
     public int getFilterTrackMetadataId(){
         return filterTrackMetadataId;
     }
 
+    /**
+     * Sets the ID of the filter track metadata.
+     * @param filterTrackMetadataId the ID of the filter track metadata.
+     */
     public void setFilterTrackMetadataId(int filterTrackMetadataId){
         this.filterTrackMetadataId = filterTrackMetadataId;
     }
 
-    public int getTaskId(){
-        return taskId;
-    }
-
-    public void setTaskId(int taskId){
-        this.taskId = taskId;
-    }
-
     /**
-     * @return the subjectTrackMetadataName
+     * Returns the name of the subject track metadata.
+     * @return the name of the subject track metadata.
      */
     public String getSubjectTrackMetadataName(){
         return subjectTrackMetadataName;
     }
 
     /**
-     * @param subjectTrackMetadataName the subjectTrackMetadataName to set
+     * Sets the name of the subject track metadata.
+     * @param subjectTrackMetadataName the name of the subject track metadata.
      */
     public void setSubjectTrackMetadataName(String subjectTrackMetadataName){
         this.subjectTrackMetadataName = subjectTrackMetadataName;
     }
 
     /**
-     * @return the filterTrackMetadataName
+     * Returns the name of the filter track metadata.
+     * @return the name of the filter track metadata.
      */
     public String getFilterTrackMetadataName(){
         return filterTrackMetadataName;
     }
 
     /**
-     * @param filterTrackMetadataName the filterTrackMetadataName to set
+     * Sets the name of the filter track metadata.
+     * @param filterTrackMetadataName the name of the filter track metadata.
      */
     public void setFilterTrackMetadataName(String filterTrackMetadataName){
         this.filterTrackMetadataName = filterTrackMetadataName;
     }
 
     @Override
+    /**
+     * HashCodes are based on the dataset ID.
+     * @return the HashCode.
+     */
     public int hashCode(){
         return id;
     }
 
     @Override
+    /**
+     * Returns true if the other Object is an instance of <code>NEMADataset</code> with an
+     * identical ID.
+     * @param object the object to compare to.
+     * @return a boolean indicating equality.
+     */
     public boolean equals(Object object){
         if (!(object instanceof NEMADataset)){
             return false;
@@ -215,21 +333,10 @@ public class NEMADataset implements Serializable {
 
     @Override
     public String toString(){
-        return "org.imirsel.nema.repository.NEMADataset[id=" + id + "]";
+        return "org.imirsel.nema.repository.NEMADataset[id=" + id + ", name=" + name + ", description=" + description + ", " +
+        		", subsetSetId=" + subsetSetId + ", numSplits=" + numSplits + ", numSetPerSplit=" + numSetPerSplit + ", " +
+        		"splitClass=" + splitClass + ", splitParametersString=" + splitParametersString + ", " +
+        		"subjectTrackMetadataId=" + subjectTrackMetadataId + ", subjectTrackMetadataName=" + subjectTrackMetadataName + ", " +
+        		"filterTrackMetadataId=" + filterTrackMetadataId + ", filterTrackMetadataName=" + filterTrackMetadataName + "]";
     }
-
-    /**
-     * @return the taskName
-     */
-    public String getTaskName(){
-        return taskName;
-    }
-
-    /**
-     * @param taskName the taskName to set
-     */
-    public void setTaskName(String taskName){
-        this.taskName = taskName;
-    }
-
 }
