@@ -50,7 +50,7 @@ public class MeandreBaseClient{
     private int _port;
 
 	/** logger for request/response contents*/
-	private Logger _log = Logger.getLogger(MeandreBaseClient.class.getName());
+	private Logger logger = Logger.getLogger(MeandreBaseClient.class.getName());
 	
 	/**
 	 * initialize a client that talks to a Meandre server located at the input
@@ -114,11 +114,11 @@ public class MeandreBaseClient{
     }
 
 	public Logger getLogger(){
-		return _log;
+		return logger;
 	}
 
 	public void setLogger(Logger log){
-		_log = log;
+		logger = log;
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class MeandreBaseClient{
 	 * @param queryParams the http query params to append to the url. Null is
 	 * an acceptable value for this set if no params are needed.
 	 * 
-	 * @return The raw content bytes of the server's response
+	 * @return http code
      * @throws TransmissionException 
 	 */
 	public int executeGetRequestNoBlock(String sRestCommand, 
@@ -191,18 +191,67 @@ public class MeandreBaseClient{
 		int httpCode=0;
 		try{
 			getHttpClient().executeMethod(get);
-			httpCode = get.getStatusCode();;
+			httpCode = get.getStatusCode();
 			verifyResponseOK(get);
 		}catch (TransmissionException te){
 			throw te;
 		}catch(Exception e){
 		    //e.printStackTrace();
-			_log.severe("unanticipated exception performing http GET: " +
+			logger.severe("unanticipated exception performing http GET: " +
 			        extractMethodsURIString(get));
 			throw new TransmissionException(e);
 		}
 		return httpCode;
 	}
+	
+	
+
+	/**This method is non blocking -it executes the call and returns
+	 * 
+	 * @param sRestCommand
+	 * @param queryParams
+	 * @param dataParts
+	 * @return http code
+	 * @throws TransmissionException
+	 */
+	public int executePostRequestNoWait(String sRestCommand,
+			Set<NameValuePair> queryParams, Set<Part> dataParts) throws TransmissionException {
+			int httpCode=0;
+		 	PostMethod post = new PostMethod();
+	        post.setPath("/" + sRestCommand);
+	        post.setDoAuthentication(true);
+	        
+	        Set<Part> parts = null;
+	        if(dataParts == null){
+	            parts = new HashSet<Part>();
+	        }else{
+	            parts = dataParts;
+	        }
+	        if(queryParams != null){
+	            for(NameValuePair param: queryParams){
+	                parts.add(new StringPart(param.getName(), param.getValue()));
+	            }
+	        }
+	        Part[] aParts = new Part[parts.size()];
+	        parts.toArray(aParts);
+	        post.setRequestEntity(new MultipartRequestEntity(aParts, post.getParams()));
+	        post.getParams().setBooleanParameter(HttpMethodParams.USE_EXPECT_CONTINUE, true);
+					
+	        try{
+	            getHttpClient().executeMethod(post);
+	            httpCode = post.getStatusCode();
+				verifyResponseOK(post);
+	       }catch(Exception e){
+				logger.severe("unanticipated exception - POST: " + 
+				        extractMethodsURIString(post));
+	            throw new TransmissionException(e);
+	        }finally{
+	        	
+	        }
+	        return httpCode;
+		
+	}
+
     
 
 
@@ -241,13 +290,13 @@ public class MeandreBaseClient{
 		}catch(Exception e){
 		    e.printStackTrace();
 		    System.out.println("HERE>...... exception "+ e.getMessage());
-		    if(_log==null){
+		    if(logger==null){
 		    	System.out.println("_log is null -check the damn CLIENT...");
 		    }else{
 		    	System.out.println("_log is not null.... good okay");
 		    }
 		  
-			_log.severe("unanticipated exception performing http GET: " +
+			logger.severe("unanticipated exception performing http GET: " +
 			        extractMethodsURIString(get));
 			throw new TransmissionException(e);
 		}
@@ -291,7 +340,7 @@ public class MeandreBaseClient{
 		}catch (TransmissionException te){
 			throw te;
         }catch(Exception e){
-            _log.severe("unanticipated exception - GET: " + 
+            logger.severe("unanticipated exception - GET: " + 
                     extractMethodsURIString(get));
             throw new TransmissionException(e);
         }
@@ -348,7 +397,7 @@ public class MeandreBaseClient{
 		}catch (TransmissionException te){
 			throw te;
         }catch(Exception e){
-			_log.severe("unanticipated exception - POST: " + 
+			logger.severe("unanticipated exception - POST: " + 
 			        extractMethodsURIString(post));
             throw new TransmissionException(e);
         }
@@ -483,7 +532,7 @@ public class MeandreBaseClient{
             errBuf.append(" -> ");
             errBuf.append(reason);
 
-            _log.severe(errBuf.toString());
+            logger.severe(errBuf.toString());
           
             method.releaseConnection();
 
