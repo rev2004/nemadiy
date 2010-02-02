@@ -11,7 +11,7 @@ package org.imirsel.nema.components.io;
 
 import java.util.logging.Logger;
 
-import org.imirsel.util.JndiHelper;
+import org.imirsel.nema.directoryservice.JndiHelper;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.core.ComponentContext;

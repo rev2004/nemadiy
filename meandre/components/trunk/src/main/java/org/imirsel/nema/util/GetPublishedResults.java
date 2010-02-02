@@ -1,28 +1,27 @@
 package org.imirsel.nema.util;
 
-import java.io.*;
-import java.util.Iterator;
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
+import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.renderers.CollectionRenderer;
+import org.imirsel.nema.repository.DatasetListFileGenerator;
+import org.imirsel.nema.repository.NEMAMetadataEntry;
+import org.imirsel.nema.repository.PublishedResult;
+import org.imirsel.nema.repository.RepositoryClientConnectionPool;
+import org.imirsel.nema.repository.RepositoryClientImpl;
+import org.meandre.annotations.Component;
+import org.meandre.annotations.ComponentOutput;
+import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
-import org.meandre.annotations.Component;
-import org.meandre.annotations.ComponentOutput;
-import org.meandre.annotations.ComponentProperty;
-import org.imirsel.nema.renderers.CollectionRenderer;
-import org.imirsel.service.ArtifactManagerImpl;
-import org.imirsel.nema.annotations.*;
-import org.imirsel.nema.repository.DatasetListFileGenerator;
-import org.imirsel.nema.repository.NEMAMetadataEntry;
-import org.imirsel.nema.repository.PublishedResult;
-
-import java.sql.SQLException;
-import org.imirsel.nema.repository.RepositoryClientImpl;
-import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 
 
 @Component(creator = "Mert Bay", description = "Takes the collection ID and pushes the names, paths for the publised results for the collection and associated groundtruth", name = "GetPublishedResults",resources={"../../../../RepositoryProperties.properties"},
@@ -56,12 +55,12 @@ import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 	private String processWorkingDirName;
 	private File processWorkingDir;
 
-	private String bitRate = "";
-	private String channels = "1";	
-	private String clip_type = "30";
-	private String encoding = "wav";
-	private String sample_rate = "22050";
-	private String delim = "\t";
+	private final String bitRate = "";
+	private final String channels = "1";	
+	private final String clip_type = "30";
+	private final String encoding = "wav";
+	private final String sample_rate = "22050";
+	private final String delim = "\t";
 
 	
 	

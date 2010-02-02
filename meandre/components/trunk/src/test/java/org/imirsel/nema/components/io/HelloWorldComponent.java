@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.service.ArtifactManagerImpl;
-import org.meandre.annotations.*;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.meandre.annotations.Component;
+import org.meandre.annotations.ComponentOutput;
+import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;

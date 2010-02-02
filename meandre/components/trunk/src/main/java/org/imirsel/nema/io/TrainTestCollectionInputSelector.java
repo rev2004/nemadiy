@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.imirsel.nema.renderers.CollectionRenderer;
 import org.imirsel.nema.repository.DatasetListFileGenerator;
 import org.imirsel.nema.repository.NEMAMetadataEntry;
-import org.imirsel.service.ArtifactManagerImpl;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentProperty;
@@ -21,7 +21,6 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
-
 
 @Component(creator = "Mert Bay", description = "Selects a Train / Test dataset from NEMA servers. Outputs 4 objects: " +
 				"1) a Feature Extraction list file path 2) Ground-truth file path 3) an array of train file paths " +

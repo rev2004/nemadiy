@@ -10,31 +10,24 @@
 
 package org.imirsel.nema.evaluation;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.imirsel.m2k.evaluation2.resultPages.WriteResultPagePerFile;
+import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.util.ProcessOutputReceiver;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
-import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
-
-import org.imirsel.service.*;
-import org.imirsel.nema.annotations.BooleanDataType;
-import org.imirsel.nema.annotations.StringDataType;
-import org.imirsel.nema.util.ProcessOutputReceiver;
-import org.imirsel.m2k.evaluation2.resultPages.WriteResultPagePerFile;
 
 /** This executable component executes an external binary using the process builder.
  *

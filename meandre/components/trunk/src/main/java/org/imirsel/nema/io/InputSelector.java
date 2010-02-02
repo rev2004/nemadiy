@@ -3,23 +3,25 @@ package org.imirsel.nema.io;
 //import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
 import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.StringTokenizer;
-import java.util.logging.Logger; //import java.net.*;
-import java.io.*;
+import java.util.logging.Logger;
 
+import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.renderers.FileRenderer;
+import org.imirsel.nema.util.FileDownload;
+import org.meandre.annotations.Component;
+import org.meandre.annotations.ComponentOutput;
+import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
-import org.meandre.annotations.Component;
-import org.meandre.annotations.ComponentOutput;
-import org.meandre.annotations.ComponentProperty;
-import org.imirsel.nema.renderers.CollectionRenderer;
-import org.imirsel.nema.renderers.FileRenderer;
-import org.imirsel.nema.util.FileDownload;
-import org.imirsel.service.ArtifactManagerImpl;
-import org.imirsel.nema.annotations.*;
 
 @Component(creator = "Mert Bay", description = "Reads an XML or CSV file from a local directory or an URL, with File location and  class " +
 		" metadata. Output is a 2D String array that holds the fileLocation  in the first column and its " +

@@ -1,20 +1,23 @@
 package org.imirsel.nema.jAudio;
 
+import jAudioFeatureExtractor.DataModel;
+import jAudioFeatureExtractor.ACE.DataTypes.Batch;
+import jAudioFeatureExtractor.ACE.DataTypes.FeatureDefinition;
+import jAudioFeatureExtractor.AudioFeatures.FeatureExtractor;
+import jAudioFeatureExtractor.DataTypes.RecordingInfo;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.logging.Logger;
-import java.lang.Boolean;
 
 import org.imirsel.nema.annotations.BooleanDataType;
 import org.imirsel.nema.annotations.DoubleDataType;
 import org.imirsel.nema.annotations.IntegerDataType;
 import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.imirsel.nema.renderers.DoubleRenderer;
-
-import org.imirsel.service.ArtifactManagerImpl;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
@@ -24,14 +27,6 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
-import jAudioFeatureExtractor.CommandLineThread;
-import jAudioFeatureExtractor.DataModel;
-import jAudioFeatureExtractor.ACE.DataTypes.Batch;
-import jAudioFeatureExtractor.ACE.DataTypes.FeatureDefinition;
-import jAudioFeatureExtractor.ACE.XMLParsers.XMLDocumentParser;
-import jAudioFeatureExtractor.Aggregators.Aggregator;
-import jAudioFeatureExtractor.AudioFeatures.FeatureExtractor;
-import jAudioFeatureExtractor.DataTypes.RecordingInfo;
 
 /** Selects options for a jAudio Feature extraction Job
  *
