@@ -1,17 +1,29 @@
 #labels Documentation,Artifactory
-#Using Artifactory to Add Dependencies to the POM
+= Using Artifactory to Add Dependencies to Projects =
 
-[http://nema.lis.uiuc.edu/help/documentation/artifactory-dependency.mov How To do it -movie]
+== Introduction ==
 
-= Introduction =
+In order to add third party dependencies to the POM, we will be using artifactory http://nema.lis.uiuc.edu/artifactory/ to search for the dependency and modify the project's POM to include the dependency. If your changes should remain with the project then check in the pom.xml file after modifying and testing it.
 
-In order to add third party dependencies to the POM, we will be using artifactory http://nema.lis.uiuc.edu/artifactory/ to search for the dependency and modify the project's POM to include the dependency.
+== How-to screencast ==
+This screencast demonstrates how to get the data to add to your project pom.xml file. Once you have done this follow instructions 5 and 6 below.
 
+[http://nema.lis.uiuc.edu/help/documentation/artifactory-dependency.mov How-To screencast]
 
-= Details =
-Go to http://nema.lis.uiuc.edu/artifactory/ and search for the dependency you want to include in the POM file. Select the POM file amongst the results and select from the menu _Show In Tree_. Click on the POM view and copy the <dependency>...</dependency> XML fragment to the pom.xml <dependencies> list.
+== Instructions ==
 
-
-Also add a scope to the dependency. Usually the scope would be compile but there are times you would want the scope to be provided (for example servlet api is provided by the servlet container), or if your dependency is a database driver, you can select the scope runtime as you would require the database implementation.
-
-Description about the scope is here  http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope
+ # Go to http://nema.lis.uiuc.edu/artifactory/ and use the search box in the top right hand corner of the page to search for the dependency you want to include in the POM file (e.g. enter mysql when searching for a mysqlconnector jar file). <br><br>
+ # Select the POM file for the dependency you want to include in the results (if it is not listed contact Amit and/or Andrew Shirk).  <br><br>
+ # From the contextual menu that will pop up, select _Show In Tree_.  <br><br>
+ # Click on the *POM view* tab (Note that this ma  not be visible initially, depending on your window size, so use the white triangle to get the next set of tab) and copy the 
+{{{
+<dependency>
+...
+</dependency>
+}}}
+ # Open the POM file for the project that you wish to add the dependency to (either in Eclipse or a text editor).
+  * In a text editor add the dependency XML fragment to the `<dependencies>` list.
+  * Alternatively, in the eclipse Maven POM file editor fill in the fields using the data from the `<dependency>` XML fragment. <br><br>
+ # Finally add a scope to the dependency. 
+  * Usually the scope would be *compile* but there are times you would want the scope to be provided (for example servlet api is provided by the servlet container), or if your dependency is a database driver (where you compile against JDBC rather than the specific driver), you can use the scope *runtime*.
+  * Further details on scopes are available at: http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope
