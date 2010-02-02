@@ -1044,7 +1044,6 @@ public class MeandreClient extends MeandreBaseClient{
 		String sRestCommand = "services/execute/repository.txt";
 		Set<NameValuePair> nvps = new HashSet<NameValuePair>();
 		Set<Part> postParts = new HashSet<Part>();
-		ByteArrayOutputStream osModel = new ByteArrayOutputStream();
 		File file = new File(fileName);
 		FileInputStream fos=null;
 		byte[] baModel=null;
@@ -1059,7 +1058,14 @@ public class MeandreClient extends MeandreBaseClient{
 		} catch (IOException e) {
 			throw new TransmissionException(e);
 		}finally{
-			
+			if(fos!=null){
+			try {
+				fos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
 		}
 		//NOTE: "InMemoryBytes" is given as the filename, and it is not
 		//clear what it's used for by httpclient in this context
@@ -1075,8 +1081,6 @@ public class MeandreClient extends MeandreBaseClient{
 				nvps.add(new NameValuePair(key, probeList.get(key)));
 			}
 		}
-		
-
 		int httpCode= executePostRequestNoWait(sRestCommand, nvps, postParts);
 		if(httpCode==200){
 			return true;
