@@ -1,7 +1,7 @@
 #labels Documentation,Artifactory
 #Using Artifactory to Add Dependencies to the POM
 
-[View  artifactory-movie.mov]
+[View  http://nema.lis.uiuc.edu/help/documentation/artifactory-dependency.mov]
 
 = Introduction =
 
@@ -15,8 +15,6 @@ Go to http://nema.lis.uiuc.edu/artifactory and search for the dependency you wan
 Also add a scope to the dependency. Usually the scope would be compile but there are times you would want the scope to be provided (for example servlet api is provided by the servlet container), or if your dependency is a database driver, you can select the scope runtime as you would require the database implementation.
 
 Description about the scope is here  http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope
-
-
 
 
 
