@@ -5,17 +5,15 @@
 
 = Introduction =
 
-In order to add third party dependencies to the POM, we will be using artifactory <http://nema.lis.uiuc.edu/artifactory> to search for the dependency and modify the project's POM to include the dependency.
+In order to add third party dependencies to the POM, we will be using artifactory <http://nema.lis.uiuc.edu/artifactory/> to search for the dependency and modify the project's POM to include the dependency.
 
 
 = Details =
-Go to http://nema.lis.uiuc.edu/artifactory and search for the dependency you want to include in the POM file. Select the POM file amongst the results and select from the menu _Show In Tree_. Click on the POM view and copy the <dependency>...</dependency> XML fragment to the pom.xml <dependencies> list.
+Go to http://nema.lis.uiuc.edu/artifactory/ and search for the dependency you want to include in the POM file. Select the POM file amongst the results and select from the menu _Show In Tree_. Click on the POM view and copy the <dependency>...</dependency> XML fragment to the pom.xml <dependencies> list.
 
 
 Also add a scope to the dependency. Usually the scope would be compile but there are times you would want the scope to be provided (for example servlet api is provided by the servlet container), or if your dependency is a database driver, you can select the scope runtime as you would require the database implementation.
 
 Description about the scope is here  http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope
-
-
 
 
