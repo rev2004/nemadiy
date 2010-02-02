@@ -4,6 +4,7 @@ package org.imirsel.meandre.client;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1023,10 +1024,67 @@ public class MeandreClient extends MeandreBaseClient{
 			}
 		}
 		int httpCode=executeGetRequestNoWait(sRestCommand, nvps);
-		return true;
+		if(httpCode==200){
+			return true;
+		}else{
+			return false;
+		}
 	}
-
 	
+	/**
+	 * 
+	 * @param fileName
+	 * @param token
+	 * @param probeList
+	 * @return true false
+	 * @throws TransmissionException
+	 */
+	public boolean runAsyncModel(String fileName, String token,HashMap<String, String> probeList) 
+	throws TransmissionException {
+		String sRestCommand = "services/execute/repository.txt";
+		Set<NameValuePair> nvps = new HashSet<NameValuePair>();
+		Set<Part> postParts = new HashSet<Part>();
+		ByteArrayOutputStream osModel = new ByteArrayOutputStream();
+		File file = new File(fileName);
+		FileInputStream fos=null;
+		byte[] baModel=null;
+		try {
+			fos = new FileInputStream(file);
+			System.out.println("Reading file: " + fileName);
+			baModel= new byte[(int) file.length()];
+			System.out.println("Size of file: " + file.length());
+			fos.read(baModel);
+		} catch (FileNotFoundException e) {
+			throw new TransmissionException(e);
+		} catch (IOException e) {
+			throw new TransmissionException(e);
+		}finally{
+			
+		}
+		//NOTE: "InMemoryBytes" is given as the filename, and it is not
+		//clear what it's used for by httpclient in this context
+		PartSource source = new ByteArrayPartSource("InMemoryBytes",baModel);
+		postParts.add(new FilePart("repository", source));
+		nvps.add(new NameValuePair("token",token));
+		if(!probeList.isEmpty()){
+			Set<String> keys = probeList.keySet();
+			Iterator<String> itK = keys.iterator();
+			String key = null;
+			while(itK.hasNext()){
+				key = itK.next();
+				nvps.add(new NameValuePair(key, probeList.get(key)));
+			}
+		}
+		
+
+		int httpCode= executePostRequestNoWait(sRestCommand, nvps, postParts);
+		if(httpCode==200){
+			return true;
+		}else{
+			return false;
+		}
+	
+	}
 
 
 	/**
