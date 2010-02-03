@@ -15,8 +15,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.GenerationTime;
-
 
 @Entity
 @Table(name="submission")
@@ -114,7 +112,7 @@ public class Submission extends BaseObject implements Serializable{
 
 	        final Submission submission = (Submission) o;
 
-	        return !(submission != null ? !(jobId==submission.getJobId()) : submission.getJobId() != -1);
+	        return !(submission != null ? !(jobId==submission.getJobId()) : submission.getJobId() != -1l);
 
 	}
 

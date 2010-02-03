@@ -30,7 +30,7 @@ import org.meandre.core.engine.Probe;
 public class NemaFlowNotification implements Probe {
 	
 	
-	private static final Logger  logger = Logger.getAnonymousLogger();
+	private static final Logger  LOGGER = Logger.getAnonymousLogger();
 	
 
 	private static DataSource dataSource=null;
@@ -38,8 +38,7 @@ public class NemaFlowNotification implements Probe {
 	try {
 		dataSource= JndiHelper.getJobStatusDataSource();
 	} catch (Exception e) {
-		logger.severe("Error could not get dataSource for NEMA...\n");
-		System.exit(0);
+		LOGGER.severe("Error could not get dataSource for NEMA...\n");
 	}
     }
 
@@ -70,8 +69,8 @@ public class NemaFlowNotification implements Probe {
 	 * @param ts The time stamp
 	 */
 	public void probeFlowStart(String sFlowUniqueID, Date ts, String weburl){
-		logger.info("Flow Started: " + ts.toString()+ " " +sFlowUniqueID + "  " + weburl);
-		logger.info("Flow Started: " + Job.JobStatus.STARTED.getCode());
+		LOGGER.info("Flow Started: " + ts.toString()+ " " +sFlowUniqueID + "  " + weburl);
+		LOGGER.info("Flow Started: " + Job.JobStatus.STARTED.getCode());
 		// create the directories for this flow
 		try {
 			ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(sFlowUniqueID);
@@ -85,14 +84,14 @@ public class NemaFlowNotification implements Probe {
 		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
 		String sqlUpdate =mdata.start();
 		if(sqlUpdate.equals("[unassigned]")){
-			logger.severe("probeFlowStart: Ignoring sql Update for Job.class "+ sqlUpdate);
+			LOGGER.severe("probeFlowStart: Ignoring sql Update for Job.class "+ sqlUpdate);
 			return;
 		}
 		Connection con = null;
         try{
         	con = dataSource.getConnection();
         }catch(SQLException e) {
-        	logger.severe("Error getting connection from the Job dataSource " + e.getMessage());
+        	LOGGER.severe("Error getting connection from the Job dataSource " + e.getMessage());
         }
         PreparedStatement updateTable = null;
         try {
@@ -106,7 +105,7 @@ public class NemaFlowNotification implements Probe {
 			//updateTable.setTimestamp(4, new Timestamp(new Date().getTime()));
 			int result =updateTable.executeUpdate();
 			if(result!=1){
-				logger.severe("probeFlowStart: update returned: "+ result);	
+				LOGGER.severe("probeFlowStart: update returned: "+ result);	
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -135,13 +134,13 @@ public class NemaFlowNotification implements Probe {
 	 * @param ts The time stamp
 	 */
 	public void probeFlowFinish(String sFlowUniqueID, Date ts){
-		logger.info("Flow Finished " + ts.toString()+ " " +sFlowUniqueID);
-		logger.info("Flow Finished: JobStatus.FINISHED "+ Job.JobStatus.FINISHED.getCode());
+		LOGGER.info("Flow Finished " + ts.toString()+ " " +sFlowUniqueID);
+		LOGGER.info("Flow Finished: JobStatus.FINISHED "+ Job.JobStatus.FINISHED.getCode());
 		databaseQuery(sFlowUniqueID, Job.JobStatus.FINISHED.getCode());
 		int jobId = getJobIdFromFlowUniqueID(sFlowUniqueID);
 		System.out.println("Found job : "+ jobId);
 		if(jobId==-1){
-			logger.severe("Job "+ sFlowUniqueID + " not found");
+			LOGGER.severe("Job "+ sFlowUniqueID + " not found");
 			return;
 		}
 		//FIND THE RESULTS IN THE RESULT DIRECTORY and store them
@@ -217,7 +216,7 @@ public class NemaFlowNotification implements Probe {
 	 */
 	public void probeExecutableComponentInitialized(String sECID, Object owc, 
 			Date ts, boolean bSerializeState){
-		System.out.println("Initialized "+ sECID);
+			LOGGER.info("Initialized "+ sECID);
 		
 	}
 
@@ -327,7 +326,7 @@ public class NemaFlowNotification implements Probe {
         	insertTable.setString(1, resultType);
         	insertTable.setString(2, url);
         	insertTable.setInt(3, jobId);
-			boolean result =insertTable.execute();
+			insertTable.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -352,7 +351,7 @@ public class NemaFlowNotification implements Probe {
 		SqlPersistence mdata=Job.class.getAnnotation(SqlPersistence.class);
 		String sql=mdata.queryByName();
 		if(sql.equals("[unassigned]")){
-			logger.severe("Error Job class does not have the query specified for queryByName\n");
+			LOGGER.severe("Error Job class does not have the query specified for queryByName\n");
 			return -1;
 		}
 		 Connection con = null;
@@ -373,7 +372,7 @@ public class NemaFlowNotification implements Probe {
         	}
         	
 			if(jobId==-1){
-				logger.severe("could not get job id with execution instance id  "+ sFlowUniqueID +  " - " + sFlowUniqueID);	
+				LOGGER.severe("could not get job id with execution instance id  "+ sFlowUniqueID +  " - " + sFlowUniqueID);	
 			}
         } catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -417,7 +416,7 @@ public class NemaFlowNotification implements Probe {
         	updateTable.setString(2, sFlowUniqueID);
 			int result =updateTable.executeUpdate();
 			if(result!=1){
-				logger.info("probeFlowStart: update returned: "+ result);	
+				LOGGER.info("probeFlowStart: update returned: "+ result + "  flow unique ID: " + sFlowUniqueID);	
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

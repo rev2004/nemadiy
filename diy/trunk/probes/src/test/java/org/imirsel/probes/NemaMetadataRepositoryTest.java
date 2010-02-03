@@ -1,9 +1,5 @@
 package org.imirsel.probes;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +9,6 @@ import org.meandre.core.repository.ExecutableComponentDescription;
 import org.meandre.core.repository.PropertiesDescriptionDefinition;
 import org.meandre.core.repository.QueryableRepository;
 import org.meandre.core.repository.RepositoryImpl;
-import org.meandre.demo.repository.DemoRepositoryGenerator;
 
 import com.hp.hpl.jena.rdf.model.Model;
 

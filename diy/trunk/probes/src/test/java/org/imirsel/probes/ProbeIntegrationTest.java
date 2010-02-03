@@ -8,9 +8,6 @@ import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DriverManagerConnectionFactory;
-import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.imirsel.dao.JobDao;
@@ -117,10 +114,10 @@ public class ProbeIntegrationTest {
 	private static  DataSource setupDataSource(String jdbc_url, String user,String password) {
 		//System.out.println("Setting up jdbc datasource: " + jdbc_url + " user: " + user);
 		GenericObjectPool connectionPool = new GenericObjectPool(null);
-		ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(jdbc_url, user, password);
+		/*ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(jdbc_url, user, password);
 		PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(
 				connectionFactory, connectionPool, null, null, false, false);
-		PoolingDataSource dataSource = new PoolingDataSource(connectionPool);
+		*/PoolingDataSource dataSource = new PoolingDataSource(connectionPool);
 		return dataSource;
 	}
 
