@@ -47,6 +47,12 @@ public class ArtifactManagerImpl implements ArtifactManager {
 		return instance;
 	}
 	
+	public static ArtifactManager getInstance(){
+		if(!inited){
+			LOGGER.severe("Error ArtifactManagerImpl is null");
+		}
+		return instance;
+	}
 	
 	
 /**Returns the process working directory
