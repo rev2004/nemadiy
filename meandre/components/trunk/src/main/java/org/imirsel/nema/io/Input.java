@@ -76,10 +76,10 @@ public class Input implements ExecutableComponent {
 		out = ccp.getOutputConsole();
 		logger = ccp.getLogger();
 		try {
-			processWorkingDir = ArtifactManagerImpl.getInstance()
+			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
 					.getProcessWorkingDirectory(
 							ccp.getFlowExecutionInstanceID());
-			commonStorageDir=ArtifactManagerImpl.getInstance().getCommonStorageLocation() + File.separator + "inputSelectorDownloadedFiles";
+			commonStorageDir=ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).getCommonStorageLocation() + File.separator + "inputSelectorDownloadedFiles";
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			throw new ComponentExecutionException(e1);

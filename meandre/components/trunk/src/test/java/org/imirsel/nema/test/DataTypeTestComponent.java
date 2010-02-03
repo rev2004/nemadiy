@@ -229,8 +229,7 @@ import org.meandre.core.ExecutableComponent;
 
 		cout = ccp.getOutputConsole();
 		try {
-			processResultsDir = ArtifactManagerImpl.getInstance().getResultLocationForJob(ccp.getFlowExecutionInstanceID());
-
+			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).getResultLocationForJob(ccp.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			throw new ComponentExecutionException(e1);

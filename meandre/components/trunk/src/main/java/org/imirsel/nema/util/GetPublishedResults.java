@@ -69,7 +69,7 @@ import org.meandre.core.ExecutableComponent;
 	public void initialize(ComponentContextProperties cc) throws  ComponentExecutionException {
 		cout = cc.getOutputConsole();		
 		try {
-			processWorkingDirName=ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
+			processWorkingDirName=ArtifactManagerImpl.getInstance(cc.getPublicResourcesDirectory()).getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
 			throw new ComponentExecutionException(e1);
 		}
