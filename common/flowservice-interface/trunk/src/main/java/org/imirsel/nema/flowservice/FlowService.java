@@ -2,6 +2,7 @@ package org.imirsel.nema.flowservice;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
@@ -126,11 +127,11 @@ public interface FlowService {
    
    
    /**
-    * Returns a HashMap of the MeandreServerProxyConfig as key and the MeandreServerProxyStatus as value
-    * @return HashMap of {@link org.imirsel.nema.flowservice.config.MeandreServerProxyConfig} as key {@link MeandreServerProxyStatus} as value
+    * Returns a Map of the MeandreServerProxyConfig as key and the MeandreServerProxyStatus as value
+    * @return Map of {@link org.imirsel.nema.flowservice.config.MeandreServerProxyConfig} as key {@link MeandreServerProxyStatus} as value
     * @since 0.5.0
     */
-   public HashMap<MeandreServerProxyConfig,MeandreServerProxyStatus> getMeandreServerProxyStatus();
+   public Map<MeandreServerProxyConfig,MeandreServerProxyStatus> getMeandreServerProxyStatus();
    
    /**
     * Returns the MeandreServerProxyStatus for the Server
@@ -146,43 +147,48 @@ public interface FlowService {
     * Returns the console for the executing flow 
     * @param URI The URI of the flow
     * @return console as string
+    * @throws MeandreServerException 
     * @since 0.5.0
     */
-   public String getConsole(String URI);
+   public String getConsole(String URI) throws MeandreServerException;
    
    /**
     * Creates a new flow with the parameters based on the flowURI template
     * @param paramMap HashMap of Parameter names and values.
     * @param flowURI  The URI of the flow
     * @return URI The URI of the flow
+    * @throws MeandreServerException 
     * @since 0.5.0
     */
-   public String createNewFlow(HashMap<String,String> paramMap,String flowURI);
+   public String createNewFlow(HashMap<String,String> paramMap,String flowURI) throws MeandreServerException;
 
    /**
     * Returns the Component Data Property
     * @param component
     * @param URI The URI of the flow
-    * @return HashMap<String, Property> The Map of component name and property.
+    * @return Map<String, Property> The Map of component name and property.
+    * @throws MeandreServerException 
     * @since 0.5.0
     */
-   public HashMap<String, Property> getComponentPropertyDataType(Component component, String URI);
+   public Map<String, Property> getComponentPropertyDataType(Component component, String URI) throws MeandreServerException;
 
    /**
     * Returns the list of Component
     * @param URI The URI of the flow
     * @return List<Component> 
+    * @throws MeandreServerException 
     * @since 0.5.0
     */
-   public List<Component> getComponents(String URI);
+   public List<Component> getComponents(String URI) throws MeandreServerException;
 
    /** 
     * Remove the flow with the url
     * @param URI The URI of the flow
     * @return success True or False
+    * @throws MeandreServerException 
     * @since 0.5.0
     */
-   public boolean removeFlow(String URI);
+   public boolean removeFlow(String URI) throws MeandreServerException;
 		
    
 
