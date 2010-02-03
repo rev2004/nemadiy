@@ -2,13 +2,13 @@ package org.imirsel.nema.artifactservice;
 
 import java.io.File;
 import java.io.IOException;
-
-import org.meandre.configuration.CoreConfiguration;
+import java.util.logging.Logger;
 
 public class ArtifactManagerImpl implements ArtifactManager {
 	
 	
-	private static CoreConfiguration coreConfiguration;
+	private final static Logger LOGGER = Logger.getLogger(ArtifactManagerImpl.class.getName());
+	private static String publicResourceDirectory;
 	private static ArtifactManagerImpl instance;
 	private static boolean inited = false;
 	
@@ -16,39 +16,46 @@ public class ArtifactManagerImpl implements ArtifactManager {
 	private ArtifactManagerImpl(){}
 	
 	/**This method must be called before calling the get methods
+	 * @param publicResourceDirectory string
 	 * 
 	 * @param config
 	 */
-	public static void init(CoreConfiguration config){
+	public static void init(String publicResourceDirectory){
+		LOGGER.info("Initing the ArtifactManagerImpl...");
 		if(instance ==null){
-			instance = new ArtifactManagerImpl(config);
+			instance = new ArtifactManagerImpl();
+			ArtifactManagerImpl.publicResourceDirectory= publicResourceDirectory;
 			inited = true;
+			
+		LOGGER.info("Initialization Success: " + inited);
 		}
+		
 	}
 	
 	/**Returns the instance of the artifact manager impl
+	 * @param publicResourceDirectory 
+	 * @param config 
 	 * 
 	 * @return ArtifactManager instance
 	 */
-	public static ArtifactManager getInstance(){
+	public static ArtifactManager getInstance(String publicResourceDirectory){
 		if(!inited){
-			throw new RuntimeException("Call ArtifactManagerImpl.init before calling getInstance");
+			//throw new RuntimeException("Call ArtifactManagerImpl.init before calling getInstance");
+			instance = new ArtifactManagerImpl();
+			ArtifactManagerImpl.publicResourceDirectory= publicResourceDirectory;
 		}
 		return instance;
 	}
 	
 	
-	private ArtifactManagerImpl(CoreConfiguration config){
-		coreConfiguration = config;
-	}
-
+	
 /**Returns the process working directory
  * 
  */
 	public synchronized String getProcessWorkingDirectory(String jobId) throws IOException {
 		jobId=jobId.replaceAll(":", "");
 		jobId = jobId.replaceAll("/","_");
-		String directoryLocation =coreConfiguration.getPublicResourcesDirectory() + File.separator+"nema"+File.separator+jobId;
+		String directoryLocation =publicResourceDirectory+ File.separator+"nema"+File.separator+jobId;
 		File dir=new File(directoryLocation);
 		boolean success = false;
 		if(dir.exists()){
@@ -67,7 +74,7 @@ public class ArtifactManagerImpl implements ArtifactManager {
 	public synchronized String getResultLocationForJob(String jobId) throws IOException {
 		jobId=jobId.replaceAll(":", "");
 		jobId = jobId.replaceAll("/","_");
-		String directoryLocation =coreConfiguration.getPublicResourcesDirectory() + File.separator+"nema"+File.separator+jobId+File.separator+"results";
+		String directoryLocation =publicResourceDirectory + File.separator+"nema"+File.separator+jobId+File.separator+"results";
 		File dir=new File(directoryLocation);
 		boolean success = false;
 		if(dir.exists()){
@@ -85,7 +92,7 @@ public class ArtifactManagerImpl implements ArtifactManager {
  * 
  */
 public synchronized String getCommonStorageLocation() throws IOException {
-	String directoryLocation=coreConfiguration.getPublicResourcesDirectory() + File.separator+"common";
+	String directoryLocation=publicResourceDirectory + File.separator+"common";
 	File dir=new File(directoryLocation);
 	boolean success = false;
 	if(dir.exists()){
@@ -106,7 +113,7 @@ public synchronized String getAbsoluteProcessWorkingDirectory(String jobId)
 		throws IOException {
 	jobId=jobId.replaceAll(":", "");
 	jobId = jobId.replaceAll("/","_");
-	String directoryLocation =coreConfiguration.getPublicResourcesDirectory() + File.separator+"nema"+File.separator+jobId;
+	String directoryLocation =publicResourceDirectory + File.separator+"nema"+File.separator+jobId;
 	File dir=new File(directoryLocation);
 	boolean success = false;
 	if(dir.exists()){
@@ -118,6 +125,20 @@ public synchronized String getAbsoluteProcessWorkingDirectory(String jobId)
 		throw new IOException("could not create directory "+dir.getCanonicalPath()+"\nfor the job "+ jobId);
 	}
 	return dir.getCanonicalPath();
+}
+
+/**
+ * @return the publicResourceDirectory
+ */
+public static String getPublicResourceDirectory() {
+	return publicResourceDirectory;
+}
+
+/**
+ * @param publicResourceDirectory the publicResourceDirectory to set
+ */
+public static void setPublicResourceDirectory(String publicResourceDirectory) {
+	ArtifactManagerImpl.publicResourceDirectory = publicResourceDirectory;
 }
 
 }
