@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="lib/m2k_core_1_3.jar" sourcepath="/m2k"/>
 	<classpathentry kind="lib" path="lib/nema-annotations-1.0.2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/nema-repository-temp-0.1.jar"/>
-	<classpathentry kind="lib" path="lib/nema-artifactservice-0.5.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/nema-artifactservice-0.5.0-SNAPSHOT.jar" sourcepath="/artifactservice"/>
 	<classpathentry kind="lib" path="lib/nema-directoryservice-0.5.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin/target/classes"/>
 </classpath>

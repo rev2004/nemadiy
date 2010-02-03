@@ -118,7 +118,7 @@ import org.meandre.core.ExecutableComponent;
 		
 			//Debugging 01/26/2010
 			//processWorkingDirName=ArtifactManagerImpl.getInstance().getResultLocationForJob(cc.getFlowExecutionInstanceID());//.getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
-			processWorkingDirName=ArtifactManagerImpl.getInstance().getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
+			processWorkingDirName=ArtifactManagerImpl.getInstance(cc.getPublicResourcesDirectory()).getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
 			
 			
 		} catch (IOException e1) {

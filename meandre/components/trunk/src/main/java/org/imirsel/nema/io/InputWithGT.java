@@ -76,10 +76,10 @@ public class InputWithGT implements ExecutableComponent {
 		out = ccp.getOutputConsole();
 		logger = ccp.getLogger();
 		try {
-			processWorkingDir = ArtifactManagerImpl.getInstance()
+			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
 					.getProcessWorkingDirectory(
 							ccp.getFlowExecutionInstanceID());
-			commonStorageDir=ArtifactManagerImpl.getInstance().getCommonStorageLocation() + File.pathSeparator + "inputSelectorDownloadedFiles";
+			commonStorageDir=ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).getCommonStorageLocation() + File.pathSeparator + "inputSelectorDownloadedFiles";
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			throw new ComponentExecutionException(e1);

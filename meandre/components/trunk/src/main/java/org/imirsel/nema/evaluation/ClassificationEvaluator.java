@@ -79,10 +79,10 @@ import org.meandre.core.ExecutableComponent;
 		this.logger = ccp.getLogger();
 		cout = ccp.getOutputConsole();
 		try {
-			processWorkingDir = ArtifactManagerImpl.getInstance()
+			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
 					.getProcessWorkingDirectory(
 							ccp.getFlowExecutionInstanceID());
-			processResultsDir = ArtifactManagerImpl.getInstance()
+			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
 			.getResultLocationForJob(ccp.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
 			try {

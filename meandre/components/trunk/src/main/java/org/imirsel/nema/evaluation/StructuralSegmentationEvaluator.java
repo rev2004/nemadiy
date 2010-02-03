@@ -86,9 +86,9 @@ import org.meandre.core.ExecutableComponent;
 		}
 		isAborted = false;
 		try {
-			processWorkingDir = ArtifactManagerImpl.getInstance().
+			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).
 			getAbsoluteProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
-			processResultsDir = ArtifactManagerImpl.getInstance().
+			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).
 			getResultLocationForJob(ccp.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
 			try {

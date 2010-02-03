@@ -48,7 +48,7 @@ public class HelloWorldComponent implements ExecutableComponent {
 		/*create two files as results*/
 		try {
 			
-			String dir=ArtifactManagerImpl.getInstance().getResultLocationForJob(cc.getFlowExecutionInstanceID());
+			String dir=ArtifactManagerImpl.getInstance(cc.getPublicResourcesDirectory()).getResultLocationForJob(cc.getFlowExecutionInstanceID());
 			File f = new File(dir,"result1.txt");
 			f.createNewFile();
 			logger.log(Level.INFO,"Create file "+ f.getAbsolutePath());
