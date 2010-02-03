@@ -4,8 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://www.springframework.org/schema/aop 
-       http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
-       "
+       http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
        default-lazy-init="false">
 
     <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
@@ -91,6 +90,11 @@
     </bean>
  -->
     <!--  job scheduler end -->
+     <bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
+            <property name="serviceUrl" value="rmi://nema.lis.uiuc.edu:1099/FlowService"/>
+            <property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService"/>
+            <property name="refreshStubOnConnectFailure" value="true"/>
+    </bean>
     
       <!-- flow controller -->
     <bean id="flowFormController" class="org.imirsel.nema.webapp.controller.FlowFormController">

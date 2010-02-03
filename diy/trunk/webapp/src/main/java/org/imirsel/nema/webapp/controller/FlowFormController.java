@@ -1,16 +1,14 @@
 package org.imirsel.nema.webapp.controller;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map;
-
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,9 +18,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.imirsel.meandre.client.TransmissionException;
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
+import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
@@ -38,10 +36,11 @@ import org.springframework.web.servlet.view.RedirectView;
 public class FlowFormController extends MultiActionController{
 
 
-	private Logger log = Logger.getLogger(FlowFormController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(FlowFormController.class.getName());
 	private FlowService flowService = null;
+	/**UserManager**/
 	private UserManager userManager = null;
-
+	/**Upload directory**/
 	private String uploadDirectory;
 
 	public FlowService getFlowService() {
@@ -54,30 +53,25 @@ public class FlowFormController extends MultiActionController{
 	}
 
 
-	public ModelAndView storeFlowInstance(HttpServletRequest req, HttpServletResponse res){
-		Flow instance= null;
-		this.flowService.storeFlowInstance(instance);
-		return null;
-	} 
-
-
-	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res) throws TransmissionException, SQLException{
+	/**
+	 * 
+	 * @param req
+	 * @param res
+	 * @return flow/flowTemplate
+	 * @throws MeandreServerException
+	 */
+	public ModelAndView flowtemplate(HttpServletRequest req, HttpServletResponse res) throws  MeandreServerException{
 		String _id=req.getParameter("id");
 		int id = Integer.parseInt(_id);
 		Flow flow=this.flowService.getFlow(id);
 		ModelAndView mav= new ModelAndView("flow/flowTemplate");
 		List<Component> componentList=flowService.getComponents(flow.getUrl());
-		if(componentList==null){
-			throw new TransmissionException("Error could not get any " +
-					"template flows from the Meandre Server.");
-		}
 		Collections.sort(componentList);
-		log.info("componentList: " + componentList.size());
+		LOGGER.info("componentList: " + componentList.size());
 		TreeMap<Component,Map<String, Property>> map = new TreeMap<Component,Map<String, Property>>();
 		for(int i=0;i<componentList.size();i++){
-			HashMap<String, Property> m=null;
-				m = (HashMap<String, Property>)flowService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
-				map.put(componentList.get(i), new TreeMap(m));
+			HashMap<String, Property> m=(HashMap<String, Property>)flowService.getComponentPropertyDataType(componentList.get(i), flow.getUrl());
+			map.put(componentList.get(i), new TreeMap<String, Property>(m));
 		}
 		Set<Role> roleList=this.userManager.getCurrentUser().getRoles();
 		int size=roleList.size();
@@ -88,23 +82,29 @@ public class FlowFormController extends MultiActionController{
 			roles[i]= role.getName();
 			i++;
 		}
- 	   
-		log.info(Constants.COMPONENTPROPERTYMAP + " : " + map.size());
+ 		LOGGER.info(Constants.COMPONENTPROPERTYMAP + " : " + map.size());
 		mav.addObject(Constants.FLOW, flow);
 		mav.addObject(Constants.COMPONENTLIST,componentList);
 	    mav.addObject(Constants.COMPONENTPROPERTYMAP,map);
 	    mav.addObject(Constants.USER_ROLES,roles);
-
 		return mav;
 	}
 	
-	public ModelAndView saveflow(HttpServletRequest req, HttpServletResponse res){
+	
+	/**Saves the flow
+	 * 
+	 * @param req
+	 * @param res
+	 * @return Redirects to JobManager.jobDetail
+	 * @throws MeandreServerException
+	 */
+	public ModelAndView saveflow(final HttpServletRequest req, HttpServletResponse res) throws MeandreServerException{
 		String token=System.currentTimeMillis()+"-token";
 		HashMap<String,String> paramMap = new HashMap<String,String>();
 		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 		if(!isMultipart){
-			log.severe("Error -this should be multipart");
+			LOGGER.severe("Error -this should be multipart");
 		}
 		
 		DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -121,13 +121,13 @@ public class FlowFormController extends MultiActionController{
 	         dirPath.mkdirs();
 	      }
 	      String flowId =  null;
-			String flowUri= null;
+		  String flowUri= null;
 			
 		try {
 			List<FileItem> items = upload.parseRequest(req);
 			Iterator<FileItem> iter = items.iterator();
 			while (iter.hasNext()) {
-			    FileItem item = (FileItem) iter.next();
+			    FileItem item = iter.next();
 			    if (item.isFormField()) {
 			    	String name = item.getFieldName();
 			        String value = item.getString();
@@ -163,7 +163,7 @@ public class FlowFormController extends MultiActionController{
 		}
 		
 		if(flowId==null || flowUri==null){
-			log.severe("flowId or flowUri is null -some severe error happened...");
+			LOGGER.severe("flowId or flowUri is null -some severe error happened...");
 		}
 		
 		
@@ -181,7 +181,6 @@ public class FlowFormController extends MultiActionController{
 		if(description==null){
 			description = templateFlow.getDescription()+" for flow: "+token;
 		}
-		Flow instance = new Flow();
 		User user = userManager.getCurrentUser();
 		logger.debug("USER IS ====> " + user);
 
@@ -189,6 +188,7 @@ public class FlowFormController extends MultiActionController{
 			user = userManager.getUserByUsername("admin");
 		}
 		long userId = user.getId();
+		Flow instance = new Flow();
 		instance.setCreatorId(userId);
 		instance.setDateCreated(new Date());
 		instance.setInstanceOf(templateFlow);
@@ -212,25 +212,38 @@ public class FlowFormController extends MultiActionController{
 
 
 
+	/**Returns upload directory
+	 * 
+	 * @return upload directory
+	 */
 	public String getUploadDirectory() {
 		return uploadDirectory;
 	}
 
-
+	
+	/**Set the upload directory
+	 * 
+	 * @param uploadDirectory
+	 */
 	public void setUploadDirectory(String uploadDirectory) {
 		this.uploadDirectory = uploadDirectory;
 	}
 
-
+	
+	/**Returns User manager
+	 * 
+	 * @return User manager
+	 */
 	public UserManager getUserManager() {
 		return userManager;
 	}
 
-
+	/**sets the user manager
+	 * 
+	 * @param userManager
+	 */
 	public void setUserManager(UserManager userManager) {
 		this.userManager = userManager;
 	}
-
-
 
 }

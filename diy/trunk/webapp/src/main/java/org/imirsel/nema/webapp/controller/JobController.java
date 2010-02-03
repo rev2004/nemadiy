@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
+import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.JobResult;
@@ -364,7 +365,7 @@ public class JobController extends MultiActionController {
 
 	
 	
-	public ModelAndView doJobAction(HttpServletRequest req,HttpServletResponse res){
+	public ModelAndView doJobAction(HttpServletRequest req,HttpServletResponse res) throws MeandreServerException{
 		String _jobId = req.getParameter("id");
 		long jobId = Long.parseLong(_jobId);
 
@@ -434,7 +435,7 @@ public class JobController extends MultiActionController {
 	 * @return console The String output
 	 * @throws TransmissionException 
 	 */
-	public ModelAndView getConsole(HttpServletRequest request, HttpServletResponse response){
+	public ModelAndView getConsole(HttpServletRequest request, HttpServletResponse response) throws MeandreServerException{
 		String uri = request.getParameter("uri");
 		String text=this.flowService.getConsole(uri);
 		try {

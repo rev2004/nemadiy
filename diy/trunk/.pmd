@@ -159,10 +159,6 @@
             <ruleset>Braces Rules</ruleset>
         </rule>
         <rule>
-            <name>CloneMethodMustImplementCloneable</name>
-            <ruleset>Type Resolution Rules</ruleset>
-        </rule>
-        <rule>
             <name>CloneThrowsCloneNotSupportedException</name>
             <ruleset>Clone Implementation Rules</ruleset>
         </rule>
@@ -297,10 +293,6 @@
         <rule>
             <name>ExcessiveImports</name>
             <ruleset>Coupling Rules</ruleset>
-        </rule>
-        <rule>
-            <name>LooseCoupling</name>
-            <ruleset>Type Resolution Rules</ruleset>
         </rule>
         <rule>
             <name>AbstractClassWithoutAbstractMethod</name>
@@ -533,10 +525,6 @@
         <rule>
             <name>TooManyStaticImports</name>
             <ruleset>Import Statement Rules</ruleset>
-        </rule>
-        <rule>
-            <name>UnusedImports</name>
-            <ruleset>Type Resolution Rules</ruleset>
         </rule>
         <rule>
             <name>DoNotCallSystemExit</name>
@@ -859,10 +847,6 @@
             <ruleset>Strict Exception Rules</ruleset>
         </rule>
         <rule>
-            <name>SignatureDeclareThrowsException</name>
-            <ruleset>Type Resolution Rules</ruleset>
-        </rule>
-        <rule>
             <name>AppendCharacterWithChar</name>
             <ruleset>String and StringBuffer Rules</ruleset>
         </rule>
@@ -956,5 +940,5 @@
         </rule>
     </rules>
     <includeDerivedFiles>false</includeDerivedFiles>
-    <violationsAsErrors>true</violationsAsErrors>
+    <violationsAsErrors>false</violationsAsErrors>
 </pmd>
