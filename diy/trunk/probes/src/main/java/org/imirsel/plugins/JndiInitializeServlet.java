@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import javax.sql.DataSource;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -26,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
@@ -86,11 +86,12 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 	/**Called when the servlet starts -called only once.
 	 * 
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void init(ServletConfig config) throws ServletException{
 		super.init(config);
 		// initialize the ArtifactManagerImpl
-		ArtifactManagerImpl.init(this.coreConfiguration);
+		ArtifactManagerImpl.init(this.coreConfiguration.getPublicResourcesDirectory());
 		logger.info("Starting the JNDIInitialize Servlet: -loading various database contexts");
 		Properties nemaFlowServiceProperties = new Properties();
 		try {
@@ -99,7 +100,7 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			logger.severe(e1.getMessage());
-			throw new RuntimeException("Cannot find nemaflowservice.properties");
+			throw new RuntimeException(e1);
 		}
 		try{
 			Hashtable env = new Hashtable();
@@ -229,18 +230,20 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 			connection.close();
 		} catch (SQLException e) {
 			System.out.println("Error: Could not connect to the server: " + jdbc_url +" \nuser: " +user + "\npassword: " + password);
-			System.exit(0);
 		}
 		return dataSource;
 	}
 	
 	private  DataSource setupDataSource(String jdbc_url, String user,String password) {
-		//System.out.println("Setting up jdbc datasource: " + jdbc_url + " user: " + user);
+		System.out.println("Setting up jdbc datasource: " + jdbc_url + " user: " + user);
 		GenericObjectPool connectionPool = new GenericObjectPool(null);
 		ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(jdbc_url, user, password);
 		PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(
 				connectionFactory, connectionPool, null, null, false, false);
 		PoolingDataSource dataSource = new PoolingDataSource(connectionPool);
+		if(dataSource==null){
+			logger.info("DataSource is null");
+		}
 		return dataSource;
 	}
 
@@ -256,6 +259,7 @@ public class JndiInitializeServlet extends HttpServlet implements MeandrePlugin 
 	}
 	
 	
+	@Override
 	public  void service(HttpServletRequest req, HttpServletResponse res)
     throws ServletException,java.io.IOException{
 		res.getOutputStream().println("JNDI Service Servlet");

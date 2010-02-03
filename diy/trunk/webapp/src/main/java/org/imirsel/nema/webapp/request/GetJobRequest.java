@@ -2,10 +2,10 @@ package org.imirsel.nema.webapp.request;
 
 public class GetJobRequest {
 	
-	long jobId;
+	private long jobId;
 	
 
-	public void setJobId(long jobId) {
+	public void setJobId(final long jobId) {
 		this.jobId = jobId;
 	}
 

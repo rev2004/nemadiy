@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 public class FlowController extends MultiActionController{
 
 
-	private final Logger log = Logger.getLogger(FlowController.class.getName());
+	private final static Logger log = Logger.getLogger(FlowController.class.getName());
 	private FlowService flowService = null;
 
 	public FlowService getFlowService() {

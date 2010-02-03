@@ -21,14 +21,11 @@ public class RemoveFlowInstances {
 				int vs = flowname.length()-13;
 				if(vs>0){
 					String  val = flowname.substring(vs);
-					try{
 						Long v = Long.parseLong(val);
 						System.out.println(v);
 						boolean b=mpw.removeResource(flowuri);
 						System.out.println("Removed: " + flowuri + " " + b);
-					}catch(Exception ex){
 					
-					}
 				}
 			}
 			

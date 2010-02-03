@@ -7,11 +7,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.sql.DataSource;
 
-import org.imirsel.dao.JobDao;
 import org.imirsel.model.Job;
-import org.imirsel.plugins.JndiInitializeServlet;
 import org.imirsel.nema.directoryservice.JndiHelper;
-import org.imirsel.nema.directoryservice.PluginConstants;
+import org.imirsel.plugins.JndiInitializeServlet;
 import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
@@ -22,8 +20,8 @@ import org.junit.Test;
 public class JobDaoTest {
 	
 	public static DataSource dataSource;
-	private Logger logger = Logger.getAnonymousLogger();
-	private Mockery context = new Mockery();
+	private static Logger logger = Logger.getAnonymousLogger();
+	private final Mockery context = new Mockery();
 	
 	@Before
 	public void initialize(){

@@ -198,12 +198,10 @@ public class JobController extends MultiActionController {
 		Set<JobResult> results=job.getResults();
 		
 		String dataSetResultUrl = null;
-		JobResult eresult = null; 
 		String token = null;
 		String path = null;
 		for(JobResult result:results){
 			if(result.getUrl().endsWith("results") && result.getResultType().equals("dir")){
-				eresult = result;
 				path = result.getUrl();
 				String[] list=path.split("/");
 				int count = list.length;

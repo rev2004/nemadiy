@@ -49,7 +49,7 @@ public class Job {
 
 	    @Override
 	    public String toString() {
-	         String name = null;
+	         String name = "Unknown";
 	         switch (code) {
 
 	            case -1: {
