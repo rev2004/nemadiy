@@ -9,5 +9,7 @@ public interface MeandreServerProxyConfig {
 	public abstract int getMaxConcurrentJobs();
 
 	public abstract String getUsername();
+	
+	public abstract String getPassword();
 
 }
