@@ -96,7 +96,7 @@ public class Flow implements Serializable {
 		this.name = name;
 	}
 
-	@Column(name = "description", nullable = false)
+	@Column(name = "description", nullable = false, length=10000)
 	public String getDescription() {
 		return description;
 	}
