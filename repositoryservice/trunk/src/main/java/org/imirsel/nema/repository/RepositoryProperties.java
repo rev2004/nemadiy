@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * A utility for loading ans storing properties for the JSTORAuctionCatalogues
+ * A utility for loading and storing properties for the JSTORAuctionCatalogues
  * community editing platform software. 
  * 
  * @author kriswest
@@ -77,7 +77,7 @@ public class RepositoryProperties {
     /**
      *This main method will print out the properties that will be loaded using the classpath
      *and default properties files. This can be run before running another application in order to verify
-     *that the correct paramters will be used.
+     *that the correct parameters will be used.
      */
     public static void main(String[] args) {
         if(repoProps == null) {
