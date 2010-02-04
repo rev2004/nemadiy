@@ -2,14 +2,14 @@ package org.imirsel.nema.flowservice.config;
 
 public interface MeandreServerProxyConfig {
 
-	public abstract String getHost();
+	public String getHost();
 
-	public abstract int getPort();
+	public int getPort();
 
-	public abstract int getMaxConcurrentJobs();
+	public int getMaxConcurrentJobs();
 
-	public abstract String getUsername();
+	public String getUsername();
 	
-	public abstract String getPassword();
+	public String getPassword();
 
 }
