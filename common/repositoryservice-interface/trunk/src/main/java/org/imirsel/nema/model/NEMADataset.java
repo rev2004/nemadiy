@@ -47,27 +47,6 @@ public class NEMADataset implements Serializable {
         this.id = id;
     }
 
-//    /**
-//     * Full constructor.
-//     * 
-//     * @param id The dataset ID.
-//     * @param name The dataset name.
-//     * @param description The description of the dataset.
-//     * @param numSplits The number of splits in the dataset, 1 or more.
-//     * @param subjectTrackMetadataId
-//     * @param subjectTrackMetadataName
-//     */
-//    public NEMADataset(int id, String name, String description,
-//                       int numSplits,
-//                       int subjectTrackMetadataId, String subjectTrackMetadataName){
-//        this.id = id;
-//        this.name = name;
-//        this.description = description;
-//        this.numSplits = numSplits;
-//        this.subjectTrackMetadataId = subjectTrackMetadataId;
-//        this.subjectTrackMetadataName = subjectTrackMetadataName;
-//    }
-
     /**
      * Full constructor.
      * * @param id The dataset ID.
