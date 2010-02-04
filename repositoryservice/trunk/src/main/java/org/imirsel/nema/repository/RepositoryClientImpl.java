@@ -35,17 +35,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_COLLECTIONS_QUERY = "SELECT * FROM collection";
     private PreparedStatement getCollections;
 
-    public static final String GET_TASKS_QUERY = "SELECT * FROM task";
-    private PreparedStatement getTasks;
-
     public static final String GET_DATA_SETS_FOR_COLLECTION_QUERY = "SELECT * FROM dataset WHERE collection_id=?";
     private PreparedStatement getDatasetsByCollection;
 
     public static final String GET_DATA_SETS_QUERY = "SELECT * FROM dataset";
     private PreparedStatement getDatasets;
-
-    public static final String GET_DATA_SETS_FOR_TASK_QUERY = "SELECT * FROM dataset WHERE task_id=?";
-    private PreparedStatement getDatasetsByTask;
 
     public static final String GET_DATA_SET_BY_ID_QUERY = "SELECT * FROM dataset WHERE id=?";
     private PreparedStatement getDatasetByID;
@@ -110,15 +104,12 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     //cached types maps
     public static final String GET_TRACK_METADATA_TYPES = "SELECT * FROM track_metadata_definitions";
     public static final String GET_FILE_METADATA_TYPES = "SELECT * FROM file_metadata_definitions";
-    public static final String GET_TASK_TYPES = "SELECT * FROM task_type";
     public static final String GET_SET_TYPES = "SELECT * FROM set_type_definitions";
     private Map<Integer,String> trackMetadataTypeMap;
     private Map<Integer,String> fileMetadataTypeMap;
-    private Map<Integer,String> taskTypeMap;
     private Map<Integer,String> setTypeMap;
     private Map<String,Integer> trackMetadataTypeMapRev;
     private Map<String,Integer> fileMetadataTypeMapRev;
-    private Map<String,Integer> taskTypeMapRev;
     private Map<String,Integer> setTypeMapRev;
 
     
@@ -145,11 +136,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
         //prepare queries
         getCollections = dbCon.con.prepareStatement(GET_COLLECTIONS_QUERY);
-        getTasks = dbCon.con.prepareStatement(GET_TASKS_QUERY);
         getDatasetsByCollection = dbCon.con.prepareStatement(GET_DATA_SETS_FOR_COLLECTION_QUERY);
         getDatasets = dbCon.con.prepareStatement(GET_DATA_SETS_QUERY);
         getDatasetByID = dbCon.con.prepareStatement(GET_DATA_SET_BY_ID_QUERY);
-        getDatasetsByTask = dbCon.con.prepareStatement(GET_DATA_SETS_FOR_TASK_QUERY);
         getSubsetForDataset = dbCon.con.prepareStatement(GET_COLLECTION_SUBSET_FOR_DATASET_QUERY);
         getExpSetsForDataset = dbCon.con.prepareStatement(GET_EXPERIMENT_SETS_FOR_DATASET_QUERY);
         getSetTracks = dbCon.con.prepareStatement(GET_SET_TRACKS_QUERY);
@@ -190,11 +179,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public void initTypesMaps() throws SQLException{
         trackMetadataTypeMap = populateTypesMap(GET_TRACK_METADATA_TYPES);
         fileMetadataTypeMap = populateTypesMap(GET_FILE_METADATA_TYPES);
-        taskTypeMap = populateTypesMap(GET_TASK_TYPES);
         setTypeMap = populateTypesMap(GET_SET_TYPES);
         trackMetadataTypeMapRev = reverseTypesMap(trackMetadataTypeMap);
         fileMetadataTypeMapRev = reverseTypesMap(fileMetadataTypeMap);
-        taskTypeMapRev = reverseTypesMap(taskTypeMap);
         setTypeMapRev = reverseTypesMap(setTypeMap);
 
     }
@@ -241,10 +228,6 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     	return Collections.unmodifiableMap(fileMetadataTypeMapRev);
     }
     
-    public Map<String,Integer> getTaskTypeMap(){
-    	return Collections.unmodifiableMap(taskTypeMapRev);
-    }
-    
     public Map<String,Integer> getSetTypeMap(){
     	return Collections.unmodifiableMap(setTypeMapRev);
     }
@@ -257,10 +240,6 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public String getFileMetadataName(int typeId){
         return fileMetadataTypeMap.get(typeId);
-    }
-
-    public String getTaskTypeName(int typeId){
-        return taskTypeMap.get(typeId);
     }
 
     public String getSetTypeName(int typeId){
@@ -285,15 +264,6 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         }
     }
 
-    public int getTaskTypeID(String typeName){
-    	Integer out = taskTypeMapRev.get(typeName);
-        if (out == null){
-        	return -1;
-        }else{
-        	return out;
-        }
-    }
-
     public int getSetTypeID(String typeName){
     	Integer out = setTypeMapRev.get(typeName);
         if (out == null){
@@ -308,12 +278,6 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public List<NEMACollection> getCollections() throws SQLException{
         List<Map<String, String>> results = executePreparedStatement(getCollections);
         return buildNEMACollections(results);
-    }
-
-
-    public List<NEMATask> getTasks() throws SQLException{
-        List<Map<String, String>> results = executePreparedStatement(getDatasetsByTask);
-        return buildNEMATask(results);
     }
 
     public List<NEMADataset> getDatasetsForCollection(NEMACollection collection) throws SQLException{
@@ -338,19 +302,6 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             return null;
         }
     }
-
-
-
-
-    public List<NEMADataset> getDatasetsForTask(NEMATask task) throws SQLException{
-        return getDatasetsForTask(task.getId());
-    }
-
-    public List<NEMADataset> getDatasetsForTask(int taskId) throws SQLException{
-        List<Map<String, String>> results = executeStatement(getDatasetsByTask, taskId);
-        return buildNEMADataset(results);
-    }
-
 
     public NEMASet getCollectionSubset(NEMADataset dataset) throws SQLException{
         return getCollectionSubset(dataset.getId());
@@ -500,41 +451,52 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    public NEMAMetadataEntry getTrackMetadataByID(String trackId, int metadataId) throws SQLException{
+    public List<NEMAMetadataEntry> getTrackMetadataByID(String trackId, int metadataId) throws SQLException{
         getTrackMetadataSpecific.setString(1, trackId);
         getTrackMetadataSpecific.setInt(2, metadataId);
         List<Map<String, String>> results = executePreparedStatement(getTrackMetadataSpecific);
         if (results.size() > 0){
-            return buildNEMAMetadataEntry(results.get(0), trackMetadataTypeMap);
+        	List<NEMAMetadataEntry> out = new ArrayList<NEMAMetadataEntry>(results.size());
+            for(Iterator<Map<String,String>> it = results.iterator(); it.hasNext();){
+            	out.add(buildNEMAMetadataEntry(it.next(), trackMetadataTypeMap));
+            }
+        	return out;
         }else{
             return null;
         }
     }
 
-    public NEMAMetadataEntry getTrackMetadata(NEMATrack track, int metadataId) throws SQLException{
+    public List<NEMAMetadataEntry> getTrackMetadata(NEMATrack track, int metadataId) throws SQLException{
         return getTrackMetadataByID(track.getId(),metadataId);
     }
 
-    public Map<String,NEMAMetadataEntry> getTrackMetadataByID(List<String> tracks, int metadataId) throws SQLException{
-        HashMap<String,NEMAMetadataEntry> out = new HashMap<String, NEMAMetadataEntry>();
+    public Map<String,List<NEMAMetadataEntry>> getTrackMetadataByID(List<String> tracks, int metadataId) throws SQLException{
+        HashMap<String,List<NEMAMetadataEntry>> out = new HashMap<String, List<NEMAMetadataEntry>>();
         Set<String> trackSet = new HashSet<String>(tracks);
 
         getAllTrackMetadataSpecific.setInt(1, metadataId);
         List<Map<String, String>> results = executePreparedStatement(getAllTrackMetadataSpecific);
         String trackId;
+        List<NEMAMetadataEntry> tmp;
         for (Iterator<Map<String, String>> it = results.iterator(); it.hasNext();){
             Map<String, String> map = it.next();
             trackId = map.get("track_id");
             if (trackSet.contains(trackId)){
-                out.put(trackId, buildNEMAMetadataEntry(map, trackMetadataTypeMap));
+            	tmp = out.get(trackId);
+            	if(tmp == null){
+            		tmp = new ArrayList<NEMAMetadataEntry>(5);
+            		out.put(trackId, tmp);
+            	}
+                tmp.add(buildNEMAMetadataEntry(map, trackMetadataTypeMap));
             }
         }
         return out;
     }
 
-    public Map<String,NEMAMetadataEntry> getTrackMetadata(List<NEMATrack> tracks, int metadataId) throws SQLException{
-        HashMap<String,NEMAMetadataEntry> out = new HashMap<String, NEMAMetadataEntry>();
+    public Map<String,List<NEMAMetadataEntry>> getTrackMetadata(List<NEMATrack> tracks, int metadataId) throws SQLException{
+        HashMap<String,List<NEMAMetadataEntry>> out = new HashMap<String, List<NEMAMetadataEntry>>();
         String id;
+        List<NEMAMetadataEntry> tmp;
         for (Iterator<NEMATrack> it = tracks.iterator(); it.hasNext();){
             id = it.next().getId();
             out.put(id, getTrackMetadataByID(id, metadataId));
@@ -757,33 +719,6 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         }
         return retVal;
     }
-
-
-    private NEMATask buildNEMATask(Map<String, String> map){
-        int meta_type = Integer.valueOf(map.get("subject_track_metadata_type_id"));
-        int task_type = Integer.valueOf(map.get("task_type_id"));
-
-        return new NEMATask(
-                Integer.valueOf(map.get("id")),
-                map.get("name"),
-                map.get("description"),
-                meta_type,
-                trackMetadataTypeMap.get(meta_type),
-                task_type,
-                taskTypeMap.get(task_type)
-            );
-    }
-    private List<NEMATask> buildNEMATask(List<Map<String, String>> maps){
-        List<NEMATask> retVal = null;
-        if(maps != null) {
-            retVal = new ArrayList<NEMATask>(maps.size());
-            for(Map<String, String> data : maps) {
-                retVal.add(buildNEMATask(data));
-            }
-        }
-        return retVal;
-    }
-
 
     private NEMADataset buildNEMADataset(Map<String, String> map){
         int subject_meta_type = Integer.parseInt(map.get("subject_track_metadata_type_id"));

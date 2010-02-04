@@ -5,7 +5,10 @@
 
 package org.imirsel.nema.repository;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,8 +18,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.imirsel.m2k.evaluation2.EvaluationDataObject;
 import org.imirsel.m2k.evaluation2.classification.ClassificationResultReadClass;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryFileReader;
+import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
 import org.imirsel.nema.repository.migration.CbrowserClient;
+
+import sun.font.LayoutPathImpl.EndType;
 
 /**
  *
@@ -28,8 +37,11 @@ public class RepositoryManagementUtils {
     public static final String TRACK_ARTIST = "Artist";
     public static final String TRACK_ALBUM = "Album";
     public static final String TRACK_GENRE = "Genre";
-
-
+    
+    public static final String TRACK_TAG_MAJORMINER = "Tag - MajorMiner";
+    public static final String TRACK_TAG_MOOD = "Tag - Mood";
+    public static final String TRACK_TAG_TAGATUNE = "Tag - Tagatune";
+    
     static HashSet<String> audio_extensions;
     static{
         audio_extensions = new HashSet<String>();
@@ -220,7 +232,9 @@ public class RepositoryManagementUtils {
             "Insert test only dataset\n" +
             "-dt \"name\" \"description\" SubjectMetadata FilterMetadata(null if none) /path/subset/file\n\n" +
             "Insert track metadata from a tabbed list file\n" +
-            "-lf /path/to/list/file trackMetadataTypeName\n\n";
+            "-lf /path/to/list/file trackMetadataTypeName\n\n" +
+            "Insert tag metadata from a list file\n" +
+            "-tag /path/to/tag/list/file tagMetadataTypeName\n\n";
     public static void main(String[] args){
         if (args[0].equals("-f")){
             String dir = args[1];
@@ -380,6 +394,31 @@ public class RepositoryManagementUtils {
                 Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+        }else if(args[0].equals("-tag")){
+        	System.out.println("Inserting tag metadata from list file");
+        	try{
+	        	RepositoryClientImpl client = new RepositoryClientImpl();
+	            if (args.length < 3){
+	                throw new RuntimeException("Insufficent arguments!\n" + USAGE);
+	            }
+	            
+	        	File listFile = new File(args[1]);
+	            if (!listFile.exists()){
+	                throw new RuntimeException("The list file did not exist: " + listFile.getAbsolutePath());
+	            }
+	        	String tagType = args[2];
+	        	System.out.println("List file path:      " + listFile.getAbsolutePath());
+	            System.out.println("Subject metadata:    " + tagType);
+	            int metadata_type_id = client.getTrackMetadataID(tagType);
+	            System.out.println("Subject metadata id: " + metadata_type_id);
+	
+	            client.close();
+	            
+	            insertTagMetadata(listFile, tagType);
+	            
+        	}catch (SQLException ex){
+                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }else{
             System.out.println("Unrecognised argument: " + args[0]);
         }
@@ -387,51 +426,139 @@ public class RepositoryManagementUtils {
         System.out.println("--exit--");
     }
 
-    public static void insertMetadataFromListFile(File listFile, String metadatatype) throws SQLException{
+    public static void insertMetadataFromListFile(File listFile, String metadatatype) {
     	RepositoryUpdateClientImpl client;
         try{
             client = new RepositoryUpdateClientImpl();
         }catch (SQLException ex){
             throw new RuntimeException("Failed to init conenctions to repository DB");
         }
-
-        int metaId = client.getTrackMetadataID(metadatatype);
-        if (metaId == -1){
-            System.out.println("Inserting metadata definition for: " + metadatatype);
-
-            int togo = 10;
-            while(togo > 0){
-                System.out.println("Commencing metadata definition in " + togo + " seconds");
-                togo -= 5;
-                try{
-                    Thread.sleep(5000);
-                }catch (InterruptedException ex){
-                    Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            client.insertTrackMetaDef(metadatatype);
-            metaId = client.getTrackMetadataID(metadatatype);
+        
+        try{
+	        client.startTransation();
+	        
+	        int metaId = client.getTrackMetadataID(metadatatype);
+	        if (metaId == -1){
+	            System.out.println("Inserting metadata definition for: " + metadatatype);
+	
+	            int togo = 10;
+	            while(togo > 0){
+	                System.out.println("Commencing metadata definition in " + togo + " seconds");
+	                togo -= 5;
+	                try{
+	                    Thread.sleep(5000);
+	                }catch (InterruptedException ex){}
+	            }
+	            client.insertTrackMetaDef(metadatatype);
+	            metaId = client.getTrackMetadataID(metadatatype);
+	        }
+	        Map<String,String> map = ClassificationResultReadClass.readClassificationFile(listFile, true);
+	        System.out.println("got data for " + map.size() + " tracks");
+	
+	        int togo = 10;
+	            while(togo > 0){
+	            System.out.println("Commencing metadata insertion in " + togo + " seconds");
+	            togo -= 5;
+	            try{
+	                Thread.sleep(5000);
+	            }catch (InterruptedException ex){
+	                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+	            }
+	        }
+	
+	        String track;
+	        int valId;
+	        for (Iterator<String> it = map.keySet().iterator(); it.hasNext();){
+	            track = it.next();
+	            valId = client.insertTrackMeta(metaId, map.get(track));
+	            client.insertTrackMetaLink(track, valId);
+	        }
+	        client.endTransation();
+        }catch (SQLException ex){
+        	try {
+				client.rollback();
+			} catch (SQLException e) {
+				throw new RuntimeException("SQLException occured whien rolling back transaction!",e);
+			}
+            throw new RuntimeException("SQLException occured!",ex);
         }
-        Map<String,String> map = ClassificationResultReadClass.readClassificationFile(listFile, true);
-        System.out.println("got data for " + map.size() + " tracks");
-
-        int togo = 10;
-            while(togo > 0){
-            System.out.println("Commencing metadata insertion in " + togo + " seconds");
-            togo -= 5;
-            try{
-                Thread.sleep(5000);
-            }catch (InterruptedException ex){
-                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    }
+    
+    public static void insertTagMetadata(File tag_file, String tag_meta_type_name){
+    	RepositoryUpdateClientImpl client;
+        try{
+            client = new RepositoryUpdateClientImpl();
+        }catch (SQLException ex){
+            throw new RuntimeException("Failed to init conenctions to repository DB");
         }
-
-        String track;
-        int valId;
-        for (Iterator<String> it = map.keySet().iterator(); it.hasNext();){
-            track = it.next();
-            valId = client.insertTrackMeta(metaId, map.get(track));
-            client.insertTrackMetaLink(track, valId);
+    	
+        try{
+	        client.startTransation();
+        
+	        System.out.println("Inserting track metadata definition for: " + tag_meta_type_name);
+	        int meta_id = -1;
+	        try{
+	        	client.insertTrackMetaDef(tag_meta_type_name);
+	        	meta_id = client.getTrackMetadataID(tag_meta_type_name);
+	        	System.out.println("Retrieved track metadata type id: " + meta_id + " for type name: " + tag_meta_type_name);
+	        }catch (SQLException ex){
+	            throw new RuntimeException("Failed to insert or retrieve the track metadata type id for type: " + tag_meta_type_name, ex);
+	        }
+	        
+	        HashMap<String,Integer> tagToId = new HashMap<String,Integer>();
+	        
+	        System.out.println("Reading tag data from file: " + tag_file);
+	        BufferedReader textBuffer = null;
+	        try {
+	            textBuffer = new BufferedReader(new FileReader(tag_file));
+	
+	            String line = textBuffer.readLine();
+	            String[] lineComps;
+	            int lineNum = 0;
+	            Integer val_id = null;
+	            String tag;
+	            while (line != null){
+	                lineNum++;
+	                line = line.trim();
+	                if (!line.equals("")){
+	                    lineComps = line.split("\t");
+	                    if (lineComps.length < 2){
+	                        client.rollback();
+	                        throw new RuntimeException("short line found, line: " + lineNum + ", file: " + tag_file.getAbsolutePath() + "\n" +
+	                                    "check if file is correctly deliminated with tabs (rather than other whitespace characters or commas) and has no preamble");
+	                    }else{
+	                    	tag = lineComps[1].trim();
+	                    	val_id = tagToId.get(tag);
+	                    	if(val_id == null){
+	                    		val_id = client.insertTrackMeta(meta_id, tag);
+	                    		tagToId.put(tag, val_id);
+	                    	}
+	                    	client.insertTrackMetaLink(RemapMusicDBFilenamesClass.convertFileToMIREX_ID(new File(lineComps[0].trim())), val_id);
+	                    }
+	                }else{
+	                    System.out.println("empty line ignored, line: " + lineNum + ", file: " + tag_file.getAbsolutePath());
+	                }
+	                line = textBuffer.readLine();
+	            }
+	            
+	        } catch (IOException ex) {
+	        	client.rollback();
+	            throw new RuntimeException("IOException occured while reading file: " + tag_file.getAbsolutePath(), ex);
+	        } finally {
+	            try {
+	                textBuffer.close();
+	            } catch (Exception ex) {
+	                Logger.getLogger(TagClassificationBinaryFileReader.class.getName()).log(Level.SEVERE, null, ex);
+	            }
+	            client.endTransation();
+	        }
+        }catch(SQLException e){
+        	try {
+				client.rollback();
+			} catch (SQLException e1) {
+				Logger.getLogger(TagClassificationBinaryFileReader.class.getName()).log(Level.SEVERE, "Exception occured while rolling back transaction", e);
+			}
+        	throw new RuntimeException("SQLException occured while inserting data from file: " + tag_file.getAbsolutePath(), e);
         }
     }
 
@@ -443,67 +570,54 @@ public class RepositoryManagementUtils {
             throw new RuntimeException("Failed to init conenctions to repository DB");
         }
 
-        //get tracks from new DB
-        List<String> tracks;
         try{
-            tracks = client.getAllTracks();
-        }catch (SQLException ex){
-            throw new RuntimeException("Failed to retrieve tracks from repository DB");
-        }
-
-        System.out.println("Inserting track metadata definitions");
-        try{
+	        client.startTransation();
+	        
+	        //get tracks from new DB
+	        List<String> tracks = client.getAllTracks();
+	        
+	        System.out.println("Inserting track metadata definitions");
             client.insertTrackMetaDef(TRACK_ALBUM);
             client.insertTrackMetaDef(TRACK_ARTIST);
             client.insertTrackMetaDef(TRACK_GENRE);
             client.insertTrackMetaDef(TRACK_TITLE);
-        }catch (SQLException ex){
-            Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        int albumMetaId = client.getTrackMetadataID(TRACK_ALBUM);
-        int artistMetaId = client.getTrackMetadataID(TRACK_ARTIST);
-        int genreMetaId = client.getTrackMetadataID(TRACK_GENRE);
-        int titleMetaId = client.getTrackMetadataID(TRACK_TITLE);
-
-
-        System.out.println("Retrieving definitions");
-            try{
-                //retrieve ids of definitions
-                client.initTypesMaps();
-            }catch (SQLException ex){
-                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        int togo = 10;
-        while(togo > 0){
-            System.out.println("Commencing metadata migration in " + togo + " seconds");
-            togo -= 5;
-            try{
-                Thread.sleep(5000);
-            }catch (InterruptedException ex){
-                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        System.out.println("Migrating metadata for " + tracks.size() + " tracks");
-
-        CbrowserClient cb_client;
-        try{
-            cb_client = new CbrowserClient();
-        }catch (SQLException ex){
-            throw new RuntimeException("Failed to init conenctions to cbrowser DB");
-        }
-
-        String track;
-        Map<String,String> vals;
-        int valId;
-        int done = 0;
-        for (Iterator<String> it = tracks.iterator(); it.hasNext();){
-            track = it.next();
-            
-            try{
-                vals = cb_client.getTrackMetadata(track);
+	        
+	        int albumMetaId = client.getTrackMetadataID(TRACK_ALBUM);
+	        int artistMetaId = client.getTrackMetadataID(TRACK_ARTIST);
+	        int genreMetaId = client.getTrackMetadataID(TRACK_GENRE);
+	        int titleMetaId = client.getTrackMetadataID(TRACK_TITLE);
+	
+	
+	        System.out.println("Retrieving definitions");
+            //retrieve ids of definitions
+            client.initTypesMaps();
+	            
+	        int togo = 10;
+	        while(togo > 0){
+	            System.out.println("Commencing metadata migration in " + togo + " seconds");
+	            togo -= 5;
+	            try{
+	                Thread.sleep(5000);
+	            }catch (InterruptedException ex){}
+	        }
+	
+	        System.out.println("Migrating metadata for " + tracks.size() + " tracks");
+	
+	        CbrowserClient cb_client;
+	        try{
+	            cb_client = new CbrowserClient();
+	        }catch (SQLException ex){
+	            throw new RuntimeException("Failed to init conenctions to cbrowser DB");
+	        }
+	
+	        String track;
+	        Map<String,String> vals;
+	        int valId;
+	        int done = 0;
+	        for (Iterator<String> it = tracks.iterator(); it.hasNext();){
+	            track = it.next();
+	            
+	            vals = cb_client.getTrackMetadata(track);
                 if(vals != null){
                     //insert metadata values, get ids and link to track
                     String album = vals.get(CbrowserClient.ALBUM);
@@ -521,22 +635,24 @@ public class RepositoryManagementUtils {
                     String genre = vals.get(CbrowserClient.GENRE);
                     valId = client.insertTrackMeta(genreMetaId, genre);
                     client.insertTrackMetaLink(track, valId);
-
                 }
-            }catch (SQLException ex){
-                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            done++;
-            if (done % 100 == 0){
-                System.out.println("done " + done + " of " + tracks.size());
-            }
+	            
+	            done++;
+	            if (done % 100 == 0){
+	                System.out.println("done " + done + " of " + tracks.size());
+	            }
+	        }
+	        client.endTransation();
+	        
+        }catch(SQLException e){
+        	try {
+				client.rollback();
+			} catch (SQLException e1) {
+				Logger.getLogger(TagClassificationBinaryFileReader.class.getName()).log(Level.SEVERE, "Exception occured while rolling back transaction", e);
+			}
+        	throw new RuntimeException("SQLException occured while migrating data from cbrowser DB", e);
         }
 
-
     }
-
-    
-
-
 
 }

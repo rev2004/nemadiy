@@ -72,7 +72,7 @@ public class DatasetListFileGenerator {
      * {train,test}.
      *
      * @param dataset_id The ID of the dataset to retrieve data from.
-     * @param delimiter The delimitter to use to separate the file path from
+     * @param delimiter The delimiter to use to separate the file path from
      * the class name in the training file.
      * @param directory The directory to write the files into.
      * @param file_encoding_constraint The file metadata constraints to use to
@@ -122,9 +122,9 @@ public class DatasetListFileGenerator {
      * dataset. These both list the paths to all the audio files in the
      * collection (one per line). The ground-truth file also contains the
      * class name of the track separated from the path by a delimiter string.
-     * Conventionally the delimitter is a tab '\t' or comma ','.
+     * Conventionally the delimiter is a tab '\t' or comma ','.
      * @param dataset_id The ID of the dataset to retrieve data from.
-     * @param delimiter The delimitter to use to separate the file path from
+     * @param delimiter The delimiter to use to separate the file path from
      * the class name in the ground-truth file.
      * @param directory The directory to write the files into.
      * @param file_encoding_constraint The file metadata constraints to use to
@@ -183,12 +183,12 @@ public class DatasetListFileGenerator {
         List<String[]> out = new ArrayList<String[]>();
         Object obj;
         NEMAFile file;
-        NEMAMetadataEntry meta;
+        List<NEMAMetadataEntry> meta_list;
+        Iterator<NEMAMetadataEntry> meta_it;
         String path;
-        String metaVal;
         int idx = 0;
 
-        Map<String,NEMAMetadataEntry> trackToMeta = client.getTrackMetadataByID(tracks, metadata_id);
+        Map<String,List<NEMAMetadataEntry>> trackToMeta = client.getTrackMetadataByID(tracks, metadata_id);
         for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
             obj = it.next();
             if (obj == null){
@@ -196,10 +196,11 @@ public class DatasetListFileGenerator {
                 out.add(null);
             }else{
                 file = (NEMAFile)obj;
-                meta = trackToMeta.get(file.getTrackId());
                 path = file.getPath();
-                metaVal = meta.getValue();
-                out.add(new String[]{path,metaVal});
+                meta_list = trackToMeta.get(file.getTrackId());
+                for(meta_it = meta_list.iterator();meta_it.hasNext();){
+                    out.add(new String[]{path,meta_it.next().getValue()});
+                }
             }
 
             idx++;
@@ -210,14 +211,20 @@ public class DatasetListFileGenerator {
 
     private static File writeExtractOrTestListFile(File directory, String set_name, int set_id,
                                     List<String[]> data){
+    	//use a set to filter out duplicated paths as tag sets will have more than one entry per path
+    	Set<String> pathsDone = new HashSet<String>();
+    	
         File out = new File(directory.getAbsolutePath() + File.separator + set_name + "-" + set_id + ".txt");
         BufferedWriter writer = null;
         try{
             writer = new BufferedWriter(new FileWriter(out));
             for (Iterator<String[]> it = data.iterator(); it.hasNext();){
                 String string = it.next()[0];
-                writer.write(string);
-                writer.newLine();
+                if (!pathsDone.contains(string)){
+	                writer.write(string);
+	                writer.newLine();
+	                pathsDone.add(string);
+                }
             }
         }catch (IOException ex){
             Logger.getLogger(DatasetListFileGenerator.class.getName()).log(Level.SEVERE, null, ex);
@@ -276,13 +283,20 @@ public class DatasetListFileGenerator {
     private static File writeOutSingleTestFile(RepositoryClientInterface client, String set_name, int set_id, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
         List<String> data = getTestData(client, set_id, file_encoding_constraint);
         File out = new File(directory.getAbsolutePath() + File.separator + set_name + "-" + set_id + ".txt");
-        BufferedWriter writer = null;
+        
+        //use a set to filter out duplicated paths as tag sets will have more than one entry per path
+    	Set<String> pathsDone = new HashSet<String>();
+    	
+    	BufferedWriter writer = null;
         try{
             writer = new BufferedWriter(new FileWriter(out));
             for (Iterator<String> it = data.iterator(); it.hasNext();){
                 String string = it.next();
-                writer.write(string);
-                writer.newLine();
+                if (!pathsDone.contains(string)){
+	                writer.write(string);
+	                writer.newLine();
+	                pathsDone.add(string);
+                }
             }
         }catch (IOException ex){
             Logger.getLogger(DatasetListFileGenerator.class.getName()).log(Level.SEVERE, null, ex);

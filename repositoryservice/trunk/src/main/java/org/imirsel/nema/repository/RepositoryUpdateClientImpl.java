@@ -170,7 +170,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             int filter_track_metadata_type_id,
             List<String> datasetTrackIDList) throws SQLException{
         
-        dbCon.con.setAutoCommit(false);
+        startTransation();
         int datasetId = -1;
         try{
 
@@ -192,12 +192,13 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             updateDatasetWithNumSplits.setInt(2, 1);
             updateDatasetWithNumSplits.setInt(3,datasetId);
             updateDatasetWithNumSplits.executeUpdate();
-
+            
+            endTransation();
         }catch(SQLException e){
-            dbCon.con.rollback();
+            rollback();
             throw e;
         }
-        dbCon.con.setAutoCommit(true);
+        
 
         return datasetId;
     }
@@ -209,13 +210,15 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             List<String> subsetList,
             List<List<String>> testLists) throws SQLException{
         
-        dbCon.con.setAutoCommit(false);
+        startTransation();
         int datasetId = -1;
         try{
 
             //insert dataset description
+        	System.out.println("Inserting dataset description");
             datasetId = insertDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, subsetList);
-
+            System.out.println("Dataset id generated: " + datasetId);
+            
             int testType = getSetTypeID("test");
             int trainType = getSetTypeID("train");
 
@@ -246,15 +249,33 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             updateDatasetWithNumSplits.setInt(2, 2);
             updateDatasetWithNumSplits.setInt(3,datasetId);
             updateDatasetWithNumSplits.executeUpdate();
-
+            
+            endTransation();
         }catch(SQLException e){
-            dbCon.con.rollback();
+            rollback();
             throw e;
         }
-        dbCon.con.setAutoCommit(true);
+        
 
         return datasetId;
     }
+    
+    public void startTransation() throws SQLException{
+    	System.out.println(this.getClass().getName() + ": Starting transaction");
+    	dbCon.con.setAutoCommit(false);
+	}
+    
+    public void endTransation() throws SQLException{
+    	System.out.println(this.getClass().getName() + ": Commiting transaction");
+    	dbCon.con.commit();
+    	dbCon.con.setAutoCommit(true);
+	}
+        
+    public void rollback() throws SQLException{
+    	System.out.println(this.getClass().getName() + ": Rolling-back transaction");
+    	dbCon.con.rollback();
+    	dbCon.con.setAutoCommit(true);
+	}
     
     public int insertTestTrainDataset(String name,
             String description,
@@ -263,11 +284,14 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             File dataset_subset_file,
             List<File> testset_files) throws SQLException{
         //read up subset tracks
+    	System.out.println("Reading subset file: " + dataset_subset_file.getAbsolutePath());
         List<String> subsetList = ClassificationResultReadClass.readClassificationFileAsList(dataset_subset_file, true);
         List<List<String>> testLists = new ArrayList<List<String>>(testset_files.size());
         
         for (Iterator<File> it = testset_files.iterator(); it.hasNext();){
             File testSetFile = it.next();
+            System.out.println("Reading test set file: " + testSetFile.getAbsolutePath());
+            
             //read up test set tracks
             testLists.add(ClassificationResultReadClass.readClassificationFileAsList(testSetFile, true));
         }
@@ -283,33 +307,40 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             List<String> subsetList) throws SQLException{
 
         int datasetId = -1;
-
+        System.out.println("\tinserting descriptive data");
         insertDataset.setString(1, name);
         insertDataset.setString(2, description);
         insertDataset.setInt(3, subject_track_metadata_type_id);
         insertDataset.setInt(4, filter_track_metadata_type_id);
         insertDataset.executeUpdate();
-
+       
+        System.out.println("\tretrieving generated id");
         ResultSet rs = insertDataset.getGeneratedKeys();
         if (rs.next()){
             datasetId = rs.getInt(1);
         }else{
             throw new SQLException("The dataset insertion did not return an inserted id!");
         }
-
+        System.out.println("\tdataset id: " + datasetId);
 
         //insert subset and link to Dataset
         int setType = getSetTypeID("collection_subset");
+        
+        System.out.println("\tinserting collection subset");
         int subsetId = insertSetDescription(datasetId, setType, -1);
+        System.out.println("\tsubset id: " + subsetId);
+        
+        System.out.println("\tinserting subset track list (" + subsetList.size() + " trackIDs)");
         insertSetTracks(subsetId, subsetList);
 
         //link subset to dataset
+        System.out.println("\tLinking subset to dataset");
         updateDatasetWithSubset.setInt(1,subsetId);
         updateDatasetWithSubset.setInt(2,datasetId);
         updateDatasetWithSubset.executeUpdate();
-
-        dbCon.con.commit();
-
+        
+        System.out.println("\tdone");
+        
         return datasetId;
     }
 
@@ -332,11 +363,16 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
 
     public void insertSetTracks(int setID, List<String> tracks) throws SQLException{
         //INSERT INTO set_track_link(set_id,track_id) VALUES(?,?)
+    	int done = 0;
         for (Iterator<String> it = tracks.iterator(); it.hasNext();){
             String track = it.next();
             insertSetTrackLink.setInt(1,setID);
             insertSetTrackLink.setString(2,track);
             insertSetTrackLink.executeUpdate();
+            done++;
+            if (done % 500 == 0){
+            	System.out.println("\t\tdone " + done + " of " + tracks.size());
+            }
         }
     }
 	
