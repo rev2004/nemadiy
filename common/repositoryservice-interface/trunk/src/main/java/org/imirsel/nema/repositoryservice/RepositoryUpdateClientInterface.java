@@ -20,6 +20,24 @@ public interface RepositoryUpdateClientInterface extends
 		RepositoryClientInterface {
 
 	/**
+	 * Starts a DB transaction by setting autocommit to false,
+	 * @throws SQLException
+	 */
+	public void startTransation() throws SQLException;
+    
+	/**
+	 * Commits the transaction and sets autocommit back to true.
+	 * @throws SQLException
+	 */
+    public void endTransation() throws SQLException;
+        
+    /**
+     * Rolls back a transaction and sets autocommit back to true.
+     * @throws SQLException
+     */
+    public void rollback() throws SQLException;
+	
+	/**
 	 * Add a new track metadata type definition to the repository DB.
 	 * @param name Name for the new type definition.
 	 * @throws SQLException Thrown if a problem with the update occurs, including duplicate values of the name parameter in the DB.

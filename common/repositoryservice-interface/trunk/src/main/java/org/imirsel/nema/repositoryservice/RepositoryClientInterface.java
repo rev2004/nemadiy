@@ -45,18 +45,6 @@ public interface RepositoryClientInterface {
     public List<NEMACollection> getCollections() throws SQLException;
 
     /**
-     * Retrieves a list of NEMATask Objects describing the available
-     * tasks.
-     *
-     * @return a list of NEMATask Objects describing the available
-     * tasks.
-     *
-     * @throws SQLException
-     */
-    public List<NEMATask> getTasks() throws SQLException;
-
-
-    /**
      * Retrieves a Set containing Sets of NEMAMetadataEntry Objects which define
      * the different file types that files in the collection are available in.
      * The inner set defines a unique combination of different metadata values
@@ -569,13 +557,13 @@ public interface RepositoryClientInterface {
     public Map<String,List<NEMAMetadataEntry>> getTrackMetadata(List<NEMATrack> tracks) throws SQLException;
 
     /**
-     * Retrieve the first metadata of a particular type for a track.
+     * Retrieve metadata of a particular type for a track.
      * @param trackId The track ID to retrieve data for.
      * @param metadataId The metadata type ID to retrieve.
-     * @return The metadata value represented as a <code>NEMAMetadataEntry</code> Object.
+     * @return The list of metadata values of the specified type represented as a <code>NEMAMetadataEntry</code> Object.
      * @throws SQLException
      */
-    public NEMAMetadataEntry getTrackMetadataByID(String trackId, int metadataId) throws SQLException;
+    public List<NEMAMetadataEntry> getTrackMetadataByID(String trackId, int metadataId) throws SQLException;
     
     /**
      * Retrieve the first metadata of a particular type for a track.
@@ -584,7 +572,7 @@ public interface RepositoryClientInterface {
      * @return The metadata value represented as a <code>NEMAMetadataEntry</code> Object.
      * @throws SQLException
      */
-    public NEMAMetadataEntry getTrackMetadata(NEMATrack track, int metadataId) throws SQLException;
+    public List<NEMAMetadataEntry> getTrackMetadata(NEMATrack track, int metadataId) throws SQLException;
     
     /**
      * Retrieve the first metadata of a particular type for each of a list of tracks.
@@ -593,7 +581,7 @@ public interface RepositoryClientInterface {
      * @return A map of track ID to the metadata value represented as a <code>NEMAMetadataEntry</code> Object.
      * @throws SQLException
      */
-    public Map<String,NEMAMetadataEntry> getTrackMetadataByID(List<String> tracks, int metadataId) throws SQLException;
+    public Map<String,List<NEMAMetadataEntry>> getTrackMetadataByID(List<String> tracks, int metadataId) throws SQLException;
     /**
      * Retrieve the first metadata of a particular type for each of a list of tracks.
      * @param tracks The list of <code>NEMATrack</code> Objects to retrieve data for.
@@ -601,7 +589,7 @@ public interface RepositoryClientInterface {
      * @return A map of track ID to the metadata value represented as a <code>NEMAMetadataEntry</code> Object.
      * @throws SQLException
      */
-    public Map<String,NEMAMetadataEntry> getTrackMetadata(List<NEMATrack> tracks, int metadataId) throws SQLException;
+    public Map<String,List<NEMAMetadataEntry>> getTrackMetadata(List<NEMATrack> tracks, int metadataId) throws SQLException;
 
     /**
      * Returns an unmodifiable map linking track metadata type names to their IDs.
@@ -614,12 +602,6 @@ public interface RepositoryClientInterface {
      * @return an unmodifiable map.
      */
     public Map<String,Integer> getFileMetadataNameMap();
-    
-    /**
-     * Returns an unmodifiable map linking task type names to their IDs.
-     * @return an unmodifiable map.
-     */
-    public Map<String,Integer> getTaskTypeMap();
     
     /**
      * Returns an unmodifiable map linking set type names to their IDs.
@@ -642,13 +624,6 @@ public interface RepositoryClientInterface {
     public String getFileMetadataName(int typeId);
 
     /**
-     * Returns the name for a task metadata type ID.
-     * @param typeId metadata type ID to retrieve name for.
-     * @return metadata type name.
-     */
-    public String getTaskTypeName(int typeId);
-
-    /**
      * Returns the name for a set metadata type ID.
      * @param typeId metadata type ID to retrieve name for.
      * @return metadata type name.
@@ -668,13 +643,6 @@ public interface RepositoryClientInterface {
      * @return metadata type ID.
      */
     public int getFileMetadataID(String typeName);
-
-    /**
-     * Returns the integer ID for the specified Task metadata type name.
-     * @param typeName metadata type name to retrieve ID for.
-     * @return metadata type ID.
-     */
-    public int getTaskTypeID(String typeName);
 
     /**
      * Returns the integer ID for the specified Set metadata type name.
