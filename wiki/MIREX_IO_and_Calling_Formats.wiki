@@ -60,3 +60,10 @@ which might look like:
 
  ...	...	...
 
+== Examples from past MIREX == 
+
+*Submissions Directory*: /data/raid3/mirex2009/subs/multfiF0/NEOS/NEOS1/mnakano2009MIREXn1
+
+*Run script*: runMultiF0.sh
+
+*Results Dir*:  /data/raid3/mirex2009/subs/multfiF0/NEOS/NEOS1/mnakano2009MIREXn1/results
