@@ -1,0 +1,62 @@
+#Overview of I/O  and calling formats for various MIREX tasks
+
+
+= Introduction =
+
+Add your content here.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
+
+= Multiple-F0 Estimation and Tracking =
+
+== Submission Format ==
+
+Submissions have to conform to the specified format below:
+
+ ''doMultiF0 "path/to/file.wav"  "path/to/output/file.F0" ''
+
+path/to/file.wav: Path to the input audio file.
+
+path/to/output/file.F0: The output file. 
+
+== Output Format ==
+For each sub task, the format of the output file is going to be different:
+For the first task, F0-estimation on frame basis,  the output will be a file where each row has a  time stamp and a number of active F0s in that frame, separated by a tab for every 10ms increments. 
+	
+Example :
+ ''time	F01	F02	F03	''
+
+ ''time	F01	F02	F03	F04''
+
+ ''time	...	...	...	...''
+
+which might look like:
+
+ ''0.78	146.83	220.00	349.23''
+
+ ''0.79	349.23	146.83	369.99	220.00	''
+
+ ''0.80	...	...	...	...''
+
+For the second subtask,  for each row, the file should contain  the onset, offset and the F0 of each note event separated by a tab, ordered in terms of onset times:
+
+ onset	offset F01
+
+ onset	offset F02
+
+ ...	... ...
+
+which might look like:
+
+ 0.68	1.20	349.23
+
+ 0.72	1.02	220.00
+
+ ...	...	...
+
