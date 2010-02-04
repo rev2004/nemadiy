@@ -25,7 +25,7 @@ path/to/file.wav: Path to the input audio file.
 
 path/to/output/file.F0: The output file. 
 
-== Output Format ==
+== I/O File Format ==
 For each sub task, the format of the output file is going to be different:
 For the first task, F0-estimation on frame basis,  the output will be a file where each row has a  time stamp and a number of active F0s in that frame, separated by a tab for every 10ms increments. 
 	
@@ -71,7 +71,27 @@ which might look like:
 
 =Audio Tag Classification=
 
-=== I/O formats ===
+=== Calling Format === 
+
+  # extractFeatures.sh /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+  TrainAndClassify.sh /path/to/scratch/folder /path/to/trainListFile.txt /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt
+
+  # extractFeatures.sh -numThreads 8 /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+  TrainAndClassify.sh -numThreads 8 /path/to/scratch/folder /path/to/trainListFile.txt /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt
+
+  # extractFeatures.sh /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+  Train.sh /path/to/scratch/folder /path/to/trainListFile.txt 
+  Classify.sh /path/to/scratch/folder /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt
+
+  # myAlgo.sh -extract -numThreads 8 /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+   myAlgo.sh -TrainAndClassify -numThreads 8 /path/to/scratch/folder /path/to/trainListFile.txt /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt
+
+  # myAlgo.sh -extract /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+  myAlgo.sh -train /path/to/scratch/folder /path/to/trainListFile.txt 
+  myAlgo.sh -classify /path/to/scratch/folder /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt
+
+
+=== I/O File  formats ===
 
 In this section the input and output files used in this task are described as are the command line calling format requirements for submissions.
 
