@@ -357,8 +357,8 @@
         <jdbc.artifactId>mysql-connector-java</jdbc.artifactId>
         <jdbc.version>5.0.5</jdbc.version>
         <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
-        <jdbc.url><![CDATA[jdbc:mysql://localhost/nema_diy?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
-        <flowservice.jdbc.url><![CDATA[jdbc:mysql://127.0.0.1/flowservice?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></flowservice.jdbc.url>
+        <jdbc.url><![CDATA[jdbc:mysql://128.174.154.145/nema_diy?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
+        <flowservice.jdbc.url><![CDATA[jdbc:mysql://128.174.154.145/flowservice?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></flowservice.jdbc.url>
         <!-- Properties calculated by AppFuse when running full-source plugin -->
         <aspectj.version>1.6.0</aspectj.version>
         <clickstream.version>1.0.2</clickstream.version>
