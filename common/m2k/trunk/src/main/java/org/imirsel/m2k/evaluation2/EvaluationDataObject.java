@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+
 import org.imirsel.m2k.util.noMetadataException;
 
 /**
@@ -111,7 +112,7 @@ public class EvaluationDataObject implements Serializable{
     /**
      * The metadata hashmap.
      */
-    private HashMap metadata;
+    private final HashMap metadata;
     
     /** Creates a new instance of EvaluationDataObject */
     public EvaluationDataObject() {
@@ -137,7 +138,7 @@ public class EvaluationDataObject implements Serializable{
         Set keys = oldObj.metadata.keySet();
         Object[] keysArray = keys.toArray();
         for (int i=0;i<keysArray.length;i++) {
-            metadata.put(new String((String)keysArray[i]), oldObj.metadata.get((String)keysArray[i]));
+            metadata.put(new String((String)keysArray[i]), oldObj.metadata.get(keysArray[i]));
         }
         //need to check this is actually copying/cloning the metadata and not just mapping to original value
     }
@@ -173,7 +174,8 @@ public class EvaluationDataObject implements Serializable{
      *  @param otherObj The EvaluationDataObject to compare this Object with.
      *  @return A boolean indicating equality.
      */
-    public boolean equals(Object otherObj) {
+    @Override
+	public boolean equals(Object otherObj) {
         try {
             return this.getStringMetadata(EvaluationDataObject.PROP_FILE_LOCATION).equals(((EvaluationDataObject)otherObj).getStringMetadata(EvaluationDataObject.PROP_FILE_LOCATION));
         } catch (noMetadataException ex) {
@@ -185,13 +187,15 @@ public class EvaluationDataObject implements Serializable{
      * Clones the EvaluationDataObject object (deep copy)
      * @return A deep copy of this Signal object
      */
-    public Object clone() throws java.lang.CloneNotSupportedException {
+    @Override
+	public Object clone() throws java.lang.CloneNotSupportedException {
         super.clone();
         return (new EvaluationDataObject(this));
     }
     
     /** Returns a File Object for the path specified by the file location metadata.
-     *  @return a File Object for the path specified by the file location metadata.
+     * @return File Object for the path specified by the file location metadata.
+     * @throws noMetadataException 
      */
     public File getFile() throws noMetadataException {
         return new File(this.getStringMetadata(EvaluationDataObject.PROP_FILE_LOCATION));
@@ -430,7 +434,8 @@ public class EvaluationDataObject implements Serializable{
      * Creates a String representation of a Signal Object
      * @return a String representation of a Signal Object
      */
-    public String toString() {
+    @Override
+	public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append(fileHeader + "\n" + DIVIDER + "\n");
         
