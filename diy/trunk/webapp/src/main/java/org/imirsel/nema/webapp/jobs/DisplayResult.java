@@ -1,9 +1,5 @@
 package org.imirsel.nema.webapp.jobs;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.imirsel.nema.model.JobResult;
-import org.imirsel.nema.webapp.controller.JobController;
 /**
  * 
  * @author Guojun Zhu
