@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <version>0.1-SNAPSHOT</version>
+    <groupId>org.imirsel</groupId>
+    <artifactId>nema-temp-repository</artifactId>
+    <packaging>jar</packaging>
+    <name>NEMA Temp Repository</name>
+    
+    <scm>
+    <connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</connection>
+    <developerConnection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</url>
+    </scm>
+    <organization>
+    	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
+    	<url>http://www.lis.illinois.edu</url>
+    </organization>
+    
+
+    <dependencies>
+    </dependencies>
+</project>
