@@ -73,20 +73,33 @@ which might look like:
 
 === Calling Format === 
 
-  # extractFeatures.sh /path/to/scratch/folder /path/to/featureExtractionListFile.txt
-  TrainAndClassify.sh /path/to/scratch/folder /path/to/trainListFile.txt /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt
+  extractFeatures.sh /path/to/scratch/folder /path/to/featureExtractionListFile.txt
 
-  # extractFeatures.sh -numThreads 8 /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+  TrainAndClassify.sh /path/to/scratch/folder /path/to/trainListFile.txt  path/to/testListFile.txt /path/to/outputAffinityFile.txt  path/to/outputBinaryRelevanceFile.txt<br><br>
+
+or   
+
+  extractFeatures.sh -numThreads 8 /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+
   TrainAndClassify.sh -numThreads 8 /path/to/scratch/folder /path/to/trainListFile.txt /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt
 
-  # extractFeatures.sh /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+or 
+
+  extractFeatures.sh /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+
   Train.sh /path/to/scratch/folder /path/to/trainListFile.txt 
+
   Classify.sh /path/to/scratch/folder /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt
 
-  # myAlgo.sh -extract -numThreads 8 /path/to/scratch/folder /path/to/featureExtractionListFile.txt
-   myAlgo.sh -TrainAndClassify -numThreads 8 /path/to/scratch/folder /path/to/trainListFile.txt /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt
+or
 
-  # myAlgo.sh -extract /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+ 
+  myAlgo.sh -extract -numThreads 8 /path/to/scratch/folder /path/to/featureExtractionListFile.txt
+  myAlgo.sh -TrainAndClassify -numThreads 8 /path/to/scratch/folder /path/to/trainListFile.txt /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt.
+
+or
+
+  myAlgo.sh -extract /path/to/scratch/folder /path/to/featureExtractionListFile.txt
   myAlgo.sh -train /path/to/scratch/folder /path/to/trainListFile.txt 
   myAlgo.sh -classify /path/to/scratch/folder /path/to/testListFile.txt /path/to/outputAffinityFile.txt /path/to/outputBinaryRelevanceFile.txt
 
