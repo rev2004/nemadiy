@@ -10,11 +10,11 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.DynamicAttributes;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import org.imirsel.nema.annotatons.parser.beans.BooleanDataTypeBean;
-import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
-import org.imirsel.nema.annotatons.parser.beans.DoubleDataTypeBean;
-import org.imirsel.nema.annotatons.parser.beans.IntegerDataTypeBean;
-import org.imirsel.nema.annotatons.parser.beans.StringDataTypeBean;
+import org.imirsel.nema.annotations.parser.beans.BooleanDataTypeBean;
+import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
+import org.imirsel.nema.annotations.parser.beans.DoubleDataTypeBean;
+import org.imirsel.nema.annotations.parser.beans.IntegerDataTypeBean;
+import org.imirsel.nema.annotations.parser.beans.StringDataTypeBean;
 import org.imirsel.nema.model.Property;
 
 /**This tag renders the component property
