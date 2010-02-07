@@ -12,7 +12,7 @@ public class StringDataTypeBean implements DataTypeBean, Serializable{
 	String[] valueList;
 	String[] labelList;
 	String renderer;
-	String className = "org.imirsel.nema.annotatons.parser.beans.StringDataTypeBean";
+	String className = "org.imirsel.nema.annotations.parser.beans.StringDataTypeBean";
 	boolean hidden;
 	
 	public String[] getValueList() {

@@ -12,7 +12,7 @@ public class BooleanDataTypeBean implements DataTypeBean, Serializable{
 	String renderer;
 	String editRole;
 	boolean hidden;
-	String className = "org.imirsel.nema.annotatons.parser.beans.BooleanDataTypeBean";
+	String className = "org.imirsel.nema.annotations.parser.beans.BooleanDataTypeBean";
 	
 	boolean[] valueList = {true,false};
 	

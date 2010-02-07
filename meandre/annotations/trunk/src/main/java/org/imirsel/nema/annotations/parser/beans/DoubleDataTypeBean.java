@@ -14,7 +14,7 @@ public class DoubleDataTypeBean implements DataTypeBean, Serializable{
 	String renderer;
 	double max;
 	double min;
-	String className = "org.imirsel.nema.annotatons.parser.beans.DoubleDataTypeBean";
+	String className = "org.imirsel.nema.annotations.parser.beans.DoubleDataTypeBean";
 	boolean hidden;
 	
 	public double getMax() {

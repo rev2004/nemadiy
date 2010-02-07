@@ -14,7 +14,7 @@ public class IntegerDataTypeBean implements DataTypeBean, Serializable{
 	String renderer;
 	int max;
 	int min;
-	String className = "org.imirsel.nema.annotatons.parser.beans.IntegerDataTypeBean";
+	String className = "org.imirsel.nema.annotations.parser.beans.IntegerDataTypeBean";
 	boolean hidden;
 	
 	
