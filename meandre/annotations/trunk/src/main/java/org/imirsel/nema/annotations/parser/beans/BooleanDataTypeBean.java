@@ -1,7 +1,14 @@
 package org.imirsel.nema.annotations.parser.beans;
 
+import java.io.Serializable;
 
-public class BooleanDataTypeBean implements DataTypeBean{
+
+public class BooleanDataTypeBean implements DataTypeBean, Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3288953812372603319L;
 	String renderer;
 	String editRole;
 	boolean hidden;

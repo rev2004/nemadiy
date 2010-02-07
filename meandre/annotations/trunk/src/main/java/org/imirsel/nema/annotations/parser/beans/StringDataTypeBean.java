@@ -1,7 +1,13 @@
 package org.imirsel.nema.annotations.parser.beans;
 
+import java.io.Serializable;
 
-public class StringDataTypeBean implements DataTypeBean{
+
+public class StringDataTypeBean implements DataTypeBean, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6853867485499302567L;
 	String editRole;
 	String[] valueList;
 	String[] labelList;
