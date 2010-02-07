@@ -1,4 +1,4 @@
-package org.imirsel.nema.annotatons.parser.beans;
+package org.imirsel.nema.annotations.parser.beans;
 
 public interface DataTypeBean {
 
