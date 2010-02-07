@@ -3,14 +3,14 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="con" path="org.meandre.MEANDRE_INFRASTRUCTURE/1.4.5"/>
 	<classpathentry kind="lib" path="lib/ACE.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/jAudio-sanitized-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/m2k_core_1_3.jar" sourcepath="/m2k"/>
-	<classpathentry kind="lib" path="lib/nema-annotations-1.0.2-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/nema-repository-temp-0.1.jar"/>
 	<classpathentry kind="lib" path="lib/nema-artifactservice-0.5.0-SNAPSHOT.jar" sourcepath="/artifactservice"/>
 	<classpathentry kind="lib" path="lib/nema-directoryservice-0.5.0-SNAPSHOT.jar"/>
+	<classpathentry kind="con" path="org.meandre.MEANDRE_INFRASTRUCTURE/1.4.8"/>
+	<classpathentry kind="lib" path="lib/nema-annotations-0.5-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin/target/classes"/>
 </classpath>
