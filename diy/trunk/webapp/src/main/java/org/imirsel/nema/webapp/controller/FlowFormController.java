@@ -197,7 +197,8 @@ public class FlowFormController extends MultiActionController{
 		instance.setTemplate(false);
 		instance.setUrl(newFlowUri);
 		instance.setDescription(description);
-		instance.setType(FlowTypeUtils.DEFAULT_FLOW);
+		instance.setType(Flow.FlowType.INHERITS);
+		instance.setTypeName(Flow.FlowType.INHERITS.getName());
 		
 		System.out.println("The new flow uri is: " + newFlowUri);
 		long instanceId=this.getFlowService().storeFlowInstance(instance);
