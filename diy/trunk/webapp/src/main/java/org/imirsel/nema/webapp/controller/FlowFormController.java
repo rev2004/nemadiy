@@ -189,16 +189,26 @@ public class FlowFormController extends MultiActionController{
 		}
 		long userId = user.getId();
 		Flow instance = new Flow();
+		logger.debug("creatorId: " + userId);
 		instance.setCreatorId(userId);
+		logger.debug("dateCreated" +new Date());
 		instance.setDateCreated(new Date());
+		logger.debug("instanceOf" +templateFlow.toString());
 		instance.setInstanceOf(templateFlow);
+		logger.debug("keyWords: "+ templateFlow.getKeyWords());
 		instance.setKeyWords(templateFlow.getKeyWords());
+		logger.debug("name: "+ name);
 		instance.setName(name);
+		logger.debug("IsTemplate: "+ false);
 		instance.setTemplate(false);
+		logger.debug("newFlowUri: "+ newFlowUri);
 		instance.setUrl(newFlowUri);
+		logger.debug("description: "+ description);
 		instance.setDescription(description);
-		instance.setType(Flow.FlowType.INHERITS);
-		instance.setTypeName(Flow.FlowType.INHERITS.getName());
+		logger.debug("type: "+ Flow.FlowType.INHERITS.toString());
+		instance.setType(templateFlow.getType());
+		logger.debug(templateFlow.getTypeName());
+		instance.setTypeName(templateFlow.getTypeName());
 		
 		System.out.println("The new flow uri is: " + newFlowUri);
 		long instanceId=this.getFlowService().storeFlowInstance(instance);
