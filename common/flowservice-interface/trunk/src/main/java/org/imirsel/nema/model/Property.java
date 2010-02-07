@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
+import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
 
 /**Component Property is represented using this bean
  * 
