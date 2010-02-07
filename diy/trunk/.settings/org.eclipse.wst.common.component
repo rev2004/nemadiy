@@ -8,6 +8,9 @@
         <wb-resource deploy-path="/" source-path="/probes/src/main/java"/>
         <wb-resource deploy-path="/" source-path="/probes/src/test/java"/>
         <wb-resource deploy-path="/" source-path="/core/src/test/java"/>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-annotations/nema-annotations">
+<dependency-type>uses</dependency-type>
+</dependent-module>
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-flow-service-interface/nema-flow-service-interface">
 <dependency-type>uses</dependency-type>
 </dependent-module>
