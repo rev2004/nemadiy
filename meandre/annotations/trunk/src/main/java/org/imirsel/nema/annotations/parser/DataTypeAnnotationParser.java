@@ -14,7 +14,7 @@ import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
 import org.imirsel.nema.annotations.parser.beans.DoubleDataTypeBean;
 import org.imirsel.nema.annotations.parser.beans.IntegerDataTypeBean;
 import org.imirsel.nema.annotations.parser.beans.StringDataTypeBean;
-import org.imirsel.nema.annotatons.parser.beans.*;
+
 
 
 public class DataTypeAnnotationParser {
