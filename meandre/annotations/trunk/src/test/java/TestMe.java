@@ -3,8 +3,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.imirsel.nema.annotatons.parser.DataTypeAnnotationParser;
-import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
+import org.imirsel.nema.annotations.parser.DataTypeAnnotationParser;
+import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;

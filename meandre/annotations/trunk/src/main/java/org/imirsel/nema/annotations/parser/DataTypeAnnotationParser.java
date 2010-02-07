@@ -1,4 +1,4 @@
-package org.imirsel.nema.annotatons.parser;
+package org.imirsel.nema.annotations.parser;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -9,6 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.imirsel.nema.annotations.*;
+import org.imirsel.nema.annotations.parser.beans.BooleanDataTypeBean;
+import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
+import org.imirsel.nema.annotations.parser.beans.DoubleDataTypeBean;
+import org.imirsel.nema.annotations.parser.beans.IntegerDataTypeBean;
+import org.imirsel.nema.annotations.parser.beans.StringDataTypeBean;
 import org.imirsel.nema.annotatons.parser.beans.*;
 
 

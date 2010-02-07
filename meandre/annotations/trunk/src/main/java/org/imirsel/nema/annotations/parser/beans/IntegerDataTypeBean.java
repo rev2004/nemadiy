@@ -1,34 +1,35 @@
-package org.imirsel.nema.annotatons.parser.beans;
+package org.imirsel.nema.annotations.parser.beans;
 
 
-public class DoubleDataTypeBean implements DataTypeBean{
+public class IntegerDataTypeBean implements DataTypeBean{
 	String editRole;
-	double[] valueList;
+	int[] valueList;
 	String[] labelList;
 	String renderer;
-	double max;
-	double min;
-	String className = "org.imirsel.nema.annotatons.parser.beans.DoubleDataTypeBean";
+	int max;
+	int min;
+	String className = "org.imirsel.nema.annotatons.parser.beans.IntegerDataTypeBean";
 	boolean hidden;
 	
-	public double getMax() {
+	
+	public int getMax() {
 		return max;
 	}
-	public void setMax(double max2) {
-		this.max = max2;
+	public void setMax(int max) {
+		this.max = max;
 	}
-	public double getMin() {
+	public int getMin() {
 		return min;
 	}
-	public void setMin(double min) {
+	public void setMin(int min) {
 		this.min = min;
 	}
 	
 	
-	public double[] getValueList() {
+	public int[] getValueList() {
 		return valueList;
 	}
-	public void setValueList(double[] valueList) {
+	public void setValueList(int[] valueList) {
 		this.valueList = valueList;
 	}
 	public String getRenderer() {
@@ -37,10 +38,9 @@ public class DoubleDataTypeBean implements DataTypeBean{
 	public void setRenderer(String class1) {
 		this.renderer = class1;
 	}
-	public String getClassName() {
+	public String getClassName(){
 		return className;
 	}
-	
 	public String getEditRole() {
 		return editRole;
 	}
@@ -53,10 +53,10 @@ public class DoubleDataTypeBean implements DataTypeBean{
 	public void setHidden(boolean hide) {
 		this.hidden = hide;
 	}
-	public void setLabelList(String[] labelList) {
-		this.labelList = labelList;
-		
+	public void setLabelList(String[] labelList2) {
+		this.labelList = labelList2;
 	}
+	
 	public String[] getLabelList(){
 		return this.labelList;
 	}
