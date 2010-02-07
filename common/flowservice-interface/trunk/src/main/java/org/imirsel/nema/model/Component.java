@@ -1,11 +1,17 @@
 package org.imirsel.nema.model;
 
+import java.io.Serializable;
+
 /** Component is represented using this bean
  * 
  * @author kumaramit01
  * @since 0.5.0
  */
-public class Component implements Comparable<Component>{
+public class Component implements Comparable<Component>, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2197472386343940677L;
 	private String name;
 	private String description;
 	private String uri;

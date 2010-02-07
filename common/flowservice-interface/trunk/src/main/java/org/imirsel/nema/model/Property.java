@@ -1,5 +1,6 @@
 package org.imirsel.nema.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,11 @@ import org.imirsel.nema.annotatons.parser.beans.DataTypeBean;
  * @since 0.5.0
  *
  */
-public class Property implements Comparable<Property>{
+public class Property implements Comparable<Property>, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6537139194655021669L;
 	private ArrayList<Object> valueList = new ArrayList<Object>();
 	private ArrayList<String> labelList = new ArrayList<String>();
 	
