@@ -1049,9 +1049,7 @@ public class MeandreClient extends MeandreBaseClient{
 		byte[] baModel=null;
 		try {
 			fos = new FileInputStream(file);
-			System.out.println("Reading file: " + fileName);
 			baModel= new byte[(int) file.length()];
-			System.out.println("Size of file: " + file.length());
 			fos.read(baModel);
 		} catch (FileNotFoundException e) {
 			throw new TransmissionException(e);
@@ -1081,7 +1079,10 @@ public class MeandreClient extends MeandreBaseClient{
 				nvps.add(new NameValuePair(key, probeList.get(key)));
 			}
 		}
-		int httpCode= executePostRequestNoWait(sRestCommand, nvps, postParts);
+	
+		int httpCode= 200; 	
+		byte[] res=	executePostRequestBytes(sRestCommand, nvps, postParts);
+		System.out.println(new String(res));
 		if(httpCode==200){
 			return true;
 		}else{
