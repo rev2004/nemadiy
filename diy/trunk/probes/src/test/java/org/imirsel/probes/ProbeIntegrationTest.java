@@ -34,7 +34,7 @@ public class ProbeIntegrationTest {
 		try {
 			HashMap<String,String> hmap = new HashMap<String,String>();
 			hmap.put("nema","true");
-			int statusCode = Job.JobStatus.toJobStatus(JobStatus.SUBMITTED);
+			int statusCode = Job.JobStatus.SUBMITTED.getCode();
 			DataSource dataSource = getDataSource();
 			JobDao jdao = new JobDao(dataSource);
 			Job job = new Job();
