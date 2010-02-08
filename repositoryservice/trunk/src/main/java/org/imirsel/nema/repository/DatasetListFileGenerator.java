@@ -43,7 +43,8 @@ public class DatasetListFileGenerator {
      *
      * @return Constraints that can be passed to retrieve file sets.
      */
-    public static Set<NEMAMetadataEntry> buildConstraints(String bitrate, String channels, String clip_type, String encoding, String sample_rate){
+	private static Logger logger = Logger.getLogger(DatasetListFileGenerator.class.getName());
+	public static Set<NEMAMetadataEntry> buildConstraints(String bitrate, String channels, String clip_type, String encoding, String sample_rate){
         HashSet<NEMAMetadataEntry> constraint = new HashSet<NEMAMetadataEntry>();
         if (bitrate != null && !bitrate.trim().equals("")){
             constraint.add(new NEMAMetadataEntry("bitrate", bitrate));
@@ -84,11 +85,12 @@ public class DatasetListFileGenerator {
      * @throws SQLException
      */
     public static List<File[]> writeOutExperimentSplitFiles(int dataset_id, String delimiter, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
-        System.out.println("Writing out train and test files for dataset_id=" + dataset_id);
-        System.out.println("File encoding constraints: ");
+    	
+        logger.info("Writing out train and test files for dataset_id=" + dataset_id);
+        logger.info("File encoding constraints: ");
         for (Iterator<NEMAMetadataEntry> it = file_encoding_constraint.iterator(); it.hasNext();){
             NEMAMetadataEntry meta = it.next();
-            System.out.println("\t" + meta.getType() + ":\t" + meta.getValue());
+            logger.info("\t" + meta.getType() + ":\t" + meta.getValue());
         }
 
         RepositoryClientInterface client = new RepositoryClientImpl();
@@ -134,11 +136,11 @@ public class DatasetListFileGenerator {
      * @throws SQLException
      */
     public static File[] writeOutGroundTruthAndExtractionListFile(int dataset_id, String delimiter, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
-        System.out.println("Writing out Groundtruth and Extraction list files for dataset_id=" + dataset_id);
-        System.out.println("File encoding constraints: ");
+        logger.info("Writing out Groundtruth and Extraction list files for dataset_id=" + dataset_id);
+        logger.info("File encoding constraints: ");
         for (Iterator<NEMAMetadataEntry> it = file_encoding_constraint.iterator(); it.hasNext();){
             NEMAMetadataEntry meta = it.next();
-            System.out.println("\t" + meta.getType() + ":\t" + meta.getValue());
+            logger.info("\t" + meta.getType() + ":\t" + meta.getValue());
         }
         RepositoryClientInterface client = new RepositoryClientImpl();
         NEMADataset dataset = client.getDataset(dataset_id);
@@ -152,18 +154,18 @@ public class DatasetListFileGenerator {
     //==========================================================================
 
     private static List<String> getTestData(RepositoryClientInterface client, int set_id, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
-        System.out.println("Retrieving test file paths for set: " + set_id);
+        logger.info("Retrieving test file paths for set: " + set_id);
         List<String> tracks = client.getTrackIDs(set_id);
-        System.out.println("Got " + tracks.size() + " tracks, resolving to files") ;
+        logger.info("Got " + tracks.size() + " tracks, resolving to files") ;
         List<NEMAFile> files = client.getFilesByID(tracks, file_encoding_constraint);
-        System.out.println("Got file list length: " + files.size() + ", preparing output");
+        logger.info("Got file list length: " + files.size() + ", preparing output");
         List<String> out = new ArrayList<String>();
         int idx = 0;
         Object file;
         for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
             file = it.next();
             if (file == null){
-                //System.out.println("WARNING: a file could not be found for track: " + tracks.get(idx));
+                //logger.info("WARNING: a file could not be found for track: " + tracks.get(idx));
                 out.add(null);
             }else{
                 out.add(((NEMAFile)file).getPath());
@@ -175,11 +177,11 @@ public class DatasetListFileGenerator {
     }
 
     private static List<String[]> getGroundtruthData(RepositoryClientInterface client, int set_id, int metadata_id, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
-        System.out.println("Retrieving ground-truth data and file paths for set: " + set_id);
+        logger.info("Retrieving ground-truth data and file paths for set: " + set_id);
         List<String> tracks = client.getTrackIDs(set_id);
-        System.out.println("Got " + tracks.size() + " tracks, resolving to files") ;
+        logger.info("Got " + tracks.size() + " tracks, resolving to files") ;
         List<NEMAFile> files = client.getFilesByID(tracks, file_encoding_constraint);
-        System.out.println("Got file list length: " + files.size() + ", retrieving metadata");
+        logger.info("Got file list length: " + files.size() + ", retrieving metadata");
         List<String[]> out = new ArrayList<String[]>();
         Object obj;
         NEMAFile file;
@@ -192,7 +194,7 @@ public class DatasetListFileGenerator {
         for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
             obj = it.next();
             if (obj == null){
-                //System.out.println("WARNING: a file could not be found for track: " + tracks.get(idx));
+                //logger.info("WARNING: a file could not be found for track: " + tracks.get(idx));
                 out.add(null);
             }else{
                 file = (NEMAFile)obj;
@@ -227,14 +229,14 @@ public class DatasetListFileGenerator {
                 }
             }
         }catch (IOException ex){
-            Logger.getLogger(DatasetListFileGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }finally{
             if (writer != null){
                 try{
                     writer.flush();
                     writer.close();
                 }catch (IOException ex){
-                    Logger.getLogger(DatasetListFileGenerator.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -253,14 +255,14 @@ public class DatasetListFileGenerator {
                 writer.newLine();
             }
         }catch (IOException ex){
-            Logger.getLogger(DatasetListFileGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }finally{
             if (writer != null){
                 try{
                     writer.flush();
                     writer.close();
                 }catch (IOException ex){
-                    Logger.getLogger(DatasetListFileGenerator.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -299,14 +301,14 @@ public class DatasetListFileGenerator {
                 }
             }
         }catch (IOException ex){
-            Logger.getLogger(DatasetListFileGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }finally{
             if (writer != null){
                 try{
                     writer.flush();
                     writer.close();
                 }catch (IOException ex){
-                    Logger.getLogger(DatasetListFileGenerator.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
             }
         }
