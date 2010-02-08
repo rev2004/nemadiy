@@ -216,7 +216,7 @@ public class MeandreBaseClient{
 	 */
 	public int executePostRequestNoWait(String sRestCommand,
 			Set<NameValuePair> queryParams, Set<Part> dataParts) throws TransmissionException {
-			int httpCode=0;
+	   	    int httpCode=0;
 		 	PostMethod post = new PostMethod();
 	        post.setPath("/" + sRestCommand);
 	        post.setDoAuthentication(true);
@@ -236,11 +236,10 @@ public class MeandreBaseClient{
 	        parts.toArray(aParts);
 	        post.setRequestEntity(new MultipartRequestEntity(aParts, post.getParams()));
 	        post.getParams().setBooleanParameter(HttpMethodParams.USE_EXPECT_CONTINUE, true);
-					
 	        try{
 	            getHttpClient().executeMethod(post);
 	            httpCode = post.getStatusCode();
-				verifyResponseOK(post);
+			    verifyResponseOK(post);
 	       }catch(Exception e){
 				logger.severe("unanticipated exception - POST: " + 
 				        extractMethodsURIString(post));
@@ -290,12 +289,6 @@ public class MeandreBaseClient{
 		}catch(Exception e){
 		    e.printStackTrace();
 		    System.out.println("HERE>...... exception "+ e.getMessage());
-		    if(logger==null){
-		    	System.out.println("_log is null -check the damn CLIENT...");
-		    }else{
-		    	System.out.println("_log is not null.... good okay");
-		    }
-		  
 			logger.severe("unanticipated exception performing http GET: " +
 			        extractMethodsURIString(get));
 			throw new TransmissionException(e);
@@ -388,8 +381,8 @@ public class MeandreBaseClient{
         post.getParams().setBooleanParameter(
 				HttpMethodParams.USE_EXPECT_CONTINUE, true);
         byte[] baResponse = null;
-       //_log.fine("executing POST: " + extractMethodsURIString(post));
-        //_log.finer("POST contents:\n" + post.toString());
+        logger.fine("executing POST: " + extractMethodsURIString(post));
+        logger.finer("POST contents:\n" + post.toString());
         try{
             getHttpClient().executeMethod(post);
 			verifyResponseOK(post);
