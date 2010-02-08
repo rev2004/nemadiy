@@ -51,18 +51,19 @@ public class RepositoryManagementUtils {
         audio_extensions.add(".MP3");
     }
     
-
+    private static final Logger logger = Logger.getLogger(RepositoryManagementUtils.class.getName());
+	
     public static void insertDirOfAudioFiles(File root, List<String[]> fileMetadataTags, int collection_id) {
         try{
-            System.out.println("");
-            System.out.println("Collection id: " + collection_id);
-            System.out.println("Directory: " + root.getAbsolutePath());
-            System.out.println("File metadata tags:");
+            logger.info("");
+            logger.info("Collection id: " + collection_id);
+            logger.info("Directory: " + root.getAbsolutePath());
+            logger.info("File metadata tags:");
             for (Iterator<String[]> it = fileMetadataTags.iterator(); it.hasNext();){
                 String[] strings = it.next();
-                System.out.println("\t" + strings[0] + ":\t" + strings[1]);
+                logger.info("\t" + strings[0] + ":\t" + strings[1]);
             }
-            System.out.println("");
+            logger.info("");
 
             RepositoryUpdateClientImpl client = new RepositoryUpdateClientImpl();
 
@@ -94,56 +95,56 @@ public class RepositoryManagementUtils {
                             //create map of id to path - checking for duplication
                             fileOld = idMap.put(id, file);
                             if (fileOld != null){
-                                System.out.println("WARNING: more than one file found for ID: " + id + "\nOld: " + fileOld.getAbsolutePath() + "\nNew: " + file.getAbsolutePath());
+                                logger.info("WARNING: more than one file found for ID: " + id + "\nOld: " + fileOld.getAbsolutePath() + "\nNew: " + file.getAbsolutePath());
                             }
                         }else{
-                            System.out.println("ignorning file " + name + " with extension " + ext);
+                            logger.info("ignorning file " + name + " with extension " + ext);
                         }
                     }
                 }
             }
-            System.out.println("Found " + idMap.size() + " files to insert for collection id: " + collection_id);
+            logger.info("Found " + idMap.size() + " files to insert for collection id: " + collection_id);
 
             int togo = 10;
             while(togo > 0){
-                System.out.println("Commencing metadata definition insertions in " + togo + " seconds");
+                logger.info("Commencing metadata definition insertions in " + togo + " seconds");
                 togo -= 5;
                 try{
                     Thread.sleep(5000);
                 }catch (InterruptedException ex){
-                    Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
             }
 
 
-            System.out.println("Inserting metadata definitions");
+            logger.info("Inserting metadata definitions");
             //insert metadata defs, fail on duplication
             for (Iterator<String[]> it = fileMetadataTags.iterator(); it.hasNext();){
                 String tag = it.next()[0];
                 try{
                     client.insertFileMetaDef(tag);
                 }catch (SQLException ex){
-                    Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
             }
-            System.out.println("Retrieving definitions");
+            logger.info("Retrieving definitions");
             try{
                 //retrieve ids of definitions
                 client.initTypesMaps();
             }catch (SQLException ex){
-                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, null, ex);
             }
-            System.out.println("Inserting metadata values");
+            logger.info("Inserting metadata values");
             //insert metadata values, fail on duplication
             for (Iterator<String[]> it = fileMetadataTags.iterator(); it.hasNext();){
                 String[] tag = it.next();
                 try{
                     client.insertFileMeta(client.getFileMetadataID(tag[0]), tag[1]);
                 }catch (SQLException ex){
-                    Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
             }
-            System.out.println("Retrieving metadata value to ID map");
+            logger.info("Retrieving metadata value to ID map");
             Map<Integer, Map<String, Integer>> fileMetaValueMap;
             int[] fileMetaIDs = new int[fileMetadataTags.size()];
             int idx = 0;
@@ -153,26 +154,26 @@ public class RepositoryManagementUtils {
                 for (Iterator<String[]> it = fileMetadataTags.iterator(); it.hasNext();){
                     String[] tag = it.next();
                     fileMetaIDs[idx] = fileMetaValueMap.get(client.getFileMetadataID(tag[0])).get(tag[1]);
-                    System.out.println(fileMetaIDs[idx] + " = " + tag[0] + ":" + tag[1]);
+                    logger.info(fileMetaIDs[idx] + " = " + tag[0] + ":" + tag[1]);
                     idx++;
                 }
             }catch (SQLException ex){
-                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, null, ex);
             }
 
 
             togo = 10;
             while(togo > 0){
-                System.out.println("Commencing file insertions in " + togo + " seconds");
+                logger.info("Commencing file insertions in " + togo + " seconds");
                 togo -= 5;
                 try{
                     Thread.sleep(5000);
                 }catch (InterruptedException ex){
-                    Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
             }
 
-            System.out.println("Inserting files");
+            logger.info("Inserting files");
             int numFilesInserted = 0;
             int numFilesFailed = 0;
             int num = 0;
@@ -182,13 +183,13 @@ public class RepositoryManagementUtils {
                 try{
                     client.insertTrack(track);
                 }catch (SQLException ex){
-                    Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
                 try{
                     //insert collection link
                     client.insertTrackCollectionLink(collection_id, track);
                 }catch (SQLException ex){
-                    Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
                 try{
                     //insert file against track
@@ -204,21 +205,21 @@ public class RepositoryManagementUtils {
                         numFilesInserted++;
                     }
                 }catch (SQLException ex){
-                    Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, null, ex);
                 }
                 num++;
                 if (num % 100 == 0){
-                    System.out.println("inserted " + num + " of " + idMap.size());
+                    logger.info("inserted " + num + " of " + idMap.size());
                 }
             }
-            System.out.println("Inserted " + numFilesInserted + ", failed " + numFilesFailed);
+            logger.info("Inserted " + numFilesInserted + ", failed " + numFilesFailed);
 
-            System.out.println("Commiting...");
+            logger.info("Commiting...");
             client.commit();
             client.setAutocommit(true);
 
         }catch (SQLException ex){
-            Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -250,7 +251,7 @@ public class RepositoryManagementUtils {
                 throw new RuntimeException("Wrong number of arguments received!\n" + USAGE);
             }
             if(args.length <= 3){
-                System.out.println("WARNING: No metadata arguments received!");
+                logger.info("WARNING: No metadata arguments received!");
             }
             for (int i = 3; i < args.length; i+=2){
                 String key = args[i];
@@ -262,7 +263,7 @@ public class RepositoryManagementUtils {
         }else if (args[0].equals("-m")){
             migrate_metadata();
         }else if (args[0].equals("-dtt")){
-            System.out.println("Inserting test/train dataset");
+            logger.info("Inserting test/train dataset");
             try{
             	RepositoryUpdateClientImpl client = new RepositoryUpdateClientImpl();
                 if (args.length < 6){
@@ -292,41 +293,41 @@ public class RepositoryManagementUtils {
                     }
                 }
 
-                System.out.println("Name:                " + name);
-                System.out.println("Description:\n" + description);
-                System.out.println("Subject metadata:    " + args[3]);
-                System.out.println("Subject metadata id: " + subject_track_metadata_type_id);
-                System.out.println("Filter metadata:     " + args[4]);
-                System.out.println("Filter metadata id:  " + filter_track_metadata_type_id);
-                System.out.println("Subset file path:    " + dataset_subset_file.getAbsolutePath());
+                logger.info("Name:                " + name);
+                logger.info("Description:\n" + description);
+                logger.info("Subject metadata:    " + args[3]);
+                logger.info("Subject metadata id: " + subject_track_metadata_type_id);
+                logger.info("Filter metadata:     " + args[4]);
+                logger.info("Filter metadata id:  " + filter_track_metadata_type_id);
+                logger.info("Subset file path:    " + dataset_subset_file.getAbsolutePath());
                 System.out.print(  "Test set files:\n");
                 for (Iterator<File> it = testset_files.iterator(); it.hasNext();){
-                    System.out.println(it.next().getAbsolutePath());
+                    logger.info(it.next().getAbsolutePath());
                 }
 
                 int togo = 10;
                 while(togo > 0){
-                    System.out.println("Commencing dataset insert in " + togo + " seconds");
+                    logger.info("Commencing dataset insert in " + togo + " seconds");
                     togo -= 5;
                     try{
                         Thread.sleep(5000);
                     }catch (InterruptedException ex){
-                        Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                        logger.log(Level.SEVERE, null, ex);
                     }
                 }
 
                 client.insertTestTrainDataset(name, description,  subject_track_metadata_type_id, filter_track_metadata_type_id, dataset_subset_file, testset_files);
             }catch (SQLException ex){
-                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, null, ex);
             }
 
         }else if (args[0].equals("-dt")){
-            System.out.println("Inserting single test set dataset");
+            logger.info("Inserting single test set dataset");
 
             try{
             	RepositoryUpdateClientImpl client = new RepositoryUpdateClientImpl();
                 if (args.length < 6){
-                    System.out.println("Insufficent arguments!\n" + USAGE);
+                    logger.info("Insufficent arguments!\n" + USAGE);
                 }
 
                 String name = args[1];
@@ -342,32 +343,32 @@ public class RepositoryManagementUtils {
                 }
                 
 
-                System.out.println("Name:                " + name);
-                System.out.println("Description:\n" + description);
-                System.out.println("Subject metadata:    " + args[3]);
-                System.out.println("Subject metadata id: " + subject_track_metadata_type_id);
-                System.out.println("Filter metadata:     " + args[4]);
-                System.out.println("Filter metadata id:  " + filter_track_metadata_type_id);
-                System.out.println("Subset file path:    " + dataset_subset_file.getAbsolutePath());
+                logger.info("Name:                " + name);
+                logger.info("Description:\n" + description);
+                logger.info("Subject metadata:    " + args[3]);
+                logger.info("Subject metadata id: " + subject_track_metadata_type_id);
+                logger.info("Filter metadata:     " + args[4]);
+                logger.info("Filter metadata id:  " + filter_track_metadata_type_id);
+                logger.info("Subset file path:    " + dataset_subset_file.getAbsolutePath());
 
                 int togo = 10;
                 while(togo > 0){
-                    System.out.println("Commencing dataset insert in " + togo + " seconds");
+                    logger.info("Commencing dataset insert in " + togo + " seconds");
                     togo -= 5;
                     try{
                         Thread.sleep(5000);
                     }catch (InterruptedException ex){
-                        Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                        logger.log(Level.SEVERE, null, ex);
                     }
                 }
 
                 client.insertTestOnlyDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, dataset_subset_file);
             }catch (SQLException ex){
-                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, null, ex);
             }
             
         }else if (args[0].equals("-lf")){
-            System.out.println("Inserting metadata from list file");
+            logger.info("Inserting metadata from list file");
             try{
                 RepositoryClientImpl client = new RepositoryClientImpl();
                 if (args.length < 3){
@@ -380,10 +381,10 @@ public class RepositoryManagementUtils {
                     throw new RuntimeException("The list file did not exist: " + listFile.getAbsolutePath());
                 }
                 String metadata = args[2];
-                System.out.println("List file path:      " + listFile.getAbsolutePath());
-                System.out.println("Subject metadata:    " + metadata);
+                logger.info("List file path:      " + listFile.getAbsolutePath());
+                logger.info("Subject metadata:    " + metadata);
                 int metadata_type_id = client.getTrackMetadataID(metadata);
-                System.out.println("Subject metadata id: " + metadata_type_id);
+                logger.info("Subject metadata id: " + metadata_type_id);
 
                 client.close();
 
@@ -391,11 +392,11 @@ public class RepositoryManagementUtils {
 
 
             }catch (SQLException ex){
-                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, null, ex);
             }
 
         }else if(args[0].equals("-tag")){
-        	System.out.println("Inserting tag metadata from list file");
+        	logger.info("Inserting tag metadata from list file");
         	try{
 	        	RepositoryClientImpl client = new RepositoryClientImpl();
 	            if (args.length < 3){
@@ -407,23 +408,23 @@ public class RepositoryManagementUtils {
 	                throw new RuntimeException("The list file did not exist: " + listFile.getAbsolutePath());
 	            }
 	        	String tagType = args[2];
-	        	System.out.println("List file path:      " + listFile.getAbsolutePath());
-	            System.out.println("Subject metadata:    " + tagType);
+	        	logger.info("List file path:      " + listFile.getAbsolutePath());
+	            logger.info("Subject metadata:    " + tagType);
 	            int metadata_type_id = client.getTrackMetadataID(tagType);
-	            System.out.println("Subject metadata id: " + metadata_type_id);
+	            logger.info("Subject metadata id: " + metadata_type_id);
 	
 	            client.close();
 	            
 	            insertTagMetadata(listFile, tagType);
 	            
         	}catch (SQLException ex){
-                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, null, ex);
             }
         }else{
-            System.out.println("Unrecognised argument: " + args[0]);
+            logger.info("Unrecognised argument: " + args[0]);
         }
 
-        System.out.println("--exit--");
+        logger.info("--exit--");
     }
 
     public static void insertMetadataFromListFile(File listFile, String metadatatype) {
@@ -439,11 +440,11 @@ public class RepositoryManagementUtils {
 	        
 	        int metaId = client.getTrackMetadataID(metadatatype);
 	        if (metaId == -1){
-	            System.out.println("Inserting metadata definition for: " + metadatatype);
+	            logger.info("Inserting metadata definition for: " + metadatatype);
 	
 	            int togo = 10;
 	            while(togo > 0){
-	                System.out.println("Commencing metadata definition in " + togo + " seconds");
+	                logger.info("Commencing metadata definition in " + togo + " seconds");
 	                togo -= 5;
 	                try{
 	                    Thread.sleep(5000);
@@ -453,16 +454,16 @@ public class RepositoryManagementUtils {
 	            metaId = client.getTrackMetadataID(metadatatype);
 	        }
 	        Map<String,String> map = ClassificationResultReadClass.readClassificationFile(listFile, true);
-	        System.out.println("got data for " + map.size() + " tracks");
+	        logger.info("got data for " + map.size() + " tracks");
 	
 	        int togo = 10;
 	            while(togo > 0){
-	            System.out.println("Commencing metadata insertion in " + togo + " seconds");
+	            logger.info("Commencing metadata insertion in " + togo + " seconds");
 	            togo -= 5;
 	            try{
 	                Thread.sleep(5000);
 	            }catch (InterruptedException ex){
-	                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
+	                logger.log(Level.SEVERE, null, ex);
 	            }
 	        }
 	
@@ -495,19 +496,19 @@ public class RepositoryManagementUtils {
         try{
 	        client.startTransation();
         
-	        System.out.println("Inserting track metadata definition for: " + tag_meta_type_name);
+	        logger.info("Inserting track metadata definition for: " + tag_meta_type_name);
 	        int meta_id = -1;
 	        try{
 	        	client.insertTrackMetaDef(tag_meta_type_name);
 	        	meta_id = client.getTrackMetadataID(tag_meta_type_name);
-	        	System.out.println("Retrieved track metadata type id: " + meta_id + " for type name: " + tag_meta_type_name);
+	        	logger.info("Retrieved track metadata type id: " + meta_id + " for type name: " + tag_meta_type_name);
 	        }catch (SQLException ex){
 	            throw new RuntimeException("Failed to insert or retrieve the track metadata type id for type: " + tag_meta_type_name, ex);
 	        }
 	        
 	        HashMap<String,Integer> tagToId = new HashMap<String,Integer>();
 	        
-	        System.out.println("Reading tag data from file: " + tag_file);
+	        logger.info("Reading tag data from file: " + tag_file);
 	        BufferedReader textBuffer = null;
 	        try {
 	            textBuffer = new BufferedReader(new FileReader(tag_file));
@@ -536,7 +537,7 @@ public class RepositoryManagementUtils {
 	                    	client.insertTrackMetaLink(RemapMusicDBFilenamesClass.convertFileToMIREX_ID(new File(lineComps[0].trim())), val_id);
 	                    }
 	                }else{
-	                    System.out.println("empty line ignored, line: " + lineNum + ", file: " + tag_file.getAbsolutePath());
+	                    logger.info("empty line ignored, line: " + lineNum + ", file: " + tag_file.getAbsolutePath());
 	                }
 	                line = textBuffer.readLine();
 	            }
@@ -576,7 +577,7 @@ public class RepositoryManagementUtils {
 	        //get tracks from new DB
 	        List<String> tracks = client.getAllTracks();
 	        
-	        System.out.println("Inserting track metadata definitions");
+	        logger.info("Inserting track metadata definitions");
             client.insertTrackMetaDef(TRACK_ALBUM);
             client.insertTrackMetaDef(TRACK_ARTIST);
             client.insertTrackMetaDef(TRACK_GENRE);
@@ -588,20 +589,20 @@ public class RepositoryManagementUtils {
 	        int titleMetaId = client.getTrackMetadataID(TRACK_TITLE);
 	
 	
-	        System.out.println("Retrieving definitions");
+	        logger.info("Retrieving definitions");
             //retrieve ids of definitions
             client.initTypesMaps();
 	            
 	        int togo = 10;
 	        while(togo > 0){
-	            System.out.println("Commencing metadata migration in " + togo + " seconds");
+	            logger.info("Commencing metadata migration in " + togo + " seconds");
 	            togo -= 5;
 	            try{
 	                Thread.sleep(5000);
 	            }catch (InterruptedException ex){}
 	        }
 	
-	        System.out.println("Migrating metadata for " + tracks.size() + " tracks");
+	        logger.info("Migrating metadata for " + tracks.size() + " tracks");
 	
 	        CbrowserClient cb_client;
 	        try{
@@ -639,7 +640,7 @@ public class RepositoryManagementUtils {
 	            
 	            done++;
 	            if (done % 100 == 0){
-	                System.out.println("done " + done + " of " + tracks.size());
+	                logger.info("done " + done + " of " + tracks.size());
 	            }
 	        }
 	        client.endTransation();
