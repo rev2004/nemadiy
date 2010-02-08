@@ -43,7 +43,7 @@ public class DatasetListFileGenerator {
      *
      * @return Constraints that can be passed to retrieve file sets.
      */
-	private static Logger logger = Logger.getLogger(DatasetListFileGenerator.class.getName());
+	private static final Logger logger = Logger.getLogger(DatasetListFileGenerator.class.getName());
 	public static Set<NEMAMetadataEntry> buildConstraints(String bitrate, String channels, String clip_type, String encoding, String sample_rate){
         HashSet<NEMAMetadataEntry> constraint = new HashSet<NEMAMetadataEntry>();
         if (bitrate != null && !bitrate.trim().equals("")){

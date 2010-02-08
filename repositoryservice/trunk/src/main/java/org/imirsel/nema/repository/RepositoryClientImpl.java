@@ -116,6 +116,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     DatabaseConnector dbCon;
 
+    private static final Logger logger = Logger.getLogger(RepositoryClientImpl.class.getName());
+	
     /**
      * Constructor. Establishes a connection to the repository database using the properties
      * represented in <code>org.imirsel.nema.repository.RepositoryProperties</code> and then
@@ -590,11 +592,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
     public List<NEMAFile> getFilesByID(List<String> trackIDList, Set<NEMAMetadataEntry> constraint) throws SQLException{
-        System.out.println("Resolving files for " + trackIDList.size() + " tracks");
+        logger.info("Resolving files for " + trackIDList.size() + " tracks");
         Set<String> trackSet = new HashSet<String>();
         trackSet.addAll(trackIDList);
 //        int idx = 0;
-        System.out.println("tracks in set:");
+        logger.info("tracks in set:");
         for (Iterator<String> it = trackSet.iterator(); it.hasNext();){
             String string = it.next();
 //            System.out.println(string);
@@ -605,7 +607,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         }
         Map<String,NEMAFile> fileMap = new HashMap<String, NEMAFile>(trackIDList.size());
         List<Map<String, String>> data = getFileData(constraint);
-        System.out.println("Query returned data on " + data.size() + " files, filtering");
+        logger.info("Query returned data on " + data.size() + " files, filtering");
         Map<String, String> map;
         String trackID;
 //        idx = 0;
@@ -624,14 +626,14 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             }
         }
 
-        System.out.println("mapped " + fileMap.size() + " files to tracks");
+        logger.info("mapped " + fileMap.size() + " files to tracks");
 
         List<NEMAFile> out = new ArrayList<NEMAFile>();
         for (Iterator<String> it = trackIDList.iterator(); it.hasNext();){
             out.add(fileMap.get(it.next()));
         }
 
-        System.out.println("returning file list length: " + out.size());
+        logger.info("returning file list length: " + out.size());
 
         return out;
     }
@@ -852,7 +854,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
                 rs.close();
             }
         }
-        System.out.println("cached "+ count + " objects with query "+ query);
+        logger.info("cached "+ count + " objects with query "+ query);
         return retVal;
     }
 

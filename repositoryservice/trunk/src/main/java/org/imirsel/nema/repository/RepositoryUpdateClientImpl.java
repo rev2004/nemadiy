@@ -60,6 +60,9 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
     public static final String UPDATE_DATASET_WITH_NUM_SPLITS = "UPDATE dataset SET num_splits=?, num_set_per_split=? WHERE id=?";
     private PreparedStatement updateDatasetWithNumSplits;
     
+    private static final Logger logger = Logger.getLogger(RepositoryUpdateClientImpl.class.getName());
+	
+    
 	public RepositoryUpdateClientImpl() throws SQLException {
 		super();
 		
@@ -82,14 +85,14 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
 
 
     public void insertTrackMetaDef(String name) throws SQLException{
-        System.out.println("Inserting Track metadata type: " + name);
+        logger.info("Inserting Track metadata type: " + name);
         insertTrackMetaDef.setString(1, name);
         insertTrackMetaDef.executeUpdate();
         initTypesMaps();
     }
 
     public int insertTrackMeta(int metadata_type_id, String value) throws SQLException{
-        System.out.println("Inserting Track metadata value: " + metadata_type_id + "=" + value);
+        logger.info("Inserting Track metadata value: " + metadata_type_id + "=" + value);
         insertTrackMeta.setInt(1, metadata_type_id);
         insertTrackMeta.setString(2, value);
         insertTrackMeta.executeUpdate();
@@ -133,14 +136,14 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
     }
 
     public void insertFileMetaDef(String name) throws SQLException{
-        System.out.println("Inserting File metadata type: " + name);
+        logger.info("Inserting File metadata type: " + name);
         insertFileMetaDef.setString(1, name);
         insertFileMetaDef.executeUpdate();
         initTypesMaps();
     }
 
     public void insertFileMeta(int metadata_type_id, String value) throws SQLException{
-        System.out.println("Inserting file metadata value: " + metadata_type_id + "=" + value);
+        logger.info("Inserting file metadata value: " + metadata_type_id + "=" + value);
         insertFileMeta.setInt(1, metadata_type_id);
         insertFileMeta.setString(2, value);
         insertFileMeta.executeUpdate();
@@ -180,7 +183,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             int testType = getSetTypeID("test");
             int trainType = getSetTypeID("train");
 
-            System.out.println("Inserting test set size: " + datasetTrackIDList.size());
+            logger.info("Inserting test set size: " + datasetTrackIDList.size());
 
             //insert test and training sets
             int testSetId = insertSetDescription(datasetId, testType, 1);
@@ -215,9 +218,9 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         try{
 
             //insert dataset description
-        	System.out.println("Inserting dataset description");
+        	logger.info("Inserting dataset description");
             datasetId = insertDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, subsetList);
-            System.out.println("Dataset id generated: " + datasetId);
+            logger.info("Dataset id generated: " + datasetId);
             
             int testType = getSetTypeID("test");
             int trainType = getSetTypeID("train");
@@ -232,7 +235,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
                 trainList = new ArrayList<String>(subsetList);
                 trainList.removeAll(testList);
 
-                System.out.println("Inserting training set size: " + trainList.size() + ", test set size: " + testList.size());
+                logger.info("Inserting training set size: " + trainList.size() + ", test set size: " + testList.size());
 
                 //insert test and training sets
                 int testSetId = insertSetDescription(datasetId, testType, setNum);
@@ -261,18 +264,18 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
     }
     
     public void startTransation() throws SQLException{
-    	System.out.println(this.getClass().getName() + ": Starting transaction");
+    	logger.info(this.getClass().getName() + ": Starting transaction");
     	dbCon.con.setAutoCommit(false);
 	}
     
     public void endTransation() throws SQLException{
-    	System.out.println(this.getClass().getName() + ": Commiting transaction");
+    	logger.info(this.getClass().getName() + ": Commiting transaction");
     	dbCon.con.commit();
     	dbCon.con.setAutoCommit(true);
 	}
         
     public void rollback() throws SQLException{
-    	System.out.println(this.getClass().getName() + ": Rolling-back transaction");
+    	logger.info(this.getClass().getName() + ": Rolling-back transaction");
     	dbCon.con.rollback();
     	dbCon.con.setAutoCommit(true);
 	}
@@ -284,13 +287,13 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             File dataset_subset_file,
             List<File> testset_files) throws SQLException{
         //read up subset tracks
-    	System.out.println("Reading subset file: " + dataset_subset_file.getAbsolutePath());
+    	logger.info("Reading subset file: " + dataset_subset_file.getAbsolutePath());
         List<String> subsetList = ClassificationResultReadClass.readClassificationFileAsList(dataset_subset_file, true);
         List<List<String>> testLists = new ArrayList<List<String>>(testset_files.size());
         
         for (Iterator<File> it = testset_files.iterator(); it.hasNext();){
             File testSetFile = it.next();
-            System.out.println("Reading test set file: " + testSetFile.getAbsolutePath());
+            logger.info("Reading test set file: " + testSetFile.getAbsolutePath());
             
             //read up test set tracks
             testLists.add(ClassificationResultReadClass.readClassificationFileAsList(testSetFile, true));
@@ -307,39 +310,39 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             List<String> subsetList) throws SQLException{
 
         int datasetId = -1;
-        System.out.println("\tinserting descriptive data");
+        logger.info("\tinserting descriptive data");
         insertDataset.setString(1, name);
         insertDataset.setString(2, description);
         insertDataset.setInt(3, subject_track_metadata_type_id);
         insertDataset.setInt(4, filter_track_metadata_type_id);
         insertDataset.executeUpdate();
        
-        System.out.println("\tretrieving generated id");
+        logger.info("\tretrieving generated id");
         ResultSet rs = insertDataset.getGeneratedKeys();
         if (rs.next()){
             datasetId = rs.getInt(1);
         }else{
             throw new SQLException("The dataset insertion did not return an inserted id!");
         }
-        System.out.println("\tdataset id: " + datasetId);
+        logger.info("\tdataset id: " + datasetId);
 
         //insert subset and link to Dataset
         int setType = getSetTypeID("collection_subset");
         
-        System.out.println("\tinserting collection subset");
+        logger.info("\tinserting collection subset");
         int subsetId = insertSetDescription(datasetId, setType, -1);
-        System.out.println("\tsubset id: " + subsetId);
+        logger.info("\tsubset id: " + subsetId);
         
-        System.out.println("\tinserting subset track list (" + subsetList.size() + " trackIDs)");
+        logger.info("\tinserting subset track list (" + subsetList.size() + " trackIDs)");
         insertSetTracks(subsetId, subsetList);
 
         //link subset to dataset
-        System.out.println("\tLinking subset to dataset");
+        logger.info("\tLinking subset to dataset");
         updateDatasetWithSubset.setInt(1,subsetId);
         updateDatasetWithSubset.setInt(2,datasetId);
         updateDatasetWithSubset.executeUpdate();
         
-        System.out.println("\tdone");
+        logger.info("\tdone");
         
         return datasetId;
     }
@@ -371,7 +374,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             insertSetTrackLink.executeUpdate();
             done++;
             if (done % 500 == 0){
-            	System.out.println("\t\tdone " + done + " of " + tracks.size());
+            	logger.info("\t\tdone " + done + " of " + tracks.size());
             }
         }
     }
