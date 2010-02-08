@@ -281,7 +281,7 @@ import org.meandre.core.ExecutableComponent;
 		sb = Boolean.valueOf(cc.getProperty(DATA_PROPERTY_SB));
 		ssb = Boolean.valueOf(cc.getProperty(DATA_PROPERTY_SSB));
 
-		cc.pushDataComponentToOutput(DATA_INPUT_1, filename);
+		cc.pushDataComponentToOutput(DATA_OUTPUT_1, filename);
 	}
 
 
