@@ -103,6 +103,10 @@ public class NemaFlowNotification implements Probe {
         	updateTable.setString(2, sFlowUniqueID);
 			updateTable.setString(3, token);
 			//updateTable.setTimestamp(4, new Timestamp(new Date().getTime()));
+			LOGGER.info("UPDATE: " + sqlUpdate);
+			LOGGER.info("statusCode: " + Job.JobStatus.STARTED.getCode());
+			LOGGER.info("sFlowUniqueID: "+ sFlowUniqueID);
+			LOGGER.info("token: "+token);
 			int result =updateTable.executeUpdate();
 			if(result!=1){
 				LOGGER.severe("probeFlowStart: update returned: "+ result);	

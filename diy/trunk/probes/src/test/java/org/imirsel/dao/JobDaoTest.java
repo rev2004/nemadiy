@@ -56,7 +56,7 @@ public class JobDaoTest {
 		job.setPort(1714);
 		job.setOwnerEmail("amitku@uiuc.edu");
 		job.setOwnerId(1l);
-		job.setStatusCode(Job.JobStatus.toJobStatus(Job.JobStatus.STARTED));
+		job.setStatusCode(Job.JobStatus.SUBMITTED.getCode());
 		job.setSubmitTimestamp(new Date());
 		job.setToken("token");
 		job.setUpdateTimestamp(new Date());
