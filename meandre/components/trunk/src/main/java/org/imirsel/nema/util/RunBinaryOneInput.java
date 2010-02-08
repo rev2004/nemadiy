@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.imirsel.nema.annotations.BooleanDataType;
@@ -28,7 +29,7 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
-import org.meandre.core.ExecutableComponent;
+import org.imirsel.nema.NEMAComponent;
 
 /** This executable component executes an external binary using the process builder.
  *
@@ -39,7 +40,7 @@ import org.meandre.core.ExecutableComponent;
 		"using the process builder. This module accepts one File input.", 
 		name="RunBinaryOneInput",
 		tags="test ft please hello")
-		public class RunBinaryOneInput implements ExecutableComponent {
+		public class RunBinaryOneInput extends NEMAComponent {
 
 
 	//@ComponentInput(description="Java File Object In", name="fileObjectIn")
@@ -117,19 +118,19 @@ import org.meandre.core.ExecutableComponent;
 	private String processWorkingDirName;
 	private String processResultsDir;
 	private boolean isAborted = false;
-	Process process;
+	Process process = null;;
+	ProcessOutputReceiver procOutputReceiverThread = null;
 
-	// log messages are here
-	private Logger _logger;
-	java.io.PrintStream cout;
+	// log messages are set to go to cout in the superclass NEMAComponent
+	
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
 	 *
 	 * @param ccp The properties associated to a component context
 	 */
-	public void initialize ( ComponentContextProperties ccp ) {
-		this._logger = ccp.getLogger();
-		cout = ccp.getOutputConsole();
+	public void initialize (ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException{
+		super.initialize(ccp, this.getClass());
+		
 		if(process != null) {
             process.destroy();
         }
@@ -171,45 +172,36 @@ import org.meandre.core.ExecutableComponent;
 		env_var = String.valueOf(cc.getProperty(DATA_PROPERTY_ENV_VAR));
 		String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[] outLists = new String[fileLists.length];
-		cout.println("");
-		cout.println("=============================================================");
-		cout.println("Starting execution of external binaries");
-		cout.println("=============================================================");
-		cout.println("Number of files to process: " + fileLists.length);
-		cout.flush();
+		_logger.info("\n" +
+				"=============================================================\n" +
+				"Starting execution of external binaries\n" +
+				"=============================================================\n" +
+				"Number of files to process: " + fileLists.length + "\n");
+		
 		File[] names = new File[fileLists.length];
 		for (int i = 0; i < fileLists.length; i++) {
-			cout.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-			cout.println("FILE:  " + (i+1) +"/" + fileLists.length);
-			cout.flush();
+			_logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+					"FILE:  " + (i+1) +"/" + fileLists.length + "\n");
 			if(isAborted) {
-				cout.println("");
-				cout.println("Execution of external binaries aborted");
-				cout.flush();
+				_logger.info("\n" +
+					"Execution of external binaries aborted");
 				break;
 			}
 
 			File inFile = new File(fileLists[i]);
 
 			try {
-				runCommand(inFile.getCanonicalPath(),cout);
+				runCommand(inFile.getCanonicalPath());
 				outLists[i] = outfile;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				cout.println("IOException");
-				cout.flush();
-				e.printStackTrace();
+				_logger.log(Level.SEVERE,"IOException occured while working with input file: " + inFile.getAbsolutePath(),e); 
 			} catch (RuntimeException e) {
-				// TODO Auto-generated catch block
-				cout.println("RuntimeException");
-				cout.flush();
-				e.printStackTrace();
+				_logger.log(Level.SEVERE,"Runtime occured while working with input file: " + inFile.getAbsolutePath(),e);
 			}
 		}
-		cout.println("=============================================================");
-		cout.println("Execution of external binaries complete");
-		cout.println("=============================================================");
-		cout.flush();
+		_logger.info("=============================================================\n" +
+				"Execution of external binaries complete\n" +
+				"=============================================================");
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 	}
 
@@ -217,16 +209,20 @@ import org.meandre.core.ExecutableComponent;
 	/** This method is called when the Menadre Flow execution is completed.
 	 *
 	 * @param ccp The properties associated to a component context
+	 * @throws ComponentContextException 
 	 */
-	public void dispose ( ComponentContextProperties ccp ) {
-		cout.close();
+	public void dispose (ComponentContextProperties ccp) throws ComponentContextException {
+		super.dispose(ccp);
 		if(process != null) {
             process.destroy();
         }
+		if(procOutputReceiverThread != null){
+			procOutputReceiverThread.kill();
+		}
 		isAborted = true;
 	}
 
-	private void runCommand(final String inputFilename, java.io.PrintStream cout) throws IOException, RuntimeException {
+	private void runCommand(final String inputFilename) throws IOException, RuntimeException {
 		//System.out.println("External Code Integration Module \nby Kris West, University of East Anglia, UK, kristopher.west@uea.ac.uk");
 
 		// Create File to represent working directory
@@ -254,12 +250,11 @@ import org.meandre.core.ExecutableComponent;
 		if (!command.exists()) {
 			File command2 = new File(dir.getCanonicalPath() + File.separator + execName);
 			if (!command2.exists()) {
-				cout.println("External Command NOT FOUND!");
-				cout.flush();
+				_logger.info("External binary (" + command2.getAbsolutePath() + ") NOT FOUND!");
 				throw new RuntimeException("External Integration module was unable to locate your command!\n" +
 						"File names tried:\n\t" + command.getCanonicalPath() + "\n\t" + command2.getCanonicalPath() + "\n" +
 						"Please ensure that your binaries are in the working directory set in the ExternalInteration " +
-				"modules's properties panel.");
+						"modules's properties panel.");
 			} else {
 				command = command2;
 			}
@@ -393,41 +388,26 @@ import org.meandre.core.ExecutableComponent;
 				//System.out.println("short component: " + components[i]);
 			}
 		}
-		cout.println("");
-		cout.println("Running command:");
-
-		
+		String msg = "Running command:    ";
 		for (int i=0;i<cmdArray.length;i++) {
-			cout.print(cmdArray[i] + " ");
+			msg += cmdArray[i] + " ";
 		}
-	
-
-
+		msg += "In directory:       " + dir.getCanonicalPath() + "\n";
+		msg += "Sending results to: " + resdir.getCanonicalPath() + "\n";
 		
-//		for (int i=0;i<cmdArray.length;i++) {
-//			cout.print(cmdArray[i] + " ");
-//		}
-		cout.println("");
-		cout.println("");
-		cout.println("In directory:");
-		cout.println(dir.getCanonicalPath());
-		cout.println("");
-		cout.println("Sending results to:");
-		cout.println(resdir.getCanonicalPath());
-		cout.println("");
-		cout.flush();
+		_logger.info(msg);
+
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
-//		ProcessBuilder pb = new ProcessBuilder(cmdArrayWithShell);
 
 		Map<String, String> env = pb.environment();
 		if (!env_var.contentEquals("VAR_NAME,VAR_VAL")){
 		     String[] env_pair = env_var.split(",");
 		     if (env_pair.length == 2){
 			     env.put(env_pair[0], env_pair[1]);
-			     cout.println("Environment variable " + env_pair[0] +"="+ env_pair[1]+ " succesfully set.");
+			     _logger.info("Environment variable " + env_pair[0] +"="+ env_pair[1]+ " succesfully set.");
 		     }
 		     else {
-		    	 cout.println("The environment variable " + env_var + " can not be parsed !!!");
+		    	 _logger.info("The environment variable " + env_var + " can not be parsed !!!");
 		     }
 		}
 		// 
@@ -435,34 +415,34 @@ import org.meandre.core.ExecutableComponent;
 		// env.put("VAR2", env.get("VAR1") + "suffix");
 		pb.directory(dir);
 		pb.redirectErrorStream(true);
-		process = pb.start();
-		InputStream is = process.getInputStream();
-		cout.println("*******************************************");
-		cout.println("EXTERNAL PROCESS STDOUT AND STDERR:");
-		cout.println("");
-		cout.flush();
-		new Thread( new ProcessOutputReceiver( is, cout ) ).start();
-        /*
-		InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        String line;
-        while ((line = br.readLine()) != null) {
-          cout.println("\t" + line);
-        }
-        */
-        int exitStatus;
-		try {
-			exitStatus = process.waitFor();
-			cout.println("");
-			cout.println("EXTERNAL PROCESS EXIT STATUS: " + exitStatus);
-			cout.println("*******************************************");
-			cout.flush();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		InputStream is = null;
+		try{
+			process = pb.start();
+			is = process.getInputStream();
+			_logger.info("*******************************************\n" +
+					"EXTERNAL PROCESS STDOUT AND STDERR:");
+			procOutputReceiverThread = new ProcessOutputReceiver( is, _logger );
+	        procOutputReceiverThread.start();
+	        int exitStatus;
+	        
+			try {
+				exitStatus = process.waitFor();
+				_logger.info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus + "\n" +
+						"*******************************************");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}finally{
+			if(procOutputReceiverThread != null){
+				procOutputReceiverThread.kill();
+			}
+			if(process != null){
+				process.getErrorStream().close();
+			}
+			if(is != null){
+				is.close();
+			}
 		}
-		process.getErrorStream().close();
-		is.close();
-	
 	}
 }

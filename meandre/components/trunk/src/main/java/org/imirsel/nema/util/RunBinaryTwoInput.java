@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.imirsel.nema.annotations.BooleanDataType;
@@ -29,6 +30,8 @@ import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
+import org.imirsel.nema.NEMAComponent;
+
 
 /** This executable component executes an external binary using the process builder.
  *
@@ -39,7 +42,7 @@ import org.meandre.core.ExecutableComponent;
 		"using the process builder. This module accepts one File input.", 
 		name="RunBinaryTwoInput",
 		tags="test ft please hello")
-		public class RunBinaryTwoInput implements ExecutableComponent {
+		public class RunBinaryTwoInput extends NEMAComponent {
 
 
 	//@ComponentInput(description="Java File Object In", name="fileObjectIn")
@@ -119,18 +122,16 @@ import org.meandre.core.ExecutableComponent;
 	private String processResultsDir;
 	private boolean isAborted = false;
 	Process process;
+	ProcessOutputReceiver procOutputReceiverThread = null;
 
-	// log messages are here
-	private Logger _logger;
-	java.io.PrintStream cout;
+	// logger is setup to got cout in superclass NEMAComponent
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
 	 *
 	 * @param ccp The properties associated to a component context
 	 */
-	public void initialize ( ComponentContextProperties ccp ) {
-		this._logger = ccp.getLogger();
-		cout = ccp.getOutputConsole();
+	public void initialize (ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException{
+		super.initialize(ccp, this.getClass());
 		if(process != null) {
             process.destroy();
         }
@@ -178,24 +179,21 @@ import org.meandre.core.ExecutableComponent;
 
 		// sanity check that both filelists are same length
 		if (fileLists1.length != fileLists2.length) {
-			cout.println("ERROR: File lists for input1 and input2 are different lengths!");
+			_logger.severe("ERROR: File lists for input1 and input2 are different lengths!");
 			return;
 		}
-		cout.println("");
-		cout.println("=============================================================");
-		cout.println("Starting execution of external binaries");
-		cout.println("=============================================================");
-		cout.println("Number of files to process: " + fileLists1.length);
-		cout.flush();
+		_logger.info("\n" +
+				"=============================================================\n" +
+				"Starting execution of external binaries\n" +
+				"=============================================================\n" +
+				"Number of files to process: " + fileLists1.length + "\n");
 
 		for (int i = 0; i < fileLists1.length; i++) {
-			cout.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-			cout.println("FILE:  " + (i+1) +"/" + fileLists1.length);
-			cout.flush();
+			_logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+					"FILE:  " + (i+1) +"/" + fileLists1.length);
+
 			if(isAborted) {
-				cout.println("");
-				cout.println("Execution of external binaries aborted");
-				cout.flush();
+				_logger.info("Execution of external binaries aborted");
 				break;
 			}
 
@@ -203,24 +201,17 @@ import org.meandre.core.ExecutableComponent;
 			File inFile2 = new File(fileLists2[i]);
 
 			try {
-				runCommand(inFile2.getCanonicalPath(), inFile1.getCanonicalPath(),cout);
+				runCommand(inFile2.getCanonicalPath(), inFile1.getCanonicalPath(),_logger);
 				outLists[i] = outfile;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				cout.println("IOException");
-				cout.flush();
-				e.printStackTrace();
+				_logger.log(Level.SEVERE,"IOException occured while working with input file1: '" + inFile1.getAbsolutePath() + "' and input file2: '" + inFile2.getAbsolutePath() + "'",e); 
 			} catch (RuntimeException e) {
-				// TODO Auto-generated catch block
-				cout.println("RuntimeException");
-				cout.flush();
-				e.printStackTrace();
+				_logger.log(Level.SEVERE,"Runtime occured while working with input file1: '" + inFile1.getAbsolutePath() + "' and input file2: '" + inFile2.getAbsolutePath() + "'",e); 
 			}
 		}
-		cout.println("=============================================================");
-		cout.println("Execution of external binaries complete");
-		cout.println("=============================================================");
-		cout.flush();
+		_logger.info("=============================================================\n" +
+				"Execution of external binaries complete\n" +
+				"=============================================================");
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 	}
 
@@ -228,273 +219,301 @@ import org.meandre.core.ExecutableComponent;
 	/** This method is called when the Menadre Flow execution is completed.
 	 *
 	 * @param ccp The properties associated to a component context
+	 * @throws ComponentContextException 
 	 */
-	public void dispose ( ComponentContextProperties ccp ) {
-		cout.close();
+	public void dispose ( ComponentContextProperties ccp ) throws ComponentContextException {
+		super.dispose(ccp);
 		if(process != null) {
             process.destroy();
         }
-		isAborted = true;
-
-	}
-
-private void runCommand(final String inputFilename2, final String inputFilename1, java.io.PrintStream cout) throws RuntimeException, IOException {
-        
-        
-        // Create File to represent working directory
-	File dir;
-	if (!workingDir.contentEquals("")) {
-		dir = new File(workingDir);
-	} else {
-		dir = new File (processWorkingDir);
-	}
-	File resdir = new File(processResultsDir);
-	
-
-	// Get the output filename
-	if (addExtension == false) {
-		outfile = resdir.getCanonicalPath() + File.separator + outputFileName;
-	} 
-	else {
-		outfile = resdir.getCanonicalPath() + File.separator + (new File(inputFilename1)).getName() + extension;            
-	}
-        
-        
-        // Set any environment variable required
-        String[] envp = null;
-        
-        //envp[0] = "VARIABLE=VALUE"
-        
-        File command = new File(execName);
-        if (!command.exists()) {
-            File command2 = new File(dir.getCanonicalPath() + File.separator + execName);
-            if (!command2.exists()) {
-                throw new RuntimeException("External Integration module was unable to locate your command!\n" +
-                        "File names tried:\n\t" + command.getCanonicalPath() + "\n\t" + command2.getCanonicalPath() + "\n" +
-                        "Please ensure that your binaries are in the working directory set in the ExternalInteration " +
-                        "modules's properties panel.");
-            } else {
-                command = command2;
-            }
-        }
-        
-        // Create command
-        String ExternalCommand = "";
-        String[] components = commandFormattingStr.split("[$]");
-        
-        int commandLength = 0;//components.length;
-        String[] cmdArray;
-        for (int i=0;i<components.length;i++) {
-            if (components[i].length() >= 1) {
-                char testSymbol = components[i].charAt(0);
-                //System.out.println("testSymbol: " + testSymbol);
-                switch (testSymbol) {
-                    case 'm':
-                        commandLength++;
-                        if(!components[i].substring(1).trim().equals("")) {
-                            String[] comps = components[i].substring(1).trim().split(" ");
-                            commandLength += comps.length;
-                        }
-                        //System.out.println("m component: " + components[i].substring(1));
-                        break;
-                        // case 'i': ExternalCommand += "\"" + inputFilename + "\"" + components[i].substring(1);
-                    case '1':
-                        commandLength++;
-                        if(!components[i].substring(1).trim().equals("")) {
-                            String[] comps = components[i].substring(1).trim().split(" ");
-                            commandLength += comps.length;
-                        }
-                        //System.out.println("i component: " + components[i].substring(1));
-                        break;
-                    case '2':
-                        commandLength++;
-                        if(!components[i].substring(1).trim().equals("")) {
-                            String[] comps = components[i].substring(1).trim().split(" ");
-                            commandLength += comps.length;
-                        }
-                        //System.out.println("i component: " + components[i].substring(1));
-                        break;
-                        //case 'o': ExternalCommand += "\"" + outfile + "\"" + components[i].substring(1);
-                    case 'o':
-                        commandLength++;
-                        if(!components[i].substring(1).trim().equals("")) {
-                            String[] comps = components[i].substring(1).trim().split(" ");
-                            commandLength += comps.length;
-                        }
-                        //System.out.println("o component: " + components[i].substring(1));
-                        break;
-                        //default: ExternalCommand += components[i];
-                    case 's':
-    					commandLength++;
-    					if(!components[i].substring(1).trim().equals("")) {
-    						String[] comps = components[i].substring(1).trim().split(" ");
-    						commandLength += comps.length;
-    					}
-    					break;
-                    default:
-                        if(components[i].trim().equals("")) {
-                            //commandLength--;
-                        } else {
-                            String[] comps = components[i].trim().split(" ");
-                            commandLength += comps.length;
-                        }
-                        break;
-                }
-            } else {
-                //ExternalCommand += components[i];
-                //System.out.println("short component: " + components[i]);
-            }
-        }
-        cmdArray = new String[commandLength];
-        
-        int cmdCount = 0;
-        for (int i=0;i<components.length;i++) {
-            if (components[i].length() >= 1) {
-                char testSymbol = components[i].charAt(0);
-                //System.out.println("testSymbol: " + testSymbol);
-                switch (testSymbol) {
-                    //case 'm': ExternalCommand += "\"" + command.getCanonicalPath() + "\"" + components[i].substring(1);
-                    case 'm':
-                        //cmdArray[cmdCount] = "\"" + command.getCanonicalPath() + "\"";
-                        cmdArray[cmdCount] = command.getCanonicalPath();
-                        cmdCount++;
-                        if(!components[i].substring(1).trim().equals("")) {
-                            String[] comps = components[i].substring(1).trim().split(" ");
-                            for (int j=0;j<comps.length;j++) {
-                                cmdArray[cmdCount] = comps[j].trim();
-                                cmdCount++;
-                            }
-                        }
-                        //System.out.println("m component: " + components[i].substring(1));
-                        break;
-                        // case 'i': ExternalCommand += "\"" + inputFilename + "\"" + components[i].substring(1);
-                    case '1':
-                        //cmdArray[cmdCount] = "\"" + inputFilename1 + "\"";
-                        cmdArray[cmdCount] = inputFilename1;
-                        cmdCount++;
-                        if(!components[i].substring(1).trim().equals("")) {
-                            String[] comps = components[i].substring(1).trim().split(" ");
-                            for (int j=0;j<comps.length;j++) {
-                                cmdArray[cmdCount] = comps[j].trim();
-                                cmdCount++;
-                            }
-                        }
-                        //System.out.println("i component: " + components[i].substring(1));
-                        break;
-                    case '2':
-                        //cmdArray[cmdCount] = "\"" + inputFilename2 + "\"";
-                        cmdArray[cmdCount] = inputFilename2;
-                        cmdCount++;
-                        if(!components[i].substring(1).trim().equals("")) {
-                            String[] comps = components[i].substring(1).trim().split(" ");
-                            for (int j=0;j<comps.length;j++) {
-                                cmdArray[cmdCount] = comps[j].trim();
-                                cmdCount++;
-                            }
-                        }
-                        //System.out.println("i component: " + components[i].substring(1));
-                        break;
-                        //case 'o': ExternalCommand += "\"" + outfile + "\"" + components[i].substring(1);
-                    case 'o':
-                        //cmdArray[cmdCount] = "\"" + outfile + "\"";
-                        cmdArray[cmdCount] = outfile;
-                        cmdCount++;
-                        if(!components[i].substring(1).trim().equals("")) {
-                            String[] comps = components[i].substring(1).trim().split(" ");
-                            for (int j=0;j<comps.length;j++) {
-                                cmdArray[cmdCount] = comps[j].trim();
-                                cmdCount++;
-                            }
-                        }
-                        //System.out.println("o component: " + components[i].substring(1));
-                        break;
-                    case 's':
-    					//cmdArray[cmdCount] = "\"" + outfile + "\"";
-    					cmdArray[cmdCount] = processWorkingDir;
-    					cmdCount++;
-    					if(!components[i].substring(1).trim().equals("")) {
-    						String[] comps = components[i].substring(1).trim().split(" ");
-    						for (int j=0;j<comps.length;j++) {
-    							cmdArray[cmdCount] = comps[j].trim();
-    							cmdCount++;
-    						}
-    					}
-    					break;
-                    default:
-                        if(components[i].trim().equals("")) {
-                            
-                        } else {
-                            String[] comps = components[i].trim().split(" ");
-                            for(int j=0;j<comps.length;j++) {
-                                cmdArray[cmdCount] = comps[j].trim();
-                                cmdCount++;
-                            }
-                            
-                        }
-                        break;
-                }
-            } else {
-                //ExternalCommand += components[i];
-                //System.out.println("short component: " + components[i]);
-            }
-        }
-        cout.println("");
-		cout.println("Running command:");
-		for (int i=0;i<cmdArray.length;i++) {
-			cout.print(cmdArray[i] + " ");
+		if(procOutputReceiverThread != null){
+			procOutputReceiverThread.kill();
 		}
-		cout.println("");
-		cout.println("");
-		cout.println("In directory:");
-		cout.println(dir.getCanonicalPath());
-		cout.println("");
-		cout.println("Sending results to:");
-		cout.println(resdir.getCanonicalPath());
-		cout.println("");
-		cout.flush();
+		isAborted = true;
+	}
+
+	private void runCommand(final String inputFilename2,
+			final String inputFilename1, Logger logger)
+			throws RuntimeException, IOException {
+		// Create File to represent working directory
+		File dir;
+		if (!workingDir.contentEquals("")) {
+			dir = new File(workingDir);
+		} else {
+			dir = new File(processWorkingDir);
+		}
+		File resdir = new File(processResultsDir);
+
+		// Get the output filename
+		if (addExtension == false) {
+			outfile = resdir.getCanonicalPath() + File.separator
+					+ outputFileName;
+		} else {
+			outfile = resdir.getCanonicalPath() + File.separator
+					+ (new File(inputFilename1)).getName() + extension;
+		}
+
+		// Set any environment variable required
+		String[] envp = null;
+
+		// envp[0] = "VARIABLE=VALUE"
+
+		File command = new File(execName);
+		if (!command.exists()) {
+			File command2 = new File(dir.getCanonicalPath() + File.separator
+					+ execName);
+			if (!command2.exists()) {
+				throw new RuntimeException(
+						"External Integration module was unable to locate your command!\n"
+								+ "File names tried:\n\t"
+								+ command.getCanonicalPath()
+								+ "\n\t"
+								+ command2.getCanonicalPath()
+								+ "\n"
+								+ "Please ensure that your binaries are in the working directory set in the ExternalInteration "
+								+ "modules's properties panel.");
+			} else {
+				command = command2;
+			}
+		}
+
+		// Create command
+		String ExternalCommand = "";
+		String[] components = commandFormattingStr.split("[$]");
+
+		int commandLength = 0;// components.length;
+		String[] cmdArray;
+		for (int i = 0; i < components.length; i++) {
+			if (components[i].length() >= 1) {
+				char testSymbol = components[i].charAt(0);
+				// System.out.println("testSymbol: " + testSymbol);
+				switch (testSymbol) {
+				case 'm':
+					commandLength++;
+					if (!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim()
+								.split(" ");
+						commandLength += comps.length;
+					}
+					// System.out.println("m component: " +
+					// components[i].substring(1));
+					break;
+				// case 'i': ExternalCommand += "\"" + inputFilename + "\"" +
+				// components[i].substring(1);
+				case '1':
+					commandLength++;
+					if (!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim()
+								.split(" ");
+						commandLength += comps.length;
+					}
+					// System.out.println("i component: " +
+					// components[i].substring(1));
+					break;
+				case '2':
+					commandLength++;
+					if (!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim()
+								.split(" ");
+						commandLength += comps.length;
+					}
+					// System.out.println("i component: " +
+					// components[i].substring(1));
+					break;
+				// case 'o': ExternalCommand += "\"" + outfile + "\"" +
+				// components[i].substring(1);
+				case 'o':
+					commandLength++;
+					if (!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim()
+								.split(" ");
+						commandLength += comps.length;
+					}
+					// System.out.println("o component: " +
+					// components[i].substring(1));
+					break;
+				// default: ExternalCommand += components[i];
+				case 's':
+					commandLength++;
+					if (!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim()
+								.split(" ");
+						commandLength += comps.length;
+					}
+					break;
+				default:
+					if (components[i].trim().equals("")) {
+						// commandLength--;
+					} else {
+						String[] comps = components[i].trim().split(" ");
+						commandLength += comps.length;
+					}
+					break;
+				}
+			} else {
+				// ExternalCommand += components[i];
+				// System.out.println("short component: " + components[i]);
+			}
+		}
+		cmdArray = new String[commandLength];
+
+		int cmdCount = 0;
+		for (int i = 0; i < components.length; i++) {
+			if (components[i].length() >= 1) {
+				char testSymbol = components[i].charAt(0);
+				// System.out.println("testSymbol: " + testSymbol);
+				switch (testSymbol) {
+				// case 'm': ExternalCommand += "\"" +
+				// command.getCanonicalPath() + "\"" +
+				// components[i].substring(1);
+				case 'm':
+					// cmdArray[cmdCount] = "\"" + command.getCanonicalPath() +
+					// "\"";
+					cmdArray[cmdCount] = command.getCanonicalPath();
+					cmdCount++;
+					if (!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim()
+								.split(" ");
+						for (int j = 0; j < comps.length; j++) {
+							cmdArray[cmdCount] = comps[j].trim();
+							cmdCount++;
+						}
+					}
+					// System.out.println("m component: " +
+					// components[i].substring(1));
+					break;
+				// case 'i': ExternalCommand += "\"" + inputFilename + "\"" +
+				// components[i].substring(1);
+				case '1':
+					// cmdArray[cmdCount] = "\"" + inputFilename1 + "\"";
+					cmdArray[cmdCount] = inputFilename1;
+					cmdCount++;
+					if (!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim()
+								.split(" ");
+						for (int j = 0; j < comps.length; j++) {
+							cmdArray[cmdCount] = comps[j].trim();
+							cmdCount++;
+						}
+					}
+					// System.out.println("i component: " +
+					// components[i].substring(1));
+					break;
+				case '2':
+					// cmdArray[cmdCount] = "\"" + inputFilename2 + "\"";
+					cmdArray[cmdCount] = inputFilename2;
+					cmdCount++;
+					if (!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim()
+								.split(" ");
+						for (int j = 0; j < comps.length; j++) {
+							cmdArray[cmdCount] = comps[j].trim();
+							cmdCount++;
+						}
+					}
+					// System.out.println("i component: " +
+					// components[i].substring(1));
+					break;
+				// case 'o': ExternalCommand += "\"" + outfile + "\"" +
+				// components[i].substring(1);
+				case 'o':
+					// cmdArray[cmdCount] = "\"" + outfile + "\"";
+					cmdArray[cmdCount] = outfile;
+					cmdCount++;
+					if (!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim()
+								.split(" ");
+						for (int j = 0; j < comps.length; j++) {
+							cmdArray[cmdCount] = comps[j].trim();
+							cmdCount++;
+						}
+					}
+					// System.out.println("o component: " +
+					// components[i].substring(1));
+					break;
+				case 's':
+					// cmdArray[cmdCount] = "\"" + outfile + "\"";
+					cmdArray[cmdCount] = processWorkingDir;
+					cmdCount++;
+					if (!components[i].substring(1).trim().equals("")) {
+						String[] comps = components[i].substring(1).trim()
+								.split(" ");
+						for (int j = 0; j < comps.length; j++) {
+							cmdArray[cmdCount] = comps[j].trim();
+							cmdCount++;
+						}
+					}
+					break;
+				default:
+					if (components[i].trim().equals("")) {
+
+					} else {
+						String[] comps = components[i].trim().split(" ");
+						for (int j = 0; j < comps.length; j++) {
+							cmdArray[cmdCount] = comps[j].trim();
+							cmdCount++;
+						}
+
+					}
+					break;
+				}
+			} else {
+				// ExternalCommand += components[i];
+				// System.out.println("short component: " + components[i]);
+			}
+		}
+		
+		String msg = "Running command:    ";
+		for (int i=0;i<cmdArray.length;i++) {
+			msg += cmdArray[i] + " ";
+		}
+		msg += "In directory:       " + dir.getCanonicalPath() + "\n";
+		msg += "Sending results to: " + resdir.getCanonicalPath() + "\n";
+		_logger.info(msg);
+		
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
-	    Map<String, String> env = pb.environment();
-		if (!env_var.contentEquals("VAR_NAME,VAR_VAL")){
-		     String[] env_pair = env_var.split(",");
-		     if (env_pair.length == 2){
-			     env.put(env_pair[0], env_pair[1]);
-			     cout.println("Environment variable " + env_pair[0] +"="+ env_pair[1]+ " succesfully set.");
+		Map<String, String> env = pb.environment();
+		if (!env_var.contentEquals("VAR_NAME,VAR_VAL")) {
+			String[] env_pair = env_var.split(",");
+			if (env_pair.length == 2) {
+				env.put(env_pair[0], env_pair[1]);
+				_logger.info("Environment variable " + env_pair[0] +"="+ env_pair[1]+ " succesfully set.");
 		     }
 		     else {
-		    	 cout.println("The environment variable " + env_var + " can not be parsed !!!");
+		    	 _logger.info("The environment variable " + env_var + " can not be parsed !!!");
 		     }
 		}
 		pb.directory(dir);
 		pb.redirectErrorStream(true);
-		process = pb.start();
-		InputStream is = process.getInputStream();
-		cout.println("*******************************************");
-		cout.println("EXTERNAL PROCESS STDOUT AND STDERR:");
-		cout.println("");
-		cout.flush();
-		new Thread( new ProcessOutputReceiver( is, cout ) ).start();
-		/*
-        InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        String line;
-        
-        while ((line = br.readLine()) != null) {
-          cout.println("\t" + line);
-        }
-        */
-        int exitStatus;
-		try {
-			exitStatus = process.waitFor();
-			cout.println("");
-			cout.println("EXTERNAL PROCESS EXIT STATUS: " + exitStatus);
-			cout.println("*******************************************");
-			cout.flush();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		InputStream is = null;
+		try{
+			process = pb.start();
+			is = process.getInputStream();
+			_logger.info("*******************************************\n" +
+			"EXTERNAL PROCESS STDOUT AND STDERR:");
+			
+			procOutputReceiverThread = new ProcessOutputReceiver( is, _logger );
+			procOutputReceiverThread.start();
+			int exitStatus;
+			try {
+				exitStatus = process.waitFor();
+				_logger.info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus + "\n" +
+				"*******************************************");
+				
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}finally{
+			if(procOutputReceiverThread != null){
+				procOutputReceiverThread.kill();
+			}
+			if(process != null){
+				process.getErrorStream().close();
+			}
+			if(is != null){
+				is.close();
+			}
 		}
-		process.getErrorStream().close();
-		is.close();
-
 	}
 }
