@@ -5,9 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.logging.Logger;
 
 
-public class ProcessOutputReceiver implements Runnable
+public class ProcessOutputReceiver extends Thread
 {
 	// ------------------------------ FIELDS ------------------------------
 
@@ -15,8 +16,11 @@ public class ProcessOutputReceiver implements Runnable
 	 * stream to receive data from child
 	 */
 	private final InputStream is;
-	PrintStream cout;
+	Logger logger;
+	private boolean run = true;
 
+	private static final int BATCHSIZE = 5;
+	
 	//--------------------------- CONSTRUCTORS ---------------------------
 
 	/**
@@ -25,10 +29,14 @@ public class ProcessOutputReceiver implements Runnable
 	 * @param is inputstream to receive data from child
 	 * @param cout PrintStream
 	 */
-	public ProcessOutputReceiver( InputStream is, PrintStream cout )
+	public ProcessOutputReceiver( InputStream is, Logger logger )
 	{
 		this.is = is;
-		this.cout = cout;
+		this.logger = logger;
+	}
+	
+	public void kill(){
+		run = false;
 	}
 
 	// -------------------------- PUBLIC INSTANCE  METHODS --------------------------
@@ -37,23 +45,49 @@ public class ProcessOutputReceiver implements Runnable
 	 */
 	public void run()
 	{
-				try
-				{
-					final BufferedReader br = new BufferedReader( new InputStreamReader( is ));
-					String line;
-					while ( ( line = br.readLine() ) != null )
-					{
-						//System.out.println( line );
-						cout.println( line );
-						cout.flush();
+		run = true;
+		try
+		{
+			final BufferedReader br = new BufferedReader( new InputStreamReader( is ));
+			String line = null;
+			String lines = null;
+			long count = 0;
+			while (run )
+			{
+				line = br.readLine();
+				if(line == null){
+					if (lines == null){
+						try {
+							sleep(5);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}else{
+						logger.info(lines);
+						lines = null;
+						count = 0;
 					}
-					br.close();
+				}else{
+					if (lines == null){
+						lines = line;
+					}else{
+						lines += "\n" + line;
+					}
+					count++;
+					if (count == BATCHSIZE){
+						logger.info(lines);
+						lines = null;
+						count = 0;
+					}
 				}
-				catch ( IOException e )
-				{
-					throw new IllegalArgumentException( "IOException receiving data from child process." );
-				}
-		
+			}
+			br.close();
+		}
+		catch ( IOException e )
+		{
+			throw new IllegalArgumentException( "IOException receiving data from child process." );
+		}
+
 		
 		
 		

@@ -3,8 +3,8 @@ package org.imirsel.nema.util;
 
 
 import java.util.logging.Logger;
-//import java.net.*;
 import java.io.*;
+import org.imirsel.nema.NEMAComponent;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -21,9 +21,7 @@ import org.meandre.annotations.ComponentProperty;
 		resources = "",
 		firingPolicy = Component.FiringPolicy.all)
 		
-public class TestConsoleOut implements ExecutableComponent {
-
-
+public class TestConsoleOut extends NEMAComponent {
 
 
     @ComponentProperty(defaultValue="Hello World !",
@@ -41,44 +39,44 @@ public class TestConsoleOut implements ExecutableComponent {
             name="Wait Time in miliseconds Between Text Displays")
             final static String DATA_PROPERTY_3 = "Wait Time in miliseconds Between Text Displays";
 
-    
-    
-
-    
    
     private String text = "Hello World !";
     private int number = 10;
     private int wtime = 10;
-    private Logger logger = null;
-    private java.io.PrintStream out;
     
-    public void initialize(ComponentContextProperties ccp) {     
-        out = ccp.getOutputConsole();
-        logger = ccp.getLogger();
-        text = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));	
+    public void initialize(ComponentContextProperties ccp) throws ComponentContextException, ComponentExecutionException{
+        //initialize logging
+    	super.initialize(ccp, this.getClass());
+    	
+    	text = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));	
         number = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_2));
         wtime = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_3));
-        //logger.fine(e.printStack);
     }
     
-	public void dispose(ComponentContextProperties ccp) {
-		// TODO Auto-generated method stub
-		out.close();
-		
+    //as we're just calling the super classes dispose method we don't need this declaration
+	public void dispose(ComponentContextProperties ccp) throws ComponentContextException {
+		super.dispose(ccp);
 	}
+	
 	public void execute(ComponentContext ccp)
 			throws ComponentExecutionException, ComponentContextException {
 				
-		out.println("Here is the text output:\n");
-		
+		_logger.info("Here is the text output:\n");
 		for (int i=0;i<number;i++){
-			out.println(i + ":\t"+ text+"\n");
-			out.flush();
+			_logger.info(i + ":\t"+ text+"\n");
 			wait(wtime);
 		}
+		
+		try{
+			throw new RuntimeException("Dummy exception");
+			
+		}catch(RuntimeException e){
+			_logger.log(Level.SEVERE,"Here is an exception that we caught:",e);
+		}
+		
+		_logger.info("--exit--");
 	}
 
-	
 	public static void wait (int n){
         long t0,t1;
         t0=System.currentTimeMillis();
@@ -86,8 +84,6 @@ public class TestConsoleOut implements ExecutableComponent {
             t1=System.currentTimeMillis();
         }
         while (t1-t0<n);
-}
-
-	
+	}
 }
 	
