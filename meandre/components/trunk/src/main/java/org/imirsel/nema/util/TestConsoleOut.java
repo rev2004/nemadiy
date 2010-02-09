@@ -2,6 +2,7 @@ package org.imirsel.nema.util;
 
 
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.*;
 import org.imirsel.nema.NEMAComponent;
@@ -46,7 +47,7 @@ public class TestConsoleOut extends NEMAComponent {
     
     public void initialize(ComponentContextProperties ccp) throws ComponentContextException, ComponentExecutionException{
         //initialize logging
-    	super.initialize(ccp, this.getClass());
+    	super.initialize(ccp);
     	
     	text = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));	
         number = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_2));

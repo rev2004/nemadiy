@@ -32,10 +32,10 @@ public abstract class NEMAComponent implements ExecutableComponent {
 	public abstract void execute(ComponentContext cc) 
 			throws ComponentExecutionException, ComponentContextException;
 
-	public void initialize(ComponentContextProperties ccp, Class componentClass)
+	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
 		cout = ccp.getOutputConsole();
-		_logger = Logger.getLogger(componentClass.getName());
+		_logger = Logger.getLogger(this.getClass().getName());
 		_logger.addHandler(new StreamHandler(cout, new SimpleFormatter()));
 	}
 
