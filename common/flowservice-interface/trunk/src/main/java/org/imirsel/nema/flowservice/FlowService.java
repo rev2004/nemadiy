@@ -156,11 +156,12 @@ public interface FlowService {
     * Creates a new flow with the parameters based on the flowURI template
     * @param paramMap HashMap of Parameter names and values.
     * @param flowURI  The URI of the flow
+    * @param userId The user id who is creating this flow
     * @return URI The URI of the flow
     * @throws MeandreServerException 
     * @since 0.5.0
     */
-   public String createNewFlow(HashMap<String,String> paramMap,String flowURI) throws MeandreServerException;
+   public String createNewFlow(HashMap<String,String> paramMap,String flowURI, long userId) throws MeandreServerException;
 
    /**
     * Returns the Component Data Property
