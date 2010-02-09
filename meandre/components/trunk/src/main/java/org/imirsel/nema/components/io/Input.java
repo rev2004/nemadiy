@@ -1,4 +1,4 @@
-package org.imirsel.nema.io;
+package org.imirsel.nema.components.io;
 
 //import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
 import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.components.util.FileCopy;
+import org.imirsel.nema.components.util.FileDownload;
 import org.imirsel.nema.renderers.FileRenderer;
-import org.imirsel.nema.util.FileCopy;
-import org.imirsel.nema.util.FileDownload;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentProperty;
@@ -191,7 +191,7 @@ public class Input implements ExecutableComponent {
 							workingDirName);
 					textBuffer = new BufferedReader(new FileReader(
 							localListFilePath));
-					noLines = org.imirsel.nema.util.LineCounter
+					noLines = org.imirsel.nema.components.util.LineCounter
 							.count(textBuffer) - 1;
 					textBuffer.close();
 					textBuffer = new BufferedReader(new FileReader(
@@ -199,7 +199,7 @@ public class Input implements ExecutableComponent {
 				} else {
 					textBuffer = new BufferedReader(
 							new FileReader(FileListURL));
-					noLines = org.imirsel.nema.util.LineCounter
+					noLines = org.imirsel.nema.components.util.LineCounter
 							.count(textBuffer) - 1;
 					textBuffer.close();
 					textBuffer = new BufferedReader(

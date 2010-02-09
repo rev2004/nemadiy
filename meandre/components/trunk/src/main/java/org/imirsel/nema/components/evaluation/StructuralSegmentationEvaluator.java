@@ -8,7 +8,7 @@
  *
  */
 
-package org.imirsel.nema.evaluation;
+package org.imirsel.nema.components.evaluation;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import org.imirsel.m2k.evaluation2.resultPages.WriteResultPagePerFile;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
-import org.imirsel.nema.util.ProcessOutputReceiver;
+import org.imirsel.nema.components.util.ProcessOutputReceiver;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentProperty;

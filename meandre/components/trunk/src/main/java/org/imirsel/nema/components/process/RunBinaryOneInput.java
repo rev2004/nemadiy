@@ -8,7 +8,7 @@
  *
  */
 
-package org.imirsel.nema.util;
+package org.imirsel.nema.components.process;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +20,8 @@ import java.util.logging.Logger;
 import org.imirsel.nema.annotations.BooleanDataType;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.components.NEMAComponent;
+import org.imirsel.nema.components.util.ProcessOutputReceiver;
 import org.imirsel.nema.role.RoleAdmin;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
@@ -29,7 +31,6 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
-import org.imirsel.nema.NEMAComponent;
 
 /** This executable component executes an external binary using the process builder.
  *

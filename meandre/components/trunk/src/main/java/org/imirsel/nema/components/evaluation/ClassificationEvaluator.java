@@ -8,7 +8,7 @@
  *
  */
 
-package org.imirsel.nema.evaluation;
+package org.imirsel.nema.components.evaluation;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,47 +17,54 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.imirsel.m2k.evaluation2.classification.MIREXClassificationEvalMain;
-import org.imirsel.nema.annotations.BooleanDataType;
+import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
+import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
+
 /** This executable component executes an external binary using the process builder.
  *
  * @author Andreas F. Ehmann;
  *
  */
-@Component(creator="Andreas F. Ehmann", description="Evaluates all Multi-fold Classification " +
-		"Results of a single task, constructs a summary table/leader board, and performs significance tests ", 
-		name="ClassificationEvaluationsAggregator",
-		tags="test ft please hello"
-		)
-		public class ClassificationEvaluationsAggregator implements ExecutableComponent {
+@Component(creator="Andreas F. Ehmann", description="Evaluates Multi-fold Classification Results", 
+		name="ClassificationEvaluator",
+		tags="test ft please hello")
+		public class ClassificationEvaluator implements ExecutableComponent {
 
 
 	//@ComponentInput(description="Java File Object In", name="fileObjectIn")
 	//final static String DATA_INPUT_1= "fileObjectIn";
 
-	@ComponentInput(description="List of the directories containing the raw classification results", name="Results Dirs")
-	final static String DATA_INPUT_1= "Results Dirs";
-	
-	@ComponentInput(description="Algorithm names", name="Algorithm Names")
-	final static String DATA_INPUT_2= "Algorithm Names";
+	@ComponentInput(description="List of the algorithm classification files, one for each fold", name="Results List")
+	final static String DATA_INPUT_1= "Results List";
 	
 	@ComponentInput(description="Ground-truth File", name="Ground-truth File")
-	final static String DATA_INPUT_3= "Ground-truth File";
+	final static String DATA_INPUT_2= "Ground-truth File";
 
-	@BooleanDataType(hide=true)
-	@ComponentProperty(defaultValue="false",
-			description="Flag whether to perform significance tests",
-			name="Perform Significance Tests")
-			final static String DATA_PROPERTY_PERFORMSIGTESTS = "Perform Significance Tests";
-	private boolean performSigTests = false;
+	@ComponentOutput(description="Results Directory Ouput", name="Results Directory")
+	final static String DATA_OUTPUT_1= "Results Directory";
+
+	@StringDataType(hide=true)
+	@ComponentProperty(defaultValue="",
+			description="Path and name of the hierarchy file",
+			name="Hierarchy File Name")
+			final static String DATA_PROPERTY_HIERARCHYFILENAME = "Hierarchy File Name";
+	private String hierarchyFileName = "";
+	
+	@StringDataType()
+	@ComponentProperty(defaultValue="MyEvaluation",
+			description="Name of the evaluation",
+			name="Evaluation Name" )
+			final static String DATA_PROPERTY_EVALNAME = "Evaluation Name";
+	private String evalName= "MyEvaluation";
 
 	private String processWorkingDir;
 	private String processResultsDir;
@@ -85,7 +92,6 @@ import org.meandre.core.ExecutableComponent;
 				e.printStackTrace();
 			}
 		}
-		//System.setProperty("java.awt.headless", "true");
       
 	}
 
@@ -102,14 +108,14 @@ import org.meandre.core.ExecutableComponent;
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
 		//File inFile = (File)cc.getDataComponentFromInput(DATA_INPUT_1);
 		
-		performSigTests = Boolean.valueOf(cc.getProperty(DATA_PROPERTY_PERFORMSIGTESTS));
-
-		String[] dirLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
-		String[] nameLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
-		String[] gtFileName = (String[])cc.getDataComponentFromInput(DATA_INPUT_3);
+		hierarchyFileName = String.valueOf(cc.getProperty(DATA_PROPERTY_HIERARCHYFILENAME));
+		evalName = String.valueOf(cc.getProperty(DATA_PROPERTY_EVALNAME));
+		String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
+		String[] gtFileName = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
+		
 		// initialize variables for MIREXClassificationEvalMain Constructor
 		String matlabPath = "/usr/local/bin/matlab";
-		String evaluationName = "OverallPublishedResults";
+	    String evaluationName = evalName;
 	    File gtFile = new File(gtFileName[0]);
 	    File procResDir = new File(processResultsDir);
 	    String processResultsDirName = processResultsDir;
@@ -119,36 +125,46 @@ import org.meandre.core.ExecutableComponent;
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    File rootEvaluationDir = new File(processResultsDirName + File.separator + "overall");
-
+	    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
+	    
+	    // create a directory to move the raw results to
+	    File classificationResultsDir = new File(processResultsDirName);
+	    File hierarchyFile;
+	    if (!hierarchyFileName.contentEquals("")) {
+	    	hierarchyFile = new File(hierarchyFileName);
+		} else {
+			hierarchyFile = null;
+		}
+	    // move the classification files (e.g. fold.1.txt) to their own dir
+	    // so MIREXClassifier has them all alone
+	    
 	    List<String> systemNames = new ArrayList<String>();
-        List<File> resultsDirs = new ArrayList<File>();
-        if (dirLists.length != nameLists.length) {
-        	cout.println("ERROR: List of Directories and List of Algorithm Names are Different!");
-        	cout.flush();
-        	return;
-        }
-        for (int i=0; i<dirLists.length; i++){
-        	resultsDirs.add(new File(dirLists[i]));
-        	systemNames.add(nameLists[i]);
-        }
-
+        List<File> resultsDir = new ArrayList<File>();
+	    systemNames.add(evalName);
+        resultsDir.add(classificationResultsDir);
         cout.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-        cout.println("Performing Overall Evaluation of All Published Results...");
+        cout.println("Evaluating...");
         cout.flush();
         // call constructor and evaluation method
-        MIREXClassificationEvalMain evaluator = new MIREXClassificationEvalMain(performSigTests,
+        MIREXClassificationEvalMain evaluator = new MIREXClassificationEvalMain(false,
                 matlabPath,
                 evaluationName,
                 gtFile,
                 rootEvaluationDir,
-                null,
+                hierarchyFile,
                 systemNames,
-                resultsDirs);
+                resultsDir);
         
         evaluator.performEvaluation();
+        
+        // output the raw results dir for reprocessing by the summarizer component
+        String[] outLists = new String[fileLists.length];
+        outLists[0] = processResultsDir;
+		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 		
         cout.println("Evaluation Complete");
+        cout.println("Written to:");
+        cout.println(rootEvaluationDir.getAbsolutePath());
         cout.flush();
         cout.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 	}

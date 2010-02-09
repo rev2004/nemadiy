@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.imirsel.nema;
+package org.imirsel.nema.components;
 
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;

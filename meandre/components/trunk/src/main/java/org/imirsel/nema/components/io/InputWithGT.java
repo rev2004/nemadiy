@@ -1,4 +1,4 @@
-package org.imirsel.nema.io;
+package org.imirsel.nema.components.io;
 
 //import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
 import jAudioFeatureExtractor.ACE.DataTypes.SegmentedClassification;
@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
-import org.imirsel.nema.renderers.FileRenderer;
-import org.imirsel.nema.util.FileDownload;
+import org.imirsel.nema.components.util.FileCopy;
+import org.imirsel.nema.components.util.FileDownload;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentProperty;
@@ -23,39 +23,49 @@ import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
-@Component(creator = "Mert Bay", description = "Reads an XML or CSV file from a local directory or an URL, with File location and  class " +
-		" metadata. Output is a 2D String array that holds the fileLocation  in the first column and its " +
-		"class metadata in the second column. If the fileLocation is a URL, it will be downloaded  to a local path. " +
-		"The inputListfiles should be  properly formed. If individual file field is not empty, the file list" +
-		" will be ignored.", name = "InputSelector", tags = "input, file, URL,file download, CSV reader, XML reader",
+@Component(creator = "Mert Bay", description = "Input component that outputs both the audio and ground-truth file locations.", name = "Structure Input", tags = "input, file, URL,file download, CSV reader, XML reader",
 		 firingPolicy = Component.FiringPolicy.all)
-public class InputSelector implements ExecutableComponent {
+public class InputWithGT implements ExecutableComponent {
 	
-	@ComponentOutput(description = "String[] that holds the fileLocations for the audio", name = "inputFiles")
-	public final static String DATA_OUTPUT = "inputFiles";
+	@ComponentOutput(description = "String[] that holds the fileLocations for the audio", name = "Audio Files")
+	public final static String DATA_OUTPUT_1 = "Audio Files";
+	
+	@ComponentOutput(description = "String[] that holds the fileLocations for the audio", name = "Groundtruth Files")
+	public final static String DATA_OUTPUT_2 = "Groundtruth Files";
 	
 	
-	@StringDataType()
-	@ComponentProperty(defaultValue = "http://nema.lis.uiuc.edu/example_wavs/mirex05FileList.xml", description = "A file with a list of audio files with  \"file URL\" and  class metadata, indicating the "
-			+ "location of the corresponding audio file and also its class", name = "FileListURL")
-	final static String DATA_PROPERTY_1 = "FileListURL";
+	@StringDataType(hide=true)
+	@ComponentProperty(defaultValue = "", description = "A file with a list of audio files with  \"file URL\" and  class metadata, indicating the "
+			+ "location of the corresponding audio file and also its class", name = "File list URL")
+	final static String DATA_PROPERTY_1 = "File list URL";
 
-	@StringDataType()
-	@ComponentProperty(defaultValue = "", description = "A URL or local path of an individual file instead of the file list. If a URL is entered, the file will be downloaded. If this property is filled, the input file list will be ignored. ", name = "SingleFileURL")
-	final static String DATA_PROPERTY_2 = "SingleFileURL";
+	@StringDataType(hide=true)
+	@ComponentProperty(defaultValue = "http://nema.lis.uiuc.edu/example_wavs/ctpt03.wav", description = "A URL or local path of an individual file instead of the file list. If a URL is entered, the file will be downloaded. If this property is filled, the input file list will be ignored. ", name = "Single file URL")
+	final static String DATA_PROPERTY_2 = "Single file URL";
 
-	
-	@StringDataType(renderer=FileRenderer.class)
-	@ComponentProperty(defaultValue = "", description = "Upload a file. If this is chosen, the input file list will or the individual file property will be ignored. ", name = "uploadFile")
-	final static String DATA_PROPERTY_3 = "uploadFile";	
-	
-	
 
 	
+	@StringDataType(labelList = { "A Hard Day's Night", "Drive My Car", "taxman"}, 
+			valueList = {"/data/raid3/collections/segmentation/wavs/01__a_hard_days_night.wav,/data/raid3/collections/segmentation/groundtruth/01__a_hard_days_night.txt","/data/raid3/collections/segmentation/wavs/01__drive_my_car.wav,/data/raid3/collections/segmentation/groundtruth/01__drive_my_car.txt","/data/raid3/collections/segmentation/wavs/01__taxman.wav,/data/raid3/collections/segmentation/groundtruth/01__taxman.txt"})//,
+			//"/data/raid3/collections/segmentation/smallwavlist.csv,/data/raid3/collections/segmentation/smallgtlist.csv"}
+	@ComponentProperty(defaultValue = "/data/raid3/collections/segmentation/wavs/01__a_hard_days_night.wav,/data/raid3/collections/segmentation/groundtruth/01__a_hard_days_night.txt", description = "Select a file from the dataset. If this is chosen, the FileListURL or the SingleFileURL  properties will be ignored. ", name = "Select a file")
+	final static String DATA_PROPERTY_3 = "Select a file";
 	
-	private String FileListURL = "http://nema.lis.uiuc.edu/example_wavs/mirex05FileList.xml";
-	private String SingleFileURL = "";
-	private String uploadFile = "";	
+	
+	@StringDataType(hide=true)
+	@ComponentProperty(defaultValue = "", description = "Upload a file. If this is chosen, the FileListURL, the SingleFileURL  or the selectFile properties will be ignored. ", name = "Upload a file")
+	final static String DATA_PROPERTY_4 = "Upload a file";	
+
+	
+
+	
+	
+	
+	private final String FileListURL = "";
+	private final String SingleFileURL = "";
+	private final String uploadFile = "";	
+	private String selectFile = "/data/raid3/collections/segmentation/wavs/01__a_hard_days_night.wav,/data/raid3/collections/segmentation/groundtruth/01__a_hard_days_night.txt";	
+	
 	private String localListFilePath;
 	private Logger logger = null;
 	private java.io.PrintStream out;
@@ -69,7 +79,7 @@ public class InputSelector implements ExecutableComponent {
 			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
 					.getProcessWorkingDirectory(
 							ccp.getFlowExecutionInstanceID());
-			commonStorageDir=ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).getCommonStorageLocation() + File.separator + "inputSelectorDownloadedFiles";
+			commonStorageDir=ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).getCommonStorageLocation() + File.pathSeparator + "inputSelectorDownloadedFiles";
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			throw new ComponentExecutionException(e1);
@@ -83,9 +93,10 @@ public class InputSelector implements ExecutableComponent {
 
 	public void execute(ComponentContext ccp)
 			throws ComponentExecutionException, ComponentContextException {
-		FileListURL = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));
-		SingleFileURL = String.valueOf(ccp.getProperty(DATA_PROPERTY_2));
-		uploadFile = String.valueOf(ccp.getProperty(DATA_PROPERTY_3));
+		//FileListURL = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));
+		//SingleFileURL = String.valueOf(ccp.getProperty(DATA_PROPERTY_2));
+		selectFile = String.valueOf(ccp.getProperty(DATA_PROPERTY_3));
+		//uploadFile = String.valueOf(ccp.getProperty(DATA_PROPERTY_4));
 
 		
 		if (!uploadFile.contentEquals("")) {
@@ -106,8 +117,37 @@ public class InputSelector implements ExecutableComponent {
 							.lastIndexOf("/") + 1, uploadFile.length()));
 				//	+ "\t\tClassName= " + "\t\t added to output");
 			
-			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
+			ccp.pushDataComponentToOutput(DATA_OUTPUT_1, inputFiles);
 		} 
+		
+		else if (!selectFile.contentEquals("")) {
+			String[] inputFiles = new String[1];
+			String[] gtFiles = new String[1];
+			
+			out.println("selectFile file is selected");
+			if (selectFile.contains("http")
+					|| selectFile.contains("ftp")) {
+				 //String workingDirName = processWorkingDir;
+				String workingDirName = commonStorageDir;
+				inputFiles[0] = downloadFiles(selectFile, workingDirName);
+			} else {
+				String dstname = commonStorageDir + File.separator +  selectFile.substring(selectFile.lastIndexOf("/")+1, selectFile.length());
+					
+				String[] file_pair = selectFile.split(",");
+					inputFiles[0] = file_pair[0];
+					gtFiles[0] = file_pair[1];
+				
+			}
+		//	inputFiles[0][1] = "";
+			out.println("no 1:\tFileName="
+					+ selectFile.subSequence(selectFile
+							.lastIndexOf("/") + 1, selectFile.length()));
+			//		+ "\t\tClassName= " + "\t\t added to output");
+			System.out.println("wavfile " + inputFiles[0] + " and gt file " + gtFiles[0] +  "pushed") ;
+			ccp.pushDataComponentToOutput(DATA_OUTPUT_1, inputFiles);		
+			ccp.pushDataComponentToOutput(DATA_OUTPUT_2, gtFiles);		
+			
+		}
 		else if (!SingleFileURL.contentEquals("")) {
 			String[] inputFiles = new String[1];
 			out.println("Individual file is selected");
@@ -117,7 +157,15 @@ public class InputSelector implements ExecutableComponent {
 				String workingDirName = commonStorageDir;
 				inputFiles[0] = downloadFiles(SingleFileURL, workingDirName);
 			} else {
-				inputFiles[0] = SingleFileURL;
+				String dstname = commonStorageDir + File.separator + selectFile.substring(SingleFileURL.lastIndexOf("/")+1, SingleFileURL.length());
+				try {
+					String copiedFile = FileCopy.copy(SingleFileURL, dstname);
+					inputFiles[0] = copiedFile;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	
 			}
 		//	inputFiles[0][1] = "";
 			out.println("no 1:\tFileName="
@@ -125,7 +173,7 @@ public class InputSelector implements ExecutableComponent {
 							.lastIndexOf("/") + 1, SingleFileURL.length()));
 			//		+ "\t\tClassName= " + "\t\t added to output");
 			
-			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);			
+			ccp.pushDataComponentToOutput(DATA_OUTPUT_1, inputFiles);			
 		}
 		else {
 			BufferedReader textBuffer;
@@ -144,7 +192,7 @@ public class InputSelector implements ExecutableComponent {
 							workingDirName);
 					textBuffer = new BufferedReader(new FileReader(
 							localListFilePath));
-					noLines = org.imirsel.nema.util.LineCounter
+					noLines = org.imirsel.nema.components.util.LineCounter
 							.count(textBuffer) - 1;
 					textBuffer.close();
 					textBuffer = new BufferedReader(new FileReader(
@@ -152,7 +200,7 @@ public class InputSelector implements ExecutableComponent {
 				} else {
 					textBuffer = new BufferedReader(
 							new FileReader(FileListURL));
-					noLines = org.imirsel.nema.util.LineCounter
+					noLines = org.imirsel.nema.components.util.LineCounter
 							.count(textBuffer) - 1;
 					textBuffer.close();
 					textBuffer = new BufferedReader(
@@ -203,7 +251,7 @@ public class InputSelector implements ExecutableComponent {
 								+ classname + "\t\t added to output");
 					//	inputFiles[i][1] = classname;
 					}
-					ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
+					ccp.pushDataComponentToOutput(DATA_OUTPUT_1, inputFiles);
 				}
 				// If it is a XML file
 				else if (FileListURL.substring(FileListURL.length() - 3,
@@ -247,7 +295,7 @@ public class InputSelector implements ExecutableComponent {
 								+ classname + "\t\t  added to output.");
 						
 					}
-					ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
+					ccp.pushDataComponentToOutput(DATA_OUTPUT_1, inputFiles);
 				} else {
 					out.println("Unsupported input file format "
 							+ FileListURL.substring(FileListURL.length() - 3,
@@ -274,7 +322,7 @@ public class InputSelector implements ExecutableComponent {
 			throw new RuntimeException(workingDir + " No such Parent directory");
 		}
 		String localFileName = workingDirName
-				+ File.separator
+				+ File.pathSeparator
 				+ fileLocation.substring(fileLocation.indexOf("//")+2,fileLocation.length()).replaceAll("/", "_");
 		
 		File localFile = new File(localFileName);

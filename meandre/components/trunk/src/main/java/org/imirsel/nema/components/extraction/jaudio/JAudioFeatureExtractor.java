@@ -8,7 +8,7 @@
  *
  */
 
-package org.imirsel.nema.jAudio;
+package org.imirsel.nema.components.extraction.jaudio;
 
 import java.io.File;
 import java.io.FileOutputStream;

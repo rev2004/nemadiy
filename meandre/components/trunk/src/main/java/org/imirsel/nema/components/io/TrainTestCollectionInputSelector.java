@@ -1,4 +1,4 @@
-package org.imirsel.nema.io;
+package org.imirsel.nema.components.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
