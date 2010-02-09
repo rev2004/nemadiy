@@ -129,7 +129,7 @@ import org.imirsel.nema.NEMAComponent;
 	 * @param ccp The properties associated to a component context
 	 */
 	public void initialize (ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException{
-		super.initialize(ccp, this.getClass());
+		super.initialize(ccp);
 		
 		if(process != null) {
             process.destroy();

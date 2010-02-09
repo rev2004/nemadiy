@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="lib/nema-repository-temp-0.1.jar"/>
 	<classpathentry kind="lib" path="lib/nema-artifactservice-0.5.0-SNAPSHOT.jar" sourcepath="/artifactservice"/>
 	<classpathentry kind="lib" path="lib/nema-directoryservice-0.5.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/nema-annotations-0.5-SNAPSHOT.jar" sourcepath="/nema-annotations"/>
 	<classpathentry kind="con" path="org.meandre.MEANDRE_INFRASTRUCTURE/1.4.8"/>
-	<classpathentry kind="lib" path="lib/nema-annotations-0.5-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin/target/classes"/>
 </classpath>
