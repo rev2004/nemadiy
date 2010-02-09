@@ -17,7 +17,7 @@ public class TestNemaComponent extends  NEMAComponent{
 
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
-		super.initialize(ccp, this.getClass());
+		super.initialize(ccp);
 		
 	}
 	
