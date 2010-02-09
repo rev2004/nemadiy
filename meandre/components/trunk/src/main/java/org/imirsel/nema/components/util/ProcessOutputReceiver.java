@@ -27,7 +27,7 @@ public class ProcessOutputReceiver extends Thread
 	 * constructor
 	 *
 	 * @param is inputstream to receive data from child
-	 * @param cout PrintStream
+	 * @param logger util.logger
 	 */
 	public ProcessOutputReceiver( InputStream is, Logger logger )
 	{
