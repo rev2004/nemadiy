@@ -1,11 +1,12 @@
-package org.imirsel.nema.util;
+package org.imirsel.nema.test;
 
 
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.*;
-import org.imirsel.nema.NEMAComponent;
+
+import org.imirsel.nema.components.NEMAComponent;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;

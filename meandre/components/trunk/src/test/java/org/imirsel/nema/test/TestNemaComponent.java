@@ -1,6 +1,6 @@
 package org.imirsel.nema.test;
 
-import org.imirsel.nema.NEMAComponent;
+import org.imirsel.nema.components.NEMAComponent;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;

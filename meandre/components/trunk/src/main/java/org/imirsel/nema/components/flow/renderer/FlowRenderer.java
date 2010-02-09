@@ -1,4 +1,4 @@
-package org.imirsel.nema.flow;
+package org.imirsel.nema.components.flow.renderer;
 
 import org.meandre.annotations.Component;
 import org.meandre.core.ComponentContext;

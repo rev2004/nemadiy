@@ -1,4 +1,4 @@
-package org.imirsel.nema.control;
+package org.imirsel.nema.components.control;
 
 
 import java.io.ByteArrayOutputStream;

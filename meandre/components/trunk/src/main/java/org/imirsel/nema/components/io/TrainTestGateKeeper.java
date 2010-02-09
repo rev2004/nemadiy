@@ -8,7 +8,7 @@
  *
  */
 
-package org.imirsel.nema.util;
+package org.imirsel.nema.components.io;
 
 import java.util.logging.Logger;
 

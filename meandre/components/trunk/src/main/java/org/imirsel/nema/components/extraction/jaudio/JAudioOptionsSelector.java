@@ -1,4 +1,4 @@
-package org.imirsel.nema.jAudio;
+package org.imirsel.nema.components.extraction.jaudio;
 
 import jAudioFeatureExtractor.DataModel;
 import jAudioFeatureExtractor.ACE.DataTypes.Batch;
