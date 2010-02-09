@@ -165,9 +165,15 @@ public class FlowFormController extends MultiActionController{
 		if(flowId==null || flowUri==null){
 			LOGGER.severe("flowId or flowUri is null -some severe error happened...");
 		}
+		User user = userManager.getCurrentUser();
+		logger.debug("USER IS ====> " + user);
+
+		if (user == null) {
+			user = userManager.getUserByUsername("admin");
+		}
 		
 		
-		String newFlowUri=flowService.createNewFlow(paramMap,flowUri);
+		String newFlowUri=flowService.createNewFlow(paramMap,flowUri,user.getId());
 		
 		Long longFlowId  =Long.parseLong(flowId);
 		Flow templateFlow = this.getFlowService().getFlow(longFlowId );
@@ -181,12 +187,7 @@ public class FlowFormController extends MultiActionController{
 		if(description==null){
 			description = templateFlow.getDescription()+" for flow: "+token;
 		}
-		User user = userManager.getCurrentUser();
-		logger.debug("USER IS ====> " + user);
-
-		if (user == null) {
-			user = userManager.getUserByUsername("admin");
-		}
+		
 		long userId = user.getId();
 		Flow instance = new Flow();
 		logger.debug("creatorId: " + userId);
