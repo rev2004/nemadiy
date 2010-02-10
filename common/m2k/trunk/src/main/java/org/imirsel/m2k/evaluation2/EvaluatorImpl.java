@@ -3,16 +3,23 @@
  */
 package org.imirsel.m2k.evaluation2;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationAffinityEvaluator;
+import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryEvaluator;
+import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
+import org.imirsel.m2k.util.MatlabCommandlineIntegrationClass;
 import org.imirsel.m2k.util.noMetadataException;
 
 /**
@@ -28,6 +35,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 	protected Map<String,List<List<DataObj>>> jobIDToFoldResults;
 	protected Map<String,String> jobIDToName;
 	protected TaskDescription task;
+	
 	
 	public EvaluatorImpl(Class loggingClass, File workingDir_, File outputDir_)  throws FileNotFoundException{
 		setLogger(Logger.getLogger(loggingClass.getName()));

@@ -18,8 +18,16 @@ import java.util.Set;
 import org.imirsel.m2k.util.noMetadataException;
 
 /**
- *
- * @author kris
+ * A multi-purpose data-structure so be used to store, index and retrieve data and metadata
+ * about tracks and evaluations. 
+ * 
+ * Note: in the current implementation string constants are declared in this class for representing
+ * different items of data. The value of these constants is likely to change in future, which will 
+ * break files written to disk at that time. Further no typing is provided at present and hence,
+ * retrieval methods currently require the user to know the type of the data they are retrieving
+ * or setting and therefore to not mix types for the same key. 
+ * 
+ * @author kris west
  */
 public class DataObj implements Serializable{
 
@@ -174,7 +182,7 @@ public class DataObj implements Serializable{
         try {
             return this.getStringMetadata(DataObj.PROP_FILE_LOCATION).compareTo(((DataObj)otherObj).getStringMetadata(DataObj.PROP_FILE_LOCATION));
         } catch (noMetadataException ex) {
-            throw new RuntimeException("Unable to compare Signal Objects with filelocation metadata",ex);
+            throw new IllegalArgumentException("Unable to compare DataObj Objects with filelocation metadata",ex);
         }
     }
     
@@ -188,13 +196,13 @@ public class DataObj implements Serializable{
         try {
             return this.getStringMetadata(DataObj.PROP_FILE_LOCATION).equals(((DataObj)otherObj).getStringMetadata(DataObj.PROP_FILE_LOCATION));
         } catch (noMetadataException ex) {
-            throw new RuntimeException("Unable to compare Signal Objects with filelocation metadata",ex);
+            throw new IllegalArgumentException("Unable to compare DataObj Objects with filelocation metadata",ex);
         }
     }
     
     /**
      * Clones the DataObj object (deep copy)
-     * @return A deep copy of this Signal object
+     * @return A deep copy of this DataObj object
      */
     public Object clone() throws java.lang.CloneNotSupportedException {
         super.clone();
@@ -368,7 +376,7 @@ public class DataObj implements Serializable{
      * unknown class is made.
      * @return The loaded DataObj.
      */
-    public static DataObj read(File theFile) throws java.io.IOException, java.lang.ClassNotFoundException {
+    public static DataObj read(File theFile) throws java.io.IOException, ClassNotFoundException, IllegalArgumentException {
         //Check readLine() behaviour is valid... could be more robust?
         DataObj dataObject = new DataObj();
         
@@ -376,17 +384,17 @@ public class DataObj implements Serializable{
             throw new FileNotFoundException("DataObj.read(): The specified file does not exist!\n File: " + theFile.getPath());
         }
         if (theFile.isDirectory()) {
-            throw new RuntimeException("DataObj.read(): The specified file is a directory and therefore cannot be read!\n Path: " + theFile.getPath());
+            throw new IllegalArgumentException("DataObj.read(): The specified file is a directory and therefore cannot be read!\n Path: " + theFile.getPath());
         }
         if (!theFile.canRead()) {
-            throw new RuntimeException("DataObj.read(): The specified file exists but cannot be read!\n File: " + theFile.getPath());
+            throw new IllegalArgumentException("DataObj.read(): The specified file exists but cannot be read!\n File: " + theFile.getPath());
         }
         
         BufferedReader textBuffer;
         try {
             textBuffer = new BufferedReader( new FileReader(theFile) );
         } catch(java.io.FileNotFoundException fnfe) {
-            throw new RuntimeException("DataObj.read(): The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n File: " + theFile.getPath());
+            throw new IllegalArgumentException("DataObj.read(): The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n File: " + theFile.getPath());
         }
         String line = null;
         try {
@@ -397,7 +405,7 @@ public class DataObj implements Serializable{
             }
             line = textBuffer.readLine();
             if (!line.equals(DIVIDER)) {
-                throw new RuntimeException("DataObj.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
+                throw new IllegalArgumentException("DataObj.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
             }
             
             String[] theColumnLabels = null;
@@ -422,7 +430,7 @@ public class DataObj implements Serializable{
                         }
                     } else {
                         if (comps.length != (3 + Integer.parseInt(comps[2]))) {
-                            throw new RuntimeException("Signal.read(): The file being read is not in the correct format (wrong number of items in metadata array)!\n File: " + theFile.getPath() + "\nLine: " + line);
+                            throw new IllegalArgumentException("DataObj.read(): The file being read is not in the correct format (wrong number of items in metadata array)!\n File: " + theFile.getPath() + "\nLine: " + line);
                         }
                         //init array
                         Object anArray = null;
@@ -452,7 +460,7 @@ public class DataObj implements Serializable{
             } else {
                 line = textBuffer.readLine();
                 if (!line.equals(DIVIDER)) {
-                    throw new RuntimeException("DataObj.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
+                    throw new IllegalArgumentException("DataObj.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
                 }
             }
             
@@ -461,18 +469,18 @@ public class DataObj implements Serializable{
             throw new java.io.IOException("DataObj.read(): An IOException occured while reading file: " + theFile.getPath() + "\n" + ioe);
         } catch (java.lang.NullPointerException npe) {
             npe.printStackTrace();
-            throw new RuntimeException("NullPointerException caused by: " + theFile.getCanonicalPath());
+            throw new IllegalArgumentException("NullPointerException caused by: " + theFile.getCanonicalPath());
         } catch (java.lang.ArrayIndexOutOfBoundsException idxex){
             idxex.printStackTrace();
-            throw new RuntimeException("ArrayIndexOutOfBoundsException caused by: " + theFile.getCanonicalPath());
+            throw new IllegalArgumentException("ArrayIndexOutOfBoundsException caused by: " + theFile.getCanonicalPath());
         }
         
         return dataObject;
     }
     
     /**
-     * Creates a String representation of a Signal Object
-     * @return a String representation of a Signal Object
+     * Creates a String representation of a DataObj Object
+     * @return a String representation of a DataObj Object
      */
     public String toString() {
         StringBuffer buffer = new StringBuffer();
@@ -495,7 +503,7 @@ public class DataObj implements Serializable{
                     //Supports only int array, String array and double array types
                     String compName = metadata.get(keysArray[i]).getClass().getComponentType().getName();
                     if ((!compName.equals("int"))&&(!compName.equals("double"))&&(!compName.equals("java.lang.String"))) {
-                        throw new RuntimeException("DataObj.write(): Only intger, double and String array types are supported at present, contact developers.");
+                        throw new IllegalArgumentException("DataObj.write(): Only intger, double and String array types are supported at present, contact developers.");
                     }
                     
                     if (compName.equals("int")) {

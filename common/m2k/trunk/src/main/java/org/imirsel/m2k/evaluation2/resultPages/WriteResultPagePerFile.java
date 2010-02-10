@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.imirsel.m2k.evaluation2.TaskDescription;
+import org.imirsel.m2k.evaluation2.classification.WriteResultFilesClass;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
 import org.imirsel.m2k.io.file.IOUtil;
 
@@ -50,8 +51,15 @@ public class WriteResultPagePerFile {
         List<PageItem> items;
         Page aPage;
 
-        String[][][] csvData = new String[pageNames.length][][];
+        //do intro page
+        items = new ArrayList<PageItem>();
+        WriteResultFilesClass.Table descriptionTable = WriteResultFilesClass.prepTaskTable(task);
+        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
+        aPage = new Page("intro", "Introduction", items, false);
+        resultPages.add(aPage);
+        
         //do a page per file
+        String[][][] csvData = new String[pageNames.length][][];
         for (int i = 0; i < pageNames.length; i++){
             items = new ArrayList<PageItem>();
             String cleanName = pageNames[i].replaceAll("\\s", "_");
@@ -68,7 +76,7 @@ public class WriteResultPagePerFile {
             items.add(new ImageItem("plot", "Plot", IOUtil.makeRelative(imagePaths[i], outputDirectory)));
 
             //add the page
-            aPage = new Page(task, cleanName, pageNames[i], items, true);
+            aPage = new Page(cleanName, pageNames[i], items, true);
             resultPages.add(aPage);
         }
 
@@ -97,7 +105,7 @@ public class WriteResultPagePerFile {
                 items.add(new TableItem("meanEvalMetrics", "Mean Evaluation Metrics", csvData[0][0], rows));
 
                 //add the page
-                aPage = new Page(task, "mean_scores", "Mean scores", items, false);
+                aPage = new Page("mean_scores", "Mean scores", items, false);
                 resultPages.add(aPage);
             }catch(Exception e){
                 Logger.getLogger(WriteResultPagePerFile.class.getName()).log(Level.WARNING, "Was unable to produce mean scores from second column of CCSV tables!",e);
@@ -125,7 +133,7 @@ public class WriteResultPagePerFile {
             }
             items.add(new FileListItem("plots", "Evaluation plots", images));
 
-            aPage = new Page(task, "files", "All data files", items, true);
+            aPage = new Page("files", "All data files", items, true);
             resultPages.add(aPage);
         }
 

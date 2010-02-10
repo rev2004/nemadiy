@@ -10,7 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * A page item implementation for a list of file links.
+ * 
  * @author kriswest
  */
 public class FileListItem extends PageItem{

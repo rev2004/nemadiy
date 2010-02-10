@@ -88,6 +88,18 @@ public class MIREXClassificationTextFile extends EvalFileTypeImpl {
 		}
 	}
 
+	//-----------
+	/**
+	 * Reads a classification file and encodes the data in a map.
+	 * 
+	 * @param toRead The file to read.
+	 * @param MIREXMode A flag that determines whether file paths are converted to just their 
+	 * names, minus the extension.
+	 * @return A map linking file path/track name component to its classification.
+	 * @throws IllegalArgumentException Thrown if the file is not in the expected format.
+	 * @throws FileNotFoundException Thrown if the specified file is not found.
+	 * @throws IOException Thrown if there is a problem reading the file unrelated to the format.
+	 */
     public static HashMap<String,String> readClassificationFile(File toRead, boolean MIREXMode) throws IllegalArgumentException, FileNotFoundException, IOException{
         HashMap<String,String> dataRead = new HashMap<String,String>();
         
@@ -129,6 +141,17 @@ public class MIREXClassificationTextFile extends EvalFileTypeImpl {
         return dataRead;
     }
 
+    /**
+     * Reads the file list data from a classification file. The class data is ignored.
+     * 
+     * @param toRead The file to read.
+     * @param MIREXMode A flag that determines whether file paths are converted to just their 
+	 * names, minus the extension.
+	 * @return A list of the file path/track name components
+	 * @throws IllegalArgumentException Thrown if the file is not in the expected format.
+	 * @throws FileNotFoundException Thrown if the specified file is not found.
+	 * @throws IOException Thrown if there is a problem reading the file unrelated to the format.
+     */
     public List<String> readClassificationFileAsList(File toRead, boolean MIREXMode) throws IllegalArgumentException, FileNotFoundException, IOException{
         List<String> dataRead = new ArrayList<String>();
 

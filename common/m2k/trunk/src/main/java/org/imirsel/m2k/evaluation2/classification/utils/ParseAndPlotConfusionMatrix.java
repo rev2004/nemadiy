@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.m2k.evaluation2.classification;
+package org.imirsel.m2k.evaluation2.classification.utils;
 
 import java.io.BufferedReader;
 import java.io.File;

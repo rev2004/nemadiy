@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import org.imirsel.m2k.evaluation2.DataObj;
 import org.imirsel.m2k.evaluation2.EvaluatorImpl;
+import org.imirsel.m2k.evaluation2.FriedmansAnovaTKHSD;
 import org.imirsel.m2k.evaluation2.TaskDescription;
 import org.imirsel.m2k.evaluation2.resultPages.FileListItem;
 import org.imirsel.m2k.evaluation2.resultPages.ImageItem;
@@ -49,16 +50,16 @@ import org.imirsel.m2k.vis.ConfusionMatrixPlot;
  */
 public class ClassificationEvaluator extends EvaluatorImpl{
 
-    public static final String EVAL_DATA_EXT = ".evalData.ser";
-    public static final String EVAL_REPORT_EXT = ".eval.txt";
+	/** Command line harness usage statement. */
     public static final String USAGE = "args: taskID(int) taskName taskDescription datasetID(int) datasetName datasetDescription subjectMetadata /path/to/GT/file /path/to/output/dir [-h /path/to/hierarchy/file] /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName";
     
-    private boolean performMatlabStatSigTests = true;
-    private String matlabPath = "matlab";
     private File hierarchyFile = null;
     private List<String[]> hierarchies = null;
     private List<String> hierachiesKey = null;
     private List<String> classNames = null;
+    
+    protected boolean performMatlabStatSigTests = true;
+	protected String matlabPath = "matlab";
     
     private static final String BIG_DIVIDER =    "================================================================================\n";
     private static final String SMALL_DIVIDER = "--------------------------------------------------------------------------------\n";
@@ -69,15 +70,22 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     private static final int CONF_MAT_WIDTH = 900;
     
     /**
-     * The task must at least contain the metadata class to be predicted. The default
-     * class is 'genre'.
-     * @param task_
-     * @param outputDir_
-     * @param workingDir_
-     * @param performMatlabStatSigTests_
-     * @param matlabPath_
-     * @param hierarchyFile_
-     * @throws FileNotFoundException
+     * Constructs and instance of the ClassificationEvaluator. 
+     * 
+     * 
+     * @param task_ A description of the task being evaluated. The task must at least contain 
+     * the metadata class to be predicted (N.B. the default class is 'genre'). The description 
+     * will be used on the HTML evaluation report and textual evaluation reports output.
+     * @param outputDir_ The directory to output results into.
+     * @param workingDir_ The working directory to use for any temp files.
+     * @param performMatlabStatSigTests_ A flag that determines whether the significance tests
+     * are performed (N.B. this is ignored if there is only one result to evaluate).
+     * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
+     * the significance tests.
+     * @param hierarchyFile_ If non-null the specified genre hierarchy will be used to discount 
+     * confusions and produce an extra evaluation metric that takes into account near misses.
+     * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
+     * found.
      */
     public ClassificationEvaluator(
     		TaskDescription task_,
@@ -97,16 +105,23 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     }
     
     /**
-     * The task must at least contain the metadata class to be predicted. The default
-     * class is 'genre'.
-     * @param task_
-     * @param outputDir_
-     * @param workingDir_
-     * @param performMatlabStatSigTests_
-     * @param matlabPath_
-     * @param hierarchyFile_
-     * @param logger
-     * @throws FileNotFoundException
+     * Constructs and instance of the ClassificationEvaluator. 
+     * 
+     * @param task_ A description of the task being evaluated. The task must at least contain 
+     * the metadata class to be predicted (N.B. the default class is 'genre'). The description 
+     * will be used on the HTML evaluation report and textual evaluation reports output.
+     * @param outputDir_ The directory to output results into.
+     * @param workingDir_ The working directory to use for any temp files.
+     * @param performMatlabStatSigTests_ A flag that determines whether the significance tests
+     * are performed (N.B. this is ignored if there is only one result to evaluate).
+     * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
+     * the significance tests.
+     * @param hierarchyFile_ If non-null the specified genre hierarchy will be used to discount 
+     * confusions and produce an extra evaluation metric that takes into account near misses.
+     * @param logger The logger to use.
+     * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
+     * found.
+     * 
      */
     public ClassificationEvaluator(
     		TaskDescription task_,
@@ -201,6 +216,16 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         }
     }
     
+    /** Parse commandline arguments for the main method harness.
+     * 
+     * @param args Full commandline arguments received by the JVM.
+     * @return An instantiated ClassificationEvaluator, based on the arguments, that is ready to run.
+     * @throws IllegalArgumentException Thrown if a results or ground-truth file is not in the expected format.
+     * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
+     * found.
+     * @throws IOException Thrown if there is a problem reading a results or ground-truth file, unrelated to 
+     * format.
+     */
     public static ClassificationEvaluator parseCommandLineArgs(String[] args) throws IllegalArgumentException, FileNotFoundException, IOException{
         if (args.length < 9){
             System.err.println("ERROR: Insufficient arguments!\n" + USAGE);
@@ -262,6 +287,11 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         return eval;
     }
     
+    /**
+     * Main method harness.
+     * 
+     * @param args Command line arguments that will be parsed by {@link #parseCommandLineArgs(String[] args)}.
+     */
     public static void main(String[] args) {
         
         System.err.println("MIREX 2008 Classification evaluator\n" +
@@ -279,6 +309,14 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         System.err.println("---exit---");
     }
     
+    /**
+     * Perform the evaluation and block until the results are fully written to the output directory.
+     * Also return a map encoding the evaluation results for each job in case they are needed for further processing.
+     * 
+     * @return a map encoding the evaluation results for each job and other data. 
+     * @throws IllegalArgumentException Thrown if required metadata is not found, either in the ground-truth
+     * data or in one of the system's results.
+     */
     public Map<String,DataObj> evaluate() throws IllegalArgumentException, IOException{
 
     	if(classNames == null){
@@ -310,7 +348,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         }
 
         //evaluate each fold for each system
-        
         Map<String,List<DataObj>> jobIDTofoldEvaluations = new HashMap<String,List<DataObj>>(numJobs); 
         for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
         	jobID = it.next();
@@ -466,7 +503,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         }
         
         //perform statistical tests
-        
         File friedmanClassTablePNG = null;
         File friedmanClassTable = null;
         File friedmanFoldTablePNG = null;
@@ -479,27 +515,29 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             _logger.info("Performing Friedman's tests in Matlab...");
             String[] systemNamesArr = jobIDToName.values().toArray(new String[jobIDToName.size()]);
             
-            File[] tmp = performFriedmanTestWithClassAccuracy(outputDir, perClassCSV, systemNamesArr);
+//            File[] tmp = performFriedmanTestWithClassAccuracy(outputDir, perClassCSV, systemNamesArr);
+            File[] tmp = FriedmansAnovaTKHSD.performFriedman(outputDir, perClassCSV, 0, 1, 1, numJobs, getMatlabPath());
             friedmanClassTablePNG = tmp[0];
             friedmanClassTable = tmp[1];
 
-            tmp = performFriedmanTestWithFoldAccuracy(outputDir, perFoldCSV, systemNamesArr);
+            //tmp = performFriedmanTestWithFoldAccuracy(outputDir, perFoldCSV, systemNamesArr);
+            tmp = FriedmansAnovaTKHSD.performFriedman(outputDir, perFoldCSV, 0, 1, 1, numJobs, getMatlabPath());
             friedmanFoldTablePNG = tmp[0];
             friedmanFoldTable = tmp[1];
 
             if (hierarchyFile != null){
-                tmp = performFriedmanTestWithClassAccuracy(outputDir, discountedPerClassCSV, systemNamesArr);
+                tmp = FriedmansAnovaTKHSD.performFriedman(outputDir, discountedPerClassCSV, 0, 1, 1, numJobs, getMatlabPath());
                 friedmanDiscountClassTablePNG = tmp[0];
                 friedmanDiscountClassTable = tmp[1];
                 
-                tmp = performFriedmanTestWithFoldAccuracy(outputDir, discountedPerFoldCSV, systemNamesArr);
+                tmp = FriedmansAnovaTKHSD.performFriedman(outputDir, discountedPerFoldCSV, 0, 1, 1, numJobs, getMatlabPath());
                 friedmanDiscountFoldTablePNG = tmp[0];
                 friedmanDiscountFoldTable = tmp[1];
             }
         }
         
         
-        //write text reports?
+        //write text reports
         _logger.info("Writing text evaluation reports...");
         Map<String,File> jobIDToReportFile = new HashMap<String,File>(numJobs);
         for (Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();) {
@@ -526,12 +564,21 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         List<PageItem> items;
         Page aPage;
 
+        //do intro page to describe task
+        {
+        	items = new ArrayList<PageItem>();
+	        WriteResultFilesClass.Table descriptionTable = WriteResultFilesClass.prepTaskTable(task);
+	        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
+	        aPage = new Page("intro", "Introduction", items, false);
+	        resultPages.add(aPage);
+        }
+        
         //do summary page
         {
 	        items = new ArrayList<PageItem>();
 	        WriteResultFilesClass.Table summaryTable = WriteResultFilesClass.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName,classNames,usingAHierarchy);
 	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
-	        aPage = new Page(task, "summary", "Summary", items, false);
+	        aPage = new Page("summary", "Summary", items, false);
 	        resultPages.add(aPage);
         }
 
@@ -544,7 +591,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
                 WriteResultFilesClass.Table perDiscClassTable = WriteResultFilesClass.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Class", perDiscClassTable.getColHeaders(), perDiscClassTable.getRows()));
             }
-            aPage = new Page(task, "acc_per_class", "Accuracy per Class", items, false);
+            aPage = new Page("acc_per_class", "Accuracy per Class", items, false);
             resultPages.add(aPage);
         }
 
@@ -557,7 +604,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
                 WriteResultFilesClass.Table perDiscFoldTable = WriteResultFilesClass.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
             }
-            aPage = new Page(task, "acc_per_fold", "Accuracy per Fold", items, false);
+            aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);
             resultPages.add(aPage);
         }
         
@@ -572,7 +619,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             if(friedmanDiscountFoldTable != null){
                 items.add(new ImageItem("friedmanDiscountFoldTablePNG", "Accuracy Per Fold: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanDiscountFoldTablePNG, outputDir)));
             }
-            aPage = new Page(task, "sig_tests", "Significance Tests", items, true);
+            aPage = new Page("sig_tests", "Significance Tests", items, true);
             resultPages.add(aPage);
         }
 
@@ -585,7 +632,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             for (int i = 0; i < numJobs; i++){
                 items.add(new ImageItem("confusion_" + i, sortedJobIDs.get(i), IOUtil.makeRelative(jobIDToOverallConfFile.get(sortedJobIDs.get(i)), outputDir)));
             }
-            aPage = new Page(task, "confusion", "Confusion Matrices", items, true);
+            aPage = new Page("confusion", "Confusion Matrices", items, true);
             resultPages.add(aPage);
         }
 
@@ -636,7 +683,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
                 tarballPaths.add(IOUtil.makeRelative(jobIDToTgz.get(sortedJobIDs.get(i)),outputDir));
             }
             items.add(new FileListItem("tarballs", "Per algorithm evaluation tarball", tarballPaths));
-            aPage = new Page(task, "files", "Raw data files", items, true);
+            aPage = new Page("files", "Raw data files", items, true);
             resultPages.add(aPage);
         }
 
@@ -644,254 +691,17 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         
         return jobIDToAggregateEvaluations;
     }
-
-
     
-    private File[] performFriedmanTestWithClassAccuracy(File outputDir, File CSVResultFile, String[] systemNames) {
-        //make sure readtext is in the working directory for matlab
-        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
-        
-        //create an m-file to run the test
-        String evalCommand = "performFriedmanForClassAccuracy";
-        String name = CSVResultFile.getName().replaceAll(".csv", "");
-        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
-        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.png";
-        String matlabPlotRelPath = "." + File.separator + name + ".friedman.tukeyKramerHSD.png";
-        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.csv";
-        try {
-            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
-            
-            textOut.write("[data, result] = readtext('" + CSVResultFile.getAbsolutePath() + "', ',');");
-            textOut.newLine();
-            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
-            textOut.newLine();
-            textOut.write("[length,width] = size(data);");
-            textOut.newLine();
-            textOut.write("Acc_Scores = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
-            textOut.newLine();
-            textOut.write("[val sort_idx] = sort(mean(Acc_Scores));");
-            textOut.newLine();
-            textOut.write("[P,friedmanTable,friedmanStats] = friedman(Acc_Scores(:,fliplr(sort_idx)),1,'on'); close(gcf)");
-            textOut.newLine();
-            textOut.write("[c,m,h,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05,'display','off');");
-            textOut.newLine();
-            textOut.write("fig = figure;");
-            textOut.newLine();
-            textOut.write("width = (-c(1,3)+c(1,5))/4;");
-            textOut.newLine();
-            textOut.write("set(fig,'paperunit','points')");
-            textOut.newLine();
-            textOut.write("set(fig,'paperposition',[1 500 1200 500])");
-            textOut.newLine();
-            textOut.write("set(fig,'papersize',[1200 500])");
-            textOut.newLine();
-            textOut.write("set(fig,'position',[1 500 1200 500])");
-            textOut.newLine();
-            textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
-            textOut.newLine();
-            textOut.write("for i=1:" + systemNames.length + ",");
-            textOut.newLine();
-            textOut.write("    plot([i i],[-width width]+friedmanStats.meanranks(i));");
-            textOut.newLine();
-            textOut.write("    plot([-0.1 .1]+i,[-width -width]+friedmanStats.meanranks(i))");
-            textOut.newLine();
-            textOut.write("    plot([-0.1 .1]+i,[+width +width]+friedmanStats.meanranks(i))");
-            textOut.newLine();
-            textOut.write("end");
-            textOut.newLine();
-            textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
-            textOut.newLine();
-            textOut.write("sortedAlgNames = algNames(fliplr(sort_idx));");
-            textOut.newLine();
-            textOut.write("set(gca,'xticklabel',sortedAlgNames)");
-            textOut.newLine();
-            textOut.write("ylabel('Mean Column Ranks')");
-            textOut.newLine();
-            textOut.write("h = title('" + CSVResultFile.getAbsolutePath() + "')");
-            textOut.newLine();
-            textOut.write("set(h,'interpreter','none')");
-            textOut.newLine();
-            textOut.write("outerpos = get(gca,'outerposition');");
-            textOut.newLine();
-            textOut.write("tightinset = get(gca,'tightinset');");
-            textOut.newLine();
-            textOut.write("newpos = [tightinset(1) tightinset(2) outerpos(3)-(tightinset(1) + tightinset(3)) outerpos(4)-(tightinset(2) + tightinset(4))];");
-            textOut.newLine();
-            textOut.write("set(gca,'position',newpos);");
-            textOut.newLine();
-            textOut.write("saveas(fig,'" + matlabPlotRelPath + "');");
-            textOut.newLine();
-            textOut.write("fidFriedman=fopen('" + friedmanTablePath + "','w+');");
-            textOut.newLine();
-            textOut.write("fprintf(fidFriedman,'%s,%s,%s,%s,%s,%s\\n','*TeamID','TeamID','Lowerbound','Mean','Upperbound','Significance');");
-            textOut.newLine();
-            textOut.write("for i=1:size(c,1)");
-            textOut.newLine();
-            textOut.write("        if sign(c(i,3))*sign(c(i,5)) > 0");
-            textOut.newLine();
-            textOut.write("            tf='TRUE';");
-            textOut.newLine();
-            textOut.write("        else");
-            textOut.newLine();
-            textOut.write("            tf='FALSE';");
-            textOut.newLine();
-            textOut.write("        end");
-            textOut.newLine();
-            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',sortedAlgNames{c(i,1)},sortedAlgNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
-            textOut.newLine();
-            textOut.write("end");
-            textOut.newLine();
-            textOut.write("fclose(fidFriedman);");
-            textOut.newLine();
-            textOut.write("exit;");
-            textOut.newLine();
-
-
-            textOut.close();
-        } catch (IOException ex) {
-            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
-        matlabIntegrator.setMatlabBin(getMatlabPath());
-        matlabIntegrator.setCommandFormattingStr("");
-        matlabIntegrator.setMainCommand(evalCommand);
-        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
-        matlabIntegrator.start();
-        try {
-            matlabIntegrator.join();
-            //  call matlab and execute Beta-Binomial test
-        } catch (InterruptedException ex) {
-            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return new File[]{new File(matlabPlotPath),new File(friedmanTablePath)};
-    }
-    
-    private File[] performFriedmanTestWithFoldAccuracy(File outputDir, File CSVResultFile, String[] systemNames) {
-        //make sure readtext is in the working directory for matlab
-        File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
-        
-        //create an m-file to run the test
-        String evalCommand = "performFriedmanForFoldAccuracy";
-        String name = CSVResultFile.getName().replaceAll(".csv", "");
-        File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
-        String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.png";
-        String matlabPlotRelPath = "." + File.separator + name + ".friedman.tukeyKramerHSD.png";
-        String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + name + ".friedman.tukeyKramerHSD.csv";
-        try {
-            BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
-
-            textOut.write("[data, result] = readtext('" + CSVResultFile.getAbsolutePath() + "', ',');");
-            textOut.newLine();
-            textOut.write("algNames = data(1,2:" + (systemNames.length + 1) + ")';");
-            textOut.newLine();
-            textOut.write("[length,width] = size(data);");
-            textOut.newLine();
-            textOut.write("Acc_Scores = cell2mat(data(2:length,2:" + (systemNames.length + 1) + "));");
-            textOut.newLine();
-            textOut.write("[val sort_idx] = sort(mean(Acc_Scores));");
-            textOut.newLine();
-            textOut.write("[P,friedmanTable,friedmanStats] = friedman(Acc_Scores(:,fliplr(sort_idx)),1,'on'); close(gcf)");
-            textOut.newLine();
-            textOut.write("[c,m,h,gnames] = multcompare(friedmanStats, 'ctype', 'tukey-kramer','estimate', 'friedman', 'alpha', 0.05,'display','off');");
-            textOut.newLine();
-            textOut.write("fig = figure;");
-            textOut.newLine();
-            textOut.write("width = (-c(1,3)+c(1,5))/4;");
-            textOut.newLine();
-            textOut.write("set(fig,'paperunit','points')");
-            textOut.newLine();
-            textOut.write("set(fig,'paperposition',[1 500 1200 500])");
-            textOut.newLine();
-            textOut.write("set(fig,'papersize',[1200 500])");
-            textOut.newLine();
-            textOut.write("set(fig,'position',[1 500 1200 500])");
-            textOut.newLine();
-            textOut.write("plot(friedmanStats.meanranks,'ro'); hold on");
-            textOut.newLine();
-            textOut.write("for i=1:" + systemNames.length + ",");
-            textOut.newLine();
-            textOut.write("    plot([i i],[-width width]+friedmanStats.meanranks(i));");
-            textOut.newLine();
-            textOut.write("    plot([-0.1 .1]+i,[-width -width]+friedmanStats.meanranks(i))");
-            textOut.newLine();
-            textOut.write("    plot([-0.1 .1]+i,[+width +width]+friedmanStats.meanranks(i))");
-            textOut.newLine();
-            textOut.write("end");
-            textOut.newLine();
-            textOut.write("set(gca,'xtick',1:" + systemNames.length + ",'xlim',[0.5 " + systemNames.length + "+0.5])");
-            textOut.newLine();
-            textOut.write("sortedAlgNames = algNames(fliplr(sort_idx));");
-            textOut.newLine();
-            textOut.write("set(gca,'xticklabel',sortedAlgNames)");
-            textOut.newLine();
-            textOut.write("ylabel('Mean Column Ranks')");
-            textOut.newLine();
-            textOut.write("h = title('" + CSVResultFile.getAbsolutePath() + "')");
-            textOut.newLine();
-            textOut.write("set(h,'interpreter','none')");
-            textOut.newLine();
-            textOut.write("outerpos = get(gca,'outerposition');");
-            textOut.newLine();
-            textOut.write("tightinset = get(gca,'tightinset');");
-            textOut.newLine();
-            textOut.write("newpos = [tightinset(1) tightinset(2) outerpos(3)-(tightinset(1) + tightinset(3)) outerpos(4)-(tightinset(2) + tightinset(4))];");
-            textOut.newLine();
-            textOut.write("set(gca,'position',newpos);");
-            textOut.newLine();
-            textOut.write("saveas(fig,'" + matlabPlotRelPath + "');");
-            textOut.newLine();
-            textOut.write("fidFriedman=fopen('" + friedmanTablePath + "','w+');");
-            textOut.newLine();
-            textOut.write("fprintf(fidFriedman,'%s,%s,%s,%s,%s,%s\\n','*TeamID','TeamID','Lowerbound','Mean','Upperbound','Significance');");
-            textOut.newLine();
-            textOut.write("for i=1:size(c,1)");
-            textOut.newLine();
-            textOut.write("        if sign(c(i,3))*sign(c(i,5)) > 0");
-            textOut.newLine();
-            textOut.write("            tf='TRUE';");
-            textOut.newLine();
-            textOut.write("        else");
-            textOut.newLine();
-            textOut.write("            tf='FALSE';");
-            textOut.newLine();
-            textOut.write("        end");
-            textOut.newLine();
-            textOut.write("         fprintf(fidFriedman,'%s,%s,%6.4f,%6.4f,%6.4f,%s\\n',sortedAlgNames{c(i,1)},sortedAlgNames{c(i,2)},c(i,3),c(i,4),c(i,5),tf);");
-            textOut.newLine();
-            textOut.write("end");
-            textOut.newLine();
-            textOut.write("fclose(fidFriedman);");
-            textOut.newLine();
-            textOut.write("exit;");
-            textOut.newLine();
-
-
-            
-            textOut.close();
-        } catch (IOException ex) {
-            Logger.getLogger(TagClassificationBinaryEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        MatlabCommandlineIntegrationClass matlabIntegrator = new MatlabCommandlineIntegrationClass();
-        matlabIntegrator.setMatlabBin(getMatlabPath());
-        matlabIntegrator.setCommandFormattingStr("");
-        matlabIntegrator.setMainCommand(evalCommand);
-        matlabIntegrator.setWorkingDir(outputDir.getAbsolutePath());
-        matlabIntegrator.start();
-        try {
-            matlabIntegrator.join();
-            //  call matlab and execute Beta-Binomial test
-        } catch (InterruptedException ex) {
-            Logger.getLogger(TagClassificationAffinityEvaluator.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return new File[]{new File(matlabPlotPath),new File(friedmanTablePath)};
-    }
-    
-
-    private DataObj evaluateResultFold(String jobID, List<DataObj> theData) throws IllegalArgumentException, IllegalArgumentException, IOException {
+    /**
+     * Evaluates a single iteration/fold of the experiment and returns an Object representing the 
+     * evaluation results.
+     * 
+     * @param jobID The jobID by which the results will be referred to.
+     * @param theData The list of data Objects each representing a prediction about a track to be
+     * evaluated.
+     * @return an Object representing the evaluation results.
+     */
+    private DataObj evaluateResultFold(String jobID, List<DataObj> theData) {
                 
         int numExamples = theData.size();
         boolean usingAHierarchy = hierarchyFile != null;
@@ -1055,7 +865,23 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         return outObj;
     }
     
-    
+    /**
+     * Writes a textual evaluation report on the results of one system to an UTF-8 text file. Includes 
+     * the confusion matrices, accuracy, discounted accuracy and normalised versions of each for each 
+     * iteration of the experiment and overall.
+     * 
+     * @param aggregateEval An Object representing the combined evaluation of all iterations.
+     * @param foldEvals A list of objects representing the evaluation of each fold/iteration of the 
+     * experiment.
+     * @param classNames An ordered list of the classnames used in the experiment.
+     * @param jobID The jobID of the system being evaluated.
+     * @param jobName The name of the job being evaluated.
+     * @param usingAHierarchy Flag indicating whether the evaluation used a hierarchy to discount confusions
+     * (meaning we need to retrieve and report on the extra discounted results).
+     * @param outputFile The File to write the report to.
+     * @throws IOException Thrown if there is a problem writing to the report file.
+     * @throws FileNotFoundException Thrown if the report file cannot be created.
+     */
     public void writeSystemTextReport(DataObj aggregateEval, List<DataObj> foldEvals, List<String> classNames, String jobID, String jobName, boolean usingAHierarchy, File outputFile) throws IOException, FileNotFoundException{
         
     	//Write output for each fold
@@ -1301,14 +1127,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         this.performMatlabStatSigTests = performMatlabStatSigTests;
     }
 
-    public String getMatlabPath() {
-        return matlabPath;
-    }
-
-    public void setMatlabPath(String matlabPath) {
-        this.matlabPath = matlabPath;
-    }
-
 	public void setHierarchyFile(File hierarchyFile) {
 		this.hierarchyFile = hierarchyFile;
 	}
@@ -1317,5 +1135,11 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 		return hierarchyFile;
 	}
 
-	
+	public String getMatlabPath() {
+        return matlabPath;
+    }
+
+    public void setMatlabPath(String matlabPath) {
+        this.matlabPath = matlabPath;
+    }
 }
