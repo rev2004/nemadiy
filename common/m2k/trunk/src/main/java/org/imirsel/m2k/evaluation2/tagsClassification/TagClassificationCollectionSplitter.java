@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.imirsel.m2k.evaluation2.EvaluationDataObject;
+import org.imirsel.m2k.evaluation2.DataObj;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.retrieval.MusicDB;
 
@@ -28,7 +28,7 @@ public class TagClassificationCollectionSplitter {
 //    java -Xmx512M -cp m2k_core_1_3.jar  org.imirsel.m2k.evaluation2.TagClassification.TagClassificationCollectionSplitter /home/kris/Desktop/final_tag_metadata.csv testTagSplitter 3 /home/kris/Desktop/tagSplitterTest
     public static final int MAX_NUM_ADJUSTMENTS = 1000;
 
-    public static Signal[][] crossValidateWithArtistFilter(EvaluationDataObject collectionToSplit, int numFolds, File outputDir) {
+    public static Signal[][] crossValidateWithArtistFilter(DataObj collectionToSplit, int numFolds, File outputDir) {
         return crossValidateWithArtistFilter(collectionToSplit, numFolds, outputDir, null);
     }
     
@@ -39,14 +39,14 @@ public class TagClassificationCollectionSplitter {
         ACCEPTED_FILE_EXTENSIONS.add(".mid");
     }
 
-    public static Signal[][] crossValidateWithArtistFilter(EvaluationDataObject collectionToSplit, int numFolds, File outputDir, ArrayList<String[]> collectionVersionPaths) {
+    public static Signal[][] crossValidateWithArtistFilter(DataObj collectionToSplit, int numFolds, File outputDir, ArrayList<String[]> collectionVersionPaths) {
 
         MusicDB theDb = new MusicDB();
         theDb.indexKey(Signal.PROP_ARTIST);
         theDb.indexKey(Signal.PROP_TAGS);
 
-        HashMap<String, HashSet<String>> pathsToRelevantTags = (HashMap<String, HashSet<String>>) collectionToSplit.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
-        HashMap<String, String> pathsToArtist = (HashMap<String, String>) collectionToSplit.getMetadata(EvaluationDataObject.PATH_TO_ARTIST_MAP);
+        HashMap<String, HashSet<String>> pathsToRelevantTags = (HashMap<String, HashSet<String>>) collectionToSplit.getMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP);
+        HashMap<String, String> pathsToArtist = (HashMap<String, String>) collectionToSplit.getMetadata(DataObj.PATH_TO_ARTIST_MAP);
         String path,id;
         for (Iterator<String> it = pathsToRelevantTags.keySet().iterator(); it.hasNext();) {
             path = it.next();
@@ -261,8 +261,8 @@ public class TagClassificationCollectionSplitter {
             
             TagClassificationGroundTruthFileReader reader = new TagClassificationGroundTruthFileReader();
             reader.setMirexMode(true);
-            EvaluationDataObject GT = reader.readFile(dataFile);
-            ArrayList<String> allTags = (ArrayList<String>) GT.getMetadata(EvaluationDataObject.TAG_LIST);
+            DataObj GT = reader.readFile(dataFile);
+            ArrayList<String> allTags = (ArrayList<String>) GT.getMetadata(DataObj.TAG_LIST);
             System.out.println("Tags loaded: ");
             for (Iterator<String> it = allTags.iterator(); it.hasNext();) {
                 System.out.println("\t" + it.next());
@@ -275,8 +275,8 @@ public class TagClassificationCollectionSplitter {
             int numFolds = Integer.parseInt(args[1]);
             File outputDirectory = new File(args[2]);
             TagClassificationGroundTruthFileReader reader = new TagClassificationGroundTruthFileReader();
-            EvaluationDataObject GT = reader.readFile(dataFile);
-            ArrayList<String> allTags = (ArrayList<String>) GT.getMetadata(EvaluationDataObject.TAG_LIST);
+            DataObj GT = reader.readFile(dataFile);
+            ArrayList<String> allTags = (ArrayList<String>) GT.getMetadata(DataObj.TAG_LIST);
             System.out.println("Tags loaded: ");
             for (Iterator<String> it = allTags.iterator(); it.hasNext();) {
                 System.out.println("\t" + it.next());

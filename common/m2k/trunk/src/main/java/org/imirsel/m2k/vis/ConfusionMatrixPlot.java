@@ -25,13 +25,12 @@ import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.TextAnchor;
 
 /**
- *
- * @author kriswest
+ * Plotting utility for confusion matrices which writes out PNG files representing the matrix.
+ * @author Kris West
  */
 public class ConfusionMatrixPlot  {
 
     String[] seriesNames;
-    String[] categoryNames;
     double[][][] confusion;
     XYTextAnnotation[][] annotations;
     
@@ -42,16 +41,15 @@ public class ConfusionMatrixPlot  {
     private String title;
     
     /**
-     * 
-     * @param title
-     * @param algorithmNames
-     * @param confusionDbl
+     * Constructor.
+     * @param title The title for the plot.....
+     * @param classNames The vector of class names to use on the plot/.
+     * @param confusionDbl The confusion matrix data.
      */
-    public ConfusionMatrixPlot(final String title, final String[] algorithmNames, double[][] confusionDbl) {
+    public ConfusionMatrixPlot(final String title, final String[] classNames, double[][] confusionDbl) {
         this.title = title;
         
-        seriesNames = algorithmNames;
-        categoryNames = algorithmNames;
+        seriesNames = classNames;
         
         confusion = new double[seriesNames.length][3][seriesNames.length];
         
@@ -59,17 +57,13 @@ public class ConfusionMatrixPlot  {
         for (int i = 0; i < seriesNames.length; i++) {
             double seriesSum = 0.0;
             for (int j = 0; j < seriesNames.length; j++) {
-                
-        
                 //set X
                 confusion[i][0][j] = i+1;
                 //set Y
                 confusion[i][1][j] = j+1;      
                 //set Z
                 confusion[i][2][j] = confusionDbl[j][i]; 
-                seriesSum += confusionDbl[j][i];
-                
-                //rowCount++;
+                seriesSum += confusionDbl[j][i];;
             }
             for (int j = 0; j < seriesNames.length; j++) {
                 confusion[i][2][j] /= seriesSum;
@@ -97,7 +91,6 @@ public class ConfusionMatrixPlot  {
         chart = createChart();
         final ChartPanel panel = new ChartPanel(chart, true, true, true, true, true);
         panel.setPreferredSize(new java.awt.Dimension(900, 850));
-//        setContentPane(panel);
 
     }
 
@@ -107,7 +100,6 @@ public class ConfusionMatrixPlot  {
      * @return the combined chart.
      */
     private JFreeChart createChart() {
-
         System.out.println("Creating plot: " + this.getTitle());
         
         XYBlockRenderer renderer = new XYBlockRenderer();
@@ -115,12 +107,6 @@ public class ConfusionMatrixPlot  {
         renderer.setBlockWidth(1.0);
         renderer.setPaintScale(new GrayPaintScale(0.0, 1.0));
         
-        //renderer.setBaseSeriesVisible(true);
-        //renderer.setBaseItemLabelPaint(Color.WHITE);
-        //renderer.setBaseItemLabelGenerator(new ConfMatLabelGenerator());
-        //renderer.setBaseItemLabelsVisible(true);
-        
-        //renderer.setBaseSeriesVisibleInLegend(false);
         for (int i = 0; i < seriesNames.length; i++) {
             renderer.setSeriesShape(i, null);
             renderer.setSeriesCreateEntities(i, false);
@@ -137,12 +123,7 @@ public class ConfusionMatrixPlot  {
         axisB.setInverted(true);
         final XYPlot aPlot = new XYPlot(this.createDataset(), axisA, axisB, renderer);
         
-        //set legend item generator and label generator
-        
         aPlot.setOutlinePaint(Color.black);
-        //aPlot.addAnnotation(annotation)
-        
-        
         
         //add annotations
         for (int i = 0; i < seriesNames.length; i++) {
@@ -154,7 +135,6 @@ public class ConfusionMatrixPlot  {
 
         }
 
-        
         //create chart
         JFreeChart chart = new JFreeChart(this.getTitle(),JFreeChart.DEFAULT_TITLE_FONT,aPlot,false);
         
@@ -175,10 +155,7 @@ public class ConfusionMatrixPlot  {
             }
             chart.addSubtitle(i, new TextTitle(aRow));
         }
-
-        
-        
-                
+   
         chart.setBackgroundPaint(Color.white);
         
 //        LegendTitle legend = chart.getLegend();
@@ -197,7 +174,6 @@ public class ConfusionMatrixPlot  {
 //        LegendItemSource[] newSources = new LegendItemSource[1];
 //        newSources[0] = newtLegendItemSource() 
         
-
         return chart;
     }
 
@@ -209,13 +185,11 @@ public class ConfusionMatrixPlot  {
     private XYZDataset createDataset() {
         final DefaultXYZDataset data = new DefaultXYZDataset();
         
-        
         for (int i = 0; i < seriesNames.length; i++) {
             data.addSeries((i+1) + ": " + seriesNames[i], confusion[i]);
         }
         
         return data;
-
     }
     
     public void writeChartToFile(File fileToWriteTo, int width, int height){
@@ -237,12 +211,7 @@ public class ConfusionMatrixPlot  {
         {0.1,0.2,0.3,3.1,0.2,0.3,0.1,0.2,0.3},{0.4,0.5,0.6,0.4,6.5,0.6,0.4,0.5,0.6},{1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0},
         {0.0,0.2,0.3,0.1,0.2,0.3,0.0,0.2,0.3},{0.4,0.5,0.6,0.4,0.5,0.6,0.4,0.5,0.6},{1.0,1.0,1.0,1.0,1.0,1.0,0.0,1.0,1.0}};
         
-        
         final ConfusionMatrixPlot plot = new ConfusionMatrixPlot("Confusion matrix test",names,conf);
-//        plot.pack();
-//        RefineryUtilities.centerFrameOnScreen(plot);
-//        plot.setVisible(true);
-        
     }
 
     /**

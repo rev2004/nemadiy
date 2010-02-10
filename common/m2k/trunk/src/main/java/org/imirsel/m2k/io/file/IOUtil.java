@@ -59,7 +59,12 @@ public class IOUtil {
         }
         
     }
-
+    
+    public static void main(String[] args){
+    	IOUtil util = new IOUtil();
+    	System.out.println(util.getClass().getName() + ": " + util);
+    }
+    
     private static long addTarEntry(File toTar, String name,
                                     TarArchiveOutputStream tarOut) throws IOException{
         TarArchiveEntry entry = new TarArchiveEntry(name);

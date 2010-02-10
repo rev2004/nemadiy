@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import org.imirsel.m2k.evaluation2.EvalFileReader;
-import org.imirsel.m2k.evaluation2.EvaluationDataObject;
+import org.imirsel.m2k.evaluation2.EvalFileType;
+import org.imirsel.m2k.evaluation2.DataObj;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
 import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
 
@@ -20,7 +20,7 @@ import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
  *
  * @author kris
  */
-public class TagClassificationGroundTruthFileReader implements EvalFileReader {
+public class TagClassificationGroundTruthFileReader /*implements EvalFileType */{
     private boolean verbose = false;
     private boolean mirexMode = false;
     public boolean getMirexMode() {
@@ -79,12 +79,12 @@ public class TagClassificationGroundTruthFileReader implements EvalFileReader {
         }
     }
     
-    public EvaluationDataObject readFile(File theFile) {
+    public DataObj readFile(File theFile) {
         if(verbose){
             System.out.println("Reading binary relevance file: " + theFile.getAbsolutePath());
         }
         //init file path as evaluation file
-        EvaluationDataObject output = new EvaluationDataObject(theFile.getAbsolutePath());
+        DataObj output = new DataObj(theFile.getAbsolutePath());
         BufferedReader textBuffer = null;
         try {
             
@@ -148,10 +148,10 @@ public class TagClassificationGroundTruthFileReader implements EvalFileReader {
                 
             }
             
-            //append data to the EvaluationDataObject Object
-            output.setMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP, pathsToRelevantTags);
-            output.setMetadata(EvaluationDataObject.PATH_TO_ARTIST_MAP, pathsToArtist);
-            output.setMetadata(EvaluationDataObject.TAG_LIST, allTags);
+            //append data to the DataObj Object
+            output.setMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP, pathsToRelevantTags);
+            output.setMetadata(DataObj.PATH_TO_ARTIST_MAP, pathsToArtist);
+            output.setMetadata(DataObj.TAG_LIST, allTags);
             
         } catch (IOException ex) {
             throw new RuntimeException("IOExcecption occured while reading file: " + theFile.getAbsolutePath(), ex);

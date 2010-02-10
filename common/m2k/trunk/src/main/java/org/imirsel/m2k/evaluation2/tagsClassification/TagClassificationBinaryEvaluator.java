@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.imirsel.m2k.evaluation2.EvaluationDataObject;
+import org.imirsel.m2k.evaluation2.DataObj;
 import org.imirsel.m2k.evaluation2.Evaluator;
 import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
@@ -28,8 +28,8 @@ import org.imirsel.m2k.util.noMetadataException;
  *
  * @author kris
  */
-public class TagClassificationBinaryEvaluator implements Evaluator {
-
+public class TagClassificationBinaryEvaluator /*implements Evaluator*/ {
+	
     private boolean verbose = false;
     private boolean performMatlabStatSigTests = true;
     private String matlabPath = "matlab";
@@ -61,7 +61,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         verbose = verbose_;
     }
     
-    public String evaluateResultsAgainstGT(String systemName, EvaluationDataObject dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException {
+    public String evaluateResultsAgainstGT(String systemName, DataObj dataToEvaluate, DataObj groundTruth, File outputDir) throws noMetadataException {
         //init report
         String systemReport = "-----------------------------------------------------------\n" +
                               "System name:        " + systemName + "\n" +
@@ -72,17 +72,17 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             systemReport += "Result subset size: " + getQuery_subset().size() + "\n";
         }
         //check GT and eval data for existence of right data 
-        if (!groundTruth.hasMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)) {
-            throw new noMetadataException("No " + EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP + " ground-truth metadata found in object, representing " + groundTruth.getFile().getAbsolutePath());
+        if (!groundTruth.hasMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP)) {
+            throw new noMetadataException("No " + DataObj.TAG_BINARY_RELEVANCE_MAP + " ground-truth metadata found in object, representing " + groundTruth.getFile().getAbsolutePath());
         }
-        if (!dataToEvaluate.hasMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)) {
+        if (!dataToEvaluate.hasMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP)) {
             File theFile = dataToEvaluate.getFile();
-            throw new RuntimeException("No " + EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP + " evaluation metadata found in object representing " + theFile.getAbsolutePath());
+            throw new RuntimeException("No " + DataObj.TAG_BINARY_RELEVANCE_MAP + " evaluation metadata found in object representing " + theFile.getAbsolutePath());
         }
         //get the data to compare
-        HashMap<String, HashSet<String>> binaryTagData = (HashMap<String, HashSet<String>>) dataToEvaluate.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
-        HashMap<String, HashSet<String>> GT_binaryTagData = (HashMap<String, HashSet<String>>) groundTruth.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
-        HashSet<String> tagSet = (HashSet<String>)groundTruth.getMetadata(EvaluationDataObject.TAG_NAME_SET);
+        HashMap<String, HashSet<String>> binaryTagData = (HashMap<String, HashSet<String>>) dataToEvaluate.getMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP);
+        HashMap<String, HashSet<String>> GT_binaryTagData = (HashMap<String, HashSet<String>>) groundTruth.getMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP);
+        HashSet<String> tagSet = (HashSet<String>)groundTruth.getMetadata(DataObj.TAG_NAME_SET);
         
         if (!GT_binaryTagData.keySet().containsAll(binaryTagData.keySet())) {
             HashSet<String> missingData = new HashSet<String>();
@@ -355,32 +355,32 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         systemReport += "  ---   \n\n";
 
         //store evaluation data
-        dataToEvaluate.setMetadata(EvaluationDataObject.SYSTEM_RESULTS_REPORT, systemReport);
+        dataToEvaluate.setMetadata(DataObj.SYSTEM_RESULTS_REPORT, systemReport);
         
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_ACCURACY_MAP, tag2Accuracy);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_POS_ACCURACY_MAP, tag2PosAccuracy);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_NEG_ACCURACY_MAP, tag2NegAccuracy);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_PRECISION_MAP, tag2Precision);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_RECALL_MAP, tag2Recall);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP, tag2FMeasure);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_ACCURACY_MAP, tag2Accuracy);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_POS_ACCURACY_MAP, tag2PosAccuracy);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_NEG_ACCURACY_MAP, tag2NegAccuracy);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_PRECISION_MAP, tag2Precision);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_RECALL_MAP, tag2Recall);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_FMEASURE_MAP, tag2FMeasure);
         
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_TRACK_ACCURACY_MAP, track2Accuracy);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_TRACK_POS_ACCURACY_MAP, track2PosAccuracy);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_TRACK_NEG_ACCURACY_MAP, track2NegAccuracy);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_TRACK_PRECISION_MAP, track2Precision);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_TRACK_RECALL_MAP, track2Recall);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_TRACK_FMEASURE_MAP, track2FMeasure);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_ACCURACY_MAP, track2Accuracy);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_POS_ACCURACY_MAP, track2PosAccuracy);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_NEG_ACCURACY_MAP, track2NegAccuracy);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_PRECISION_MAP, track2Precision);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_RECALL_MAP, track2Recall);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_FMEASURE_MAP, track2FMeasure);
         
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_ACCURACY, totalAccuracy);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_PRECISION, totalPrecision);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_RECALL, totalRecall);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_BINARY_OVERALL_FMEASURE, totalFmeasure);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_OVERALL_ACCURACY, totalAccuracy);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_OVERALL_PRECISION, totalPrecision);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_OVERALL_RECALL, totalRecall);
+        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_OVERALL_FMEASURE, totalFmeasure);
         
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES, tag2numPositiveExamples);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES, tag2numNegativeExamples);
+        dataToEvaluate.setMetadata(DataObj.TAG_NUM_POSITIVE_EXAMPLES, tag2numPositiveExamples);
+        dataToEvaluate.setMetadata(DataObj.TAG_NUM_NEGATIVE_EXAMPLES, tag2numNegativeExamples);
         
         //serialise out the evaluation data
-        //  later this should be changed to use ASCII file format - when Collections are supported by write method of EvaluationDataObject
+        //  later this should be changed to use ASCII file format - when Collections are supported by write method of DataObj
         File systemDirectory = new File(outputDir.getAbsolutePath() + File.separator + systemName);
         systemDirectory.mkdir();
         try {
@@ -409,7 +409,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         return systemReport;
     }
 
-    public String evaluate(String[] systemNames, EvaluationDataObject[][] dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException{
+    public String evaluate(String[] systemNames, DataObj[][] dataToEvaluate, DataObj groundTruth, File outputDir) throws noMetadataException{
         String report = "";
 
         //evaluate each system
@@ -419,9 +419,9 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             //evaluate each fold
             for (int j = 0; j < dataToEvaluate[i].length; j++) {
                 String systemReport = evaluateResultsAgainstGT(systemNames[i], dataToEvaluate[i][j], groundTruth, outputDir);
-                report += systemReport + EvaluationDataObject.DIVIDER + "\n";
+                report += systemReport + DataObj.DIVIDER + "\n";
             }
-            report += EvaluationDataObject.DIVIDER + "\n";
+            report += DataObj.DIVIDER + "\n";
             System.err.println("done.");
         }
         
@@ -877,7 +877,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
 //        readtextMFile.delete();
 //    }
 
-    private String[] produceSummaryRowAvgByTag(String metadataType, String measureName, String[] systemNames, int numFolds, EvaluationDataObject[][] dataToEvaluate, String[][] tagNames) throws noMetadataException {
+    private String[] produceSummaryRowAvgByTag(String metadataType, String measureName, String[] systemNames, int numFolds, DataObj[][] dataToEvaluate, String[][] tagNames) throws noMetadataException {
 
         String[] csvData = new String[systemNames.length + 1];
         csvData[0] = measureName;
@@ -900,7 +900,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         return csvData;
     }
 
-    private void writeCSVResultFile(String metadataType, int totalNumRows, String[] systemNames, int numFolds, EvaluationDataObject[][] dataToEvaluate, String[][] tagNames, File outputFile) throws noMetadataException {
+    private void writeCSVResultFile(String metadataType, int totalNumRows, String[] systemNames, int numFolds, DataObj[][] dataToEvaluate, String[][] tagNames, File outputFile) throws noMetadataException {
 
         String[][] csvData = new String[totalNumRows + 1][systemNames.length + 4];
         csvData[0][0] = "*tag";
@@ -913,8 +913,8 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         }
         int foldOffset = 1;
         for (int f = 0; f < numFolds; f++) {
-            HashMap<String, Integer> tag2NumPos = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
-            HashMap<String, Integer> tag2NumNeg = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
+            HashMap<String, Integer> tag2NumPos = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(DataObj.TAG_NUM_POSITIVE_EXAMPLES);
+            HashMap<String, Integer> tag2NumNeg = (HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(DataObj.TAG_NUM_NEGATIVE_EXAMPLES);
             for (int j = 0; j < tagNames[f].length; j++) {
                 csvData[foldOffset + j][0] = tagNames[f][j];
                 csvData[foldOffset + j][1] = "" + (f + 1);
@@ -936,7 +936,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         }
     }
     
-    private void writeCSVResultFilePerTrack(String metadataType, int totalNumRows, String[] systemNames, int numFolds, EvaluationDataObject[][] dataToEvaluate, String[][] pathNames, File outputFile) throws noMetadataException {
+    private void writeCSVResultFilePerTrack(String metadataType, int totalNumRows, String[] systemNames, int numFolds, DataObj[][] dataToEvaluate, String[][] pathNames, File outputFile) throws noMetadataException {
 
         String[][] csvData = new String[totalNumRows + 1][systemNames.length + 2];
         csvData[0][0] = "*Track";
@@ -965,7 +965,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         }
     }
     
-    private void writeAvgAcrossFoldsCSVResultFile(String metadataType,  String[] systemNames, int numFolds, EvaluationDataObject[][] dataToEvaluate, HashSet<String> tagNames, File outputFile) throws noMetadataException {
+    private void writeAvgAcrossFoldsCSVResultFile(String metadataType,  String[] systemNames, int numFolds, DataObj[][] dataToEvaluate, HashSet<String> tagNames, File outputFile) throws noMetadataException {
 
         String[][] csvData = new String[tagNames.size()+1][systemNames.length + 3];
         csvData[0][0] = "*Tag";
@@ -982,8 +982,8 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             csvData[rowIdx][0] = tag;
             int numPos = 0, numNeg = 0;
             for (int f = 0; f < numFolds; f++) {
-                numPos += ((HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES)).get(tag);
-                numNeg += ((HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES)).get(tag);
+                numPos += ((HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(DataObj.TAG_NUM_POSITIVE_EXAMPLES)).get(tag);
+                numNeg += ((HashMap<String, Integer>) dataToEvaluate[0][f].getMetadata(DataObj.TAG_NUM_NEGATIVE_EXAMPLES)).get(tag);
             }
             csvData[rowIdx][1] = "" + numPos;
             csvData[rowIdx][2] = "" + numNeg;
@@ -1006,7 +1006,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         }
     }
     
-    private File[] writeOutCSVResultFiles(EvaluationDataObject[][] dataToEvaluate, String[] systemNames, File outputDir) throws noMetadataException {
+    private File[] writeOutCSVResultFiles(DataObj[][] dataToEvaluate, String[] systemNames, File outputDir) throws noMetadataException {
 
 
         //TODO: stat sig tests
@@ -1017,7 +1017,7 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         String[][] tagNames = new String[numFolds][];
         HashSet<String> tagNamesSet = new HashSet<String>();
         for (int i = 0; i < numFolds; i++) {
-            HashMap<String, Double> tag2fmeasureMap = (HashMap<String, Double>) dataToEvaluate[0][i].getMetadata(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP);
+            HashMap<String, Double> tag2fmeasureMap = (HashMap<String, Double>) dataToEvaluate[0][i].getMetadata(DataObj.TAG_BINARY_FMEASURE_MAP);
             tagNames[i] = tag2fmeasureMap.keySet().toArray(new String[tag2fmeasureMap.size()]);
             tagNamesSet.addAll(tag2fmeasureMap.keySet());
             totalNumRows += tagNames[i].length;
@@ -1025,48 +1025,48 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
         
         String[][] paths = new String[numFolds][];
         for (int i = 0; i < numFolds; i++) {
-            HashMap<String, Double> track2fmeasureMap = (HashMap<String, Double>) dataToEvaluate[0][i].getMetadata(EvaluationDataObject.TAG_BINARY_TRACK_FMEASURE_MAP);
+            HashMap<String, Double> track2fmeasureMap = (HashMap<String, Double>) dataToEvaluate[0][i].getMetadata(DataObj.TAG_BINARY_TRACK_FMEASURE_MAP);
             paths[i] = track2fmeasureMap.keySet().toArray(new String[track2fmeasureMap.size()]);
             totalNumTrackRows += paths[i].length;
         }
 
         File FmeasureFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_per_fold_Fmeasure.csv");
-        writeCSVResultFile(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, FmeasureFile);
+        writeCSVResultFile(DataObj.TAG_BINARY_FMEASURE_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, FmeasureFile);
 
         File AccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_per_fold_Accuracy.csv");
-        writeCSVResultFile(EvaluationDataObject.TAG_BINARY_ACCURACY_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, AccuracyFile);
+        writeCSVResultFile(DataObj.TAG_BINARY_ACCURACY_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, AccuracyFile);
   
         File PosAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_per_fold_positive_example_Accuracy.csv");
-        writeCSVResultFile(EvaluationDataObject.TAG_BINARY_POS_ACCURACY_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, PosAccuracyFile);
+        writeCSVResultFile(DataObj.TAG_BINARY_POS_ACCURACY_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, PosAccuracyFile);
   
         File NegAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_per_fold_negative_example_Accuracy.csv");
-        writeCSVResultFile(EvaluationDataObject.TAG_BINARY_NEG_ACCURACY_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, NegAccuracyFile);
+        writeCSVResultFile(DataObj.TAG_BINARY_NEG_ACCURACY_MAP,totalNumRows, systemNames, numFolds, dataToEvaluate, tagNames, NegAccuracyFile);
   
         
         File TrackFmeasureFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_per_fold_per_track_Fmeasure.csv");
-        writeCSVResultFilePerTrack(EvaluationDataObject.TAG_BINARY_TRACK_FMEASURE_MAP,totalNumTrackRows, systemNames, numFolds, dataToEvaluate, paths, TrackFmeasureFile);
+        writeCSVResultFilePerTrack(DataObj.TAG_BINARY_TRACK_FMEASURE_MAP,totalNumTrackRows, systemNames, numFolds, dataToEvaluate, paths, TrackFmeasureFile);
 
         File TrackAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_per_fold_per_track_Accuracy.csv");
-        writeCSVResultFilePerTrack(EvaluationDataObject.TAG_BINARY_TRACK_ACCURACY_MAP,totalNumTrackRows, systemNames, numFolds, dataToEvaluate, paths, TrackAccuracyFile);
+        writeCSVResultFilePerTrack(DataObj.TAG_BINARY_TRACK_ACCURACY_MAP,totalNumTrackRows, systemNames, numFolds, dataToEvaluate, paths, TrackAccuracyFile);
   
         File TrackPosAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_per_fold_per_track_positive_example_Accuracy.csv");
-        writeCSVResultFilePerTrack(EvaluationDataObject.TAG_BINARY_TRACK_POS_ACCURACY_MAP,totalNumTrackRows, systemNames, numFolds, dataToEvaluate, paths, TrackPosAccuracyFile);
+        writeCSVResultFilePerTrack(DataObj.TAG_BINARY_TRACK_POS_ACCURACY_MAP,totalNumTrackRows, systemNames, numFolds, dataToEvaluate, paths, TrackPosAccuracyFile);
   
         File TrackNegAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_per_fold_per_track_negative_example_Accuracy.csv");
-        writeCSVResultFilePerTrack(EvaluationDataObject.TAG_BINARY_TRACK_NEG_ACCURACY_MAP,totalNumTrackRows, systemNames, numFolds, dataToEvaluate, paths, TrackNegAccuracyFile);
+        writeCSVResultFilePerTrack(DataObj.TAG_BINARY_TRACK_NEG_ACCURACY_MAP,totalNumTrackRows, systemNames, numFolds, dataToEvaluate, paths, TrackNegAccuracyFile);
   
         
         File AvgFmeasureFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_avg_Fmeasure.csv");
-        writeAvgAcrossFoldsCSVResultFile(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP, systemNames, numFolds, dataToEvaluate, tagNamesSet, AvgFmeasureFile);
+        writeAvgAcrossFoldsCSVResultFile(DataObj.TAG_BINARY_FMEASURE_MAP, systemNames, numFolds, dataToEvaluate, tagNamesSet, AvgFmeasureFile);
 
         File AvgAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_avg_Accuracy.csv");
-        writeAvgAcrossFoldsCSVResultFile(EvaluationDataObject.TAG_BINARY_ACCURACY_MAP, systemNames, numFolds, dataToEvaluate, tagNamesSet, AvgAccuracyFile);
+        writeAvgAcrossFoldsCSVResultFile(DataObj.TAG_BINARY_ACCURACY_MAP, systemNames, numFolds, dataToEvaluate, tagNamesSet, AvgAccuracyFile);
   
         File AvgPosAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_avg_positive_example_Accuracy.csv");
-        writeAvgAcrossFoldsCSVResultFile(EvaluationDataObject.TAG_BINARY_POS_ACCURACY_MAP, systemNames, numFolds, dataToEvaluate, tagNamesSet, AvgPosAccuracyFile);
+        writeAvgAcrossFoldsCSVResultFile(DataObj.TAG_BINARY_POS_ACCURACY_MAP, systemNames, numFolds, dataToEvaluate, tagNamesSet, AvgPosAccuracyFile);
   
         File AvgNegAccuracyFile = new File(outputDir.getAbsolutePath() + File.separator + "binary_avg_negative_example_Accuracy.csv");
-        writeAvgAcrossFoldsCSVResultFile(EvaluationDataObject.TAG_BINARY_NEG_ACCURACY_MAP, systemNames, numFolds, dataToEvaluate, tagNamesSet, AvgNegAccuracyFile);
+        writeAvgAcrossFoldsCSVResultFile(DataObj.TAG_BINARY_NEG_ACCURACY_MAP, systemNames, numFolds, dataToEvaluate, tagNamesSet, AvgNegAccuracyFile);
 
 
         String[][] summaryData = new String[5][];
@@ -1076,10 +1076,10 @@ public class TagClassificationBinaryEvaluator implements Evaluator {
             header[i+1] = systemNames[i];
         }
         summaryData[0] = header;
-        summaryData[1] = produceSummaryRowAvgByTag(EvaluationDataObject.TAG_BINARY_FMEASURE_MAP, "Average Tag F-measure", systemNames, numFolds, dataToEvaluate, tagNames);
-        summaryData[2] = produceSummaryRowAvgByTag(EvaluationDataObject.TAG_BINARY_ACCURACY_MAP, "Average Tag Accuracy", systemNames, numFolds, dataToEvaluate, tagNames);
-        summaryData[3] = produceSummaryRowAvgByTag(EvaluationDataObject.TAG_BINARY_POS_ACCURACY_MAP, "Average Positive Tag Accuracy", systemNames, numFolds, dataToEvaluate, tagNames);
-        summaryData[4] = produceSummaryRowAvgByTag(EvaluationDataObject.TAG_BINARY_NEG_ACCURACY_MAP, "Average Negative Tag Accuracy", systemNames, numFolds, dataToEvaluate, tagNames);
+        summaryData[1] = produceSummaryRowAvgByTag(DataObj.TAG_BINARY_FMEASURE_MAP, "Average Tag F-measure", systemNames, numFolds, dataToEvaluate, tagNames);
+        summaryData[2] = produceSummaryRowAvgByTag(DataObj.TAG_BINARY_ACCURACY_MAP, "Average Tag Accuracy", systemNames, numFolds, dataToEvaluate, tagNames);
+        summaryData[3] = produceSummaryRowAvgByTag(DataObj.TAG_BINARY_POS_ACCURACY_MAP, "Average Positive Tag Accuracy", systemNames, numFolds, dataToEvaluate, tagNames);
+        summaryData[4] = produceSummaryRowAvgByTag(DataObj.TAG_BINARY_NEG_ACCURACY_MAP, "Average Negative Tag Accuracy", systemNames, numFolds, dataToEvaluate, tagNames);
 
         File SummaryFile = new File(outputDir.getAbsolutePath() + File.separator + "summary_binary.csv");
         try {

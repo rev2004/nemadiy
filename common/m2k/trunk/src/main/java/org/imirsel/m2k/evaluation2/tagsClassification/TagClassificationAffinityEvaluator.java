@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.imirsel.m2k.evaluation2.EvaluationDataObject;
+import org.imirsel.m2k.evaluation2.DataObj;
 import org.imirsel.m2k.evaluation2.Evaluator;
 import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
@@ -30,7 +30,7 @@ import org.imirsel.m2k.vis.SimpleNumericPlot;
  *
  * @author kris
  */
-public class TagClassificationAffinityEvaluator implements Evaluator{
+public class TagClassificationAffinityEvaluator{
     private boolean verbose = true;
     private boolean performMatlabStatSigTests = true;
     private String matlabPath = "matlab";
@@ -106,7 +106,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         return area;
     }
     
-    public String evaluateResultsAgainstGT(String systemName, EvaluationDataObject dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException {
+    public String evaluateResultsAgainstGT(String systemName, DataObj dataToEvaluate, DataObj groundTruth, File outputDir) throws noMetadataException {
         //init report
         String systemReport = "-----------------------------------------------------------\n" +
                               "System name:       " + systemName + "\n" +
@@ -115,18 +115,18 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
 
         
         //check GT and eval data for existence of right data 
-        if (!groundTruth.hasMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)) {
-            throw new noMetadataException("No " + EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP + " ground-truth metadata found in object, representing " + groundTruth.getFile().getAbsolutePath());
+        if (!groundTruth.hasMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP)) {
+            throw new noMetadataException("No " + DataObj.TAG_BINARY_RELEVANCE_MAP + " ground-truth metadata found in object, representing " + groundTruth.getFile().getAbsolutePath());
         }
-        if (!dataToEvaluate.hasMetadata(EvaluationDataObject.TAG_AFFINITY_MAP)) {
+        if (!dataToEvaluate.hasMetadata(DataObj.TAG_AFFINITY_MAP)) {
             File theFile = dataToEvaluate.getFile();
-            throw new RuntimeException("No " + EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP + " evaluation metadata found in object representing " + theFile.getAbsolutePath());
+            throw new RuntimeException("No " + DataObj.TAG_BINARY_RELEVANCE_MAP + " evaluation metadata found in object representing " + theFile.getAbsolutePath());
         }
         
         //get the data to compare
-        HashMap<String, HashMap<String,Double>> path2tag2affinity = (HashMap<String, HashMap<String,Double>>) dataToEvaluate.getMetadata(EvaluationDataObject.TAG_AFFINITY_MAP);
-        HashMap<String, HashSet<String>> GT_binaryTagData = (HashMap<String, HashSet<String>>) groundTruth.getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
-        HashSet<String> tagSet = (HashSet<String>)groundTruth.getMetadata(EvaluationDataObject.TAG_NAME_SET);
+        HashMap<String, HashMap<String,Double>> path2tag2affinity = (HashMap<String, HashMap<String,Double>>) dataToEvaluate.getMetadata(DataObj.TAG_AFFINITY_MAP);
+        HashMap<String, HashSet<String>> GT_binaryTagData = (HashMap<String, HashSet<String>>) groundTruth.getMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP);
+        HashSet<String> tagSet = (HashSet<String>)groundTruth.getMetadata(DataObj.TAG_NAME_SET);
         
         if (!GT_binaryTagData.keySet().containsAll(path2tag2affinity.keySet())) {
             HashSet<String> missingData = new HashSet<String>();
@@ -310,13 +310,13 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         }
         systemReport += "\n";
         
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_OVERALL_PRECISION_AT_N, avgPrecisionAtN);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_PRECISION_AT_N,clip2PrecisionAtN);
+        dataToEvaluate.setMetadata(DataObj.TAG_AFFINITY_OVERALL_PRECISION_AT_N, avgPrecisionAtN);
+        dataToEvaluate.setMetadata(DataObj.TAG_AFFINITY_CLIP_PRECISION_AT_N,clip2PrecisionAtN);
         
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_AUC_ROC, clip2AUC_ROC);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_ROC_DATA, clip2ROCpointSequence);
+        dataToEvaluate.setMetadata(DataObj.TAG_AFFINITY_CLIP_AUC_ROC, clip2AUC_ROC);
+        dataToEvaluate.setMetadata(DataObj.TAG_AFFINITY_CLIP_ROC_DATA, clip2ROCpointSequence);
         
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_TAG_AFFINITY_DATAPOINTS, tag2affinityDataPoints);
+        dataToEvaluate.setMetadata(DataObj.TAG_AFFINITY_TAG_AFFINITY_DATAPOINTS, tag2affinityDataPoints);
 
         //compute AUC-ROC for each tag
         for (Iterator<String> it = tagSet.iterator(); it.hasNext();) {
@@ -480,16 +480,16 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         }
         
         
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC,tag2AUC_ROC);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_ROC_DATA,tag2ROCpointSequence);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_OVERALL_AUC_ROC,overallAUC_ROC);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_AFFINITY_OVERALL_ROC_DATA,overallROCpointSequence);
+        dataToEvaluate.setMetadata(DataObj.TAG_AFFINITY_AUC_ROC,tag2AUC_ROC);
+        dataToEvaluate.setMetadata(DataObj.TAG_AFFINITY_ROC_DATA,tag2ROCpointSequence);
+        dataToEvaluate.setMetadata(DataObj.TAG_AFFINITY_OVERALL_AUC_ROC,overallAUC_ROC);
+        dataToEvaluate.setMetadata(DataObj.TAG_AFFINITY_OVERALL_ROC_DATA,overallROCpointSequence);
         
         
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES, tag2numPositiveExamples);
-        dataToEvaluate.setMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES, tag2numNegativeExamples);
-        dataToEvaluate.setMetadata(EvaluationDataObject.OVERALL_NUM_POSITIVE_EXAMPLES, positives);
-        dataToEvaluate.setMetadata(EvaluationDataObject.OVERALL_NUM_NEGATIVE_EXAMPLES, negatives);
+        dataToEvaluate.setMetadata(DataObj.TAG_NUM_POSITIVE_EXAMPLES, tag2numPositiveExamples);
+        dataToEvaluate.setMetadata(DataObj.TAG_NUM_NEGATIVE_EXAMPLES, tag2numNegativeExamples);
+        dataToEvaluate.setMetadata(DataObj.OVERALL_NUM_POSITIVE_EXAMPLES, positives);
+        dataToEvaluate.setMetadata(DataObj.OVERALL_NUM_NEGATIVE_EXAMPLES, negatives);
         
         
         //report on files evaluated against
@@ -503,12 +503,12 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         systemReport += "  ---   \n\n";
 
         //store evaluation report
-        dataToEvaluate.setMetadata(EvaluationDataObject.SYSTEM_RESULTS_REPORT, systemReport);
+        dataToEvaluate.setMetadata(DataObj.SYSTEM_RESULTS_REPORT, systemReport);
 
         System.out.println("Writing out results");
 
         //serialise out the evaluation data
-        //  later this should be changed to use ASCII file format - when Collections are supported by write method of EvaluationDataObject
+        //  later this should be changed to use ASCII file format - when Collections are supported by write method of DataObj
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(systemDirectory.getAbsolutePath() + File.separator + dataToEvaluate.getFile().getName() + ".evalData.ser");
             ObjectOutputStream objectOutputStream;
@@ -534,7 +534,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         return systemReport;
     }
 
-    public String evaluate(String[] systemNames, EvaluationDataObject[][] dataToEvaluate, EvaluationDataObject groundTruth, File outputDir) throws noMetadataException{
+    public String evaluate(String[] systemNames, DataObj[][] dataToEvaluate, DataObj groundTruth, File outputDir) throws noMetadataException{
         String report = "";
 
         //evaluate each system
@@ -544,9 +544,9 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             //evaluate each fold
             for (int j = 0; j < dataToEvaluate[i].length; j++) {
                 String systemReport = evaluateResultsAgainstGT(systemNames[i], dataToEvaluate[i][j], groundTruth, outputDir);
-                report += systemReport + EvaluationDataObject.DIVIDER + "\n";
+                report += systemReport + DataObj.DIVIDER + "\n";
             }
-            report += EvaluationDataObject.DIVIDER + "\n";
+            report += DataObj.DIVIDER + "\n";
             System.err.println("done.");
         }
 
@@ -570,7 +570,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         //Write out tag AUC-ROC data for significance testing
         String[][] tagNames = new String[numFolds][];
         for (int i = 0; i < numFolds; i++) {
-            HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[0][i].getMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC);
+            HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[0][i].getMetadata(DataObj.TAG_AFFINITY_AUC_ROC);
             tagNames[i] = tag2AUC_ROC.keySet().toArray(new String[tag2AUC_ROC.size()]);
             totalNumRows += tagNames[i].length;
         }
@@ -584,15 +584,15 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         }
         int foldOffset = 1;
         for (int f = 0; f < numFolds; f++) {
-//            HashMap<String,Integer> tag2NumPos = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_POSITIVE_EXAMPLES);
-//            HashMap<String,Integer> tag2NumNeg = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(EvaluationDataObject.TAG_NUM_NEGATIVE_EXAMPLES);
+//            HashMap<String,Integer> tag2NumPos = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(DataObj.TAG_NUM_POSITIVE_EXAMPLES);
+//            HashMap<String,Integer> tag2NumNeg = (HashMap<String,Integer>)dataToEvaluate[0][f].getMetadata(DataObj.TAG_NUM_NEGATIVE_EXAMPLES);
             for (int j = 0; j < tagNames[f].length; j++) {
                 csvData[foldOffset + j][0] = tagNames[f][j];
                 csvData[foldOffset + j][1] = "" + (f + 1);
                 
                 
                 for (int s = 0; s < systemNames.length; s++) {
-                    HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC);
+                    HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(DataObj.TAG_AFFINITY_AUC_ROC);
                     csvData[foldOffset + j][s+2] = "" + tag2AUC_ROC.get(tagNames[f][j]).doubleValue();
                 }
             }
@@ -610,7 +610,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         //Write out tag AUC-ROC data for significance testing
         HashSet<String> tagNamesSet = new HashSet<String>();
         for (int i = 0; i < numFolds; i++) {
-            HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[0][i].getMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC);
+            HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[0][i].getMetadata(DataObj.TAG_AFFINITY_AUC_ROC);
             tagNamesSet.addAll(tag2AUC_ROC.keySet());
         }
         
@@ -631,7 +631,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
             for (int s = 0; s < systemNames.length; s++) {
                 double avg = 0.0;
                 for (int f = 0; f < numFolds; f++) {
-                    HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_AFFINITY_AUC_ROC);
+                    HashMap<String, Double> tag2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(DataObj.TAG_AFFINITY_AUC_ROC);
                     avg += tag2AUC_ROC.get(tag);
                 }
                 avg /= numFolds;
@@ -660,7 +660,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
         String[][] clipNames = new String[numFolds][];
         totalNumRows = 0;
         for (int i = 0; i < numFolds; i++) {
-            HashMap<String, Double> clip2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[0][i].getMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_AUC_ROC);
+            HashMap<String, Double> clip2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[0][i].getMetadata(DataObj.TAG_AFFINITY_CLIP_AUC_ROC);
             clipNames[i] = clip2AUC_ROC.keySet().toArray(new String[clip2AUC_ROC.size()]);
             totalNumRows += clipNames[i].length;
         }
@@ -687,7 +687,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                 csvData[foldOffset + c][1] = "" + (f + 1);
                 
                 for (int s = 0; s < systemNames.length; s++) {
-                    HashMap<String, Double> clip2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_AUC_ROC);
+                    HashMap<String, Double> clip2AUC_ROC =  (HashMap<String, Double>)dataToEvaluate[s][f].getMetadata(DataObj.TAG_AFFINITY_CLIP_AUC_ROC);
                     if(!clip2AUC_ROC.containsKey(clipNames[f][c])){
                         System.out.println("Error! Results for system: " + systemNames[s] + " did not contain results for fold " + (f+1) + " clip " + clipNames[f][c] + "!");
                     }
@@ -735,7 +735,7 @@ public class TagClassificationAffinityEvaluator implements Evaluator{
                     csvData[foldOffset + c][1] = "" + (f + 1);
 
                     for (int s = 0; s < systemNames.length; s++) {
-                        HashMap<String, double[]> clip2PrecAtN =  (HashMap<String, double[]>)dataToEvaluate[s][f].getMetadata(EvaluationDataObject.TAG_AFFINITY_CLIP_PRECISION_AT_N);
+                        HashMap<String, double[]> clip2PrecAtN =  (HashMap<String, double[]>)dataToEvaluate[s][f].getMetadata(DataObj.TAG_AFFINITY_CLIP_PRECISION_AT_N);
                         if(!clip2PrecAtN.containsKey(clipNames[f][c])){
                             System.out.println("Error! Results for system: " + systemNames[s] + " did not contain precision at N results for fold " + (f+1) + " clip " + clipNames[f][c] + "!");
                         }

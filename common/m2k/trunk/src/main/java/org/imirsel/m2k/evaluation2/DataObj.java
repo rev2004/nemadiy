@@ -15,14 +15,13 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
-
 import org.imirsel.m2k.util.noMetadataException;
 
 /**
  *
  * @author kris
  */
-public class EvaluationDataObject implements Serializable{
+public class DataObj implements Serializable{
 
     public static final long serialVersionUID = -1234567894463456789L;
     
@@ -33,14 +32,13 @@ public class EvaluationDataObject implements Serializable{
     public final static String PROP_FILE_LOCATION  = "fileLocation";
     /** Constant definition for metadata key: directory name     */
     public final static String PROP_DIRECTORY_NAME  = "dirName";
-    /** Constant definition for metadata key: class name     */
-    public final static String PROP_MCNEMAR = "McNemars";
+
     /** Constant definition for performance metadata.     */
     public final static String PROP_PERF = "Performance";
     /** Constant definition for algorithm name (used as an identifier in evaluations).     */
     public final static String PROP_ALG_NAME = "Algorithm name";
-    /** Constant definition for algorithm name (used as an identifier in evaluations).     */
-    public final static String PATH_TO_ARTIST_MAP = "Pathto artist map";
+    /** Constant definition for      */
+    public final static String PATH_TO_ARTIST_MAP = "Path to artist map";
     
     
     //Evaluation results constants
@@ -54,7 +52,19 @@ public class EvaluationDataObject implements Serializable{
     /** Constant definition for SEPARATOR used in ASCII file     */
     public final static String SEPARATOR = "\t";
     /** Constant definition for header used in ASCII file     */
-    public final static String fileHeader = "M2K EvaluationDataObject (13/08/08)";
+    public final static String fileHeader = "M2K DataObj (8th Feb 2010)";
+    
+    //Test/Train classification evaluator constants
+    public final static String CLASSIFICATION_EXPERIMENT_CLASSNAMES = "Classification Experiment Classnames";
+    public final static String CLASSIFICATION_CONFUSION_MATRIX_RAW = "Classification Confusion Matrix - raw";
+    public final static String CLASSIFICATION_CONFUSION_MATRIX_PERCENT = "Classification Confusion Matrix - percent";
+    public final static String CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW = "Classification Discounted Confusion Matrix - raw";
+    public final static String CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT = "Classification Discounted Confusion Matrix - percent";
+    public final static String CLASSIFICATION_ACCURACY = "Classification Accuracy";
+    public final static String CLASSIFICATION_DISCOUNTED_ACCURACY = "Classification Discounted Accuracy";
+    public final static String CLASSIFICATION_NORMALISED_ACCURACY = "Normalised Classification Accuracy";
+    public final static String CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY = "Normalised Classification Discounted Accuracy";
+    
     
     //Tag classification evaluator constants
     /** Constant definition for tag classification data in the form of a 
@@ -112,33 +122,33 @@ public class EvaluationDataObject implements Serializable{
     /**
      * The metadata hashmap.
      */
-    private final HashMap metadata;
+    private HashMap metadata;
     
-    /** Creates a new instance of EvaluationDataObject */
-    public EvaluationDataObject() {
+    /** Creates a new instance of DataObj */
+    public DataObj() {
         metadata = new HashMap();
     }
     
-    /** Creates a new instance of EvaluationDataObject with the file location as metadata
+    /** Creates a new instance of DataObj with the file location as metadata
      *  @param fileLocation Original location of evaluation file, used as an identifier
      */
-    public EvaluationDataObject(String fileLocation) {
+    public DataObj(String fileLocation) {
         metadata = new HashMap();
         metadata.put(PROP_FILE_LOCATION, fileLocation);
     }
     
     /**
-     * Creates a new instance of EvaluationDataObject which is a deep copy of 
-     * the EvaluationDataObject passed as a parameter
-     * @param oldObj The EvaluationDataObject to copy
+     * Creates a new instance of DataObj which is a deep copy of 
+     * the DataObj passed as a parameter
+     * @param oldObj The DataObj to copy
      */
-    public EvaluationDataObject(EvaluationDataObject oldObj) {
+    public DataObj(DataObj oldObj) {
         //copy metadata
         metadata = new HashMap();
         Set keys = oldObj.metadata.keySet();
         Object[] keysArray = keys.toArray();
         for (int i=0;i<keysArray.length;i++) {
-            metadata.put(new String((String)keysArray[i]), oldObj.metadata.get(keysArray[i]));
+            metadata.put(new String((String)keysArray[i]), oldObj.metadata.get((String)keysArray[i]));
         }
         //need to check this is actually copying/cloning the metadata and not just mapping to original value
     }
@@ -155,50 +165,47 @@ public class EvaluationDataObject implements Serializable{
     }
     
     /**
-     *  Compares two EvaluationDataObject Objects for equality based on their 
+     *  Compares two DataObj Objects for equality based on their 
      *  file location metadata.
-     *  @param otherObj The EvaluationDataObject to compare this Object with.
+     *  @param otherObj The DataObj to compare this Object with.
      *  @return An integer indicating equality or ordering.
      */
     public int compareTo(Object otherObj) {
         try {
-            return this.getStringMetadata(EvaluationDataObject.PROP_FILE_LOCATION).compareTo(((EvaluationDataObject)otherObj).getStringMetadata(EvaluationDataObject.PROP_FILE_LOCATION));
+            return this.getStringMetadata(DataObj.PROP_FILE_LOCATION).compareTo(((DataObj)otherObj).getStringMetadata(DataObj.PROP_FILE_LOCATION));
         } catch (noMetadataException ex) {
             throw new RuntimeException("Unable to compare Signal Objects with filelocation metadata",ex);
         }
     }
     
     /**
-     *  Compares two EvaluationDataObject Objects for equality based on their 
+     *  Compares two DataObj Objects for equality based on their 
      *  filelocation metadata.
-     *  @param otherObj The EvaluationDataObject to compare this Object with.
+     *  @param otherObj The DataObj to compare this Object with.
      *  @return A boolean indicating equality.
      */
-    @Override
-	public boolean equals(Object otherObj) {
+    public boolean equals(Object otherObj) {
         try {
-            return this.getStringMetadata(EvaluationDataObject.PROP_FILE_LOCATION).equals(((EvaluationDataObject)otherObj).getStringMetadata(EvaluationDataObject.PROP_FILE_LOCATION));
+            return this.getStringMetadata(DataObj.PROP_FILE_LOCATION).equals(((DataObj)otherObj).getStringMetadata(DataObj.PROP_FILE_LOCATION));
         } catch (noMetadataException ex) {
             throw new RuntimeException("Unable to compare Signal Objects with filelocation metadata",ex);
         }
     }
     
     /**
-     * Clones the EvaluationDataObject object (deep copy)
+     * Clones the DataObj object (deep copy)
      * @return A deep copy of this Signal object
      */
-    @Override
-	public Object clone() throws java.lang.CloneNotSupportedException {
+    public Object clone() throws java.lang.CloneNotSupportedException {
         super.clone();
-        return (new EvaluationDataObject(this));
+        return (new DataObj(this));
     }
     
     /** Returns a File Object for the path specified by the file location metadata.
-     * @return File Object for the path specified by the file location metadata.
-     * @throws noMetadataException 
+     *  @return a File Object for the path specified by the file location metadata.
      */
     public File getFile() throws noMetadataException {
-        return new File(this.getStringMetadata(EvaluationDataObject.PROP_FILE_LOCATION));
+        return new File(this.getStringMetadata(DataObj.PROP_FILE_LOCATION));
     }
     
     /**
@@ -225,7 +232,7 @@ public class EvaluationDataObject implements Serializable{
     }
     
     /**
-     * Lists all metadata keys for this EvaluationDataObject Object.
+     * Lists all metadata keys for this DataObj Object.
      * @return An array of Strings representing the available metadata.
      */
     public String[] metadataKeys() {
@@ -277,6 +284,17 @@ public class EvaluationDataObject implements Serializable{
     
     /**
      * Returns the metadata value corresponding to the supplied key and casts it
+     * as an int[][].
+     * @param key The key to return the value for
+     * @throws noMetadataException Thrown if the key does not exist.
+     * @return The int[][] corresponding to the supplied key
+     */
+    public int[][] get2dIntArrayMetadata(String key) throws noMetadataException {
+        return ((int[][])this.getMetadata(key));
+    }
+    
+    /**
+     * Returns the metadata value corresponding to the supplied key and casts it
      * as a String
      * @param key The key to return the value for
      * @throws noMetadataException Thrown if the key does not exist.
@@ -295,6 +313,17 @@ public class EvaluationDataObject implements Serializable{
      */
     public String[] getStringArrayMetadata(String key) throws noMetadataException {
         return ((String[])this.getMetadata(key));
+    }
+    
+    /**
+     * Returns the metadata value corresponding to the supplied key and casts it
+     * as a String[][]
+     * @param key The key to return the value for
+     * @throws noMetadataException Thrown if the key does not exist.
+     * @return The String[][] of values corresponding to the supplied key
+     */
+    public String[][] get2dStringArrayMetadata(String key) throws noMetadataException {
+        return ((String[][])this.getMetadata(key));
     }
     
     /**
@@ -320,44 +349,55 @@ public class EvaluationDataObject implements Serializable{
     }
     
     /**
-     * Reads a EvaluationDataObject Object from an ASCII file in the format 
+     * Returns the metadata value corresponding to the supplied key and casts it
+     * as a double[][]
+     * @param key The key to return the value for
+     * @throws noMetadataException Thrown if the key does not exist.
+     * @return The double[][] of values corresponding to the supplied key
+     */
+    public double[][] get2dDoubleArrayMetadata(String key) throws noMetadataException {
+        return ((double[][])this.getMetadata(key));
+    }
+    
+    /**
+     * Reads a DataObj Object from an ASCII file in the format 
      * produced by the <code>write</code> method.
-     * @param theFile The File object to load the EvaluationDataObject from.
+     * @param theFile The File object to load the DataObj from.
      * @throws java.io.IOException Thrown if an IOException occurs.
      * @throws java.lang.ClassNotFoundException Thrown if an attempt load an 
      * unknown class is made.
-     * @return The loaded EvaluationDataObject.
+     * @return The loaded DataObj.
      */
-    public static EvaluationDataObject read(File theFile) throws java.io.IOException, java.lang.ClassNotFoundException {
+    public static DataObj read(File theFile) throws java.io.IOException, java.lang.ClassNotFoundException {
         //Check readLine() behaviour is valid... could be more robust?
-        EvaluationDataObject dataObject = new EvaluationDataObject();
+        DataObj dataObject = new DataObj();
         
         if (!theFile.exists()) {
-            throw new FileNotFoundException("EvaluationDataObject.read(): The specified file does not exist!\n File: " + theFile.getPath());
+            throw new FileNotFoundException("DataObj.read(): The specified file does not exist!\n File: " + theFile.getPath());
         }
         if (theFile.isDirectory()) {
-            throw new RuntimeException("EvaluationDataObject.read(): The specified file is a directory and therefore cannot be read!\n Path: " + theFile.getPath());
+            throw new RuntimeException("DataObj.read(): The specified file is a directory and therefore cannot be read!\n Path: " + theFile.getPath());
         }
         if (!theFile.canRead()) {
-            throw new RuntimeException("EvaluationDataObject.read(): The specified file exists but cannot be read!\n File: " + theFile.getPath());
+            throw new RuntimeException("DataObj.read(): The specified file exists but cannot be read!\n File: " + theFile.getPath());
         }
         
         BufferedReader textBuffer;
         try {
             textBuffer = new BufferedReader( new FileReader(theFile) );
         } catch(java.io.FileNotFoundException fnfe) {
-            throw new RuntimeException("EvaluationDataObject.read(): The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n File: " + theFile.getPath());
+            throw new RuntimeException("DataObj.read(): The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n File: " + theFile.getPath());
         }
         String line = null;
         try {
             //check headers
             line = textBuffer.readLine();
             if (!line.equals(fileHeader)) {
-                System.out.println("WARNING: EvaluationDataObject.read(): Doesn't match the current format specification\nFile: " + theFile.getPath() + "\nCurrent spec: " + fileHeader + "\nFile spec: " + line);
+                System.out.println("WARNING: DataObj.read(): Doesn't match the current format specification\nFile: " + theFile.getPath() + "\nCurrent spec: " + fileHeader + "\nFile spec: " + line);
             }
             line = textBuffer.readLine();
             if (!line.equals(DIVIDER)) {
-                throw new RuntimeException("EvaluationDataObject.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
+                throw new RuntimeException("DataObj.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
             }
             
             String[] theColumnLabels = null;
@@ -412,13 +452,13 @@ public class EvaluationDataObject implements Serializable{
             } else {
                 line = textBuffer.readLine();
                 if (!line.equals(DIVIDER)) {
-                    throw new RuntimeException("EvaluationDataObject.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
+                    throw new RuntimeException("DataObj.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
                 }
             }
             
             textBuffer.close();
         } catch (java.io.IOException ioe) {
-            throw new java.io.IOException("EvaluationDataObject.read(): An IOException occured while reading file: " + theFile.getPath() + "\n" + ioe);
+            throw new java.io.IOException("DataObj.read(): An IOException occured while reading file: " + theFile.getPath() + "\n" + ioe);
         } catch (java.lang.NullPointerException npe) {
             npe.printStackTrace();
             throw new RuntimeException("NullPointerException caused by: " + theFile.getCanonicalPath());
@@ -434,8 +474,7 @@ public class EvaluationDataObject implements Serializable{
      * Creates a String representation of a Signal Object
      * @return a String representation of a Signal Object
      */
-    @Override
-	public String toString() {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append(fileHeader + "\n" + DIVIDER + "\n");
         
@@ -456,7 +495,7 @@ public class EvaluationDataObject implements Serializable{
                     //Supports only int array, String array and double array types
                     String compName = metadata.get(keysArray[i]).getClass().getComponentType().getName();
                     if ((!compName.equals("int"))&&(!compName.equals("double"))&&(!compName.equals("java.lang.String"))) {
-                        throw new RuntimeException("EvaluationDataObject.write(): Only intger, double and String array types are supported at present, contact developers.");
+                        throw new RuntimeException("DataObj.write(): Only intger, double and String array types are supported at present, contact developers.");
                     }
                     
                     if (compName.equals("int")) {
@@ -490,7 +529,7 @@ public class EvaluationDataObject implements Serializable{
                     } else if (className.equals("java.lang.Double")) {
                         buffer.append(((Double)metadata.get(keysArray[i])).doubleValue() + "\n");
                     }
-                }
+                } //TODO add support for collections and other objects that can be marshalled to a String
             }
         }
         buffer.append(DIVIDER + "\n");
@@ -498,7 +537,7 @@ public class EvaluationDataObject implements Serializable{
     }
     
     /**
-     * Writes a EvaluationDataObject Object to an ASCII file.
+     * Writes a DataObj Object to an ASCII file.
      * @param theFile The file to write the Object to.
      * @throws java.io.IOException Thrown if an IO error occurs, such as being 
      * unable to create the File or being unable to write to it.
@@ -510,7 +549,7 @@ public class EvaluationDataObject implements Serializable{
         try {
             textBuffer = new BufferedWriter( new FileWriter(theFile, false) );
         } catch (java.io.IOException ioe) {
-            throw new java.io.IOException("EvaluationDataObject.write(): An IOException occured while opening file: " + theFile.getPath() + " for writing\n" + ioe);
+            throw new java.io.IOException("DataObj.write(): An IOException occured while opening file: " + theFile.getPath() + " for writing\n" + ioe);
         }
         
         textBuffer.write(this.toString());

@@ -12,8 +12,14 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+
+import org.imirsel.m2k.evaluation2.DataObj;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
 
@@ -62,54 +68,44 @@ public class WriteResultFilesClass {
         }
     }
 
-    public static Table prepTableDataOverClasses(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
-        //sort systems alphabetically
-        HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
-        for (int i = 0; i < sigStore.size(); i++) {
-            try {
-                sigArrMap.put((sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), sigStore.get(i));
-            } catch (noMetadataException ex) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + ex);
-            }
-        }
-        String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
-        Arrays.sort(keys);
-
-        sigStore.clear();
-        for (int i = 0; i < keys.length; i++) {
-            sigStore.add(sigArrMap.get(keys[i]));
-        }
-
-        int numAlgos = sigStore.size();
-        int numRuns = sigStore.get(0).length;
-
+    public static Table prepTableDataOverClasses(Map<String,DataObj> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
+    	//sort systems alphabetically
+    	int numAlgos = jobIDToName.size();
+    	String[][] jobIDandName = new String[numAlgos][];
+    	int idx=0;
+    	String id;
+    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+    		id = it.next();
+    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
+    	}
+    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
+    		public int compare(String[] a, String[] b){
+    			return a[1].compareTo(b[1]);
+    		}
+    	});
+    	
         String[] colNames = new String[numAlgos + 1];
         colNames[0] = "Class";
         for (int i = 0; i < numAlgos; i++) {
-            try {
-                colNames[i+1] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME).replaceAll(",", " ");
-            } catch (noMetadataException e) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
-            }
+            colNames[i+1] = jobIDandName[i][1];
         }
 
         DecimalFormat dec = new DecimalFormat();
         dec.setMaximumFractionDigits(2);
 
         List<String[]> rows = new ArrayList<String[]>();
-        String[] classNames = sigStore.get(0)[0].getStringArrayMetadata(Signal.PROP_CLASSES);
-        for (int c = 0; c < classNames.length; c++) {
+        
+        for (int c = 0; c < classNames.size(); c++) {
             String[] row = new String[numAlgos + 1];
-            row[0] = classNames[c].replaceAll(",", " ");
+            row[0] = classNames.get(c).replaceAll(",", " ");
 
-            for (int j = 0 ; j < numAlgos; j++){
-                double avg = 0.0;
-                for (int i = 0; i < numRuns; i++) {
-                    avg += sigStore.get(j)[i].getDoubleArrayMetadata(perfMetadataKey)[c];
-                }
-                avg /= numRuns;
-
-                row[j+1] = dec.format(100.0 * avg);
+            for (int j = 0 ; j < numAlgos; j++){  
+            	if (jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey).getClass().getComponentType().isArray()){
+            		row[j+1] = dec.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c]);
+            	}else{
+            		//discounted types are 1D as there is no residual confusion after discounting
+            		row[j+1] = dec.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c]);
+            	}
             }
             rows.add(row);
         }
@@ -117,138 +113,95 @@ public class WriteResultFilesClass {
     }
 
     /**
-     * A utility function that takes an ArrayList of Signal arrays containing algorithm 
-     * name and performance (per class) metadata and outputs the data into a CSV 
-     * file to be used to perform significance tests in Matlab or another 
-     * suitable environment.
+     * A utility function that takes a Map of jobID to a <code>DataObj</code> that 
+     * contains a confusion matrix and outputs the data into a CSV file to be used 
+     * to perform significance tests in Matlab or another suitable environment.
      * 
-     * @param sigStore An ArrayList of Signal arrays containing algorithm name and
-     * performance metadata. Each Signal Object represents a single fold of the
-     * experiment (thus each array should be ordered in the same way).
-     * @param outputDirectory The directory to output the CSV file into.
-     * @param evaluationName The name of the evaluation (used to name output file.
-     * @param perfMetadataKey
-     * @param outputFileExt The extension to put on the output file.
-     * @param verbose Determines wheter the data should be dumped to the console
-     * as well.
-     * @return A File Object indicating where the output CSV file was written to.
+     * @param jobIDToAggregateEval Map of jobID to overall evaluation data.
+     * @param jobIDToName Map of jobID to job Name.
+     * @param outputFile The file to write the output to.
      */
-    public static File prepFriedmanTestDataOverClassesCSV(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
+    public static void prepFriedmanTestDataCSVOverClasses(Map<String,DataObj> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey, File outputFile) 
+    		throws IOException{
+    	
         //sort systems alphabetically
-        HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
-        for (int i = 0; i < sigStore.size(); i++) {
-            try {
-                sigArrMap.put((sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), sigStore.get(i));
-            } catch (noMetadataException ex) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + ex);
-            }
-        }
-        String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
-        Arrays.sort(keys);
-        
-        sigStore.clear();
-        for (int i = 0; i < keys.length; i++) {
-            sigStore.add(sigArrMap.get(keys[i]));
-        }
-        
-        int numAlgos = sigStore.size();
-        int numRuns = sigStore.get(0).length;
-        String EvaluationOutput = "";
+    	int numAlgos = jobIDToName.size();
+    	String[][] jobIDandName = new String[numAlgos][];
+    	int idx=0;
+    	String id;
+    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+    		id = it.next();
+    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id).replaceAll(",", " ")};
+    	}
+    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
+    		public int compare(String[] a, String[] b){
+    			return a[1].compareTo(b[1]);
+    		}
+    	});
 
-        String[] runNames = new String[numAlgos];
-        EvaluationOutput += "*Class,";
+        String csv = "*Class,";
         for (int i = 0; i < numAlgos; i++) {
-            try {
-                runNames[i] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME).replaceAll(",", " ");
-            } catch (noMetadataException e) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
-            }
-            if (sigStore.get(i).length != numRuns){
-                throw new RuntimeException(runNames[i] + " had a different number of results (" + sigStore.get(i).length + ") to " + runNames[0] + " (" + numRuns + ")");
-            }
-            EvaluationOutput += runNames[i];
-            if (i< sigStore.size()-1){
-                EvaluationOutput += ",";
+        	csv += jobIDandName[i][1];
+            if (i<numAlgos-1){
+            	csv += ",";
             }
         }
-        EvaluationOutput += "\n";
+        csv += "\n";
         
-        
-        String[] classNames = sigStore.get(0)[0].getStringArrayMetadata(Signal.PROP_CLASSES);
-        for (int c = 0; c < classNames.length; c++) {
-            EvaluationOutput += classNames[c].replaceAll(",", " ") + ",";
+        for (int c = 0; c < classNames.size(); c++) {
+            csv += classNames.get(c).replaceAll(",", " ") + ",";
 
             for (int j = 0 ; j < numAlgos; j++){
-                double avg = 0.0;
-                for (int i = 0; i < numRuns; i++) {
-                    avg += sigStore.get(j)[i].getDoubleArrayMetadata(perfMetadataKey)[c];
+            	if (jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey).getClass().getComponentType().isArray()){
+            		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c];
+            	}else{
+            		//discounted types are 1D as there is no residual confusion after discounting
+            		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c];
+            	}
+                if (j < numAlgos-1){
+                	csv += ",";
                 }
-                avg /= numRuns;
-
-                try{
-                    EvaluationOutput += "" + avg;
-                } catch (noMetadataException e) {
-                    throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
-                }
-                if (j< sigStore.size()-1){
-                    EvaluationOutput += ",";
-                }
-
             }
-            EvaluationOutput += "\n";
+            csv += "\n";
         }
         
-
-        
-        
-        File copyToDirFile = new File(outputDirectory);
-        if (!copyToDirFile.isDirectory()) {
-            if (!copyToDirFile.mkdirs()) {
-                throw new RuntimeException("Could not create the output folder.");
-            }
-        }
-        File testFile = null;
+        BufferedWriter output = null;
         try {
-            testFile = new File(outputDirectory + File.separator + evaluationName + "_" + perfMetadataKey.replaceAll("\\s+", "_") + outputFileExt);
-            BufferedWriter output = new BufferedWriter(new FileWriter(testFile));
-            output.write(EvaluationOutput);
-            output.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            output = new BufferedWriter(new FileWriter(outputFile));
+            output.write(csv);
+        }finally{
+        	try {
+	        	if(output != null){
+	        		output.flush();
+	        		output.close();
+	        	}
+        	} catch (IOException ex) {}
         }
-
-        if (verbose) {
-            System.out.println(EvaluationOutput);
-        }
-        return testFile;
     }
 
-    public static Table prepTableData(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
-        //sort systems alphabetically
-        HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
-        for (int i = 0; i < sigStore.size(); i++) {
-            try {
-                sigArrMap.put((sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), sigStore.get(i));
-            } catch (noMetadataException ex) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + ex);
-            }
-        }
-        String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
-        Arrays.sort(keys);
+    public static Table prepTableDataOverFolds(Map<String,List<DataObj>> jobIDToFoldEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
+    	//sort systems alphabetically
+    	int numAlgos = jobIDToName.size();
+    	String[][] jobIDandName = new String[numAlgos][];
+    	int idx=0;
+    	String id;
+    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+    		id = it.next();
+    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
+    	}
+    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
+    		public int compare(String[] a, String[] b){
+    			return a[1].compareTo(b[1]);
+    		}
+    	});
 
-        sigStore.clear();
-        for (int i = 0; i < keys.length; i++) {
-            sigStore.add(sigArrMap.get(keys[i]));
-        }
-
-        int numAlgos = sigStore.size();
-        int numRuns = sigStore.get(0).length;
+        int numFolds = jobIDToFoldEval.get(jobIDandName[0][0]).size();
 
         String[] colNames = new String[numAlgos + 1];
         colNames[0] = "Classification fold";
         for (int i = 0; i < numAlgos; i++) {
             try {
-                colNames[i+1] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME).replaceAll(",", " ");
+                colNames[i+1] = jobIDandName[i][1];
             } catch (noMetadataException e) {
                 throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
             }
@@ -258,13 +211,12 @@ public class WriteResultFilesClass {
         dec.setMaximumFractionDigits(2);
 
         List<String[]> rows = new ArrayList<String[]>();
-        String[] classNames = sigStore.get(0)[0].getStringArrayMetadata(Signal.PROP_CLASSES);
-        for (int r = 0; r < numRuns; r++) {
+        for (int r = 0; r < numFolds; r++) {
             String[] row = new String[numAlgos + 1];
             row[0] = "" + (r+1);
 
             for (int j = 0 ; j < numAlgos; j++){
-                row[j+1] = dec.format(100.0 * sigStore.get(j)[r].getDoubleMetadata(perfMetadataKey));
+                row[j+1] = dec.format(100.0 * jobIDToFoldEval.get(jobIDandName[j][0]).get(r).getDoubleMetadata(metadataKey));
             }
             rows.add(row);
         }
@@ -287,159 +239,88 @@ public class WriteResultFilesClass {
      * as well.
      * @return A File Object indicating where the output CSV file was written to.
      */
-    public static File prepFriedmanTestDataCSV(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String perfMetadataKey, String outputFileExt, boolean verbose) {
+    public static void prepFriedmanTestDataCSVOverFolds(Map<String,List<DataObj>> jobIDToFoldEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey, File outputFile) 
+    		throws IOException{
         //sort systems alphabetically
-        HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
-        for (int i = 0; i < sigStore.size(); i++) {
-            try {
-                sigArrMap.put(((Signal[]) sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), (Signal[]) sigStore.get(i));
-            } catch (noMetadataException ex) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + ex);
-            }
-        }
-        String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
-        Arrays.sort(keys);
-        
-        sigStore.clear();
-        for (int i = 0; i < keys.length; i++) {
-            sigStore.add(sigArrMap.get(keys[i]));
-        }
-        
-        int numAlgos = sigStore.size();
-        int numRuns = sigStore.get(0).length;
-        String EvaluationOutput = "";
+    	int numAlgos = jobIDToName.size();
+    	String[][] jobIDandName = new String[numAlgos][];
+    	int idx=0;
+    	String id;
+    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+    		id = it.next();
+    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
+    	}
+    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
+    		public int compare(String[] a, String[] b){
+    			return a[1].compareTo(b[1]);
+    		}
+    	});
 
-        String[] runNames = new String[numAlgos];
-        EvaluationOutput += "*Classification fold,";
+        int numFolds = jobIDToFoldEval.get(jobIDandName[0][0]).size();
+
+        String csv = "*Classification fold,";
         for (int i = 0; i < numAlgos; i++) {
-            try {
-                runNames[i] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME);
-            } catch (noMetadataException e) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
-            }
-            if (sigStore.get(i).length != numRuns){
-                throw new RuntimeException(runNames[i] + " had a different number of results (" + sigStore.get(i).length + ") to " + runNames[0] + " (" + numRuns + ")");
-            }
-            EvaluationOutput += runNames[i];
-            if (i< sigStore.size()-1){
-                EvaluationOutput += ",";
+            csv += jobIDandName[i][1];
+            if (i< numAlgos-1){
+                csv += ",";
             }
         }
-        EvaluationOutput += "\n";
+        csv += "\n";
         
-        for (int i = 0; i < numRuns; i++) {
-            EvaluationOutput += i + ",";
+        for (int i = 0; i < numFolds; i++) {
+            csv += i + ",";
             for (int j = 0 ; j < numAlgos; j++){
-                try{
-                    EvaluationOutput += "" + sigStore.get(j)[i].getDoubleMetadata(perfMetadataKey);
-                } catch (noMetadataException e) {
-                    throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
-                }
-                if (j< sigStore.size()-1){
-                    EvaluationOutput += ",";
+                csv += "" + jobIDToFoldEval.get(jobIDandName[j][0]).get(i).getDoubleMetadata(metadataKey);
+                if (j<numAlgos-1){
+                    csv += ",";
                 }
             }
-            EvaluationOutput += "\n";
+            csv += "\n";
         }
 
-        
-        
-        File copyToDirFile = new File(outputDirectory);
-        if (!copyToDirFile.isDirectory()) {
-            if (!copyToDirFile.mkdirs()) {
-                throw new RuntimeException("Could not create the output folder.");
-            }
-        }
-        File testFile = null;
+        BufferedWriter output = null;
         try {
-            testFile = new File(outputDirectory + File.separator + evaluationName + "_" + perfMetadataKey.replaceAll("\\s+", "_") + outputFileExt);
-            BufferedWriter output = new BufferedWriter(new FileWriter(testFile));
-            output.write(EvaluationOutput);
-            output.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            output = new BufferedWriter(new FileWriter(outputFile));
+            output.write(csv);
+        }finally{
+        	try {
+	        	if(output != null){
+	        		output.flush();
+	        		output.close();
+	        	}
+        	} catch (IOException ex) {}
         }
-
-        if (verbose) {
-            System.out.println(EvaluationOutput);
-        }
-        return testFile;
     }
 
-    public static Table prepSummaryTable(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean usingAHierarchy, boolean verbose) {
-        //sort systems alphabetically
-        HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
-        for (int i = 0; i < sigStore.size(); i++) {
-            try {
-                sigArrMap.put(((Signal[]) sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), (Signal[]) sigStore.get(i));
-            } catch (noMetadataException ex) {
-                throw new RuntimeException("prepSummaryTable: Required metadata not found!\n" + ex);
-            }
-        }
-        String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
-        Arrays.sort(keys);
-
-
-        double[][] means = null;
-        if(usingAHierarchy){
-            means = new double[keys.length][4];
-        }else{
-            means = new double[keys.length][2];
-        }
-
-        sigStore.clear();
-        for (int i = 0; i < keys.length; i++) {
-            sigStore.add(sigArrMap.get(keys[i]));
-        }
-
-        int numAlgos = sigStore.size();
-        int numRuns = sigStore.get(0).length;
-        String[] runNames = new String[numAlgos];
-        for (int i = 0; i < numAlgos; i++) {
-            try {
-                runNames[i] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME);
-            } catch (noMetadataException e) {
-                throw new RuntimeException("prepSummaryTable: Required metadata not found!\n" + e);
-            }
-            if (sigStore.get(i).length != numRuns){
-                throw new RuntimeException(runNames[i] + " had a different number of results (" + sigStore.get(i).length + ") to " + runNames[0] + " (" + numRuns + ")");
-            }
-        }
-        for (int i = 0; i < numRuns; i++) {
-            for (int j = 0 ; j < numAlgos; j++){
-                try{
-                    means[j][0] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_ACC);
-                    means[j][1] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_NORM_ACC);
-                    if(usingAHierarchy){
-                        means[j][2] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_DISCOUNTED_ACC);
-                        means[j][3] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_NORM_DISCOUNTED_ACC);
-                    }
-                } catch (noMetadataException e) {
-                    throw new RuntimeException("prepSummaryTable: Required metadata not found!\n" + e);
-                }
-            }
-        }
-        int numMetrics = 2;
-        if(usingAHierarchy){
-            numMetrics = 4;
-        }
-        for (int i = 0; i < numAlgos; i++) {
-            for (int j = 0; j < numMetrics; j++){
-                means[i][j] /= numRuns;
-            }
-        }
-
+    public static Table prepSummaryTable(Map<String,DataObj> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, boolean usingAHierarchy) {
+    	//sort systems alphabetically
+    	int numAlgos = jobIDToName.size();
+    	String[][] jobIDandName = new String[numAlgos][];
+    	int idx=0;
+    	String id;
+    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+    		id = it.next();
+    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
+    	}
+    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
+    		public int compare(String[] a, String[] b){
+    			return a[1].compareTo(b[1]);
+    		}
+    	});
 
         String[] colNames;
         if(usingAHierarchy){
-            colNames = new String[3];
-            colNames[0] = "Participant";
-            colNames[1] = "Mean Accuracy";
-            colNames[2] = "Mean Discounted Accuracy";
+            colNames = new String[5];
+            colNames[0] = "Job";
+            colNames[1] = "Overall Accuracy";
+            colNames[2] = "Normalised Overall Accuracy";
+            colNames[3] = "Overall Discounted Accuracy";
+            colNames[4] = "Normalised Overall Discounted Accuracy";
         }else{
-            colNames = new String[2];
-            colNames[0] = "Participant";
-            colNames[1] = "Mean Accuracy";
+            colNames = new String[3];
+            colNames[0] = "Job";
+            colNames[1] = "Overall Accuracy";
+            colNames[2] = "Normalised Overall Accuracy";
         }
 
         DecimalFormat dec = new DecimalFormat();
@@ -448,140 +329,66 @@ public class WriteResultFilesClass {
         List<String[]> rows = new ArrayList<String[]>();
         for (int i = 0; i < numAlgos; i++) {
             String[] row = new String[colNames.length];
-            row[0] = runNames[i];
-            //for (int j = 0; j < numMetrics; j++){
-            //TODO: undo this hack
-            int idx = 1;
-            for (int j = 0; j < numMetrics; j+=2){
-                row[idx++] = dec.format(means[i][j] * 100.0) + "%";
+            row[0] = jobIDandName[i][1];
+            row[1] = "" + jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_ACCURACY);
+            row[2] = "" + jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_ACCURACY);
+            if(usingAHierarchy){
+            	row[3] = "" + jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY);
+            	row[4] = "" + jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY);
             }
             rows.add(row);
         }
         return new Table(colNames, rows);
     }
 
-    /**
-     * A utility function that takes an ArrayList of Signal arrays containing 
-     * algorithm name and performance metadata and outputs the mean of each 
-     * systems data into a CSV file to be used As a result sumamry.
-     * 
-     * @param sigStore An ArrayList of Signal arrays containing algorithm name 
-     * and performance metadata. Each Signal Object represents a single fold of 
-     * the experiment (thus each array should be ordered in the same way)
-     * @param outputDirectory The directory to output the CSV file into.
-     * @param evaluationName The name of the evaluation (used to name output file.
-     * @param outputFileExt The extension to put on the output file.
-     * @param verbose Determines wheter the data should be dumped to the console
-     * as well.
-     * @return A File Object indicating where the output CSV file was written to.
-     */
-    public static File prepSummaryResultDataCSV(ArrayList<Signal[]> sigStore, String outputDirectory, String evaluationName, String outputFileExt, boolean usingAHierarchy, boolean verbose) {
-        //sort systems alphabetically
-        HashMap<String,Signal[]> sigArrMap = new HashMap<String,Signal[]>();
-        for (int i = 0; i < sigStore.size(); i++) {
-            try {
-                sigArrMap.put(((Signal[]) sigStore.get(i))[0].getStringMetadata(Signal.PROP_ALG_NAME), (Signal[]) sigStore.get(i));
-            } catch (noMetadataException ex) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + ex);
-            }
-        }
-        String[] keys = sigArrMap.keySet().toArray(new String[sigStore.size()]);
-        Arrays.sort(keys);
-
-
-        double[][] means = null;
-        if(usingAHierarchy){
-            means = new double[keys.length][4];
-        }else{
-            means = new double[keys.length][2];
-        }
-
-        sigStore.clear();
-        for (int i = 0; i < keys.length; i++) {
-            sigStore.add(sigArrMap.get(keys[i]));
-        }
-        
-        int numAlgos = sigStore.size();
-        int numRuns = sigStore.get(0).length;
-        String EvaluationOutput = "";
-        String[] runNames = new String[numAlgos];
-        for (int i = 0; i < numAlgos; i++) {
-            try {
-                runNames[i] = sigStore.get(i)[0].getStringMetadata(Signal.PROP_ALG_NAME);
-            } catch (noMetadataException e) {
-                throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
-            }
-            if (sigStore.get(i).length != numRuns){
-                throw new RuntimeException(runNames[i] + " had a different number of results (" + sigStore.get(i).length + ") to " + runNames[0] + " (" + numRuns + ")");
-            }
-        }
-        for (int i = 0; i < numRuns; i++) {
-            for (int j = 0 ; j < numAlgos; j++){
-                try{
-                    means[j][0] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_ACC);
-                    means[j][1] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_NORM_ACC);
-                    if(usingAHierarchy){
-                        means[j][2] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_DISCOUNTED_ACC);
-                        means[j][3] += sigStore.get(j)[i].getDoubleMetadata(Signal.PROP_PERF_NORM_DISCOUNTED_ACC);
-                    }
-                } catch (noMetadataException e) {
-                    throw new RuntimeException("prepFriedmanTestData: Required metadata not found!\n" + e);
-                }
-            }
-        }
-        int numMetrics = 2;
-        if(usingAHierarchy){
-            numMetrics = 4;
-        }
-        for (int i = 0; i < numAlgos; i++) {
-            for (int j = 0; j < numMetrics; j++){
-                means[i][j] /= numRuns;
-            }
-        }
-        
+    public static void prepSummaryResultDataCSV(Map<String,DataObj> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, File outputFile, boolean usingAHierarchy) 
+    		throws IOException{
+    	//sort systems alphabetically
+    	int numAlgos = jobIDToName.size();
+    	String[][] jobIDandName = new String[numAlgos][];
+    	int idx=0;
+    	String id;
+    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+    		id = it.next();
+    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
+    	}
+    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
+    		public int compare(String[] a, String[] b){
+    			return a[1].compareTo(b[1]);
+    		}
+    	});
         
         DecimalFormat dec = new DecimalFormat();
         dec.setMaximumFractionDigits(2);
-        //TODO: undo this hack
-        //EvaluationOutput += "*Participant,Mean Accuracy,Mean Normalised Accuracy";
-        EvaluationOutput += "*Participant,Mean Accuracy";
+        
+        String csv = "*Participant,Overall Accuracy,Overall Normalised Accuracy";
         if (usingAHierarchy){
-            //TODO: undo this hack
-            //EvaluationOutput += ",Mean Discounted Accuracy,Mean Normalised Accuracy";
-            EvaluationOutput += ",Mean Discounted Accuracy";
+        	csv += ",Overall Discounted Accuracy,Overall Normalised Accuracy";
         }
-        EvaluationOutput += "\n";
+        csv += "\n";
         for (int i = 0; i < numAlgos; i++) {
-            EvaluationOutput += runNames[i];
-            //for (int j = 0; j < numMetrics; j++){
-            //TODO: undo this hack
-            for (int j = 0; j < numMetrics; j+=2){
-                EvaluationOutput += "," + dec.format(means[i][j] * 100.0) + "%";
-            }
-            
-            EvaluationOutput += "\n";
+        	csv += jobIDandName[i][1];
+        	csv += "," + dec.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_ACCURACY) * 100.0) + "%";
+        	csv += "," + dec.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_ACCURACY) * 100.0) + "%";
+        	if(usingAHierarchy){
+        		csv += "," + dec.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY) * 100.0) + "%";
+            	csv += "," + dec.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY) * 100.0) + "%";
+        	}
+        	csv += "\n";
         }
         
-        File copyToDirFile = new File(outputDirectory);
-        if (!copyToDirFile.isDirectory()) {
-            if (!copyToDirFile.mkdirs()) {
-                throw new RuntimeException("Could not create the output folder.");
-            }
-        }
-        File testFile = null;
+        BufferedWriter output = null;
         try {
-            testFile = new File(outputDirectory + File.separator + "summary_" + evaluationName + outputFileExt);
-            BufferedWriter output = new BufferedWriter(new FileWriter(testFile));
-            output.write(EvaluationOutput);
-            output.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            output = new BufferedWriter(new FileWriter(outputFile));
+            output.write(csv);
+        }finally{
+        	try {
+	        	if(output != null){
+	        		output.flush();
+	        		output.close();
+	        	}
+        	} catch (IOException ex) {}
         }
-
-        if (verbose) {
-            System.out.println(EvaluationOutput);
-        }
-        return testFile;
     }
     
 }

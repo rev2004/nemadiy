@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.imirsel.m2k.evaluation2.TaskDescription;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
 import org.imirsel.m2k.io.file.IOUtil;
 
@@ -34,7 +36,7 @@ public class WriteResultPagePerFile {
      * @param outputDirectory The directory to output the HTML pages to.
      * @throws IOException Thrown if there is a problem reading the CSV files.
      */
-    public static void writeResultsHTML(String evaluationName, String[] pageNames, File[] CSVFiles, File[] imagePaths, File outputDirectory) throws IOException{
+    public static void writeResultsHTML(TaskDescription task, String[] pageNames, File[] CSVFiles, File[] imagePaths, File outputDirectory) throws IOException{
         //create result pages
         System.err.println("Creating result HTML files...");
 
@@ -66,7 +68,7 @@ public class WriteResultPagePerFile {
             items.add(new ImageItem("plot", "Plot", IOUtil.makeRelative(imagePaths[i], outputDirectory)));
 
             //add the page
-            aPage = new Page(cleanName, pageNames[i], items, true);
+            aPage = new Page(task, cleanName, pageNames[i], items, true);
             resultPages.add(aPage);
         }
 
@@ -95,7 +97,7 @@ public class WriteResultPagePerFile {
                 items.add(new TableItem("meanEvalMetrics", "Mean Evaluation Metrics", csvData[0][0], rows));
 
                 //add the page
-                aPage = new Page("mean_scores", "Mean scores", items, false);
+                aPage = new Page(task, "mean_scores", "Mean scores", items, false);
                 resultPages.add(aPage);
             }catch(Exception e){
                 Logger.getLogger(WriteResultPagePerFile.class.getName()).log(Level.WARNING, "Was unable to produce mean scores from second column of CCSV tables!",e);
@@ -123,10 +125,10 @@ public class WriteResultPagePerFile {
             }
             items.add(new FileListItem("plots", "Evaluation plots", images));
 
-            aPage = new Page("files", "All data files", items, true);
+            aPage = new Page(task, "files", "All data files", items, true);
             resultPages.add(aPage);
         }
 
-        ResultPageUtilities.writeResultPages(evaluationName, outputDirectory, resultPages);
+        Page.writeResultPages(task.getTaskName(), outputDirectory, resultPages);
     }
 }
