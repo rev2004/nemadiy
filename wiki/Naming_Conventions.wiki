@@ -152,7 +152,7 @@ Incorrect:
 
 == Public Class Constants ==
 
-Public class constants should be set in all caps with underscores separating words. There is one exception to this rule: loggers. Visually, constants demand a great deal of visual attention since they are set in all caps. Because logger objects can be used heavily throughout a class, they should be set in lower case:
+Public class constants should be set in all caps with underscores separating words. There is one exception to this rule: loggers. Visually, constants demand a great deal of attention since they are set in all caps. Because logger objects can be used heavily throughout a class, we want to minimize the visual clutter logging statements create. Therefore, logger objects should be set in lower case:
 
 {{{
 private static final Logger logger;
