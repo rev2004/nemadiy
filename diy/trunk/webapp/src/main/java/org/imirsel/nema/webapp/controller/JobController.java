@@ -40,7 +40,7 @@ import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 public class JobController extends MultiActionController {
 
-	static protected Log logger=LogFactory.getLog(JobController.class);
+	static private Log logger=LogFactory.getLog(JobController.class);
 	private UserManager userManager = null;
 	private FlowService flowService = null;
     private SubmissionManager submissionManager = null;
