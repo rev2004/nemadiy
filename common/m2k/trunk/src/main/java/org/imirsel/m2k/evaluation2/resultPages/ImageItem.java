@@ -6,7 +6,8 @@
 package org.imirsel.m2k.evaluation2.resultPages;
 
 /**
- *
+ * A page item implementation for image items.
+ * 
  * @author kriswest
  */
 public class ImageItem extends PageItem{

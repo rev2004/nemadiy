@@ -20,16 +20,25 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.imirsel.m2k.evaluation2.DataObj;
+import org.imirsel.m2k.evaluation2.TaskDescription;
 import org.imirsel.m2k.util.Signal;
 import org.imirsel.m2k.util.noMetadataException;
 
 /**
- *
+ * Utility class that can produce CSV result files and Table Objects for use in reporting
+ * results, encoding them for use in significance testing (as CSV files) and formatting
+ * data for use in the output of HTML result pages.
  * @author kriswest
  */
 public class WriteResultFilesClass {
 
-    static class Table{
+	/**
+	 * Data-structure to hold the information relating to a table (column names and rows 
+	 * of string data).
+	 *  
+	 * @author kriswest
+	 */
+    public static class Table{
         private String[] colHeaders;
         private List<String[]> rows;
 
@@ -68,6 +77,17 @@ public class WriteResultFilesClass {
         }
     }
 
+    /**
+     * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
+     * of the table and the rows are the different classes of data in the evaluation.
+     * 
+     * @param jobIDToAggregateEval Map linking jobID to its overall evaluation data Object.
+     * @param jobIDToName Map linking jobID to the Job name to use in the Table for each set of results.
+     * @param classNames A list of the class names used.
+     * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
+     * a 1 or 2 dimensional double array giving the accuracies or confusions for each class.
+     * @return The prepared table.
+     */
     public static Table prepTableDataOverClasses(Map<String,DataObj> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
@@ -113,13 +133,15 @@ public class WriteResultFilesClass {
     }
 
     /**
-     * A utility function that takes a Map of jobID to a <code>DataObj</code> that 
-     * contains a confusion matrix and outputs the data into a CSV file to be used 
-     * to perform significance tests in Matlab or another suitable environment.
+     * Prepares a CSV file representing the specified evaluation metadata, where the systems are the columns
+     * of the CSV and the rows are the different classes of data in the evaluation.
      * 
-     * @param jobIDToAggregateEval Map of jobID to overall evaluation data.
-     * @param jobIDToName Map of jobID to job Name.
-     * @param outputFile The file to write the output to.
+     * @param jobIDToAggregateEval Map linking jobID to its overall evaluation data Object.
+     * @param jobIDToName Map linking jobID to the Job name to use in the CSV for each set of results.
+     * @param classNames A list of the class names used.
+     * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
+     * a 1 or 2 dimensional double array giving the accuracies or confusions for each class.
+     * @param outputFile The file to write the CSV encoded data to.
      */
     public static void prepFriedmanTestDataCSVOverClasses(Map<String,DataObj> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey, File outputFile) 
     		throws IOException{
@@ -179,6 +201,18 @@ public class WriteResultFilesClass {
         }
     }
 
+    /**
+     * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
+     * of the table and the rows are the folds or iterations of the experiment evaluated.
+     * 
+     * @param jobIDToFoldEval Map linking jobID to a list of evaluation data Objects for each fold/iteration
+     * of the experiment. This list is expected to be consistently ordered across all systems.
+     * @param jobIDToName Map linking jobID to the Job name to use in the Table for each set of results.
+     * @param classNames A list of the class names used.
+     * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
+     * a single double value giving the accuracy or performance estimate for the experiment fold.
+     * @return The prepared table.
+     */
     public static Table prepTableDataOverFolds(Map<String,List<DataObj>> jobIDToFoldEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
@@ -224,20 +258,16 @@ public class WriteResultFilesClass {
     }
 
     /**
-     * A utility function that takes an ArrayList of Signal arrays containing 
-     * algorithm name and performance metadata and outputs the data into a CSV 
-     * file to be used to perform significance tests in Matlab or another 
-     * suitable environment.
+     * Prepares a CSV file representing the specified evaluation metadata, where the systems are the columns
+     * of the table and the rows are the folds or iterations of the experiment evaluated.
      * 
-     * @param sigStore An ArrayList of Signal arrays containing algorithm name 
-     * and performance metadata. Each Signal Object represents a single fold of 
-     * the experiment (thus each array should be ordered in the same way)
-     * @param outputDirectory The directory to output the CSV file into.
-     * @param evaluationName The name of the evaluation (used to name output file.
-     * @param outputFileExt The extension to put on the output file.
-     * @param verbose Determines wheter the data should be dumped to the console
-     * as well.
-     * @return A File Object indicating where the output CSV file was written to.
+     * @param jobIDToFoldEval Map linking jobID to a list of evaluation data Objects for each fold/iteration
+     * of the experiment. This list is expected to be consistently ordered across all systems.
+     * @param jobIDToName Map linking jobID to the Job name to use in the CSV for each set of results.
+     * @param classNames A list of the class names used.
+     * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
+     * a single double value giving the accuracy or performance estimate for the experiment fold.
+     * @param outputFile The file to write the CSV encoded data to.
      */
     public static void prepFriedmanTestDataCSVOverFolds(Map<String,List<DataObj>> jobIDToFoldEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey, File outputFile) 
     		throws IOException{
@@ -292,6 +322,45 @@ public class WriteResultFilesClass {
         }
     }
 
+    /**
+     * Prepares a Table Object that encodes the description of the specified task. To be
+     * used to construct introduction pages for the results.
+     * 
+     * @param task The task description to encode.
+     * @return The prepared Table.
+     */
+    public static Table prepTaskTable(TaskDescription task) {
+        String[] colNames = new String[2];
+        colNames[0] = "Field";
+        colNames[1] = "Value";
+
+        DecimalFormat dec = new DecimalFormat();
+        dec.setMaximumFractionDigits(2);
+
+        List<String[]> rows = new ArrayList<String[]>();
+        
+        rows.add(new String[]{"Task ID",""+task.getTaskID()});
+        rows.add(new String[]{"Task Name",""+task.getTaskName()});
+        rows.add(new String[]{"Task Description",""+task.getTaskDescription()});
+        rows.add(new String[]{"Dataset ID",""+task.getDatasetId()});
+        rows.add(new String[]{"Dataset Name",""+task.getDatasetName()});
+        rows.add(new String[]{"Dataset Description",""+task.getDatasetDescription()});
+        rows.add(new String[]{"Subject Metadata",""+task.getMetadataPredicted()});
+        
+        return new Table(colNames, rows);
+    }
+    
+    /**
+     * Prepares a summary table for the classification task which displays multiple evaluation metrics
+     * averaged over all folds of the experiment.
+     * 
+     * @param jobIDToAggregateEval Map linking jobID to its overall evaluation data Object.
+     * @param jobIDToName Map linking jobID to the Job name to use in the Table for each set of results.
+     * @param classNames A list of the class names used.
+     * @param usingAHierarchy A flag that indicates whether hierarchical discounting was performed. If 
+     * true then additional metrics based on the hierarchical discounting procedure are reported.
+     * @return The prepared table.
+     */
     public static Table prepSummaryTable(Map<String,DataObj> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, boolean usingAHierarchy) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
@@ -341,6 +410,17 @@ public class WriteResultFilesClass {
         return new Table(colNames, rows);
     }
 
+    /**
+     * Prepares a summary CSV file for the classification task which encodes multiple evaluation metrics
+     * averaged over all folds of the experiment.
+     * 
+     * @param jobIDToAggregateEval Map linking jobID to its overall evaluation data Object.
+     * @param jobIDToName Map linking jobID to the Job name to use in the CSV for each set of results.
+     * @param classNames A list of the class names used.
+     * @param outputFile The file to write the CSV encoded data to.
+     * @param usingAHierarchy A flag that indicates whether hierarchical discounting was performed. If 
+     * true then additional metrics based on the hierarchical discounting procedure are reported.
+     */
     public static void prepSummaryResultDataCSV(Map<String,DataObj> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, File outputFile, boolean usingAHierarchy) 
     		throws IOException{
     	//sort systems alphabetically

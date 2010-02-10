@@ -6,7 +6,8 @@
 package org.imirsel.m2k.evaluation2.resultPages;
 
 /**
- *
+ * Abstract super class for items to display on a page.
+ * 
  * @author kriswest
  */
 public abstract class PageItem {
@@ -50,8 +51,18 @@ public abstract class PageItem {
         this.caption = caption;
     }
 
+    /**
+     * Returns data to add to the head tag of the page.
+     * @return HTML head tag data.
+     */
     public abstract String getHeadData();
 
+    /**
+     * Returns data to add to the body tag of the page.
+     * @param topLink A flag that determines whether a link is added to scroll
+     * to the top of the page from the item.
+     * @return Returns the HTML for the item.
+     */
     public abstract String getBodyData(boolean topLink);
 
 }

@@ -13,29 +13,45 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.m2k.evaluation2.TaskDescription;
+
 import org.imirsel.m2k.io.file.CopyFileFromClassPathToDisk;
 import org.imirsel.m2k.io.file.IOUtil;
 
 /**
- *
+ * Data-structure and utility class for writing result HTML pages.
+ * 
  * @author kriswest
  */
 public class Page {
     private String id;
     private String title;
-    private TaskDescription task;
     private List<PageItem> items;
     private boolean addTOC;
 
-    public Page(TaskDescription task, String id, String title, List<PageItem> items, boolean addTOC){
-        this.task = task;
-    	this.id = id;
+    /** Construct a page.
+     * 
+     * @param id The id for page (will be used to make the file name). Should not include whitespace
+     * or strange characters.
+     * @param title The title to display on the page and HTML title in the header.
+     * @param items The items to display on the page.
+     * @param addTOC A flag that determines if an indexto the content should be added to the top of 
+     * the page.
+     */
+    public Page(String id, String title, List<PageItem> items, boolean addTOC){
+        this.id = id;
         this.title = title;
         this.items = items;
         this.addTOC = addTOC;
     }
 
+    /**
+     * Writes a set of result pages to a specified directory.
+     * 
+     * @param set_title The title to use for the page set, which prepended to the page titles
+     * in the HTML title tag in the header and displayed on the top of each page.
+     * @param directory The directory to write the result pages to.
+     * @param pages The list of pages to write out.
+     */
     public static void writeResultPages(String set_title, File directory, List<Page> pages){
         if (!directory.exists()){
             directory.mkdirs();
@@ -47,10 +63,12 @@ public class Page {
 
         int idx = 0;
         Iterator<Page> it = pages.iterator();
+        //make first page index.htm
         Page aPage = it.next();
-        //names[idx] = aPage.getTitle();
         filenames[idx] = "index.htm";
         idx++;
+        
+        //add subsequent pages
         for (; it.hasNext();){
             aPage = it.next();
             //names[idx] = aPage.getName();
@@ -154,7 +172,16 @@ public class Page {
         this.id = id;
     }
 
-
+    /**
+     * Creates the HTML for the page.
+     * 
+     * @param set_name The name of the page set that the page being written belongs to.
+     * @param currPage The page to create HTML for.
+     * @param pages The list of pages in the set. Used to create navigation tabs.
+     * @param pageFileNames The names of the pages in the set. Used to create navigation 
+     * tabs.
+     * @return A string containing the HTML data.
+     */
     public static String createPageHTML(String set_name, Page currPage, List<Page> pages, String[] pageFileNames){
         String out = createHeader(set_name, currPage.getTitle());
         for (Iterator<PageItem> it = currPage.getItems().iterator(); it.hasNext();){
@@ -178,6 +205,13 @@ public class Page {
         return out;
     }
 
+    /**
+     * Opens a head tag in HTML.
+     * 
+     * @param set_name The name of the page set to be prepended to the page title in the header title tag.
+     * @param title The title of the page.
+     * @return The HTML for the start of the head tag.
+     */
     private static String createHeader(String set_name, String title){
         String out = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
         "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
@@ -196,6 +230,13 @@ public class Page {
         return out;
     }
 
+    /**
+     * Closes the head tag in HTML and starts the body with a header giving the name of the
+     * page set.
+     * 
+     * @param set_name The name of the page set to be displayed at the top each page.
+     * @return The closing head tag and the first part of the body with the page set header.
+     */
     private static String closeheader(String set_name){
 
         String out = "</head>\n\n";
@@ -209,11 +250,23 @@ public class Page {
         return out;
     }
 
+    /**
+     * Starts the body content.
+     * @return The opening DIV tag in HTML.
+     */
     private static String startContent(){
         String out = "<div id=\"content\">\n";
         return out;
     }
 
+    /**
+     * Creates the navigation tabs.
+     * 
+     * @param currPage The current page.
+     * @param pages The list of all pages in the set.
+     * @param pageFileNames The names of pages in the set.
+     * @return The tab HTML.
+     */
     private static String createTabs(Page currPage, List<Page> pages, String[] pageFileNames){
         String out = "<div id=\"tabs\">\n";
         out +="\t<ul>\n";
@@ -234,6 +287,12 @@ public class Page {
         return out;
     }
 
+    /**
+     * Creates an index to the page content.
+     * 
+     * @param currPage The page to create an index for.
+     * @return The index HTML.
+     */
     private static String createIndex(Page currPage){
         String out = "<h3>" + currPage.getTitle() + "</h3>\n";
         out +="<ul>\n";
@@ -247,6 +306,11 @@ public class Page {
         return out;
     }
 
+    /**
+     * Closes the content DIV, body and HTML tags.
+     * 
+     * @return the closing tags in HTML.
+     */
     private static String createFooter(){
         String out = "</div>\n";
         out += "</body>\n";

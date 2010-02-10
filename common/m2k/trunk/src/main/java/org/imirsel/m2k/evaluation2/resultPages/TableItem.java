@@ -9,7 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * A PageItem implementation for tabular data.
+ * 
  * @author kriswest
  */
 public class TableItem extends PageItem{

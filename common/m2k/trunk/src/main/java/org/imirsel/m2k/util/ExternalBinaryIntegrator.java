@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.m2k.evaluation2;
+package org.imirsel.m2k.util;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

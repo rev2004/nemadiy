@@ -1,5 +1,13 @@
 package org.imirsel.m2k.evaluation2;
 
+/**
+ * Data-structure encoding the description of a particular task including an ID, name
+ * and description for the task, an ID name and description for the dataset used and
+ * the metadata type that is the subject of the task.
+ * 
+ * @author kriswest
+ *
+ */
 public class TaskDescription {
 	private int taskID = -1;
 	private String taskName = "<none given>";

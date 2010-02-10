@@ -1,4 +1,4 @@
-package org.imirsel.m2k.evaluation2;
+package org.imirsel.m2k.util;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
