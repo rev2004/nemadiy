@@ -257,7 +257,7 @@ import org.meandre.core.ExecutableComponent;
 		cout.println("EXTERNAL PROCESS STDOUT AND STDERR:");
 		cout.println("");
 		cout.flush();
-		new Thread( new ProcessOutputReceiver( is, cout ) ).start();
+		new Thread( new ProcessOutputReceiver( is, this._logger ) ).start();
 		/*
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);

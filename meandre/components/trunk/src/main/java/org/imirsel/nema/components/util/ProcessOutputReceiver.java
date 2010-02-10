@@ -4,10 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.util.logging.Logger;
 
-
+/**
+ * 
+ * @author kriswest
+ * @since 0.4.0
+ *
+ */
 public class ProcessOutputReceiver extends Thread
 {
 	// ------------------------------ FIELDS ------------------------------
