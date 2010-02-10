@@ -13,8 +13,13 @@ import org.imirsel.nema.model.Flow;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
+/**
+ * This controller exposes list of flows.
+ * @author kumaramit01
+ * @since 0.4.0
+ *
+ */
 public class FlowController extends MultiActionController{
-
 
 	private final static Logger log = Logger.getLogger(FlowController.class.getName());
 	private FlowService flowService = null;
@@ -28,32 +33,6 @@ public class FlowController extends MultiActionController{
 		this.flowService = flowService;
 	}
 
-
-	/**Returns all the template flows
-	 * 
-	 * @param req
-	 * @param res 
-	 * @return flow/flowType.jsp
-	 * @deprecated for getTemplateFlows 
-	 */
-	@Deprecated
-	public ModelAndView flowlist(HttpServletRequest req, HttpServletResponse res){
-		Set<Flow> flowSet=this.flowService.getFlowTemplates();
-		log.info("done loading for flowlist");
-		
-		ModelAndView mav;
-		String uri = req.getRequestURI();
-		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
-			mav = new ModelAndView("jsonView");
-		} else {
-			mav =new ModelAndView("flow/flowType");
-		}
-		mav.addObject(Constants.FLOW_LIST, flowSet);
-		mav.addObject(Constants.FLOW_TYPE, "all");
-		return mav;
-	} 
-
-	
 	/**Returns a view that displays Template Flows
 	 * 
 	 * @param req
@@ -90,7 +69,6 @@ public class FlowController extends MultiActionController{
 		log.info("done loading for flowlist");
 		mav.addObject(Constants.FLOW_LIST, flowSet);
 		}
-	
 		mav.addObject(Constants.FLOW_TYPE, type);
 		return mav;
 	} 

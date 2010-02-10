@@ -33,6 +33,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
+/**
+ * This controller provides functions that create a new flow and forwards to
+ * jsp pages that render the flow templates.
+ * @author kumaramit01
+ * @since 0.4.0
+ */
 public class FlowFormController extends MultiActionController{
 
 
@@ -43,7 +49,7 @@ public class FlowFormController extends MultiActionController{
 	/**Upload directory**/
 	private String uploadDirectory;
 
-	public FlowService getFlowService() {
+	private FlowService getFlowService() {
 		return flowService;
 	}
 
@@ -54,7 +60,9 @@ public class FlowFormController extends MultiActionController{
 
 
 	/**
-	 * 
+	 * This function renders the flow Templates. It forwards to a jsp page that
+	 * with the flow, the component list, the role of the user and the jsp pages does the
+	 * actual rendering.
 	 * @param req
 	 * @param res
 	 * @return flow/flowTemplate
@@ -91,7 +99,7 @@ public class FlowFormController extends MultiActionController{
 	}
 	
 	
-	/**Saves the flow
+	/**Saves the flow by calling the flowservice
 	 * 
 	 * @param req
 	 * @param res
@@ -105,17 +113,15 @@ public class FlowFormController extends MultiActionController{
 		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
 		if(!isMultipart){
 			LOGGER.severe("Error -this should be multipart");
+			throw new MeandreServerException("the call to saveFlow should be multipart");
 		}
 		
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		//upload.setSizeMax(yourMaxRequestSize);
-		
 		String uploadDir = getServletContext().getRealPath(getUploadDirectory()) + "/" + req.getRemoteUser() + "/"+ token+"/";
-
-		  
-	        // Create the directory if it doesn't exist
-	     File dirPath = new File(uploadDir);
+	    // Create the directory if it doesn't exist
+	    File dirPath = new File(uploadDir);
 	     
 	      if (!dirPath.exists()) {
 	         dirPath.mkdirs();
@@ -155,21 +161,22 @@ public class FlowFormController extends MultiActionController{
 			}
 			
 		} catch (FileUploadException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new MeandreServerException(e);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new MeandreServerException(e);
 		}
 		
 		if(flowId==null || flowUri==null){
 			LOGGER.severe("flowId or flowUri is null -some severe error happened...");
+			throw new MeandreServerException("flowId or flowUri is null");
 		}
 		User user = userManager.getCurrentUser();
-		logger.debug("USER IS ====> " + user);
-
 		if (user == null) {
-			user = userManager.getUserByUsername("admin");
+			LOGGER.severe("user is null");
+			throw new MeandreServerException("Could not get the user");
+			//user = userManager.getUserByUsername("admin");
 		}
 		
 		
@@ -190,32 +197,19 @@ public class FlowFormController extends MultiActionController{
 		
 		long userId = user.getId();
 		Flow instance = new Flow();
-		logger.debug("creatorId: " + userId);
 		instance.setCreatorId(userId);
-		logger.debug("dateCreated" +new Date());
 		instance.setDateCreated(new Date());
-		logger.debug("instanceOf" +templateFlow.toString());
 		instance.setInstanceOf(templateFlow);
-		logger.debug("keyWords: "+ templateFlow.getKeyWords());
 		instance.setKeyWords(templateFlow.getKeyWords());
-		logger.debug("name: "+ name);
 		instance.setName(name);
-		logger.debug("IsTemplate: "+ false);
 		instance.setTemplate(false);
-		logger.debug("newFlowUri: "+ newFlowUri);
 		instance.setUrl(newFlowUri);
-		logger.debug("description: "+ description);
 		instance.setDescription(description);
-		logger.debug("type: "+ Flow.FlowType.INHERITS.toString());
 		instance.setType(templateFlow.getType());
-		logger.debug(templateFlow.getTypeName());
 		instance.setTypeName(templateFlow.getTypeName());
 		
-		System.out.println("The new flow uri is: " + newFlowUri);
 		long instanceId=this.getFlowService().storeFlowInstance(instance);
 		Job job=this.getFlowService().executeJob(token, name,description, instanceId, user.getId(), user.getEmail());
-		
-		
 		ModelAndView mav= new ModelAndView(new RedirectView("JobManager.jobDetail",true));
 		//ModelAndView mav = new ModelAndView("job/job");
 		mav.addObject("id", job.getId());
@@ -228,7 +222,7 @@ public class FlowFormController extends MultiActionController{
 	 * 
 	 * @return upload directory
 	 */
-	public String getUploadDirectory() {
+	private String getUploadDirectory() {
 		return uploadDirectory;
 	}
 
@@ -239,15 +233,6 @@ public class FlowFormController extends MultiActionController{
 	 */
 	public void setUploadDirectory(String uploadDirectory) {
 		this.uploadDirectory = uploadDirectory;
-	}
-
-	
-	/**Returns User manager
-	 * 
-	 * @return User manager
-	 */
-	public UserManager getUserManager() {
-		return userManager;
 	}
 
 	/**sets the user manager
