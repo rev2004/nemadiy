@@ -1,5 +1,14 @@
 #summary A Collection of Maven tips related to the NEMA project.
 
+== Using Profiles to install Flowservice for development and production ==
+
+To install as development build
+mvn install compile -Denv=res -Dmaven.test.skip=true
+
+To install as production build.
+mvn install -Denv=nema -Dmaven.test.skip=true
+
+
 == Example ==
 To run NEMA DIY application in the nema-webapp directory
 mvn jetty:run
