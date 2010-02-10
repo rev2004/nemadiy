@@ -808,7 +808,7 @@ public class MusicDB implements java.io.Serializable, java.lang.Cloneable {
         
         retriever = null;
         
-        //create a file location to index hashmap to speed up times similar file search
+        //create a file location to index HashMap to speed up times similar file search
         HashMap<String,Integer> fileLoc2Index = new HashMap<String,Integer>(Signals.size());
         for (int i = 0; i < Signals.size(); i++) {
             fileLoc2Index.put(Signals.get(i).getStringMetadata(Signal.PROP_FILE_LOCATION), new Integer(i));

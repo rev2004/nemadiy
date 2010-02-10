@@ -22,7 +22,7 @@ import org.imirsel.m2k.util.retrieval.MIREXMatrixQueryUtil;
  *
  * @author kris
  */
-public class TagClassificationBinaryFileReader implements EvalFileReader {
+public class TagClassificationBinaryFileReader /*implements EvalFileType*/ {
     private boolean verbose = false;
     private boolean MIREX_submissionMode = false;
     public boolean getMIREX_submissionMode() {
@@ -71,12 +71,12 @@ public class TagClassificationBinaryFileReader implements EvalFileReader {
         tagSet.add(cleanTag);
     }
     
-    public EvaluationDataObject readFile(File theFile) {
+    public DataObj readFile(File theFile) {
         if(verbose){
             System.out.println("Reading binary relevance file: " + theFile.getAbsolutePath());
         }
         //init file path as evaluation file
-        EvaluationDataObject output = new EvaluationDataObject(theFile.getAbsolutePath());
+        DataObj output = new DataObj(theFile.getAbsolutePath());
         BufferedReader textBuffer = null;
         try {
             textBuffer = new BufferedReader(new FileReader(theFile));
@@ -118,9 +118,9 @@ public class TagClassificationBinaryFileReader implements EvalFileReader {
             }
             
             
-            //append data to the EvaluationDataObject Object
-            output.setMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP, pathsToRelevantTags);
-            output.setMetadata(EvaluationDataObject.TAG_NAME_SET, allTags);
+            //append data to the DataObj Object
+            output.setMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP, pathsToRelevantTags);
+            output.setMetadata(DataObj.TAG_NAME_SET, allTags);
         } catch (IOException ex) {
             throw new RuntimeException("IOExcecption occured while reading file: " + theFile.getAbsolutePath(), ex);
         } finally {

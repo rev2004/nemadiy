@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import org.imirsel.m2k.evaluation2.EvaluationDataObject;
+import org.imirsel.m2k.evaluation2.DataObj;
 
 /**
  *
@@ -25,9 +25,8 @@ public class MIREXTagClassificationEvalMain {
     public static final String USAGE = "args: /path/to/GT/file /path/to/output/dir /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemName [-s /path/to/subsetOfQueriesToEvaluate]";
     public static void main(String[] args) {
         
-        System.out.println("MIREX 2008 Audio Tag classification evaluator\n" +
-                "\t\tby Kris West (kris.west@gmail.com\n" +
-                "\t\tBeta Binomial test by Michael Mandel (mim@ee.columbia.edu)");
+        System.out.println("MIREX Audio Tag classification evaluatorevaluator\n" +
+                "\t\tby Kris West (kris.west@gmail.com");
         System.out.println("");
         
         if (args.length < 4){
@@ -46,9 +45,6 @@ public class MIREXTagClassificationEvalMain {
         ArrayList<String> systemNames = new ArrayList<String>();
         ArrayList<File> resultsDirs = new ArrayList<File>();
         
-        
-        
-//        ArrayList<Integer> systemsMissingAffinityData = new ArrayList<Integer>();
         File subsetFile = null;
         
         System.out.println("---");
@@ -72,9 +68,8 @@ public class MIREXTagClassificationEvalMain {
         
         ArrayList<String> affinitySystemNames = (ArrayList<String>)systemNames.clone();
         
-        //integrate subset here
+        //evaluate a subset of possible queries?
         HashSet<String> subset = null;
-        
         if(subsetFile != null){
             //load subset
             System.out.println("Loading subset of queries to evaluate from: " + subsetFile.getAbsolutePath());
@@ -153,14 +148,14 @@ public class MIREXTagClassificationEvalMain {
         //read GT file
         System.out.println("reading ground-truth data file...");
         TagClassificationBinaryFileReader gtReader = new TagClassificationBinaryFileReader();
-        EvaluationDataObject GT = gtReader.readFile(gtFile);
+        DataObj GT = gtReader.readFile(gtFile);
         
         System.out.println("reading binary result data files...");
-        //read each binary result file and create EvaluationDataObject arrays
+        //read each binary result file and create DataObj arrays
         TagClassificationBinaryFileReader binReader = new TagClassificationBinaryFileReader();
         binReader.setMIREX_submissionMode(true);
         binReader.setVerbose(false);
-        EvaluationDataObject[][] resultData = new EvaluationDataObject[systemNames.size()][numFolds];
+        DataObj[][] resultData = new DataObj[systemNames.size()][numFolds];
         HashSet<String>[] masterPathListPerFold = new HashSet[numFolds];
         for (int i = 0; i < masterPathListPerFold.length; i++) {
             masterPathListPerFold[i] = new HashSet<String>();
@@ -170,23 +165,23 @@ public class MIREXTagClassificationEvalMain {
             ArrayList<File> fileList = binaryResultsFilesPerSystemPerFold.get(i);
             for (int j = 0; j <numFolds; j++) {
                 resultData[i][j] = binReader.readFile(fileList.get(j));              
-                masterPathListPerFold[j].addAll(((HashMap<String,HashSet<String>>)resultData[i][j].getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP)).keySet());
+                masterPathListPerFold[j].addAll(((HashMap<String,HashSet<String>>)resultData[i][j].getMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP)).keySet());
             }
         }
         
-        //read each affinity result file and create EvaluationDataObject arrays
+        //read each affinity result file and create DataObj arrays
         System.out.println("reading affinity result data files...");
         TagClassificationAffinityFileReader affReader = new TagClassificationAffinityFileReader();
         affReader.setMIREX_submissionMode(true);
         affReader.setVerbose(false);
-        ArrayList<EvaluationDataObject[]> affResultData = new ArrayList<EvaluationDataObject[]>();
+        ArrayList<DataObj[]> affResultData = new ArrayList<DataObj[]>();
         for (int i = 0; i < affinitySystemNames.size(); i++) {
             ArrayList<File> fileList = affinityResultsFilesPerSystemPerFold.get(i);
             
-            EvaluationDataObject[] affSysResults = new EvaluationDataObject[numFolds];
+            DataObj[] affSysResults = new DataObj[numFolds];
             for (int j = 0; j < numFolds; j++) {
                 affSysResults[j] = affReader.readFile(fileList.get(j));   
-                masterPathListPerFold[j].addAll(((HashMap<String,HashMap<String,Double>>)affSysResults[j].getMetadata(EvaluationDataObject.TAG_AFFINITY_MAP)).keySet());
+                masterPathListPerFold[j].addAll(((HashMap<String,HashMap<String,Double>>)affSysResults[j].getMetadata(DataObj.TAG_AFFINITY_MAP)).keySet());
             }
             affResultData.add(affSysResults);
         }
@@ -197,7 +192,7 @@ public class MIREXTagClassificationEvalMain {
         for (int i = 0; i < systemNames.size(); i++) {
             for (int j = 0; j < numFolds; j++) {
                 HashSet<String> missing = (HashSet<String>)masterPathListPerFold[j].clone();
-                HashMap<String,HashSet<String>> path2tagList = (HashMap<String,HashSet<String>>)resultData[i][j].getMetadata(EvaluationDataObject.TAG_BINARY_RELEVANCE_MAP);
+                HashMap<String,HashSet<String>> path2tagList = (HashMap<String,HashSet<String>>)resultData[i][j].getMetadata(DataObj.TAG_BINARY_RELEVANCE_MAP);
                 missing.removeAll(path2tagList.keySet());
                 if (subset != null){
                     missing.retainAll(subset);
@@ -213,7 +208,7 @@ public class MIREXTagClassificationEvalMain {
         for (int i = 0; i < affinitySystemNames.size(); i++) {
             for (int j = 0; j < numFolds; j++) {
                 HashSet<String> missing = (HashSet<String>)masterPathListPerFold[j].clone();
-                HashMap<String,HashMap<String,Double>> path2tagAffList = (HashMap<String,HashMap<String,Double>>)affResultData.get(i)[j].getMetadata(EvaluationDataObject.TAG_AFFINITY_MAP);
+                HashMap<String,HashMap<String,Double>> path2tagAffList = (HashMap<String,HashMap<String,Double>>)affResultData.get(i)[j].getMetadata(DataObj.TAG_AFFINITY_MAP);
                 missing.removeAll(path2tagAffList.keySet());
                 if (subset != null){
                     missing.retainAll(subset);
@@ -248,8 +243,39 @@ public class MIREXTagClassificationEvalMain {
         affEval.setVerbose(true);
         affEval.setPerformMatlabStatSigTests(doStatsTests);
         affEval.evaluate(affinitySystemNames.toArray(new String[affinitySystemNames.size()]), 
-                (EvaluationDataObject[][])affResultData.toArray(new EvaluationDataObject[affResultData.size()][]), 
+                (DataObj[][])affResultData.toArray(new DataObj[affResultData.size()][]), 
                 GT, rootEvaluationDir);
+        
+        
+        System.out.println("Preparing results pages...");
+        
+//        
+//        dataToEvaluate.setMetadata(DataObj.SYSTEM_RESULTS_REPORT, systemReport);
+//        
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_ACCURACY_MAP, tag2Accuracy);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_POS_ACCURACY_MAP, tag2PosAccuracy);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_NEG_ACCURACY_MAP, tag2NegAccuracy);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_PRECISION_MAP, tag2Precision);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_RECALL_MAP, tag2Recall);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_FMEASURE_MAP, tag2FMeasure);
+//        
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_ACCURACY_MAP, track2Accuracy);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_POS_ACCURACY_MAP, track2PosAccuracy);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_NEG_ACCURACY_MAP, track2NegAccuracy);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_PRECISION_MAP, track2Precision);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_RECALL_MAP, track2Recall);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_TRACK_FMEASURE_MAP, track2FMeasure);
+//        
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_OVERALL_ACCURACY, totalAccuracy);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_OVERALL_PRECISION, totalPrecision);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_OVERALL_RECALL, totalRecall);
+//        dataToEvaluate.setMetadata(DataObj.TAG_BINARY_OVERALL_FMEASURE, totalFmeasure);
+//        
+//        dataToEvaluate.setMetadata(DataObj.TAG_NUM_POSITIVE_EXAMPLES, tag2numPositiveExamples);
+//        dataToEvaluate.setMetadata(DataObj.TAG_NUM_NEGATIVE_EXAMPLES, tag2numNegativeExamples);
+//        
+        
+        
         
         System.out.println("---exit---");
         

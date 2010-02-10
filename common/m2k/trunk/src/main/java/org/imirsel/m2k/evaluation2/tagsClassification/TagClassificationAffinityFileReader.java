@@ -21,7 +21,7 @@ import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
  *
  * @author kris
  */
-public class TagClassificationAffinityFileReader implements EvalFileReader {
+public class TagClassificationAffinityFileReader /*implements EvalFileType*/ {
     private boolean verbose = true;
     private boolean MIREX_submissionMode = false;
 
@@ -83,7 +83,7 @@ public class TagClassificationAffinityFileReader implements EvalFileReader {
         tagMap.put(cleanTag,value);
     }
     
-    public EvaluationDataObject readFile(File theFile) {
+    public DataObj readFile(File theFile) {
         if(verbose){
             System.out.println("Reading affinity file: " + theFile.getAbsolutePath());
         }
@@ -92,7 +92,7 @@ public class TagClassificationAffinityFileReader implements EvalFileReader {
         maxAffinity = Double.NEGATIVE_INFINITY;
 
         //init file path as evaluation file
-        EvaluationDataObject output = new EvaluationDataObject(theFile.getAbsolutePath());
+        DataObj output = new DataObj(theFile.getAbsolutePath());
         BufferedReader textBuffer = null;
         try {
             textBuffer = new BufferedReader(new FileReader(theFile));
@@ -145,11 +145,11 @@ public class TagClassificationAffinityFileReader implements EvalFileReader {
                 }
             }
             
-            //append data to the EvaluationDataObject Object
+            //append data to the DataObj Object
             if(verbose){
                 System.out.println("   appending relevant tags for " + pathsToRelevantTags.size() + " paths");
             }
-            output.setMetadata(EvaluationDataObject.TAG_AFFINITY_MAP, pathsToRelevantTags);
+            output.setMetadata(DataObj.TAG_AFFINITY_MAP, pathsToRelevantTags);
         } catch (IOException ex) {
             throw new RuntimeException("IOExcecption occured while reading file: " + theFile.getAbsolutePath(), ex);
         } finally {
