@@ -26,7 +26,7 @@ public class RepositoryProperties {
     static {
         repoProps = new Properties();
         repoProps.setProperty(DB_LOCATOR, "jdbc:mysql://nema.lis.uiuc.edu:3306/");
-        repoProps.setProperty(DB_NAME, "nemadatarepository");
+        repoProps.setProperty(DB_NAME, "nemadatarepository_dev");
         
         try {
             InputStream iStream = RepositoryProperties.class.getResourceAsStream("/RepositoryProperties.properties");

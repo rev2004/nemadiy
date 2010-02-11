@@ -19,13 +19,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.m2k.evaluation2.EvaluationDataObject;
-import org.imirsel.m2k.evaluation2.classification.ClassificationResultReadClass;
-import org.imirsel.m2k.evaluation2.tagsClassification.TagClassificationBinaryFileReader;
+import org.imirsel.m2k.evaluation.classification.ClassificationTextFile;
+import org.imirsel.m2k.evaluation.tagsClassification.TagClassificationBinaryFileReader;
 import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
 import org.imirsel.nema.repository.migration.CbrowserClient;
 
-import sun.font.LayoutPathImpl.EndType;
 
 /**
  *
@@ -317,7 +315,7 @@ public class RepositoryManagementUtils {
                 }
 
                 client.insertTestTrainDataset(name, description,  subject_track_metadata_type_id, filter_track_metadata_type_id, dataset_subset_file, testset_files);
-            }catch (SQLException ex){
+            }catch (Exception ex){
                 logger.log(Level.SEVERE, null, ex);
             }
 
@@ -363,7 +361,7 @@ public class RepositoryManagementUtils {
                 }
 
                 client.insertTestOnlyDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, dataset_subset_file);
-            }catch (SQLException ex){
+            }catch (Exception ex){
                 logger.log(Level.SEVERE, null, ex);
             }
             
@@ -453,7 +451,7 @@ public class RepositoryManagementUtils {
 	            client.insertTrackMetaDef(metadatatype);
 	            metaId = client.getTrackMetadataID(metadatatype);
 	        }
-	        Map<String,String> map = ClassificationResultReadClass.readClassificationFile(listFile, true);
+	        Map<String,String> map = ClassificationTextFile.readClassificationFile(listFile, true);
 	        logger.info("got data for " + map.size() + " tracks");
 	
 	        int togo = 10;
@@ -475,7 +473,7 @@ public class RepositoryManagementUtils {
 	            client.insertTrackMetaLink(track, valId);
 	        }
 	        client.endTransation();
-        }catch (SQLException ex){
+        }catch (Exception ex){
         	try {
 				client.rollback();
 			} catch (SQLException e) {

@@ -1,6 +1,7 @@
 package org.imirsel.nema.repository;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.imirsel.nema.repositoryservice.RepositoryUpdateClientInterface;
 
-import org.imirsel.m2k.evaluation2.classification.ClassificationResultReadClass;
+import org.imirsel.m2k.evaluation.classification.ClassificationTextFile;
 
 public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements RepositoryUpdateClientInterface{
 
@@ -159,10 +160,11 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             String description,
             int subject_track_metadata_type_id,
             int filter_track_metadata_type_id,
-            File dataset_subset_file) throws SQLException{
+            File dataset_subset_file) throws SQLException, IOException{
     	
         //read up subset tracks
-        List<String> subsetList = ClassificationResultReadClass.readClassificationFileAsList(dataset_subset_file, true);
+    	ClassificationTextFile reader = new ClassificationTextFile(getTrackMetadataName(subject_track_metadata_type_id));
+        List<String> subsetList = reader.readClassificationFileAsList(dataset_subset_file, true);
 
         return insertTestOnlyDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, subsetList);
     }
@@ -285,10 +287,11 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             int subject_track_metadata_type_id,
             int filter_track_metadata_type_id,
             File dataset_subset_file,
-            List<File> testset_files) throws SQLException{
+            List<File> testset_files) throws SQLException,IOException{
         //read up subset tracks
     	logger.info("Reading subset file: " + dataset_subset_file.getAbsolutePath());
-        List<String> subsetList = ClassificationResultReadClass.readClassificationFileAsList(dataset_subset_file, true);
+    	ClassificationTextFile reader = new ClassificationTextFile(getTrackMetadataName(subject_track_metadata_type_id));
+        List<String> subsetList = reader.readClassificationFileAsList(dataset_subset_file, true);
         List<List<String>> testLists = new ArrayList<List<String>>(testset_files.size());
         
         for (Iterator<File> it = testset_files.iterator(); it.hasNext();){
@@ -296,7 +299,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             logger.info("Reading test set file: " + testSetFile.getAbsolutePath());
             
             //read up test set tracks
-            testLists.add(ClassificationResultReadClass.readClassificationFileAsList(testSetFile, true));
+            testLists.add(reader.readClassificationFileAsList(testSetFile, true));
         }
 
         return insertTestTrainDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, subsetList, testLists);
