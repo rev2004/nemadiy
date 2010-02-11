@@ -52,7 +52,7 @@ public class FriedmansAnovaTkHsd {
 	public static File[] performFriedman(File outputDir, File CSVResultFile, int systemNamesRow, int startDataCol, int startDataRow, int numSystems, String matlabPath) {
         //make sure readtext.m is in the working directory for Matlab
         File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/tagsClassification/resources/readtext.m", readtextMFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation/tagsClassification/resources/readtext.m", readtextMFile);
         
         //create an m-file to run the test
         String name = CSVResultFile.getName().replaceAll(".csv", "");

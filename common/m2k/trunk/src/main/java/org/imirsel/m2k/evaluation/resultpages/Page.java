@@ -34,7 +34,7 @@ public class Page {
      * or strange characters.
      * @param title The title to display on the page and HTML title in the header.
      * @param items The items to display on the page.
-     * @param addTOC A flag that determines if an indexto the content should be added to the top of 
+     * @param addTOC A flag that determines if an index to the content should be added to the top of 
      * the page.
      */
     public Page(String id, String title, List<PageItem> items, boolean addTOC){
@@ -78,19 +78,19 @@ public class Page {
 
         //copy over resource files
         File rscFile = new File(directory.getAbsolutePath() + File.separator + "tableft.gif");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/resultPages/resources/tableft.gif", rscFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation/resultpages/resources/tableft.gif", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "tabright.gif");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/resultPages/resources/tabright.gif", rscFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation/resultpages/resources/tabright.gif", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "logo.png");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/resultPages/resources/logo.png", rscFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation/resultpages/resources/logo.png", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "tableblue.css");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/resultPages/resources/tableblue.css", rscFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation/resultpages/resources/tableblue.css", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "menu.css");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation2/resultPages/resources/menu.css", rscFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation/resultpages/resources/menu.css", rscFile);
 
 
         it = pages.iterator();
