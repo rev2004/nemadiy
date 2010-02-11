@@ -11,7 +11,8 @@ package org.imirsel.m2k.myCodeExamples;
 
 import java.io.File;
 import java.util.Random;
-import org.imirsel.m2k.evaluation.SignalArrayAccuracyClass;
+
+import org.imirsel.m2k.evaluation.deprecated.SignalArrayAccuracyClass;
 import org.imirsel.m2k.featureExtractors.ExtractSingleGaussianFeatures;
 import org.imirsel.m2k.featureExtractors.FeatureExtractorInterface;
 import org.imirsel.m2k.featureExtractors.MFCCExtractorClass;
