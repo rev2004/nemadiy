@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.imirsel.m2k.evaluation2.TaskDescription;
-import org.imirsel.m2k.evaluation2.classification.WriteResultFilesClass;
+import org.imirsel.m2k.evaluation2.classification.WriteResultFiles;
 import org.imirsel.m2k.io.file.DeliminatedTextFileUtilities;
 import org.imirsel.m2k.io.file.IOUtil;
 
@@ -53,7 +53,7 @@ public class WriteResultPagePerFile {
 
         //do intro page
         items = new ArrayList<PageItem>();
-        WriteResultFilesClass.Table descriptionTable = WriteResultFilesClass.prepTaskTable(task);
+        WriteResultFiles.Table descriptionTable = WriteResultFiles.prepTaskTable(task);
         items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
         aPage = new Page("intro", "Introduction", items, false);
         resultPages.add(aPage);

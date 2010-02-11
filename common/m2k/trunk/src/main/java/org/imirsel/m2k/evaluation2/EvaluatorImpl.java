@@ -79,17 +79,14 @@ public abstract class EvaluatorImpl implements Evaluator {
 		task = task_;
 	}
 	
-	@Override
 	public Logger getLogger() {
 		return _logger;
 	}
 
-	@Override
 	public void setLogger(Logger logger) {
 		_logger = logger;
 	}
 	
-	@Override
 	public void setOutputDir(File outputDir_) throws FileNotFoundException {
 		outputDir = outputDir_;
 		outputDir.mkdirs();
@@ -98,7 +95,6 @@ public abstract class EvaluatorImpl implements Evaluator {
 		}
 	}
 
-	@Override
 	public void setWorkingDir(File workingDir_) throws FileNotFoundException {
 		workingDir = workingDir_;
 		workingDir.mkdirs();
@@ -107,7 +103,6 @@ public abstract class EvaluatorImpl implements Evaluator {
 		}
 	}
 	
-	@Override
 	public void addResults(String systemName, String jobID, List<DataObj> results) {
 		jobIDToName.put(jobID, systemName);
 		List<List<DataObj>> resultList = jobIDToFoldResults.get(jobID);
@@ -119,7 +114,6 @@ public abstract class EvaluatorImpl implements Evaluator {
 	}
 	
 
-	@Override
 	public void setGroundTruth(List<DataObj> groundtruth) {
 		DataObj data;
 		for(Iterator<DataObj> it = groundtruth.iterator(); it.hasNext();){
@@ -145,7 +139,6 @@ public abstract class EvaluatorImpl implements Evaluator {
 		return task;
 	}
 
-	@Override
 	public abstract Map<String,DataObj> evaluate() throws IllegalArgumentException, IOException;
 
 }

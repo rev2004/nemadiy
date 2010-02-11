@@ -30,7 +30,7 @@ import org.imirsel.m2k.util.noMetadataException;
  * data for use in the output of HTML result pages.
  * @author kriswest
  */
-public class WriteResultFilesClass {
+public class WriteResultFiles {
 
 	public static final DecimalFormat DEC = new DecimalFormat("0.00");
     
