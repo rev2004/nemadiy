@@ -491,23 +491,23 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //write out CSV results files
         _logger.info("Writing out CSV result files over whole task...");
         File perClassCSV = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassResults.csv");
-        WriteResultFilesClass.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_CONFUSION_MATRIX_PERCENT,perClassCSV);
+        WriteResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_CONFUSION_MATRIX_PERCENT,perClassCSV);
         
         File perFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "PerFoldResults.csv");
-        WriteResultFilesClass.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_ACCURACY,perFoldCSV);
+        WriteResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_ACCURACY,perFoldCSV);
         
         //write out results summary CSV
         File summaryCSV = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
-        WriteResultFilesClass.prepSummaryResultDataCSV(jobIDToAggregateEvaluations,jobIDToName,classNames,summaryCSV,usingAHierarchy);
+        WriteResultFiles.prepSummaryResultDataCSV(jobIDToAggregateEvaluations,jobIDToName,classNames,summaryCSV,usingAHierarchy);
         
         //write out discounted results summary CSVs
         File discountedPerClassCSV = null;
         File discountedPerFoldCSV = null;
         if (hierarchyFile != null){
             discountedPerClassCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerClassResults.csv");
-            WriteResultFilesClass.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountedPerClassCSV);
+            WriteResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountedPerClassCSV);
             discountedPerFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerFoldResults.csv");
-            WriteResultFilesClass.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY,perFoldCSV);
+            WriteResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY,perFoldCSV);
         }
         
         //perform statistical tests
@@ -575,7 +575,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do intro page to describe task
         {
         	items = new ArrayList<PageItem>();
-	        WriteResultFilesClass.Table descriptionTable = WriteResultFilesClass.prepTaskTable(task);
+	        WriteResultFiles.Table descriptionTable = WriteResultFiles.prepTaskTable(task);
 	        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
 	        aPage = new Page("intro", "Introduction", items, false);
 	        resultPages.add(aPage);
@@ -584,7 +584,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do summary page
         {
 	        items = new ArrayList<PageItem>();
-	        WriteResultFilesClass.Table summaryTable = WriteResultFilesClass.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName,classNames,usingAHierarchy);
+	        WriteResultFiles.Table summaryTable = WriteResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName,classNames,usingAHierarchy);
 	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
 	        aPage = new Page("summary", "Summary", items, false);
 	        resultPages.add(aPage);
@@ -593,10 +593,10 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do per class page
         {
             items = new ArrayList<PageItem>();
-            WriteResultFilesClass.Table perClassTable = WriteResultFilesClass.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
+            WriteResultFiles.Table perClassTable = WriteResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
             items.add(new TableItem("acc_class", "Accuracy per Class", perClassTable.getColHeaders(), perClassTable.getRows()));
             if (hierarchyFile != null){
-                WriteResultFilesClass.Table perDiscClassTable = WriteResultFilesClass.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
+                WriteResultFiles.Table perDiscClassTable = WriteResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Class", perDiscClassTable.getColHeaders(), perDiscClassTable.getRows()));
             }
             aPage = new Page("acc_per_class", "Accuracy per Class", items, false);
@@ -606,10 +606,10 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do per fold page
         {
             items = new ArrayList<PageItem>();
-            WriteResultFilesClass.Table perFoldTable = WriteResultFilesClass.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_ACCURACY);
+            WriteResultFiles.Table perFoldTable = WriteResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_ACCURACY);
             items.add(new TableItem("acc_class", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
             if (hierarchyFile != null){
-                WriteResultFilesClass.Table perDiscFoldTable = WriteResultFilesClass.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY);
+                WriteResultFiles.Table perDiscFoldTable = WriteResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
             }
             aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);
