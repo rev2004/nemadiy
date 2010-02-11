@@ -267,7 +267,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         eval.getLogger().info(msg);
         
         //reading ground-truth data
-        MIREXClassificationTextFile reader = new MIREXClassificationTextFile(task.getMetadataPredicted());
+        ClassificationTextFile reader = new ClassificationTextFile(task.getMetadataPredicted());
         List<DataObj> gt = reader.readFile(gtFile);
         eval.setGroundTruth(gt);
         

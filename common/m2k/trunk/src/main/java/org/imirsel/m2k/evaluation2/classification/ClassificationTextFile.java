@@ -30,17 +30,17 @@ import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
  *
  * @author kriswest
  */
-public class MIREXClassificationTextFile extends EvalFileTypeImpl {
+public class ClassificationTextFile extends EvalFileTypeImpl {
 
 	String type;
 	String delimiter = "\t";
 	
-	public MIREXClassificationTextFile(String type) {
-		super(Logger.getLogger(MIREXClassificationTextFile.class.getName()));
+	public ClassificationTextFile(String type) {
+		super(Logger.getLogger(ClassificationTextFile.class.getName()));
 		this.type = type;
 	}
 	
-	public MIREXClassificationTextFile(Logger logger, String type) {
+	public ClassificationTextFile(Logger logger, String type) {
 		super(logger);
 		this.type = type;
 	}
