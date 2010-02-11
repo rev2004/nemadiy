@@ -4,6 +4,7 @@
 package org.imirsel.nema.repositoryservice;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -145,12 +146,13 @@ public interface RepositoryUpdateClientInterface extends
      * @param dataset_subset_file A file listing the track IDs in the dataset with one track ID per line.
      * @return The ID of the inserted dataset in the repository DB.
      * @throws SQLException
+     * @throws IOException
      */
     public int insertTestOnlyDataset(String name,
             String description,
             int subject_track_metadata_type_id,
             int filter_track_metadata_type_id,
-            File dataset_subset_file) throws SQLException;
+            File dataset_subset_file) throws SQLException, IOException;
     
     /**
      * Adds a dataset to the repository DB that contains one or more splits of the dataset into
@@ -198,13 +200,14 @@ public interface RepositoryUpdateClientInterface extends
      * with one track ID per line.
      * @return The ID of the inserted dataset in the repository DB.
      * @throws SQLException
+     * @throws IOException
      */
     public int insertTestTrainDataset(String name,
             String description,
             int subject_track_metadata_type_id,
             int filter_track_metadata_type_id,
             File dataset_subset_file,
-            List<File> testset_files) throws SQLException;
+            List<File> testset_files) throws SQLException, IOException;
 
     /**
      * Adds a dataset to the repository DB. No splits are added, hence, at least one Set description 
