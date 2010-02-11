@@ -56,7 +56,7 @@ public class FriedmansAnovaTKHSD {
         
         //create an m-file to run the test
         String name = CSVResultFile.getName().replaceAll(".csv", "");
-        String evalCommand = name + ".friedmanTKHSD";
+        String evalCommand = name.replaceAll("\\.", "_") + "_friedmanTKHSD";
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
         String plotFileName = name + ".friedmanTKHSD.png";
         String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + plotFileName;
@@ -70,11 +70,11 @@ public class FriedmansAnovaTKHSD {
             int matlabStartRow = startDataRow+1;
             textOut.write("[data, result] = readtext('" + CSVResultFile.getAbsolutePath() + "', ',');");
             textOut.newLine();
-            textOut.write("algNames = data(" + matlabSysNamesRow + "," + matlabStartCol + ":" + (numSystems + matlabStartCol) + ")';");
+            textOut.write("algNames = data(" + matlabSysNamesRow + "," + matlabStartCol + ":" + (numSystems + (matlabStartCol-1)) + ")';");
             textOut.newLine();
             textOut.write("[length,width] = size(data);");
             textOut.newLine();
-            textOut.write("Acc_Scores = cell2mat(data(" + startDataRow + ":length," + matlabStartCol + ":" + (numSystems + matlabStartCol) + "));");
+            textOut.write("Acc_Scores = cell2mat(data(" + matlabStartRow + ":length," + matlabStartCol + ":" + (numSystems + (matlabStartCol-1)) + "));");
             textOut.newLine();
             textOut.write("[val sort_idx] = sort(mean(Acc_Scores));");
             textOut.newLine();

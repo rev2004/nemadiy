@@ -100,7 +100,12 @@ public class MatlabCommandlineIntegrationClass extends ExternalCommandlineIntegr
         }
         ExternalCommand[argArray.length + 1] = "-r";
         int cmdArgs = argArray.length + 2;
-        ExternalCommand[cmdArgs] = mainCommand;
+//        if(mainCommand.endsWith(".m")){
+        	ExternalCommand[cmdArgs] = mainCommand;
+//        }else{
+//        	ExternalCommand[cmdArgs] = mainCommand + ".m";
+//        }
+        
         String[] components = commandFormattingStr.split("[$]");
 
         for (int i = 0; i < components.length; i++) {
