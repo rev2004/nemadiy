@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.logging.Logger;
+
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -100,7 +102,7 @@ public class ConfusionMatrixPlot  {
      * @return the combined chart.
      */
     private JFreeChart createChart() {
-        System.out.println("Creating plot: " + this.getTitle());
+        Logger.getLogger(ConfusionMatrixPlot.class.getName()).info("Creating plot: " + this.getTitle());
         
         XYBlockRenderer renderer = new XYBlockRenderer();
         renderer.setBlockHeight(1.0);
@@ -195,7 +197,8 @@ public class ConfusionMatrixPlot  {
     public void writeChartToFile(File fileToWriteTo, int width, int height){
         try
         {
-            System.out.println("Writing confusion matrix image to: " + fileToWriteTo.getAbsolutePath());
+        	Logger.getLogger(ConfusionMatrixPlot.class.getName()).info(
+        			"Writing confusion matrix image to: " + fileToWriteTo.getAbsolutePath());
             ChartUtilities.writeChartAsPNG( new FileOutputStream(fileToWriteTo),
                                      chart, width, height);
         }

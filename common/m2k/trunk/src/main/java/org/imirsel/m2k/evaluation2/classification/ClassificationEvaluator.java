@@ -86,6 +86,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
      * confusions and produce an extra evaluation metric that takes into account near misses.
      * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
      * found.
+     * @throws IOException Thrown if there is a problem reading the hierarchy file.
      */
     public ClassificationEvaluator(
     		TaskDescription task_,
@@ -94,7 +95,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             boolean performMatlabStatSigTests_,
             String matlabPath_,
             File hierarchyFile_) 
-    		throws FileNotFoundException{
+    		throws FileNotFoundException, IOException{
         super(ClassificationEvaluator.class, workingDir_, outputDir_, task_);
         performMatlabStatSigTests = performMatlabStatSigTests_;
         matlabPath = matlabPath_;
@@ -121,6 +122,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
      * @param logger The logger to use.
      * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
      * found.
+     * @throws IOException Thrown if there is a problem reading the hierarchy file.
      * 
      */
     public ClassificationEvaluator(
@@ -131,7 +133,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             String matlabPath_,
             File hierarchyFile_,
             Logger logger) 
-    		throws FileNotFoundException{
+    		throws FileNotFoundException, IOException{
         super(logger, workingDir_, outputDir_, task_);
         performMatlabStatSigTests = performMatlabStatSigTests_;
         matlabPath = matlabPath_;
@@ -172,13 +174,14 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     /**
      * Initialises the class hierarchy data-structures if a hierarchy file is in use.
      */
-    private void initHierachy() {
+    private void initHierachy() throws FileNotFoundException, IOException{
         //Initialise Hierarchy scoring stuff
-        System.out.println("reading hierarchy file: " + hierarchyFile);
+    	String msg = "reading hierarchy file: " + hierarchyFile.getAbsolutePath() + "\n";
         this.hierarchies = new ArrayList<String[]>();
         this.hierachiesKey = new ArrayList<String>();
         BufferedReader textBuffer = null;
         String[] dataLine = {"init1", "init2"};
+        msg += "Hierarchy data:\n";
         try {
             //use buffering
             //this implementation reads one line at a time
@@ -187,23 +190,21 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             while (( line = textBuffer.readLine()) != null) {
                 line = line.trim();
                 if(!line.equals("")){
-                    dataLine = line.split("\t");
+                    dataLine = line.split("[\t]+");
                     for (int i = 0; i < dataLine.length; i++){
                         dataLine[i] = TagClassificationGroundTruthFileReader.cleanTag(dataLine[i]);
                     }
                     this.hierarchies.add(dataLine);
                     this.hierachiesKey.add(dataLine[0]);
-                    System.out.print("Adding");
-                    for (int i = 0; i < dataLine.length; i++){
-                        System.out.print("\t" + dataLine[i]);
+
+                    msg += "\t" + dataLine[0];
+                    for (int i = 1; i < dataLine.length; i++){
+                        msg += " -> " + dataLine[i];
                     }
-                    System.out.println("");
+                    msg += "\n";
                 }
             }
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            _logger.info(msg);
         } finally {
             try {
                 if (textBuffer!= null) {
@@ -211,7 +212,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
                     textBuffer.close();
                 }
             } catch (IOException ex) {
-                ex.printStackTrace();
             }
         }
     }
@@ -242,24 +242,24 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         task.setDatasetDescription(args[5]);
         task.setMetadataPredicted(args[6]);
         File gtFile = new File(args[7]);
-        File workingDir = new File(".");
+        File workingDir = new File(args[8]);
         File hierarchyFile = null;
-        String msg = 
-        		"Task description:  " + task.toString() + 
+        String msg = "\n" + 
+        		"Task description:  \n" + task.toString() + 
     			"Ground-truth file: " + gtFile.getAbsolutePath() + "\n" + 
     			"Working directory: " + workingDir.getAbsolutePath() + "\n" + 
     			"OutputDirectory:   " + workingDir.getAbsolutePath() + "\n";
 
-        if (args.length % 2 != 0){
-            System.err.println("WARNING: an odd number of arguments was specified, one may have been ignored!\n" + USAGE);
+        if (args.length % 2 != 1){
+            System.err.println("WARNING: an even number of arguments was specified, one may have been ignored!\n" + USAGE);
         }
         
         int startIdx = -1;
-        if (args[8].equalsIgnoreCase("-h")){
-            hierarchyFile = new File(args[9]);
+        if (args[9].equalsIgnoreCase("-h")){
+            hierarchyFile = new File(args[10]);
             msg += "Hierarchy file:    " + hierarchyFile.getAbsolutePath() + "\n";
-            startIdx = 9;
-        }else{startIdx = 7;
+            startIdx = 11;
+        }else{startIdx = 9;
             msg += "Hierarchy file:    null\n";
         }
         
@@ -280,7 +280,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             for(Iterator<List<DataObj>> it = results.iterator();it.hasNext();){
             	eval.addResults(systemName, systemName, it.next());
             }
-            msg += systemName + ": " + resultsPath.getAbsolutePath() + ", read " + results.size() + "result files\n";
+            msg += systemName + ": " + resultsPath.getAbsolutePath() + ", read " + results.size() + " result files\n";
         }
         eval.getLogger().info(msg);
         
@@ -294,16 +294,24 @@ public class ClassificationEvaluator extends EvaluatorImpl{
      */
     public static void main(String[] args) {
         
-        System.err.println("MIREX 2008 Classification evaluator\n" +
+        System.err.println("MIREX Classification evaluator\n" +
                 "\t\tby Kris West (kris.west@gmail.com");
         System.err.println("");
         
-        ClassificationEvaluator eval;
+        ClassificationEvaluator eval = null;
 		try {
 			eval = parseCommandLineArgs(args);
-			eval.evaluate();
+			try{
+				eval.evaluate();
+			}catch(Exception e){
+				eval.getLogger().log(Level.SEVERE, "Exception occured while executing evaluate!",e);
+			}
 		} catch (Exception e) {
-			Logger.getLogger(ClassificationEvaluator.class.getName()).log(Level.SEVERE, "Exception occured while parsing command line arguments!",e);
+			if (eval != null){
+				eval.getLogger().log(Level.SEVERE, "Exception occured while parsing command line arguments!",e);
+			}else{
+				Logger.getLogger(ClassificationEvaluator.class.getName()).log(Level.SEVERE, "Exception occured while parsing command line arguments!",e);
+			}
 		}
         
         System.err.println("---exit---");
@@ -448,14 +456,14 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         		for(int f=0;f<numFolds;f++){
         			discountFoldAccs[f] = evalList.get(f).getDoubleArrayMetadata(DataObj.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW);
         		}
-	        	int[] discountConfusionRaw = new int[numClasses];
+	        	double[] discountConfusionRaw = new double[numClasses];
 	        	double[] discountConfusionPercent = new double[numClasses];
 	        	for(int i=0;i<numClasses;i++){
 	        		for(int f=0;f<numFolds;f++){
 	        			discountConfusionRaw[i] += discountFoldAccs[f][i];
 	        		}
 	        		if(sums[i] > 0){
-	        			discountConfusionPercent[i] = (double)discountConfusionRaw[i] / sums[i];
+	        			discountConfusionPercent[i] = discountConfusionRaw[i] / sums[i];
 	        		}
 	        	}
 	        	

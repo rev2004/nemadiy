@@ -32,6 +32,8 @@ import org.imirsel.m2k.util.noMetadataException;
  */
 public class WriteResultFilesClass {
 
+	public static final DecimalFormat DEC = new DecimalFormat("0.00");
+    
 	/**
 	 * Data-structure to hold the information relating to a table (column names and rows 
 	 * of string data).
@@ -110,9 +112,6 @@ public class WriteResultFilesClass {
             colNames[i+1] = jobIDandName[i][1];
         }
 
-        DecimalFormat dec = new DecimalFormat();
-        dec.setMaximumFractionDigits(2);
-
         List<String[]> rows = new ArrayList<String[]>();
         
         for (int c = 0; c < classNames.size(); c++) {
@@ -121,10 +120,10 @@ public class WriteResultFilesClass {
 
             for (int j = 0 ; j < numAlgos; j++){  
             	if (jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey).getClass().getComponentType().isArray()){
-            		row[j+1] = dec.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c]);
+            		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c]);
             	}else{
             		//discounted types are 1D as there is no residual confusion after discounting
-            		row[j+1] = dec.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c]);
+            		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c]);
             	}
             }
             rows.add(row);
@@ -178,7 +177,7 @@ public class WriteResultFilesClass {
             		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c];
             	}else{
             		//discounted types are 1D as there is no residual confusion after discounting
-            		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c];
+            		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c];
             	}
                 if (j < numAlgos-1){
                 	csv += ",";
@@ -241,16 +240,13 @@ public class WriteResultFilesClass {
             }
         }
 
-        DecimalFormat dec = new DecimalFormat();
-        dec.setMaximumFractionDigits(2);
-
         List<String[]> rows = new ArrayList<String[]>();
         for (int r = 0; r < numFolds; r++) {
             String[] row = new String[numAlgos + 1];
             row[0] = "" + (r+1);
 
             for (int j = 0 ; j < numAlgos; j++){
-                row[j+1] = dec.format(100.0 * jobIDToFoldEval.get(jobIDandName[j][0]).get(r).getDoubleMetadata(metadataKey));
+                row[j+1] = DEC.format(100.0 * jobIDToFoldEval.get(jobIDandName[j][0]).get(r).getDoubleMetadata(metadataKey));
             }
             rows.add(row);
         }
@@ -392,18 +388,15 @@ public class WriteResultFilesClass {
             colNames[2] = "Normalised Overall Accuracy";
         }
 
-        DecimalFormat dec = new DecimalFormat();
-        dec.setMaximumFractionDigits(2);
-
         List<String[]> rows = new ArrayList<String[]>();
         for (int i = 0; i < numAlgos; i++) {
             String[] row = new String[colNames.length];
             row[0] = jobIDandName[i][1];
-            row[1] = "" + jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_ACCURACY);
-            row[2] = "" + jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_ACCURACY);
+            row[1] = DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_ACCURACY) * 100.0) + "%";
+            row[2] = DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_ACCURACY) * 100.0) + "%";
             if(usingAHierarchy){
-            	row[3] = "" + jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY);
-            	row[4] = "" + jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY);
+            	row[3] = DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY) * 100.0) + "%";
+            	row[4] = DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY) * 100.0) + "%";
             }
             rows.add(row);
         }
@@ -438,9 +431,6 @@ public class WriteResultFilesClass {
     		}
     	});
         
-        DecimalFormat dec = new DecimalFormat();
-        dec.setMaximumFractionDigits(2);
-        
         String csv = "*Participant,Overall Accuracy,Overall Normalised Accuracy";
         if (usingAHierarchy){
         	csv += ",Overall Discounted Accuracy,Overall Normalised Accuracy";
@@ -448,11 +438,11 @@ public class WriteResultFilesClass {
         csv += "\n";
         for (int i = 0; i < numAlgos; i++) {
         	csv += jobIDandName[i][1];
-        	csv += "," + dec.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_ACCURACY) * 100.0) + "%";
-        	csv += "," + dec.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_ACCURACY) * 100.0) + "%";
+        	csv += "," + DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_ACCURACY) * 100.0) + "%";
+        	csv += "," + DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_ACCURACY) * 100.0) + "%";
         	if(usingAHierarchy){
-        		csv += "," + dec.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY) * 100.0) + "%";
-            	csv += "," + dec.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY) * 100.0) + "%";
+        		csv += "," + DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_DISCOUNTED_ACCURACY) * 100.0) + "%";
+            	csv += "," + DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(DataObj.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY) * 100.0) + "%";
         	}
         	csv += "\n";
         }
