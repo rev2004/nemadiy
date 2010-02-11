@@ -53,11 +53,10 @@ public abstract class EvalFileTypeImpl implements EvalFileType {
 		
     	List<List<DataObj>> out = new ArrayList<List<DataObj>>();
 		
-		System.out.println("\tretrieving files for " + theDir.getAbsolutePath());
 		File[] files = theDir.listFiles();
 		ArrayList<File> filesToUse = new ArrayList<File>();
 		
-		System.out.println("\t\tgot " + files.length + " files");
+		_logger.info("got " + files.length + " files for " + theDir.getAbsolutePath());
 		
 		if(extension == null){
 			for (int i = 0; i < files.length; i++){
@@ -82,6 +81,10 @@ public abstract class EvalFileTypeImpl implements EvalFileType {
 		for(Iterator<File> it = filesToUse.iterator();it.hasNext();){
 			out.add(readFile(it.next()));
 		}
+		
+		_logger.info("Retrieved " + out.size() + " of " + files.length + " files from " + theDir.getAbsolutePath());
+		
+		
 		return out;
 	}
     

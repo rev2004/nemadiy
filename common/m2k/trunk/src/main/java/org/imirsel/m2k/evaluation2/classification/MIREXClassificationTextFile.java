@@ -58,7 +58,10 @@ public class MIREXClassificationTextFile extends EvalFileTypeImpl {
             trackID = it.next();
             obj = new DataObj(trackID);
             obj.setMetadata(type, data.get(trackID));
+            examples.add(obj);
         }
+        
+        _logger.info(examples.size() + " examples with " + type + " metadata read from file: " + theFile.getAbsolutePath());
         
         return examples;
 	}
@@ -76,6 +79,8 @@ public class MIREXClassificationTextFile extends EvalFileTypeImpl {
 				writer.write(obj.getStringMetadata(DataObj.PROP_FILE_LOCATION) + delimiter + obj.getStringMetadata(type));
 				writer.newLine();
 			}
+			
+			_logger.info(data.size() + " examples with " + type + " metadata written to file: " + theFile.getAbsolutePath());
 		} finally {
 			if (writer != null) {
 				try {
