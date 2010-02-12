@@ -101,7 +101,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         if (rs.next()) {
             return rs.getInt(1);
         }else{
-            Logger.getLogger(RepositoryClientImpl.class.getName()).log(Level.SEVERE, "Failed to get id for inserted track metadata " + metadata_type_id + "=" + value);
+            logger.log(Level.SEVERE, "Failed to get id for inserted track metadata " + metadata_type_id + "=" + value);
             return -1;
         }
     }
@@ -131,7 +131,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         if (rs.next()) {
             return rs.getInt(1);
         }else{
-            Logger.getLogger(RepositoryClientImpl.class.getName()).log(Level.SEVERE, "Failed to get id for inserted file: " + path);
+            logger.log(Level.SEVERE, "Failed to get id for inserted file: " + path);
             return -1;
         }
     }
