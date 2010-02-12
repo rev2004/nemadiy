@@ -4,16 +4,56 @@
   <artifactId>test-api</artifactId>
   <name>nema-Test API</name>
   <version>0.1.0-SNAPSHOT</version>
-  <issueManagement>
-  	<system>Google Code</system>
-  	<url>http://code.google.com/p/nemadiy/issues/list</url>
-  </issueManagement>
-  <ciManagement>
-  	<system>Hudson</system>
-  	<url>http://nema.lis.uiuc.edu/hudson/</url>
-  </ciManagement>
-  <dependencies>
-  
+ <prerequisites>
+		<maven>2.0.6</maven>
+	</prerequisites>
+<distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<name>IMIRSEL Releases</name>
+			<id>nema.lis.uiuc.edu-releases</id>
+			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
+			
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		
+			<snapshotRepository>
+				<id>nema.lis.uiuc.edu-snapshots</id>
+				<name>IMIRSEL Snapshots</name>
+				<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-snapshots-local</url>
+			</snapshotRepository>
+		
+		<downloadUrl>http://nema.lis.uiuc.edu/artifactory/</downloadUrl>
+	</distributionManagement>
+	
+
+	<scm>
+		<connection>scm:svn:https://nemadiy.googlecode.com/svn/test/test-api/</connection>
+		<developerConnection>scm:svn:https://nemadiy.googlecode.com/svn/test/test-api/trunk</developerConnection>
+		<tag>HEAD</tag>
+		<url>http://code.google.com/p/nemadiy/source/browse/#svn/test/test-api/trunk</url>
+	</scm>
+
+	<issueManagement>
+		<system>Google Code</system>
+		<url>http://code.google.com/p/nemadiy/issues/list</url>
+	</issueManagement>
+
+	<developers>
+		<developer>
+			<id>amitku</id>
+			<name>Amit Kumar</name>
+			<email>amitku@illinois.edu</email>
+			<timezone>-5</timezone>
+		</developer>
+		<developer>
+			<id>shirk</id>
+			<name>Andrew Shirk</name>
+			<email>shirk@illinois.edu</email>
+			<timezone>-5</timezone>
+		</developer>
+	</developers>
+<dependencies>
 <dependency>
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
