@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.imirsel.nema.repository.DatasetListFileGenerator;
 import org.imirsel.nema.model.NEMAMetadataEntry;
@@ -33,6 +34,8 @@ public class TestDataListFileGenerator {
 	
 	String[] names;
 	String[] paths;
+	
+	private static final Logger logger = Logger.getLogger(TestDataListFileGenerator.class.getName());
 	
 	public  static void main(String[] args) throws IOException{
 		
@@ -98,8 +101,8 @@ public class TestDataListFileGenerator {
 				//cout.println("Test File: " + thisFile[1].getCanonicalPath());
 				paths[ctr]=thisResult.getResult_path();
 				names[ctr]=thisResult.getName();
-				System.out.println("names " + ctr + " " + names[ctr]);
-				System.out.println("paths " + ctr + " " + paths[ctr]);				
+				logger.info("names " + ctr + " " + names[ctr]);
+				logger.info("paths " + ctr + " " + paths[ctr]);				
 				ctr++;
 			}		   
 		   
