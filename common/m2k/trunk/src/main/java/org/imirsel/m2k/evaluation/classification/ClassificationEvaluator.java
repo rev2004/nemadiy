@@ -992,7 +992,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         }
         
         for(int x=0; x<classNames.size(); x++) {
-            bufferString += getKey(x) + "\t\t";
             bufferString += fmtDec(vector[x]) + "\t";
         }
         bufferString += "\n";
@@ -1012,7 +1011,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         }
         
         for(int x=0; x<classNames.size(); x++) {
-            bufferString += getKey(x) + "\t\t";
             bufferString += fmtPercent(vector[x] * 100.0) + "\t";
         }
         bufferString += "\n";
