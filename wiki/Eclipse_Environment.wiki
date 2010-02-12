@@ -42,7 +42,7 @@ Here are the complete steps for setting up your Eclipse environment.
   # In the list of plugins that appears, expand the "Find Bugs" tree node and select the latest "Find Bugs Feature" plugin. Complete the installation by following the buttons.
   # Now install the Ecl Emma plugin. In Eclipse go to Help->Install New Software
   # In the "Work with:" field, type "http://update.eclemma.org/"
-  # Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "EclEmma Update Site" then click "OK".
+  # Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Ecl Emma Update Site" then click "OK".
   # In the list of plugins that appears, expand the "Find Bugs" tree node and select the latest "Find Bugs Feature" plugin. Complete the installation by following the buttons.
 
 You have now completed configuration of your Eclipse environment.
