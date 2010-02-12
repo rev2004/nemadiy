@@ -60,7 +60,7 @@ public class FriedmansAnovaTkHsd {
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
         String plotFileName = name + ".friedmanTKHSD.png";
         String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + plotFileName;
-        String matlabPlotRelPath = "." + File.separator + name + plotFileName;
+        String matlabPlotRelPath = "." + File.separator + plotFileName;
         String friedmanTablePath = outputDir.getAbsolutePath() + File.separator + name + ".friedmanTKHSD.csv";
         try {
             BufferedWriter textOut = new BufferedWriter(new FileWriter(tempMFile));
