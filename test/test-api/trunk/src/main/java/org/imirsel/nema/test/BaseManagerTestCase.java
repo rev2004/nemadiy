@@ -79,14 +79,14 @@ public abstract class BaseManagerTestCase {
 		logger.setLevel(level);
 	}
 
-	public final String getAsString(String key){
+	public final String getPropertyAsString(String key){
 		if(!hasValidProperty){
 			return null;
 		}
 		return this.properties.getProperty(key);
 	}
 	
-	public final Integer getAsInteger(String key){
+	public final Integer getPropertyAsInteger(String key){
 		if(!hasValidProperty){
 			return null;
 		}
@@ -95,7 +95,7 @@ public abstract class BaseManagerTestCase {
 		return integerVal;
 	}
 	
-	public final Long getAsLong(String key){
+	public final Long getPropertyAsLong(String key){
 		if(!hasValidProperty){
 			return null;
 		}
