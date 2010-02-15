@@ -18,7 +18,7 @@ import org.meandre.core.ExecutableComponent;
  * @author kriswest
  * @since 0.5.0
  */
-public abstract class NEMAComponent implements ExecutableComponent {
+public abstract class NemaComponent implements ExecutableComponent {
 
 	// log messages are here
 	protected Logger _logger;

@@ -14,10 +14,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.m2k.evaluation2.TaskDescription;
-import org.imirsel.m2k.evaluation2.resultPages.WriteResultPagePerFile;
+import org.imirsel.m2k.evaluation.TaskDescription;
+import org.imirsel.m2k.evaluation.resultpages.WriteResultPagePerFile;
+import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.imirsel.nema.components.util.ProcessOutputReceiver;
@@ -38,7 +40,7 @@ import org.meandre.core.ExecutableComponent;
 @Component(creator="Andreas F. Ehmann", description="Evaluates Structural Segmentors", 
 		name="StructuralSegmentationEvaluator",
 		tags="test ft please hello")
-		public class StructuralSegmentationEvaluator implements ExecutableComponent {
+		public class StructuralSegmentationEvaluator extends NemaComponent {
 
 
 	//@ComponentInput(description="Java File Object In", name="fileObjectIn")
@@ -57,35 +59,35 @@ import org.meandre.core.ExecutableComponent;
 			final static String DATA_PROPERTY_WORKINGDIR = "Working Directory";
 	private String workingDir = "/path/to/workingDir";
 
-	final static String DATA_PROPERTY_EXECNAME = "Executeable Name";
 	@StringDataType()
 	@ComponentProperty(defaultValue="evalstruct.sh",
 			description="The name of the evalscript, called as: evalscript gtfile algofile pngoutfile csvoutfile",
-			name=DATA_PROPERTY_EXECNAME)
+			name="Executeable Name")
+	final static String DATA_PROPERTY_EXECNAME = "Executeable Name";
 			
-	final static String DATA_TASK_NAME = "Task Name";
 	@StringDataType()
 	@ComponentProperty(defaultValue="Structural segmentation",
 			description="The name of the evaluation to be used on the result pages output.",
-			name=DATA_TASK_NAME)
+			name="Task Name")
+	final static String DATA_TASK_NAME = "Task Name";
 			
-	final static String DATA_TASK_DESC = "Task Description";
 	@StringDataType()
 	@ComponentProperty(defaultValue="Automated segmentation of music audio according to structure",
 			description="Task Description",
-			name=DATA_TASK_DESC)
+			name="Task Description")
+	final static String DATA_TASK_DESC = "Task Description";
 			
-	final static String DATA_DATASET_NAME = "Dataset Name";
 	@StringDataType()
 	@ComponentProperty(defaultValue="",
 			description="The name of the dataset being evaluated.",
-			name=DATA_DATASET_NAME)
+			name="Dataset Name")
+	final static String DATA_DATASET_NAME = "Dataset Name";
 			
-	final static String DATA_DATASET_DESC = "Dataset Description";
 	@StringDataType()
 	@ComponentProperty(defaultValue="",
 			description="Description of the dataset used.",
-			name=DATA_DATASET_DESC)
+			name="Dataset Description")
+	final static String DATA_DATASET_DESC = "Dataset Description";
 			
 	String taskName;
 	String taskDesc;
@@ -101,18 +103,17 @@ import org.meandre.core.ExecutableComponent;
 	private String processResultsDir;
 	private boolean isAborted = false;
 	Process process;
+	ProcessOutputReceiver procReceiverThread = null;
 
-	// log messages are here
-	private Logger _logger;
-	java.io.PrintStream cout;
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
 	 *
 	 * @param ccp The properties associated to a component context
+	 * @throws ComponentContextException 
+	 * @throws ComponentExecutionException 
 	 */
-	public void initialize ( ComponentContextProperties ccp ) {
-		this._logger = ccp.getLogger();
-		cout = ccp.getOutputConsole();
+	public void initialize ( ComponentContextProperties ccp ) throws ComponentExecutionException, ComponentContextException {
+		super.initialize(ccp);
 		if(process != null) {
 			process.destroy();
 		}
@@ -160,15 +161,13 @@ import org.meandre.core.ExecutableComponent;
 
 		// sanity check that both filelists are same length
 		if (fileLists1.length != fileLists2.length) {
-			cout.println("ERROR: File lists for input1 and input2 are different lengths!");
-			return;
+			throw new ComponentExecutionException("ERROR: File lists for input1 and input2 are different lengths!");
 		}
-		cout.println("");
-		cout.println("=============================================================");
-		cout.println("Starting evaluation of structural segmentation");
-		cout.println("=============================================================");
-		cout.println("Number of files to process: " + fileLists1.length);
-		cout.flush();
+		_logger.info("\n" +
+				"=============================================================\n" +
+				"Starting evaluation of structural segmentation\n" +
+				"=============================================================\n" +
+				"Number of files to process: " + fileLists1.length + "\n");
 		
 		File[] csvFiles = new File[fileLists1.length];
 		File[] pngFiles = new File[fileLists1.length];
@@ -183,13 +182,11 @@ import org.meandre.core.ExecutableComponent;
 		}
 		File resultsDir = new File(processResultsDirName);
 		for (int i = 0; i < fileLists1.length; i++) {
-			cout.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-			cout.println("FILE:  " + (i+1) +"/" + fileLists1.length);
-			cout.flush();
+			_logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+					"FILE:  " + (i+1) +"/" + fileLists1.length + "\n");
+
 			if(isAborted) {
-				cout.println("");
-				cout.println("Execution of external binaries aborted");
-				cout.flush();
+				_logger.info("Execution of external binaries aborted");
 				break;
 			}
 
@@ -197,17 +194,11 @@ import org.meandre.core.ExecutableComponent;
 			File inFile2 = new File(fileLists2[i]);
 
 			try {
-				runCommand(inFile2.getCanonicalPath(), inFile1.getCanonicalPath(),cout);
+				runCommand(inFile2.getCanonicalPath(), inFile1.getCanonicalPath());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				cout.println("IOException");
-				cout.flush();
-				e.printStackTrace();
-			} catch (RuntimeException e) {
-				// TODO Auto-generated catch block
-				cout.println("RuntimeException");
-				cout.flush();
-				e.printStackTrace();
+				_logger.log(Level.SEVERE,"IOException occured while running eval script!", e);
+			} catch (Exception e) {
+				_logger.log(Level.SEVERE,"Exception occured while running eval script!",e);
 			}
 			
 			csvFiles[i] = new File(outfileCSV);
@@ -217,32 +208,31 @@ import org.meandre.core.ExecutableComponent;
 		try {
 			TaskDescription task = new TaskDescription(-1, taskName, taskDesc, "Structure", -1, datasetName, datasetDesc);
 			WriteResultPagePerFile.writeResultsHTML(task, pageNames, csvFiles, pngFiles, resultsDir);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			_logger.log(Level.SEVERE,"Exception occured while writing results pages!",e);
 		}
-		cout.println("=============================================================");
-		cout.println("Evaluation of structural segmentation complete");
-		cout.println("=============================================================");
-		cout.flush();
+		_logger.info("=============================================================\n" +
+				"Evaluation of structural segmentation complete\n" +
+				"=============================================================");
 	}
 
 
 	/** This method is called when the Menadre Flow execution is completed.
 	 *
 	 * @param ccp The properties associated to a component context
+	 * @throws ComponentContextException 
 	 */
-	public void dispose ( ComponentContextProperties ccp ) {
-		cout.close();
+	public void dispose ( ComponentContextProperties ccp ) throws ComponentContextException {
+		super.dispose(ccp);
 		if(process != null) {
-			process.destroy();
+            process.destroy();
+        }
+		if(procReceiverThread != null){
+			procReceiverThread.kill();
 		}
-		isAborted = true;
-
 	}
 
-	private void runCommand(final String inputFilename2, final String inputFilename1, java.io.PrintStream cout) throws RuntimeException, IOException {
-
+	private void runCommand(final String inputFilename2, final String inputFilename1) throws RuntimeException, IOException {
 
 		// Create File to represent working directory
 		File dir = new File(workingDir);	
@@ -270,54 +260,54 @@ import org.meandre.core.ExecutableComponent;
 		cmdArray[3] = outfilePNG;
 		cmdArray[4] = outfileCSV;
 		
-
-		cout.println("");
-		cout.println("Running command:");
+		String msg = "";
+		msg += "Running command:";
 		for (int i=0;i<cmdArray.length;i++) {
-			cout.print(cmdArray[i] + " ");
+			msg += cmdArray[i] + " ";
 		}
-		cout.println("");
-		cout.println("");
-		cout.println("In directory:");
-		cout.println(dir.getCanonicalPath());
-		cout.println("");
-		cout.println("Sending results to:");
-		cout.println(resdir.getCanonicalPath());
-		cout.println("");
-		cout.flush();
+		msg += "\n\n In directory:" + dir.getCanonicalPath() + "\n" +
+				"Sending results to: " + resdir.getCanonicalPath() + "\n";
+
+		_logger.info(msg);
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
 		Map<String, String> env = pb.environment();
 		pb.directory(dir);
 		pb.redirectErrorStream(true);
-		process = pb.start();
-		InputStream is = process.getInputStream();
-		cout.println("*******************************************");
-		cout.println("EXTERNAL PROCESS STDOUT AND STDERR:");
-		cout.println("");
-		cout.flush();
-		new Thread( new ProcessOutputReceiver( is, this._logger ) ).start();
-		/*
-        InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        String line;
 
-        while ((line = br.readLine()) != null) {
-          cout.println("\t" + line);
-        }
-		 */
-		int exitStatus;
-		try {
-			exitStatus = process.waitFor();
-			cout.println("");
-			cout.println("EXTERNAL PROCESS EXIT STATUS: " + exitStatus);
-			cout.println("*******************************************");
-			cout.flush();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		msg = "*******************************************\n" +
+				"EXTERNAL PROCESS STDOUT AND STDERR:\n";
+		_logger.info(msg);
+		
+		
+		InputStream is = null;
+		try{
+			process = pb.start();
+			is = process.getInputStream();
+			_logger.info("*******************************************\n" +
+					"EXTERNAL PROCESS STDOUT AND STDERR:");
+			procReceiverThread = new ProcessOutputReceiver( is, _logger );
+			procReceiverThread.start();
+	        int exitStatus;
+	        
+			try {
+				exitStatus = process.waitFor();
+				_logger.info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus + "\n" +
+						"*******************************************");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}finally{
+			if(procReceiverThread != null){
+				procReceiverThread.kill();
+			}
+			if(process != null){
+				process.getErrorStream().close();
+			}
+			if(is != null){
+				is.close();
+			}
 		}
-		process.getErrorStream().close();
-		is.close();
-
+		
 	}
 }
