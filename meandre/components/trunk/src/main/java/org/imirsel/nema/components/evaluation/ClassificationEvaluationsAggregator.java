@@ -13,17 +13,13 @@ package org.imirsel.nema.components.evaluation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.imirsel.m2k.evaluation.DataObj;
 import org.imirsel.m2k.evaluation.TaskDescription;
-import org.imirsel.m2k.evaluation2.classification.MIREXClassificationEvalMain;
-import org.imirsel.nema.annotations.BooleanDataType;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.imirsel.nema.components.NemaComponent;
@@ -34,7 +30,6 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
-import org.meandre.core.ExecutableComponent;
 /** This executable component executes an external binary using the process builder.
  *
  * @author Andreas F. Ehmann and Kris West;

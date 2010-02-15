@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.imirsel.m2k.evaluation.TaskDescription;
 import org.imirsel.m2k.evaluation.resultpages.WriteResultPagePerFile;
@@ -30,7 +29,6 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
-import org.meandre.core.ExecutableComponent;
 
 /** This executable component executes an external binary using the process builder.
  *
