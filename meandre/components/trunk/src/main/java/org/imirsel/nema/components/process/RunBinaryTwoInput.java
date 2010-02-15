@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 import org.imirsel.nema.annotations.BooleanDataType;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
-import org.imirsel.nema.components.NEMAComponent;
+import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.components.util.ProcessOutputReceiver;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
@@ -43,7 +43,7 @@ import org.meandre.core.ExecutableComponent;
 		"using the process builder. This module accepts one File input.", 
 		name="RunBinaryTwoInput",
 		tags="test ft please hello")
-		public class RunBinaryTwoInput extends NEMAComponent {
+		public class RunBinaryTwoInput extends NemaComponent {
 
 
 	//@ComponentInput(description="Java File Object In", name="fileObjectIn")
@@ -125,7 +125,7 @@ import org.meandre.core.ExecutableComponent;
 	Process process;
 	ProcessOutputReceiver procOutputReceiverThread = null;
 
-	// logger is setup to got cout in superclass NEMAComponent
+	// logger is setup to got cout in superclass NemaComponent
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
 	 *

@@ -11,12 +11,15 @@
 package org.imirsel.nema.components.evaluation;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Map;
+import java.util.logging.Level;
 
-import org.imirsel.m2k.evaluation2.classification.MIREXClassificationEvalMain;
+import org.imirsel.m2k.evaluation.TaskDescription;
+import org.imirsel.m2k.evaluation.DataObj;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.meandre.annotations.Component;
@@ -27,7 +30,8 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
-import org.meandre.core.ExecutableComponent;
+import org.imirsel.nema.components.NemaComponent;
+
 
 /** This executable component executes an external binary using the process builder.
  *
@@ -37,7 +41,7 @@ import org.meandre.core.ExecutableComponent;
 @Component(creator="Andreas F. Ehmann", description="Evaluates Multi-fold Classification Results", 
 		name="ClassificationEvaluator",
 		tags="test ft please hello")
-		public class ClassificationEvaluator implements ExecutableComponent {
+		public class ClassificationEvaluator extends NemaComponent {
 
 
 	//@ComponentInput(description="Java File Object In", name="fileObjectIn")
@@ -52,32 +56,82 @@ import org.meandre.core.ExecutableComponent;
 	@ComponentOutput(description="Results Directory Ouput", name="Results Directory")
 	final static String DATA_OUTPUT_1= "Results Directory";
 
+	
 	@StringDataType(hide=true)
 	@ComponentProperty(defaultValue="",
 			description="Path and name of the hierarchy file",
-			name="Hierarchy File Name")
-			final static String DATA_PROPERTY_HIERARCHYFILENAME = "Hierarchy File Name";
-	private String hierarchyFileName = "";
+			name="Hierarchy file path")
+	final static String DATA_HEIRARCY_FILE_PATH = "Hierarchy file path";
 	
 	@StringDataType()
-	@ComponentProperty(defaultValue="MyEvaluation",
-			description="Name of the evaluation",
-			name="Evaluation Name" )
-			final static String DATA_PROPERTY_EVALNAME = "Evaluation Name";
-	private String evalName= "MyEvaluation";
-
+	@ComponentProperty(defaultValue="genre",
+			description="Metadata type to be trained on and predicted.",
+			name="Metadata to classify")
+	final static String DATA_METADATA_PREDICTED = "Metadata to classify";
+	
+	@StringDataType()
+	@ComponentProperty(defaultValue="Structural segmentation",
+			description="The name of the evaluation to be used on the result pages output.",
+			name="Task Name")
+	final static String DATA_TASK_NAME = "Task Name";
+			
+	@StringDataType()
+	@ComponentProperty(defaultValue="Automated segmentation of music audio according to structure",
+			description="Task Description",
+			name="Task Description")
+	final static String DATA_TASK_DESC = "Task Description";
+			
+	@StringDataType()
+	@ComponentProperty(defaultValue="",
+			description="The name of the dataset being evaluated.",
+			name="Dataset Name")
+	final static String DATA_DATASET_NAME = "Dataset Name";
+			
+	@StringDataType()
+	@ComponentProperty(defaultValue="",
+			description="Description of the dataset used.",
+			name="Dataset Description")
+	final static String DATA_DATASET_DESC = "Dataset Description";
+			
+	@StringDataType()
+	@ComponentProperty(defaultValue="",
+			description="Short name of the system being evaluated.",
+			name="System name")
+	final static String DATA_SYSTEM_NAME = "System name";
+			
+	@StringDataType()
+	@ComponentProperty(defaultValue="",
+			description="Description of the system being evaluated.",
+			name="System Description")
+	final static String DATA_SYSTEM_DESC = "System Description";
+			
+//	final static String DATA_SYSTEM_ID = "System ID";
+//	@StringDataType()
+//	@ComponentProperty(defaultValue="",
+//			description="ID of the system being evaluated.",
+//			name=DATA_SYSTEM_ID)
+			
+	String taskName;
+	String taskDesc;
+	String datasetName;
+	String datasetDesc;
+	String systemName;
+	String systemDesc;
+	String systemID;
+	String metadata;
+	File hierarchyFile;
+	
 	private String processWorkingDir;
 	private String processResultsDir;
-	private Logger logger;
-	java.io.PrintStream cout;
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
 	 *
 	 * @param ccp The properties associated to a component context
+	 * @throws ComponentContextException 
+	 * @throws ComponentExecutionException 
 	 */
-	public void initialize ( ComponentContextProperties ccp ) {
-		this.logger = ccp.getLogger();
-		cout = ccp.getOutputConsole();
+	public void initialize ( ComponentContextProperties ccp ) throws ComponentExecutionException, ComponentContextException {
+		super.initialize(ccp);
 		try {
 			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
 					.getProcessWorkingDirectory(
@@ -92,7 +146,22 @@ import org.meandre.core.ExecutableComponent;
 				e.printStackTrace();
 			}
 		}
-      
+
+		taskName = ccp.getProperty(DATA_TASK_NAME);
+		taskDesc = ccp.getProperty(DATA_TASK_DESC);
+		datasetName = ccp.getProperty(DATA_DATASET_NAME);
+		datasetDesc = ccp.getProperty(DATA_DATASET_DESC);
+		systemName = ccp.getProperty(DATA_SYSTEM_NAME);
+		systemDesc = ccp.getProperty(DATA_SYSTEM_DESC);
+		systemID = ccp.getFlowID();
+		metadata = ccp.getProperty(DATA_METADATA_PREDICTED);
+		String hierarchyFilePath = ccp.getProperty(DATA_HEIRARCY_FILE_PATH);
+		if (!hierarchyFilePath.trim().equals("")){
+			hierarchyFile = new File(hierarchyFilePath);
+		}else{
+			hierarchyFile = null;
+		}
+		
 	}
 
 	/** This method just pushes a concatenated version of the entry to the
@@ -108,75 +177,82 @@ import org.meandre.core.ExecutableComponent;
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
 		//File inFile = (File)cc.getDataComponentFromInput(DATA_INPUT_1);
 		
-		hierarchyFileName = String.valueOf(cc.getProperty(DATA_PROPERTY_HIERARCHYFILENAME));
-		evalName = String.valueOf(cc.getProperty(DATA_PROPERTY_EVALNAME));
 		String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[] gtFileName = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
 		
 		// initialize variables for MIREXClassificationEvalMain Constructor
 		String matlabPath = "/usr/local/bin/matlab";
-	    String evaluationName = evalName;
 	    File gtFile = new File(gtFileName[0]);
 	    File procResDir = new File(processResultsDir);
 	    String processResultsDirName = processResultsDir;
 		try {
 			processResultsDirName = procResDir.getCanonicalPath();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			_logger.log(Level.SEVERE,"Failed to get canonical path for File: " + processResultsDirName.toString(),e);
 		}
 	    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
 	    
 	    // create a directory to move the raw results to
 	    File classificationResultsDir = new File(processResultsDirName);
-	    File hierarchyFile;
-	    if (!hierarchyFileName.contentEquals("")) {
-	    	hierarchyFile = new File(hierarchyFileName);
-		} else {
-			hierarchyFile = null;
-		}
-	    // move the classification files (e.g. fold.1.txt) to their own dir
-	    // so MIREXClassifier has them all alone
 	    
-	    List<String> systemNames = new ArrayList<String>();
-        List<File> resultsDir = new ArrayList<File>();
-	    systemNames.add(evalName);
-        resultsDir.add(classificationResultsDir);
-        cout.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-        cout.println("Evaluating...");
-        cout.flush();
         // call constructor and evaluation method
-        MIREXClassificationEvalMain evaluator = new MIREXClassificationEvalMain(false,
-                matlabPath,
-                evaluationName,
-                gtFile,
-                rootEvaluationDir,
-                hierarchyFile,
-                systemNames,
-                resultsDir);
+        TaskDescription task = new TaskDescription(-1, taskName, taskDesc, metadata, -1, datasetName, datasetDesc);
         
-        evaluator.performEvaluation();
+        //init evaluator
+        org.imirsel.m2k.evaluation.classification.ClassificationEvaluator eval;
+		try {
+			eval = new 
+				org.imirsel.m2k.evaluation.classification.ClassificationEvaluator(task,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile,this._logger);
+		} catch (FileNotFoundException e) {
+			throw new ComponentExecutionException("FileNotFoundException occured when setting up evaluator!",e);
+		} catch (IOException e) {
+			throw new ComponentExecutionException("IOException occured when setting up evaluator!",e);
+		}
         
+		//read Ground-truth
+        org.imirsel.m2k.evaluation.classification.ClassificationTextFile reader = new 
+        	org.imirsel.m2k.evaluation.classification.ClassificationTextFile(this._logger,metadata);
+		try {
+			List<DataObj> gt = reader.readFile(gtFile);
+			eval.setGroundTruth(gt);
+		} catch (Exception e) {
+			throw new ComponentExecutionException("Exception occured when reading up ground-truth from: " + gtFile.getAbsolutePath(),e);
+		}
+		
+		//read results
+		try{
+			List<List<DataObj>> results = reader.readDirectory(classificationResultsDir,metadata);
+			for(Iterator<List<DataObj>> it= results.iterator();it.hasNext();){
+	        	eval.addResults(systemName, systemID, it.next());
+	        }
+		} catch (Exception e) {
+			throw new ComponentExecutionException("Exception occured when reading up results!",e);
+		}
+        
+		//perform evaluation
+        try {
+			Map<String,DataObj> evalResults = eval.evaluate();
+		} catch (Exception e) {
+			throw new ComponentExecutionException("Exception occured when performing the evaluation!",e);
+		}
+    	
         // output the raw results dir for reprocessing by the summarizer component
         String[] outLists = new String[fileLists.length];
         outLists[0] = processResultsDir;
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 		
-        cout.println("Evaluation Complete");
-        cout.println("Written to:");
-        cout.println(rootEvaluationDir.getAbsolutePath());
-        cout.flush();
-        cout.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+        _logger.info("Evaluation Complete\n" +
+        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
 	}
 
 
 	/** This method is called when the Menadre Flow execution is completed.
 	 *
 	 * @param ccp The properties associated to a component context
+	 * @throws ComponentContextException 
 	 */
-	public void dispose ( ComponentContextProperties ccp ) {
-		cout.close();
-
+	public void dispose ( ComponentContextProperties ccp ) throws ComponentContextException {
+		super.dispose(ccp);
 	}
 
 }
