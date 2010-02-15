@@ -35,7 +35,7 @@ import org.imirsel.nema.components.NemaComponent;
 
 /** This executable component executes an external binary using the process builder.
  *
- * @author Andreas F. Ehmann;
+ * @author Andreas F. Ehmann and Kris West;
  *
  */
 @Component(creator="Andreas F. Ehmann", description="Evaluates Multi-fold Classification Results", 
@@ -70,13 +70,13 @@ import org.imirsel.nema.components.NemaComponent;
 	final static String DATA_METADATA_PREDICTED = "Metadata to classify";
 	
 	@StringDataType()
-	@ComponentProperty(defaultValue="Structural segmentation",
+	@ComponentProperty(defaultValue="MIREX Genre Classification",
 			description="The name of the evaluation to be used on the result pages output.",
 			name="Task Name")
 	final static String DATA_TASK_NAME = "Task Name";
 			
 	@StringDataType()
-	@ComponentProperty(defaultValue="Automated segmentation of music audio according to structure",
+	@ComponentProperty(defaultValue="Classification of popular music by genre",
 			description="Task Description",
 			name="Task Description")
 	final static String DATA_TASK_DESC = "Task Description";
@@ -139,12 +139,9 @@ import org.imirsel.nema.components.NemaComponent;
 			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
 			.getResultLocationForJob(ccp.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
-			try {
-				throw new ComponentExecutionException(e1);
-			} catch (ComponentExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			ComponentExecutionException ex = new ComponentExecutionException("IOException occured when getting working and result directories!",e1);
+			_logger.log(Level.SEVERE, "Terminating execution",ex);
+			throw ex;
 		}
 
 		taskName = ccp.getProperty(DATA_TASK_NAME);
@@ -188,7 +185,9 @@ import org.imirsel.nema.components.NemaComponent;
 		try {
 			processResultsDirName = procResDir.getCanonicalPath();
 		} catch (IOException e) {
-			_logger.log(Level.SEVERE,"Failed to get canonical path for File: " + processResultsDirName.toString(),e);
+			ComponentExecutionException ex = new ComponentExecutionException("Failed to get canonical path for File: " + processResultsDirName.toString(),e);
+			_logger.log(Level.SEVERE, "Terminating execution",ex);
+			throw ex;
 		}
 	    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
 	    
@@ -204,9 +203,13 @@ import org.imirsel.nema.components.NemaComponent;
 			eval = new 
 				org.imirsel.m2k.evaluation.classification.ClassificationEvaluator(task,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile,this._logger);
 		} catch (FileNotFoundException e) {
-			throw new ComponentExecutionException("FileNotFoundException occured when setting up evaluator!",e);
+			ComponentExecutionException ex = new ComponentExecutionException("FileNotFoundException occured when setting up evaluator!",e);
+			_logger.log(Level.SEVERE, "Terminating execution",ex);
+			throw ex;
 		} catch (IOException e) {
-			throw new ComponentExecutionException("IOException occured when setting up evaluator!",e);
+			ComponentExecutionException ex = new ComponentExecutionException("IOException occured when setting up evaluator!",e);
+			_logger.log(Level.SEVERE, "Terminating execution",ex);
+			throw ex;
 		}
         
 		//read Ground-truth
@@ -216,7 +219,9 @@ import org.imirsel.nema.components.NemaComponent;
 			List<DataObj> gt = reader.readFile(gtFile);
 			eval.setGroundTruth(gt);
 		} catch (Exception e) {
-			throw new ComponentExecutionException("Exception occured when reading up ground-truth from: " + gtFile.getAbsolutePath(),e);
+			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when reading up ground-truth from: " + gtFile.getAbsolutePath(),e);
+			_logger.log(Level.SEVERE, "Terminating execution",ex);
+			throw ex;
 		}
 		
 		//read results
@@ -226,14 +231,18 @@ import org.imirsel.nema.components.NemaComponent;
 	        	eval.addResults(systemName, systemID, it.next());
 	        }
 		} catch (Exception e) {
-			throw new ComponentExecutionException("Exception occured when reading up results!",e);
+			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when reading up results!",e);
+			_logger.log(Level.SEVERE, "Terminating execution",ex);
+			throw ex;
 		}
         
 		//perform evaluation
         try {
 			Map<String,DataObj> evalResults = eval.evaluate();
 		} catch (Exception e) {
-			throw new ComponentExecutionException("Exception occured when performing the evaluation!",e);
+			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when performing the evaluation!",e);
+			_logger.log(Level.SEVERE, "Terminating execution",ex);
+			throw ex;
 		}
     	
         // output the raw results dir for reprocessing by the summarizer component
@@ -251,7 +260,7 @@ import org.imirsel.nema.components.NemaComponent;
 	 * @param ccp The properties associated to a component context
 	 * @throws ComponentContextException 
 	 */
-	public void dispose ( ComponentContextProperties ccp ) throws ComponentContextException {
+	public void dispose (ComponentContextProperties ccp) throws ComponentContextException {
 		super.dispose(ccp);
 	}
 
