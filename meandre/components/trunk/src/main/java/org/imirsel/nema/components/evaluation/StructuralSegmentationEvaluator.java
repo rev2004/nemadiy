@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.imirsel.m2k.evaluation2.TaskDescription;
 import org.imirsel.m2k.evaluation2.resultPages.WriteResultPagePerFile;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
@@ -56,11 +57,42 @@ import org.meandre.core.ExecutableComponent;
 			final static String DATA_PROPERTY_WORKINGDIR = "Working Directory";
 	private String workingDir = "/path/to/workingDir";
 
+	final static String DATA_PROPERTY_EXECNAME = "Executeable Name";
 	@StringDataType()
 	@ComponentProperty(defaultValue="evalstruct.sh",
 			description="The name of the evalscript, called as: evalscript gtfile algofile pngoutfile csvoutfile",
-			name="Executeable Name")
-			final static String DATA_PROPERTY_EXECNAME = "Executeable Name";
+			name=DATA_PROPERTY_EXECNAME)
+			
+	final static String DATA_TASK_NAME = "Task Name";
+	@StringDataType()
+	@ComponentProperty(defaultValue="Structural segmentation",
+			description="The name of the evaluation to be used on the result pages output.",
+			name=DATA_TASK_NAME)
+			
+	final static String DATA_TASK_DESC = "Task Description";
+	@StringDataType()
+	@ComponentProperty(defaultValue="Automated segmentation of music audio according to structure",
+			description="Task Description",
+			name=DATA_TASK_DESC)
+			
+	final static String DATA_DATASET_NAME = "Dataset Name";
+	@StringDataType()
+	@ComponentProperty(defaultValue="",
+			description="The name of the dataset being evaluated.",
+			name=DATA_DATASET_NAME)
+			
+	final static String DATA_DATASET_DESC = "Dataset Description";
+	@StringDataType()
+	@ComponentProperty(defaultValue="",
+			description="Description of the dataset used.",
+			name=DATA_DATASET_DESC)
+			
+	String taskName;
+	String taskDesc;
+	String datasetName;
+	String datasetDesc;
+			
+	
 	private String execName = "evalstruct.sh";
 
 	private String outfilePNG;
@@ -98,6 +130,11 @@ import org.meandre.core.ExecutableComponent;
 				e.printStackTrace();
 			}
 		}
+		
+		taskName = ccp.getProperty(DATA_TASK_NAME);
+		taskDesc = ccp.getProperty(DATA_TASK_DESC);
+		datasetName = ccp.getProperty(DATA_DATASET_NAME);
+		datasetDesc = ccp.getProperty(DATA_DATASET_DESC);
 
 	}
 
@@ -178,7 +215,8 @@ import org.meandre.core.ExecutableComponent;
 			pageNames[i] = inFile1.getName().split(".wav")[0];
 		}
 		try {
-			WriteResultPagePerFile.writeResultsHTML("Structural Segmentation Evaluation", pageNames, csvFiles, pngFiles, resultsDir);
+			TaskDescription task = new TaskDescription(-1, taskName, taskDesc, "Structure", -1, datasetName, datasetDesc);
+			WriteResultPagePerFile.writeResultsHTML(task, pageNames, csvFiles, pngFiles, resultsDir);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
