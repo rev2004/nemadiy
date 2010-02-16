@@ -38,7 +38,7 @@ import org.meandre.core.ComponentExecutionException;
 @Component(creator="Andreas F. Ehmann", description="Evaluates all Multi-fold Classification " +
 		"Results of a single task, constructs a summary table/leader board, and performs significance tests ", 
 		name="ClassificationEvaluationsAggregatorComponent",
-		tags="test ft please hello",
+		tags="classification evaluation comparison",
 		dependency={"commons-compress-1.0.jar","jfreechart-1.0.9.jar","jcommon-1.0.12.jar"}
 		)
 		public class ClassificationEvaluationsAggregatorComponent extends NemaComponent {

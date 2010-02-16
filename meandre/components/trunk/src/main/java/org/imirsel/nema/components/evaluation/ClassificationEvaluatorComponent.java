@@ -40,7 +40,7 @@ import org.imirsel.nema.components.NemaComponent;
  */
 @Component(creator="Andreas F. Ehmann", description="Evaluates Multi-fold Classification Results", 
 		name="ClassificationEvaluatorComponent",
-		tags="test ft please hello",
+		tags="classification evaluation comparison",
 		dependency={"commons-compress-1.0.jar","jfreechart-1.0.9.jar","jcommon-1.0.12.jar"})
 		public class ClassificationEvaluatorComponent extends NemaComponent {
 
