@@ -293,21 +293,13 @@
       		<id>development</id>
       		<properties>
       			<flowservice.location>rmi://128.174.154.145:1099/FlowService</flowservice.location>
-      			<meandre.host>128.174.154.145</meandre.host>
-      			<meandre.port>11709</meandre.port>
-      			<meandre.username>admin</meandre.username>
-      			<meandre.password>admin</meandre.password>
-      		</properties>
+      	  	</properties>
      	 </profile>
      	 
      	  <profile>
       		<id>production</id>
       		<properties>
       			<flowservice.location>rmi://nema.lis.uiuc.edu:1099/FlowService</flowservice.location>
-      			<meandre.host>nema.lis.uiuc.edu</meandre.host>
-      			<meandre.port>11709</meandre.port>
-      			<meandre.username>admin</meandre.username>
-      			<meandre.password>admin</meandre.password>
       		</properties>
      	 </profile>
      	 
@@ -351,14 +343,18 @@
         <!-- Database settings -->
         <dbunit.dataTypeFactoryName>org.dbunit.dataset.datatype.DefaultDataTypeFactory</dbunit.dataTypeFactoryName>
         <dbunit.operation.type>CLEAN_INSERT</dbunit.operation.type>
-        <hibernate.dialect>org.hibernate.dialect.MySQL5InnoDBDialect</hibernate.dialect>
-        <hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
+        <hibernate.dialect>${diy.hibernate.dialect}</hibernate.dialect>
+        <hibernate.hbm2ddl.auto>${diy.hibernate.hbm2ddl.auto}</hibernate.hbm2ddl.auto>
         <jdbc.groupId>mysql</jdbc.groupId>
         <jdbc.artifactId>mysql-connector-java</jdbc.artifactId>
         <jdbc.version>5.0.5</jdbc.version>
-        <jdbc.driverClassName>com.mysql.jdbc.Driver</jdbc.driverClassName>
-        <jdbc.url><![CDATA[jdbc:mysql://128.174.154.145/nema_diy?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></jdbc.url>
-        <flowservice.jdbc.url><![CDATA[jdbc:mysql://128.174.154.145/flowservice?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=utf-8]]></flowservice.jdbc.url>
+        <jdbc.driverClassName>${diy.jdbc.driverClassName}</jdbc.driverClassName>
+        <jdbc.url>${diy.jdbc.url}</jdbc.url>
+        <jdbc.username>${diy.jdbc.username}</jdbc.username>
+        <jdbc.password>${diy.jdbc.password}</jdbc.password>
+
+        <flowservice.location>${diy.flowservice.location}</flowservice.location>
+
         <!-- Properties calculated by AppFuse when running full-source plugin -->
         <aspectj.version>1.6.0</aspectj.version>
         <clickstream.version>1.0.2</clickstream.version>
