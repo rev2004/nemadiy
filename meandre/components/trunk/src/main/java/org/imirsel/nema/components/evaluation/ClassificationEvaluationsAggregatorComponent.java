@@ -37,10 +37,11 @@ import org.meandre.core.ComponentExecutionException;
  */
 @Component(creator="Andreas F. Ehmann", description="Evaluates all Multi-fold Classification " +
 		"Results of a single task, constructs a summary table/leader board, and performs significance tests ", 
-		name="ClassificationEvaluationsAggregator",
-		tags="test ft please hello"
+		name="ClassificationEvaluationsAggregatorComponent",
+		tags="test ft please hello",
+		dependency={"commons-compress-1.0.jar","jfreechart-1.0.9.jar","jcommon-1.0.12.jar"}
 		)
-		public class ClassificationEvaluationsAggregator extends NemaComponent {
+		public class ClassificationEvaluationsAggregatorComponent extends NemaComponent {
 
 
 	//@ComponentInput(description="Java File Object In", name="fileObjectIn")

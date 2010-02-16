@@ -36,9 +36,11 @@ import org.meandre.core.ComponentExecutionException;
  *
  */
 @Component(creator="Andreas F. Ehmann", description="Evaluates Structural Segmentors", 
-		name="StructuralSegmentationEvaluator",
-		tags="test ft please hello")
-		public class StructuralSegmentationEvaluator extends NemaComponent {
+		name="StructuralSegmentationEvaluatorComponent",
+		tags="test ft please hello",
+		dependency={"commons-compress-1.0.jar","jfreechart-1.0.9.jar","jcommon-1.0.12.jar"}
+		)
+		public class StructuralSegmentationEvaluatorComponent extends NemaComponent {
 
 
 	//@ComponentInput(description="Java File Object In", name="fileObjectIn")
