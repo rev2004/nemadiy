@@ -56,9 +56,8 @@ import org.meandre.core.ComponentExecutionException;
 	@ComponentProperty(defaultValue="/path/to/workingDir",
 			description="The Working Directory of the Evaluation Script",
 			name="Working Directory")
-			final static String DATA_PROPERTY_WORKINGDIR = "Working Directory";
-	private String workingDir = "/path/to/workingDir";
-
+	final static String DATA_PROPERTY_WORKINGDIR = "ExeWorking Directory";
+	
 	@StringDataType()
 	@ComponentProperty(defaultValue="evalstruct.sh",
 			description="The name of the evalscript, called as: evalscript gtfile algofile pngoutfile csvoutfile",
@@ -88,19 +87,10 @@ import org.meandre.core.ComponentExecutionException;
 			description="Description of the dataset used.",
 			name="Dataset Description")
 	final static String DATA_DATASET_DESC = "Dataset Description";
-			
-	String taskName;
-	String taskDesc;
-	String datasetName;
-	String datasetDesc;
-			
 	
-	private String execName = "evalstruct.sh";
-
-	private String outfilePNG;
-	private String outfileCSV;
-	private String processWorkingDir;
-	private String processResultsDir;
+	
+	//private String processWorkingDir;
+	//private String processResultsDir;
 	private boolean isAborted = false;
 	Process process;
 	ProcessOutputReceiver procReceiverThread = null;
@@ -114,29 +104,6 @@ import org.meandre.core.ComponentExecutionException;
 	 */
 	public void initialize ( ComponentContextProperties ccp ) throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
-		if(process != null) {
-			process.destroy();
-		}
-		isAborted = false;
-		try {
-			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).
-			getAbsoluteProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
-			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).
-			getResultLocationForJob(ccp.getFlowExecutionInstanceID());
-		} catch (IOException e1) {
-			try {
-				throw new ComponentExecutionException(e1);
-			} catch (ComponentExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		taskName = ccp.getProperty(DATA_TASK_NAME);
-		taskDesc = ccp.getProperty(DATA_TASK_DESC);
-		datasetName = ccp.getProperty(DATA_DATASET_NAME);
-		datasetDesc = ccp.getProperty(DATA_DATASET_DESC);
-
 	}
 
 	/** This method just pushes a concatenated version of the entry to the
@@ -151,14 +118,39 @@ import org.meandre.core.ComponentExecutionException;
 	 */
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException{
 		//File inFile = (File)cc.getDataComponentFromInput(DATA_INPUT_1);
-		workingDir = String.valueOf(cc.getProperty(DATA_PROPERTY_WORKINGDIR));
+		String execName = "evalstruct.sh";
+		//String processWorkingDir =null;
+		String processResultsDir =null;
+		
+		String taskName;
+		String taskDesc;
+		String datasetName;
+		String datasetDesc;
+		
+		
+		taskName = cc.getProperty(DATA_TASK_NAME);
+		taskDesc = cc.getProperty(DATA_TASK_DESC);
+		datasetName = cc.getProperty(DATA_DATASET_NAME);
+		datasetDesc = cc.getProperty(DATA_DATASET_DESC);
+				
+		
+		
+		String workingDir = String.valueOf(cc.getProperty(DATA_PROPERTY_WORKINGDIR));
 		execName = String.valueOf(cc.getProperty(DATA_PROPERTY_EXECNAME));
 
 		String[] fileLists1 = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[] fileLists2 = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
 		String[] outLists = new String[fileLists1.length];
-
-
+		try {
+			//processWorkingDir = ArtifactManagerImpl.getInstance(cc.getPublicResourcesDirectory()).
+			//getAbsoluteProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
+			processResultsDir = ArtifactManagerImpl.getInstance(cc.getPublicResourcesDirectory()).
+			getResultLocationForJob(cc.getFlowExecutionInstanceID());
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		// sanity check that both filelists are same length
 		if (fileLists1.length != fileLists2.length) {
 			throw new ComponentExecutionException("ERROR: File lists for input1 and input2 are different lengths!");
@@ -180,7 +172,7 @@ import org.meandre.core.ComponentExecutionException;
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		File resultsDir = new File(processResultsDirName);
+	 	File resultsDir = new File(processResultsDirName);
 		for (int i = 0; i < fileLists1.length; i++) {
 			_logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
 					"FILE:  " + (i+1) +"/" + fileLists1.length + "\n");
@@ -192,28 +184,34 @@ import org.meandre.core.ComponentExecutionException;
 
 			File inFile1 = new File(fileLists1[i]);
 			File inFile2 = new File(fileLists2[i]);
-
-			try {
-				runCommand(inFile2.getCanonicalPath(), inFile1.getCanonicalPath());
+			CommandResult result = null;
+				try {
+				result=runCommand(inFile2.getCanonicalPath(), inFile1.getCanonicalPath(), execName,workingDir,processResultsDir,resultsDir);
 			} catch (IOException e) {
-				_logger.log(Level.SEVERE,"IOException occured while running eval script!", e);
+				_logger.log(Level.SEVERE,"Exception occured while running eval script!",e);
+				throw new ComponentExecutionException(e);
 			} catch (Exception e) {
 				_logger.log(Level.SEVERE,"Exception occured while running eval script!",e);
+				throw new ComponentExecutionException(e);
 			}
 			
-			csvFiles[i] = new File(outfileCSV);
-			pngFiles[i] = new File(outfilePNG);
+			csvFiles[i] = new File(result.getCsvFile());
+			pngFiles[i] = new File(result.getPngFile());
 			pageNames[i] = inFile1.getName().split(".wav")[0];
+			
 		}
+		
 		try {
 			TaskDescription task = new TaskDescription(-1, taskName, taskDesc, "Structure", -1, datasetName, datasetDesc);
 			WriteResultPagePerFile.writeResultsHTML(task, pageNames, csvFiles, pngFiles, resultsDir);
 		} catch (Exception e) {
 			_logger.log(Level.SEVERE,"Exception occured while writing results pages!",e);
 		}
+		 
 		_logger.info("=============================================================\n" +
 				"Evaluation of structural segmentation complete\n" +
 				"=============================================================");
+				
 	}
 
 
@@ -232,13 +230,20 @@ import org.meandre.core.ComponentExecutionException;
 		}
 	}
 
-	private void runCommand(final String inputFilename2, final String inputFilename1) throws RuntimeException, IOException {
-
+	private CommandResult runCommand(final String inputFilename2, final String inputFilename1, final String execName, 
+			final String workingDir, final String processResultsDir, final File resultsDir) throws RuntimeException, IOException {
+		String outfilePNG;
+		String outfileCSV;
+		CommandResult commandResult = new CommandResult();
+		
 		// Create File to represent working directory
 		File dir = new File(workingDir);	
 		File resdir = new File(processResultsDir);
 		outfilePNG = resdir.getCanonicalPath() + File.separator + (new File(inputFilename1)).getName() + ".eval.png";            
-		outfileCSV = resdir.getCanonicalPath() + File.separator + (new File(inputFilename1)).getName() + ".eval.csv";    
+		outfileCSV = resdir.getCanonicalPath() + File.separator + (new File(inputFilename1)).getName() + ".eval.csv"; 
+		
+		commandResult.setCsvFile(outfileCSV);
+		commandResult.setPngFile(outfilePNG);
 
 		File command = new File(execName);
 		if (!command.exists()) {
@@ -309,5 +314,6 @@ import org.meandre.core.ComponentExecutionException;
 			}
 		}
 		
+		return commandResult;
 	}
 }
