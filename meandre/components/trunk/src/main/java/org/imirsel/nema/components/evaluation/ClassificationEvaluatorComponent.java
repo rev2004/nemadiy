@@ -183,76 +183,77 @@ import org.imirsel.nema.components.NemaComponent;
 	    File gtFile = new File(gtFileName[0]);
 	    File procResDir = new File(processResultsDir);
 	    String processResultsDirName = processResultsDir;
-		try {
-			processResultsDirName = procResDir.getCanonicalPath();
-		} catch (IOException e) {
-			ComponentExecutionException ex = new ComponentExecutionException("Failed to get canonical path for File: " + processResultsDirName.toString(),e);
-			_logger.log(Level.SEVERE, "Terminating execution",ex);
-			throw ex;
+	    try{
+			try {
+				processResultsDirName = procResDir.getCanonicalPath();
+			} catch (IOException e) {
+				ComponentExecutionException ex = new ComponentExecutionException("Failed to get canonical path for File: " + processResultsDirName.toString(),e);
+				throw ex;
+			}
+		    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
+		    
+		    // create a directory to move the raw results to
+		    File classificationResultsDir = new File(processResultsDirName);
+		    
+	        // call constructor and evaluation method
+	        TaskDescription task = new TaskDescription(-1, taskName, taskDesc, metadata, -1, datasetName, datasetDesc);
+	        
+	        //init evaluator
+	        org.imirsel.m2k.evaluation.classification.ClassificationEvaluator eval;
+			try {
+				eval = new 
+					org.imirsel.m2k.evaluation.classification.ClassificationEvaluator(task,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile,this._logger);
+			} catch (FileNotFoundException e) {
+				ComponentExecutionException ex = new ComponentExecutionException("FileNotFoundException occured when setting up evaluator!",e);
+				throw ex;
+			} catch (IOException e) {
+				ComponentExecutionException ex = new ComponentExecutionException("IOException occured when setting up evaluator!",e);
+				throw ex;
+			}
+	        
+			//read Ground-truth
+	        org.imirsel.m2k.evaluation.classification.ClassificationTextFile reader = new 
+	        	org.imirsel.m2k.evaluation.classification.ClassificationTextFile(this._logger,metadata);
+			try {
+				List<DataObj> gt = reader.readFile(gtFile);
+				eval.setGroundTruth(gt);
+			} catch (Exception e) {
+				ComponentExecutionException ex = new ComponentExecutionException("Exception occured when reading up ground-truth from: " + gtFile.getAbsolutePath(),e);
+				throw ex;
+			}
+			
+			//read results
+			try{
+				List<List<DataObj>> results = reader.readDirectory(classificationResultsDir,metadata);
+				for(Iterator<List<DataObj>> it= results.iterator();it.hasNext();){
+		        	eval.addResults(systemName, systemID, it.next());
+		        }
+			} catch (Exception e) {
+				ComponentExecutionException ex = new ComponentExecutionException("Exception occured when reading up results!",e);
+				throw ex;
+			}
+	        
+			//perform evaluation
+	        try {
+				Map<String,DataObj> evalResults = eval.evaluate();
+			} catch (Exception e) {
+				ComponentExecutionException ex = new ComponentExecutionException("Exception occured when performing the evaluation!",e);
+				throw ex;
+			}
+			
+			// output the raw results dir for reprocessing by the summarizer component
+	        String[] outLists = new String[fileLists.length];
+	        outLists[0] = processResultsDir;
+			cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
+			
+	        _logger.info("Evaluation Complete\n" +
+	        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
+	    	
+	    } catch (ComponentExecutionException e) {
+			_logger.log(Level.SEVERE, "Terminating execution", e);
+			throw e;
 		}
-	    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
-	    
-	    // create a directory to move the raw results to
-	    File classificationResultsDir = new File(processResultsDirName);
-	    
-        // call constructor and evaluation method
-        TaskDescription task = new TaskDescription(-1, taskName, taskDesc, metadata, -1, datasetName, datasetDesc);
         
-        //init evaluator
-        org.imirsel.m2k.evaluation.classification.ClassificationEvaluator eval;
-		try {
-			eval = new 
-				org.imirsel.m2k.evaluation.classification.ClassificationEvaluator(task,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile,this._logger);
-		} catch (FileNotFoundException e) {
-			ComponentExecutionException ex = new ComponentExecutionException("FileNotFoundException occured when setting up evaluator!",e);
-			_logger.log(Level.SEVERE, "Terminating execution",ex);
-			throw ex;
-		} catch (IOException e) {
-			ComponentExecutionException ex = new ComponentExecutionException("IOException occured when setting up evaluator!",e);
-			_logger.log(Level.SEVERE, "Terminating execution",ex);
-			throw ex;
-		}
-        
-		//read Ground-truth
-        org.imirsel.m2k.evaluation.classification.ClassificationTextFile reader = new 
-        	org.imirsel.m2k.evaluation.classification.ClassificationTextFile(this._logger,metadata);
-		try {
-			List<DataObj> gt = reader.readFile(gtFile);
-			eval.setGroundTruth(gt);
-		} catch (Exception e) {
-			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when reading up ground-truth from: " + gtFile.getAbsolutePath(),e);
-			_logger.log(Level.SEVERE, "Terminating execution",ex);
-			throw ex;
-		}
-		
-		//read results
-		try{
-			List<List<DataObj>> results = reader.readDirectory(classificationResultsDir,metadata);
-			for(Iterator<List<DataObj>> it= results.iterator();it.hasNext();){
-	        	eval.addResults(systemName, systemID, it.next());
-	        }
-		} catch (Exception e) {
-			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when reading up results!",e);
-			_logger.log(Level.SEVERE, "Terminating execution",ex);
-			throw ex;
-		}
-        
-		//perform evaluation
-        try {
-			Map<String,DataObj> evalResults = eval.evaluate();
-		} catch (Exception e) {
-			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when performing the evaluation!",e);
-			_logger.log(Level.SEVERE, "Terminating execution",ex);
-			throw ex;
-		}
-    	
-        // output the raw results dir for reprocessing by the summarizer component
-        String[] outLists = new String[fileLists.length];
-        outLists[0] = processResultsDir;
-		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
-		
-        _logger.info("Evaluation Complete\n" +
-        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
 	}
 
 
