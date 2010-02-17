@@ -12,5 +12,8 @@
 	<classpathentry kind="lib" path="lib/nema-annotations-0.5-SNAPSHOT.jar" sourcepath="/nema-annotations"/>
 	<classpathentry kind="con" path="org.meandre.MEANDRE_INFRASTRUCTURE/1.4.8"/>
 	<classpathentry kind="lib" path="lib/m2k-core-1.4.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/commons-compress-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.12.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.9.jar"/>
 	<classpathentry kind="output" path="bin/target/classes"/>
 </classpath>

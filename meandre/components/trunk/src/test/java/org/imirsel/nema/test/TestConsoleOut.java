@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.*;
 
-import org.imirsel.nema.components.NEMAComponent;
+import org.imirsel.nema.components.NemaComponent;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -23,7 +23,7 @@ import org.meandre.annotations.ComponentProperty;
 		resources = "",
 		firingPolicy = Component.FiringPolicy.all)
 		
-public class TestConsoleOut extends NEMAComponent {
+public class TestConsoleOut extends NemaComponent {
 
 
     @ComponentProperty(defaultValue="Hello World !",
