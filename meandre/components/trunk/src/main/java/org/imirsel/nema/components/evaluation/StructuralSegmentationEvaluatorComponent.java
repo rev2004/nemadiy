@@ -55,8 +55,8 @@ import org.meandre.core.ComponentExecutionException;
 	@StringDataType(hide=true)
 	@ComponentProperty(defaultValue="/path/to/workingDir",
 			description="The Working Directory of the Evaluation Script",
-			name="Working Directory")
-	final static String DATA_PROPERTY_WORKINGDIR = "ExeWorking Directory";
+			name="Executable Working Directory")
+	final static String DATA_PROPERTY_EXEWORKINGDIR = "Executable Working Directory";
 	
 	@StringDataType()
 	@ComponentProperty(defaultValue="evalstruct.sh",
@@ -135,7 +135,7 @@ import org.meandre.core.ComponentExecutionException;
 				
 		
 		
-		String workingDir = String.valueOf(cc.getProperty(DATA_PROPERTY_WORKINGDIR));
+		String workingDir = String.valueOf(cc.getProperty(DATA_PROPERTY_EXEWORKINGDIR));
 		execName = String.valueOf(cc.getProperty(DATA_PROPERTY_EXECNAME));
 
 		String[] fileLists1 = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
