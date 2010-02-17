@@ -55,7 +55,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 			throws ComponentExecutionException, ComponentContextException {
 		cout = componentContextProperties.getOutputConsole();
 		_logger = Logger.getLogger(this.getClass().getName());
-		_logger.addHandler(new StreamHandler(cout, new SimpleFormatter()));
+		_logger.addHandler(new StreamHandler(cout, new ComponentLogFormatter()));
 	}
 
 }
