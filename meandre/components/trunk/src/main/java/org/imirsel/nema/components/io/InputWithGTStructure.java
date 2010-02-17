@@ -25,7 +25,7 @@ import org.meandre.core.ExecutableComponent;
 
 @Component(creator = "Mert Bay", description = "Input component that outputs both the audio and ground-truth file locations.", name = "Structure Input", tags = "input, file, URL,file download, CSV reader, XML reader",
 		 firingPolicy = Component.FiringPolicy.all)
-public class InputWithGT implements ExecutableComponent {
+public class InputWithGTStructure implements ExecutableComponent {
 	
 	@ComponentOutput(description = "String[] that holds the fileLocations for the audio", name = "Audio Files")
 	public final static String DATA_OUTPUT_1 = "Audio Files";

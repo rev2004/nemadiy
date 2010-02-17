@@ -1,12 +1,12 @@
 package org.imirsel.nema.test;
 
-import org.imirsel.nema.components.NEMAComponent;
+import org.imirsel.nema.components.NemaComponent;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
-public class TestNemaComponent extends  NEMAComponent{
+public class TestNemaComponent extends  NemaComponent{
 
 	@Override
 	public void execute(ComponentContext cc)
