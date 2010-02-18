@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -123,10 +124,10 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             boolean performMatlabStatSigTests_,
             String matlabPath_,
             File hierarchyFile_,
-            Logger logger) 
+            Handler logHandler) 
     		throws FileNotFoundException, IOException{
     	//TODO: undo hack
-        super(logger.getHandlers()[logger.getHandlers().length-1], workingDir_, outputDir_, task_);
+        super(logHandler, workingDir_, outputDir_, task_);
         performMatlabStatSigTests = performMatlabStatSigTests_;
         matlabPath = matlabPath_;
         hierarchyFile = hierarchyFile_;
