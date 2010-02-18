@@ -13,8 +13,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
 
 import org.imirsel.m2k.evaluation.tagsClassification.TagClassificationAffinityEvaluator;
 import org.imirsel.m2k.evaluation.tagsClassification.TagClassificationBinaryEvaluator;
@@ -47,16 +49,6 @@ public abstract class EvaluatorImpl implements Evaluator {
 		task = new TaskDescription();
 	}
 	
-	public EvaluatorImpl(Logger logger, File workingDir_, File outputDir_)  throws FileNotFoundException{
-		setLogger(logger);
-		setWorkingDir(workingDir_);
-		setOutputDir(outputDir_);
-		trackIDToGT = new HashMap<String,DataObj>();
-		jobIDToFoldResults = new HashMap<String,List<List<DataObj>>>();
-		jobIDToName = new HashMap<String,String>();
-		task = new TaskDescription();
-	}
-	
 	public EvaluatorImpl(Class loggingClass, File workingDir_, File outputDir_, 
 			TaskDescription task_)  throws FileNotFoundException{
 		setLogger(Logger.getLogger(loggingClass.getName()));
@@ -68,16 +60,27 @@ public abstract class EvaluatorImpl implements Evaluator {
 		task = task_;
 	}
 	
-	public EvaluatorImpl(Logger logger, File workingDir_, File outputDir_, 
+	public EvaluatorImpl(Handler logHandler, File workingDir_, File outputDir_)  throws FileNotFoundException{
+		setWorkingDir(workingDir_);
+		setOutputDir(outputDir_);
+		setLogger(Logger.getLogger(this.getClass().getName()));
+		getLogger().addHandler(logHandler);
+		trackIDToGT = new HashMap<String,DataObj>();
+		jobIDToFoldResults = new HashMap<String,List<List<DataObj>>>();
+		jobIDToName = new HashMap<String,String>();
+		task = new TaskDescription();
+	}
+	
+	public EvaluatorImpl(Handler logHandler, File workingDir_, File outputDir_, 
 			TaskDescription task_)  throws FileNotFoundException{
-		setLogger(logger);
+		setLogger(Logger.getLogger(this.getClass().getName()));
+		getLogger().addHandler(logHandler);
 		setWorkingDir(workingDir_);
 		setOutputDir(outputDir_);
 		trackIDToGT = new HashMap<String,DataObj>();
 		jobIDToFoldResults = new HashMap<String,List<List<DataObj>>>();
 		jobIDToName = new HashMap<String,String>();
 		task = task_;
-		_logger = logger;
 	}
 	
 	public Logger getLogger() {
