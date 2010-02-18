@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import org.imirsel.nema.components.evaluation.ClassificationEvaluatorComponent;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.core.ComponentContext;
@@ -27,7 +28,7 @@ public class TestClassificationEvaluatorComponent {
 	public void tearDown() throws Exception {
 	}
 
-	
+	@Test
 	public void testComponentExecution(){
 		ComponentContextProperties componentContextProperties;
 		ComponentContext componentContext;
@@ -36,9 +37,11 @@ public class TestClassificationEvaluatorComponent {
 		
 		ClassificationEvaluatorComponent  classificationEvaluatorComponent = new ClassificationEvaluatorComponent();
 		MeandreMockFactory meandreMockFactory = MeandreMockFactoryImpl.getInstance();
-		String[] fileLists= new String[]{};
-		String[] gtFileName= new String[]{};
-		String dirName="";
+		String[] fileLists= new String[]{"/home/mertbay/programming/debug/results/train-35.txt.pred.txt",
+				"/home/mertbay/programming/debug/results/train-37.txt.pred.txt",
+				"/home/mertbay/programming/debug/results/train-39.txt.pred.txt"};
+		String[] gtFileName= new String[]{"/home/mertbay/programming/debug/gt-33.txt"};
+		String dirName="/home/mertbay/programming/debug/results/evaluation";
 			
 			
 		Hashtable htInput = new Hashtable();
