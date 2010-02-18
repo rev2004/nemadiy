@@ -181,6 +181,7 @@ import org.meandre.core.ExecutableComponent;
 		// sanity check that both filelists are same length
 		if (fileLists1.length != fileLists2.length) {
 			_logger.severe("ERROR: File lists for input1 and input2 are different lengths!");
+			
 			return;
 		}
 		_logger.info("\n" +

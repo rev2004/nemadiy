@@ -177,7 +177,7 @@ import org.meandre.core.ComponentExecutionException;
 	        org.imirsel.m2k.evaluation.classification.ClassificationEvaluator eval;
 			try {
 				eval = new 
-					org.imirsel.m2k.evaluation.classification.ClassificationEvaluator(task,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile,this._logger);
+					org.imirsel.m2k.evaluation.classification.ClassificationEvaluator(task,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile,_handler);
 			} catch (FileNotFoundException e) {
 				ComponentExecutionException ex = new ComponentExecutionException("FileNotFoundException occured when setting up evaluator!",e);
 				throw ex;
