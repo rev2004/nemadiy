@@ -37,6 +37,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 	 */
 	public void dispose(ComponentContextProperties componentContextProperties) 
 			throws ComponentContextException {
+		_logger.fine("Disposing of " + this.getClass().getName());
 		cout.flush();
 		cout = null;
 	}
