@@ -8,12 +8,13 @@ import java.util.Set;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.model.NEMAMetadataEntry;
+import org.imirsel.nema.model.PublishedResult;
 import org.imirsel.nema.renderers.CollectionRenderer;
 import org.imirsel.nema.repository.DatasetListFileGenerator;
-import org.imirsel.nema.repository.NEMAMetadataEntry;
-import org.imirsel.nema.repository.PublishedResult;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repository.RepositoryClientImpl;
+import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentProperty;
@@ -91,7 +92,7 @@ import org.meandre.core.ExecutableComponent;
        // String ID = (String)ccp.getDataComponentFromInput(DATA_INPUT_ID);
      //   int datasetID = Integer.parseInt(ID);
 		RepositoryClientConnectionPool pool = RepositoryClientConnectionPool.getInstance();
-		RepositoryClientImpl client = pool.getFromPool();
+		RepositoryClientInterface client = pool.getFromPool();
 		List<PublishedResult> resultList = null;
 		try{
 		   resultList = client.getPublishedResultsForDataset(datasetid);

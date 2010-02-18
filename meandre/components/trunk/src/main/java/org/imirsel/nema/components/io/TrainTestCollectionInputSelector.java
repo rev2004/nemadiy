@@ -10,9 +10,9 @@ import java.util.Set;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.model.NEMAMetadataEntry;
 import org.imirsel.nema.renderers.CollectionRenderer;
 import org.imirsel.nema.repository.DatasetListFileGenerator;
-import org.imirsel.nema.repository.NEMAMetadataEntry;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentProperty;
