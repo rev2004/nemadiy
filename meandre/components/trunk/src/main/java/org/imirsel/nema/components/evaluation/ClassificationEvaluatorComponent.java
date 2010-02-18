@@ -232,8 +232,7 @@ import org.imirsel.nema.components.NemaComponent;
 				
 		        this.getLogger().info("Evaluation Complete\n" +
 		        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
-		    	
-	        } catch (Exception e) {
+		    } catch (Exception e) {
 				ComponentExecutionException ex = new ComponentExecutionException("Exception occured when performing the evaluation!",e);
 				throw ex;
 			}
