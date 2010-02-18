@@ -204,7 +204,7 @@ import org.meandre.core.ComponentExecutionException;
 	        }
 	        for (int i=0; i<dirLists.length; i++){
 	        	try{
-		        	List<List<DataObj>> results = reader.readDirectory(new File(dirLists[i]),metadata);
+		        	List<List<DataObj>> results = reader.readDirectory(new File(dirLists[i]),null);
 					for(Iterator<List<DataObj>> it= results.iterator();it.hasNext();){
 			        	eval.addResults(nameLists[i], ""+i, it.next());
 			        }
