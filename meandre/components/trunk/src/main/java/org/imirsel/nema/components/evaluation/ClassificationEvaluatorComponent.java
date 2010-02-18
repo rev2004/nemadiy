@@ -177,18 +177,18 @@ import org.imirsel.nema.components.NemaComponent;
 		String matlabPath = "/usr/local/bin/matlab";
 	    File gtFile = new File(gtFileName[0]);
 	    File procResDir = new File(processResultsDir);
-	    String processResultsDirName = processResultsDir;
+	    String processResultsDirName;
 	    try{
 			try {
 				processResultsDirName = procResDir.getCanonicalPath();
 			} catch (IOException e) {
-				ComponentExecutionException ex = new ComponentExecutionException("Failed to get canonical path for File: " + processResultsDirName.toString(),e);
+				ComponentExecutionException ex = new ComponentExecutionException("Failed to get canonical path for File: " + procResDir.toString(),e);
 				throw ex;
 			}
 		    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
 		    
 		    // create a directory to move the raw results to
-		    File classificationResultsDir = new File(processResultsDirName);
+		    File classificationResultsDir = new File(fileLists[0]);
 		    
 	        // call constructor and evaluation method
 	        TaskDescription task = new TaskDescription(-1, taskName, taskDesc, metadata, -1, datasetName, datasetDesc);
@@ -231,7 +231,7 @@ import org.imirsel.nema.components.NemaComponent;
 	        try {
 				Map<String,DataObj> evalOutput = eval.evaluate();
 				// output the raw results dir for reprocessing by the summarizer component
-		        String[] outLists = new String[fileLists.length];
+		        String[] outLists = new String[1];
 		        outLists[0] = processResultsDir;
 				cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 				
