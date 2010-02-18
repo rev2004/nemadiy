@@ -3,6 +3,7 @@
  */
 package org.imirsel.nema.components;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
@@ -55,7 +56,9 @@ public abstract class NemaComponent implements ExecutableComponent {
 			throws ComponentExecutionException, ComponentContextException {
 		cout = componentContextProperties.getOutputConsole();
 		_logger = Logger.getLogger(this.getClass().getName());
+		_logger.setLevel(Level.FINEST);
 		_logger.addHandler(new StreamHandler(cout, new ComponentLogFormatter()));
+		_logger.info("Initializing logging for " + this.getClass().getName()) ;
 	}
 
 }

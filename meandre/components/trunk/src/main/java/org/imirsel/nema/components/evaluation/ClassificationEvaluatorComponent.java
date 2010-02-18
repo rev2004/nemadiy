@@ -235,20 +235,20 @@ import org.imirsel.nema.components.NemaComponent;
 	        
 			//perform evaluation
 	        try {
-				Map<String,DataObj> evalResults = eval.evaluate();
-			} catch (Exception e) {
+				Map<String,DataObj> evalOutput = eval.evaluate();
+				// output the raw results dir for reprocessing by the summarizer component
+		        String[] outLists = new String[fileLists.length];
+		        outLists[0] = processResultsDir;
+				cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
+				
+		        _logger.info("Evaluation Complete\n" +
+		        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
+		    	
+	        } catch (Exception e) {
 				ComponentExecutionException ex = new ComponentExecutionException("Exception occured when performing the evaluation!",e);
 				throw ex;
 			}
 			
-			// output the raw results dir for reprocessing by the summarizer component
-	        String[] outLists = new String[fileLists.length];
-	        outLists[0] = processResultsDir;
-			cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
-			
-	        _logger.info("Evaluation Complete\n" +
-	        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
-	    	
 	    } catch (ComponentExecutionException e) {
 			_logger.log(Level.SEVERE, "Terminating execution", e);
 			throw e;
