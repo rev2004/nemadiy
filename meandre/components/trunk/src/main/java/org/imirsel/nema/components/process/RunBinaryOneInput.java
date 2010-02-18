@@ -146,10 +146,12 @@ import org.meandre.core.ComponentExecutionException;
 			try {
 				throw new ComponentExecutionException(e1);
 			} catch (ComponentExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				_logger.log(Level.SEVERE, "IOException in initialise!",e);
+				throw e;
 			}
 		}
+		_logger.info("RUNBINARY: PROCESS WORKING DIR: " + processWorkingDir);
+
 
 	}
 
@@ -202,7 +204,7 @@ import org.meandre.core.ComponentExecutionException;
 		}
 		_logger.info("=============================================================\n" +
 				"Execution of external binaries complete\n" +
-				"=============================================================");
+				"=============================================================\n");
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 	}
 
@@ -393,6 +395,7 @@ import org.meandre.core.ComponentExecutionException;
 		for (int i=0;i<cmdArray.length;i++) {
 			msg += cmdArray[i] + " ";
 		}
+		msg += "\n";
 		msg += "In directory:       " + dir.getCanonicalPath() + "\n";
 		msg += "Sending results to: " + resdir.getCanonicalPath() + "\n";
 		
