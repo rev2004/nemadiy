@@ -64,5 +64,13 @@ public abstract class NemaComponent implements ExecutableComponent {
 		_logger.addHandler(_handler);
 		_logger.info("Initializing logging for " + this.getClass().getName()) ;
 	}
+	
+	/**
+	 * 
+	 * @return logger initiated in the initialize
+	 */
+	public Logger getLogger(){
+		return this._logger;
+	}
 
 }

@@ -141,7 +141,7 @@ import org.imirsel.nema.components.NemaComponent;
 			.getResultLocationForJob(ccp.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
 			ComponentExecutionException ex = new ComponentExecutionException("IOException occured when getting working and result directories!",e1);
-			_logger.log(Level.SEVERE, "Terminating execution",ex);
+			this.getLogger().log(Level.SEVERE, "Terminating execution",ex);
 			throw ex;
 		}
 
@@ -199,7 +199,7 @@ import org.imirsel.nema.components.NemaComponent;
 	        TaskDescription task = new TaskDescription(-1, taskName, taskDesc, metadata, -1, datasetName, datasetDesc);
 	        
 	        //init evaluator
-	        _logger.info("Initializing evaluation toolset");
+	        this.getLogger().info("Initializing evaluation toolset");
 	        org.imirsel.m2k.evaluation.classification.ClassificationEvaluator eval;
 			try {
 				eval = new 
@@ -214,7 +214,7 @@ import org.imirsel.nema.components.NemaComponent;
 	        
 			//read Ground-truth
 	        org.imirsel.m2k.evaluation.classification.ClassificationTextFile reader = new 
-	        	org.imirsel.m2k.evaluation.classification.ClassificationTextFile(this._logger,metadata);
+	        	org.imirsel.m2k.evaluation.classification.ClassificationTextFile(this.getLogger(),metadata);
 			try {
 				List<DataObj> gt = reader.readFile(gtFile);
 				eval.setGroundTruth(gt);
@@ -242,7 +242,7 @@ import org.imirsel.nema.components.NemaComponent;
 		        outLists[0] = processResultsDir;
 				cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 				
-		        _logger.info("Evaluation Complete\n" +
+		        this.getLogger().info("Evaluation Complete\n" +
 		        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
 		    	
 	        } catch (Exception e) {
@@ -258,7 +258,7 @@ import org.imirsel.nema.components.NemaComponent;
 	}
 
 
-	/** This method is called when the Menadre Flow execution is completed.
+	/** This method is called when the Meandre Flow execution is completed.
 	 *
 	 * @param ccp The properties associated to a component context
 	 * @throws ComponentContextException 
