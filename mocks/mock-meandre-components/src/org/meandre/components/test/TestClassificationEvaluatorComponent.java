@@ -56,7 +56,7 @@ public class TestClassificationEvaluatorComponent {
 		
 		try {
 			componentContextProperties =  
-			meandreMockFactory.getComponentContextProperties("defaultProperties",StringConcatenateComponent.class);
+			meandreMockFactory.getComponentContextProperties("defaultProperties",ClassificationEvaluatorComponent.class);
 			componentContext = 
 			meandreMockFactory.getComponentContext("defaultComponent", ClassificationEvaluatorComponent.class, htInput, htOutput);
 		
