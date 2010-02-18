@@ -125,7 +125,8 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             File hierarchyFile_,
             Logger logger) 
     		throws FileNotFoundException, IOException{
-        super(logger, workingDir_, outputDir_, task_);
+    	//TODO: undo hack
+        super(logger.getHandlers()[logger.getHandlers().length-1], workingDir_, outputDir_, task_);
         performMatlabStatSigTests = performMatlabStatSigTests_;
         matlabPath = matlabPath_;
         hierarchyFile = hierarchyFile_;
@@ -481,6 +482,32 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         
         //write out CSV results files
         _logger.info("Writing out CSV result files over whole task...");
+        String msg = "Job ID to name IDs: ";
+        for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+        	msg += it.next();
+        	if (it.hasNext()){
+        		msg += ", ";
+        	}
+        }
+        msg += "\n";
+        msg += "Job ID to fold evaluation IDs: ";
+        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator();it.hasNext();){
+        	msg += it.next();
+        	if (it.hasNext()){
+        		msg += ", ";
+        	}
+        }
+        msg += "\n";
+        msg += "Job ID to aggregate evaluation IDs: ";
+        for(Iterator<String> it = jobIDToAggregateEvaluations.keySet().iterator();it.hasNext();){
+        	msg += it.next();
+        	if (it.hasNext()){
+        		msg += ", ";
+        	}
+        }
+        msg += "\n";
+        _logger.fine(msg);
+        
         File perClassCSV = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassResults.csv");
         WriteResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,DataObj.CLASSIFICATION_CONFUSION_MATRIX_PERCENT,perClassCSV);
         
