@@ -68,6 +68,7 @@ public final class MeandreMockFactoryImpl extends BaseMeandreMockFactory impleme
 			allowing(componentContextProperties).getInputNames(); will(returnValue(inputNames));
 			allowing(componentContextProperties).getOutputNames(); will(returnValue(outputNames));
 			allowing(componentContextProperties).getPropertyNames(); will(returnValue(propertyNames));
+			allowing(componentContextProperties).getPublicResourcesDirectory(); will(returnValue(System.getProperty("java.io.tmpdir")));
 			
 			allowing(componentContextProperties).getProperty(with(aValidProperty(propertyNames))); will(returnPropertyValue(propertyDefaultValues));
 			
