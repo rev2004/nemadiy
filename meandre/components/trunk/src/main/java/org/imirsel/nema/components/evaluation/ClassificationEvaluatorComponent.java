@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.imirsel.m2k.evaluation.TaskDescription;
 import org.imirsel.m2k.evaluation.DataObj;
@@ -120,6 +121,7 @@ import org.imirsel.nema.components.NemaComponent;
 	private File hierarchyFile;
 	
 	private String processResultsDir;
+	
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
 	 *
@@ -127,11 +129,14 @@ import org.imirsel.nema.components.NemaComponent;
 	 * @throws ComponentContextException 
 	 * @throws ComponentExecutionException 
 	 */
-	public void initialize ( ComponentContextProperties ccp ) throws ComponentExecutionException, ComponentContextException {
+	public void initialize (ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException{
 		super.initialize(ccp);
+		System.out.println("Init " + this.getClass().getName());
 		try {
+//			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
+//					.getProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
 			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
-			.getResultLocationForJob(ccp.getFlowExecutionInstanceID());
+					.getResultLocationForJob(ccp.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
 			ComponentExecutionException ex = new ComponentExecutionException("IOException occured when getting working and result directories!",e1);
 			this.getLogger().log(Level.SEVERE, "Terminating execution",ex);
@@ -213,7 +218,7 @@ import org.imirsel.nema.components.NemaComponent;
 			
 			//read results
 			try{
-				List<List<DataObj>> results = reader.readDirectory(classificationResultsDir,metadata);
+				List<List<DataObj>> results = reader.readDirectory(classificationResultsDir, null);
 				for(Iterator<List<DataObj>> it= results.iterator();it.hasNext();){
 		        	eval.addResults(systemName, systemID, it.next());
 		        }
