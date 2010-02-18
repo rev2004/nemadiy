@@ -77,6 +77,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 		jobIDToFoldResults = new HashMap<String,List<List<DataObj>>>();
 		jobIDToName = new HashMap<String,String>();
 		task = task_;
+		_logger = logger;
 	}
 	
 	public Logger getLogger() {
