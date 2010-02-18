@@ -20,6 +20,8 @@ import java.util.logging.Level;
 
 import org.imirsel.m2k.evaluation.TaskDescription;
 import org.imirsel.m2k.evaluation.DataObj;
+import org.imirsel.m2k.evaluation.classification.ClassificationEvaluator;
+import org.imirsel.m2k.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.meandre.annotations.Component;
@@ -106,23 +108,17 @@ import org.imirsel.nema.components.NemaComponent;
 			name="System Description")
 	final static String DATA_SYSTEM_DESC = "System Description";
 			
-//	final static String DATA_SYSTEM_ID = "System ID";
-//	@StringDataType()
-//	@ComponentProperty(defaultValue="",
-//			description="ID of the system being evaluated.",
-//			name=DATA_SYSTEM_ID)
+
 			
-	String taskName;
-	String taskDesc;
-	String datasetName;
-	String datasetDesc;
-	String systemName;
-	String systemDesc;
-	String systemID;
-	String metadata;
-	File hierarchyFile;
+	private String taskName;
+	private String taskDesc;
+	private String datasetName;
+	private String datasetDesc;
+	private String systemName;
+	private String systemID;
+	private String metadata;
+	private File hierarchyFile;
 	
-	private String processWorkingDir;
 	private String processResultsDir;
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
@@ -134,9 +130,6 @@ import org.imirsel.nema.components.NemaComponent;
 	public void initialize ( ComponentContextProperties ccp ) throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
 		try {
-			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
-					.getProcessWorkingDirectory(
-							ccp.getFlowExecutionInstanceID());
 			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
 			.getResultLocationForJob(ccp.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
@@ -150,7 +143,6 @@ import org.imirsel.nema.components.NemaComponent;
 		datasetName = ccp.getProperty(DATA_DATASET_NAME);
 		datasetDesc = ccp.getProperty(DATA_DATASET_DESC);
 		systemName = ccp.getProperty(DATA_SYSTEM_NAME);
-		systemDesc = ccp.getProperty(DATA_SYSTEM_DESC);
 		systemID = ccp.getFlowID();
 		metadata = ccp.getProperty(DATA_METADATA_PREDICTED);
 		String hierarchyFilePath = ccp.getProperty(DATA_HEIRARCY_FILE_PATH);
@@ -173,8 +165,6 @@ import org.imirsel.nema.components.NemaComponent;
 
 	 */
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
-		//File inFile = (File)cc.getDataComponentFromInput(DATA_INPUT_1);
-		
 		String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[] gtFileName = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
 		
@@ -200,10 +190,9 @@ import org.imirsel.nema.components.NemaComponent;
 	        
 	        //init evaluator
 	        this.getLogger().info("Initializing evaluation toolset");
-	        org.imirsel.m2k.evaluation.classification.ClassificationEvaluator eval;
+	        ClassificationEvaluator eval;
 			try {
-				eval = new 
-					org.imirsel.m2k.evaluation.classification.ClassificationEvaluator(task,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile,_handler);
+				eval = new ClassificationEvaluator(task,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile,_handler);
 			} catch (FileNotFoundException e) {
 				ComponentExecutionException ex = new ComponentExecutionException("FileNotFoundException occured when setting up evaluator!",e);
 				throw ex;
@@ -213,8 +202,7 @@ import org.imirsel.nema.components.NemaComponent;
 			}
 	        
 			//read Ground-truth
-	        org.imirsel.m2k.evaluation.classification.ClassificationTextFile reader = new 
-	        	org.imirsel.m2k.evaluation.classification.ClassificationTextFile(this.getLogger(),metadata);
+	        ClassificationTextFile reader = new ClassificationTextFile(this.getLogger(),metadata);
 			try {
 				List<DataObj> gt = reader.readFile(gtFile);
 				eval.setGroundTruth(gt);
