@@ -7,6 +7,11 @@ import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+/**
+ * 
+ * @author kriswest
+ * @since 0.5.0
+ */
 public class ComponentLogFormatter extends Formatter {
 
 	Date dat = new Date();
