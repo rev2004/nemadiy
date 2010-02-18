@@ -126,7 +126,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             File hierarchyFile_,
             Handler logHandler) 
     		throws FileNotFoundException, IOException{
-    	//TODO: undo hack
+
         super(logHandler, workingDir_, outputDir_, task_);
         performMatlabStatSigTests = performMatlabStatSigTests_;
         matlabPath = matlabPath_;
