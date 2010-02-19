@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
-    <version>0.1.0-SNAPSHOT</version>
-    <groupId>org.imirsel</groupId>
-    <artifactId>nema-repositoryservice</artifactId>
-    <packaging>jar</packaging>
-    <name>NEMA Repository Service Implementation</name>
-    
-    <scm>
-    <connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</connection>
-    <developerConnection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</developerConnection>
-    <tag>HEAD</tag>
-    <url>https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</url>
-    </scm>
-    <organization>
-    	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
-    	<url>http://www.lis.illinois.edu</url>
-    </organization>
-    
-  
-<distributionManagement>
+	<modelVersion>4.0.0</modelVersion>
+	<version>0.1.0-SNAPSHOT</version>
+	<groupId>org.imirsel</groupId>
+	<artifactId>nema-repositoryservice</artifactId>
+	<packaging>jar</packaging>
+	<name>NEMA Repository Service Implementation</name>
+
+	<scm>
+		<connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</connection>
+		<developerConnection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</url>
+	</scm>
+	<organization>
+		<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
+		<url>http://www.lis.illinois.edu</url>
+	</organization>
+
+
+	<distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
 			<name>IMIRSEL Releases</name>
 			<id>nema.lis.uiuc.edu-releases</id>
 			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
-			
+
 		</repository>
 		<!-- use the following if you ARE using a snapshot version. -->
-		
-			<snapshotRepository>
-				<id>nema.lis.uiuc.edu-snapshots</id>
-				<name>IMIRSEL Snapshots</name>
-				<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-snapshots-local</url>
-			</snapshotRepository>
-		
+
+		<snapshotRepository>
+			<id>nema.lis.uiuc.edu-snapshots</id>
+			<name>IMIRSEL Snapshots</name>
+			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-snapshots-local</url>
+		</snapshotRepository>
+
 		<downloadUrl>http://nema.lis.uiuc.edu/artifactory/</downloadUrl>
 	</distributionManagement>
-	
+
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<extensions>
@@ -48,14 +48,14 @@
 				<artifactId>wagon-webdav</artifactId>
 				<version>1.0-beta-2</version>
 			</extension>
-			</extensions>
-				<plugins>
+		</extensions>
+		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.5</source>
+					<target>1.5</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -73,6 +73,23 @@
 					<wtpversion>1.5</wtpversion>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3</version>
+				<!--
+          This plugin is used to create the jar file.
+        -->
+				<configuration>
+					<excludes>
+						<exclude>**/*.xml</exclude>
+						<exclude>**/*.properties</exclude>
+						<exclude>**/applicationContext.xml</exclude>
+					</excludes>
+				</configuration>
+
+			</plugin>
+
 		</plugins>
 		<resources>
 			<resource>
@@ -101,31 +118,25 @@
 			<url>http://nema.lis.uiuc.edu/artifactory/remote-repos</url>
 		</repository>
 	</repositories>
-    
-    
 
-    <dependencies>
-    <dependency>
+
+
+	<dependencies>
+		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-repositoryservice-api</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
 			<scope>compile</scope>
-    </dependency>
-    <dependency>
-			<groupId>org.imirsel</groupId>
-			<artifactId>m2k-core</artifactId>
-			<version>1.4.0-SNAPSHOT</version>
-			<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>mysql</groupId>
-    	<artifactId>mysql-connector-java</artifactId>
-    	<version>5.1.6</version>
-    	<scope>runtime</scope>
-    </dependency>
-    </dependencies>
+		</dependency>
+	<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.6</version>
+			<scope>runtime</scope>
+		</dependency>
+	</dependencies>
 
-    <properties>
-    <repository.db.location>jdbc:mysql://nema:3306/</repository.db.location>
-    </properties>
+	<properties>
+		<repository.db.location>jdbc:mysql://nema:3306/</repository.db.location>
+	</properties>
 </project>
