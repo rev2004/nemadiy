@@ -522,6 +522,9 @@ public class MeandreClient extends MeandreBaseClient{
 		Set<ExecutableComponentDescription> repoComps =
 			repo.getAvailableExecutableComponentDescriptions();
 		Iterator<ExecutableComponentDescription> iter = repoComps.iterator();
+		if(!iter.hasNext()){
+			throw new TransmissionException("Component description not found: " + sComponentUrl);
+		}
 		ExecutableComponentDescription comp = iter.next();
 
 		if(iter.hasNext()){
