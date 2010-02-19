@@ -24,7 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.imirsel.nema.repositoryservice.*;
 import org.imirsel.nema.model.*;
-import org.imirsel.m2k.evaluation.classification.ClassificationTextFile;
 
 /**
  * 
