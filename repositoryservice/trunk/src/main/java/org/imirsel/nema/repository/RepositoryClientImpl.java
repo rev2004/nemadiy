@@ -725,7 +725,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     private NEMADataset buildNEMADataset(Map<String, String> map){
         int subject_meta_type = Integer.parseInt(map.get("subject_track_metadata_type_id"));
         int filter_meta_type = Integer.parseInt(map.get("filter_track_metadata_type_id"));
-        int task = Integer.parseInt(map.get("task_id"));
+        //int task = Integer.parseInt(map.get("task_id"));
         return new NEMADataset(
                 Integer.valueOf(map.get("id")),
                 map.get("name"),
