@@ -44,7 +44,7 @@ public class FlowController extends MultiActionController{
 		if(type==null){
 			type="all";
 		}
-		Set<Flow> flowSet=this.flowService.getFlowTemplates();
+		
 		ModelAndView mav;
 		String uri = req.getRequestURI();
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
@@ -52,16 +52,18 @@ public class FlowController extends MultiActionController{
 		} else {
 			mav =new ModelAndView("flow/flowType");
 		}
-		
+		Set<Flow> flowSet=this.flowService.getFlowTemplates();
 		if(!type.equalsIgnoreCase("all")){
 		ArrayList<Flow> list = new ArrayList<Flow>();
 		for(Flow flow:flowSet){
-			log.info("name is: "+ flow.getName());
-			log.info("Flow Type is: " + flow.getTypeName() + "get type name " +flow.getType().getName());
-			if(flow.getTypeName().toUpperCase().indexOf(type.toUpperCase())!=-1){
-				System.out.println("adding: " + flow.getName() + "     "+flow.getType());
+			log.info("Name is: "+ flow.getName());
+			log.info("Flow Type is: " + flow.getTypeName());
+			System.out.println(flow.getType());
+			//if(flow.getTypeName().toUpperCase().indexOf(type.toUpperCase())!=-1){
+			//	System.out.println("adding: " + flow.getName() + "     "+flow.getType());
 				list.add(flow);
-			}
+		   //}
+			
 		}
 		log.info("done loading for flowlist");
 		mav.addObject(Constants.FLOW_LIST, list);

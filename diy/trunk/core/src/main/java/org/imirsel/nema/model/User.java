@@ -249,7 +249,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
     public Integer getVersion() {
         return version;
     }
-    
+  
     @Column(name="account_enabled")
     public boolean isEnabled() {
         return enabled;
