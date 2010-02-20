@@ -1,0 +1,29 @@
+org.imirsel.m2k.modelling to do list:
+
+Note: All individual apply modules removed (e.g. ApplySingleGaussian modules)
+	Now use ApplySignalClassifier etc.
+
+
+
+add custom prop panel with menu to select CLASS metadata from known relevant metadata types or to set a custom one
+        TestTrainSplitSignalArray.java and TestTrainSplitSignalArrays.java
+        CreateTestandTrainSetsFromMusicDB - 
+
+Create a walkthrough HTML file for whole package
+	Particularly for the models and combiners as they no longer have their own apply modules 
+
+Test TestTrainSplitSignalArray and TestTrainSplitSignalArrays
+Test GaussianDecisionTemplateCombiner
+
+Create TestTrainValidationSplitSignalArray and TestTrainValidationSplitSignalArrays modules
+	3-way splits, variable proportions for each
+
+
+Jahmm modules to go in a separate jar file? They force yet another library dependency just for HMMs...
+    Update to most recent Jahmm
+    Add a GMM based on Jahmm.
+
+Add Weka integration modules!!!
+	write ARFF files as well
+	See Sang's code, needs testing and a GUI added for building models,
+	perhaps theres a weka GUI we can spawn...
