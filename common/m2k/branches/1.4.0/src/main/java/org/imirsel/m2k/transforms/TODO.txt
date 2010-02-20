@@ -1,0 +1,11 @@
+org.imirsel.m2k.transforms to do list:
+
+Update docs for each module
+
+Ensure FFTClass is pre-initing FFT weights not recalcing each time
+
+Create a walkthrough HTML file for whole transform package
+	Instructions for simple transforms (DCT, Autocorrelation, FFTs)
+	Instructions for trained transforms (LDA, PCA)
+
+	
