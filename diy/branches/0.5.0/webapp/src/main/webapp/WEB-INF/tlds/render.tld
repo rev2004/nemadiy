@@ -1,0 +1,43 @@
+<taglib>
+	<tlib-version>1.2</tlib-version>
+	<jsp-version>2.0</jsp-version>
+	<short-name>NEMA Tag Library</short-name>
+	<uri>http://www.imirsel.org/tags</uri>
+	
+  <tag>
+    <name>componentproperty</name>
+    <tag-class>org.imirsel.nema.webapp.taglib.ComponentPropertyTag</tag-class>
+    <body-content>empty</body-content>
+    <description>
+   	This tag renders the component property.
+    </description>
+    
+  	    <attribute>
+          <name>value</name>
+      	  <required>true</required>
+    	  <rtexprvalue>true</rtexprvalue>
+    	  <type>org.imirsel.nema.model.Property</type>
+    	</attribute>
+    	
+    	
+    	 <attribute>
+          <name>component</name>
+      	  <required>true</required>
+    	  <rtexprvalue>true</rtexprvalue>
+    	  <type>java.lang.String</type>
+    	</attribute>
+    	
+    	
+    	 <attribute>
+          <name>roles</name>
+      	  <required>true</required>
+    	  <rtexprvalue>true</rtexprvalue>
+    	
+    	</attribute>
+  		
+  		<dynamic-attributes>true</dynamic-attributes>
+	
+	</tag>
+	
+	
+</taglib>
