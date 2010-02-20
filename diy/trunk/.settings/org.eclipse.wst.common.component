@@ -2,22 +2,13 @@
 <project-modules id="moduleCoreId" project-version="1.5.0">
 <wb-module deploy-name="nema">
 <wb-resource deploy-path="/" source-path="/src"/>
+<wb-resource deploy-path="/" source-path="/src/main/resources"/>
+<wb-resource deploy-path="/" source-path="/probes/src/main/java"/>
+<wb-resource deploy-path="/" source-path="/probes/src/main/resources"/>
+<wb-resource deploy-path="/" source-path="/probes/src/test/java"/>
+<wb-resource deploy-path="/" source-path="/core/src/main/java"/>
 <wb-resource deploy-path="/" source-path="/webapp/src/main/java"/>
-        <wb-resource deploy-path="/" source-path="/core/src/main/java"/>
-        <wb-resource deploy-path="/" source-path="/webapp/src/test/java"/>
-        <wb-resource deploy-path="/" source-path="/probes/src/main/java"/>
-        <wb-resource deploy-path="/" source-path="/probes/src/test/java"/>
-        <wb-resource deploy-path="/" source-path="/core/src/test/java"/>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-client/nema-client">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/repositoryservice/repositoryservice">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/repositoryservice-api/repositoryservice-api">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/m2k/m2k">
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-flowservice-api/nema-flowservice-api">
 <dependency-type>uses</dependency-type>
 </dependent-module>
 </wb-module>

@@ -1,4 +1,4 @@
 #creates the schema and the database
-mvn hibernate3:hbm2ddl 
+mvn -Denv=development hibernate3:hbm2ddl 
 #uploads the test data
-mvn test-compile 
+mvn -Denv=development test-compile 
