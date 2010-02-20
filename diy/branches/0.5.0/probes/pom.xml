@@ -3,7 +3,7 @@
   <groupId>org.imirsel</groupId>
   <artifactId>probes</artifactId>
   <name>NEMA: Probes and Plugin</name>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.5.0</version>
 
 <scm>
   	<connection>scm:svn:https://nemadiy.googlecode.com/svn/diy/trunk/probes</connection>
@@ -18,7 +18,7 @@
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
 			<name>IMIRSEL Releases</name>
-			<id>nema.lis.uiuc.edu-releases</id>
+			<id>nema.lis.uiuc.edu-release</id>
 			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
 			
 		</repository>
@@ -300,13 +300,13 @@
         <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>nema-directoryservice</artifactId>
-            <version>0.5.0-SNAPSHOT</version>
+            <version>0.5.0</version>
         </dependency>
         
         <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>nema-artifactservice</artifactId>
-            <version>0.5.0-SNAPSHOT</version>
+            <version>0.5.0</version>
         </dependency>
         
         
@@ -314,14 +314,14 @@
         <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>imirsel-meandre-client</artifactId>
-            <version>0.5.0-SNAPSHOT</version>
+            <version>0.5.0</version>
             <scope>test</scope>
         </dependency>
        <!-- 
          <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>nema-mock-flowservice</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.2</version>
             <scope>test</scope>
         </dependency>
         -->
@@ -344,7 +344,8 @@
    <meandre-client.version>1.4.8</meandre-client.version> 
    <servlet.version>2.4</servlet.version>
 
-  </properties>
+  	<nema.repository.version>0.1.0</nema.repository.version>
+	</properties>
   
 
 
