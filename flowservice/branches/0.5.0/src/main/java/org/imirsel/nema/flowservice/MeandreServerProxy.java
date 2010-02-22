@@ -91,7 +91,8 @@ public class MeandreServerProxy implements JobStatusUpdateHandler {
 		try{
 		this.qrCached = this.meandreClient.retrieveRepository();
 		}catch(Exception ex){
-			
+			logger.severe("Error could not connect to " + meandreClient.getServerHost() + ":" + meandreClient.getPort());
+			throw new MeandreServerException(ex);
 		}finally{
 			cacheLock.unlock();
 		}
