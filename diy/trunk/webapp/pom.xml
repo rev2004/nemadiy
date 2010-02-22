@@ -433,40 +433,6 @@
     </dependencies>
 
     <profiles>
-    	<profile>
-    		<id>development</id>
-    		<activation>
-    			<property>
-         		 <name>!environment.type</name>
-      		  </property>
-    	    </activation>
-    			 <properties>
-                        <meandre.host>128.174.154.145</meandre.host>
-                        <meandre.port>11709</meandre.port>
-                        <meandre.username>admin</meandre.username>
-                        <meandre.password>admin</meandre.password>
-                        <flowservice.location>rmi://128.174.154.145:1099/FlowService</flowservice.location>
-                </properties>
-    	
-    	</profile>
-    	
-    	<profile>
-                <id>production</id>  
-                <activation>
-    			<property>
-         			 <name>environment.type</name>
-         			 <value>production</value>
-         	 	 </property>
-    	   		 </activation>                                                                                                                                                                      
-                <properties>                                                                                                                                                                                       
-                        <meandre.host>nema.lis.uiuc.edu</meandre.host>                                                                                                                                             
-                        <meandre.port>11709</meandre.port>                                                                                                                                                         
-                        <meandre.username>admin</meandre.username>                                                                                                                                                 
-                        <meandre.password>admin</meandre.password>                                                                                                                                                 
-                </properties>                                                                                                                                                                                      
-         </profile>  
-    	
-    	
         <profile>
             <id>integration-test</id>
             <activation>
