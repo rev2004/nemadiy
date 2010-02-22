@@ -288,21 +288,6 @@
                 </plugins>
             </build>
         </profile>
-        
-         <profile>
-      		<id>development</id>
-      		<properties>
-      			<flowservice.location>rmi://128.174.154.145:1099/FlowService</flowservice.location>
-      	  	</properties>
-     	 </profile>
-     	 
-     	  <profile>
-      		<id>production</id>
-      		<properties>
-      			<flowservice.location>rmi://nema.lis.uiuc.edu:1099/FlowService</flowservice.location>
-      		</properties>
-     	 </profile>
-     	 
     </profiles>
     
     
