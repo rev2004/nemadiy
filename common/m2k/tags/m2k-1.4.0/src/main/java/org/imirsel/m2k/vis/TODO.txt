@@ -1,0 +1,3 @@
+Review whole package, not looked at yet...
+
+Fix interpolation in SpectrumPlot and reduce overlap of frames used to plot spectrum.
