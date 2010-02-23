@@ -173,6 +173,7 @@ import org.imirsel.nema.components.NemaComponent;
 		String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[] gtFileName = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
 		
+		
 		// initialize variables for MIREXClassificationEvalMain Constructor
 		String matlabPath = "/usr/local/bin/matlab";
 	    File gtFile = new File(gtFileName[0]);
