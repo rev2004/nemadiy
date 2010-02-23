@@ -1,8 +1,8 @@
--- MySQL dump 10.11
+-- MySQL dump 10.10
 --
--- Host: localhost    Database: diy
+-- Host: localhost    Database: diy050
 -- ------------------------------------------------------
--- Server version	5.0.45-log
+-- Server version	5.0.22
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,7 +16,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `diy`
+-- Current Database: `diy050`
 --
 
 CREATE DATABASE /*!32312 IF NOT EXISTS*/ `diy050` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -50,11 +50,12 @@ CREATE TABLE `app_user` (
 -- Dumping data for table `app_user`
 --
 
-LOCK TABLES `app_user` WRITE;
+
 /*!40000 ALTER TABLE `app_user` DISABLE KEYS */;
-INSERT INTO `app_user` VALUES (-2,1,'d033e22ae348aeb5660fc2140aec35850c4da997','admin','','matt@raibledesigns.com','Not a female kitty.','Matt','Raible','\0','\0','\0'),(-1,1,'12dea96fec20593566ab75692c9949596833adc9','user','','matt_raible@yahoo.com','A male kitty.','Tomcat','User','\0','\0','\0');
-/*!40000 ALTER TABLE `app_user` ENABLE KEYS */;
+LOCK TABLES `app_user` WRITE;
+INSERT INTO `app_user` VALUES (-2,1,'d033e22ae348aeb5660fc2140aec35850c4da997','admin','','kumaramit01@gmail.com','Not a female kitty.','Amit','Kumar','\0','\0','\0'),(-1,1,'12dea96fec20593566ab75692c9949596833adc9','user','','amitku@illinois.edu','A male kitty.','Amit','Kumar','\0','\0','\0');
 UNLOCK TABLES;
+/*!40000 ALTER TABLE `app_user` ENABLE KEYS */;
 
 --
 -- Table structure for table `preference_value`
@@ -66,17 +67,18 @@ CREATE TABLE `preference_value` (
   `value` varchar(100) NOT NULL,
   `mkey` varchar(100) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `preference_value`
 --
 
-LOCK TABLES `preference_value` WRITE;
+
 /*!40000 ALTER TABLE `preference_value` DISABLE KEYS */;
+LOCK TABLES `preference_value` WRITE;
 INSERT INTO `preference_value` VALUES (1,'FALSE','emailPrefStartFlow'),(2,'TRUE','emailPrefEndFlow'),(3,'TRUE','emailPrefAbortFlow'),(4,'TRUE','emailPrefFlowResult'),(5,'FALSE','emailPrefStartFlow'),(6,'TRUE','emailPrefEndFlow'),(7,'TRUE','emailPrefAbortFlow'),(8,'TRUE','emailPrefFlowResult');
-/*!40000 ALTER TABLE `preference_value` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!40000 ALTER TABLE `preference_value` ENABLE KEYS */;
 
 --
 -- Table structure for table `role`
@@ -94,11 +96,12 @@ CREATE TABLE `role` (
 -- Dumping data for table `role`
 --
 
-LOCK TABLES `role` WRITE;
+
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
+LOCK TABLES `role` WRITE;
 INSERT INTO `role` VALUES (-2,'ROLE_USER','Default role for all Users'),(-1,'ROLE_ADMIN','Administrator role (can edit Users)');
-/*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
 
 --
 -- Table structure for table `submission`
@@ -115,17 +118,17 @@ CREATE TABLE `submission` (
   PRIMARY KEY  (`id`),
   KEY `FK84363B4CE68F30EE` (`userId`),
   CONSTRAINT `FK84363B4CE68F30EE` FOREIGN KEY (`userId`) REFERENCES `app_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `submission`
 --
 
-LOCK TABLES `submission` WRITE;
+
 /*!40000 ALTER TABLE `submission` DISABLE KEYS */;
-INSERT INTO `submission` VALUES (1,'one','Inherits',1,NULL,-2),(2,'one','Feature Extraction',2,NULL,-2),(3,'one','Classification',3,NULL,-2),(4,'one','Evaluation',4,NULL,-2),(5,'one','Analysis',5,NULL,-2);
-/*!40000 ALTER TABLE `submission` ENABLE KEYS */;
+LOCK TABLES `submission` WRITE;
 UNLOCK TABLES;
+/*!40000 ALTER TABLE `submission` ENABLE KEYS */;
 
 --
 -- Table structure for table `user_prefs`
@@ -147,11 +150,12 @@ CREATE TABLE `user_prefs` (
 -- Dumping data for table `user_prefs`
 --
 
-LOCK TABLES `user_prefs` WRITE;
+
 /*!40000 ALTER TABLE `user_prefs` DISABLE KEYS */;
+LOCK TABLES `user_prefs` WRITE;
 INSERT INTO `user_prefs` VALUES (-1,1),(-1,2),(-1,3),(-1,4),(-2,5),(-2,6),(-2,7),(-2,8);
-/*!40000 ALTER TABLE `user_prefs` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!40000 ALTER TABLE `user_prefs` ENABLE KEYS */;
 
 --
 -- Table structure for table `user_role`
@@ -172,11 +176,12 @@ CREATE TABLE `user_role` (
 -- Dumping data for table `user_role`
 --
 
-LOCK TABLES `user_role` WRITE;
+
 /*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
+LOCK TABLES `user_role` WRITE;
 INSERT INTO `user_role` VALUES (-1,-2),(-2,-1);
-/*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -187,4 +192,3 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-02-22 17:57:05
