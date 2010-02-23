@@ -1,0 +1,42 @@
+org.imirsel.m2k.util to do list:
+
+Create a walkthrough HTML file for whole package
+	Short segment for each tool, just doing for this package would make M2K much more usable
+
+Note: Moved test/train split modules to modelling package
+
+ExternalIntegrationModules - convert to class and module harness -half done
+
+Signal.java - Update metadataStandards() method, ouput String[]?
+        Duplicate column names over data cols and update reader to support both old and new file formats
+	
+Update io.musicDB.RemapMusicDBFilenames.java to recurse into subdirs and 
+		to compare paths not just filenames.
+
+Add a purely similarity matrix based retrieval modules
+Add a file reader for Similarity matrices based on DelimTextFileUtilites
+
+
+---------------------------------
+Long term wishlist:
+
+Signal.java - 
+        Get full review
+	Add Xml-based file format?
+	noMetadataException.java - could this be a sub-class of Signal??? would save importing it all the time
+
+MatlabExternalIntegrationModules - Rebuild based on Matlink! Seems quite easy
+
+Build MFCCExtractor, SpectralContrastExtractor, PsychoaccousticExtractor modules for util.featureExtractors package
+
+Add better upSample and downSample modules with decimation/interpolation 
+
+add custom prop panel with menu to select from known relevant metadata types or to set a custom one	
+	Check CopyMetadataFromSignal.java and CopyMetadataFromSignalArray.java
+	TranscriptionMapper.java
+	AppendArrayToSignal.java, AppendMatrixStreamToSignal.java and AppendMatrixToSignal.java
+	StripMetadataFromSignal.java and StripMetadataFromSignalArray.java
+	AddIntMetadataToSignal.java
+
+
+ 	 
