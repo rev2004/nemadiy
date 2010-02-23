@@ -3,15 +3,15 @@
   <groupId>org.imirsel.nema.test</groupId>
   <artifactId>test-api</artifactId>
   <name>nema-Test API</name>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
  <prerequisites>
 		<maven>2.0.6</maven>
 	</prerequisites>
 <distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
-			<name>IMIRSEL Releases</name>
-			<id>nema.lis.uiuc.edu-releases</id>
+			<name>nema.lis.uiuc.edu-release</name>
+			<id>nema.lis.uiuc.edu-release</id>
 			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
 			
 		</repository>

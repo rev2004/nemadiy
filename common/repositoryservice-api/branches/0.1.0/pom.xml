@@ -3,23 +3,22 @@
   <groupId>org.imirsel</groupId>
   <artifactId>nema-repositoryservice-api</artifactId>
   <name>NEMA Repository Service Interface</name>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <description>Service Interface for Repository</description>
   
   <distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
-			<name>IMIRSEL Releases</name>
-			<id>nema.lis.uiuc.edu-releases</id>
-			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
-			
+			<id>nema.lis.uiuc.edu-release</id>
+			<name>nema.lis.uiuc.edu-release</name>
+                        <url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>                        
 		</repository>
 		<!-- use the following if you ARE using a snapshot version. -->
 		
 			<snapshotRepository>
 				<id>nema.lis.uiuc.edu-snapshots</id>
 				<name>IMIRSEL Snapshots</name>
-				<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-snapshots-local</url>
+				<url>http://nema.lis.uiuc.edu/artifactory/libs-snapshots-local</url>
 			</snapshotRepository>
 		
 		<downloadUrl>http://nema.lis.uiuc.edu/artifactory/</downloadUrl>
