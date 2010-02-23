@@ -58,11 +58,10 @@ public class FlowController extends MultiActionController{
 		for(Flow flow:flowSet){
 			log.info("Name is: "+ flow.getName());
 			log.info("Flow Type is: " + flow.getTypeName());
-			System.out.println(flow.getType());
-			//if(flow.getTypeName().toUpperCase().indexOf(type.toUpperCase())!=-1){
-			//	System.out.println("adding: " + flow.getName() + "     "+flow.getType());
+			if(flow.getTypeName().toUpperCase().indexOf(type.toUpperCase())!=-1){
+				log.info("adding: " + flow.getName() + "     "+flow.getType());
 				list.add(flow);
-		   //}
+		   }
 			
 		}
 		log.info("done loading for flowlist");
