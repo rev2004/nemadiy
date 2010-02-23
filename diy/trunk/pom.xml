@@ -67,12 +67,6 @@
             <timezone>-5</timezone>
         </developer>
          <developer>
-            <id>agrudz2</id>
-            <name>Anatolliy Grudz</name>
-            <email>agruzd2@illinois.edu</email>
-            <timezone>-5</timezone>
-        </developer>
-         <developer>
             <id>shirk</id>
             <name>Andrew Shirk</name>
             <email>shirk@illinois.edu</email>
@@ -292,7 +286,7 @@
 
     <properties>
         <!-- Application settings -->
-        <copyright.year>2008</copyright.year>
+        <copyright.year>2010</copyright.year>
         <dao.framework>hibernate</dao.framework>
         <web.framework>spring</web.framework>
         <amp.genericCore>true</amp.genericCore>
