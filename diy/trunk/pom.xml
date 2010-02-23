@@ -33,7 +33,7 @@
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
 			<name>IMIRSEL Releases</name>
-			<id>nema.lis.uiuc.edu-releases</id>
+			<id>nema.lis.uiuc.edu-release</id>
 			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
 			
 		</repository>

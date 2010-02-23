@@ -18,6 +18,9 @@
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-flowservice-api-0.5.0/nema-flowservice-api-0.5.0">
 <dependency-type>uses</dependency-type>
 </dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/flowservice-0.5.0/flowservice-0.5.0">
+<dependency-type>uses</dependency-type>
+</dependent-module>
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-repositoryservice-0.1.0/nema-repositoryservice-0.1.0">
 <dependency-type>uses</dependency-type>
 </dependent-module>
