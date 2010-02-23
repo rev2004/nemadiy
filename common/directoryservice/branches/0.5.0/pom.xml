@@ -3,14 +3,14 @@
   <groupId>org.imirsel</groupId>
   <artifactId>nema-directoryservice</artifactId>
   <name>NEMA Directory Service</name>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.5.0</version>
   <description>NEMA Directory Service -used to expose JNDI services to the flow and the middleware</description>
 
 <distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
-			<name>IMIRSEL Releases</name>
-			<id>nema.lis.uiuc.edu-releases</id>
+			<name>nema.lis.uiuc.edu-release</name>
+			<id>nema.lis.uiuc.edu-release</id>
 			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
 			
 		</repository>
