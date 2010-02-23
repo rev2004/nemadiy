@@ -139,10 +139,7 @@
                 </dependencies>
             </plugin>
     </plugins>
-            
-            
-            
-        
+
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>

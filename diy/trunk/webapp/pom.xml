@@ -149,6 +149,7 @@
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>applicationContext-resources.xml</include>
+                    <include>**/*.sql</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>
@@ -163,6 +164,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>**/*.xml</include>
+                    <include>**/*.sql</include>
                 </includes>
             </testResource>
         </testResources>
@@ -374,6 +376,14 @@
             <scope>compile</scope>
         </dependency>
         
+        <dependency>
+            <groupId>org.imirsel</groupId>
+            <artifactId>nema-flow-service</artifactId>
+            <version>0.5.0</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        
 	   <dependency>
     	<groupId>org.imirsel</groupId>
     	<artifactId>nema-repositoryservice</artifactId>
@@ -531,4 +541,4 @@
             </build>
         </profile>
     </profiles>
-</project>
+   </project>

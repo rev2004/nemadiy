@@ -8,7 +8,20 @@
 <wb-resource deploy-path="/" source-path="/probes/src/test/java"/>
 <wb-resource deploy-path="/" source-path="/core/src/main/java"/>
 <wb-resource deploy-path="/" source-path="/webapp/src/main/java"/>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-flowservice-api/nema-flowservice-api">
+<wb-resource deploy-path="/" source-path="/webapp/src/test/java"/>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-client-0.5.0/nema-client-0.5.0">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-annotations-0.5.0/nema-annotations-0.5.0">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-flowservice-api-0.5.0/nema-flowservice-api-0.5.0">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-repositoryservice-0.1.0/nema-repositoryservice-0.1.0">
+<dependency-type>uses</dependency-type>
+</dependent-module>
+<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-repositoryservice-api-0.1.0/nema-repositoryservice-api-0.1.0">
 <dependency-type>uses</dependency-type>
 </dependent-module>
 </wb-module>
