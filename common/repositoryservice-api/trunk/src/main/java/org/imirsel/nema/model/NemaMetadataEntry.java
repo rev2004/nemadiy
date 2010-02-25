@@ -12,7 +12,7 @@ import java.io.Serializable;
  * 
  * @author kriswest
  */
-public class NEMAMetadataEntry implements Serializable{
+public class NemaMetadataEntry implements Serializable{
     private static final long serialVersionUID = 1L;
 
     private String type;
@@ -24,7 +24,7 @@ public class NEMAMetadataEntry implements Serializable{
      * @param type The type of the value.
      * @param value The value.
      */
-    public NEMAMetadataEntry(String type, String value){
+    public NemaMetadataEntry(String type, String value){
         this.type = type;
         this.value = value;
     }
@@ -72,16 +72,16 @@ public class NEMAMetadataEntry implements Serializable{
 
     @Override
     /**
-     * Returns true if the other Object is an instance of <code>NEMAMetadataEntry</code> and carries
+     * Returns true if the other Object is an instance of <code>NemaMetadataEntry</code> and carries
      * identical type and value Strings. Note this comparison is case-sensitive.
      * @param object the Object to compare to.
      * @return a boolean indicating equality.
      */
     public boolean equals(Object object){
-        if (!(object instanceof NEMAMetadataEntry)){
+        if (!(object instanceof NemaMetadataEntry)){
             return false;
         }
-        NEMAMetadataEntry other = (NEMAMetadataEntry)object;
+        NemaMetadataEntry other = (NemaMetadataEntry)object;
         if (type.equals(other.type) && value.equals(other.value)){
             return true;
         }

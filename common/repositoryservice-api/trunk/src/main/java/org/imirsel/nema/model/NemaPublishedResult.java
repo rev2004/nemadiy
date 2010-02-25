@@ -13,7 +13,7 @@ import java.util.Date;
  * 
  * @author kriswest
  */
-public class PublishedResult implements Serializable{
+public class NemaPublishedResult implements Serializable{
     public static final long serialVersionUID = 1L;
 
     private int id;
@@ -32,7 +32,7 @@ public class PublishedResult implements Serializable{
      * @param result_path The path to the results directory on the filesystem/
      * @param date The date of publication.
      */
-    public PublishedResult(int id, String username, String name, String result_path, Date date){
+    public NemaPublishedResult(int id, String username, String name, String result_path, Date date){
         this.id = id;
         this.username = username;
         this.name = name;

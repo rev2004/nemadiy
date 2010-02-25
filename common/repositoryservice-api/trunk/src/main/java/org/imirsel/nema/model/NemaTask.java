@@ -11,33 +11,31 @@ import java.io.Serializable;
  * To be redesigned.... probably with a linked dataset and evaluator type.
  * @author kriswest
  */
-public class NEMATask implements Serializable {
+public class NemaTask implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private int id;
-    private String name;
-    private String description;
-    private int subjectTrackMetadataID;
-    private String subjectTrackMetadataName;
-    private int taskTypeID;
-    private String taskType;
+    private int id = -1;
+    private String name = null;
+    private String description = null;
+    private int subjectTrackMetadataId = -1;
+    private String subjectTrackMetadataName = null;
+    private int datasetId = -1;
 
-    public NEMATask(){
+    public NemaTask(){
     }
 
-    public NEMATask(Integer id){
+    public NemaTask(Integer id){
         this.id = id;
     }
 
-    public NEMATask(int id, String name, String description, int subjectTrackMetadataID,
-            String subjectTrackMetadataName, int taskTypeID, String taskType){
+    public NemaTask(int id, String name, String description, int subjectTrackMetadataID,
+            String subjectTrackMetadataName, int datasetId){
         this.id = id;
         this.name = name;
         this.description = description;
         this.subjectTrackMetadataName = subjectTrackMetadataName;
-        this.subjectTrackMetadataID = subjectTrackMetadataID;
-        this.taskTypeID = taskTypeID;
-        this.taskType = taskType;
+        this.subjectTrackMetadataId = subjectTrackMetadataID;
+        this.datasetId = datasetId;
     }
 
     public int getId(){
@@ -72,13 +70,6 @@ public class NEMATask implements Serializable {
         this.subjectTrackMetadataName = subjectTrackMetadataName;
     }
 
-    public String getTaskType(){
-        return taskType;
-    }
-
-    public void setTaskType(String taskType){
-        this.taskType = taskType;
-    }
 
     @Override
     public int hashCode(){
@@ -87,10 +78,10 @@ public class NEMATask implements Serializable {
 
     @Override
     public boolean equals(Object object){
-        if (!(object instanceof NEMATask)){
+        if (!(object instanceof NemaTask)){
             return false;
         }
-        NEMATask other = (NEMATask)object;
+        NemaTask other = (NemaTask)object;
         if (this.id == other.id){
             return true;
         }
@@ -105,29 +96,29 @@ public class NEMATask implements Serializable {
     /**
      * @return the subjectTrackMetadataID
      */
-    public int getSubjectTrackMetadataID(){
-        return subjectTrackMetadataID;
+    public int getSubjectTrackMetadataId(){
+        return subjectTrackMetadataId;
     }
 
     /**
      * @param subjectTrackMetadataID the subjectTrackMetadataID to set
      */
-    public void setSubjectTrackMetadataID(int subjectTrackMetadataID){
-        this.subjectTrackMetadataID = subjectTrackMetadataID;
+    public void setSubjectTrackMetadataId(int subjectTrackMetadataID){
+        this.subjectTrackMetadataId = subjectTrackMetadataID;
     }
 
     /**
-     * @return the taskTypeID
+     * @return the datasetId
      */
-    public int getTaskTypeID(){
-        return taskTypeID;
+    public int getDatasetId(){
+        return datasetId;
     }
 
     /**
-     * @param taskTypeID the taskTypeID to set
+     * @param datasetId the datasetId to set
      */
-    public void setTaskTypeID(int taskTypeID){
-        this.taskTypeID = taskTypeID;
+    public void setDatasetId(int datasetId){
+        this.datasetId = datasetId;
     }
 
 }

@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 
  * @author kriswest
  */
-public class NEMACollection implements Serializable {
+public class NemaCollection implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private int id;
@@ -19,7 +19,7 @@ public class NEMACollection implements Serializable {
      * Constructor. Sets the ID but not the name or description.
      * @param id The ID to create the Object with.
      */
-    public NEMACollection(int id){
+    public NemaCollection(int id){
         this.id = id;
     }
 
@@ -29,7 +29,7 @@ public class NEMACollection implements Serializable {
      * @param name The name to create the Object with.
      * @param description The description to create the Object with.
      */
-    public NEMACollection(int id, String name, String description){
+    public NemaCollection(int id, String name, String description){
         this.id = id;
         this.name = name;
         this.description = description;
@@ -94,16 +94,16 @@ public class NEMACollection implements Serializable {
 
     @Override
     /**
-     * Return true if the other Object is an instance of <code>NEMACollection</code> with the same ID,
+     * Return true if the other Object is an instance of <code>NemaCollection</code> with the same ID,
      * false otherwise.
      * @param object The Object to compare to.
      * @return a boolean indeicating equality.
      */
     public boolean equals(Object object){
-        if (!(object instanceof NEMACollection)){
+        if (!(object instanceof NemaCollection)){
             return false;
         }
-        NEMACollection other = (NEMACollection)object;
+        NemaCollection other = (NemaCollection)object;
         if (id == other.id){
             return true;
         }
