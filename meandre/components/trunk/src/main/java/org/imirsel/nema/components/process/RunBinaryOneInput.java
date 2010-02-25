@@ -146,11 +146,11 @@ import org.meandre.core.ComponentExecutionException;
 			try {
 				throw new ComponentExecutionException(e1);
 			} catch (ComponentExecutionException e) {
-				_logger.log(Level.SEVERE, "IOException in initialise!",e);
+				getLogger().log(Level.SEVERE, "IOException in initialise!",e);
 				throw e;
 			}
 		}
-		_logger.info("RUNBINARY: PROCESS WORKING DIR: " + processWorkingDir);
+		getLogger().info("RUNBINARY: PROCESS WORKING DIR: " + processWorkingDir);
 
 
 	}
@@ -175,7 +175,7 @@ import org.meandre.core.ComponentExecutionException;
 		env_var = String.valueOf(cc.getProperty(DATA_PROPERTY_ENV_VAR));
 		String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[] outLists = new String[fileLists.length];
-		_logger.info("\n" +
+		getLogger().info("\n" +
 				"=============================================================\n" +
 				"Starting execution of external binaries\n" +
 				"=============================================================\n" +
@@ -183,10 +183,10 @@ import org.meandre.core.ComponentExecutionException;
 		
 		File[] names = new File[fileLists.length];
 		for (int i = 0; i < fileLists.length; i++) {
-			_logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+			getLogger().info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
 					"FILE:  " + (i+1) +"/" + fileLists.length + "\n");
 			if(isAborted) {
-				_logger.info("\n" +
+				getLogger().info("\n" +
 					"Execution of external binaries aborted");
 				break;
 			}
@@ -197,12 +197,12 @@ import org.meandre.core.ComponentExecutionException;
 				runCommand(inFile.getCanonicalPath());
 				outLists[i] = outfile;
 			} catch (IOException e) {
-				_logger.log(Level.SEVERE,"IOException occured while working with input file: " + inFile.getAbsolutePath(),e); 
+				getLogger().log(Level.SEVERE,"IOException occured while working with input file: " + inFile.getAbsolutePath(),e); 
 			} catch (RuntimeException e) {
-				_logger.log(Level.SEVERE,"Runtime occured while working with input file: " + inFile.getAbsolutePath(),e);
+				getLogger().log(Level.SEVERE,"Runtime occured while working with input file: " + inFile.getAbsolutePath(),e);
 			}
 		}
-		_logger.info("=============================================================\n" +
+		getLogger().info("=============================================================\n" +
 				"Execution of external binaries complete\n" +
 				"=============================================================\n");
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
@@ -253,7 +253,7 @@ import org.meandre.core.ComponentExecutionException;
 		if (!command.exists()) {
 			File command2 = new File(dir.getCanonicalPath() + File.separator + execName);
 			if (!command2.exists()) {
-				_logger.info("External binary (" + command2.getAbsolutePath() + ") NOT FOUND!");
+				getLogger().info("External binary (" + command2.getAbsolutePath() + ") NOT FOUND!");
 				throw new RuntimeException("External Integration module was unable to locate your command!\n" +
 						"File names tried:\n\t" + command.getCanonicalPath() + "\n\t" + command2.getCanonicalPath() + "\n" +
 						"Please ensure that your binaries are in the working directory set in the ExternalInteration " +
@@ -399,7 +399,7 @@ import org.meandre.core.ComponentExecutionException;
 		msg += "In directory:       " + dir.getCanonicalPath() + "\n";
 		msg += "Sending results to: " + resdir.getCanonicalPath() + "\n";
 		
-		_logger.info(msg);
+		getLogger().info(msg);
 
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
 
@@ -408,10 +408,10 @@ import org.meandre.core.ComponentExecutionException;
 		     String[] env_pair = env_var.split(",");
 		     if (env_pair.length == 2){
 			     env.put(env_pair[0], env_pair[1]);
-			     _logger.info("Environment variable " + env_pair[0] +"="+ env_pair[1]+ " succesfully set.");
+			     getLogger().info("Environment variable " + env_pair[0] +"="+ env_pair[1]+ " succesfully set.");
 		     }
 		     else {
-		    	 _logger.info("The environment variable " + env_var + " can not be parsed !!!");
+		    	 getLogger().info("The environment variable " + env_var + " can not be parsed !!!");
 		     }
 		}
 		// 
@@ -423,15 +423,15 @@ import org.meandre.core.ComponentExecutionException;
 		try{
 			process = pb.start();
 			is = process.getInputStream();
-			_logger.info("*******************************************\n" +
+			getLogger().info("*******************************************\n" +
 					"EXTERNAL PROCESS STDOUT AND STDERR:");
-			procOutputReceiverThread = new ProcessOutputReceiver( is, _logger );
+			procOutputReceiverThread = new ProcessOutputReceiver( is, getLogger() );
 	        procOutputReceiverThread.start();
 	        int exitStatus;
 	        
 			try {
 				exitStatus = process.waitFor();
-				_logger.info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus + "\n" +
+				getLogger().info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus + "\n" +
 						"*******************************************");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

@@ -63,9 +63,9 @@ public class TestConsoleOut extends NemaComponent {
 	public void execute(ComponentContext ccp)
 			throws ComponentExecutionException, ComponentContextException {
 				
-		_logger.info("Here is the text output:\n");
+		getLogger().info("Here is the text output:\n");
 		for (int i=0;i<number;i++){
-			_logger.info(i + ":\t"+ text+"\n");
+			getLogger().info(i + ":\t"+ text+"\n");
 			wait(wtime);
 		}
 		
@@ -73,10 +73,10 @@ public class TestConsoleOut extends NemaComponent {
 			throw new RuntimeException("Dummy exception");
 			
 		}catch(RuntimeException e){
-			_logger.log(Level.SEVERE,"Here is an exception that we caught:",e);
+			getLogger().log(Level.SEVERE,"Here is an exception that we caught:",e);
 		}
 		
-		_logger.info("--exit--");
+		getLogger().info("--exit--");
 	}
 
 	public static void wait (int n){

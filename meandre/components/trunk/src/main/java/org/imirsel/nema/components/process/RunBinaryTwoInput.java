@@ -145,11 +145,11 @@ import org.meandre.core.ComponentExecutionException;
 			try {
 				throw new ComponentExecutionException(e1);
 			} catch (ComponentExecutionException e) {
-				_logger.log(Level.SEVERE, "IOException in initialise!",e);
+				getLogger().log(Level.SEVERE, "IOException in initialise!",e);
 				throw e;
 			}
 		}
-		_logger.info("RUNBINARY: PROCESS WORKING DIR: " + processWorkingDir);
+		getLogger().info("RUNBINARY: PROCESS WORKING DIR: " + processWorkingDir);
 
 	}
 
@@ -179,22 +179,22 @@ import org.meandre.core.ComponentExecutionException;
 
 		// sanity check that both filelists are same length
 		if (fileLists1.length != fileLists2.length) {
-			_logger.severe("ERROR: File lists for input1 and input2 are different lengths!");
+			getLogger().severe("ERROR: File lists for input1 and input2 are different lengths!");
 			
 			return;
 		}
-		_logger.info("\n" +
+		getLogger().info("\n" +
 				"=============================================================\n" +
 				"Starting execution of external binaries\n" +
 				"=============================================================\n" +
 				"Number of files to process: " + fileLists1.length + "\n");
 
 		for (int i = 0; i < fileLists1.length; i++) {
-			_logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+			getLogger().info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
 					"FILE:  " + (i+1) +"/" + fileLists1.length);
 
 			if(isAborted) {
-				_logger.info("Execution of external binaries aborted");
+				getLogger().info("Execution of external binaries aborted");
 				break;
 			}
 
@@ -202,15 +202,15 @@ import org.meandre.core.ComponentExecutionException;
 			File inFile2 = new File(fileLists2[i]);
 
 			try {
-				runCommand(inFile2.getCanonicalPath(), inFile1.getCanonicalPath(),_logger);
+				runCommand(inFile2.getCanonicalPath(), inFile1.getCanonicalPath(),getLogger());
 				outLists[i] = outfile;
 			} catch (IOException e) {
-				_logger.log(Level.SEVERE,"IOException occured while working with input file1: '" + inFile1.getAbsolutePath() + "' and input file2: '" + inFile2.getAbsolutePath() + "'",e); 
+				getLogger().log(Level.SEVERE,"IOException occured while working with input file1: '" + inFile1.getAbsolutePath() + "' and input file2: '" + inFile2.getAbsolutePath() + "'",e); 
 			} catch (RuntimeException e) {
-				_logger.log(Level.SEVERE,"Runtime occured while working with input file1: '" + inFile1.getAbsolutePath() + "' and input file2: '" + inFile2.getAbsolutePath() + "'",e); 
+				getLogger().log(Level.SEVERE,"Runtime occured while working with input file1: '" + inFile1.getAbsolutePath() + "' and input file2: '" + inFile2.getAbsolutePath() + "'",e); 
 			}
 		}
-		_logger.info("=============================================================\n" +
+		getLogger().info("=============================================================\n" +
 				"Execution of external binaries complete\n" +
 				"=============================================================\n");
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
@@ -471,7 +471,7 @@ import org.meandre.core.ComponentExecutionException;
 		msg += "\n";
 		msg += "In directory:       " + dir.getCanonicalPath() + "\n";
 		msg += "Sending results to: " + resdir.getCanonicalPath() + "\n";
-		_logger.info(msg);
+		getLogger().info(msg);
 		
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
 		Map<String, String> env = pb.environment();
@@ -479,10 +479,10 @@ import org.meandre.core.ComponentExecutionException;
 			String[] env_pair = env_var.split(",");
 			if (env_pair.length == 2) {
 				env.put(env_pair[0], env_pair[1]);
-				_logger.info("Environment variable " + env_pair[0] +"="+ env_pair[1]+ " succesfully set.");
+				getLogger().info("Environment variable " + env_pair[0] +"="+ env_pair[1]+ " succesfully set.");
 		     }
 		     else {
-		    	 _logger.info("The environment variable " + env_var + " can not be parsed !!!");
+		    	 getLogger().info("The environment variable " + env_var + " can not be parsed !!!");
 		     }
 		}
 		pb.directory(dir);
@@ -491,15 +491,15 @@ import org.meandre.core.ComponentExecutionException;
 		try{
 			process = pb.start();
 			is = process.getInputStream();
-			_logger.info("*******************************************\n" +
+			getLogger().info("*******************************************\n" +
 			"EXTERNAL PROCESS STDOUT AND STDERR:");
 			
-			procOutputReceiverThread = new ProcessOutputReceiver( is, _logger );
+			procOutputReceiverThread = new ProcessOutputReceiver( is, getLogger() );
 			procOutputReceiverThread.start();
 			int exitStatus;
 			try {
 				exitStatus = process.waitFor();
-				_logger.info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus + "\n" +
+				getLogger().info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus + "\n" +
 				"*******************************************");
 				
 			} catch (InterruptedException e) {
