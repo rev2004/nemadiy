@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/bsh-core-2.0b4.jar"/>
-	<classpathentry kind="lib" path="lib/cglib-2.1_3-src.jar"/>
-	<classpathentry kind="lib" path="lib/cglib-nodep-2.1_3.jar"/>
-	<classpathentry kind="lib" path="lib/hamcrest-core-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/hamcrest-library-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/jmock-2.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/jmock-junit3-2.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/jmock-junit4-2.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/jmock-legacy-2.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/jmock-script-2.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/objenesis-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/hamcrest-all-1.2RC4.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>
-	<classpathentry kind="con" path="org.meandre.MEANDRE_INFRASTRUCTURE/1.4.8"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/nema-components"/>
-	<classpathentry kind="lib" path="lib/servlet-api-2.5.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
