@@ -6,7 +6,7 @@ public class NemaDataConstants {
     /** Constant definition for metadata key: column label     */
     public final static String PROP_COLUMN_LABELS = "columnLabels";
     /** Constant definition for metadata key: file location     */
-    public final static String PROP_FILE_LOCATION  = "fileLocation";
+    public final static String PROP_ID  = "fileLocation";
     /** Constant definition for metadata key: directory name     */
     public final static String PROP_DIRECTORY_NAME  = "dirName";
 
@@ -96,4 +96,11 @@ public class NemaDataConstants {
     public static final String OVERALL_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples overall";
     public static final String OVERALL_NUM_NEGATIVE_EXAMPLES = "Tag classification number of negative examples overall";
     
+    // Melody Extraction Evaluator Constants
+    public static final String MELODY_EXTRACTION_DATA = "Raw melody transcription data with timestamps and F0 in Hz";
+    public static final String MELODY_RAW_PITCH_ACCURACY = "Melody raw pitch accuracy ignoring segmentation errors";
+    public static final String MELODY_RAW_CHROMA_ACCURACY = "Melody raw chroma accuracy ignoring segmentation and octave errors";
+    public static final String MELODY_VOICING_RECALL = "Melody voiced section recall rate";
+    public static final String MELODY_VOICING_FALSE_ALARM = "Melody voiced section false-alarm rate";
+    public static final String MELODY_OVERALL_ACCURACY = "Melody overall accuracy";
 }
