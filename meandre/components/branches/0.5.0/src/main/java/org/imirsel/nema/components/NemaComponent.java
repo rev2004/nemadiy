@@ -22,10 +22,9 @@ import org.meandre.core.ExecutableComponent;
 public abstract class NemaComponent implements ExecutableComponent {
 
 	// log messages are here
-	protected Logger _logger;
-	protected Handler _handler;
+	private Logger _logger;
+	protected static Handler _handler;
 	
-	private java.io.PrintStream cout;
 	
 	/**
 	 * Marks the cout as null after flushing and releases the resources.
@@ -38,8 +37,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 	public void dispose(ComponentContextProperties componentContextProperties) 
 			throws ComponentContextException {
 		_logger.fine("Disposing of " + this.getClass().getName());
-		cout.flush();
-		cout = null;
+		componentContextProperties.getOutputConsole().flush();
 	}
 
 	/**
@@ -57,10 +55,13 @@ public abstract class NemaComponent implements ExecutableComponent {
 	 */
 	public void initialize(ComponentContextProperties componentContextProperties)
 			throws ComponentExecutionException, ComponentContextException {
-		cout = componentContextProperties.getOutputConsole();
 		_logger = Logger.getLogger(this.getClass().getName());
 		_logger.setLevel(Level.FINEST);
-		_handler = new StreamHandler(cout, new ComponentLogFormatter());
+		synchronized(NemaComponent.class){
+			if(_handler==null){
+				_handler = new StreamHandler(componentContextProperties.getOutputConsole(), new ComponentLogFormatter());
+			}
+		}
 		_logger.addHandler(_handler);
 		_logger.info("Initializing logging for " + this.getClass().getName()) ;
 	}
