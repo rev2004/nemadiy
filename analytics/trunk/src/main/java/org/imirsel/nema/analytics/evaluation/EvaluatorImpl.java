@@ -100,7 +100,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 		NemaData data;
 		for(Iterator<NemaData> it = groundtruth.iterator(); it.hasNext();){
 			data = it.next();
-			trackIDToGT.put(data.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION), data);
+			trackIDToGT.put(data.getId(), data);
 		}		
 		_logger.info("Received groundtruth for " + groundtruth.size() + " track IDs");
 	}
