@@ -9,6 +9,7 @@
  */
 package org.meandre.test.matchers;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 
 import org.hamcrest.BaseMatcher;
@@ -38,9 +39,23 @@ public class OutputValueMatcher<T> extends BaseMatcher<T> {
 					}
 				}
 			}
-			if(item.equals(obj)){
-				return true;
+			// item is not an array
+			if(!item.getClass().isArray()){
+				if(item.equals(obj)){
+					return true;
+				}
+			}else{
+				// item is an array
+				// check if the obj is an array
+				if(obj.getClass().isArray()){
+					return Arrays.equals((Object []) item, (Object[]) obj);
+				}
 			}
+			
+			
+			
+			
+			
 		}
 		
 		
