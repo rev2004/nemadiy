@@ -75,4 +75,10 @@ public interface EvalFileType {
      */
     public Logger getLogger();
     
+    /**
+     * Adds a handler to the logger (for getting log messages to alternate printstreams).
+     * 
+     * @param logHandler
+     */
+	public void addLogHandler(Handler logHandler);
 }

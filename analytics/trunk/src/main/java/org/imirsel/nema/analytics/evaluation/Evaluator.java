@@ -105,6 +105,13 @@ public interface Evaluator {
     public Logger getLogger();
     
     /**
+     * Adds a handler to the logger (for getting log messages to alternate printstreams).
+     * 
+     * @param logHandler
+     */
+	public void addLogHandler(Handler logHandler);
+	
+    /**
      * Perform the evaluation and block until the results are fully written to the output directory.
      * Also return a map encoding the evaluation results for each job in case they are needed for further processing.
      * 
