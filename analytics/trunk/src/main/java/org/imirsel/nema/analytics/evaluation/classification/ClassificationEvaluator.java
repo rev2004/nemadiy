@@ -23,12 +23,12 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.nema.model.*;
-import org.imirsel.nema.analytics.evaluation.util.FriedmansAnovaTkHsd;
 import org.imirsel.nema.analytics.evaluation.*;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
-import org.imirsel.nema.analytics.util.io.IOUtil;
+import org.imirsel.nema.analytics.evaluation.util.*;
 import org.imirsel.nema.analytics.evaluation.vis.ConfusionMatrixPlot;
+import org.imirsel.nema.analytics.util.io.*;
+import org.imirsel.nema.model.*;
 
 /**
  *
@@ -83,7 +83,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             File matlabPath_,
             File hierarchyFile_) 
     		throws FileNotFoundException, IOException{
-        super(ClassificationEvaluator.class, workingDir_, outputDir_, task_, dataset_);
+        super(workingDir_, outputDir_, task_, dataset_);
         performMatlabStatSigTests = performMatlabStatSigTests_;
         matlabPath = matlabPath_;
         hierarchyFile = hierarchyFile_;

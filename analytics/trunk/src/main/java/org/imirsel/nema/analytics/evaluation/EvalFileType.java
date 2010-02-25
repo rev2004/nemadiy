@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 import org.imirsel.nema.model.NemaData;
@@ -65,13 +66,6 @@ public interface EvalFileType {
      * the input data.
      */
     public void writeFile(File theFile, List<NemaData> data) throws IllegalArgumentException, FileNotFoundException, IOException;
-    
-    /**
-     * Set the logger to use for console output. If not set the default logger should be used, i.e.
-     * the fully qualified name of the implementing class given by <code>this.getClass().getName()</code>.
-     * @param logger The logger to use for output.
-     */
-    public void setLogger(Logger logger);
     
     /**
      * Returns the logger in use. Can be used to change the logging verbosity 

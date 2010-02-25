@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 
@@ -94,13 +95,6 @@ public interface Evaluator {
      * @param results A <code>List</code> of <code>EvaluationDataObjects</code>
      */
     public void addResults(String systemName, String jobID, List<NemaData> results);
-
-    /**
-     * Set the logger to use for console output. If not set the default logger should be used, i.e.
-     * the fully qualified name of the implementing class given by <code>this.getClass().getName()</code>.
-     * @param logger The logger to use for output.
-     */
-    public void setLogger(Logger logger);
     
     /**
      * Returns the logger in use. Can be used to change the logging verbosity 
