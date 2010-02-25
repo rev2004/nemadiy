@@ -45,9 +45,9 @@ public class NemaData implements Serializable{
     /** Creates a new instance of NemaData with the file location as metadata
      *  @param fileLocation Original location of evaluation file, used as an identifier
      */
-    public NemaData(String fileLocation) {
+    public NemaData(String id) {
         metadata = new HashMap<String,Object>();
-        metadata.put(NemaDataConstants.PROP_FILE_LOCATION, fileLocation);
+        metadata.put(NemaDataConstants.PROP_ID, id);
     }
     
     /**
@@ -85,7 +85,7 @@ public class NemaData implements Serializable{
      */
     public int compareTo(Object otherObj) {
         try {
-            return this.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION).compareTo(((NemaData)otherObj).getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
+            return this.getStringMetadata(NemaDataConstants.PROP_ID).compareTo(((NemaData)otherObj).getStringMetadata(NemaDataConstants.PROP_ID));
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("Unable to compare NemaData Objects with filelocation metadata",ex);
         }
@@ -99,7 +99,7 @@ public class NemaData implements Serializable{
      */
     public boolean equals(Object otherObj) {
         try {
-            return this.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION).equals(((NemaData)otherObj).getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
+            return this.getStringMetadata(NemaDataConstants.PROP_ID).equals(((NemaData)otherObj).getStringMetadata(NemaDataConstants.PROP_ID));
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("Unable to compare NemaData Objects with filelocation metadata",ex);
         }
@@ -117,8 +117,8 @@ public class NemaData implements Serializable{
     /** Returns a File Object for the path specified by the file location metadata.
      *  @return a File Object for the path specified by the file location metadata.
      */
-    public File getFile() throws IllegalArgumentException {
-        return new File(this.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
+    public String getId() throws IllegalArgumentException {
+        return this.getStringMetadata(NemaDataConstants.PROP_ID);
     }
     
     /**
