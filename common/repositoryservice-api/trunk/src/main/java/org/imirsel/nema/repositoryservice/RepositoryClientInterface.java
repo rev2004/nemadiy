@@ -6,7 +6,6 @@
 package org.imirsel.nema.repositoryservice;
 
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,18 +15,17 @@ import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTrackList;
-import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaPublishedResult;
 
 /**
  * An interface defining the methods of a query client for the temporary NEMA metadata
- * repository. Additionally, result publicaiton methods are defined.
+ * repository. Additionally, result publication methods are defined.
  *
- * @author kriswest
+ * @author kris.west@gmail.com
  */
 public interface RepositoryClientInterface {
-
+	//TODO update DB and Client to support Tasks
     /**
      * Close any DB connections held.
      */
