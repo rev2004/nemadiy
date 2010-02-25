@@ -17,12 +17,12 @@ import org.meandre.annotations.ComponentProperty;
 
 @Component(creator = "Mert Bay", 
 		description = "Test console output", 
-		name = "TestConsoleOut", 
+		name = "TestConsoleOut2", 
 		tags = "test, console, output", 
 		resources = "",
 		firingPolicy = Component.FiringPolicy.all)
 		
-public class TestConsoleOut extends NemaComponent {
+public class TestConsoleOut2 extends NemaComponent {
 
 
     @ComponentProperty(defaultValue="Hello World !",
@@ -55,11 +55,11 @@ public class TestConsoleOut extends NemaComponent {
 	
 	public void execute(ComponentContext ccp)
 			throws ComponentExecutionException, ComponentContextException {
-	  String text = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));	
+		String text = String.valueOf(ccp.getProperty(DATA_PROPERTY_1));	
         int number = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_2));
         int wtime = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_3));
         PrintStream ps=ccp.getOutputConsole();
-    	getLogger().info("Here is the text output: ");
+		getLogger().info("Here is the text output: ");
 		for (int i=0;i<number;i++){
 			getLogger().info(i + ":\t"+ text+"\n");
 			// print on the console
