@@ -44,22 +44,22 @@ public class DatasetListFileGenerator {
      * @return Constraints that can be passed to retrieve file sets.
      */
 	private static final Logger logger = Logger.getLogger(DatasetListFileGenerator.class.getName());
-	public static Set<NEMAMetadataEntry> buildConstraints(String bitrate, String channels, String clip_type, String encoding, String sample_rate){
-        HashSet<NEMAMetadataEntry> constraint = new HashSet<NEMAMetadataEntry>();
+	public static Set<NemaMetadataEntry> buildConstraints(String bitrate, String channels, String clip_type, String encoding, String sample_rate){
+        HashSet<NemaMetadataEntry> constraint = new HashSet<NemaMetadataEntry>();
         if (bitrate != null && !bitrate.trim().equals("")){
-            constraint.add(new NEMAMetadataEntry("bitrate", bitrate));
+            constraint.add(new NemaMetadataEntry("bitrate", bitrate));
         }
         if (channels != null && !channels.trim().equals("")){
-            constraint.add(new NEMAMetadataEntry("channels", channels));
+            constraint.add(new NemaMetadataEntry("channels", channels));
         }
         if (clip_type != null && !clip_type.trim().equals("")){
-            constraint.add(new NEMAMetadataEntry("clip-type", clip_type));
+            constraint.add(new NemaMetadataEntry("clip-type", clip_type));
         }
         if (encoding != null && !encoding.trim().equals("")){
-            constraint.add(new NEMAMetadataEntry("encoding", encoding));
+            constraint.add(new NemaMetadataEntry("encoding", encoding));
         }
         if (sample_rate != null && !sample_rate.trim().equals("")){
-            constraint.add(new NEMAMetadataEntry("sample-rate", sample_rate));
+            constraint.add(new NemaMetadataEntry("sample-rate", sample_rate));
         }
 
         return constraint;
@@ -84,27 +84,27 @@ public class DatasetListFileGenerator {
      * particular iteration
      * @throws SQLException
      */
-    public static List<File[]> writeOutExperimentSplitFiles(int dataset_id, String delimiter, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
+    public static List<File[]> writeOutExperimentSplitFiles(int dataset_id, String delimiter, File directory, Set<NemaMetadataEntry> file_encoding_constraint) throws SQLException{
     	
         logger.info("Writing out train and test files for dataset_id=" + dataset_id);
         logger.info("File encoding constraints: ");
-        for (Iterator<NEMAMetadataEntry> it = file_encoding_constraint.iterator(); it.hasNext();){
-            NEMAMetadataEntry meta = it.next();
+        for (Iterator<NemaMetadataEntry> it = file_encoding_constraint.iterator(); it.hasNext();){
+            NemaMetadataEntry meta = it.next();
             logger.info("\t" + meta.getType() + ":\t" + meta.getValue());
         }
 
         RepositoryClientInterface client = new RepositoryClientImpl();
-        NEMADataset dataset = client.getDataset(dataset_id);
+        NemaDataset dataset = client.getDataset(dataset_id);
         int subjectMetadata = dataset.getSubjectTrackMetadataId();
 
         ArrayList<File[]> out = new ArrayList<File[]>();
-        List<List<NEMASet>> sets = client.getExperimentSets(dataset);
-        for (Iterator<List<NEMASet>> it = sets.iterator(); it.hasNext();){
-            List<NEMASet> list = it.next();
+        List<List<NemaTrackList>> sets = client.getExperimentSets(dataset);
+        for (Iterator<List<NemaTrackList>> it = sets.iterator(); it.hasNext();){
+            List<NemaTrackList> list = it.next();
             LinkedList<File> files = new LinkedList<File>();
             String setType;
-            for (Iterator<NEMASet> it1 = list.iterator(); it1.hasNext();){
-                NEMASet set = it1.next();
+            for (Iterator<NemaTrackList> it1 = list.iterator(); it1.hasNext();){
+                NemaTrackList set = it1.next();
                 setType = set.getSetTypeName();
 
                 if (setType.equalsIgnoreCase("test")){
@@ -135,15 +135,15 @@ public class DatasetListFileGenerator {
      * @return An array indexed {gt_file,fl_file}
      * @throws SQLException
      */
-    public static File[] writeOutGroundTruthAndExtractionListFile(int dataset_id, String delimiter, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
+    public static File[] writeOutGroundTruthAndExtractionListFile(int dataset_id, String delimiter, File directory, Set<NemaMetadataEntry> file_encoding_constraint) throws SQLException{
         logger.info("Writing out Groundtruth and Extraction list files for dataset_id=" + dataset_id);
         logger.info("File encoding constraints: ");
-        for (Iterator<NEMAMetadataEntry> it = file_encoding_constraint.iterator(); it.hasNext();){
-            NEMAMetadataEntry meta = it.next();
+        for (Iterator<NemaMetadataEntry> it = file_encoding_constraint.iterator(); it.hasNext();){
+            NemaMetadataEntry meta = it.next();
             logger.info("\t" + meta.getType() + ":\t" + meta.getValue());
         }
         RepositoryClientInterface client = new RepositoryClientImpl();
-        NEMADataset dataset = client.getDataset(dataset_id);
+        NemaDataset dataset = client.getDataset(dataset_id);
         int subset = dataset.getSubsetSetId();
         int subjectMetadata = dataset.getSubjectTrackMetadataId();
         return writeOutGTAndExtractListFiles(client, delimiter, subset, subjectMetadata, directory, file_encoding_constraint);
@@ -153,22 +153,22 @@ public class DatasetListFileGenerator {
     //Private methods
     //==========================================================================
 
-    private static List<String> getTestData(RepositoryClientInterface client, int set_id, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
+    private static List<String> getTestData(RepositoryClientInterface client, int set_id, Set<NemaMetadataEntry> file_encoding_constraint) throws SQLException{
         logger.info("Retrieving test file paths for set: " + set_id);
         List<String> tracks = client.getTrackIDs(set_id);
         logger.info("Got " + tracks.size() + " tracks, resolving to files") ;
-        List<NEMAFile> files = client.getFilesByID(tracks, file_encoding_constraint);
+        List<NemaFile> files = client.getFilesByID(tracks, file_encoding_constraint);
         logger.info("Got file list length: " + files.size() + ", preparing output");
         List<String> out = new ArrayList<String>();
         int idx = 0;
         Object file;
-        for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
+        for (Iterator<NemaFile> it = files.iterator(); it.hasNext();){
             file = it.next();
             if (file == null){
                 //logger.info("WARNING: a file could not be found for track: " + tracks.get(idx));
                 out.add(null);
             }else{
-                out.add(((NEMAFile)file).getPath());
+                out.add(((NemaFile)file).getPath());
             }
 
             idx++;
@@ -176,28 +176,28 @@ public class DatasetListFileGenerator {
         return out;
     }
 
-    private static List<String[]> getGroundtruthData(RepositoryClientInterface client, int set_id, int metadata_id, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
+    private static List<String[]> getGroundtruthData(RepositoryClientInterface client, int set_id, int metadata_id, Set<NemaMetadataEntry> file_encoding_constraint) throws SQLException{
         logger.info("Retrieving ground-truth data and file paths for set: " + set_id);
         List<String> tracks = client.getTrackIDs(set_id);
         logger.info("Got " + tracks.size() + " tracks, resolving to files") ;
-        List<NEMAFile> files = client.getFilesByID(tracks, file_encoding_constraint);
+        List<NemaFile> files = client.getFilesByID(tracks, file_encoding_constraint);
         logger.info("Got file list length: " + files.size() + ", retrieving metadata");
         List<String[]> out = new ArrayList<String[]>();
         Object obj;
-        NEMAFile file;
-        List<NEMAMetadataEntry> meta_list;
-        Iterator<NEMAMetadataEntry> meta_it;
+        NemaFile file;
+        List<NemaMetadataEntry> meta_list;
+        Iterator<NemaMetadataEntry> meta_it;
         String path;
         int idx = 0;
 
-        Map<String,List<NEMAMetadataEntry>> trackToMeta = client.getTrackMetadataByID(tracks, metadata_id);
-        for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
+        Map<String,List<NemaMetadataEntry>> trackToMeta = client.getTrackMetadataByID(tracks, metadata_id);
+        for (Iterator<NemaFile> it = files.iterator(); it.hasNext();){
             obj = it.next();
             if (obj == null){
                 //logger.info("WARNING: a file could not be found for track: " + tracks.get(idx));
                 out.add(null);
             }else{
-                file = (NEMAFile)obj;
+                file = (NemaFile)obj;
                 path = file.getPath();
                 meta_list = trackToMeta.get(file.getTrackId());
                 for(meta_it = meta_list.iterator();meta_it.hasNext();){
@@ -269,20 +269,20 @@ public class DatasetListFileGenerator {
         return out;
     }
 
-    private static File[] writeOutGTAndExtractListFiles(RepositoryClientInterface client, String delimiter, int set_id, int metadata_id, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
+    private static File[] writeOutGTAndExtractListFiles(RepositoryClientInterface client, String delimiter, int set_id, int metadata_id, File directory, Set<NemaMetadataEntry> file_encoding_constraint) throws SQLException{
         List<String[]> data = getGroundtruthData(client, set_id, metadata_id, file_encoding_constraint);
         File gt = writeGTFile(directory, "gt", set_id, data, delimiter);
         File el = writeExtractOrTestListFile(directory, "extractlist", set_id, data);
         return new File[]{gt,el};
     }
 
-    private static File writeOutGTFile(RepositoryClientInterface client, String set_name, String delimiter, int set_id, int metadata_id, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
+    private static File writeOutGTFile(RepositoryClientInterface client, String set_name, String delimiter, int set_id, int metadata_id, File directory, Set<NemaMetadataEntry> file_encoding_constraint) throws SQLException{
         List<String[]> data = getGroundtruthData(client, set_id, metadata_id, file_encoding_constraint);
         File out = writeGTFile(directory, set_name, set_id, data, delimiter);
         return out;
     }
 
-    private static File writeOutSingleTestFile(RepositoryClientInterface client, String set_name, int set_id, File directory, Set<NEMAMetadataEntry> file_encoding_constraint) throws SQLException{
+    private static File writeOutSingleTestFile(RepositoryClientInterface client, String set_name, int set_id, File directory, Set<NemaMetadataEntry> file_encoding_constraint) throws SQLException{
         List<String> data = getTestData(client, set_id, file_encoding_constraint);
         File out = new File(directory.getAbsolutePath() + File.separator + set_name + "-" + set_id + ".txt");
         

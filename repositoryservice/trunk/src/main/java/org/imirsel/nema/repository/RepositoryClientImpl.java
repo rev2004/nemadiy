@@ -276,26 +276,26 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
 
 
-    public List<NEMACollection> getCollections() throws SQLException{
+    public List<NemaCollection> getCollections() throws SQLException{
         List<Map<String, String>> results = executePreparedStatement(getCollections);
         return buildNEMACollections(results);
     }
 
-    public List<NEMADataset> getDatasetsForCollection(NEMACollection collection) throws SQLException{
+    public List<NemaDataset> getDatasetsForCollection(NemaCollection collection) throws SQLException{
         return getDatasetsForCollection(collection.getId());
     }
 
-    public List<NEMADataset> getDatasetsForCollection(int collectionId) throws SQLException{
+    public List<NemaDataset> getDatasetsForCollection(int collectionId) throws SQLException{
         List<Map<String, String>> results = executeStatement(getDatasetsByCollection, collectionId);
         return buildNEMADataset(results);
     }
 
-    public List<NEMADataset> getDatasets() throws SQLException{
+    public List<NemaDataset> getDatasets() throws SQLException{
         List<Map<String, String>> results = executePreparedStatement(getDatasets);
         return buildNEMADataset(results);
     }
 
-    public NEMADataset getDataset(int dataset_id) throws SQLException{
+    public NemaDataset getDataset(int dataset_id) throws SQLException{
         List<Map<String, String>> results = executeStatement(getDatasetByID, dataset_id);
         if(results.size() > 0){
             return buildNEMADataset(results.get(0));
@@ -304,11 +304,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         }
     }
 
-    public NEMASet getCollectionSubset(NEMADataset dataset) throws SQLException{
+    public NemaTrackList getCollectionSubset(NemaDataset dataset) throws SQLException{
         return getCollectionSubset(dataset.getId());
     }
 
-    public NEMASet getCollectionSubset(int datasetId) throws SQLException{
+    public NemaTrackList getCollectionSubset(int datasetId) throws SQLException{
         List<Map<String, String>> results = executeStatement(getSubsetForDataset, datasetId);
         if(results.size() > 0){
             return buildNEMASet(results.get(0));
@@ -318,28 +318,28 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    public List<List<NEMASet>> getExperimentSets(NEMADataset dataset) throws SQLException{
+    public List<List<NemaTrackList>> getExperimentSets(NemaDataset dataset) throws SQLException{
         return getExperimentSets(dataset.getId());
     }
 
-    public List<List<NEMASet>> getExperimentSets(int datasetID) throws SQLException{
+    public List<List<NemaTrackList>> getExperimentSets(int datasetID) throws SQLException{
         List<Map<String, String>> results = executeStatement(getExpSetsForDataset, datasetID);
 
-        Map<Integer,List<NEMASet>> sortMap = new HashMap<Integer,List<NEMASet>>();
-        List<NEMASet> setList = buildNEMASet(results);
-        List<NEMASet> aSetList;
-        for (Iterator<NEMASet> it = setList.iterator(); it.hasNext();){
-            NEMASet nemaSet = it.next();
+        Map<Integer,List<NemaTrackList>> sortMap = new HashMap<Integer,List<NemaTrackList>>();
+        List<NemaTrackList> setList = buildNEMASet(results);
+        List<NemaTrackList> aSetList;
+        for (Iterator<NemaTrackList> it = setList.iterator(); it.hasNext();){
+            NemaTrackList nemaSet = it.next();
             aSetList = sortMap.get(nemaSet.getSplitNumber());
             if (aSetList == null){
-                aSetList = new ArrayList<NEMASet>();
+                aSetList = new ArrayList<NemaTrackList>();
                 sortMap.put(nemaSet.getSplitNumber(), aSetList);
             }
             aSetList.add(nemaSet);
         }
         List<Integer> splitNumbers = new ArrayList<Integer>(sortMap.keySet());
         Collections.sort(splitNumbers);
-        List<List<NEMASet>> out = new ArrayList<List<NEMASet>>();
+        List<List<NemaTrackList>> out = new ArrayList<List<NemaTrackList>>();
         for (Iterator<Integer> it = splitNumbers.iterator(); it.hasNext();){
             out.add(sortMap.get(it.next()));
         }
@@ -347,16 +347,16 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    public List<NEMATrack> getTracks(NEMASet set) throws SQLException{
+    public List<NemaTrack> getTracks(NemaTrackList set) throws SQLException{
         return getTracks(set.getId());
     }
 
-    public List<NEMATrack> getTracks(int setId) throws SQLException{
+    public List<NemaTrack> getTracks(int setId) throws SQLException{
         List<Map<String, String>> results = executeStatement(getSetTracks, setId);
         return buildNEMATrack(results);
     }
 
-    public List<String> getTrackIDs(NEMASet set) throws SQLException{
+    public List<String> getTrackIDs(NemaTrackList set) throws SQLException{
         return getTrackIDs(set.getId());
     }
 
@@ -372,30 +372,30 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    public List<NEMAMetadataEntry> getFileMetadata(NEMAFile file) throws SQLException{
+    public List<NemaMetadataEntry> getFileMetadata(NemaFile file) throws SQLException{
         return getFileMetadataByID(file.getId());
     }
 
-    public List<NEMAMetadataEntry> getFileMetadataByID(int fileId) throws SQLException{
+    public List<NemaMetadataEntry> getFileMetadataByID(int fileId) throws SQLException{
         List<Map<String, String>> results = executeStatement(getFileMetadata, fileId);
         return buildNEMAMetadataEntry(results,fileMetadataTypeMap);
     }
 
 
-    public Map<Integer,List<NEMAMetadataEntry>> getFileMetadata(List<NEMAFile> files)
+    public Map<Integer,List<NemaMetadataEntry>> getFileMetadata(List<NemaFile> files)
             throws SQLException{
-        HashMap<Integer,List<NEMAMetadataEntry>> out = new HashMap<Integer, List<NEMAMetadataEntry>>();
+        HashMap<Integer,List<NemaMetadataEntry>> out = new HashMap<Integer, List<NemaMetadataEntry>>();
         int id;
-        for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
+        for (Iterator<NemaFile> it = files.iterator(); it.hasNext();){
             id = it.next().getId();
             out.put(id, getFileMetadataByID(id));
         }
         return out;
     }
 
-    public Map<Integer,List<NEMAMetadataEntry>> getFileMetadataByID(List<Integer> fileIDs)
+    public Map<Integer,List<NemaMetadataEntry>> getFileMetadataByID(List<Integer> fileIDs)
             throws SQLException{
-        HashMap<Integer,List<NEMAMetadataEntry>> out = new HashMap<Integer, List<NEMAMetadataEntry>>();
+        HashMap<Integer,List<NemaMetadataEntry>> out = new HashMap<Integer, List<NemaMetadataEntry>>();
         int id;
         for (Iterator<Integer> it = fileIDs.iterator(); it.hasNext();){
             id = it.next();
@@ -405,35 +405,35 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    public List<NEMAMetadataEntry> getTrackMetadata(NEMATrack track) throws SQLException{
+    public List<NemaMetadataEntry> getTrackMetadata(NemaTrack track) throws SQLException{
         return getTrackMetadataByID(track.getId());
     }
 
-    public List<NEMAMetadataEntry> getTrackMetadataByID(String trackId) throws SQLException{
+    public List<NemaMetadataEntry> getTrackMetadataByID(String trackId) throws SQLException{
         List<Map<String, String>> results = executeStatement(getTrackMetadata, trackId);
         return buildNEMAMetadataEntry(results,trackMetadataTypeMap);
     }
 
 
-    public Map<String,List<NEMAMetadataEntry>> getTrackMetadata(List<NEMATrack> trackList)
+    public Map<String,List<NemaMetadataEntry>> getTrackMetadata(List<NemaTrack> trackList)
             throws SQLException{
-        HashMap<String,List<NEMAMetadataEntry>> out = new HashMap<String, List<NEMAMetadataEntry>>();
+        HashMap<String,List<NemaMetadataEntry>> out = new HashMap<String, List<NemaMetadataEntry>>();
         String id;
-        for (Iterator<NEMATrack> it = trackList.iterator(); it.hasNext();){
+        for (Iterator<NemaTrack> it = trackList.iterator(); it.hasNext();){
             id = it.next().getId();
             out.put(id, getTrackMetadataByID(id));
         }
         return out;
     }
 
-    public Map<String,List<NEMAMetadataEntry>> getTrackMetadataByID(List<String> tracks)
+    public Map<String,List<NemaMetadataEntry>> getTrackMetadataByID(List<String> tracks)
             throws SQLException{
-        HashMap<String,List<NEMAMetadataEntry>> out = new HashMap<String, List<NEMAMetadataEntry>>();
+        HashMap<String,List<NemaMetadataEntry>> out = new HashMap<String, List<NemaMetadataEntry>>();
         Set<String> trackSet = new HashSet<String>(tracks);
 
         List<Map<String, String>> results = executePreparedStatement(getAllTrackMetadata);
-        NEMAMetadataEntry entry;
-        List<NEMAMetadataEntry> list;
+        NemaMetadataEntry entry;
+        List<NemaMetadataEntry> list;
         String track_id;
         for (Iterator<Map<String, String>> it = results.iterator(); it.hasNext();){
             Map<String, String> map = it.next();
@@ -442,7 +442,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
                 entry = buildNEMAMetadataEntry(map, trackMetadataTypeMap);
                 list = out.get(track_id);
                 if (list == null){
-                    list = new ArrayList<NEMAMetadataEntry>(5);
+                    list = new ArrayList<NemaMetadataEntry>(5);
                     out.put(track_id,list);
                 }
                 list.add(entry);
@@ -452,12 +452,12 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    public List<NEMAMetadataEntry> getTrackMetadataByID(String trackId, int metadataId) throws SQLException{
+    public List<NemaMetadataEntry> getTrackMetadataByID(String trackId, int metadataId) throws SQLException{
         getTrackMetadataSpecific.setString(1, trackId);
         getTrackMetadataSpecific.setInt(2, metadataId);
         List<Map<String, String>> results = executePreparedStatement(getTrackMetadataSpecific);
         if (results.size() > 0){
-        	List<NEMAMetadataEntry> out = new ArrayList<NEMAMetadataEntry>(results.size());
+        	List<NemaMetadataEntry> out = new ArrayList<NemaMetadataEntry>(results.size());
             for(Iterator<Map<String,String>> it = results.iterator(); it.hasNext();){
             	out.add(buildNEMAMetadataEntry(it.next(), trackMetadataTypeMap));
             }
@@ -467,25 +467,25 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         }
     }
 
-    public List<NEMAMetadataEntry> getTrackMetadata(NEMATrack track, int metadataId) throws SQLException{
+    public List<NemaMetadataEntry> getTrackMetadata(NemaTrack track, int metadataId) throws SQLException{
         return getTrackMetadataByID(track.getId(),metadataId);
     }
 
-    public Map<String,List<NEMAMetadataEntry>> getTrackMetadataByID(List<String> tracks, int metadataId) throws SQLException{
-        HashMap<String,List<NEMAMetadataEntry>> out = new HashMap<String, List<NEMAMetadataEntry>>();
+    public Map<String,List<NemaMetadataEntry>> getTrackMetadataByID(List<String> tracks, int metadataId) throws SQLException{
+        HashMap<String,List<NemaMetadataEntry>> out = new HashMap<String, List<NemaMetadataEntry>>();
         Set<String> trackSet = new HashSet<String>(tracks);
 
         getAllTrackMetadataSpecific.setInt(1, metadataId);
         List<Map<String, String>> results = executePreparedStatement(getAllTrackMetadataSpecific);
         String trackId;
-        List<NEMAMetadataEntry> tmp;
+        List<NemaMetadataEntry> tmp;
         for (Iterator<Map<String, String>> it = results.iterator(); it.hasNext();){
             Map<String, String> map = it.next();
             trackId = map.get("track_id");
             if (trackSet.contains(trackId)){
             	tmp = out.get(trackId);
             	if(tmp == null){
-            		tmp = new ArrayList<NEMAMetadataEntry>(5);
+            		tmp = new ArrayList<NemaMetadataEntry>(5);
             		out.put(trackId, tmp);
             	}
                 tmp.add(buildNEMAMetadataEntry(map, trackMetadataTypeMap));
@@ -494,11 +494,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return out;
     }
 
-    public Map<String,List<NEMAMetadataEntry>> getTrackMetadata(List<NEMATrack> tracks, int metadataId) throws SQLException{
-        HashMap<String,List<NEMAMetadataEntry>> out = new HashMap<String, List<NEMAMetadataEntry>>();
+    public Map<String,List<NemaMetadataEntry>> getTrackMetadata(List<NemaTrack> tracks, int metadataId) throws SQLException{
+        HashMap<String,List<NemaMetadataEntry>> out = new HashMap<String, List<NemaMetadataEntry>>();
         String id;
-        List<NEMAMetadataEntry> tmp;
-        for (Iterator<NEMATrack> it = tracks.iterator(); it.hasNext();){
+        List<NemaMetadataEntry> tmp;
+        for (Iterator<NemaTrack> it = tracks.iterator(); it.hasNext();){
             id = it.next().getId();
             out.put(id, getTrackMetadataByID(id, metadataId));
         }
@@ -506,10 +506,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    private List<Map<String, String>> getFileData(Set<NEMAMetadataEntry> constraint) throws SQLException{
+    private List<Map<String, String>> getFileData(Set<NemaMetadataEntry> constraint) throws SQLException{
         String query = GET_CONSTRAINED_FILES;
-        NEMAMetadataEntry nemaMetadataEntry;
-        for (Iterator<NEMAMetadataEntry> it = constraint.iterator(); it.hasNext();){
+        NemaMetadataEntry nemaMetadataEntry;
+        for (Iterator<NemaMetadataEntry> it = constraint.iterator(); it.hasNext();){
             nemaMetadataEntry = it.next();
             query += "AND EXISTS (SELECT file_id FROM file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id AND file_file_metadata_link.file_metadata_id=(SELECT id FROM file_metadata WHERE metadata_type_id=" + fileMetadataTypeMapRev.get(nemaMetadataEntry.getType()) + " AND value='" + nemaMetadataEntry.getValue() + "')) ";
             if (it.hasNext()){
@@ -524,11 +524,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return results;
     }
 
-    private List<Map<String, String>> getFileData(Set<NEMAMetadataEntry> constraint,
+    private List<Map<String, String>> getFileData(Set<NemaMetadataEntry> constraint,
                                                   String trackId) throws SQLException{
         String query = GET_CONSTRAINED_FILE_FOR_TRACK;
-        NEMAMetadataEntry nemaMetadataEntry;
-        for (Iterator<NEMAMetadataEntry> it = constraint.iterator(); it.hasNext();){
+        NemaMetadataEntry nemaMetadataEntry;
+        for (Iterator<NemaMetadataEntry> it = constraint.iterator(); it.hasNext();){
             nemaMetadataEntry = it.next();
             query += "AND EXISTS (SELECT file_id FROM file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id AND file_file_metadata_link.file_metadata_id=(SELECT id FROM file_metadata WHERE metadata_type_id=" + fileMetadataTypeMapRev.get(nemaMetadataEntry.getType()) + " AND value='" + nemaMetadataEntry.getValue() + "')) ";
             if (it.hasNext()){
@@ -543,13 +543,13 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return results;
     }
     
-    public NEMAFile getFile(NEMATrack track,
-                            Set<NEMAMetadataEntry> constraint) throws SQLException{
+    public NemaFile getFile(NemaTrack track,
+                            Set<NemaMetadataEntry> constraint) throws SQLException{
         return getFile(track.getId(), constraint);
     }
 
-    public NEMAFile getFile(String trackId,
-                            Set<NEMAMetadataEntry> constraint) throws SQLException{
+    public NemaFile getFile(String trackId,
+                            Set<NemaMetadataEntry> constraint) throws SQLException{
         List<Map<String, String>> results = getFileData(constraint, trackId);
 
         if(results.size() > 0){
@@ -559,38 +559,38 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         }
     }
 
-    public Map<NEMAFile, List<NEMAMetadataEntry>> getFileFuzzy(NEMATrack track,
-                                                              Set<NEMAMetadataEntry> constraint)
+    public Map<NemaFile, List<NemaMetadataEntry>> getFileFuzzy(NemaTrack track,
+                                                              Set<NemaMetadataEntry> constraint)
             throws SQLException{
         return getFileFuzzy(track.getId(), constraint);
     }
 
-    public Map<NEMAFile, List<NEMAMetadataEntry>> getFileFuzzy(String trackId,
-                                                              Set<NEMAMetadataEntry> constraint)
+    public Map<NemaFile, List<NemaMetadataEntry>> getFileFuzzy(String trackId,
+                                                              Set<NemaMetadataEntry> constraint)
             throws SQLException{
         List<Map<String, String>> results = getFileData(constraint, trackId);
 
-        List<NEMAFile> files = buildNEMAFile(results);
-        Map<NEMAFile, List<NEMAMetadataEntry>> out = new HashMap<NEMAFile, List<NEMAMetadataEntry>>(files.size());
-        for (Iterator<NEMAFile> it = files.iterator(); it.hasNext();){
-            NEMAFile nemaFile = it.next();
+        List<NemaFile> files = buildNEMAFile(results);
+        Map<NemaFile, List<NemaMetadataEntry>> out = new HashMap<NemaFile, List<NemaMetadataEntry>>(files.size());
+        for (Iterator<NemaFile> it = files.iterator(); it.hasNext();){
+            NemaFile nemaFile = it.next();
             out.put(nemaFile, getFileMetadata(nemaFile));
         }
         return out;
     }
 
 
-    public List<NEMAFile> getFiles(List<NEMATrack> trackList,
-                                   Set<NEMAMetadataEntry> constraint) throws SQLException{
+    public List<NemaFile> getFiles(List<NemaTrack> trackList,
+                                   Set<NemaMetadataEntry> constraint) throws SQLException{
         List<String> trackIDList = new ArrayList<String>(trackList.size());
-        for (Iterator<NEMATrack> it = trackList.iterator(); it.hasNext();){
+        for (Iterator<NemaTrack> it = trackList.iterator(); it.hasNext();){
             trackIDList.add(it.next().getId());
         }
         
         return getFilesByID(trackIDList, constraint);
     }
 
-    public List<NEMAFile> getFilesByID(List<String> trackIDList, Set<NEMAMetadataEntry> constraint) throws SQLException{
+    public List<NemaFile> getFilesByID(List<String> trackIDList, Set<NemaMetadataEntry> constraint) throws SQLException{
         logger.info("Resolving files for " + trackIDList.size() + " tracks");
         Set<String> trackSet = new HashSet<String>();
         trackSet.addAll(trackIDList);
@@ -604,7 +604,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 //            }
 //            idx++;
         }
-        Map<String,NEMAFile> fileMap = new HashMap<String, NEMAFile>(trackIDList.size());
+        Map<String,NemaFile> fileMap = new HashMap<String, NemaFile>(trackIDList.size());
         List<Map<String, String>> data = getFileData(constraint);
         logger.info("Query returned data on " + data.size() + " files, filtering");
         Map<String, String> map;
@@ -627,7 +627,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
         logger.info("mapped " + fileMap.size() + " files to tracks");
 
-        List<NEMAFile> out = new ArrayList<NEMAFile>();
+        List<NemaFile> out = new ArrayList<NemaFile>();
         for (Iterator<String> it = trackIDList.iterator(); it.hasNext();){
             out.add(fileMap.get(it.next()));
         }
@@ -639,23 +639,23 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
 
 
-    public List<List<NEMAMetadataEntry>> getCollectionVersions(NEMACollection collection)
+    public List<List<NemaMetadataEntry>> getCollectionVersions(NemaCollection collection)
             throws SQLException{
         return getCollectionVersions(collection.getId());
     }
 
-    public List<List<NEMAMetadataEntry>> getCollectionVersions(int collectionId)
+    public List<List<NemaMetadataEntry>> getCollectionVersions(int collectionId)
             throws SQLException{
         throw new UnsupportedOperationException("Not supported yet.");
     }
     //this is not right it will return a row for ANY metadata rows for the collection
     //SELECT DISTINCT * FROM file_metadata WHERE id IN (SELECT file_metadata_id FROM file_file_metadata_link WHERE file_id IN (SELECT id FROM file WHERE track_id IN (SELECT id FROM track WHERE collection_id=?)))
 
-    public List<List<NEMAMetadataEntry>> getSetVersions(NEMASet set) throws SQLException{
+    public List<List<NemaMetadataEntry>> getSetVersions(NemaTrackList set) throws SQLException{
         return getSetVersions(set.getId());
     }
 
-    public List<List<NEMAMetadataEntry>> getSetVersions(int setId) throws SQLException{
+    public List<List<NemaMetadataEntry>> getSetVersions(int setId) throws SQLException{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -703,17 +703,17 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return retVal;
     }
 
-    private NEMACollection buildNEMACollection(Map<String, String> map){
-        return new NEMACollection(
+    private NemaCollection buildNEMACollection(Map<String, String> map){
+        return new NemaCollection(
                 Integer.valueOf(map.get("id")),
                 map.get("name"),
                 map.get("description")
             );
     }
-    private List<NEMACollection> buildNEMACollections(List<Map<String, String>> maps){
-        List<NEMACollection> retVal = null;
+    private List<NemaCollection> buildNEMACollections(List<Map<String, String>> maps){
+        List<NemaCollection> retVal = null;
         if(maps != null) {
-            retVal = new ArrayList<NEMACollection>(maps.size());
+            retVal = new ArrayList<NemaCollection>(maps.size());
             for(Map<String, String> data : maps) {
                 retVal.add(buildNEMACollection(data));
             }
@@ -721,11 +721,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return retVal;
     }
 
-    private NEMADataset buildNEMADataset(Map<String, String> map){
+    private NemaDataset buildNEMADataset(Map<String, String> map){
         int subject_meta_type = Integer.parseInt(map.get("subject_track_metadata_type_id"));
         int filter_meta_type = Integer.parseInt(map.get("filter_track_metadata_type_id"));
         //int task = Integer.parseInt(map.get("task_id"));
-        return new NEMADataset(
+        return new NemaDataset(
                 Integer.valueOf(map.get("id")),
                 map.get("name"),
                 map.get("description"),
@@ -743,10 +743,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 //                taskTypeMap.get(task)
             );
     }
-    private List<NEMADataset> buildNEMADataset(List<Map<String, String>> maps){
-        List<NEMADataset> retVal = null;
+    private List<NemaDataset> buildNEMADataset(List<Map<String, String>> maps){
+        List<NemaDataset> retVal = null;
         if(maps != null) {
-            retVal = new ArrayList<NEMADataset>(maps.size());
+            retVal = new ArrayList<NemaDataset>(maps.size());
             for(Map<String, String> data : maps) {
                 retVal.add(buildNEMADataset(data));
             }
@@ -755,10 +755,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    private NEMASet buildNEMASet(Map<String, String> map){
+    private NemaTrackList buildNEMASet(Map<String, String> map){
         int set_type = Integer.valueOf(map.get("set_type_id"));
 
-        return new NEMASet(
+        return new NemaTrackList(
                 Integer.valueOf(map.get("id")),
                 Integer.valueOf(map.get("dataset_id")),
                 set_type,
@@ -766,10 +766,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
                 Integer.valueOf(map.get("split_number"))
             );
     }
-    private List<NEMASet> buildNEMASet(List<Map<String, String>> maps){
-        List<NEMASet> retVal = null;
+    private List<NemaTrackList> buildNEMASet(List<Map<String, String>> maps){
+        List<NemaTrackList> retVal = null;
         if(maps != null) {
-            retVal = new ArrayList<NEMASet>(maps.size());
+            retVal = new ArrayList<NemaTrackList>(maps.size());
             for(Map<String, String> data : maps) {
                 retVal.add(buildNEMASet(data));
             }
@@ -778,15 +778,15 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    private NEMATrack buildNEMATrack(Map<String, String> map){
-        return new NEMATrack(
+    private NemaTrack buildNEMATrack(Map<String, String> map){
+        return new NemaTrack(
                 map.get("id")
             );
     }
-    private List<NEMATrack> buildNEMATrack(List<Map<String, String>> maps){
-        List<NEMATrack> retVal = null;
+    private List<NemaTrack> buildNEMATrack(List<Map<String, String>> maps){
+        List<NemaTrack> retVal = null;
         if(maps != null) {
-            retVal = new ArrayList<NEMATrack>(maps.size());
+            retVal = new ArrayList<NemaTrack>(maps.size());
             for(Map<String, String> data : maps) {
                 retVal.add(buildNEMATrack(data));
             }
@@ -795,17 +795,17 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    private NEMAFile buildNEMAFile(Map<String, String> map){
-        return new NEMAFile(
+    private NemaFile buildNEMAFile(Map<String, String> map){
+        return new NemaFile(
                 Integer.parseInt(map.get("id")),
                 map.get("track_id"),
                 map.get("path")
             );
     }
-    private List<NEMAFile> buildNEMAFile(List<Map<String, String>> maps){
-        List<NEMAFile> retVal = null;
+    private List<NemaFile> buildNEMAFile(List<Map<String, String>> maps){
+        List<NemaFile> retVal = null;
         if(maps != null) {
-            retVal = new ArrayList<NEMAFile>(maps.size());
+            retVal = new ArrayList<NemaFile>(maps.size());
             for(Map<String, String> data : maps) {
                 retVal.add(buildNEMAFile(data));
             }
@@ -814,17 +814,17 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     }
 
 
-    private NEMAMetadataEntry buildNEMAMetadataEntry(Map<String, String> map, Map<Integer,String> typesMap){
+    private NemaMetadataEntry buildNEMAMetadataEntry(Map<String, String> map, Map<Integer,String> typesMap){
         int type = Integer.parseInt(map.get("metadata_type_id"));
-        return new NEMAMetadataEntry(
+        return new NemaMetadataEntry(
             typesMap.get(type),
             map.get("value")
         );
     }
-    private List<NEMAMetadataEntry> buildNEMAMetadataEntry(List<Map<String, String>> maps, Map<Integer,String> typesMap){
-        List<NEMAMetadataEntry> retVal = null;
+    private List<NemaMetadataEntry> buildNEMAMetadataEntry(List<Map<String, String>> maps, Map<Integer,String> typesMap){
+        List<NemaMetadataEntry> retVal = null;
         if(maps != null) {
-            retVal = new ArrayList<NEMAMetadataEntry>(maps.size());
+            retVal = new ArrayList<NemaMetadataEntry>(maps.size());
             for(Map<String, String> data : maps) {
                 retVal.add(buildNEMAMetadataEntry(data,typesMap));
             }
@@ -878,34 +878,34 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         insertPublishedResult.executeUpdate();
     }
 
-    public List<PublishedResult> getPublishedResultsForDataset(int dataset_id)
+    public List<NemaPublishedResult> getPublishedResultsForDataset(int dataset_id)
             throws SQLException{
         getPublishedResultsForDataset.setInt(1,dataset_id);
         ResultSet rs = getPublishedResultsForDataset.executeQuery();
-        List<PublishedResult> out = new ArrayList<PublishedResult>();
+        List<NemaPublishedResult> out = new ArrayList<NemaPublishedResult>();
         while(rs.next()){
             int id = rs.getInt("id");
             String username = rs.getString("username");
             String name = rs.getString("system_name");
             String path = rs.getString("result_path");
             Timestamp time = rs.getTimestamp("last_updated");
-            out.add(new PublishedResult(id, username, name, path, time));
+            out.add(new NemaPublishedResult(id, username, name, path, time));
         }
         return out;
     }
 
-    public List<PublishedResult> getPublishedResultsForDataset(String username)
+    public List<NemaPublishedResult> getPublishedResultsForDataset(String username)
             throws SQLException{
         getPublishedResultsForUsername.setString(1,username);
         ResultSet rs = getPublishedResultsForUsername.executeQuery();
-        List<PublishedResult> out = new ArrayList<PublishedResult>();
+        List<NemaPublishedResult> out = new ArrayList<NemaPublishedResult>();
         while(rs.next()){
             int id = rs.getInt("id");
             String username2 = rs.getString("username");
             String name = rs.getString("system_name");
             String path = rs.getString("result_path");
             Timestamp time = rs.getTimestamp("last_updated");
-            out.add(new PublishedResult(id, username2, name, path, time));
+            out.add(new NemaPublishedResult(id, username2, name, path, time));
         }
         return out;
     }
@@ -915,11 +915,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         deletePublishedResult.execute();
     }
 
-    public void deletePublishedResult(PublishedResult result) throws SQLException{
+    public void deletePublishedResult(NemaPublishedResult result) throws SQLException{
         deletePublishedResult(result.getId());
     }
 
-    public List<PublishedResult> getPublishedResultsForUsername(String username)
+    public List<NemaPublishedResult> getPublishedResultsForUsername(String username)
             throws SQLException{
         throw new UnsupportedOperationException("Not supported yet.");
     }
