@@ -39,6 +39,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 		
 		setWorkingDir(workingDir_);
 		setOutputDir(outputDir_);
+		
 		trackIDToGT = new HashMap<String,NemaData>();
 		jobIDToFoldResults = new HashMap<String,List<List<NemaData>>>();
 		jobIDToName = new HashMap<String,String>();
@@ -49,33 +50,6 @@ public abstract class EvaluatorImpl implements Evaluator {
 	public EvaluatorImpl(File workingDir_, File outputDir_, 
 			NemaTask task_, NemaDataset dataset_)  throws FileNotFoundException{
 		_logger = Logger.getLogger(this.getClass().getName());
-		setWorkingDir(workingDir_);
-		setOutputDir(outputDir_);
-		trackIDToGT = new HashMap<String,NemaData>();
-		jobIDToFoldResults = new HashMap<String,List<List<NemaData>>>();
-		jobIDToName = new HashMap<String,String>();
-		task = task_;
-		dataset = dataset_;
-	}
-	
-	public EvaluatorImpl(Handler logHandler, File workingDir_, File outputDir_)  throws FileNotFoundException{
-		_logger = Logger.getLogger(this.getClass().getName());
-		_logger.addHandler(logHandler);
-		
-		setWorkingDir(workingDir_);
-		setOutputDir(outputDir_);
-
-		trackIDToGT = new HashMap<String,NemaData>();
-		jobIDToFoldResults = new HashMap<String,List<List<NemaData>>>();
-		jobIDToName = new HashMap<String,String>();
-		task = null;
-		dataset = null;
-	}
-	
-	public EvaluatorImpl(Handler logHandler, File workingDir_, File outputDir_, 
-			NemaTask task_, NemaDataset dataset_)  throws FileNotFoundException{
-		_logger = Logger.getLogger(this.getClass().getName());
-		_logger.addHandler(logHandler);
 		
 		setWorkingDir(workingDir_);
 		setOutputDir(outputDir_);
@@ -89,6 +63,10 @@ public abstract class EvaluatorImpl implements Evaluator {
 	
 	public Logger getLogger() {
 		return _logger;
+	}
+	
+	public void addLogHandler(Handler logHandler){
+		getLogger().addHandler(logHandler);
 	}
 
 	public void setOutputDir(File outputDir_) throws FileNotFoundException {

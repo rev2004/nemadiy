@@ -93,46 +93,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     }
     
     /**
-     * Constructs and instance of the ClassificationEvaluator. 
-     * 
-     * @param task_ A description of the task being evaluated. The task must at least contain 
-     * the metadata class to be predicted (N.B. the default class is 'genre'). The description 
-     * will be used on the HTML evaluation report and textual evaluation reports output.
-     * @param outputDir_ The directory to output results into.
-     * @param workingDir_ The working directory to use for any temp files.
-     * @param performMatlabStatSigTests_ A flag that determines whether the significance tests
-     * are performed (N.B. this is ignored if there is only one result to evaluate).
-     * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
-     * the significance tests.
-     * @param hierarchyFile_ If non-null the specified genre hierarchy will be used to discount 
-     * confusions and produce an extra evaluation metric that takes into account near misses.
-     * @param logger The logger to use.
-     * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
-     * found.
-     * @throws IOException Thrown if there is a problem reading the hierarchy file.
-     * 
-     */
-    public ClassificationEvaluator(
-    		NemaTask task_,
-            NemaDataset dataset_,
-            File outputDir_,
-            File workingDir_,
-            boolean performMatlabStatSigTests_,
-            File matlabPath_,
-            File hierarchyFile_,
-            Handler logHandler) 
-    		throws FileNotFoundException, IOException{
-
-        super(logHandler, workingDir_, outputDir_, task_, dataset_);
-        performMatlabStatSigTests = performMatlabStatSigTests_;
-        matlabPath = matlabPath_;
-        hierarchyFile = hierarchyFile_;
-        if(hierarchyFile != null) {
-            initHierachy();
-        }
-    }
-    
-    /**
      * Initialises the class names list from the ground-truth.
      */
     private void initClassNames() throws IllegalArgumentException{

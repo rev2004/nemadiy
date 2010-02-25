@@ -38,11 +38,6 @@ public class ClassificationTextFile extends EvalFileTypeImpl {
 		this.type = type;
 	}
 	
-	public ClassificationTextFile(Handler logHandler, String type) {
-		super(logHandler);
-		this.type = type;
-	}
-	
 	@Override
 	public List<NemaData> readFile(File theFile)
 			throws IllegalArgumentException, FileNotFoundException, IOException {

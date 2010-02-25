@@ -27,15 +27,14 @@ public abstract class EvalFileTypeImpl implements EvalFileType {
 		_logger = Logger.getLogger(this.getClass().getName());
 	}
 	
-	public EvalFileTypeImpl(Handler logHandler) {
-		_logger = Logger.getLogger(this.getClass().getName());
-		_logger.addHandler(logHandler);
-	}
-	
 	public Logger getLogger() {
 		return _logger;
 	}
 
+	public void addLogHandler(Handler logHandler){
+		getLogger().addHandler(logHandler);
+	}
+	
     //private static Pattern WINDOWS_PATH_MATCHER = Pattern.compile("[A-Z]:\\\\");
     public static String convertFileToMIREX_ID(File aFile){
         String name = aFile.getName();
