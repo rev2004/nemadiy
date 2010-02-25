@@ -9,8 +9,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.imirsel.nema.repository.DatasetListFileGenerator;
-import org.imirsel.nema.model.NEMAMetadataEntry;
-import org.imirsel.nema.model.PublishedResult;
+import org.imirsel.nema.model.NemaMetadataEntry;
+import org.imirsel.nema.model.NemaPublishedResult;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 
@@ -42,7 +42,7 @@ public class TestDataListFileGenerator {
 		
 		 List<File[]> traintest_split_files;
 		 File[] gt_and_featExt_files;
-		 Set<NEMAMetadataEntry>  file_encoding_constraint;
+		 Set<NemaMetadataEntry>  file_encoding_constraint;
 		 String[] names;
 		 String[] paths;
 			
@@ -90,13 +90,13 @@ public class TestDataListFileGenerator {
 		//Testing getting results for dataset id 
 		RepositoryClientConnectionPool pool = RepositoryClientConnectionPool.getInstance();
 		RepositoryClientInterface client = pool.getFromPool();
-		List<PublishedResult> resultList = null;
+		List<NemaPublishedResult> resultList = null;
 		try{
 		   resultList = client.getPublishedResultsForDataset(datasetID);
 		   names = new String[resultList.size()];
 		   paths = new String[resultList.size()];
 		   int ctr =0;
-			for (PublishedResult thisResult:resultList ){
+			for (NemaPublishedResult thisResult:resultList ){
 				//cout.println("Train File: " + thisFile[0].getCanonicalPath());
 				//cout.println("Test File: " + thisFile[1].getCanonicalPath());
 				paths[ctr]=thisResult.getResult_path();
@@ -117,13 +117,13 @@ public class TestDataListFileGenerator {
 		//Testing delete results 
 /*		RepositoryClientConnectionPool pool = RepositoryClientConnectionPool.getInstance();
 		RepositoryClientImpl client = pool.getFromPool();
-		List<PublishedResult> resultList = null;
+		List<NemaPublishedResult> resultList = null;
 		try{
 		   resultList = client.getPublishedResultsForDataset(dataset_id);
 		   names = new String[resultList.size()];
 		   paths = new String[resultList.size()];
 		   int ctr =0;
-			for (PublishedResult thisResult:resultList ){
+			for (NemaPublishedResult thisResult:resultList ){
 				//cout.println("Train File: " + thisFile[0].getCanonicalPath());
 				//cout.println("Test File: " + thisFile[1].getCanonicalPath());
 				paths[ctr]=thisResult.getResult_path();
