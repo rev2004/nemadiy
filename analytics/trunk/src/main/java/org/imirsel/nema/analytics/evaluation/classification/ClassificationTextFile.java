@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.imirsel.nema.model.*;
 import org.imirsel.nema.analytics.evaluation.*;
-import org.imirsel.nema.analytics.util.PathAndTagCleaner;
+import org.imirsel.nema.analytics.util.*;
 
 
 /**
@@ -34,12 +34,12 @@ public class ClassificationTextFile extends EvalFileTypeImpl {
 	String delimiter = "\t";
 	
 	public ClassificationTextFile(String type) {
-		super(Logger.getLogger(ClassificationTextFile.class.getName()));
+		super();
 		this.type = type;
 	}
 	
-	public ClassificationTextFile(Logger logger, String type) {
-		super(logger);
+	public ClassificationTextFile(Handler logHandler, String type) {
+		super(logHandler);
 		this.type = type;
 	}
 	

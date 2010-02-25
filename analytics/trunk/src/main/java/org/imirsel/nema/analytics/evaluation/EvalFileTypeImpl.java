@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 
@@ -22,16 +23,17 @@ public abstract class EvalFileTypeImpl implements EvalFileType {
 	protected Logger _logger;
 	private static String WINDOWS_PATH_REGEX = "[A-Z]:\\\\";
     
-	public EvalFileTypeImpl(Logger logger) {
-		setLogger(logger);
+	public EvalFileTypeImpl() {
+		_logger = Logger.getLogger(this.getClass().getName());
+	}
+	
+	public EvalFileTypeImpl(Handler logHandler) {
+		_logger = Logger.getLogger(this.getClass().getName());
+		_logger.addHandler(logHandler);
 	}
 	
 	public Logger getLogger() {
 		return _logger;
-	}
-
-	public void setLogger(Logger logger) {
-		_logger = logger;
 	}
 
     //private static Pattern WINDOWS_PATH_MATCHER = Pattern.compile("[A-Z]:\\\\");
