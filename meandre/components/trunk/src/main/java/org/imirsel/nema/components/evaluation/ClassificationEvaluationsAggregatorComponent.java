@@ -120,7 +120,7 @@ import org.meandre.core.ComponentExecutionException;
 			.getResultLocationForJob(ccp.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
 			ComponentExecutionException ex = new ComponentExecutionException("IOException occured when getting working and result directories!",e1);
-			_logger.log(Level.SEVERE, "Terminating execution",ex);
+			getLogger().log(Level.SEVERE, "Terminating execution",ex);
 			throw ex;
 		}
 		
@@ -188,7 +188,7 @@ import org.meandre.core.ComponentExecutionException;
 		    
 			//read Ground-truth
 	        org.imirsel.m2k.evaluation.classification.ClassificationTextFile reader = new 
-	        	org.imirsel.m2k.evaluation.classification.ClassificationTextFile(this._logger,metadata);
+	        	org.imirsel.m2k.evaluation.classification.ClassificationTextFile(this.getLogger(),metadata);
 			try {
 				List<DataObj> gt = reader.readFile(gtFile);
 				eval.setGroundTruth(gt);
@@ -222,12 +222,12 @@ import org.meandre.core.ComponentExecutionException;
 				throw ex;
 			}
 			
-			_logger.info("Evaluation Complete\n" +
+			getLogger().info("Evaluation Complete\n" +
 	        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
 			
 			
 		} catch (ComponentExecutionException e) {
-			_logger.log(Level.SEVERE, "Terminating execution", e);
+			getLogger().log(Level.SEVERE, "Terminating execution", e);
 			throw e;
 		}
 	}

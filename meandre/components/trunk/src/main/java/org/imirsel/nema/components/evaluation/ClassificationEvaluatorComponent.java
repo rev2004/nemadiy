@@ -244,7 +244,7 @@ import org.imirsel.nema.components.NemaComponent;
 			}
 			
 	    } catch (ComponentExecutionException e) {
-			_logger.log(Level.SEVERE, "Terminating execution", e);
+			getLogger().log(Level.SEVERE, "Terminating execution", e);
 			throw e;
 		}
         
