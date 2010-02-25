@@ -13,7 +13,7 @@ import java.io.Serializable;
  * 
  * @author kriswest
  */
-public class NEMATrack implements Serializable {
+public class NemaTrack implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
@@ -22,7 +22,7 @@ public class NEMATrack implements Serializable {
      * Constructor. The trackID must be specified.
      * @param id The trackID to set.
      */
-    public NEMATrack(String id){
+    public NemaTrack(String id){
         this.id = id;
     }
 
@@ -55,16 +55,16 @@ public class NEMATrack implements Serializable {
 
     @Override
     /**
-     * Returns true if the other Object is an instance of <code>NEMATrack</code> with an 
+     * Returns true if the other Object is an instance of <code>NemaTrack</code> with an 
      * identical trackID. The compariosn is case sensitive.
      * @param object the Object to compare to.
      * @return a flag indicating equality.
      */
     public boolean equals(Object object){
-        if (!(object instanceof NEMATrack)){
+        if (!(object instanceof NemaTrack)){
             return false;
         }
-        NEMATrack other = (NEMATrack)object;
+        NemaTrack other = (NemaTrack)object;
         if (id.equals(other.id)){
             return true;
         }

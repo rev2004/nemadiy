@@ -10,11 +10,11 @@ import java.io.Serializable;
 
 /**
  * A class representing a file referred to by the NEMA repository that is linked to
- * a trackID. The <code>NEMAFile</code> has a unique ID assigned by the repository DB
+ * a trackID. The <code>NemaFile</code> has a unique ID assigned by the repository DB
  * and a filesystem path.
  * @author kriswest
  */
-public class NEMAFile implements Serializable {
+public class NemaFile implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int id;
@@ -24,14 +24,14 @@ public class NEMAFile implements Serializable {
     /**
      * No arg constructor. All fields must be set manually.
      */
-    public NEMAFile(){
+    public NemaFile(){
     }
 
     /**
      * Constructor. Sets the ID field but not the trackID or path.
      * @param id the ID to set.
      */
-    public NEMAFile(int id){
+    public NemaFile(int id){
         this.id = id;
     }
 
@@ -41,7 +41,7 @@ public class NEMAFile implements Serializable {
      * @param trackId the trackID to set.
      * @param path the filesystem path to set.
      */
-    public NEMAFile(int id, String trackId, String path){
+    public NemaFile(int id, String trackId, String path){
         this.id = id;
         this.trackId = trackId;
         this.path = path;
@@ -64,7 +64,7 @@ public class NEMAFile implements Serializable {
     }
 
     /**
-     * Returns the trackID that the <code>NEMAFile</code> corresponds to.
+     * Returns the trackID that the <code>NemaFile</code> corresponds to.
      * @return the trackID.
      */
     public String getTrackId(){
@@ -72,7 +72,7 @@ public class NEMAFile implements Serializable {
     }
 
     /**
-     * Sets the trackID that the <code>NEMAFile</code> corresponds to.
+     * Sets the trackID that the <code>NemaFile</code> corresponds to.
      * @param trackId
      */
     public void setTrackId(String trackId){
@@ -80,7 +80,7 @@ public class NEMAFile implements Serializable {
     }
 
     /**
-     * Returns the filesystem path of the <code>NEMAFile</code> Object.
+     * Returns the filesystem path of the <code>NemaFile</code> Object.
      * @return the filesystem path.
      */
     public String getPath(){
@@ -88,7 +88,7 @@ public class NEMAFile implements Serializable {
     }
 
     /**
-     * Returns a <code>File</code> Object representing the filesystem path of the <code>NEMAFile</code> Object.
+     * Returns a <code>File</code> Object representing the filesystem path of the <code>NemaFile</code> Object.
      * @return a <code>File</code> Object representing the filesystem path.
      */
     public File getFile(){
@@ -96,7 +96,7 @@ public class NEMAFile implements Serializable {
     }
 
     /**
-     * Sets the filesystem path of the <code>NEMAFile</code> Object.
+     * Sets the filesystem path of the <code>NemaFile</code> Object.
      * @param path the path to set.
      */
     public void setPath(String path){
@@ -105,7 +105,7 @@ public class NEMAFile implements Serializable {
 
     @Override
     /**
-     * HashCodes are purely based on the id of the <code>NEMAFile</code> Object.
+     * HashCodes are purely based on the id of the <code>NemaFile</code> Object.
      * @return the HashCode.
      */
     public int hashCode(){
@@ -114,15 +114,15 @@ public class NEMAFile implements Serializable {
 
     @Override
     /**
-     * Returns true if the other Object is a <code>NEMAFile</code> instance with the same ID set.
+     * Returns true if the other Object is a <code>NemaFile</code> instance with the same ID set.
      * @param object the Object to compare to.
      * @return a boolean indicating equality.
      */
     public boolean equals(Object object){
-        if (!(object instanceof NEMAFile)){
+        if (!(object instanceof NemaFile)){
             return false;
         }
-        NEMAFile other = (NEMAFile)object;
+        NemaFile other = (NemaFile)object;
         if (id == other.id){
             return true;
         }

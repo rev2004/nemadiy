@@ -28,128 +28,34 @@ import java.util.Set;
  * 
  * @author kris.west@gmail.com
  */
-public class DataObj implements Serializable{
+public class NemaData implements Serializable{
 
     public static final long serialVersionUID = -1234567894463456789L;
-    
-    //Metadata key constants
-    /** Constant definition for metadata key: column label     */
-    public final static String PROP_COLUMN_LABELS = "columnLabels";
-    /** Constant definition for metadata key: file location     */
-    public final static String PROP_FILE_LOCATION  = "fileLocation";
-    /** Constant definition for metadata key: directory name     */
-    public final static String PROP_DIRECTORY_NAME  = "dirName";
-
-    /** Constant definition for performance metadata.     */
-    public final static String PROP_PERF = "Performance";
-    /** Constant definition for algorithm name (used as an identifier in evaluations).     */
-    public final static String PROP_ALG_NAME = "Algorithm name";
-    /** Constant definition for      */
-    public final static String PATH_TO_ARTIST_MAP = "Path to artist map";
-    
-    
-    //Evaluation results constants
-    /** Constant definition for metadata key: Evaluation report*/
-    public static final String SYSTEM_RESULTS_REPORT = "Single system rsult evaluation report";
-    
-    
-    //File format constants
-    /** Constant definition for section divider used in ASCII file     */
-    public final static String DIVIDER = "-===-";
-    /** Constant definition for SEPARATOR used in ASCII file     */
-    public final static String SEPARATOR = "\t";
-    /** Constant definition for header used in ASCII file     */
-    public final static String fileHeader = "M2K DataObj (8th Feb 2010)";
-    
-    //Test/Train classification evaluator constants
-    public final static String CLASSIFICATION_EXPERIMENT_CLASSNAMES = "Classification Experiment Classnames";
-    public final static String CLASSIFICATION_CONFUSION_MATRIX_RAW = "Classification Confusion Matrix - raw";
-    public final static String CLASSIFICATION_CONFUSION_MATRIX_PERCENT = "Classification Confusion Matrix - percent";
-    public final static String CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW = "Classification Discounted Confusion Matrix - raw";
-    public final static String CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT = "Classification Discounted Confusion Matrix - percent";
-    public final static String CLASSIFICATION_ACCURACY = "Classification Accuracy";
-    public final static String CLASSIFICATION_DISCOUNTED_ACCURACY = "Classification Discounted Accuracy";
-    public final static String CLASSIFICATION_NORMALISED_ACCURACY = "Normalised Classification Accuracy";
-    public final static String CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY = "Normalised Classification Discounted Accuracy";
-    
-    
-    //Tag classification evaluator constants
-    /** Constant definition for tag classification data in the form of a 
-     * <code>HashMap<String,HashSet<String>></code> - mapping paths to a set
-     * of relevant tags. */
-    public static final String TAG_BINARY_RELEVANCE_MAP = "Tag classification binary relevance map";
-    /** Constant definition for the list of tag names appearing in the data in 
-     * the form of a <code>HashSet<String></code>. */
-    public static final String TAG_NAME_SET = "Tag name set";
-    /** Constant definition for tag classification data in the form of a 
-     * <code>HashMap<String,HashMap<String,Double>></code> - mapping paths
-     * to a map linking tags to their affinity values. */
-    public static final String TAG_AFFINITY_MAP = "Tag classification affinity map";
-    
-    
-    public static final String TAG_LIST = "Tag list";
-    
-    public static final String TAG_BINARY_ACCURACY_MAP = "Tag classification binary relevance accuracy map";
-    public static final String TAG_BINARY_POS_ACCURACY_MAP = "Tag classification binary relevance positive example accuracy map";
-    public static final String TAG_BINARY_NEG_ACCURACY_MAP = "Tag classification binary relevance negative example accuracy map";
-    public static final String TAG_BINARY_PRECISION_MAP = "Tag classification binary relevance precision map";
-    public static final String TAG_BINARY_RECALL_MAP = "Tag classification binary relevance recall map";
-    public static final String TAG_BINARY_FMEASURE_MAP = "Tag classification binary relevance fMeasure map";
-    
-    public static final String TAG_BINARY_TRACK_ACCURACY_MAP = "Tag track classification binary relevance accuracy map";
-    public static final String TAG_BINARY_TRACK_POS_ACCURACY_MAP = "Tag track classification binary relevance positive example accuracy map";
-    public static final String TAG_BINARY_TRACK_NEG_ACCURACY_MAP = "Tag track classification binary relevance negative example accuracy map";
-    public static final String TAG_BINARY_TRACK_PRECISION_MAP = "Tag track classification binary relevance precision map";
-    public static final String TAG_BINARY_TRACK_RECALL_MAP = "Tag track classification binary relevance recall map";
-    public static final String TAG_BINARY_TRACK_FMEASURE_MAP = "Tag track classification binary relevance fMeasure map";
-    
-    
-    public static final String TAG_BINARY_OVERALL_ACCURACY = "Tag classification binary relevance overall accuracy";
-    public static final String TAG_BINARY_OVERALL_PRECISION = "Tag classification binary relevance overall precision";
-    public static final String TAG_BINARY_OVERALL_RECALL = "Tag classification binary relevance overall recall";
-    public static final String TAG_BINARY_OVERALL_FMEASURE = "Tag classification binary relevance overall fMeasure";
-    
-    public static final String TAG_AFFINITY_AUC_ROC = "Tag classification affinity tag AUC-ROC map";
-    public static final String TAG_AFFINITY_ROC_DATA = "Tag classification affinity tag ROC data points map";
-    public static final String TAG_AFFINITY_CLIP_AUC_ROC = "Tag classification affinity clip AUC-ROC map";
-    public static final String TAG_AFFINITY_CLIP_ROC_DATA = "Tag classification affinity clip ROC data points map";
-    public static final String TAG_AFFINITY_OVERALL_AUC_ROC = "Tag classification affinity overall AUC-ROC";
-    public static final String TAG_AFFINITY_OVERALL_ROC_DATA = "Tag classification affinity overall ROC data points";
-    public static final String TAG_AFFINITY_TAG_AFFINITY_DATAPOINTS = "Tag classification affinity data points map";
-    
-    public static final String TAG_AFFINITY_CLIP_PRECISION_AT_N = "Tag classification affinity clip precision at N map";
-    public static final String TAG_AFFINITY_OVERALL_PRECISION_AT_N = "Tag classification affinity overall precision at N";
-    
-    public static final String TAG_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples map";
-    public static final String TAG_NUM_NEGATIVE_EXAMPLES = "Tag classification number of negative examples map";
-    
-    public static final String OVERALL_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples overall";
-    public static final String OVERALL_NUM_NEGATIVE_EXAMPLES = "Tag classification number of negative examples overall";
     
     /**
      * The metadata hashmap.
      */
     private HashMap<String,Object> metadata;
     
-    /** Creates a new instance of DataObj */
-    public DataObj() {
+    /** Creates a new instance of NemaData */
+    public NemaData() {
         metadata = new HashMap<String,Object>();
     }
     
-    /** Creates a new instance of DataObj with the file location as metadata
+    /** Creates a new instance of NemaData with the file location as metadata
      *  @param fileLocation Original location of evaluation file, used as an identifier
      */
-    public DataObj(String fileLocation) {
+    public NemaData(String fileLocation) {
         metadata = new HashMap<String,Object>();
-        metadata.put(PROP_FILE_LOCATION, fileLocation);
+        metadata.put(NemaDataConstants.PROP_FILE_LOCATION, fileLocation);
     }
     
     /**
-     * Creates a new instance of DataObj which is a shallow copy of 
-     * the DataObj passed as a parameter
-     * @param oldObj The DataObj to copy
+     * Creates a new instance of NemaData which is a shallow copy of 
+     * the NemaData passed as a parameter
+     * @param oldObj The NemaData to copy
      */
-    public DataObj(DataObj oldObj) {
+    public NemaData(NemaData oldObj) {
         //copy metadata
         metadata = new HashMap<String,Object>();
         Set<String> keys = oldObj.metadata.keySet();
@@ -172,47 +78,47 @@ public class DataObj implements Serializable{
     }
     
     /**
-     *  Compares two DataObj Objects for equality based on their 
+     *  Compares two NemaData Objects for equality based on their 
      *  file location metadata.
-     *  @param otherObj The DataObj to compare this Object with.
+     *  @param otherObj The NemaData to compare this Object with.
      *  @return An integer indicating equality or ordering.
      */
     public int compareTo(Object otherObj) {
         try {
-            return this.getStringMetadata(DataObj.PROP_FILE_LOCATION).compareTo(((DataObj)otherObj).getStringMetadata(DataObj.PROP_FILE_LOCATION));
+            return this.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION).compareTo(((NemaData)otherObj).getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
         } catch (IllegalArgumentException ex) {
-            throw new IllegalArgumentException("Unable to compare DataObj Objects with filelocation metadata",ex);
+            throw new IllegalArgumentException("Unable to compare NemaData Objects with filelocation metadata",ex);
         }
     }
     
     /**
-     *  Compares two DataObj Objects for equality based on their 
+     *  Compares two NemaData Objects for equality based on their 
      *  filelocation metadata.
-     *  @param otherObj The DataObj to compare this Object with.
+     *  @param otherObj The NemaData to compare this Object with.
      *  @return A boolean indicating equality.
      */
     public boolean equals(Object otherObj) {
         try {
-            return this.getStringMetadata(DataObj.PROP_FILE_LOCATION).equals(((DataObj)otherObj).getStringMetadata(DataObj.PROP_FILE_LOCATION));
+            return this.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION).equals(((NemaData)otherObj).getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
         } catch (IllegalArgumentException ex) {
-            throw new IllegalArgumentException("Unable to compare DataObj Objects with filelocation metadata",ex);
+            throw new IllegalArgumentException("Unable to compare NemaData Objects with filelocation metadata",ex);
         }
     }
     
     /**
-     * Clones the DataObj object including the metadata HashMap keys. However, values are not cloned.
+     * Clones the NemaData object including the metadata HashMap keys. However, values are not cloned.
      * 
-     * @return A clone of this DataObj object.
+     * @return A clone of this NemaData object.
      */
     public Object clone() throws java.lang.CloneNotSupportedException {
-        return (new DataObj(this));
+        return (new NemaData(this));
     }
     
     /** Returns a File Object for the path specified by the file location metadata.
      *  @return a File Object for the path specified by the file location metadata.
      */
     public File getFile() throws IllegalArgumentException {
-        return new File(this.getStringMetadata(DataObj.PROP_FILE_LOCATION));
+        return new File(this.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
     }
     
     /**
@@ -239,7 +145,7 @@ public class DataObj implements Serializable{
     }
     
     /**
-     * Lists all metadata keys for this DataObj Object.
+     * Lists all metadata keys for this NemaData Object.
      * @return An array of Strings representing the available metadata.
      */
     public String[] metadataKeys() {
@@ -367,54 +273,54 @@ public class DataObj implements Serializable{
     }
     
     /**
-     * Reads a DataObj Object from an ASCII file in the format 
+     * Reads a NemaData Object from an ASCII file in the format 
      * produced by the <code>write</code> method.
-     * @param theFile The File object to load the DataObj from.
+     * @param theFile The File object to load the NemaData from.
      * @throws java.io.IOException Thrown if an IOException occurs.
      * @throws java.lang.ClassNotFoundException Thrown if an attempt load an 
      * unknown class is made.
-     * @return The loaded DataObj.
+     * @return The loaded NemaData.
      */
-    public static DataObj read(File theFile) throws java.io.IOException, ClassNotFoundException, IllegalArgumentException {
+    public static NemaData read(File theFile) throws java.io.IOException, ClassNotFoundException, IllegalArgumentException {
         //Check readLine() behaviour is valid... could be more robust?
-        DataObj dataObject = new DataObj();
+        NemaData dataObject = new NemaData();
         
         if (!theFile.exists()) {
-            throw new FileNotFoundException("DataObj.read(): The specified file does not exist!\n File: " + theFile.getPath());
+            throw new FileNotFoundException("NemaData.read(): The specified file does not exist!\n File: " + theFile.getPath());
         }
         if (theFile.isDirectory()) {
-            throw new IllegalArgumentException("DataObj.read(): The specified file is a directory and therefore cannot be read!\n Path: " + theFile.getPath());
+            throw new IllegalArgumentException("NemaData.read(): The specified file is a directory and therefore cannot be read!\n Path: " + theFile.getPath());
         }
         if (!theFile.canRead()) {
-            throw new IllegalArgumentException("DataObj.read(): The specified file exists but cannot be read!\n File: " + theFile.getPath());
+            throw new IllegalArgumentException("NemaData.read(): The specified file exists but cannot be read!\n File: " + theFile.getPath());
         }
         
         BufferedReader textBuffer;
         try {
             textBuffer = new BufferedReader( new FileReader(theFile) );
         } catch(java.io.FileNotFoundException fnfe) {
-            throw new IllegalArgumentException("DataObj.read(): The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n File: " + theFile.getPath());
+            throw new IllegalArgumentException("NemaData.read(): The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n File: " + theFile.getPath());
         }
         String line = null;
         try {
             //check headers
             line = textBuffer.readLine();
-            if (!line.equals(fileHeader)) {
-                System.out.println("WARNING: DataObj.read(): Doesn't match the current format specification\nFile: " + theFile.getPath() + "\nCurrent spec: " + fileHeader + "\nFile spec: " + line);
+            if (!line.equals(NemaDataConstants.fileHeader)) {
+                System.out.println("WARNING: NemaData.read(): Doesn't match the current format specification\nFile: " + theFile.getPath() + "\nCurrent spec: " + NemaDataConstants.fileHeader + "\nFile spec: " + line);
             }
             line = textBuffer.readLine();
-            if (!line.equals(DIVIDER)) {
-                throw new IllegalArgumentException("DataObj.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
+            if (!line.equals(NemaDataConstants.DIVIDER)) {
+                throw new IllegalArgumentException("NemaData.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
             }
             
-            String[] theColumnLabels = null;
+//            String[] theColumnLabels = null;
             
             //read metadata
             line = textBuffer.readLine();
             if (!line.equals("null")) {
                 //read metadata
-                while(!line.equals(DIVIDER)) {//Format: key className length (data1 + SEPARATOR ... datalength)
-                    String[] comps = line.split(SEPARATOR);
+                while(!line.equals(NemaDataConstants.DIVIDER)) {//Format: key className length (data1 + SEPARATOR ... datalength)
+                    String[] comps = line.split(NemaDataConstants.SEPARATOR);
                     if (comps[1].equals("null")){
                         //ignore line
                     } else if (comps[2].equals("-1")) {
@@ -429,7 +335,7 @@ public class DataObj implements Serializable{
                         }
                     } else {
                         if (comps.length != (3 + Integer.parseInt(comps[2]))) {
-                            throw new IllegalArgumentException("DataObj.read(): The file being read is not in the correct format (wrong number of items in metadata array)!\n File: " + theFile.getPath() + "\nLine: " + line);
+                            throw new IllegalArgumentException("NemaData.read(): The file being read is not in the correct format (wrong number of items in metadata array)!\n File: " + theFile.getPath() + "\nLine: " + line);
                         }
                         //init array
                         Object anArray = null;
@@ -458,14 +364,14 @@ public class DataObj implements Serializable{
                 }
             } else {
                 line = textBuffer.readLine();
-                if (!line.equals(DIVIDER)) {
-                    throw new IllegalArgumentException("DataObj.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
+                if (!line.equals(NemaDataConstants.DIVIDER)) {
+                    throw new IllegalArgumentException("NemaData.read(): The file being read is not in the correct format!\n File: " + theFile.getPath());
                 }
             }
             
             textBuffer.close();
         } catch (java.io.IOException ioe) {
-            throw new java.io.IOException("DataObj.read(): An IOException occured while reading file: " + theFile.getPath() + "\n" + ioe);
+            throw new java.io.IOException("NemaData.read(): An IOException occured while reading file: " + theFile.getPath() + "\n" + ioe);
         } catch (java.lang.NullPointerException npe) {
             npe.printStackTrace();
             throw new IllegalArgumentException("NullPointerException caused by: " + theFile.getCanonicalPath());
@@ -478,23 +384,23 @@ public class DataObj implements Serializable{
     }
     
     /**
-     * Creates a String representation of a DataObj Object
-     * @return a String representation of a DataObj Object
+     * Creates a String representation of a NemaData Object
+     * @return a String representation of a NemaData Object
      */
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-        buffer.append(fileHeader + "\n" + DIVIDER + "\n");
+        buffer.append(NemaDataConstants.fileHeader + "\n" + NemaDataConstants.DIVIDER + "\n");
         
         if (metadata == null) {
             buffer.append("null\n");
         } else {
-            Set keys = this.metadata.keySet();
-            Object[] keysArray = keys.toArray();
+            Set<String> keys = this.metadata.keySet();
+            String[] keysArray = keys.toArray(new String[keys.size()]);
             // sort the keys so items are always output
             // in the same order
             Arrays.sort(keysArray);
             for (int i=0;i<keysArray.length;i++) {
-                buffer.append((String)keysArray[i] + SEPARATOR);
+                buffer.append((String)keysArray[i] + NemaDataConstants.SEPARATOR);
                 int length = 0;
                 if (metadata.get(keysArray[i]) == null) {
                     buffer.append("null\n");
@@ -502,7 +408,7 @@ public class DataObj implements Serializable{
                     //Supports only int array, String array and double array types
                     String compName = metadata.get(keysArray[i]).getClass().getComponentType().getName();
                     if ((!compName.equals("int"))&&(!compName.equals("double"))&&(!compName.equals("java.lang.String"))) {
-                        throw new IllegalArgumentException("DataObj.write(): Only intger, double and String array types are supported at present, contact developers.");
+                        throw new IllegalArgumentException("NemaData.write(): Only intger, double and String array types are supported at present, contact developers.");
                     }
                     
                     if (compName.equals("int")) {
@@ -512,15 +418,15 @@ public class DataObj implements Serializable{
                     } else if (compName.equals("double")) {
                         length = ((double[])metadata.get(keysArray[i])).length;
                     }
-                    buffer.append(compName + SEPARATOR + length  + SEPARATOR);
+                    buffer.append(compName + NemaDataConstants.SEPARATOR + length  + NemaDataConstants.SEPARATOR);
                     
                     for (int j=0;j<length;j++) {
                         if (compName.equals("int")) {
-                            buffer.append(((int[])metadata.get(keysArray[i]))[j] + SEPARATOR);
+                            buffer.append(((int[])metadata.get(keysArray[i]))[j] + NemaDataConstants.SEPARATOR);
                         } else if (compName.equals("java.lang.String")) {
-                            buffer.append(((String[])metadata.get(keysArray[i]))[j] + SEPARATOR);
+                            buffer.append(((String[])metadata.get(keysArray[i]))[j] + NemaDataConstants.SEPARATOR);
                         } else if (compName.equals("double")) {
-                            buffer.append(((double[])metadata.get(keysArray[i]))[j] + SEPARATOR);
+                            buffer.append(((double[])metadata.get(keysArray[i]))[j] + NemaDataConstants.SEPARATOR);
                         }
                     }
                     buffer.append("\n");
@@ -528,7 +434,7 @@ public class DataObj implements Serializable{
                     //Supports only Integer, String and Double data types
                     String className = metadata.get(keysArray[i]).getClass().getName();
                     length = -1;
-                    buffer.append(className + SEPARATOR + length  + SEPARATOR);
+                    buffer.append(className + NemaDataConstants.SEPARATOR + length  + NemaDataConstants.SEPARATOR);
                     if (className.equals("java.lang.Integer")) {
                         buffer.append(((Integer)metadata.get(keysArray[i])).intValue() + "\n");
                     } else if (className.equals("java.lang.String")) {
@@ -539,12 +445,12 @@ public class DataObj implements Serializable{
                 } //TODO add support for collections and other objects that can be marshalled to a String
             }
         }
-        buffer.append(DIVIDER + "\n");
+        buffer.append(NemaDataConstants.DIVIDER + "\n");
         return buffer.toString();
     }
     
     /**
-     * Writes a DataObj Object to an ASCII file.
+     * Writes a NemaData Object to an ASCII file.
      * @param theFile The file to write the Object to.
      * @throws java.io.IOException Thrown if an IO error occurs, such as being 
      * unable to create the File or being unable to write to it.
@@ -556,7 +462,7 @@ public class DataObj implements Serializable{
         try {
             textBuffer = new BufferedWriter( new FileWriter(theFile, false) );
         } catch (java.io.IOException ioe) {
-            throw new java.io.IOException("DataObj.write(): An IOException occured while opening file: " + theFile.getPath() + " for writing\n" + ioe);
+            throw new java.io.IOException("NemaData.write(): An IOException occured while opening file: " + theFile.getPath() + " for writing\n" + ioe);
         }
         
         textBuffer.write(this.toString());

@@ -9,13 +9,13 @@ import java.io.Serializable;
 
 /**
  * A class representing a set of tracks from the NEMA repository. Sets are primarily used to 
- * provide lists of tracks for use with <code>NEMADataset</code>s. Hence, <code>NEMASet</code>
- * Objects have a unique ID, a <code>NEMADataset</code> ID to which they belong, set type information
+ * provide lists of tracks for use with <code>NemaDataset</code>s. Hence, <code>NemaTrackList</code>
+ * Objects have a unique ID, a <code>NemaDataset</code> ID to which they belong, set type information
  * and a split number (identifying which split within the dataset that the set belongs to). 
  * 
  * @author kriswest
  */
-public class NEMASet implements Serializable {
+public class NemaTrackList implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private int id;
@@ -28,7 +28,7 @@ public class NEMASet implements Serializable {
      * Constructor. Sets only the set ID. All other parameters must be manually set if they are used.
      * @param id The ID to set.
      */
-    public NEMASet(int id){
+    public NemaTrackList(int id){
         this.id = id;
     }
 
@@ -40,7 +40,7 @@ public class NEMASet implements Serializable {
      * @param setTypeName The type name corresponding to the set type ID (e.g. subset, train, test etc.)
      * @param splitNumber The split number within the dataset to which the set belongs. 
      */
-    public NEMASet(int id, int datasetId, int setTypeId, String setTypeName,
+    public NemaTrackList(int id, int datasetId, int setTypeId, String setTypeName,
                    int splitNumber){
         this.id = id;
         this.datasetId = datasetId;
@@ -66,7 +66,7 @@ public class NEMASet implements Serializable {
     }
 
     /**
-     * Returns the ID of the <code>NEMADataset</code> that the set belongs to.
+     * Returns the ID of the <code>NemaDataset</code> that the set belongs to.
      * @return the ID of the dataset.
      */
     public int getDatasetId(){
@@ -74,7 +74,7 @@ public class NEMASet implements Serializable {
     }
 
     /**
-     * Sets the ID of the <code>NEMADataset</code> that the set belongs to.
+     * Sets the ID of the <code>NemaDataset</code> that the set belongs to.
      * @param datasetId the dataset ID to set.
      */
     public void setDatasetId(int datasetId){
@@ -140,15 +140,15 @@ public class NEMASet implements Serializable {
 
     @Override
     /**
-     * Returns true if the other object is an instance of <code>NEMASet</code> and has the same ID.
+     * Returns true if the other object is an instance of <code>NemaTrackList</code> and has the same ID.
      * @param object The Object to compare to.
      * @return a boolean indicating equality.
      */
     public boolean equals(Object object){
-        if (!(object instanceof NEMASet)){
+        if (!(object instanceof NemaTrackList)){
             return false;
         }
-        NEMASet other = (NEMASet)object;
+        NemaTrackList other = (NemaTrackList)object;
         if (id == other.id){
             return true;
         }

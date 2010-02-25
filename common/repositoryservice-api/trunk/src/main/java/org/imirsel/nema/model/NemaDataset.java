@@ -8,8 +8,8 @@ package org.imirsel.nema.model;
 import java.io.Serializable;
 
 /**
- * A class representing a NEMA dataset. <code>NEMADataset</code>s have an ID, name, description, 
- * a link to a <code>NEMASet</code> defining the tracks in the set, a number of splits in the set 
+ * A class representing a NEMA dataset. <code>NemaDataset</code>s have an ID, name, description, 
+ * a link to a <code>NemaTrackList</code> defining the tracks in the set, a number of splits in the set 
  * (e.g. a number of paired test and train sets), a number of sets per split (e.g. 2 for a classic
  * train/test classification experiment, 1 for an analysis dataset), a subject metadata type id (e.g.
  * 1 for genre, -1 for none) which experiments based on the dataset will be based on (e.g. genre
@@ -20,22 +20,28 @@ import java.io.Serializable;
  *
  * @author kriswest
  */
-public class NEMADataset implements Serializable {
+public class NemaDataset implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private int id;
-    private String name;
-    private String description;
-    private int subsetSetId;
-    private int numSplits;
-    private int numSetPerSplit;
-    private String splitClass;
-    private String splitParametersString;
-    private int subjectTrackMetadataId;
-    private String subjectTrackMetadataName;
-    private int filterTrackMetadataId;
-    private String filterTrackMetadataName;
+    private int id = -1;
+    private String name = null;
+    private String description = null;
+    private int subsetSetId = -1;
+    private int numSplits = -1;
+    private int numSetPerSplit = -1;
+    private String splitClass = null;
+    private String splitParametersString = null;
+    private int subjectTrackMetadataId = -1;
+    private String subjectTrackMetadataName = null;
+    private int filterTrackMetadataId = -1;
+    private String filterTrackMetadataName = null;
 
+    /**
+     * No arg constructor.
+     */
+    public NemaDataset(){
+    	
+    }
 
     /**
      * Constructor. The ID is specified, all other fields are null and must be set manually if
@@ -43,7 +49,7 @@ public class NEMADataset implements Serializable {
      * 
      * @param id The dataset ID to set.
      */
-    public NEMADataset(int id){
+    public NemaDataset(int id){
         this.id = id;
     }
 
@@ -68,7 +74,7 @@ public class NEMADataset implements Serializable {
 	 * only appears in either train or test sets). 
      * @param filterTrackMetadataName The filter metadata type name.
      */
-    public NEMADataset(int id, String name, String description, 
+    public NemaDataset(int id, String name, String description, 
                        int subsetSetId, int numSplits, int numSetPerSplit,
                        String splitClass, String splitParametersString,
                        int subjectTrackMetadataId, String subjectTrackMetadataName,
@@ -136,18 +142,18 @@ public class NEMADataset implements Serializable {
     }
 
     /**
-     * Returns the ID of the <code>NEMASet</code> defining the subset of tracks under the NEMA repository 
+     * Returns the ID of the <code>NemaTrackList</code> defining the subset of tracks under the NEMA repository 
      * in the dataset.
-     * @return The ID of the <code>NEMASet</code> defining the subset of tracks.
+     * @return The ID of the <code>NemaTrackList</code> defining the subset of tracks.
      */
     public int getSubsetSetId(){
         return subsetSetId;
     }
 
     /**
-     * Sets the ID of the <code>NEMASet</code> defining the subset of tracks under the NEMA repository 
+     * Sets the ID of the <code>NemaTrackList</code> defining the subset of tracks under the NEMA repository 
      * in the dataset.
-     * @param subsetSetId Sets the ID of the <code>NEMASet</code> defining the subset of tracks.
+     * @param subsetSetId Sets the ID of the <code>NemaTrackList</code> defining the subset of tracks.
      */
     public void setSubsetSetId(int subsetSetId){
         this.subsetSetId = subsetSetId;
@@ -163,7 +169,7 @@ public class NEMADataset implements Serializable {
 
     /**
      * Sets the number of splits in the dataset. Must be kept in sync with the split numbers
-     * stored against the NEMASet Objects linked to the dataset in the repository.
+     * stored against the NemaTrackList Objects linked to the dataset in the repository.
      * @param numSplits the number of splits in the dataset to set.
      */
     public void setNumSplits(int numSplits){
@@ -180,7 +186,7 @@ public class NEMADataset implements Serializable {
 
     /**
      * Sets the number of sets in each split of the dataset. Must be kept in sync with the 
-     * NEMASet Objects linked to the dataset in the repository.
+     * NemaTrackList Objects linked to the dataset in the repository.
      * @param numSetPerSplit the number of sets in each split of the dataset to set.
      */
     public void setNumSetPerSplit(int numSetPerSplit){
@@ -294,16 +300,16 @@ public class NEMADataset implements Serializable {
 
     @Override
     /**
-     * Returns true if the other Object is an instance of <code>NEMADataset</code> with an
+     * Returns true if the other Object is an instance of <code>NemaDataset</code> with an
      * identical ID.
      * @param object the object to compare to.
      * @return a boolean indicating equality.
      */
     public boolean equals(Object object){
-        if (!(object instanceof NEMADataset)){
+        if (!(object instanceof NemaDataset)){
             return false;
         }
-        NEMADataset other = (NEMADataset)object;
+        NemaDataset other = (NemaDataset)object;
         if (id == other.id){
             return true;
         }
