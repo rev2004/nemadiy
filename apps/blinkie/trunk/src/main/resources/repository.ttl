@@ -1,0 +1,2480 @@
+@prefix meandre:  <http://www.meandre.org/ontology/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dc:      <http://purl.org/dc/elements/1.1/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+<http://www.seasrproject.org/components/servicehead/servicehead/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "service call for input to webUI fragment"^^xsd:string ;
+      meandre:instance_name
+              "ServiceHead"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/servicehead> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/servicehead/servicehead/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/servicehead/servicehead/blinkie20/property/wb_top_pix_pos> .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20/property/windowSize>
+      rdf:type meandre:property ;
+      meandre:key "windowSize"^^xsd:string ;
+      meandre:value "10.0"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/45>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/dct/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/forkx2/input/input_object> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/dct/dct/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/forkx2/forkx2/blinkie20> .
+
+<http://www.seasrproject.org/components/differencebetweenframes/differencebetweenframes/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "3"^^xsd:string .
+
+<http://www.seasrproject.org/components/parsestringforfilenames/parsestringforfilenames/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "66"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/39>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx5/output/output_object_1> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/zerocrossings/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx5/forkx5/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/zerocrossings/zerocrossings/blinkie20> .
+
+<http://www.seasrproject.org/components/forkx2/forkx2/blinkie20/property/Custom_Copy_Method_Name>
+      rdf:type meandre:property ;
+      meandre:key "Custom_Copy_Method_Name"^^xsd:string ;
+      meandre:value ""^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/10>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/spectralrolloff/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_2> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/spectralrolloff/spectralrolloff/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_6/blinkie20> .
+
+<http://www.seasrproject.org/components/flux/flux/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "compute the flux of an array stream"^^xsd:string ;
+      meandre:instance_name
+              "Flux"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/flux> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/flux/flux/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/flux/flux/blinkie20/property/verbose> , <http://www.seasrproject.org/components/flux/flux/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/forkx5/output/output_object_4>
+      rdf:type meandre:data_port ;
+      dc:description "output object"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/forkx5/output/output_object_4"^^xsd:string ;
+      meandre:name "output_object_4"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/33>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_1> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_1/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_2/blinkie20> .
+
+<http://www.seasrproject.org/components/audiofileread/property/downmix>
+      rdf:type meandre:property ;
+      dc:description "Should the audio be downmixed to mono? If true, the mono frames will be output through the left channel."^^xsd:string ;
+      meandre:key "downmix"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/downmix>
+      rdf:type meandre:property ;
+      meandre:key "downmix"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/window/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "input values(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/window/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://www.seasrproject.org/components/parsestringforfilenames/parsestringforfilenames/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "Parse a string for list of filenames"^^xsd:string ;
+      meandre:instance_name
+              "ParseStringForFileNames"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/parsestringforfilenames> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/parsestringforfilenames/parsestringforfilenames/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/parsestringforfilenames/parsestringforfilenames/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/audiofileread/property/overlapPercent>
+      rdf:type meandre:property ;
+      dc:description "The percentage to overlap concurrent output frames by (0.0-1.0)"^^xsd:string ;
+      meandre:key "overlapPercent"^^xsd:string ;
+      meandre:value "0.5"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20/property/Replication_Mode>
+      rdf:type meandre:property ;
+      meandre:key "Replication_Mode"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/property/limitAudioFrames>
+      rdf:type meandre:property ;
+      dc:description "Controls whether the number of frames that are output is limited or not."^^xsd:string ;
+      meandre:key "limitAudioFrames"^^xsd:string ;
+      meandre:value "false"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_1/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "966"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/1>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/servicehead/output/semaphore> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/servicetail/input/semaphore> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/servicehead/servicehead/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/servicetail/servicetail/blinkie20> .
+
+<http://www.seasrproject.org/components/servicehead/output/stringvalue>
+      rdf:type meandre:data_port ;
+      dc:description "String value of the selection"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/servicehead/output/stringvalue"^^xsd:string ;
+      meandre:name "stringValue"^^xsd:string .
+
+<http://www.seasrproject.org/components/filetosignalobject/filetosignalobject/blinkie20/property/verbose>
+      rdf:type meandre:property ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/centroid/centroid/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "677"^^xsd:string .
+
+<http://www.seasrproject.org/components/window/window/blinkie20/property/WindowName>
+      rdf:type meandre:property ;
+      meandre:key "WindowName"^^xsd:string ;
+      meandre:value "Hamming"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicehead/output/response>
+      rdf:type meandre:data_port ;
+      dc:description "The response to be sent to the Service Tail."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/servicehead/output/response"^^xsd:string ;
+      meandre:name "response"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicetail/input/stringvalue>
+      rdf:type meandre:data_port ;
+      dc:description "String value of the selection"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/servicetail/input/stringvalue"^^xsd:string ;
+      meandre:name "stringValue"^^xsd:string .
+
+<http://www.seasrproject.org/components/zerocrossings/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "input (1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/zerocrossings/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://imirsel.org/flow/blinkie20>
+      rdf:type meandre:flow_component ;
+      dc:creator "David Tcheng"^^xsd:string ;
+      dc:date "2008-06-25T16:46:31"^^xsd:dateTime ;
+      dc:description "called from the web app, which passes filenames for audio and models, applies the model and returns the resulting xml data"^^xsd:string ;
+      dc:rights ""^^xsd:string ;
+      meandre:components_instances
+              <http://imirsel.org/flow/blinkie20components/set> ;
+      meandre:connectors <http://imirsel.org/flow/blinkie20connector/set> ;
+      meandre:name "blinkie20"^^xsd:string ;
+      meandre:tag "blinkie"^^xsd:string , "visualization"^^xsd:string , "classification"^^xsd:string , "m2k"^^xsd:string .
+
+<http://www.seasrproject.org/components/filetosignalobject/filetosignalobject/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/forkx2/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "894"^^xsd:string .
+
+<http://www.seasrproject.org/components/melfilterbank/input/magnitude>
+      rdf:type meandre:data_port ;
+      dc:description "magnitude spectrums(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/melfilterbank/input/magnitude"^^xsd:string ;
+      meandre:name "magnitude"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/output/right_frames>
+      rdf:type meandre:data_port ;
+      dc:description "Audio frames from the the right channel.(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/audiofileread/output/right_frames"^^xsd:string ;
+      meandre:name "right_frames"^^xsd:string .
+
+<http://www.seasrproject.org/components/parsestringforfilenames/input/stringvalue>
+      rdf:type meandre:data_port ;
+      dc:description "String value of the selection"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/parsestringforfilenames/input/stringvalue"^^xsd:string ;
+      meandre:name "stringValue"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "the concatenated output(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/concatenate1ddarrays/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "431"^^xsd:string .
+
+<http://www.seasrproject.org/components/dct/dct/blinkie20/property/numCoefs>
+      rdf:type meandre:property ;
+      meandre:key "numCoefs"^^xsd:string ;
+      meandre:value "14"^^xsd:string .
+
+<http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20/property/scaleMagnitude>
+      rdf:type meandre:property ;
+      meandre:key "scaleMagnitude"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/readserializedobject/readserializedobject/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "read in a serialized object and output it"^^xsd:string ;
+      meandre:instance_name
+              "ReadSerializedObject"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/readserializedobject> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/readserializedobject/readserializedobject/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/readserializedobject/readserializedobject/blinkie20/property/wb_top_pix_pos> .
+
+<http://imirsel.org/blinkie20/connector/data/20>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_6/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20> .
+
+<http://www.seasrproject.org/components/entropy/property/verbose>
+      rdf:type meandre:property ;
+      dc:description "control whether debugging information is output to the console"^^xsd:string ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/differencebetweenframes/differencebetweenframes/blinkie20/property/verbose>
+      rdf:type meandre:property ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_6/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "concatenate two 1-D double arrays"^^xsd:string ;
+      meandre:instance_name
+              "Concatenate1DDArrays_6"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/concatenate1ddarrays> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_6/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_6/blinkie20/property/wb_top_pix_pos> .
+
+<http://www.seasrproject.org/components/audiofileread/output/left_frames>
+      rdf:type meandre:data_port ;
+      dc:description "Audio frames from the the left channel or from mono signals (either mono files or stereo files with downmix set)."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/audiofileread/output/left_frames"^^xsd:string ;
+      meandre:name "left_frames"^^xsd:string .
+
+<http://www.seasrproject.org/components/norm/property/NormType>
+      rdf:type meandre:property ;
+      dc:description "the type of norm to calculate"^^xsd:string ;
+      meandre:key "NormType"^^xsd:string ;
+      meandre:value "2"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_6/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "313"^^xsd:string .
+
+<http://www.seasrproject.org/components/createblinkiexml>
+      rdf:type meandre:executable_component ;
+      dc:creator "David Tcheng"^^xsd:string ;
+      dc:date "2008-06-25T16:29:57"^^xsd:dateTime ;
+      dc:description "This component displays the histogram of classificatin."^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.vis.CreateBlinkieXML-createblinkiexml.jar> , <http://www.seasrproject.org/components/createblinkiexml/implementation/> ;
+      meandre:firing_policy
+              "any"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/createblinkiexml/input/likelihoodframe> , <http://www.seasrproject.org/components/createblinkiexml/input/modelfilenames> , <http://www.seasrproject.org/components/createblinkiexml/input/signal> , <http://www.seasrproject.org/components/createblinkiexml/input/classnames> ;
+      meandre:name "CreateBlinkieXML"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/createblinkiexml/output/xml_string> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/createblinkiexml/implementation/org.imirsel.meandre.m2k.vis.CreateBlinkieXML> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "xml"^^xsd:string .
+
+<http://www.seasrproject.org/components/differencebetweenframes/differencebetweenframes/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "963"^^xsd:string .
+
+<http://www.seasrproject.org/components/readserializedobject/output/outputobjects>
+      rdf:type meandre:data_port ;
+      dc:description "the object read-in from the file(object)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/readserializedobject/output/outputobjects"^^xsd:string ;
+      meandre:name "outputObjects"^^xsd:string .
+
+<http://www.seasrproject.org/components/flux>
+      rdf:type meandre:executable_component ;
+      dc:creator "Andreas Ehmann"^^xsd:string ;
+      dc:date "2008-06-25T16:35:07"^^xsd:dateTime ;
+      dc:description "compute the flux of an array stream"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/flux/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.math.Flux-flux.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/flux/input/input> ;
+      meandre:name "Flux"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/flux/output/output> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/flux/property/verbose> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/flux/implementation/org.imirsel.meandre.m2k.math.Flux> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "computation"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/27>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx2/output/output_object_1> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/createblinkiexml/input/modelfilenames> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20> .
+
+<http://imirsel.org/blinkie20/connector/data/34>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx2/output/output_object_2> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/readserializedobject/input/modelnames> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/readserializedobject/readserializedobject/blinkie20> .
+
+<http://www.seasrproject.org/components/flux/flux/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "61"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicetail/servicetail/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "service call for output from webUI fragment"^^xsd:string ;
+      meandre:instance_name
+              "ServiceTail"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/servicetail> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/servicetail/servicetail/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/servicetail/servicetail/blinkie20/property/wb_top_pix_pos> .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_1/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "concatenate two 1-D double arrays"^^xsd:string ;
+      meandre:instance_name
+              "Concatenate1DDArrays_1"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/concatenate1ddarrays> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_1/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_1/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/dct/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "dct(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/dct/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "167"^^xsd:string .
+
+<http://www.seasrproject.org/components/norm/property/p>
+      rdf:type meandre:property ;
+      dc:description "field for entering the desired p-norm"^^xsd:string ;
+      meandre:key "p"^^xsd:string ;
+      meandre:value "2.0"^^xsd:string .
+
+<http://www.seasrproject.org/components/filetosignalobject/filetosignalobject/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "215"^^xsd:string .
+
+<http://www.seasrproject.org/components/zerocrossings/zerocrossings/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "512"^^xsd:string .
+
+<http://www.seasrproject.org/components/differencebetweenframes/differencebetweenframes/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "compute the difference between successive frames, F(x) and F(x-1) of data taken as input"^^xsd:string ;
+      meandre:instance_name
+              "DifferenceBetweenFrames"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/differencebetweenframes> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/differencebetweenframes/differencebetweenframes/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/differencebetweenframes/differencebetweenframes/blinkie20/property/verbose> , <http://www.seasrproject.org/components/differencebetweenframes/differencebetweenframes/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/servicetail>
+      rdf:type meandre:executable_component ;
+      dc:creator "Xavier Llora"^^xsd:string ;
+      dc:date "2008-06-25T16:29:39"^^xsd:dateTime ;
+      dc:description "service call for output from webUI fragment"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.meandre.components.io.webservice.ServiceTail-servicetail.jar> , <http://www.seasrproject.org/components/servicetail/implementation/> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/servicetail/input/stringvalue> , <http://www.seasrproject.org/components/servicetail/input/semaphore> , <http://www.seasrproject.org/components/servicetail/input/response> ;
+      meandre:name "ServiceTail"^^xsd:string ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/servicetail/implementation/org.meandre.components.io.webservice.ServiceTail> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "output"^^xsd:string , "webui"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/19>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx5/output/output_object_2> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/norm/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx5/forkx5/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/norm/norm/blinkie20> .
+
+<http://www.seasrproject.org/components/forkx2/property/Custom_Copy_Method_Name>
+      rdf:type meandre:property ;
+      dc:description "custom replication method"^^xsd:string ;
+      meandre:key "Custom_Copy_Method_Name"^^xsd:string ;
+      meandre:value ""^^xsd:string .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance>
+      rdf:type meandre:executable_component ;
+      dc:creator "David Tcheng & KW"^^xsd:string ;
+      dc:date "2008-06-25T16:36:40"^^xsd:dateTime ;
+      dc:description "Compute windowed means and covariances of a feature stream, outputting whenever a window is full"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.math.StreamFixedWindowMeanAndCovariance-streamfixedwindowmeanandcovariance.jar> ;
+      meandre:firing_policy
+              "any"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/input/signal> , <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/input/input> ;
+      meandre:name "StreamFixedWindowMeanAndCovariance"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/output/meanandcovariacevectors> , <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/output/signal> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/property/windowSize> , <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/property/windowOverlap> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/implementation/org.imirsel.meandre.m2k.math.StreamFixedWindowMeanAndCovariance> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "window"^^xsd:string , "covariance"^^xsd:string , "stream"^^xsd:string , "mean"^^xsd:string , "fixed"^^xsd:string .
+
+<http://www.seasrproject.org/components/applysignalclassifierstovectors/input/classifiers>
+      rdf:type meandre:data_port ;
+      dc:description "classifier(SignalClassifier)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/applysignalclassifierstovectors/input/classifiers"^^xsd:string ;
+      meandre:name "classifiers"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicetail/servicetail/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "497"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2>
+      rdf:type meandre:executable_component ;
+      dc:creator "Duane Searsmith"^^xsd:string ;
+      dc:date "2008-06-25T16:42:30"^^xsd:dateTime ;
+      dc:description "<p>Description: This component takes in any Java objectand distributes it (or copies of it) across multiple outputs.  The user can choose from five object replication methods -- by reference, shallow copy by clone, deep copy via serialization, copy via constructor, or copy via custom method.</p>"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/forkx2/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.meandre.components.control.ForkX2-forkx2.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/forkx2/input/input_object> ;
+      meandre:name "ForkX2"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/forkx2/output/output_object_1> , <http://www.seasrproject.org/components/forkx2/output/output_object_2> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/forkx2/property/Custom_Copy_Method_Name> , <http://www.seasrproject.org/components/forkx2/property/Replication_Mode> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/forkx2/implementation/org.meandre.components.control.ForkX2> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "clone"^^xsd:string , "copy"^^xsd:string , "fork"^^xsd:string .
+
+<http://www.seasrproject.org/components/spectralrolloff/property/percent>
+      rdf:type meandre:property ;
+      dc:description "rolloff point(percent of total)"^^xsd:string ;
+      meandre:key "percent"^^xsd:string ;
+      meandre:value "0.85"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_5/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "228"^^xsd:string .
+
+<http://www.seasrproject.org/components/window/window/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "424"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/41>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/logn/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/dct/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/logn/logn/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/dct/dct/blinkie20> .
+
+<http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "26"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/outputFrameLength>
+      rdf:type meandre:property ;
+      meandre:key "outputFrameLength"^^xsd:string ;
+      meandre:value "0.023219954648526078"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_6/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "813"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_2/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "concatenate two 1-D double arrays"^^xsd:string ;
+      meandre:instance_name
+              "Concatenate1DDArrays_2"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/concatenate1ddarrays> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_2/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_2/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/forkx5/output/output_object_3>
+      rdf:type meandre:data_port ;
+      dc:description "output object"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/forkx5/output/output_object_3"^^xsd:string ;
+      meandre:name "output_object_3"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/43>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/output/classnamesvector> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/createblinkiexml/input/classnames> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20> .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/output/meanandcovariacevectors>
+      rdf:type meandre:data_port ;
+      dc:description "The Mean and covariance of a window of the input vector stream. (Double array)."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/output/meanandcovariacevectors"^^xsd:string ;
+      meandre:name "meanAndCovariaceVectors"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicetail/servicetail/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "314"^^xsd:string .
+
+<http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "Overview: This computes the magnitude or power spectrum of an input array with a DFT.Detailed Description: This module uses a radix-2 Fast Fourier Transform to compute the Discrete Fourier Transform of a 1-dimensional input array and then calculates magnitude or power spectrum from it.  If the input is not a power-of-2 in length, the input will automatically be zeropadded to the next appropriate power of two length.  The module uses only the nonredundant part of the conjugate-symmetric spectrum. If calculating only the magnitude or power spectrum this module may be more efficient than using FFTReal, Truncate1DDArray and Magnitude (and pow for the power spectrum).Data Handling: The input data is not modified."^^xsd:string ;
+      meandre:instance_name
+              "FFTRealMagnitude"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/fftrealmagnitude> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20/property/scaleMagnitude> , <http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20/property/powerSpectrum> , <http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/logn/property/baseN>
+      rdf:type meandre:property ;
+      dc:description "set the logarithmic base"^^xsd:string ;
+      meandre:key "baseN"^^xsd:string ;
+      meandre:value "10.0"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/29>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/differencebetweenframes/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_2> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/differencebetweenframes/differencebetweenframes/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays/blinkie20> .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/input/input_1>
+      rdf:type meandre:data_port ;
+      dc:description "the first input(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/concatenate1ddarrays/input/input_1"^^xsd:string ;
+      meandre:name "input_1"^^xsd:string .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/property/windowSize>
+      rdf:type meandre:property ;
+      dc:description "the length of audio signal over which the windows should be calculated"^^xsd:string ;
+      meandre:key "windowSize"^^xsd:string ;
+      meandre:value "10.0"^^xsd:string .
+
+<http://www.seasrproject.org/components/norm/norm/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "compute the vector norm of specified type"^^xsd:string ;
+      meandre:instance_name
+              "Norm"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/norm> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/norm/norm/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/norm/norm/blinkie20/property/p> , <http://www.seasrproject.org/components/norm/norm/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/norm/norm/blinkie20/property/NormType> .
+
+<http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20/property/highestFreq>
+      rdf:type meandre:property ;
+      meandre:key "highestFreq"^^xsd:string ;
+      meandre:value "0.5"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx5/forkx5/blinkie20/property/Custom_Copy_Method_Name>
+      rdf:type meandre:property ;
+      meandre:key "Custom_Copy_Method_Name"^^xsd:string ;
+      meandre:value ""^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "take any object and distribute it across multiple outputs"^^xsd:string ;
+      meandre:instance_name
+              "ForkX2_1"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/forkx2> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20/property/Custom_Copy_Method_Name> , <http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20/property/Replication_Mode> .
+
+<http://www.seasrproject.org/components/melfilterbank/property/highestFreq>
+      rdf:type meandre:property ;
+      dc:description "High frequency edge as ratio of sample rate"^^xsd:string ;
+      meandre:key "highestFreq"^^xsd:string ;
+      meandre:value "0.5"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx5/input/input_object>
+      rdf:type meandre:data_port ;
+      dc:description "input object"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/forkx5/input/input_object"^^xsd:string ;
+      meandre:name "input_object"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/3>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/melfilterbank/output/bands> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/logn/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/logn/logn/blinkie20> .
+
+<http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "input magnitude spectrums and sample rate and output bands of the filter bank"^^xsd:string ;
+      meandre:instance_name
+              "MelFilterBank"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/melfilterbank> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20/property/highestFreq> , <http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20/property/numFilters> , <http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20/property/lowestFreq> .
+
+<http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "take any object and distribute it across multiple outputs"^^xsd:string ;
+      meandre:instance_name
+              "ForkX5_1"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/forkx5> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20/property/Custom_Copy_Method_Name> , <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20/property/Replication_Mode> .
+
+<http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "Overview: Takes a Signal object with file location metadata as input, reads in the corresponding audio file and streams out frames of data from that file.Detailed Description: This module reads in audio files in a number of formats,enframes the data and streams out the frames. Downmixing to mono can also be performed.The frame size, overlap percentage and sample rate of the of the audio frames are appended tothe metadata of the Signal object, which is 'passed through' for later use. The \"Read Frame Size\" parameter can be used to control how often data is read from disk.Currently supported audio file formats include MP3 (.mp3) and Wave (.wav).Note: This module should not be used in conjunction with StereoToMono or Enframe as it provides the same services."^^xsd:string ;
+      meandre:instance_name
+              "AudioFileRead"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/audiofileread> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/maxOutFrames> , <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/readFrameSize> , <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/limitAudioFrames> , <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/outputFrameLength> , <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/overlapPercent> , <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/downmix> .
+
+<http://www.seasrproject.org/components/audiofileread/property/outputFrameLength>
+      rdf:type meandre:property ;
+      dc:description "The length of audio frames to output, measured in seconds. This will be multiplied by the samplerate of the audio file and rounded to calculate the length in samples of the output vectors. This ensures that constant time resolution can be maintained at different sample rates. The default setting (0.023219...) produces 1024 sample frames at 44.1kHz and 512 at 22.05kHz."^^xsd:string ;
+      meandre:key "outputFrameLength"^^xsd:string ;
+      meandre:value "0.023219954648526078"^^xsd:string .
+
+<http://www.seasrproject.org/components/norm/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "vector norm(double 1x1 array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/norm/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://www.seasrproject.org/components/entropy/entropy/blinkie20/property/histogramBins>
+      rdf:type meandre:property ;
+      meandre:key "histogramBins"^^xsd:string ;
+      meandre:value "20"^^xsd:string .
+
+<http://imirsel.org/flow/blinkie20components/set>
+      rdf:type meandre:instance_set ;
+      meandre:executable_component_instance
+              <http://www.seasrproject.org/components/servicehead/servicehead/blinkie20> , <http://www.seasrproject.org/components/readserializedobject/readserializedobject/blinkie20> , <http://www.seasrproject.org/components/forkx5/forkx5/blinkie20> , <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20> , <http://www.seasrproject.org/components/norm/norm/blinkie20> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_6/blinkie20> , <http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20> , <http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20> , <http://www.seasrproject.org/components/flux/flux/blinkie20> , <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20> , <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_4/blinkie20> , <http://www.seasrproject.org/components/entropy/entropy/blinkie20> , <http://www.seasrproject.org/components/logn/logn/blinkie20> , <http://www.seasrproject.org/components/servicetail/servicetail/blinkie20> , <http://www.seasrproject.org/components/zerocrossings/zerocrossings/blinkie20> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_1/blinkie20> , <http://www.seasrproject.org/components/window/window/blinkie20> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_5/blinkie20> , <http://www.seasrproject.org/components/forkx2/forkx2/blinkie20> , <http://www.seasrproject.org/components/parsestringforfilenames/parsestringforfilenames/blinkie20> , <http://www.seasrproject.org/components/differencebetweenframes/differencebetweenframes/blinkie20> , <http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20> , <http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays/blinkie20> , <http://www.seasrproject.org/components/dct/dct/blinkie20> , <http://www.seasrproject.org/components/filetosignalobject/filetosignalobject/blinkie20> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_2/blinkie20> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_3/blinkie20> , <http://www.seasrproject.org/components/centroid/centroid/blinkie20> , <http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20> , <http://www.seasrproject.org/components/spectralrolloff/spectralrolloff/blinkie20> .
+
+<http://www.seasrproject.org/components/melfilterbank/property/numFilters>
+      rdf:type meandre:property ;
+      dc:description "Number of filters in the Mel-scale filter bank"^^xsd:string ;
+      meandre:key "numFilters"^^xsd:string ;
+      meandre:value "32"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/6>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/createblinkiexml/output/xml_string> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/servicetail/input/stringvalue> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/servicetail/servicetail/blinkie20> .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays>
+      rdf:type meandre:executable_component ;
+      dc:creator "David Tcheng"^^xsd:string ;
+      dc:date "2008-06-25T16:30:20"^^xsd:dateTime ;
+      dc:description "concatenate two 1-D double arrays"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/concatenate1ddarrays/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.util.Concatenate1DDArrays-concatenate1ddarrays.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_1> , <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_2> ;
+      meandre:name "Concatenate1DDArrays"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/concatenate1ddarrays/output/output> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/concatenate1ddarrays/implementation/org.imirsel.meandre.m2k.util.Concatenate1DDArrays> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "concatenation"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx5/output/output_object_2>
+      rdf:type meandre:data_port ;
+      dc:description "output object"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/forkx5/output/output_object_2"^^xsd:string ;
+      meandre:name "output_object_2"^^xsd:string .
+
+<http://www.seasrproject.org/components/melfilterbank/input/rate>
+      rdf:type meandre:data_port ;
+      dc:description "sample rate"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/melfilterbank/input/rate"^^xsd:string ;
+      meandre:name "rate"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/9>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx5/output/output_object_4> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/spectralrolloff/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/spectralrolloff/spectralrolloff/blinkie20> .
+
+<http://www.seasrproject.org/components/differencebetweenframes/property/verbose>
+      rdf:type meandre:property ;
+      dc:description "control whether debugging information is output to the console"^^xsd:string ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/fftrealmagnitude/property/scaleMagnitude>
+      rdf:type meandre:property ;
+      dc:description "scale magnitude coefficients"^^xsd:string ;
+      meandre:key "scaleMagnitude"^^xsd:string ;
+      meandre:value "false"^^xsd:string .
+
+<http://www.seasrproject.org/components/zerocrossings>
+      rdf:type meandre:executable_component ;
+      dc:creator "Andreas Ehmann"^^xsd:string ;
+      dc:date "2008-06-25T16:36:59"^^xsd:dateTime ;
+      dc:description "count the number of zero-crossings in an array"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.math.ZeroCrossings-zerocrossings.jar> , <http://www.seasrproject.org/components/zerocrossings/implementation/> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/zerocrossings/input/input> ;
+      meandre:name "ZeroCrossings"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/zerocrossings/output/output> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/zerocrossings/implementation/org.imirsel.meandre.m2k.math.ZeroCrossings> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "computation"^^xsd:string .
+
+<http://www.seasrproject.org/components/spectralrolloff/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "input(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/spectralrolloff/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://www.seasrproject.org/components/logn>
+      rdf:type meandre:executable_component ;
+      dc:creator "David Tcheng"^^xsd:string ;
+      dc:date "2008-06-25T16:35:33"^^xsd:dateTime ;
+      dc:description "calculate Log values of an input array of numbers"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/logn/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.math.LogN-logn.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/logn/input/input> ;
+      meandre:name "LogN"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/logn/output/output> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/logn/property/baseN> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/logn/implementation/org.imirsel.meandre.m2k.math.LogN> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "logn"^^xsd:string .
+
+<http://www.seasrproject.org/components/readserializedobject/input/modelnames>
+      rdf:type meandre:data_port ;
+      dc:description "model names"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/readserializedobject/input/modelnames"^^xsd:string ;
+      meandre:name "modelNames"^^xsd:string .
+
+<http://www.seasrproject.org/components/melfilterbank/output/bands>
+      rdf:type meandre:data_port ;
+      dc:description "bands of filter bank(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/melfilterbank/output/bands"^^xsd:string ;
+      meandre:name "bands"^^xsd:string .
+
+<http://www.seasrproject.org/components/createblinkiexml/output/xml_string>
+      rdf:type meandre:data_port ;
+      dc:description "execute again"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/createblinkiexml/output/xml_string"^^xsd:string ;
+      meandre:name "xml_string"^^xsd:string .
+
+<http://www.seasrproject.org/components/centroid/centroid/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "compute the centroid of a 1-D double array"^^xsd:string ;
+      meandre:instance_name
+              "Centroid"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/centroid> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/centroid/centroid/blinkie20/property/verbose> , <http://www.seasrproject.org/components/centroid/centroid/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/centroid/centroid/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/logn/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "input values(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/logn/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/14>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx5/output/output_object_1> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/entropy/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/entropy/entropy/blinkie20> .
+
+<http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/maxOutFrames>
+      rdf:type meandre:property ;
+      meandre:key "maxOutFrames"^^xsd:string ;
+      meandre:value "10000"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_5/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "803"^^xsd:string .
+
+<http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20/property/powerSpectrum>
+      rdf:type meandre:property ;
+      meandre:key "powerSpectrum"^^xsd:string ;
+      meandre:value "false"^^xsd:string .
+
+<http://www.seasrproject.org/components/flux/flux/blinkie20/property/verbose>
+      rdf:type meandre:property ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20/property/lowestFreq>
+      rdf:type meandre:property ;
+      meandre:key "lowestFreq"^^xsd:string ;
+      meandre:value "0.0"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_3/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "969"^^xsd:string .
+
+<http://www.seasrproject.org/components/centroid/property/verbose>
+      rdf:type meandre:property ;
+      dc:description "control whether debugging information is output to the console"^^xsd:string ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/logn/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "Log(Input)(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/logn/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/13>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_1> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_1/blinkie20> .
+
+<http://www.seasrproject.org/components/norm/norm/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "88"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/property/Replication_Mode>
+      rdf:type meandre:property ;
+      dc:description "replication mode"^^xsd:string ;
+      meandre:key "Replication_Mode"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicehead/output/semaphore>
+      rdf:type meandre:data_port ;
+      dc:description "The semaphore to signal response done."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/servicehead/output/semaphore"^^xsd:string ;
+      meandre:name "semaphore"^^xsd:string .
+
+<http://www.seasrproject.org/components/createblinkiexml/input/signal>
+      rdf:type meandre:data_port ;
+      dc:description "signal object conatining the metadata for the audio files(signal)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/createblinkiexml/input/signal"^^xsd:string ;
+      meandre:name "signal"^^xsd:string .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/property/windowOverlap>
+      rdf:type meandre:property ;
+      dc:description "the percentage overlap of concurrent windows"^^xsd:string ;
+      meandre:key "windowOverlap"^^xsd:string ;
+      meandre:value "0.5"^^xsd:string .
+
+<http://www.seasrproject.org/components/logn/logn/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "737"^^xsd:string .
+
+<http://www.seasrproject.org/components/logn/logn/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "1"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx5/forkx5/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "86"^^xsd:string .
+
+<http://www.seasrproject.org/components/filetosignalobject/input/filename>
+      rdf:type meandre:data_port ;
+      dc:description "file name"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/filetosignalobject/input/filename"^^xsd:string ;
+      meandre:name "fileName"^^xsd:string .
+
+<http://www.seasrproject.org/components/dct/dct/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "814"^^xsd:string .
+
+meandre:
+      dc:date "2008-06-30T11:27:03"^^xsd:dateTime ;
+      dc:description "This is the current repository aggregated using Meandre"^^xsd:string .
+
+<http://www.seasrproject.org/components/spectralrolloff/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "rolloff point(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/spectralrolloff/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://www.seasrproject.org/components/entropy/entropy/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "179"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicehead>
+      rdf:type meandre:executable_component ;
+      dc:creator "Xavier Llora"^^xsd:string ;
+      dc:date "2008-06-25T16:29:20"^^xsd:dateTime ;
+      dc:description "service call for input to webUI fragment"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/servicehead/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.meandre.components.io.webservice.ServiceHead-servicehead.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:name "ServiceHead"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/servicehead/output/response> , <http://www.seasrproject.org/components/servicehead/output/stringvalue> , <http://www.seasrproject.org/components/servicehead/output/semaphore> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/servicehead/implementation/org.meandre.components.io.webservice.ServiceHead> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "webui"^^xsd:string , "input"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/readFrameSize>
+      rdf:type meandre:property ;
+      meandre:key "readFrameSize"^^xsd:string ;
+      meandre:value "102400"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20/property/Custom_Copy_Method_Name>
+      rdf:type meandre:property ;
+      meandre:key "Custom_Copy_Method_Name"^^xsd:string ;
+      meandre:value ""^^xsd:string .
+
+<http://www.seasrproject.org/components/flux/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "the flux of successive arrays(double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/flux/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_3/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "concatenate two 1-D double arrays"^^xsd:string ;
+      meandre:instance_name
+              "Concatenate1DDArrays_3"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/concatenate1ddarrays> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_3/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_3/blinkie20/property/wb_top_pix_pos> .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "187"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "973"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/16>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_1> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_3/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_4/blinkie20> .
+
+<http://www.seasrproject.org/components/forkx5/output/output_object_5>
+      rdf:type meandre:data_port ;
+      dc:description "output object"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/forkx5/output/output_object_5"^^xsd:string ;
+      meandre:name "output_object_5"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/input/input_object>
+      rdf:type meandre:data_port ;
+      dc:description "input object"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/forkx2/input/input_object"^^xsd:string ;
+      meandre:name "input_object"^^xsd:string .
+
+<http://www.seasrproject.org/components/centroid/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "the centroid of the input array(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/centroid/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://www.seasrproject.org/components/fftrealmagnitude/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "input(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/fftrealmagnitude/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://www.seasrproject.org/components/dct/property/keepFirstCoef>
+      rdf:type meandre:property ;
+      dc:description "flag to set if the 0th DCT coefficient is output(useful for MFCCs)"^^xsd:string ;
+      meandre:key "keepFirstCoef"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/window>
+      rdf:type meandre:executable_component ;
+      dc:creator "Andreas Ehmann & Kris West"^^xsd:string ;
+      dc:date "2008-06-25T16:31:57"^^xsd:dateTime ;
+      dc:description "Overview: This module applies the specified window to an array.  The choices are: Rectangular, Bartlett, Blackman, Hanning, and Hamming.Data Handling: The input data is not modified."^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/window/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.util.Window-window.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/window/input/input> ;
+      meandre:name "Window"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/window/output/output> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/window/property/WindowName> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/window/implementation/org.imirsel.meandre.m2k.util.Window> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "array"^^xsd:string , "an"^^xsd:string , "window"^^xsd:string , "apply"^^xsd:string , "a"^^xsd:string , "specified"^^xsd:string , "to"^^xsd:string .
+
+<http://www.seasrproject.org/components/filetosignalobject/property/verbose>
+      rdf:type meandre:property ;
+      dc:description "determine whether debugging information is output to console"^^xsd:string ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_2/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "195"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/38>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx2/output/output_object_2> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_1> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx2/forkx2/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays/blinkie20> .
+
+<http://www.seasrproject.org/components/window/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "output(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/window/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx5/property/Replication_Mode>
+      rdf:type meandre:property ;
+      dc:description "replication mode"^^xsd:string ;
+      meandre:key "Replication_Mode"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "140"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/35>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/zerocrossings/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_2> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/zerocrossings/zerocrossings/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_4/blinkie20> .
+
+<http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20/property/Replication_Mode>
+      rdf:type meandre:property ;
+      meandre:key "Replication_Mode"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/forkx2/blinkie20/property/Replication_Mode>
+      rdf:type meandre:property ;
+      meandre:key "Replication_Mode"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://www.seasrproject.org/components/parsestringforfilenames>
+      rdf:type meandre:executable_component ;
+      dc:creator "Loretta Auvil"^^xsd:string ;
+      dc:date "2008-06-25T16:37:42"^^xsd:dateTime ;
+      dc:description "Parse a string for list of filenames"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/parsestringforfilenames/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.io.file.ParseStringForFileNames-parsestringforfilenames.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/parsestringforfilenames/input/stringvalue> ;
+      meandre:name "ParseStringForFileNames"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/parsestringforfilenames/output/modelfiles> , <http://www.seasrproject.org/components/parsestringforfilenames/output/audiofile> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/parsestringforfilenames/implementation/org.imirsel.meandre.m2k.io.file.ParseStringForFileNames> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "input"^^xsd:string , "string"^^xsd:string , "filename"^^xsd:string .
+
+<http://www.seasrproject.org/components/dct/dct/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/26>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/output/likelihoods> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/createblinkiexml/input/likelihoodframe> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20> .
+
+<http://imirsel.org/blinkie20/connector/data/0>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx5/output/output_object_4> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/fftrealmagnitude/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx5/forkx5/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20> .
+
+<http://www.seasrproject.org/components/audiofileread/property/readFrameSize>
+      rdf:type meandre:property ;
+      dc:description "Controls frame size of data read in by this module. If possible, this frame size will be used by the AudioReader responsible for the file otherwise buffering will be used to achieve the correct framesize. This parameter is used to control how often data is read from disk."^^xsd:string ;
+      meandre:key "readFrameSize"^^xsd:string ;
+      meandre:value "102400"^^xsd:string .
+
+<http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://www.seasrproject.org/components/centroid/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "input(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/centroid/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/22>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/entropy/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_2> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/entropy/entropy/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_5/blinkie20> .
+
+<http://www.seasrproject.org/components/parsestringforfilenames/parsestringforfilenames/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "52"^^xsd:string .
+
+<http://www.seasrproject.org/components/flux/property/verbose>
+      rdf:type meandre:property ;
+      dc:description "control whether debugging information is output to the console"^^xsd:string ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20/property/Custom_Copy_Method_Name>
+      rdf:type meandre:property ;
+      meandre:key "Custom_Copy_Method_Name"^^xsd:string ;
+      meandre:value ""^^xsd:string .
+
+<http://www.seasrproject.org/components/norm/norm/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "517"^^xsd:string .
+
+<http://www.seasrproject.org/components/centroid>
+      rdf:type meandre:executable_component ;
+      dc:creator "Andreas Ehmann"^^xsd:string ;
+      dc:date "2008-06-25T16:34:14"^^xsd:dateTime ;
+      dc:description "compute the centroid of a 1-D double array"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/centroid/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.math.Centroid-centroid.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/centroid/input/input> ;
+      meandre:name "Centroid"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/centroid/output/output> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/centroid/property/verbose> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/centroid/implementation/org.imirsel.meandre.m2k.math.Centroid> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "centroid"^^xsd:string .
+
+<http://www.seasrproject.org/components/createblinkiexml/input/likelihoodframe>
+      rdf:type meandre:data_port ;
+      dc:description "classificaiton likelihood frames for the signal object(vector of storing vector)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/createblinkiexml/input/likelihoodframe"^^xsd:string ;
+      meandre:name "likelihoodFrame"^^xsd:string .
+
+<http://www.seasrproject.org/components/spectralrolloff/spectralrolloff/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "238"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "concatenate two 1-D double arrays"^^xsd:string ;
+      meandre:instance_name
+              "Concatenate1DDArrays"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/concatenate1ddarrays> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/createblinkiexml/input/classnames>
+      rdf:type meandre:data_port ;
+      dc:description "class name for each column of likelihoods(vector of storing String[])"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/createblinkiexml/input/classnames"^^xsd:string ;
+      meandre:name "classNames"^^xsd:string .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/input/signal>
+      rdf:type meandre:data_port ;
+      dc:description "Signal Object containing the signal processing information used to produce the feature vectors"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/input/signal"^^xsd:string ;
+      meandre:name "signal"^^xsd:string .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20/property/windowOverlap>
+      rdf:type meandre:property ;
+      meandre:key "windowOverlap"^^xsd:string ;
+      meandre:value "0.9"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_4/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "806"^^xsd:string .
+
+<http://www.seasrproject.org/components/spectralrolloff/spectralrolloff/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "compute the rolloff point of the input array"^^xsd:string ;
+      meandre:instance_name
+              "SpectralRollOff"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/spectralrolloff> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/spectralrolloff/spectralrolloff/blinkie20/property/percent> , <http://www.seasrproject.org/components/spectralrolloff/spectralrolloff/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/spectralrolloff/spectralrolloff/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/entropy/property/histogramBins>
+      rdf:type meandre:property ;
+      dc:description "set the number of bins in the histogram used to calculate the probability of each value in the input array"^^xsd:string ;
+      meandre:key "histogramBins"^^xsd:string ;
+      meandre:value "20"^^xsd:string .
+
+<http://www.seasrproject.org/components/melfilterbank>
+      rdf:type meandre:executable_component ;
+      dc:creator "Andreas Ehmann"^^xsd:string ;
+      dc:date "2008-06-25T16:39:07"^^xsd:dateTime ;
+      dc:description "input magnitude spectrums and sample rate and output bands of the filter bank"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.filters.MelFilterBank-melfilterbank.jar> , <http://www.seasrproject.org/components/melfilterbank/implementation/> ;
+      meandre:firing_policy
+              "any"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/melfilterbank/input/magnitude> , <http://www.seasrproject.org/components/melfilterbank/input/rate> ;
+      meandre:name "MelFilterBank"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/melfilterbank/output/bands> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/melfilterbank/property/numFilters> , <http://www.seasrproject.org/components/melfilterbank/property/lowestFreq> , <http://www.seasrproject.org/components/melfilterbank/property/highestFreq> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/melfilterbank/implementation/org.imirsel.meandre.m2k.filters.MelFilterBank> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "filterbank"^^xsd:string , "mel"^^xsd:string .
+
+<http://www.seasrproject.org/components/applysignalclassifierstovectors/output/likelihoods>
+      rdf:type meandre:data_port ;
+      dc:description "a vector of classification likelihoods(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/applysignalclassifierstovectors/output/likelihoods"^^xsd:string ;
+      meandre:name "likelihoods"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/limitAudioFrames>
+      rdf:type meandre:property ;
+      meandre:key "limitAudioFrames"^^xsd:string ;
+      meandre:value "false"^^xsd:string .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "221"^^xsd:string .
+
+<http://www.seasrproject.org/components/window/property/WindowName>
+      rdf:type meandre:property ;
+      dc:description "The name of the window function which can be Rectangular, Bartlett, Blackman, Hanning, Hamming."^^xsd:string ;
+      meandre:key "WindowName"^^xsd:string ;
+      meandre:value "Rectangular"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/4>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/fftrealmagnitude/output/spectrum> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/forkx5/input/input_object> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20> .
+
+<http://www.seasrproject.org/components/fftrealmagnitude>
+      rdf:type meandre:executable_component ;
+      dc:creator "Kris West"^^xsd:string ;
+      dc:date "2008-06-25T16:33:09"^^xsd:dateTime ;
+      dc:description "Overview: This computes the magnitude or power spectrum of an input array with a DFT.Detailed Description: This module uses a radix-2 Fast Fourier Transform to compute the Discrete Fourier Transform of a 1-dimensional input array and then calculates magnitude or power spectrum from it.  If the input is not a power-of-2 in length, the input will automatically be zeropadded to the next appropriate power of two length.  The module uses only the nonredundant part of the conjugate-symmetric spectrum. If calculating only the magnitude or power spectrum this module may be more efficient than using FFTReal, Truncate1DDArray and Magnitude (and pow for the power spectrum).Data Handling: The input data is not modified."^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/fftrealmagnitude/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.transforms.FFTRealMagnitudeModule-fftrealmagnitude.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/fftrealmagnitude/input/input> ;
+      meandre:name "FFTRealMagnitude"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/fftrealmagnitude/output/spectrum> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/fftrealmagnitude/property/scaleMagnitude> , <http://www.seasrproject.org/components/fftrealmagnitude/property/powerSpectrum> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/fftrealmagnitude/implementation/org.imirsel.meandre.m2k.transforms.FFTRealMagnitudeModule> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "array"^^xsd:string , "an"^^xsd:string , "power"^^xsd:string , "compoute"^^xsd:string , "the"^^xsd:string , "input"^^xsd:string , "a"^^xsd:string , "of"^^xsd:string , "dft"^^xsd:string , "spectrum"^^xsd:string , "magnitude"^^xsd:string , "with"^^xsd:string , "or"^^xsd:string .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "Compute windowed means and covariances of a feature stream, outputting whenever a window is full"^^xsd:string ;
+      meandre:instance_name
+              "StreamFixedWindowMeanAndCovariance"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20/property/windowSize> , <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20/property/windowOverlap> , <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20/property/wb_top_pix_pos> .
+
+<http://www.seasrproject.org/components/spectralrolloff/spectralrolloff/blinkie20/property/percent>
+      rdf:type meandre:property ;
+      meandre:key "percent"^^xsd:string ;
+      meandre:value "0.85"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_2/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "968"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx5/output/output_object_1>
+      rdf:type meandre:data_port ;
+      dc:description "output object"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/forkx5/output/output_object_1"^^xsd:string ;
+      meandre:name "output_object_1"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/11>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/window/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/forkx5/input/input_object> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/window/window/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/forkx5/forkx5/blinkie20> .
+
+<http://imirsel.org/blinkie20/connector/data/36>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/filetosignalobject/output/signal> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/audiofileread/input/signal> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/filetosignalobject/filetosignalobject/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20> .
+
+<http://www.seasrproject.org/components/dct/dct/blinkie20/property/keepFirstCoef>
+      rdf:type meandre:property ;
+      meandre:key "keepFirstCoef"^^xsd:string ;
+      meandre:value "false"^^xsd:string .
+
+<http://www.seasrproject.org/components/differencebetweenframes/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "differences between the frame of data and the last(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/differencebetweenframes/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/40>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/parsestringforfilenames/output/audiofile> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/filetosignalobject/input/filename> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/parsestringforfilenames/parsestringforfilenames/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/filetosignalobject/filetosignalobject/blinkie20> .
+
+<http://www.seasrproject.org/components/zerocrossings/zerocrossings/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "count the number of zero-crossings in an array"^^xsd:string ;
+      meandre:instance_name
+              "ZeroCrossings"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/zerocrossings> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/zerocrossings/zerocrossings/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/zerocrossings/zerocrossings/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/forkx5/forkx5/blinkie20/property/Replication_Mode>
+      rdf:type meandre:property ;
+      meandre:key "Replication_Mode"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://www.seasrproject.org/components/norm/norm/blinkie20/property/p>
+      rdf:type meandre:property ;
+      meandre:key "p"^^xsd:string ;
+      meandre:value "2.0"^^xsd:string .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/output/signal>
+      rdf:type meandre:data_port ;
+      dc:description "Signal Objects with window onset times"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/output/signal"^^xsd:string ;
+      meandre:name "signal"^^xsd:string .
+
+<http://www.seasrproject.org/components/spectralrolloff>
+      rdf:type meandre:executable_component ;
+      dc:creator "Andreas Ehmann"^^xsd:string ;
+      dc:date "2008-06-25T16:36:23"^^xsd:dateTime ;
+      dc:description "compute the rolloff point of the input array"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.math.SpectralRollOff-spectralrolloff.jar> , <http://www.seasrproject.org/components/spectralrolloff/implementation/> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/spectralrolloff/input/input> ;
+      meandre:name "SpectralRollOff"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/spectralrolloff/output/output> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/spectralrolloff/property/percent> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/spectralrolloff/implementation/org.imirsel.meandre.m2k.math.SpectralRollOff> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "computation"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "73"^^xsd:string .
+
+<http://www.seasrproject.org/components/dct/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "real part(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/dct/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://www.seasrproject.org/components/readserializedobject/readserializedobject/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "102"^^xsd:string .
+
+<http://www.seasrproject.org/components/entropy/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "an array containing the entropy calculated from the input array(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/entropy/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/24>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx5/output/output_object_5> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/centroid/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/centroid/centroid/blinkie20> .
+
+<http://www.seasrproject.org/components/forkx5/forkx5/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "425"^^xsd:string .
+
+<http://www.seasrproject.org/components/logn/logn/blinkie20/property/baseN>
+      rdf:type meandre:property ;
+      meandre:key "baseN"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
+
+<http://www.seasrproject.org/components/applysignalclassifierstovectors>
+      rdf:type meandre:executable_component ;
+      dc:creator "David Tcheng & Kris West"^^xsd:string ;
+      dc:date "2008-06-25T16:33:39"^^xsd:dateTime ;
+      dc:description "apply an array classifier to noval inputs in the form of an array of doubles "^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.modelling.ApplySignalClassifiersToVectors-applysignalclassifierstovectors.jar> ;
+      meandre:firing_policy
+              "any"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/input/classifiers> , <http://www.seasrproject.org/components/applysignalclassifierstovectors/input/datavector> ;
+      meandre:name "ApplySignalClassifiersToVectors"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/output/likelihoods> , <http://www.seasrproject.org/components/applysignalclassifierstovectors/output/classnamesvector> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/property/verbose> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/implementation/org.imirsel.meandre.m2k.modelling.ApplySignalClassifiersToVectors> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "classification"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/21>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/output/signal> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/createblinkiexml/input/signal> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20> .
+
+<http://www.seasrproject.org/components/createblinkiexml/input/modelfilenames>
+      rdf:type meandre:data_port ;
+      dc:description "model file names"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/createblinkiexml/input/modelfilenames"^^xsd:string ;
+      meandre:name "ModelFileNames"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/32>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx5/output/output_object_2> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/melfilterbank/input/magnitude> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20> .
+
+<http://imirsel.org/blinkie20/connector/data/8>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_1> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_4/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_5/blinkie20> .
+
+<http://imirsel.org/blinkie20/connector/data/23>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/output/meanandcovariacevectors> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/input/datavector> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20> .
+
+<http://imirsel.org/blinkie20/connector/data/30>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/readserializedobject/output/outputobjects> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/input/classifiers> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/readserializedobject/readserializedobject/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20> .
+
+<http://www.seasrproject.org/components/flux/flux/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "676"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/output/output_object_1>
+      rdf:type meandre:data_port ;
+      dc:description "output object"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/forkx2/output/output_object_1"^^xsd:string ;
+      meandre:name "output_object_1"^^xsd:string .
+
+<http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20/property/verbose>
+      rdf:type meandre:property ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/applysignalclassifierstovectors/property/verbose>
+      rdf:type meandre:property ;
+      dc:description "control whether debugging information is output to the console"^^xsd:string ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/entropy>
+      rdf:type meandre:executable_component ;
+      dc:creator "Kris West"^^xsd:string ;
+      dc:date "2008-06-25T16:34:48"^^xsd:dateTime ;
+      dc:description "compute the entropy of input arrays"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/entropy/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.math.Entropy-entropy.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/entropy/input/input> ;
+      meandre:name "Entropy"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/entropy/output/output> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/entropy/property/verbose> , <http://www.seasrproject.org/components/entropy/property/histogramBins> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/entropy/implementation/org.imirsel.meandre.m2k.math.Entropy> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "computation"^^xsd:string .
+
+<http://www.seasrproject.org/components/zerocrossings/zerocrossings/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "150"^^xsd:string .
+
+<http://www.seasrproject.org/components/readserializedobject>
+      rdf:type meandre:executable_component ;
+      dc:creator "Kris West"^^xsd:string ;
+      dc:date "2008-06-25T16:38:04"^^xsd:dateTime ;
+      dc:description "read in a serialized object and output it"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.io.file.ReadSerializedObject-readserializedobject.jar> , <http://www.seasrproject.org/components/readserializedobject/implementation/> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/readserializedobject/input/modelnames> ;
+      meandre:name "ReadSerializedObject"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/readserializedobject/output/outputobjects> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/readserializedobject/implementation/org.imirsel.meandre.m2k.io.file.ReadSerializedObject> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "serialization"^^xsd:string .
+
+<http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "Input vector (Double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://www.seasrproject.org/components/spectralrolloff/spectralrolloff/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "677"^^xsd:string .
+
+<http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "668"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread>
+      rdf:type meandre:executable_component ;
+      dc:creator "Kris West"^^xsd:string ;
+      dc:date "2008-06-25T16:37:22"^^xsd:dateTime ;
+      dc:description "Overview: Takes a Signal object with file location metadata as input, reads in the corresponding audio file and streams out frames of data from that file.Detailed Description: This module reads in audio files in a number of formats,enframes the data and streams out the frames. Downmixing to mono can also be performed.The frame size, overlap percentage and sample rate of the of the audio frames are appended tothe metadata of the Signal object, which is 'passed through' for later use. The \"Read Frame Size\" parameter can be used to control how often data is read from disk.Currently supported audio file formats include MP3 (.mp3) and Wave (.wav).Note: This module should not be used in conjunction with StereoToMono or Enframe as it provides the same services."^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.io.file.AudioFileRead-audiofileread.jar> , <http://www.seasrproject.org/components/audiofileread/implementation/> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/audiofileread/input/signal> ;
+      meandre:name "AudioFileRead"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/audiofileread/output/right_frames> , <http://www.seasrproject.org/components/audiofileread/output/left_frames> , <http://www.seasrproject.org/components/audiofileread/output/signal> , <http://www.seasrproject.org/components/audiofileread/output/samplerate> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/audiofileread/property/overlapPercent> , <http://www.seasrproject.org/components/audiofileread/property/downmix> , <http://www.seasrproject.org/components/audiofileread/property/readFrameSize> , <http://www.seasrproject.org/components/audiofileread/property/limitAudioFrames> , <http://www.seasrproject.org/components/audiofileread/property/maxOutFrames> , <http://www.seasrproject.org/components/audiofileread/property/outputFrameLength> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/audiofileread/implementation/org.imirsel.meandre.m2k.io.file.AudioFileRead> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "reader"^^xsd:string , "signal"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/overlapPercent>
+      rdf:type meandre:property ;
+      meandre:key "overlapPercent"^^xsd:string ;
+      meandre:value "0.5"^^xsd:string .
+
+<http://www.seasrproject.org/components/entropy/entropy/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "680"^^xsd:string .
+
+<http://www.seasrproject.org/components/norm>
+      rdf:type meandre:executable_component ;
+      dc:creator "Andreas Ehmann"^^xsd:string ;
+      dc:date "2008-06-25T16:35:49"^^xsd:dateTime ;
+      dc:description "compute the vector norm of specified type"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.math.Norm-norm.jar> , <http://www.seasrproject.org/components/norm/implementation/> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/norm/input/input> ;
+      meandre:name "Norm"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/norm/output/output> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/norm/property/p> , <http://www.seasrproject.org/components/norm/property/NormType> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/norm/implementation/org.imirsel.meandre.m2k.math.Norm> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "computation"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_3/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "260"^^xsd:string .
+
+<http://www.seasrproject.org/components/logn/logn/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "calculate Log values of an input array of numbers"^^xsd:string ;
+      meandre:instance_name
+              "LogN"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/logn> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/logn/logn/blinkie20/property/baseN> , <http://www.seasrproject.org/components/logn/logn/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/logn/logn/blinkie20/property/wb_top_pix_pos> .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_4/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "169"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/42>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/audiofileread/output/left_frames> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/window/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/window/window/blinkie20> .
+
+<http://www.seasrproject.org/components/audiofileread/input/signal>
+      rdf:type meandre:data_port ;
+      dc:description "A Signal object with \"fileLocation\" metadata, indicating the location of the corresponding audio file."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/audiofileread/input/signal"^^xsd:string ;
+      meandre:name "signal"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/7>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/audiofileread/output/samplerate> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/melfilterbank/input/rate> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20> .
+
+<http://www.seasrproject.org/components/centroid/centroid/blinkie20/property/verbose>
+      rdf:type meandre:property ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/window/window/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "Overview: This module applies the specified window to an array.  The choices are: Rectangular, Bartlett, Blackman, Hanning, and Hamming.Data Handling: The input data is not modified."^^xsd:string ;
+      meandre:instance_name
+              "Window"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/window> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/window/window/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/window/window/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/window/window/blinkie20/property/WindowName> .
+
+<http://www.seasrproject.org/components/forkx2/forkx2/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "take any object and distribute it across multiple outputs"^^xsd:string ;
+      meandre:instance_name
+              "ForkX2"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/forkx2> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/forkx2/forkx2/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/forkx2/forkx2/blinkie20/property/Custom_Copy_Method_Name> , <http://www.seasrproject.org/components/forkx2/forkx2/blinkie20/property/Replication_Mode> , <http://www.seasrproject.org/components/forkx2/forkx2/blinkie20/property/wb_top_pix_pos> .
+
+<http://www.seasrproject.org/components/fftrealmagnitude/fftrealmagnitude/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "501"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/output/signal>
+      rdf:type meandre:data_port ;
+      dc:description "The Signal Object used to read the file, with \"frameSize\", \"overlapSize\" and \"sampleRate\" metadata set."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/audiofileread/output/signal"^^xsd:string ;
+      meandre:name "signal"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/input/input_2>
+      rdf:type meandre:data_port ;
+      dc:description "the second input(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/concatenate1ddarrays/input/input_2"^^xsd:string ;
+      meandre:name "input_2"^^xsd:string .
+
+<http://www.seasrproject.org/components/window/window/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "18"^^xsd:string .
+
+<http://www.seasrproject.org/components/norm/norm/blinkie20/property/NormType>
+      rdf:type meandre:property ;
+      meandre:key "NormType"^^xsd:string ;
+      meandre:value "2"^^xsd:string .
+
+<http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "This component displays the histogram of classificatin."^^xsd:string ;
+      meandre:instance_name
+              "CreateBlinkieXML"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/createblinkiexml> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "326"^^xsd:string .
+
+<http://www.seasrproject.org/components/readserializedobject/readserializedobject/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "205"^^xsd:string .
+
+<http://www.seasrproject.org/components/dct>
+      rdf:type meandre:executable_component ;
+      dc:creator "Andreas Ehmann & Kris West"^^xsd:string ;
+      dc:date "2008-06-25T16:32:21"^^xsd:dateTime ;
+      dc:description "perform a discrete cosine transform of a 1D input double array"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.transforms.DCT-dct.jar> , <http://www.seasrproject.org/components/dct/implementation/> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/dct/input/input> ;
+      meandre:name "DCT"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/dct/output/output> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/dct/property/numCoefs> , <http://www.seasrproject.org/components/dct/property/keepFirstCoef> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/dct/implementation/org.imirsel.meandre.m2k.transforms.DCT> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "dct"^^xsd:string , "the"^^xsd:string , "input"^^xsd:string , "of"^^xsd:string , "compute"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/44>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/servicehead/output/stringvalue> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/parsestringforfilenames/input/stringvalue> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/servicehead/servicehead/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/parsestringforfilenames/parsestringforfilenames/blinkie20> .
+
+<http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20/property/numFilters>
+      rdf:type meandre:property ;
+      meandre:key "numFilters"^^xsd:string ;
+      meandre:value "20"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicetail/input/semaphore>
+      rdf:type meandre:data_port ;
+      dc:description "The semaphore to signal response done."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/servicetail/input/semaphore"^^xsd:string ;
+      meandre:name "semaphore"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/property/maxOutFrames>
+      rdf:type meandre:property ;
+      dc:description "The maxium number of frames to output."^^xsd:string ;
+      meandre:key "maxOutFrames"^^xsd:string ;
+      meandre:value "10000"^^xsd:string .
+
+<http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "apply an array classifier to noval inputs in the form of an array of doubles"^^xsd:string ;
+      meandre:instance_name
+              "ApplySignalClassifiersToVectors"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20/property/verbose> , <http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/fftrealmagnitude/output/spectrum>
+      rdf:type meandre:data_port ;
+      dc:description "magnitude or power spectrum(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/fftrealmagnitude/output/spectrum"^^xsd:string ;
+      meandre:name "Spectrum"^^xsd:string .
+
+<http://www.seasrproject.org/components/createblinkiexml/createblinkiexml/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "359"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/17>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/norm/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_2> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/norm/norm/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_1/blinkie20> .
+
+<http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "591"^^xsd:string .
+
+<http://www.seasrproject.org/components/filetosignalobject/filetosignalobject/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "take a file Object as input and create a signal objec."^^xsd:string ;
+      meandre:instance_name
+              "FileToSignalObject"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/filetosignalobject> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/filetosignalobject/filetosignalobject/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/filetosignalobject/filetosignalobject/blinkie20/property/verbose> , <http://www.seasrproject.org/components/filetosignalobject/filetosignalobject/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/filetosignalobject/output/signal>
+      rdf:type meandre:data_port ;
+      dc:description "signal object"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/filetosignalobject/output/signal"^^xsd:string ;
+      meandre:name "signal"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_1/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "131"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicehead/servicehead/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "28"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/output/output_object_2>
+      rdf:type meandre:data_port ;
+      dc:description "output object"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/forkx2/output/output_object_2"^^xsd:string ;
+      meandre:name "output_object_2"^^xsd:string .
+
+<http://www.seasrproject.org/components/centroid/centroid/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "115"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/25>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx5/output/output_object_3> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/flux/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx5/forkx5_1/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/flux/flux/blinkie20> .
+
+<http://imirsel.org/blinkie20/connector/data/15>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/parsestringforfilenames/output/modelfiles> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/forkx2/input/input_object> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/parsestringforfilenames/parsestringforfilenames/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/forkx2/forkx2_1/blinkie20> .
+
+<http://imirsel.org/blinkie20/connector/data/28>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/servicehead/output/response> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/servicetail/input/response> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/servicehead/servicehead/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/servicetail/servicetail/blinkie20> .
+
+<http://imirsel.org/blinkie20/connector/data/5>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/forkx2/output/output_object_1> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/differencebetweenframes/input/input> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/forkx2/forkx2/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/differencebetweenframes/differencebetweenframes/blinkie20> .
+
+<http://www.seasrproject.org/components/forkx5/forkx5/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "take any object and distribute it across multiple outputs"^^xsd:string ;
+      meandre:instance_name
+              "ForkX5"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/forkx5> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/forkx5/forkx5/blinkie20/property/Custom_Copy_Method_Name> , <http://www.seasrproject.org/components/forkx5/forkx5/blinkie20/property/Replication_Mode> , <http://www.seasrproject.org/components/forkx5/forkx5/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/forkx5/forkx5/blinkie20/property/wb_top_pix_pos> .
+
+<http://www.seasrproject.org/components/filetosignalobject>
+      rdf:type meandre:executable_component ;
+      dc:creator "Andreas Ehmann"^^xsd:string ;
+      dc:date "2008-06-30T11:39:51"^^xsd:dateTime ;
+      dc:description "take a file Object as input and create a signal objec."^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://nema.lis.uiuc.edu/blinkie-archive/resources/m2k_core_1_3.jar> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.io.file.FileToSignalObject-filetosignalobject.jar> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/jfreechart-1.0.9.jar> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/jahmm-0.3.3.jar> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/jl1.0.jar> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/Jama-1.0.2.jar> , <http://www.seasrproject.org/components/filetosignalobject/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/swing-layout-1.0.jar> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/jcommon-1.0.12.jar> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/weka.jar> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/JID3.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/filetosignalobject/input/filename> ;
+      meandre:name "FileToSignalObject"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/filetosignalobject/output/signal> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/filetosignalobject/property/verbose> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/filetosignalobject/implementation/org.imirsel.meandre.m2k.io.file.FileToSignalObject> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "file"^^xsd:string , "reader"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_4/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "concatenate two 1-D double arrays"^^xsd:string ;
+      meandre:instance_name
+              "Concatenate1DDArrays_4"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/concatenate1ddarrays> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_4/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_4/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/entropy/entropy/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "compute the entropy of input arrays"^^xsd:string ;
+      meandre:instance_name
+              "Entropy"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/entropy> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/entropy/entropy/blinkie20/property/verbose> , <http://www.seasrproject.org/components/entropy/entropy/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/entropy/entropy/blinkie20/property/histogramBins> , <http://www.seasrproject.org/components/entropy/entropy/blinkie20/property/wb_left_pix_pos> .
+
+<http://www.seasrproject.org/components/entropy/entropy/blinkie20/property/verbose>
+      rdf:type meandre:property ;
+      meandre:key "verbose"^^xsd:string ;
+      meandre:value "true"^^xsd:string .
+
+<http://www.seasrproject.org/components/parsestringforfilenames/output/modelfiles>
+      rdf:type meandre:data_port ;
+      dc:description "The model files."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/parsestringforfilenames/output/modelfiles"^^xsd:string ;
+      meandre:name "modelFiles"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/31>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_1> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_5/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_6/blinkie20> .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "68"^^xsd:string .
+
+<http://www.seasrproject.org/components/differencebetweenframes>
+      rdf:type meandre:executable_component ;
+      dc:creator "Kris West"^^xsd:string ;
+      dc:date "2008-06-25T16:34:30"^^xsd:dateTime ;
+      dc:description "compute the difference between successive frames, F(x) and F(x-1) of data taken as input"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/differencebetweenframes/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.imirsel.meandre.m2k.math.DifferenceBetweenFrames-differencebetweenframes.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/differencebetweenframes/input/input> ;
+      meandre:name "DifferenceBetweenFrames"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/differencebetweenframes/output/output> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/differencebetweenframes/property/verbose> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/differencebetweenframes/implementation/org.imirsel.meandre.m2k.math.DifferenceBetweenFrames> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "frames"^^xsd:string , "difference"^^xsd:string , "the"^^xsd:string , "between"^^xsd:string , "compute"^^xsd:string .
+
+<http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_5/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "concatenate two 1-D double arrays"^^xsd:string ;
+      meandre:instance_name
+              "Concatenate1DDArrays_5"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/concatenate1ddarrays> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_5/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_5/blinkie20/property/wb_top_pix_pos> .
+
+<http://imirsel.org/flow/blinkie20connector/set>
+      rdf:type meandre:connector_set ;
+      meandre:data_connector
+              <http://imirsel.org/blinkie20/connector/data/29> , <http://imirsel.org/blinkie20/connector/data/20> , <http://imirsel.org/blinkie20/connector/data/5> , <http://imirsel.org/blinkie20/connector/data/4> , <http://imirsel.org/blinkie20/connector/data/45> , <http://imirsel.org/blinkie20/connector/data/38> , <http://imirsel.org/blinkie20/connector/data/35> , <http://imirsel.org/blinkie20/connector/data/11> , <http://imirsel.org/blinkie20/connector/data/39> , <http://imirsel.org/blinkie20/connector/data/3> , <http://imirsel.org/blinkie20/connector/data/10> , <http://imirsel.org/blinkie20/connector/data/36> , <http://imirsel.org/blinkie20/connector/data/26> , <http://imirsel.org/blinkie20/connector/data/27> , <http://imirsel.org/blinkie20/connector/data/7> , <http://imirsel.org/blinkie20/connector/data/42> , <http://imirsel.org/blinkie20/connector/data/34> , <http://imirsel.org/blinkie20/connector/data/40> , <http://imirsel.org/blinkie20/connector/data/0> , <http://imirsel.org/blinkie20/connector/data/33> , <http://imirsel.org/blinkie20/connector/data/31> , <http://imirsel.org/blinkie20/connector/data/37> , <http://imirsel.org/blinkie20/connector/data/22> , <http://imirsel.org/blinkie20/connector/data/6> , <http://imirsel.org/blinkie20/connector/data/13> , <http://imirsel.org/blinkie20/connector/data/18> , <http://imirsel.org/blinkie20/connector/data/12> , <http://imirsel.org/blinkie20/connector/data/9> , <http://imirsel.org/blinkie20/connector/data/19> , <http://imirsel.org/blinkie20/connector/data/24> , <http://imirsel.org/blinkie20/connector/data/44> , <http://imirsel.org/blinkie20/connector/data/21> , <http://imirsel.org/blinkie20/connector/data/1> , <http://imirsel.org/blinkie20/connector/data/8> , <http://imirsel.org/blinkie20/connector/data/32> , <http://imirsel.org/blinkie20/connector/data/23> , <http://imirsel.org/blinkie20/connector/data/17> , <http://imirsel.org/blinkie20/connector/data/30> , <http://imirsel.org/blinkie20/connector/data/41> , <http://imirsel.org/blinkie20/connector/data/2> , <http://imirsel.org/blinkie20/connector/data/43> , <http://imirsel.org/blinkie20/connector/data/16> , <http://imirsel.org/blinkie20/connector/data/14> , <http://imirsel.org/blinkie20/connector/data/25> , <http://imirsel.org/blinkie20/connector/data/15> , <http://imirsel.org/blinkie20/connector/data/28> .
+
+<http://imirsel.org/blinkie20/connector/data/37>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/centroid/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_2> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/centroid/centroid/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_3/blinkie20> .
+
+<http://www.seasrproject.org/components/melfilterbank/property/lowestFreq>
+      rdf:type meandre:property ;
+      dc:description "Low frequency edge as ratio of sample rate"^^xsd:string ;
+      meandre:key "lowestFreq"^^xsd:string ;
+      meandre:value "0.0"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/18>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_1> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_2/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_3/blinkie20> .
+
+<http://www.seasrproject.org/components/zerocrossings/output/output>
+      rdf:type meandre:data_port ;
+      dc:description "number of zero-crossings(double 1x1 array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/zerocrossings/output/output"^^xsd:string ;
+      meandre:name "output"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicehead/servicehead/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "283"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/12>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/audiofileread/output/signal> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/input/signal> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/audiofileread/audiofileread/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/streamfixedwindowmeanandcovariance/streamfixedwindowmeanandcovariance/blinkie20> .
+
+<http://www.seasrproject.org/components/dct/property/numCoefs>
+      rdf:type meandre:property ;
+      dc:description "set the number of DCT coefficients to be output by the module"^^xsd:string ;
+      meandre:key "numCoefs"^^xsd:string ;
+      meandre:value "13"^^xsd:string .
+
+<http://www.seasrproject.org/components/applysignalclassifierstovectors/applysignalclassifierstovectors/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "224"^^xsd:string .
+
+<http://www.seasrproject.org/components/entropy/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "a frame of function to calculate the entropy(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/entropy/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://www.seasrproject.org/components/flux/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "input of streaming arrays(double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/flux/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://www.seasrproject.org/components/norm/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "input vector for norm computation(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/norm/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://www.seasrproject.org/components/applysignalclassifierstovectors/input/datavector>
+      rdf:type meandre:data_port ;
+      dc:description "the data vector to be classified(1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/applysignalclassifierstovectors/input/datavector"^^xsd:string ;
+      meandre:name "dataVector"^^xsd:string .
+
+<http://www.seasrproject.org/components/melfilterbank/melfilterbank/blinkie20/property/wb_left_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_left_pix_pos"^^xsd:string ;
+      meandre:value "657"^^xsd:string .
+
+<http://www.seasrproject.org/components/servicetail/input/response>
+      rdf:type meandre:data_port ;
+      dc:description "The response to be sent to the Service Tail."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/servicetail/input/response"^^xsd:string ;
+      meandre:name "response"^^xsd:string .
+
+<http://www.seasrproject.org/components/audiofileread/output/samplerate>
+      rdf:type meandre:data_port ;
+      dc:description "The Sample rate of the file being read (often used by filtering modules)."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/audiofileread/output/samplerate"^^xsd:string ;
+      meandre:name "SampleRate"^^xsd:string .
+
+<http://www.seasrproject.org/components/dct/dct/blinkie20>
+      rdf:type meandre:instance_configuration ;
+      dc:description "perform a discrete cosine transform of a 1D input double array"^^xsd:string ;
+      meandre:instance_name
+              "DCT"^^xsd:string ;
+      meandre:instance_resource
+              <http://www.seasrproject.org/components/dct> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/dct/dct/blinkie20/property/keepFirstCoef> , <http://www.seasrproject.org/components/dct/dct/blinkie20/property/wb_top_pix_pos> , <http://www.seasrproject.org/components/dct/dct/blinkie20/property/wb_left_pix_pos> , <http://www.seasrproject.org/components/dct/dct/blinkie20/property/numCoefs> .
+
+<http://www.seasrproject.org/components/parsestringforfilenames/output/audiofile>
+      rdf:type meandre:data_port ;
+      dc:description "The audio file."^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/parsestringforfilenames/output/audiofile"^^xsd:string ;
+      meandre:name "audioFile"^^xsd:string .
+
+<http://imirsel.org/blinkie20/connector/data/2>
+      rdf:type meandre:data_connector_configuration ;
+      meandre:connector_instance_data_port_source
+              <http://www.seasrproject.org/components/flux/output/output> ;
+      meandre:connector_instance_data_port_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/input/input_2> ;
+      meandre:connector_instance_source
+              <http://www.seasrproject.org/components/flux/flux/blinkie20> ;
+      meandre:connector_instance_target
+              <http://www.seasrproject.org/components/concatenate1ddarrays/concatenate1ddarrays_2/blinkie20> .
+
+<http://www.seasrproject.org/components/forkx5/property/Custom_Copy_Method_Name>
+      rdf:type meandre:property ;
+      dc:description "custom replication method"^^xsd:string ;
+      meandre:key "Custom_Copy_Method_Name"^^xsd:string ;
+      meandre:value ""^^xsd:string .
+
+<http://www.seasrproject.org/components/applysignalclassifierstovectors/output/classnamesvector>
+      rdf:type meandre:data_port ;
+      dc:description "a vector of class names(object)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/applysignalclassifierstovectors/output/classnamesvector"^^xsd:string ;
+      meandre:name "classNamesVector"^^xsd:string .
+
+<http://www.seasrproject.org/components/fftrealmagnitude/property/powerSpectrum>
+      rdf:type meandre:property ;
+      dc:description "produce power spectrum"^^xsd:string ;
+      meandre:key "powerSpectrum"^^xsd:string ;
+      meandre:value "false"^^xsd:string .
+
+<http://www.seasrproject.org/components/differencebetweenframes/input/input>
+      rdf:type meandre:data_port ;
+      dc:description "frame of data to calculate the difference from (1-D double array)"^^xsd:string ;
+      dc:identifier "http://www.seasrproject.org/components/differencebetweenframes/input/input"^^xsd:string ;
+      meandre:name "input"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx5>
+      rdf:type meandre:executable_component ;
+      dc:creator "Duane Searsmith"^^xsd:string ;
+      dc:date "2008-06-25T16:42:48"^^xsd:dateTime ;
+      dc:description "<p>Description: This component takes in any Java object and distributes it (or copies of it) across multiple outputs.  The user can choose from five object replication methods -- by reference, shallow copy by clone, deep copy via serialization, copy via constructor, or copy via custom method.</p>"^^xsd:string ;
+      dc:format "java/class"^^xsd:string ;
+      dc:rights "University of Illinois/NCSA Open Source License"^^xsd:string ;
+      meandre:execution_context
+              <http://www.seasrproject.org/components/forkx5/implementation/> , <http://nema.lis.uiuc.edu/blinkie-archive/resources/org.meandre.components.control.ForkX5-forkx5.jar> ;
+      meandre:firing_policy
+              "all"^^xsd:string ;
+      meandre:input_data_port
+              <http://www.seasrproject.org/components/forkx5/input/input_object> ;
+      meandre:name "ForkX5"^^xsd:string ;
+      meandre:output_data_port
+              <http://www.seasrproject.org/components/forkx5/output/output_object_4> , <http://www.seasrproject.org/components/forkx5/output/output_object_3> , <http://www.seasrproject.org/components/forkx5/output/output_object_1> , <http://www.seasrproject.org/components/forkx5/output/output_object_5> , <http://www.seasrproject.org/components/forkx5/output/output_object_2> ;
+      meandre:property_set
+              <http://www.seasrproject.org/components/forkx5/property/Custom_Copy_Method_Name> , <http://www.seasrproject.org/components/forkx5/property/Replication_Mode> ;
+      meandre:resource_location
+              <http://www.seasrproject.org/components/forkx5/implementation/org.meandre.components.control.ForkX5> ;
+      meandre:runnable "java"^^xsd:string ;
+      meandre:tag "clone"^^xsd:string .
+
+<http://www.seasrproject.org/components/forkx2/forkx2/blinkie20/property/wb_top_pix_pos>
+      rdf:type meandre:property ;
+      meandre:key "wb_top_pix_pos"^^xsd:string ;
+      meandre:value "0"^^xsd:string .
