@@ -40,7 +40,7 @@ import org.meandre.core.ComponentExecutionException;
 		tags="evaluation segmentation",
 		dependency={"commons-compress-1.0.jar","jfreechart-1.0.9.jar","jcommon-1.0.12.jar"}
 		)
-		public class StructuralSegmentationEvaluatorComponent extends NemaComponent {
+public class StructuralSegmentationEvaluatorComponent extends NemaComponent {
 
 
 	//@ComponentInput(description="Java File Object In", name="fileObjectIn")
@@ -155,7 +155,7 @@ import org.meandre.core.ComponentExecutionException;
 		if (fileLists1.length != fileLists2.length) {
 			throw new ComponentExecutionException("ERROR: File lists for input1 and input2 are different lengths!");
 		}
-		_logger.info("\n" +
+		getLogger().info("\n" +
 				"=============================================================\n" +
 				"Starting evaluation of structural segmentation\n" +
 				"=============================================================\n" +
@@ -174,11 +174,11 @@ import org.meandre.core.ComponentExecutionException;
 		}
 	 	File resultsDir = new File(processResultsDirName);
 		for (int i = 0; i < fileLists1.length; i++) {
-			_logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+			getLogger().info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
 					"FILE:  " + (i+1) +"/" + fileLists1.length + "\n");
 
 			if(isAborted) {
-				_logger.info("Execution of external binaries aborted");
+				getLogger().info("Execution of external binaries aborted");
 				break;
 			}
 
@@ -188,10 +188,10 @@ import org.meandre.core.ComponentExecutionException;
 				try {
 				result=runCommand(inFile2.getCanonicalPath(), inFile1.getCanonicalPath(), execName,workingDir,processResultsDir,resultsDir);
 			} catch (IOException e) {
-				_logger.log(Level.SEVERE,"Exception occured while running eval script!",e);
+				getLogger().log(Level.SEVERE,"Exception occured while running eval script!",e);
 				throw new ComponentExecutionException(e);
 			} catch (Exception e) {
-				_logger.log(Level.SEVERE,"Exception occured while running eval script!",e);
+				getLogger().log(Level.SEVERE,"Exception occured while running eval script!",e);
 				throw new ComponentExecutionException(e);
 			}
 			
@@ -205,10 +205,10 @@ import org.meandre.core.ComponentExecutionException;
 			TaskDescription task = new TaskDescription(-1, taskName, taskDesc, "Structure", -1, datasetName, datasetDesc);
 			WriteResultPagePerFile.writeResultsHTML(task, pageNames, csvFiles, pngFiles, resultsDir);
 		} catch (Exception e) {
-			_logger.log(Level.SEVERE,"Exception occured while writing results pages!",e);
+			getLogger().log(Level.SEVERE,"Exception occured while writing results pages!",e);
 		}
 		 
-		_logger.info("=============================================================\n" +
+		getLogger().info("=============================================================\n" +
 				"Evaluation of structural segmentation complete\n" +
 				"=============================================================");
 				
@@ -273,7 +273,7 @@ import org.meandre.core.ComponentExecutionException;
 		msg += "\n\n In directory:" + dir.getCanonicalPath() + "\n" +
 				"Sending results to: " + resdir.getCanonicalPath() + "\n";
 
-		_logger.info(msg);
+		getLogger().info(msg);
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
 		Map<String, String> env = pb.environment();
 		pb.directory(dir);
@@ -281,22 +281,22 @@ import org.meandre.core.ComponentExecutionException;
 
 		msg = "*******************************************\n" +
 				"EXTERNAL PROCESS STDOUT AND STDERR:\n";
-		_logger.info(msg);
+		getLogger().info(msg);
 		
 		
 		InputStream is = null;
 		try{
 			process = pb.start();
 			is = process.getInputStream();
-			_logger.info("*******************************************\n" +
+			getLogger().info("*******************************************\n" +
 					"EXTERNAL PROCESS STDOUT AND STDERR:");
-			procReceiverThread = new ProcessOutputReceiver( is, _logger );
+			procReceiverThread = new ProcessOutputReceiver( is, getLogger() );
 			procReceiverThread.start();
 	        int exitStatus;
 	        
 			try {
 				exitStatus = process.waitFor();
-				_logger.info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus + "\n" +
+				getLogger().info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus + "\n" +
 						"*******************************************");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
