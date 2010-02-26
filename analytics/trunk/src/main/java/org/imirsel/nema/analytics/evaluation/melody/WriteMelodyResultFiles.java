@@ -60,6 +60,7 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
             row[3] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_RECALL));
             row[4] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM));
             row[5] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY));   
+            rows.add(row);
         }
 
         return new Table(colNames, rows);
@@ -131,6 +132,7 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
             row[3] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_RECALL));
             row[4] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM));
             row[5] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY));   
+            rows.add(row);
         }
 
         return new Table(colNames, rows);
