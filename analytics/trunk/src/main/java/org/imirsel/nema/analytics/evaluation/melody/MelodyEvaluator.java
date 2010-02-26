@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+
 import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.ImageItem;
@@ -256,21 +257,16 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		NemaData gtData;
 		double[][] rawData;
 		double[][] rawGtData;
+		
+		double vxRecallOvarall = 0.0;
+		double vxFalseAlarmOverall = 0.0;
+		double rawPitchOverall = 0.0;
+		double rawChromaOverall = 0.0;
+		double accuracyOverall = 0.0;
 
-		int totalCorrect = 0;
-		int totalNoMelCorrect = 0;
-		int totalIncorrect = 0;
-		int totalFalsePositives = 0;
-		int totalFalseNegatives = 0;
-		int totalFalNegCorF0 = 0;
-		int total1OctaveCorrect = 0;
-		int totallOctaveNoMelCorrect = 0;
-		int total1OctaveIncorrect = 0;
-		int total1OctaveFalsePositives = 0;
-		int total1OctaveFalseNegatives = 0;
-		int totallOctaveFalseNegCorF0 = 0;
-
-		for (int x = 0; x < theData.size(); x++) {
+		int numTracks = theData.size();
+		for (int x = 0; x < numTracks; x++) {
+			// pull the algorithm and ground-truth raw data
 			data = theData.get(x);
 			gtData = trackIDToGT.get(data.getId());
 			rawData = data
@@ -278,13 +274,13 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			rawGtData = gtData
 					.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
 
+			// initialize frame-by-frame counters for the evaluation measures
 			int correct = 0;
 			int nomelcorrect = 0;
 			int incorrect = 0;
 			int falsePositives = 0;
 			int falseNegatives = 0;
 			int falseNegCorF0 = 0;
-
 			int octaveCorrect = 0;
 			int octaveNoMelCorrect = 0;
 			int octaveIncorrect = 0;
@@ -324,13 +320,6 @@ public class MelodyEvaluator extends EvaluatorImpl {
 					incorrect++;
 				}
 			}
-
-			totalCorrect += correct;
-			totalNoMelCorrect += nomelcorrect;
-			totalFalseNegatives += falseNegatives;
-			totalFalsePositives += falsePositives;
-			totalIncorrect += incorrect;
-			totalFalNegCorF0 += falseNegCorF0;
 
 			// Do one octave evaluation
 			for (int t = 0; t < tot; t++) {
@@ -424,31 +413,53 @@ public class MelodyEvaluator extends EvaluatorImpl {
 					octaveIncorrect++;
 				}
 			} // end counts for a single trackID evaluation
-			/*
-			 * int correct = 0;
-			int nomelcorrect = 0;
-			int incorrect = 0;
-			int falsePositives = 0;
-			int falseNegatives = 0;
-			int falseNegCorF0 = 0;
-			 * */
+
 			
 			
-			// Calculate the evaluation measures for this task
+			// Calculate the evaluation measures for this track
 			int gv = correct + incorrect + falseNegatives;
 			int gu = nomelcorrect + falsePositives;
-			double vxRecall = ((double)correct + (double)incorrect)/(double)gv;
+			double vxRecall = ((double) correct + (double) incorrect)
+					/ ((double) gv);
+			double vxFalseAlarm = (Math.max(0.001, (double) falsePositives))
+					/ (Math.max(0.001, (double) gu));
+			double rawPitch = ((double) correct + (double) falseNegCorF0) 
+					/ ((double) gv); 
+			double rawChroma = ((double) octaveCorrect + (double) octaveFalseNegCorF0)
+					/ ((double) gv);
+			double accuracy = ((double) correct + (double) nomelcorrect)
+					/ ((double) tot);
 			
+			vxRecallOvarall += vxRecall;
+			vxFalseAlarmOverall += vxFalseAlarm;
+			rawPitchOverall += rawPitch;
+			rawChromaOverall += rawChroma;
+			accuracyOverall += accuracy;	
 			
-			// increment accumulated counts over all files
-			total1OctaveCorrect += octaveCorrect;
-			totallOctaveNoMelCorrect += octaveNoMelCorrect;
-			total1OctaveFalseNegatives += octaveFalseNegatives;
-			total1OctaveFalsePositives += octaveFalsePositives;
-			total1OctaveIncorrect += octaveIncorrect;
-			totallOctaveFalseNegCorF0 += octaveFalseNegCorF0;
+			data.setMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY, accuracy);
+			data.setMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY, rawPitch);
+			data.setMetadata(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY, rawChroma);
+			data.setMetadata(NemaDataConstants.MELODY_VOICING_RECALL, vxRecall);
+			data.setMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM, vxFalseAlarm);
+
+			theData.set(x, data);
+			
+					
 
 		}
+		
+		
+		vxRecallOvarall = vxRecallOvarall / ((double) numTracks);
+		vxFalseAlarmOverall = vxFalseAlarmOverall / ((double) numTracks);
+		rawPitchOverall = rawPitchOverall / ((double) numTracks);
+		rawChromaOverall = rawChromaOverall / ((double) numTracks);
+		accuracyOverall = accuracyOverall / ((double) numTracks);
+		
+		outObj.setMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY, accuracyOverall);
+		outObj.setMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY, rawPitchOverall);
+		outObj.setMetadata(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY, rawChromaOverall);
+		outObj.setMetadata(NemaDataConstants.MELODY_VOICING_RECALL, vxRecallOvarall);
+		outObj.setMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM, vxFalseAlarmOverall);
 
 		return outObj;
 	}
