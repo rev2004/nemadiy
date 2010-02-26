@@ -25,7 +25,10 @@ import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
 
-@Component(creator = "Mert Bay", description = "Takes the collection ID and pushes the names, paths for the publised results for the collection and associated groundtruth", name = "GetPublishedResults",resources={"../../../../RepositoryProperties.properties"},
+@Component(creator = "Mert Bay",
+		description = "Takes the collection ID and pushes the names, " +
+				"paths for the publised results for the collection and associated groundtruth",
+				name = "GetPublishedResults", resources={"../../../../../RepositoryProperties.properties"},
 		tags = "dataset, published, results", firingPolicy = Component.FiringPolicy.all)
 	
 	public class GetPublishedResults implements ExecutableComponent {
