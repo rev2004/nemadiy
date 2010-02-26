@@ -5,8 +5,13 @@ import static org.junit.Assert.*;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.imirsel.nema.model.NemaCollection;
 import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaMetadataEntry;
+import org.imirsel.nema.model.NemaTrack;
+import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -19,7 +24,6 @@ public class RepositoryClientImplTest {
 	
 	@Before
     public void setUp() throws Exception {
-		System.out.println("1");
 		clientImpl = new RepositoryClientImpl();
 	}
 	
@@ -31,8 +35,8 @@ public class RepositoryClientImplTest {
 
 	
 	@Test
-	public final void testgetDatasets() {
-		System.out.println("IN TEST GET DATASETS");
+	public final void testGetDatasets() {
+		
 		List<NemaDataset> dataset = null;
 		try {
 			dataset=clientImpl.getDatasets();
@@ -48,7 +52,65 @@ public class RepositoryClientImplTest {
 		
 	}
 
+	@Test
+	public final void testGetDataset() {
+		
+		NemaDataset dataset = null;
+		try {
+			dataset=clientImpl.getDataset(10);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assertTrue(dataset!=null);
+		
+		  System.out.println(dataset);
+				
+	}
 	
+	@Test
+	public final void testGetCollections() {
+		
+		List<NemaCollection>  collectionlist = null;
+		
+		try {
+			collectionlist=clientImpl.getCollections();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assertTrue(collectionlist!=null);
+		
+		for(NemaCollection nc:collectionlist){
+			System.out.println(nc.getName());
+		}
+		
+	}
+	
+//	@Test
+//	public final void testGetCollectionSubset(){
+//		NemaTrackList tracklist = null;
+//		try {
+//			tracklist=clientImpl.getCollectionSubset(10);
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		assertTrue(tracklist!=null);
+//		
+//		  System.out.println(tracklist);
+//	}
+	
+
+//	@Test
+//	public final void testGetFile(NemaTrack track, Set<NemaMetadataEntry> constraint){
+//	//return NemaFile	
+//	}
+//	
+//	@Test
+//	public final void testGetTracks(NemaTrackList set){
+//	//return list<NemaTrack>	
+//	}
 //
 //	@Test
 //	public final void testGetTrackMetadataNameMap() {
@@ -64,17 +126,9 @@ public class RepositoryClientImplTest {
 //	public final void testGetTrackMetadataID() {
 //		fail("Not yet implemented"); // TODO
 //	}
-//
-//	@Test
-//	public final void testGetCollections() {
-//		fail("Not yet implemented"); // TODO
-//	}
-//
-//	@Test
-//	public final void testGetTracksInt() {
-//		fail("Not yet implemented"); // TODO
-//	}
-//
+
+
+
 //	@Test
 //	public final void testGetTrackMetadataNemaTrack() {
 //		fail("Not yet implemented"); // TODO
@@ -114,20 +168,6 @@ public class RepositoryClientImplTest {
 //	public final void testGetTrackMetadataListOfNemaTrackInt() {
 //		fail("Not yet implemented"); // TODO
 //	}
-//
-//	@Test
-//	public final void testGetFileNemaTrackSetOfNemaMetadataEntry() {
-//		fail("Not yet implemented"); // TODO
-//	}
-//
-//	@Test
-//	public final void testGetCollectionVersionsNemaCollection() {
-//		fail("Not yet implemented"); // TODO
-//	}
-//
-//	@Test
-//	public final void testGetCollectionVersionsInt() {
-//		fail("Not yet implemented"); // TODO
-//	}
+
 
 }
