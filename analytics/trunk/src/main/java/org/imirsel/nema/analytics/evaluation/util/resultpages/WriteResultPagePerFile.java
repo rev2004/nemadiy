@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.imirsel.nema.model.*;
-import org.imirsel.nema.analytics.evaluation.classification.WriteResultFiles;
+import org.imirsel.nema.analytics.evaluation.classification.WriteClassificationResultFiles;
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 import org.imirsel.nema.analytics.util.io.IOUtil;
 
@@ -53,7 +53,7 @@ public class WriteResultPagePerFile {
 
         //do intro page
         items = new ArrayList<PageItem>();
-        WriteResultFiles.Table descriptionTable = WriteResultFiles.prepTaskTable(task,dataset);
+        Table descriptionTable = WriteClassificationResultFiles.prepTaskTable(task,dataset);
         items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
         aPage = new Page("intro", "Introduction", items, false);
         resultPages.add(aPage);

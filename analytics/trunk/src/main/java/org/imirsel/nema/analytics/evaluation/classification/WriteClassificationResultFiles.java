@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.imirsel.nema.model.*;
+import org.imirsel.nema.analytics.evaluation.AbstractWriteResultFiles;
+import org.imirsel.nema.analytics.evaluation.util.resultpages.Table;
 
 /**
  * Utility class that can produce CSV result files and Table Objects for use in reporting
@@ -26,55 +28,10 @@ import org.imirsel.nema.model.*;
  * 
  * @author kris.west@gmail.com
  */
-public class WriteResultFiles {
+public class WriteClassificationResultFiles extends AbstractWriteResultFiles {
 
 	public static final DecimalFormat DEC = new DecimalFormat("0.00");
     
-	/**
-	 * Data-structure to hold the information relating to a table (column names and rows 
-	 * of string data).
-	 *  
-	 * @author kriswest
-	 */
-    public static class Table{
-        private String[] colHeaders;
-        private List<String[]> rows;
-
-        public Table(String[] colHeaders,
-                     List<String[]> rows){
-            this.colHeaders = colHeaders;
-            this.rows = rows;
-        }
-
-        /**
-         * @return the colHeaders
-         */
-        public String[] getColHeaders(){
-            return colHeaders;
-        }
-
-        /**
-         * @param colHeaders the colHeaders to set
-         */
-        public void setColHeaders(String[] colHeaders){
-            this.colHeaders = colHeaders;
-        }
-
-        /**
-         * @return the rows
-         */
-        public List<String[]> getRows(){
-            return rows;
-        }
-
-        /**
-         * @param rows the rows to set
-         */
-        public void setRows(List<String[]> rows){
-            this.rows = rows;
-        }
-    }
-
     /**
      * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
      * of the table and the rows are the different classes of data in the evaluation.
@@ -310,37 +267,6 @@ public class WriteResultFiles {
         }
     }
 
-    /**
-     * Prepares a Table Object that encodes the description of the specified task. To be
-     * used to construct introduction pages for the results.
-     * 
-     * @param task The task description to encode.
-     * @return The prepared Table.
-     */
-    public static Table prepTaskTable(NemaTask task, NemaDataset dataset) {
-        String[] colNames = new String[2];
-        colNames[0] = "Field";
-        colNames[1] = "Value";
-
-        DecimalFormat dec = new DecimalFormat();
-        dec.setMaximumFractionDigits(2);
-
-        List<String[]> rows = new ArrayList<String[]>();
-        
-        rows.add(new String[]{"Task ID",""+task.getId()});
-        rows.add(new String[]{"Task Name",""+task.getName()});
-        rows.add(new String[]{"Task Description",""+task.getDescription()});
-        rows.add(new String[]{"Subject Metadata ID",""+task.getSubjectTrackMetadataId()});
-        rows.add(new String[]{"Subject Metadata Name",""+task.getSubjectTrackMetadataName()});
-        
-        
-        rows.add(new String[]{"Dataset ID","" + dataset.getId()});
-        rows.add(new String[]{"Dataset Name",""+dataset.getName()});
-        rows.add(new String[]{"Dataset Description",""+dataset.getDescription()});
-        
-        return new Table(colNames, rows);
-    }
-    
     /**
      * Prepares a summary table for the classification task which displays multiple evaluation metrics
      * averaged over all folds of the experiment.

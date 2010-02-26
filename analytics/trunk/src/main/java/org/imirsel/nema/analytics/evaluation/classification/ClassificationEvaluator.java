@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -104,7 +103,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     		data = it.next();
     		aClass = data.getStringMetadata(type);
     		if(aClass == null){
-    			throw new IllegalArgumentException("Ground-truth example " + data.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION) + " had no metadata of type '" + type + "'");
+    			throw new IllegalArgumentException("Ground-truth example " + data.getId() + " had no metadata of type '" + type + "'");
     		}else{
     			classes.add(aClass);
     		}
@@ -304,7 +303,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
                 numFolds = sysResults.size();
             } else if (numFolds != sysResults.size()) {
                 throw new IllegalArgumentException("The number of folds (" + sysResults.size() + ") detected for system ID: " + jobID + 
-                		", name: " + jobIDToName.get(jobID) + "is not equal to the number detected " + 
+                		", name: " + jobIDToName.get(jobID) + " is not equal to the number detected " + 
                 		"for the preceeding systems (" + numFolds + ")!");
             }
         }
@@ -471,23 +470,23 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         _logger.fine(msg);
         
         File perClassCSV = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassResults.csv");
-        WriteResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT,perClassCSV);
+        WriteClassificationResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT,perClassCSV);
         
         File perFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "PerFoldResults.csv");
-        WriteResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY,perFoldCSV);
+        WriteClassificationResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY,perFoldCSV);
         
         //write out results summary CSV
         File summaryCSV = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
-        WriteResultFiles.prepSummaryResultDataCSV(jobIDToAggregateEvaluations,jobIDToName,classNames,summaryCSV,usingAHierarchy);
+        WriteClassificationResultFiles.prepSummaryResultDataCSV(jobIDToAggregateEvaluations,jobIDToName,classNames,summaryCSV,usingAHierarchy);
         
         //write out discounted results summary CSVs
         File discountedPerClassCSV = null;
         File discountedPerFoldCSV = null;
         if (hierarchyFile != null){
             discountedPerClassCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerClassResults.csv");
-            WriteResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountedPerClassCSV);
+            WriteClassificationResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountedPerClassCSV);
             discountedPerFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerFoldResults.csv");
-            WriteResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY,discountedPerFoldCSV);
+            WriteClassificationResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY,discountedPerFoldCSV);
         }
         
         //perform statistical tests
@@ -555,7 +554,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do intro page to describe task
         {
         	items = new ArrayList<PageItem>();
-	        WriteResultFiles.Table descriptionTable = WriteResultFiles.prepTaskTable(task,dataset);
+	        Table descriptionTable = WriteClassificationResultFiles.prepTaskTable(task,dataset);
 	        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
 	        aPage = new Page("intro", "Introduction", items, false);
 	        resultPages.add(aPage);
@@ -564,7 +563,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do summary page
         {
 	        items = new ArrayList<PageItem>();
-	        WriteResultFiles.Table summaryTable = WriteResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName,classNames,usingAHierarchy);
+	        Table summaryTable = WriteClassificationResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName,classNames,usingAHierarchy);
 	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
 	        aPage = new Page("summary", "Summary", items, false);
 	        resultPages.add(aPage);
@@ -573,10 +572,10 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do per class page
         {
             items = new ArrayList<PageItem>();
-            WriteResultFiles.Table perClassTable = WriteResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
+            Table perClassTable = WriteClassificationResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
             items.add(new TableItem("acc_class", "Accuracy per Class", perClassTable.getColHeaders(), perClassTable.getRows()));
             if (hierarchyFile != null){
-                WriteResultFiles.Table perDiscClassTable = WriteResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
+                Table perDiscClassTable = WriteClassificationResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Class", perDiscClassTable.getColHeaders(), perDiscClassTable.getRows()));
             }
             aPage = new Page("acc_per_class", "Accuracy per Class", items, false);
@@ -586,10 +585,10 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do per fold page
         {
             items = new ArrayList<PageItem>();
-            WriteResultFiles.Table perFoldTable = WriteResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY);
+            Table perFoldTable = WriteClassificationResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY);
             items.add(new TableItem("acc_class", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
             if (hierarchyFile != null){
-                WriteResultFiles.Table perDiscFoldTable = WriteResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
+                Table perDiscFoldTable = WriteClassificationResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
             }
             aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);
@@ -716,7 +715,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         	data = theData.get(x);
         	classString = data.getStringMetadata(type);
             classification = classNames.indexOf(classString);
-            gtData = trackIDToGT.get(data.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
+            gtData = trackIDToGT.get(data.getId());
             truthString = gtData.getStringMetadata(type);
             truth = classNames.indexOf(truthString);
             
