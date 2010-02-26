@@ -187,8 +187,6 @@ import org.imirsel.nema.components.NemaComponent;
 			}
 		    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
 		    
-		    // create a directory to move the raw results to
-		    File classificationResultsDir = new File(fileLists[0]);
 		    
 	        // call constructor and evaluation method
 	        TaskDescription task = new TaskDescription(-1, taskName, taskDesc, metadata, -1, datasetName, datasetDesc);
@@ -218,7 +216,7 @@ import org.imirsel.nema.components.NemaComponent;
 			
 			//read results
 			try{
-				List<List<DataObj>> results = reader.readDirectory(classificationResultsDir, null);
+				List<List<DataObj>> results = reader.readDirectory(procResDir, null);
 				for(Iterator<List<DataObj>> it= results.iterator();it.hasNext();){
 		        	eval.addResults(systemName, systemID, it.next());
 		        }
