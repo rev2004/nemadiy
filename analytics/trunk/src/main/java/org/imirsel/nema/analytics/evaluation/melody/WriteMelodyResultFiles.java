@@ -30,92 +30,67 @@ import org.imirsel.nema.model.*;
  */
 public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
 
-	public static final DecimalFormat DEC = new DecimalFormat("0.00");
+	public static final DecimalFormat DEC = new DecimalFormat("0.000");
     
-	//TODO implement real methods here for results tables
-	public static Table prepSummaryTableData(Map<String,NemaData> jobIDToEval, Map<String,String> jobIDToName) {
-    	//sort systems alphabetically
-    	int numAlgos = jobIDToName.size();
-    	String[][] jobIDandName = new String[numAlgos][];
-    	int idx=0;
-    	String id;
-    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
-    		id = it.next();
-    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
-    	}
-    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
-    		public int compare(String[] a, String[] b){
-    			return a[1].compareTo(b[1]);
-    		}
-    	});
-    	
-        String[] colNames = new String[numAlgos + 1];
-        colNames[0] = "Class";
-        for (int i = 0; i < numAlgos; i++) {
-            colNames[i+1] = jobIDandName[i][1];
-        }
 
+	public static Table prepSummaryTableData(Map<String,NemaData> jobIDToEval, Map<String,String> jobIDToName) {
+
+    	// create the table
+        String[] colNames = new String[6];
+        colNames[0] = "Algorithm";
+        colNames[1] = NemaDataConstants.MELODY_RAW_PITCH_ACCURACY;
+        colNames[2] = NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY;
+        colNames[3] = NemaDataConstants.MELODY_VOICING_RECALL;
+        colNames[4] = NemaDataConstants.MELODY_VOICING_FALSE_ALARM;
+        colNames[5] = NemaDataConstants.MELODY_OVERALL_ACCURACY;
+        
         List<String[]> rows = new ArrayList<String[]>();
         
-        for (int c = 0; c < classNames.size(); c++) {
-            String[] row = new String[numAlgos + 1];
-            row[0] = classNames.get(c).replaceAll(",", " ");
-
-            for (int j = 0 ; j < numAlgos; j++){  
-            	if (jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey).getClass().getComponentType().isArray()){
-            		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c]);
-            	}else{
-            		//discounted types are 1D as there is no residual confusion after discounting
-            		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c]);
-            	}
-            }
-            rows.add(row);
+        NemaData eval;
+		String jobId;
+		String jobName;
+        for (Iterator<String> it = jobIDToEval.keySet().iterator();it.hasNext();) {
+        	jobId = it.next();
+        	jobName = jobIDToName.get(jobId);
+        	eval = jobIDToEval.get(jobId);
+        	String[] row = new String[6];
+        	row[0] = jobName;
+            row[1] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY));
+            row[2] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY));
+            row[3] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_RECALL));
+            row[4] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM));
+            row[5] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY));   
         }
+
         return new Table(colNames, rows);
     }
 
     public static void prepSummaryCsv(Map<String,NemaData> jobIDToEval, Map<String,String> jobIDToName, File outputFile) 
     		throws IOException{
-    	
-        //sort systems alphabetically
-    	int numAlgos = jobIDToName.size();
-    	String[][] jobIDandName = new String[numAlgos][];
-    	int idx=0;
-    	String id;
-    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
-    		id = it.next();
-    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id).replaceAll(",", " ")};
-    	}
-    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
-    		public int compare(String[] a, String[] b){
-    			return a[1].compareTo(b[1]);
-    		}
-    	});
 
-        String csv = "*Class,";
-        for (int i = 0; i < numAlgos; i++) {
-        	csv += jobIDandName[i][1];
-            if (i<numAlgos-1){
-            	csv += ",";
-            }
-        }
-        csv += "\n";
+    	String delim = ",";
+        String csv = "*Algorithm";
+        csv += delim + NemaDataConstants.MELODY_RAW_PITCH_ACCURACY;
+		csv += delim + NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY;
+		csv += delim + NemaDataConstants.MELODY_VOICING_RECALL;
+		csv += delim + NemaDataConstants.MELODY_VOICING_FALSE_ALARM;
+		csv += delim + NemaDataConstants.MELODY_OVERALL_ACCURACY;
+		csv += "\n";
         
-        for (int c = 0; c < classNames.size(); c++) {
-            csv += classNames.get(c).replaceAll(",", " ") + ",";
-
-            for (int j = 0 ; j < numAlgos; j++){
-            	if (jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey).getClass().getComponentType().isArray()){
-            		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c];
-            	}else{
-            		//discounted types are 1D as there is no residual confusion after discounting
-            		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c];
-            	}
-                if (j < numAlgos-1){
-                	csv += ",";
-                }
-            }
-            csv += "\n";
+		NemaData eval;
+		String jobId;
+		String jobName;
+        for (Iterator<String> it = jobIDToEval.keySet().iterator();it.hasNext();) {
+        	jobId = it.next();
+        	jobName = jobIDToName.get(jobId);
+        	eval = jobIDToEval.get(jobId);
+            csv += jobName;
+            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY);
+            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY);
+            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_RECALL);
+            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM);
+            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY);
+            csv += "\n";   
         }
         
         BufferedWriter output = null;
@@ -132,89 +107,56 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
         }
     }
     
-    public static Table prepPerTrackTableData(NemaData eval, String name) {
-    	//sort systems alphabetically
-    	int numAlgos = jobIDToName.size();
-    	String[][] jobIDandName = new String[numAlgos][];
-    	int idx=0;
-    	String id;
-    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
-    		id = it.next();
-    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
-    	}
-    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
-    		public int compare(String[] a, String[] b){
-    			return a[1].compareTo(b[1]);
-    		}
-    	});
-    	
-        String[] colNames = new String[numAlgos + 1];
-        colNames[0] = "Class";
-        for (int i = 0; i < numAlgos; i++) {
-            colNames[i+1] = jobIDandName[i][1];
-        }
-
+    public static Table prepPerTrackTableData(List<NemaData> evalList, String jobName) {
+    	// create the table
+        String[] colNames = new String[6];
+        colNames[0] = "Track";
+        colNames[1] = NemaDataConstants.MELODY_RAW_PITCH_ACCURACY;
+        colNames[2] = NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY;
+        colNames[3] = NemaDataConstants.MELODY_VOICING_RECALL;
+        colNames[4] = NemaDataConstants.MELODY_VOICING_FALSE_ALARM;
+        colNames[5] = NemaDataConstants.MELODY_OVERALL_ACCURACY;
+        
         List<String[]> rows = new ArrayList<String[]>();
         
-        for (int c = 0; c < classNames.size(); c++) {
-            String[] row = new String[numAlgos + 1];
-            row[0] = classNames.get(c).replaceAll(",", " ");
-
-            for (int j = 0 ; j < numAlgos; j++){  
-            	if (jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey).getClass().getComponentType().isArray()){
-            		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c]);
-            	}else{
-            		//discounted types are 1D as there is no residual confusion after discounting
-            		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c]);
-            	}
-            }
-            rows.add(row);
+        NemaData eval;
+		String trackName;
+        for (Iterator<NemaData> it = evalList.iterator();it.hasNext();) {
+        	eval = it.next();
+        	trackName = eval.getId();
+        	String[] row = new String[6];
+        	row[0] = trackName;
+            row[1] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY));
+            row[2] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY));
+            row[3] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_RECALL));
+            row[4] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM));
+            row[5] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY));   
         }
+
         return new Table(colNames, rows);
     }
 
-    public static void prepPerTrackCsv(NemaData eval, String jobName, File outputFile) 
+    public static void prepPerTrackCsv(List<NemaData> evalList, String jobName, File outputFile) 
     		throws IOException{
-    	
-        //sort systems alphabetically
-    	int numAlgos = jobIDToName.size();
-    	String[][] jobIDandName = new String[numAlgos][];
-    	int idx=0;
-    	String id;
-    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
-    		id = it.next();
-    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id).replaceAll(",", " ")};
-    	}
-    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
-    		public int compare(String[] a, String[] b){
-    			return a[1].compareTo(b[1]);
-    		}
-    	});
-
-        String csv = "*Class,";
-        for (int i = 0; i < numAlgos; i++) {
-        	csv += jobIDandName[i][1];
-            if (i<numAlgos-1){
-            	csv += ",";
-            }
-        }
-        csv += "\n";
+    	String delim = ",";
+        String csv = "*Track";
+        csv += delim + NemaDataConstants.MELODY_RAW_PITCH_ACCURACY;
+		csv += delim + NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY;
+		csv += delim + NemaDataConstants.MELODY_VOICING_RECALL;
+		csv += delim + NemaDataConstants.MELODY_VOICING_FALSE_ALARM;
+		csv += delim + NemaDataConstants.MELODY_OVERALL_ACCURACY;
+		csv += "\n";
         
-        for (int c = 0; c < classNames.size(); c++) {
-            csv += classNames.get(c).replaceAll(",", " ") + ",";
-
-            for (int j = 0 ; j < numAlgos; j++){
-            	if (jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey).getClass().getComponentType().isArray()){
-            		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c];
-            	}else{
-            		//discounted types are 1D as there is no residual confusion after discounting
-            		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c];
-            	}
-                if (j < numAlgos-1){
-                	csv += ",";
-                }
-            }
-            csv += "\n";
+		NemaData eval;
+        for (Iterator<NemaData> it = evalList.iterator();it.hasNext();) {
+        	eval = it.next();
+            csv += eval.getId();
+            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY);
+            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY);
+            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_RECALL);
+            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM);
+            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY);
+            csv += "\n";   
         }
         
         BufferedWriter output = null;

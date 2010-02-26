@@ -130,11 +130,13 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		for (Iterator<String> it = jobIDToName.keySet().iterator(); it
 				.hasNext();) {
 			jobID = it.next();
+			sysResults = jobIDToFoldResults.get(jobID);
+			resultList = sysResults.get(0);
 			File sysDir = jobIDToResultDir.get(jobID);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator
 					+ jobID + File.separator + "perTrack.csv");
 			WriteMelodyResultFiles.prepPerTrackCsv(
-					jobIdToEvaluation.get(jobID), jobIDToName.get(jobID),
+					resultList, jobIDToName.get(jobID),
 					trackCSV);
 			jobIDToPerTrackCSV.put(jobID, trackCSV);
 		}
@@ -186,9 +188,11 @@ public class MelodyEvaluator extends EvaluatorImpl {
 					.hasNext();) {
 				jobID = it.next();
 				items = new ArrayList<PageItem>();
+				sysResults = jobIDToFoldResults.get(jobID);
+				resultList = sysResults.get(0);
 				// add per track table
 				Table perTrackTable = WriteMelodyResultFiles
-						.prepPerTrackTableData(jobIdToEvaluation.get(jobID),
+						.prepPerTrackTableData(resultList,
 								jobIDToName.get(jobID));
 				items.add(new TableItem(jobID + "_results", jobIDToName
 						.get(jobID)
@@ -249,7 +253,6 @@ public class MelodyEvaluator extends EvaluatorImpl {
 	}
 
 	private NemaData evaluateResult(String jobID, List<NemaData> theData) {
-		// throw new UnsupportedOperationException("Not implemented yet!");
 
 		NemaData outObj = new NemaData(jobID);
 
@@ -288,7 +291,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			int octaveFalseNegatives = 0;
 			int octaveFalseNegCorF0 = 0;
 			
-			
+			// perform evaluation
 			int tot = rawGtData.length;
 			for (int t = 0; t < tot; t++) {
 				double gtF0 = rawGtData[t][1];
@@ -441,9 +444,6 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			data.setMetadata(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY, rawChroma);
 			data.setMetadata(NemaDataConstants.MELODY_VOICING_RECALL, vxRecall);
 			data.setMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM, vxFalseAlarm);
-
-			theData.set(x, data);
-			
 					
 
 		}
