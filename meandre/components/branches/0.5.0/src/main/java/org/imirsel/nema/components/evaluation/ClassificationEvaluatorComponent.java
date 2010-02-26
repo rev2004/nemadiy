@@ -188,6 +188,9 @@ import org.imirsel.nema.components.NemaComponent;
 		    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
 		    
 		    
+		    
+		    
+		    
 	        // call constructor and evaluation method
 	        TaskDescription task = new TaskDescription(-1, taskName, taskDesc, metadata, -1, datasetName, datasetDesc);
 	        

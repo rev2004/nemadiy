@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.NEMAMetadataEntry;
 import org.imirsel.nema.renderers.CollectionRenderer;
 import org.imirsel.nema.repository.DatasetListFileGenerator;
@@ -24,10 +25,11 @@ import org.meandre.core.ExecutableComponent;
 
 @Component(creator = "Mert Bay", description = "Selects a Train / Test dataset from NEMA servers. Outputs 4 objects: " +
 				"1) a Feature Extraction list file path 2) Ground-truth file path 3) an array of train file paths " +
-				"4) an array of test file paths", name = "CollectionSelector",//resources={"RepositoryProperties.properties"},
+				"4) an array of test file paths", name = "CollectionSelector",
+				resources={"../../../../../RepositoryProperties.properties"},
 					tags = "input, collection, train/test", firingPolicy = Component.FiringPolicy.all)
 	
-	public class TrainTestCollectionInputSelector implements ExecutableComponent {
+	public class TrainTestCollectionInputSelector extends NemaComponent {
 
 	
 	
@@ -100,8 +102,8 @@ import org.meandre.core.ExecutableComponent;
 	private java.io.PrintStream cout;
 
 	
-	public void initialize(ComponentContextProperties cc) throws  ComponentExecutionException {
-		
+	public void initialize(ComponentContextProperties cc) throws  ComponentExecutionException, ComponentContextException {
+		super.initialize(cc);
 		datasetID = Integer.valueOf(cc.getProperty(DATA_PROPERTY_DATASET_ID));		
 		bitRate = String.valueOf(cc.getProperty(DATA_PROPERTY_BIT_RATE));
 		channels = String.valueOf(cc.getProperty(DATA_PROPERTY_CHANNELS));
@@ -136,12 +138,9 @@ import org.meandre.core.ExecutableComponent;
 		    new PrintStream(fout).println(datasetID);
 		    // Close our output stream
 		    fout.close();		
-		}
-		// Catches any error conditions
-		catch (IOException e)
-		{
+		}catch (IOException e){
 			System.err.println ("Unable to write to files " + processWorkingDirName  + " or " + datasetidtxt );
-			System.exit(-1);
+			throw new ComponentExecutionException(e);
 		}
 		cout.println("Dataset ID " + datasetID + " is selected ");
 		cout.println("Dataset properties are:\nbitRate=" + bitRate
@@ -151,7 +150,12 @@ import org.meandre.core.ExecutableComponent;
 	}
 	
 	public void dispose(ComponentContextProperties ccp) {
-		// TODO Auto-generated method stub
+		try {
+			super.dispose(ccp);
+		} catch (ComponentContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void execute(ComponentContext ccp)
