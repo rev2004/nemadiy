@@ -2,6 +2,7 @@ package org.imirsel.nema.analysis.evaluation;
 
 
 import static org.junit.Assert.*;
+import static org.imirsel.nema.test.matchers.NemaMatchers.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -101,6 +102,10 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 		e.printStackTrace();
 		fail(e.getMessage());
 	}
+		
+	  File resultFile = new File("src/test/resources/evaluation/results/GT1/report.txt");
+	  File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
+	  assertThat(resultFile, fileContentEquals(outputFile));
 	
 	}
 	
@@ -144,6 +149,11 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 		e.printStackTrace();
 		fail(e.getMessage());
 	}
+	
+	  File resultFile = new File("src/test/resources/evaluation/results/HNOS1/report.txt");
+	  File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
+	  assertThat(resultFile, fileContentEquals(outputFile));
+
 	
 	}
 
