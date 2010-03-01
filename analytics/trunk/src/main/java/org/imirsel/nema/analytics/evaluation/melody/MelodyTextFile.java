@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
-import org.imirsel.nema.analytics.evaluation.EvalFileTypeImpl;
+import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.PathAndTagCleaner;
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 import org.imirsel.nema.model.NemaData;
@@ -17,7 +17,7 @@ import org.imirsel.nema.model.NemaDataConstants;
 
 
 
-public class MelodyTextFile extends EvalFileTypeImpl {
+public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
 
 	public static final String READ_DELIMITER = "\t";
 	public static final String WRITE_DELIMITER = "\t";
@@ -29,7 +29,7 @@ public class MelodyTextFile extends EvalFileTypeImpl {
 	}
 
 	@Override
-	public List<NemaData> readFile(File theFile)
+	public NemaData readFile(File theFile)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
 		// Read a space-delimited melody text file as a 2D string array
 		String[][] melodyDataStrArray = DeliminatedTextFileUtilities.loadDelimTextData(theFile, READ_DELIMITER, -1);
@@ -43,21 +43,16 @@ public class MelodyTextFile extends EvalFileTypeImpl {
 			}
 		}
 		// Form the NemaData Object for this file and return as a length-1 list
-		List<NemaData> out = new ArrayList<NemaData>(1);
 		NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
 		obj.setMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA, melodyData);
-		out.add(obj);
-		return out;
+		return obj;
 	}
 
 	@Override
-	public void writeFile(File theFile, List<NemaData> data)
+	public void writeFile(File theFile, NemaData data)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
-		if (data.size() != 1) {
-			throw new IllegalArgumentException("Received data List size greater than 1. Was expecting ..." +
-					"length 1 (single file");
-		}
-		double[][] melodyData = data.get(0).get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
+		
+		double[][] melodyData = data.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
 		
 		// Convert the data to a 2D double array
 		int nrows = melodyData.length;
@@ -69,7 +64,7 @@ public class MelodyTextFile extends EvalFileTypeImpl {
 				melodyDataStrArray[r][1] = F0_DEC.format(melodyData[r][1]);
 			}
 		}catch(ArrayIndexOutOfBoundsException e){
-			throw new IllegalArgumentException("Track " + data.get(0).getId() + " should have a double[N][2] array for metadata" +
+			throw new IllegalArgumentException("Track " + data.getId() + " should have a double[N][2] array for metadata" +
 					" type '" + NemaDataConstants.MELODY_EXTRACTION_DATA + "', number of columns is wrong" ,e);
 		}
 		DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(theFile, WRITE_DELIMITER, melodyDataStrArray);

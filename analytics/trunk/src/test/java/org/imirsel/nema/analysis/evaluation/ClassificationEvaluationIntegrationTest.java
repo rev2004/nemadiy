@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.imirsel.nema.analytics.evaluation.EvalFileType;
+import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.model.NemaData;
@@ -23,6 +23,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.imirsel.nema.test.BaseManagerTestCase;
 
+
+/**
+ * 
+ * @author kumaramit01
+ * @since 0.2.0
+ */
 public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase{
 
 	private NemaTask task;
@@ -71,7 +77,7 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 	ClassificationEvaluator evaluator = null;
 	try {
 		evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, false, null, hierarchyFile);
-		EvalFileType reader = new ClassificationTextFile("track name");
+		MultipleTrackEvalFileType reader = new ClassificationTextFile("track name");
 		List<NemaData> groundTruth = reader.readFile(groundTruthFile);
 		evaluator.setGroundTruth(groundTruth);
 	
@@ -119,7 +125,7 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 	ClassificationEvaluator evaluator = null;
 	try {
 		evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, false, null, hierarchyFile);
-		EvalFileType reader = new ClassificationTextFile("track name");
+		MultipleTrackEvalFileType reader = new ClassificationTextFile("track name");
 		List<NemaData> groundTruth = reader.readFile(groundTruthFile);
 		evaluator.setGroundTruth(groundTruth);
 	
@@ -153,9 +159,7 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 	
 	 File resultFile = new File("src/test/resources/classification/evaluation/HNOS1/report.txt");
 	 File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
-	  assertThat(resultFile, fileContentEquals(outputFile));
-
-	
+	 assertThat(resultFile, fileContentEquals(outputFile));
 	}
 
 }

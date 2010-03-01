@@ -92,8 +92,22 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				summaryCsv);
 
 		// write out per track CSV for each system
-		Map<String, File> jobIDToPerTrackCSV = writePerTrackCsvFiles(numJobs,
-				jobIDToResultDir);
+
+		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(
+				numJobs);
+		for (Iterator<String> it = jobIDToName.keySet().iterator(); it
+				.hasNext();) {
+			jobID = it.next();
+			sysResults = jobIDToFoldResults.get(jobID);
+			resultList = sysResults.get(0);
+			File sysDir = jobIDToResultDir.get(jobID);
+			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "perTrack.csv");
+			WriteMelodyResultFiles.prepPerTrackCsv(
+					resultList, jobIDToName.get(jobID),
+					trackCSV);
+			jobIDToPerTrackCSV.put(jobID, trackCSV);
+		}
+
 
 		// create tarballs of individual result dirs
 		_logger.info("Preparing evaluation data tarballs...");
@@ -235,36 +249,6 @@ public class MelodyEvaluator extends EvaluatorImpl {
 								+ " is not 1 (Melody Evaluation is not cross-validated)!");
 			}
 		}
-	}
-
-	/**
-	 * 
-	 * @param numJobs
-	 * @param jobIDToResultDir
-	 * @return
-	 * @throws IOException
-	 */
-	private Map<String, File> writePerTrackCsvFiles(int numJobs,
-			Map<String, File> jobIDToResultDir) throws IOException {
-		String jobID;
-		List<List<NemaData>> sysResults;
-		List<NemaData> resultList;
-		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(
-				numJobs);
-		for (Iterator<String> it = jobIDToName.keySet().iterator(); it
-				.hasNext();) {
-			jobID = it.next();
-			sysResults = jobIDToFoldResults.get(jobID);
-			resultList = sysResults.get(0);
-			File sysDir = jobIDToResultDir.get(jobID);
-			File trackCsv = new File(sysDir.getAbsolutePath() + File.separator
-					+ jobID + File.separator + "perTrack.csv");
-			WriteMelodyResultFiles.prepPerTrackCsv(
-					resultList, jobIDToName.get(jobID),
-					trackCsv);
-			jobIDToPerTrackCSV.put(jobID, trackCsv);
-		}
-		return jobIDToPerTrackCSV;
 	}
 
 
