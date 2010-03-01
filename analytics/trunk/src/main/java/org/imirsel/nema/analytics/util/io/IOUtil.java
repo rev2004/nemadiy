@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
@@ -431,7 +429,6 @@ public class IOUtil {
         BufferedWriter out = null;
         try{
             out = new BufferedWriter(new FileWriter(outputFile));
-
             for (Iterator<File> it = paths.iterator(); it.hasNext();){
                 File file = it.next();
                 out.write(file.getAbsolutePath());

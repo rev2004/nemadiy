@@ -64,9 +64,9 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 
 	@Test
 	public void testEvaluateGT1() { 
-	File groundTruthFile = new File("src/test/resources/audiolatin.all.gt.txt");
+	File groundTruthFile = new File("src/test/resources/classification/audiolatin.all.gt.txt");
 	File hierarchyFile = null;
-	File resultsDirectory = new File("src/test/resources/GT1");
+	File resultsDirectory = new File("src/test/resources/classification/GT1");
 	String	systemName = "GT1-System";
 	ClassificationEvaluator evaluator = null;
 	try {
@@ -93,7 +93,7 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 	try {
 		Map<String,NemaData> jobIdToAggregateResults = evaluator.evaluate();
 		for(String key:jobIdToAggregateResults.keySet()){
-			assertTrue(key.equals("GT1-System"));
+			assertTrue(key.equals(systemName));
 		}
 	} catch (IllegalArgumentException e) {
 		e.printStackTrace();
@@ -103,17 +103,18 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 		fail(e.getMessage());
 	}
 		
-	  File resultFile = new File("src/test/resources/evaluation/results/GT1/report.txt");
+	  File resultFile = new File("src/test/resources/classification/evaluation/GT1/report.txt");
 	  File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
+	 
 	  assertThat(resultFile, fileContentEquals(outputFile));
 	
 	}
 	
 	@Test
 	public void testEvaluateHNOS1() { 
-	File groundTruthFile = new File("src/test/resources/audiolatin.all.gt.txt");
+	File groundTruthFile = new File("src/test/resources/classification/audiolatin.all.gt.txt");
 	File hierarchyFile = null;
-	File resultsDirectory = new File("src/test/resources/HNOS1");
+	File resultsDirectory = new File("src/test/resources/classification/HNOS1");
 	String	systemName = "HNOS1-System";
 	ClassificationEvaluator evaluator = null;
 	try {
@@ -140,7 +141,7 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 	try {
 		Map<String,NemaData> jobIdToAggregateResults = evaluator.evaluate();
 		for(String key:jobIdToAggregateResults.keySet()){
-			assertTrue(key.equals("HNOS1-System"));
+			assertTrue(key.equals(systemName));
 		}
 	} catch (IllegalArgumentException e) {
 		e.printStackTrace();
@@ -150,8 +151,8 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 		fail(e.getMessage());
 	}
 	
-	  File resultFile = new File("src/test/resources/evaluation/results/HNOS1/report.txt");
-	  File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
+	 File resultFile = new File("src/test/resources/classification/evaluation/HNOS1/report.txt");
+	 File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
 	  assertThat(resultFile, fileContentEquals(outputFile));
 
 	
