@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  *  key/value pairs.
  *  
  * @author kumaramit01
- * @since 0.5.0
+ * @since 0.1.0
  */
 public abstract class BaseManagerTestCase {
 	final Logger logger = Logger.getLogger(getClass().getName());

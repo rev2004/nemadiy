@@ -21,6 +21,11 @@ import static org.hamcrest.Matchers.*;
 import static org.imirsel.nema.test.matchers.NemaMatchers.*;
 
 
+/**
+ * 
+ * @author kumaramit01
+ * Unit test for matchers
+ */
 public class FileContentEqualsMatcherTest {
 	
 	private File file1;
