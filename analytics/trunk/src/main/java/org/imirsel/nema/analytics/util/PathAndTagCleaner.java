@@ -21,23 +21,18 @@ public class PathAndTagCleaner {
 	 */
 	public static String convertFileToMIREX_ID(File aFile){
         String name = aFile.getName();
-        String key;
+        String cleanName;
         //detect windows paths
         if (name.substring(0,3).matches(WINDOWS_PATH_REGEX)){
-            key = name.substring(name.lastIndexOf("\\")+1,name.length()).toLowerCase();
+            cleanName = name.substring(name.lastIndexOf("\\")+1,name.length()).toLowerCase();
         }else{
-            key = name.toLowerCase();
+            cleanName = name.toLowerCase();
         }
-        if (key.endsWith(".mp3")
-                || key.endsWith(".wav")
-                || key.endsWith(".aac")
-                || key.endsWith(".wma")
-                || key.endsWith(".ogg")
-                || key.endsWith(".aif")
-                || key.endsWith(".mid")){
-            return key.substring(0,key.length()-4);
+        int idx = cleanName.indexOf('.');
+        if (idx != -1){
+        	cleanName = cleanName.substring(0,idx);
         }
-        return key;
+        return cleanName;
     }
     
     /**

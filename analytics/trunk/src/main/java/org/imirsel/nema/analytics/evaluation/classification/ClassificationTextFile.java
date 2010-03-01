@@ -28,7 +28,7 @@ import org.imirsel.nema.analytics.util.*;
  *
  * @author kris.west@gmail.com
  */
-public class ClassificationTextFile extends EvalFileTypeImpl {
+public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
 
 	private String type;
 	public static final String DELIMITER = "\t";
@@ -162,7 +162,7 @@ public class ClassificationTextFile extends EvalFileTypeImpl {
                 if (!str.equals("")) {
                     String[] splitted = str.split("\\s+");
                     File aPath = new File(splitted[0]);
-                    String key = convertFileToMIREX_ID(aPath);
+                    String key = PathAndTagCleaner.convertFileToMIREX_ID(aPath);
                     if(key.equals("")){
                         throw new IllegalArgumentException("Error: an empty track name was read from file: " + toRead.getAbsolutePath());
                     }

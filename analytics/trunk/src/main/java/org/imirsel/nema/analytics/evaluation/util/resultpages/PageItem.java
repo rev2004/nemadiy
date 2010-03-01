@@ -15,7 +15,8 @@ public abstract class PageItem {
     protected String caption;
 
     public PageItem(String name, String caption){
-        this.name = name;
+    	String regex = "\\W";
+        this.name = name.replaceAll(regex, "_");
         this.caption = caption;
 
         if(this.name.contains("\\s")){
