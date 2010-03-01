@@ -337,7 +337,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
         	jobID = it.next();
         	List<NemaData> evalList = jobIDTofoldEvaluations.get(jobID);
-        	File[] foldConfFiles = plotConfusionMatrixPerFold(numClasses, numFolds, jobID, evalList);
+        	File[] foldConfFiles = plotConfusionMatrixPerFoldJob(numClasses, numFolds, jobID, evalList);
     		jobIDToFoldConfFileList.put(jobID,foldConfFiles);
         }
         
@@ -752,7 +752,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 		return numFolds;
 	}
 
-	private File[] plotConfusionMatrixPerFold(int numClasses, int numFolds,
+	private File[] plotConfusionMatrixPerFoldJob(int numClasses, int numFolds,
 			String jobID, List<NemaData> evalList) {
 		double[][] confusion;
 		File[] foldConfFiles = new File[numFolds];

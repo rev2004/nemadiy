@@ -7,6 +7,7 @@ package org.imirsel.nema.analytics.evaluation.util.resultpages;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.List;
@@ -105,7 +106,10 @@ public class Page {
                 Logger.getLogger(Page.class.getName()).log(Level.SEVERE, "UTF-8 encoding was not available!?!", ex);
             }catch (FileNotFoundException ex){
                 Logger.getLogger(Page.class.getName()).log(Level.SEVERE, null, "Could not write to file: " + pageFile.getAbsolutePath());
-            }
+            } catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
             idx++;
         }

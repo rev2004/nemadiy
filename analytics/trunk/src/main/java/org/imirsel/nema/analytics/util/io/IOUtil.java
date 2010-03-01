@@ -24,6 +24,7 @@ import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -42,23 +44,9 @@ public class IOUtil {
     private static final DecimalFormat MEMORY_FORMAT = new DecimalFormat("###,###,###,###.#");
     private static final double MEGABYTE_DIVISOR = 1024 * 1024;
 
-    public static void writeStringToFile(File file, String string, String encoding) throws UnsupportedEncodingException, FileNotFoundException{
-        BufferedWriter out = null;
-        try{
-            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "utf-8"));
-            out.write(string);
-            out.flush();
-        }catch (IOException ex){
-            Logger.getLogger(IOUtil.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            if(out != null){
-                try{
-                    out.close();
-                }catch (IOException ex){}
-            }
-        }
-        
-    }
+    public static void writeStringToFile(File file, String content, String encoding) throws IOException{
+       FileUtils.writeStringToFile(file, content, encoding);
+   }
     
     public static void main(String[] args){
     	IOUtil util = new IOUtil();
@@ -360,7 +348,14 @@ public class IOUtil {
 
         return object;
     }
-
+    
+    /**
+     * 
+     * @param searchDir
+     * @param extension
+     * @deprecated
+     * @return
+     */
     public static List<File> getFilteredPathStrings(File searchDir, String extension) {
         System.out.println("Getting list of files in " + searchDir.getAbsolutePath() + " with extension " + extension);
         if (!searchDir.exists()) {
@@ -432,7 +427,7 @@ public class IOUtil {
     }
 
     public static void listFiles(File dir, File outputFile, String extension){
-        List<File> paths = getFilteredPathStrings(dir, extension);
+        Collection<File> paths = FileUtils.listFiles(dir, new String[]{extension}, true);//getFilteredPathStrings(dir, extension);
         BufferedWriter out = null;
         try{
             out = new BufferedWriter(new FileWriter(outputFile));

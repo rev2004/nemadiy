@@ -3,6 +3,8 @@ package org.imirsel.nema.analysis.util.io;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
 
 import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.junit.After;
@@ -75,7 +77,27 @@ public class IOUtilTest {
 
 	@Test
 	public void testListFiles() {
-		fail("Not yet implemented");
+		String tmpFolder = System.getProperty("java.io.tmpdir")+ System.getProperty("java.file.pathseparator")+ System.currentTimeMillis();
+		File f1 = new File(tmpFolder,"1.dd");
+		File f2 = new File(tmpFolder,"2.dd");
+		try {
+			f1.createNewFile();
+			f2.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		StringWriter swriter = new StringWriter();
+		swriter.append(f1.getAbsolutePath()+System.getProperty("line.separator"));
+		swriter.append(f2.getAbsolutePath()+System.getProperty("line.separator"));
+		
+		
+		File outFile = new File(tmpFolder,"delme");
+		String extension = "dd";
+		IOUtil.listFiles(new File(tmpFolder), outFile, "dd");
+		
+		
+		
 	}
 
 }
