@@ -33,5 +33,11 @@ public class NemaMatchers {
 			    return new FileContentEquals<File>(file);
 		  }
 		  
+		  @Factory
+		  public static <T> Matcher<Object> fileLineCountEquals(long l) {
+			    return new FileLineCount(l);
+		  }
+		  
+		  
 		
 }

@@ -30,17 +30,20 @@ public class FileContentEqualsMatcherTest {
 	
 	private File file1;
 	private File file2;
+	private final String EOL=System.getProperty("line.separator");
 
 	@Before
 	public void setUp() throws Exception {
 		String tmpFolder = System.getProperty("java.io.tmpdir");
 		file1 = new File(tmpFolder,"one");
 		FileWriter fwrite1 = new FileWriter(file1);
-		fwrite1.write("Hello World");
+		fwrite1.write("Hello World"+EOL);
+		fwrite1.write("Hello World"+EOL);
 		fwrite1.flush();
 		file2 = new File(tmpFolder,"two");
 		FileWriter fwrite2 = new FileWriter(file2);
-		fwrite2.write("Hello World");
+		fwrite2.write("Hello World"+EOL);
+		fwrite2.write("Hello World"+EOL);
 		fwrite2.flush();
 	}
 
@@ -53,10 +56,9 @@ public class FileContentEqualsMatcherTest {
 		  assertThat(file1, fileContentEquals(file2));
 		  assertThat(file1,fileContentContains("Hello"));
 		  assertThat(file1,fileContentContainsIgnoreCase("hello"));
-		  
 		  assertThat(10,between(5,15));
 		  assertThat("amit is here", containsString("amit"));
-
+		  assertThat(file1,fileLineCountEquals(2));
 	}
 	
 	
