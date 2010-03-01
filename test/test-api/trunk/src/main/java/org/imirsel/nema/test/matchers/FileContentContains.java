@@ -9,7 +9,13 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
 
-
+/**This matcher is used by assertThat to check if a file
+ * has a particular string
+ * 
+ * @author kumaramit01
+ * @since 0.2.0  
+ * @param <T>
+ */
 public class FileContentContains <T> extends BaseMatcher<T>  {
 	
 	private String content;

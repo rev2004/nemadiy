@@ -5,6 +5,12 @@ import java.io.File;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
+/**Allows static imports of the the matchers.
+ * 
+ * @author kumaramit01
+ * @since 0.1.0
+ * 
+ */
 public class NemaMatchers {
 
 		  @Factory
