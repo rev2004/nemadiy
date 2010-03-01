@@ -4,21 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
-import org.imirsel.nema.analytics.evaluation.util.resultpages.FileListItem;
-import org.imirsel.nema.analytics.evaluation.util.resultpages.ImageItem;
-import org.imirsel.nema.analytics.evaluation.util.resultpages.Page;
-import org.imirsel.nema.analytics.evaluation.util.resultpages.PageItem;
-import org.imirsel.nema.analytics.evaluation.util.resultpages.Table;
-import org.imirsel.nema.analytics.evaluation.util.resultpages.TableItem;
-import org.imirsel.nema.analytics.evaluation.vis.ConfusionMatrixPlot;
+import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
 import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
@@ -45,22 +37,12 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		String jobID;
 		int numJobs = jobIDToFoldResults.size();
 		List<List<NemaData>> sysResults;
-		for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it
-				.hasNext();) {
-			jobID = it.next();
-			sysResults = jobIDToFoldResults.get(jobID);
-			if (sysResults.size() != 1) {
-				throw new IllegalArgumentException(
-						"The number of folds ("
-								+ sysResults.size()
-								+ ") detected for system ID: "
-								+ jobID
-								+ ", name: "
-								+ jobIDToName.get(jobID)
-								+ " is not 1 (Melody Evaluation is not cross-validated)!");
-			}
-		}
-
+		
+		// Make sure we only have one set of results per jobId (i.e. system), 
+		// as this is not a cross-fold validated experiment
+		checkFolds();
+		
+		// Perform the evaluations on all jobIds (systems)
 		Map<String, NemaData> jobIdToEvaluation = new HashMap<String, NemaData>(
 				numJobs);
 		for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it
@@ -72,7 +54,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			jobIdToEvaluation.put(jobID, result);
 		}
 
-		// make per system result dirs
+		// Make per system result dirs
 		Map<String, File> jobIDToResultDir = new HashMap<String, File>();
 		for (Iterator<String> it = jobIdToEvaluation.keySet().iterator(); it
 				.hasNext();) {
@@ -86,35 +68,20 @@ public class MelodyEvaluator extends EvaluatorImpl {
 
 		// plot melody transcription against GT for each track result for each
 		// system
-		NemaData eval;
-		NemaData result;
 		List<NemaData> resultList;
-		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>(
-				numJobs);
-		for (Iterator<String> it = jobIdToEvaluation.keySet().iterator(); it
-				.hasNext();) {
+		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
+		for (Iterator<String> it = jobIdToEvaluation.keySet().iterator(); it.hasNext();) {
 			jobID = it.next();
-
 			File sysDir = jobIDToResultDir.get(jobID);
-
+		
 			// get results to plot
 			sysResults = jobIDToFoldResults.get(jobID);
 			resultList = sysResults.get(0);
-
-			// plot each result
-			File[] plotFiles = new File[resultList.size()];
+		
+			File[] plotFiles = plotTranscriptionForJob(jobID, resultList,
+					sysDir);
+			
 			jobIDToResultPlotFileList.put(jobID, plotFiles);
-
-			int idx = 0;
-			for (Iterator<NemaData> iterator = resultList.iterator(); iterator
-					.hasNext();) {
-				result = iterator.next();
-				plotFiles[idx++] = new File(sysDir.getAbsolutePath()
-						+ File.separator + jobID + File.separator
-						+ result.getId() + MELODY_PLOT_EXT);
-
-				// TODO actually plot the result
-			}
 		}
 
 		// write out summary CSV
@@ -125,21 +92,8 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				summaryCsv);
 
 		// write out per track CSV for each system
-		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(
-				numJobs);
-		for (Iterator<String> it = jobIDToName.keySet().iterator(); it
-				.hasNext();) {
-			jobID = it.next();
-			sysResults = jobIDToFoldResults.get(jobID);
-			resultList = sysResults.get(0);
-			File sysDir = jobIDToResultDir.get(jobID);
-			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator
-					+ jobID + File.separator + "perTrack.csv");
-			WriteMelodyResultFiles.prepPerTrackCsv(
-					resultList, jobIDToName.get(jobID),
-					trackCSV);
-			jobIDToPerTrackCSV.put(jobID, trackCSV);
-		}
+		Map<String, File> jobIDToPerTrackCSV = writePerTrackCsvFiles(numJobs,
+				jobIDToResultDir);
 
 		// create tarballs of individual result dirs
 		_logger.info("Preparing evaluation data tarballs...");
@@ -155,6 +109,20 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		// write result HTML pages
 		_logger.info("Creating result HTML files...");
 
+		writeResultHtmlPages(numJobs, jobIdToEvaluation,
+				jobIDToResultPlotFileList, summaryCsv, jobIDToPerTrackCSV,
+				jobIDToTgz);
+
+		return jobIdToEvaluation;
+	}
+
+	private void writeResultHtmlPages(int numJobs,
+			Map<String, NemaData> jobIdToEvaluation,
+			Map<String, File[]> jobIDToResultPlotFileList, File summaryCsv,
+			Map<String, File> jobIDToPerTrackCSV, Map<String, File> jobIDToTgz) {
+		String jobID;
+		List<List<NemaData>> sysResults;
+		List<NemaData> resultList;
 		List<Page> resultPages = new ArrayList<Page>();
 		List<PageItem> items;
 		Page aPage;
@@ -229,8 +197,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 						outputDir));
 			}
 
-			items
-					.add(new FileListItem("dataCSVs", "CSV result files",
+			items.add(new FileListItem("dataCSVs", "CSV result files",
 							CSVPaths));
 
 			// System Tarballs
@@ -248,8 +215,76 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		}
 
 		Page.writeResultPages(task.getName(), outputDir, resultPages);
+	}
 
-		return jobIdToEvaluation;
+	private void checkFolds() {
+		String jobID;
+		List<List<NemaData>> sysResults;
+		for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it
+				.hasNext();) {
+			jobID = it.next();
+			sysResults = jobIDToFoldResults.get(jobID);
+			if (sysResults.size() != 1) {
+				throw new IllegalArgumentException(
+						"The number of folds ("
+								+ sysResults.size()
+								+ ") detected for system ID: "
+								+ jobID
+								+ ", name: "
+								+ jobIDToName.get(jobID)
+								+ " is not 1 (Melody Evaluation is not cross-validated)!");
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param numJobs
+	 * @param jobIDToResultDir
+	 * @return
+	 * @throws IOException
+	 */
+	private Map<String, File> writePerTrackCsvFiles(int numJobs,
+			Map<String, File> jobIDToResultDir) throws IOException {
+		String jobID;
+		List<List<NemaData>> sysResults;
+		List<NemaData> resultList;
+		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(
+				numJobs);
+		for (Iterator<String> it = jobIDToName.keySet().iterator(); it
+				.hasNext();) {
+			jobID = it.next();
+			sysResults = jobIDToFoldResults.get(jobID);
+			resultList = sysResults.get(0);
+			File sysDir = jobIDToResultDir.get(jobID);
+			File trackCsv = new File(sysDir.getAbsolutePath() + File.separator
+					+ jobID + File.separator + "perTrack.csv");
+			WriteMelodyResultFiles.prepPerTrackCsv(
+					resultList, jobIDToName.get(jobID),
+					trackCsv);
+			jobIDToPerTrackCSV.put(jobID, trackCsv);
+		}
+		return jobIDToPerTrackCSV;
+	}
+
+
+	private File[] plotTranscriptionForJob(String jobID,
+			List<NemaData> resultList, File sysDir) {
+		NemaData result;
+		// plot each result
+		File[] plotFiles = new File[resultList.size()];
+		
+		int idx = 0;
+		for (Iterator<NemaData> iterator = resultList.iterator(); iterator
+				.hasNext();) {
+			result = iterator.next();
+			plotFiles[idx++] = new File(sysDir.getAbsolutePath()
+					+ File.separator + jobID + File.separator
+					+ result.getId() + MELODY_PLOT_EXT);
+
+			// TODO actually plot the result
+		}
+		return plotFiles;
 	}
 
 	private NemaData evaluateResult(String jobID, List<NemaData> theData) {

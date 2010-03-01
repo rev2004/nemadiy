@@ -32,8 +32,13 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
 
 	public static final DecimalFormat DEC = new DecimalFormat("0.000");
     
-
-	public static Table prepSummaryTableData(Map<String,NemaData> jobIDToEval, Map<String,String> jobIDToName) {
+	/**
+	 * 
+	 * @param jobIdToEval
+	 * @param jobIdToName
+	 * @return
+	 */
+	public static Table prepSummaryTableData(Map<String,NemaData> jobIdToEval, Map<String,String> jobIdToName) {
 
     	// create the table
         String[] colNames = new String[6];
@@ -49,10 +54,10 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
         NemaData eval;
 		String jobId;
 		String jobName;
-        for (Iterator<String> it = jobIDToEval.keySet().iterator();it.hasNext();) {
+        for (Iterator<String> it = jobIdToEval.keySet().iterator();it.hasNext();) {
         	jobId = it.next();
-        	jobName = jobIDToName.get(jobId);
-        	eval = jobIDToEval.get(jobId);
+        	jobName = jobIdToName.get(jobId);
+        	eval = jobIdToEval.get(jobId);
         	String[] row = new String[6];
         	row[0] = jobName;
             row[1] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY));
@@ -66,9 +71,17 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
         return new Table(colNames, rows);
     }
 
-    public static void prepSummaryCsv(Map<String,NemaData> jobIDToEval, Map<String,String> jobIDToName, File outputFile) 
+	/**
+	 * 
+	 * @param jobIdToEval
+	 * @param jobIdToName
+	 * @param outputFile
+	 * @throws IOException
+	 */
+    public static void prepSummaryCsv(Map<String,NemaData> jobIdToEval, Map<String,String> jobIdToName, File outputFile) 
     		throws IOException{
 
+    	// create the csv file as a string
     	String delim = ",";
         String csv = "*Algorithm";
         csv += delim + NemaDataConstants.MELODY_RAW_PITCH_ACCURACY;
@@ -81,10 +94,10 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
 		NemaData eval;
 		String jobId;
 		String jobName;
-        for (Iterator<String> it = jobIDToEval.keySet().iterator();it.hasNext();) {
+        for (Iterator<String> it = jobIdToEval.keySet().iterator();it.hasNext();) {
         	jobId = it.next();
-        	jobName = jobIDToName.get(jobId);
-        	eval = jobIDToEval.get(jobId);
+        	jobName = jobIdToName.get(jobId);
+        	eval = jobIdToEval.get(jobId);
             csv += jobName;
             csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY);
             csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY);
@@ -94,6 +107,7 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
             csv += "\n";   
         }
         
+        // write the csv string out to a file
         BufferedWriter output = null;
         try {
             output = new BufferedWriter(new FileWriter(outputFile));
@@ -108,6 +122,12 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
         }
     }
     
+    /**
+     * 
+     * @param evalList
+     * @param jobName
+     * @return
+     */
     public static Table prepPerTrackTableData(List<NemaData> evalList, String jobName) {
     	// create the table
         String[] colNames = new String[6];
@@ -138,8 +158,17 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
         return new Table(colNames, rows);
     }
 
+    /**
+     * 
+     * @param evalList
+     * @param jobName
+     * @param outputFile
+     * @throws IOException
+     */
     public static void prepPerTrackCsv(List<NemaData> evalList, String jobName, File outputFile) 
     		throws IOException{
+    	
+    	// create the csv file as a string
     	String delim = ",";
         String csv = "*Track";
         csv += delim + NemaDataConstants.MELODY_RAW_PITCH_ACCURACY;
@@ -161,6 +190,7 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
             csv += "\n";   
         }
         
+        // write the csv string out to a file
         BufferedWriter output = null;
         try {
             output = new BufferedWriter(new FileWriter(outputFile));
