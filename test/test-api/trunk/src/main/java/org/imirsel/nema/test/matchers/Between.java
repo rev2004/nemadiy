@@ -18,8 +18,8 @@ public class Between <T> extends BaseMatcher<T>  {
 	
 
 	public boolean matches(Object object) {
-	double number = (Double) object;
-	if(number <= this.start && number >=this.end){
+	Number number = (Number) object;
+	if(number.doubleValue() >= this.start && number.doubleValue() <= this.end){
 		return true;
 	}
 	return false;
