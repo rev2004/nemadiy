@@ -92,6 +92,37 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     }
     
     /**
+     * Constructs and instance of the ClassificationEvaluator. 
+     * 
+     * 
+     * @param task_ A description of the task being evaluated. The task must at least contain 
+     * the metadata class to be predicted (N.B. the default class is 'genre'). The description 
+     * will be used on the HTML evaluation report and textual evaluation reports output.
+     * @param outputDir_ The directory to output results into.
+     * @param workingDir_ The working directory to use for any temp files.
+     * @param performMatlabStatSigTests_ A flag that determines whether the significance tests
+     * are performed (N.B. this is ignored if there is only one result to evaluate).
+     * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
+     * the significance tests.
+     * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
+     * found.
+     * @throws IOException Thrown if there is a problem reading the hierarchy file.
+     */
+    public ClassificationEvaluator(
+    		NemaTask task_,
+            NemaDataset dataset_,
+            File outputDir_,
+            File workingDir_,
+            boolean performMatlabStatSigTests_,
+            File matlabPath_) 
+    		throws FileNotFoundException, IOException{
+        super(workingDir_, outputDir_, task_, dataset_);
+        performMatlabStatSigTests = performMatlabStatSigTests_;
+        matlabPath = matlabPath_;
+        hierarchyFile = null;
+    }
+    
+    /**
      * Initialises the class names list from the ground-truth.
      */
     private void initClassNames() throws IllegalArgumentException{
@@ -164,9 +195,9 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         }
     }
     
-    /** Parse commandline arguments for the main method harness.
+    /** Parse command line arguments for the main method harness.
      * 
-     * @param args Full commandline arguments received by the JVM.
+     * @param args Full command line arguments received by the JVM.
      * @return An instantiated ClassificationEvaluator, based on the arguments, that is ready to run.
      * @throws IllegalArgumentException Thrown if a results or ground-truth file is not in the expected format.
      * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
@@ -294,180 +325,71 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         String jobID;
         boolean usingAHierarchy = hierarchyFile != null;
         
-        List<List<NemaData>> sysResults;
         //check that all systems have the same number of results
-        for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
-        	jobID = it.next();
-        	sysResults = jobIDToFoldResults.get(jobID);
-            if (numFolds == -1) {
-                numFolds = sysResults.size();
-            } else if (numFolds != sysResults.size()) {
-                throw new IllegalArgumentException("The number of folds (" + sysResults.size() + ") detected for system ID: " + jobID + 
-                		", name: " + jobIDToName.get(jobID) + " is not equal to the number detected " + 
-                		"for the preceeding systems (" + numFolds + ")!");
-            }
-        }
+        numFolds = checkNumFolds(numFolds);
 
         //evaluate each fold for each system
-        Map<String,List<NemaData>> jobIDTofoldEvaluations = new HashMap<String,List<NemaData>>(numJobs); 
-        for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
-        	jobID = it.next();
-        	_logger.info("Evaluating experiment folds for jobID: " + jobID);
-        	sysResults = jobIDToFoldResults.get(jobID);
-        	List<NemaData> foldResultList = new ArrayList<NemaData>(numFolds);
-        	for(Iterator<List<NemaData>> it2 = sysResults.iterator();it2.hasNext();){
-        		foldResultList.add(evaluateResultFold(jobID, it2.next()));
-        	}
-        	jobIDTofoldEvaluations.put(jobID, foldResultList);
-        }
+        Map<String, List<NemaData>> jobIDTofoldEvaluations = evaluateAllResultFolds(numJobs, numFolds);
         
         //plot confusion matrices for each fold
-        _logger.info("Plotting confusion matrices for each fold");
-        List<NemaData> evalList;
-        NemaData eval;
-        double[][] confusion;
+		_logger.info("Plotting confusion matrices for each fold for each job");
         Map<String,File[]> jobIDToFoldConfFileList = new HashMap<String,File[]>(numJobs);
         for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
         	jobID = it.next();
-        	evalList = jobIDTofoldEvaluations.get(jobID);
-        	File[] foldConfFiles = new File[numFolds];
-        	jobIDToFoldConfFileList.put(jobID,foldConfFiles);
-        	new File(outputDir.getAbsolutePath() + File.separator + jobID).mkdirs();
-    		for(int i=0;i<evalList.size();i++){
-        		eval = evalList.get(i);
-        		confusion = eval.get2dDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
-        		foldConfFiles[i] = new File(outputDir.getAbsolutePath() + File.separator + jobID + File.separator + i + CONF_MAT_PLOT_EXTENSION);
-        		
-        		ConfusionMatrixPlot plot = new ConfusionMatrixPlot(getTask().getName() + " - " + jobIDToName.get(jobID) + " - fold " + i, (String[])classNames.toArray(new String[numClasses]), confusion);
-                plot.writeChartToFile(foldConfFiles[i], CONF_MAT_WIDTH, CONF_MAT_HEIGHT);
-        	}
+        	List<NemaData> evalList = jobIDTofoldEvaluations.get(jobID);
+        	File[] foldConfFiles = plotConfusionMatrixPerFold(numClasses, numFolds, jobID, evalList);
+    		jobIDToFoldConfFileList.put(jobID,foldConfFiles);
         }
         
         //aggregate results to produce overall evaluation
-        _logger.info("Producing aggregate evaluations over all folds");
+        _logger.info("Producing aggregate evaluations over all folds for each job");
         Map<String,NemaData> jobIDToAggregateEvaluations = new HashMap<String,NemaData>(numJobs); 
-        Map<String,File> jobIDToOverallConfFile = new HashMap<String,File>(numJobs);
-        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
+        List<NemaData> evalList;
+		for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
         	jobID = it.next();
         	evalList = jobIDTofoldEvaluations.get(jobID);
-        	NemaData aggregateEval = new NemaData(jobID);
-        	int[][][] confFolds = new int[numFolds][][];
-        	for(int f=0;f<numFolds;f++){
-        		confFolds[f] = evalList.get(f).get2dIntArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW);
-        	}
-        	int[][] confusionRaw = new int[numClasses][numClasses];
-        	double[][] confusionPercent = new double[numClasses][numClasses];
-        	
-        	int[] sums = new int[numClasses];
-    		for(int i=0;i<numClasses;i++){
-    			sums[i] = 0;
-    			for(int j=0;j<numClasses;j++){
-    				for(int f=0;f<numFolds;f++){
-        				confusionRaw[j][i] += confFolds[f][j][i];
-    				}
-    				sums[i] += confusionRaw[j][i];
-    			}
-    			if(sums[i] > 0){
-	    			for(int j=0;j<numClasses;j++){
-	    				confusionPercent[j][i] = (double)confusionRaw[j][i] / sums[i];
-	    			}
-    			}
-    		}
-        	
-    		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW, confusionRaw);
-    		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT, confusionPercent);
-        	
-    		//plot aggregate confusion
-    		File overallConfFile = new File(outputDir.getAbsolutePath() + File.separator + jobID + File.separator + "overall" + CONF_MAT_PLOT_EXTENSION);
-    		jobIDToOverallConfFile.put(jobID, overallConfFile);
-    		ConfusionMatrixPlot plot = new ConfusionMatrixPlot(getTask().getName() + " - " + jobIDToName.get(jobID) + " - overall", (String[])classNames.toArray(new String[numClasses]), confusionPercent);
-            plot.writeChartToFile(overallConfFile, CONF_MAT_WIDTH, CONF_MAT_HEIGHT);
-    		
-    		//Calculate final accuracy as diagonal sum of confusion matrix divided by total number of examples
-	        double finalAccuracy = 0.0;
-	        double finalDiscountedAccuracy = 0.0;
-	        int finalSum = 0;
-	        for (int i=0;i<numClasses; i++) {
-	            finalSum += sums[i];
-	        	finalAccuracy += confusionRaw[i][i];
-	        }
-	        finalAccuracy /= (double)finalSum;
-	        
-	        aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_ACCURACY, finalAccuracy);
-	        
-        	//Calculate Normalised accuracy as mean of percentage confusion matrix diagonal
-	        double finalNormalisedAccuracy = 0.0;
-	        for (int i=0;i<numClasses; i++) {
-	            finalNormalisedAccuracy += confusionPercent[i][i];
-	        }
-	        finalNormalisedAccuracy /= (double)numClasses;
-	        aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY, finalNormalisedAccuracy);
-	        
-	        //repeat for discounted stuff
-        	if(usingAHierarchy){
-        		double[][] discountFoldAccs = new double[numFolds][];
-        		for(int f=0;f<numFolds;f++){
-        			discountFoldAccs[f] = evalList.get(f).getDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW);
-        		}
-	        	double[] discountConfusionRaw = new double[numClasses];
-	        	double[] discountConfusionPercent = new double[numClasses];
-	        	for(int i=0;i<numClasses;i++){
-	        		for(int f=0;f<numFolds;f++){
-	        			discountConfusionRaw[i] += discountFoldAccs[f][i];
-	        		}
-	        		if(sums[i] > 0){
-	        			discountConfusionPercent[i] = discountConfusionRaw[i] / sums[i];
-	        		}
-	        	}
-	        	
-	        	aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW, discountConfusionRaw);
-	    		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountConfusionPercent);
-	    		
-	    		for (int i=0;i<numClasses; i++) {
-	                finalDiscountedAccuracy += discountConfusionRaw[i];
-	            }
-	            finalDiscountedAccuracy /= finalSum;
-	            aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY, finalDiscountedAccuracy);
-	            
-	            //Calculate Normalised accuracy as mean of percentage discounted confusion matrix diagonal
-	            double finalNormalisedDiscountedAccuracy = 0.0;
-	            for (int i=0;i<numClasses; i++) {
-	                finalNormalisedDiscountedAccuracy += discountConfusionPercent[i];
-	            }
-	            finalNormalisedDiscountedAccuracy /= (double)numClasses;
-	            aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY, finalNormalisedDiscountedAccuracy);    
-        	}
-        	
+        	NemaData aggregateEval = aggregateEvaluationOverFolds(numClasses, numFolds, jobID, usingAHierarchy, evalList);
         	jobIDToAggregateEvaluations.put(jobID, aggregateEval);
         }
+		
+		//plot aggregate confusion for each job
+		_logger.info("Plotting overall confusion matrices for each job");
+		Map<String,File> jobIDToOverallConfFile = new HashMap<String,File>(numJobs);
+        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
+        	jobID = it.next();
+        	NemaData aggregateEval = jobIDToAggregateEvaluations.get(jobID);
+        	File overallConfFile = plotAggregatedConfusionForJob(numClasses, jobID, aggregateEval);
+            jobIDToOverallConfFile.put(jobID, overallConfFile);
+		}
+		
         
         //write out CSV results files
         _logger.info("Writing out CSV result files over whole task...");
-        String msg = "Job ID to name IDs: ";
-        for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
-        	msg += it.next();
-        	if (it.hasNext()){
-        		msg += ", ";
-        	}
-        }
-        msg += "\n";
-        msg += "Job ID to fold evaluation IDs: ";
-        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator();it.hasNext();){
-        	msg += it.next();
-        	if (it.hasNext()){
-        		msg += ", ";
-        	}
-        }
-        msg += "\n";
-        msg += "Job ID to aggregate evaluation IDs: ";
-        for(Iterator<String> it = jobIDToAggregateEvaluations.keySet().iterator();it.hasNext();){
-        	msg += it.next();
-        	if (it.hasNext()){
-        		msg += ", ";
-        	}
-        }
-        msg += "\n";
-        _logger.fine(msg);
+//        String msg = "Job ID to name IDs: ";
+//        for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+//        	msg += it.next();
+//        	if (it.hasNext()){
+//        		msg += ", ";
+//        	}
+//        }
+//        msg += "\n";
+//        msg += "Job ID to fold evaluation IDs: ";
+//        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator();it.hasNext();){
+//        	msg += it.next();
+//        	if (it.hasNext()){
+//        		msg += ", ";
+//        	}
+//        }
+//        msg += "\n";
+//        msg += "Job ID to aggregate evaluation IDs: ";
+//        for(Iterator<String> it = jobIDToAggregateEvaluations.keySet().iterator();it.hasNext();){
+//        	msg += it.next();
+//        	if (it.hasNext()){
+//        		msg += ", ";
+//        	}
+//        }
+//        msg += "\n";
+//        _logger.fine(msg);
         
         File perClassCSV = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassResults.csv");
         WriteClassificationResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT,perClassCSV);
@@ -499,15 +421,12 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         File friedmanDiscountFoldTablePNG = null;
         File friedmanDiscountFoldTable = null;
         if (getPerformMatlabStatSigTests() && performStatSigTests){
-            _logger.info("Performing Friedman's tests in Matlab...");
-//            String[] systemNamesArr = jobIDToName.values().toArray(new String[jobIDToName.size()]);
-            
-//            File[] tmp = performFriedmanTestWithClassAccuracy(outputDir, perClassCSV, systemNamesArr);
+            _logger.info("Performing Friedman's tests...");
+
             File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, perClassCSV, 0, 1, 1, numJobs, getMatlabPath());
             friedmanClassTablePNG = tmp[0];
             friedmanClassTable = tmp[1];
 
-            //tmp = performFriedmanTestWithFoldAccuracy(outputDir, perFoldCSV, systemNamesArr);
             tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, perFoldCSV, 0, 1, 1, numJobs, getMatlabPath());
             friedmanFoldTablePNG = tmp[0];
             friedmanFoldTable = tmp[1];
@@ -546,8 +465,31 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         
         //write result HTML pages
         _logger.info("Creating result HTML files...");
+        writeHtmlResultPages(performStatSigTests, numJobs, usingAHierarchy,
+				jobIDTofoldEvaluations, jobIDToAggregateEvaluations,
+				jobIDToOverallConfFile, perClassCSV, perFoldCSV,
+				discountedPerClassCSV, discountedPerFoldCSV,
+				friedmanClassTablePNG, friedmanClassTable,
+				friedmanFoldTablePNG, friedmanFoldTable,
+				friedmanDiscountClassTablePNG, friedmanDiscountClassTable,
+				friedmanDiscountFoldTablePNG, friedmanDiscountFoldTable,
+				jobIDToTgz);
+        
+        return jobIDToAggregateEvaluations;
+    }
 
-        List<Page> resultPages = new ArrayList<Page>();
+	private void writeHtmlResultPages(boolean performStatSigTests, int numJobs,
+			boolean usingAHierarchy,
+			Map<String, List<NemaData>> jobIDTofoldEvaluations,
+			Map<String, NemaData> jobIDToAggregateEvaluations,
+			Map<String, File> jobIDToOverallConfFile, File perClassCSV,
+			File perFoldCSV, File discountedPerClassCSV,
+			File discountedPerFoldCSV, File friedmanClassTablePNG,
+			File friedmanClassTable, File friedmanFoldTablePNG,
+			File friedmanFoldTable, File friedmanDiscountClassTablePNG,
+			File friedmanDiscountClassTable, File friedmanDiscountFoldTablePNG,
+			File friedmanDiscountFoldTable, Map<String, File> jobIDToTgz) {
+		List<Page> resultPages = new ArrayList<Page>();
         List<PageItem> items;
         Page aPage;
 
@@ -675,9 +617,156 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         }
 
         Page.writeResultPages(task.getName(), outputDir, resultPages);
-        
-        return jobIDToAggregateEvaluations;
-    }
+	}
+
+	private NemaData aggregateEvaluationOverFolds(int numClasses, int numFolds,
+			String jobID, boolean usingAHierarchy, List<NemaData> evalList) {
+		NemaData aggregateEval = new NemaData(jobID);
+		int[][][] confFolds = new int[numFolds][][];
+		for(int f=0;f<numFolds;f++){
+			confFolds[f] = evalList.get(f).get2dIntArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW);
+		}
+		int[][] confusionRaw = new int[numClasses][numClasses];
+		double[][] confusionPercent = new double[numClasses][numClasses];
+		
+		int[] resultsPerClass = new int[numClasses];
+		for(int i=0;i<numClasses;i++){
+			resultsPerClass[i] = 0;
+			for(int j=0;j<numClasses;j++){
+				for(int f=0;f<numFolds;f++){
+					confusionRaw[j][i] += confFolds[f][j][i];
+				}
+				resultsPerClass[i] += confusionRaw[j][i];
+			}
+			if(resultsPerClass[i] > 0){
+				for(int j=0;j<numClasses;j++){
+					confusionPercent[j][i] = (double)confusionRaw[j][i] / resultsPerClass[i];
+				}
+			}
+		}
+		
+		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW, confusionRaw);
+		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT, confusionPercent);
+		
+		//Calculate final accuracy as diagonal sum of confusion matrix divided by total number of examples
+      
+		double finalAccuracy = 0.0;
+		double finalDiscountedAccuracy = 0.0;
+		int finalSum = 0;
+		for (int i=0;i<numClasses; i++) {
+		    finalSum += resultsPerClass[i];
+			finalAccuracy += confusionRaw[i][i];
+		}
+		finalAccuracy /= (double)finalSum;
+		
+		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_ACCURACY, finalAccuracy);
+		
+		//Calculate Normalised accuracy as mean of percentage confusion matrix diagonal
+		double finalNormalisedAccuracy = 0.0;
+		for (int i=0;i<numClasses; i++) {
+		    finalNormalisedAccuracy += confusionPercent[i][i];
+		}
+		finalNormalisedAccuracy /= (double)numClasses;
+		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY, finalNormalisedAccuracy);
+		
+		//repeat for discounted stuff
+		if(usingAHierarchy){
+			double[][] discountFoldAccs = new double[numFolds][];
+			for(int f=0;f<numFolds;f++){
+				discountFoldAccs[f] = evalList.get(f).getDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW);
+			}
+			double[] discountConfusionRaw = new double[numClasses];
+			double[] discountConfusionPercent = new double[numClasses];
+			for(int i=0;i<numClasses;i++){
+				for(int f=0;f<numFolds;f++){
+					discountConfusionRaw[i] += discountFoldAccs[f][i];
+				}
+				if(resultsPerClass[i] > 0){
+					discountConfusionPercent[i] = discountConfusionRaw[i] / resultsPerClass[i];
+				}
+			}
+			
+			aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW, discountConfusionRaw);
+			aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountConfusionPercent);
+			
+			for (int i=0;i<numClasses; i++) {
+		        finalDiscountedAccuracy += discountConfusionRaw[i];
+		    }
+		    finalDiscountedAccuracy /= finalSum;
+		    aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY, finalDiscountedAccuracy);
+		    
+		    //Calculate Normalised accuracy as mean of percentage discounted confusion matrix diagonal
+		    double finalNormalisedDiscountedAccuracy = 0.0;
+		    for (int i=0;i<numClasses; i++) {
+		        finalNormalisedDiscountedAccuracy += discountConfusionPercent[i];
+		    }
+		    finalNormalisedDiscountedAccuracy /= (double)numClasses;
+		    aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY, finalNormalisedDiscountedAccuracy);    
+		}
+		return aggregateEval;
+	}
+
+	private File plotAggregatedConfusionForJob(int numClasses, String jobID,
+			NemaData aggregateEval) {
+		double[][] confusionPercent = aggregateEval.get2dDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
+		
+		
+		File overallConfFile = new File(outputDir.getAbsolutePath() + File.separator + jobID + File.separator + "overall" + CONF_MAT_PLOT_EXTENSION);
+		ConfusionMatrixPlot plot = new ConfusionMatrixPlot(getTask().getName() + " - " + jobIDToName.get(jobID) + " - overall", (String[])classNames.toArray(new String[numClasses]), confusionPercent);
+		plot.writeChartToFile(overallConfFile, CONF_MAT_WIDTH, CONF_MAT_HEIGHT);
+		return overallConfFile;
+	}
+
+	private Map<String, List<NemaData>> evaluateAllResultFolds(int numJobs,
+			int numFolds) {
+		String jobID;
+		List<List<NemaData>> sysResults;
+		Map<String,List<NemaData>> jobIDTofoldEvaluations = new HashMap<String,List<NemaData>>(numJobs); 
+        for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
+        	jobID = it.next();
+        	_logger.info("Evaluating experiment folds for jobID: " + jobID);
+        	sysResults = jobIDToFoldResults.get(jobID);
+        	List<NemaData> foldResultList = new ArrayList<NemaData>(numFolds);
+        	for(Iterator<List<NemaData>> it2 = sysResults.iterator();it2.hasNext();){
+        		foldResultList.add(evaluateResultFold(jobID, it2.next()));
+        	}
+        	jobIDTofoldEvaluations.put(jobID, foldResultList);
+        }
+		return jobIDTofoldEvaluations;
+	}
+
+	private int checkNumFolds(int numFolds) {
+		String jobID;
+		List<List<NemaData>> sysResults;
+		for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
+        	jobID = it.next();
+        	sysResults = jobIDToFoldResults.get(jobID);
+            if (numFolds == -1) {
+                numFolds = sysResults.size();
+            } else if (numFolds != sysResults.size()) {
+                throw new IllegalArgumentException("The number of folds (" + sysResults.size() + ") detected for system ID: " + jobID + 
+                		", name: " + jobIDToName.get(jobID) + " is not equal to the number detected " + 
+                		"for the preceeding systems (" + numFolds + ")!");
+            }
+        }
+		return numFolds;
+	}
+
+	private File[] plotConfusionMatrixPerFold(int numClasses, int numFolds,
+			String jobID, List<NemaData> evalList) {
+		double[][] confusion;
+		File[] foldConfFiles = new File[numFolds];
+		new File(outputDir.getAbsolutePath() + File.separator + jobID).mkdirs();
+		for(int i=0;i<evalList.size();i++){
+			NemaData eval = evalList.get(i);
+			confusion = eval.get2dDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
+			foldConfFiles[i] = new File(outputDir.getAbsolutePath() + File.separator + jobID + File.separator + i + CONF_MAT_PLOT_EXTENSION);
+			
+			ConfusionMatrixPlot plot = new ConfusionMatrixPlot(getTask().getName() + " - " + jobIDToName.get(jobID) + " - fold " + i, (String[])classNames.toArray(new String[numClasses]), confusion);
+		    plot.writeChartToFile(foldConfFiles[i], CONF_MAT_WIDTH, CONF_MAT_HEIGHT);
+		}
+		return foldConfFiles;
+	}
     
     /**
      * Evaluates a single iteration/fold of the experiment and returns an Object representing the 
