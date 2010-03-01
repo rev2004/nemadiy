@@ -79,6 +79,11 @@ public abstract class BaseManagerTestCase {
 		logger.setLevel(level);
 	}
 
+	/**Return the property value as string
+	 * 
+	 * @param key
+	 * @return property value
+	 */
 	public final String getPropertyAsString(String key){
 		if(!hasValidProperty){
 			return null;
@@ -86,6 +91,11 @@ public abstract class BaseManagerTestCase {
 		return this.properties.getProperty(key);
 	}
 	
+	/**Return property value as integer
+	 * 
+	 * @param key
+	 * @return property value
+	 */
 	public final Integer getPropertyAsInteger(String key){
 		if(!hasValidProperty){
 			return null;
@@ -95,6 +105,11 @@ public abstract class BaseManagerTestCase {
 		return integerVal;
 	}
 	
+	/** Returns property value
+	 * 
+	 * @param key
+	 * @return property value as long
+	 */
 	public final Long getPropertyAsLong(String key){
 		if(!hasValidProperty){
 			return null;
@@ -104,6 +119,10 @@ public abstract class BaseManagerTestCase {
 		return longVal;
 	}
 
+	/**Returns the logger
+	 * 
+	 * @return the logger
+	 */
 	public final Logger getLogger(){
 		return this.logger;
 	}
