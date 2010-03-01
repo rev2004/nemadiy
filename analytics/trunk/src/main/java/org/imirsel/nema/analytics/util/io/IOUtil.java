@@ -120,12 +120,8 @@ public class IOUtil {
      * @return The relative path.
      */
     public static String makeRelative(File toModify, File base) {
-        try{
-            return toModify.getCanonicalPath().replaceFirst(base.getCanonicalPath() + File.separator, "");
-        }catch (IOException ex){
-            Logger.getLogger(IOUtil.class.getName()).log(Level.WARNING, "Failed to make path relative using Canonical paths, using absolute", ex);
-            return toModify.getAbsolutePath().replaceFirst(base.getAbsolutePath() + File.separator, "");
-        }
+            String relative = base.toURI().relativize(toModify.toURI()).getPath();
+            return relative;
     }
     
     /**

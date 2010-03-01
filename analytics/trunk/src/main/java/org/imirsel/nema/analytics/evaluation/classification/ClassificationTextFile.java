@@ -30,7 +30,7 @@ import org.imirsel.nema.analytics.util.*;
  */
 public class ClassificationTextFile extends EvalFileTypeImpl {
 
-	String type;
+	private String type;
 	public static final String DELIMITER = "\t";
 	
 	public ClassificationTextFile(String type) {
@@ -69,7 +69,7 @@ public class ClassificationTextFile extends EvalFileTypeImpl {
 			NemaData obj;
 			for (Iterator<NemaData> it = data.iterator(); it.hasNext();) {
 				obj = it.next();
-				writer.write(obj.getStringMetadata(NemaDataConstants.PROP_ID) + DELIMITER + obj.getStringMetadata(type));
+				writer.write(obj.getId() + DELIMITER + obj.getStringMetadata(type));
 				writer.newLine();
 			}
 			
