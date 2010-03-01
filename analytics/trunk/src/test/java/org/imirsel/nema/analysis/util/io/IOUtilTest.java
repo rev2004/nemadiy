@@ -1,6 +1,7 @@
 package org.imirsel.nema.analysis.util.io;
 
 import static org.junit.Assert.*;
+import static org.imirsel.nema.test.matchers.NemaMatchers.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +79,8 @@ public class IOUtilTest {
 	@Test
 	public void testListFiles() {
 		String tmpFolder = System.getProperty("java.io.tmpdir")+ System.getProperty("java.file.pathseparator")+ System.currentTimeMillis();
+		File tmpLoc = new File(tmpFolder);
+		tmpLoc.mkdirs();
 		File f1 = new File(tmpFolder,"1.dd");
 		File f2 = new File(tmpFolder,"2.dd");
 		try {
@@ -90,13 +93,10 @@ public class IOUtilTest {
 		StringWriter swriter = new StringWriter();
 		swriter.append(f1.getAbsolutePath()+System.getProperty("line.separator"));
 		swriter.append(f2.getAbsolutePath()+System.getProperty("line.separator"));
-		
-		
 		File outFile = new File(tmpFolder,"delme");
 		String extension = "dd";
-		IOUtil.listFiles(new File(tmpFolder), outFile, "dd");
-		
-		
+		IOUtil.listFiles(new File(tmpFolder), outFile, extension);
+		assertThat(outFile,fileLineCountEquals(2));
 		
 	}
 
