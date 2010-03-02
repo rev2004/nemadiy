@@ -42,7 +42,7 @@ public class ProcessOutputReceiver extends Thread
 	public void kill(){
 		run = false;
 	}
-
+ 
 	// -------------------------- PUBLIC INSTANCE  METHODS --------------------------
 	/**
 	 * method invoked when Receiver thread started.  Reads data from child and displays in on System.out.
