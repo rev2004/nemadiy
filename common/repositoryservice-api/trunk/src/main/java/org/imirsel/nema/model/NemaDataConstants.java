@@ -103,4 +103,9 @@ public class NemaDataConstants {
     public static final String MELODY_VOICING_RECALL = "Melody voiced section recall rate";
     public static final String MELODY_VOICING_FALSE_ALARM = "Melody voiced section false-alarm rate";
     public static final String MELODY_OVERALL_ACCURACY = "Melody overall accuracy";
+    
+    
+    
+    public static final String CHORD_LABEL_SEQUENCE = "Chord label sequence";
+    
 }
