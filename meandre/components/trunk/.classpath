@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="lib/nema-repositoryservice-0.1.0-SNAPSHOT.jar" sourcepath="/repositoryservice"/>
 	<classpathentry kind="lib" path="lib/nema-repositoryservice-api-0.1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/nema-analytics-0.1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin/target/classes"/>
 </classpath>
