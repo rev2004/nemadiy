@@ -10,6 +10,8 @@ public abstract class ProcessExecutorImpl implements ProcessExecutorInterface{
 	protected File outpath;
 	protected File processWorkingDir;
 	protected File processResultsDir;
+	protected File scratchDir;
+	
 	protected boolean outputIsDirectory = false;
 	protected final String outputFileName = "outputFileName.txt";
 	protected int inputToExtend = -1;
@@ -27,6 +29,7 @@ public abstract class ProcessExecutorImpl implements ProcessExecutorInterface{
 	 * @param outpath
 	 * @param processWorkingDir
 	 * @param processResultsDir
+	 * @param scratchDir
 	 * @param addExtension
 	 * @param extension
 	 * @param envVar
@@ -34,11 +37,13 @@ public abstract class ProcessExecutorImpl implements ProcessExecutorInterface{
 	public ProcessExecutorImpl(File outpath, boolean outputIsDirectory,
 			File processWorkingDir,
 			File processResultsDir,
+			File scratchDir,
 			String envVar) {
 		this.outpath = outpath;
 		this.outputIsDirectory = outputIsDirectory;
 		this.processWorkingDir = processWorkingDir;
 		this.processResultsDir = processResultsDir;
+		this.scratchDir = scratchDir;
 		this.inputToExtend = -1;
 		this.extension = null;
 		this.envVar = envVar;
@@ -56,16 +61,17 @@ public abstract class ProcessExecutorImpl implements ProcessExecutorInterface{
 	 * 
 	 * @param processWorkingDir
 	 * @param processResultsDir
+	 * @param scratchDir
 	 * @param commandFormattingStr
 	 * @param executablePath
 	 * @param envVar
 	 */
 	public ProcessExecutorImpl(File processWorkingDir,
-			File processResultsDir, 
-			int inputToExtend, String envVar) {
+			File processResultsDir, File scratchDir, String envVar) {
 		this.processWorkingDir = processWorkingDir;
 		this.processResultsDir = processResultsDir;
-		this.inputToExtend = inputToExtend;
+		this.scratchDir = scratchDir;
+		this.inputToExtend = -1;
 		this.envVar = envVar;
 		
 	}
@@ -79,16 +85,18 @@ public abstract class ProcessExecutorImpl implements ProcessExecutorInterface{
 	 * 
 	 * @param processWorkingDir
 	 * @param processResultsDir
+	 * @param scratchDir
 	 * @param inputToExtend
 	 * @param extension
 	 * @param envVar
 	 */
 	public ProcessExecutorImpl(
-			File processWorkingDir, File processResultsDir,
+			File processWorkingDir, File processResultsDir, File scratchDir,
 			int inputToExtend, String extension, String envVar) {
 
 		this.processWorkingDir = processWorkingDir;
 		this.processResultsDir = processResultsDir;
+		this.scratchDir = scratchDir;
 		this.inputToExtend = inputToExtend;
 		this.extension = extension;
 		this.envVar = envVar;
@@ -138,6 +146,10 @@ public abstract class ProcessExecutorImpl implements ProcessExecutorInterface{
 
 	public String getEnvVar() {
 		return envVar;
+	}
+
+	public File getScratchDir() {
+		return scratchDir;
 	}
 
 }

@@ -150,7 +150,7 @@ public class FriedmansAnovaTkHsd {
             textOut.write("fclose(fidFriedman);");
             textOut.newLine();
             textOut.write("exit;");
-            textOut.newLine();
+            textOut.newLine(); 
 
 
             textOut.close();
@@ -158,7 +158,7 @@ public class FriedmansAnovaTkHsd {
             Logger.getLogger(FriedmansAnovaTkHsd.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        MatlabExecutorImpl matlabIntegrator = new MatlabExecutorImpl(outputDir,true,outputDir,outputDir,"",evalCommand,null);
+        MatlabExecutorImpl matlabIntegrator = new MatlabExecutorImpl(outputDir,true,outputDir,outputDir,outputDir,"",evalCommand,null);
         matlabIntegrator.setMatlabBin(matlabPath);
         matlabIntegrator.runCommand(null);
         

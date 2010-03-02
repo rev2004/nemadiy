@@ -55,7 +55,12 @@ public interface ProcessExecutorInterface {
 	 * @return the processResultsDir
 	 */
 	public File getProcessResultsDir();
-
+	
+	/**
+	 * @return the scratchDir
+	 */
+	public File getScratchDir();
+	
 	/**
 	 * @return the outputIsDirectory
 	 */

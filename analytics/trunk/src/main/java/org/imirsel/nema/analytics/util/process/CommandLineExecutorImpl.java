@@ -28,31 +28,10 @@ public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 	 * @param envVar
 	 */
 	public CommandLineExecutorImpl(File outpath, boolean outputIsDirectory,
-			File processWorkingDir, File processResultsDir,
+			File processWorkingDir, File processResultsDir, File scratchDir,
 			String commandFormattingStr, File executablePath, String envVar) {
-		super(outpath, outputIsDirectory, processWorkingDir, processResultsDir,
+		super(outpath, outputIsDirectory, processWorkingDir, processResultsDir, scratchDir,
 				envVar);
-		this.commandFormattingStr = commandFormattingStr;
-		this.executablePath = executablePath;
-		this.isRunning = false;
-		this.procOutputReceiverThread = null;
-		this.process = null;
-	}
-
-	/**
-	 * Sets up the ProcessExecutor, with an output path determined by appending
-	 * '.result' to the specified input within the process results directory.
-	 * 
-	 * @param processWorkingDir
-	 * @param processResultsDir
-	 * @param commandFormattingStr
-	 * @param executablePath
-	 * @param envVar
-	 */
-	public CommandLineExecutorImpl(File processWorkingDir,
-			File processResultsDir, String commandFormattingStr,
-			int inputToExtend, File executablePath, String envVar) {
-		super(processWorkingDir, processResultsDir, inputToExtend, envVar);
 		this.commandFormattingStr = commandFormattingStr;
 		this.executablePath = executablePath;
 		this.isRunning = false;
@@ -74,11 +53,10 @@ public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 	 * @param envVar
 	 */
 	public CommandLineExecutorImpl(File processWorkingDir,
-			File processResultsDir, String commandFormattingStr,
+			File processResultsDir, File scratchDir, String commandFormattingStr,
 			File executablePath, int inputToExtend, String extension,
 			String envVar) {
-		super(processWorkingDir, processResultsDir, inputToExtend, extension,
-				envVar);
+		super(processWorkingDir, processResultsDir, scratchDir, inputToExtend, extension, envVar);
 		this.commandFormattingStr = commandFormattingStr;
 		this.executablePath = executablePath;
 		this.outpath = null;
@@ -97,6 +75,9 @@ public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 	public void killProcess() {
 		if (process != null) {
 			process.destroy();
+		}
+		if (procOutputReceiverThread != null){
+			procOutputReceiverThread.kill();
 		}
 	}
 
@@ -285,7 +266,7 @@ public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 					// components[i].substring(1));
 				} else if (testSymbol == 's') {
 					// cmdArray[cmdCount] = "\"" + outfile + "\"";
-					cmdArray[cmdCount] = processWorkingDir.getCanonicalPath();
+					cmdArray[cmdCount] = scratchDir.getCanonicalPath();
 					cmdCount++;
 					if (!components[i].substring(1).trim().equals("")) {
 						String[] comps = components[i].substring(1).trim()

@@ -15,7 +15,7 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
 	protected Process process;
 	protected ProcessOutputReceiver procOutputReceiverThread = null;
 	protected String commandFormattingStr = "('$1','$o')";
-	
+	 
 	/**
 	 * Sets up the ProcessExecutor, with a specified output path. Note that this file
 	 * must be under the process results directory path.
@@ -29,32 +29,12 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
 	 */
 	public MatlabExecutorImpl(File outpath, boolean outputIsDirectory,
 			File processWorkingDir,
-			File processResultsDir, String commandFormattingStr,
+			File processResultsDir, 
+			File scratchDir,
+			String commandFormattingStr,
 			String functionName,
 			String envVar) {
-		super(outpath, outputIsDirectory, processWorkingDir, processResultsDir, envVar);
-		this.commandFormattingStr = commandFormattingStr;
-		this.functionName = functionName;
-		this.isRunning = false;
-		this.procOutputReceiverThread = null;
-		this.process = null;
-	}
-	
-	/**
-	 * Sets up the ProcessExecutor, with an output path determined by appending 
-	 * '.result' to the specified input within the process results directory.
-	 * 
-	 * @param processWorkingDir
-	 * @param processResultsDir
-	 * @param commandFormattingStr
-	 * @param functionName
-	 * @param envVar
-	 */
-	public MatlabExecutorImpl(File processWorkingDir,
-			File processResultsDir, String commandFormattingStr,
-			int inputToExtend,
-			String functionName, String envVar) {
-		super(processWorkingDir,processResultsDir,inputToExtend,envVar);
+		super(outpath, outputIsDirectory, processWorkingDir, processResultsDir, scratchDir, envVar);
 		this.commandFormattingStr = commandFormattingStr;
 		this.functionName = functionName;
 		this.isRunning = false;
@@ -77,10 +57,11 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
 	 */
 	public MatlabExecutorImpl(
 			File processWorkingDir, File processResultsDir,
+			File scratchDir,
 			String commandFormattingStr, String functionName,
 			int inputToExtend,
 			String extension, String envVar) {
-		super(processWorkingDir, processResultsDir, inputToExtend, extension, envVar);
+		super(processWorkingDir, processResultsDir, scratchDir, inputToExtend, extension, envVar);
 		this.functionName = functionName;
 		this.commandFormattingStr = commandFormattingStr;
 		this.outpath = null;
@@ -177,7 +158,7 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
 					}
 				}
 				else if(testSymbol == 's'){
-					cmdArray[commandArgsIdx] = processWorkingDir.getCanonicalPath();
+					cmdArray[commandArgsIdx] = scratchDir.getCanonicalPath();
 					if (!components[i].substring(1).trim().equals("")) {
 						String[] comps = components[i].substring(1).trim()
 								.split(" ");
