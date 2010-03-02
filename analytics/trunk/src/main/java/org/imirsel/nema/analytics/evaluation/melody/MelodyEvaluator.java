@@ -36,6 +36,8 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			IOException {
 		String jobID;
 		int numJobs = jobIDToFoldResults.size();
+		
+		//check all systems have just one result set
 		List<List<NemaData>> sysResults;
 		
 		// Make sure we only have one set of results per jobId (i.e. system), 
