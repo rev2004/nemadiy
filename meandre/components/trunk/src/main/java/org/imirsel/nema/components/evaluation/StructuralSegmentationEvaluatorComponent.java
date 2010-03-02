@@ -13,15 +13,22 @@ package org.imirsel.nema.components.evaluation;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.imirsel.m2k.evaluation.TaskDescription;
-import org.imirsel.m2k.evaluation.resultpages.WriteResultPagePerFile;
 import org.imirsel.nema.components.NemaComponent;
+import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaTask;
+import org.imirsel.nema.analytics.evaluation.AbstractWriteResultFiles;
+import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
+import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
+import org.imirsel.nema.analytics.util.io.IOUtil;
+import org.imirsel.nema.analytics.util.process.ProcessOutputReceiver;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
-import org.imirsel.nema.components.util.ProcessOutputReceiver;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentProperty;
@@ -202,8 +209,10 @@ import org.meandre.core.ComponentExecutionException;
 		}
 		
 		try {
-			TaskDescription task = new TaskDescription(-1, taskName, taskDesc, "Structure", -1, datasetName, datasetDesc);
-			WriteResultPagePerFile.writeResultsHTML(task, pageNames, csvFiles, pngFiles, resultsDir);
+			NemaTask task = new NemaTask(-1, taskName, taskDesc, -1, "Structure", -1);
+	        NemaDataset dataset = new NemaDataset(-1,datasetName,datasetDesc,-1,-1,-1,null,null,-1,"Structure",-1,null);
+	        
+			writeResultsHTML(task, dataset, pageNames, csvFiles, pngFiles, resultsDir);
 		} catch (Exception e) {
 			getLogger().log(Level.SEVERE,"Exception occured while writing results pages!",e);
 		}
@@ -214,6 +223,108 @@ import org.meandre.core.ComponentExecutionException;
 				
 	}
 
+	private static void writeResultsHTML(NemaTask task, NemaDataset dataset, String[] pageNames, File[] CSVFiles, File[] imagePaths, File outputDirectory) throws IOException{
+        //create result pages
+        System.err.println("Creating result HTML files...");
+
+        if ((pageNames.length != CSVFiles.length)||(CSVFiles.length != imagePaths.length)){
+            throw new IllegalArgumentException("The arrays of page names, CSV files and imagePaths must be the same length!\n" +
+                    "pageNames length  = " + pageNames.length + "\n" +
+                    "CSVFiles length   = " + CSVFiles.length + "\n" +
+                    "imagePaths length = " + imagePaths.length);
+        }
+        List<Page> resultPages = new ArrayList<Page>();
+        List<PageItem> items;
+        Page aPage;
+
+        //do intro page
+        items = new ArrayList<PageItem>();
+        Table descriptionTable = AbstractWriteResultFiles.prepTaskTable(task,dataset);
+        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
+        aPage = new Page("intro", "Introduction", items, false);
+        resultPages.add(aPage);
+        
+        //do a page per file
+        String[][][] csvData = new String[pageNames.length][][];
+        for (int i = 0; i < pageNames.length; i++){
+            items = new ArrayList<PageItem>();
+            String cleanName = pageNames[i].replaceAll("\\s", "_");
+
+            //add table from CSV files
+            csvData[i] = DeliminatedTextFileUtilities.loadDelimTextData(CSVFiles[i], ",", -1);
+            ArrayList<String[]> rows = new ArrayList<String[]>(csvData[i].length-1);
+            for (int j = 1; j < csvData[i].length; j++){
+                rows.add(csvData[i][j]);
+            }
+            items.add(new TableItem("evalMetrics", "Evaluation Metrics", csvData[i][0], rows));
+
+            //add evaluation plot
+            items.add(new ImageItem("plot", "Plot", IOUtil.makeRelative(imagePaths[i], outputDirectory)));
+
+            //add the page
+            aPage = new Page(cleanName, pageNames[i], items, true);
+            resultPages.add(aPage);
+        }
+
+        //do mean results page
+        if(csvData.length > 1){
+            items = new ArrayList<PageItem>();
+            
+            try{
+                //average tables
+                double[] averages = new double[csvData[0].length-1];
+                for (int i = 0; i < csvData.length; i++){
+                    for (int j = 0; j < averages.length; j++){
+                        averages[j] += Double.parseDouble(csvData[i][j+1][1]);
+                    }
+                }
+                for (int i = 0; i < averages.length; i++){
+                    averages[i] /= csvData.length;
+                }
+                
+                ArrayList<String[]> rows = new ArrayList<String[]>(averages.length);
+                
+                for (int r = 0; r < averages.length; r++){
+                    rows.add(new String[]{csvData[0][r+1][0],""+averages[r]});
+                }
+                
+                items.add(new TableItem("meanEvalMetrics", "Mean Evaluation Metrics", csvData[0][0], rows));
+
+                //add the page
+                aPage = new Page("mean_scores", "Mean scores", items, false);
+                resultPages.add(aPage);
+            }catch(Exception e){
+                Logger.getLogger(WriteResultPagePerFile.class.getName()).log(Level.WARNING, "Was unable to produce mean scores from second column of CCSV tables!",e);
+            }
+            
+            
+        }
+
+
+        //do files page
+        {
+            items = new ArrayList<PageItem>();
+
+            //CSVs
+            List<String> CSVPaths = new ArrayList<String>(CSVFiles.length);
+            for (int i = 0; i < CSVFiles.length; i++){
+                 CSVPaths.add(IOUtil.makeRelative(CSVFiles[i],outputDirectory));
+            }
+            items.add(new FileListItem("dataCSVs", "CSV result files", CSVPaths));
+
+            //Friedman's tables and plots
+            List<String> images = new ArrayList<String>(imagePaths.length);
+            for (int i = 0; i < imagePaths.length; i++){
+                 images.add(IOUtil.makeRelative(imagePaths[i],outputDirectory));
+            }
+            items.add(new FileListItem("plots", "Evaluation plots", images));
+
+            aPage = new Page("files", "All data files", items, true);
+            resultPages.add(aPage);
+        }
+
+        Page.writeResultPages(task.getName(), outputDirectory, resultPages);
+    }
 
 	/** This method is called when the Menadre Flow execution is completed.
 	 *

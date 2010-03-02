@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
-import org.imirsel.nema.model.NEMAMetadataEntry;
+import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.renderers.CollectionRenderer;
 import org.imirsel.nema.repository.DatasetListFileGenerator;
 import org.meandre.annotations.Component;
@@ -95,7 +95,7 @@ import org.meandre.core.ExecutableComponent;
 
 	private List<File[]> traintest_split_files;
 	private File[] gt_and_featExt_files;
-	private Set<NEMAMetadataEntry>  file_encoding_constraint;
+	private Set<NemaMetadataEntry>  file_encoding_constraint;
 	
 	private java.io.PrintStream cout;
 

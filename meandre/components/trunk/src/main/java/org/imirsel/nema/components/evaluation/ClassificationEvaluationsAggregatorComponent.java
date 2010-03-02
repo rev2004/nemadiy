@@ -17,12 +17,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
-import org.imirsel.m2k.evaluation.DataObj;
-import org.imirsel.m2k.evaluation.TaskDescription;
+import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
+import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.imirsel.nema.components.NemaComponent;
+import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaTask;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentProperty;
@@ -30,6 +32,7 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
+
 /** This executable component executes an external binary using the process builder.
  *
  * @author Andreas F. Ehmann and Kris West;
@@ -156,7 +159,7 @@ import org.meandre.core.ComponentExecutionException;
 		String[] gtFileName = (String[])cc.getDataComponentFromInput(DATA_INPUT_3);
 		
 		// initialize variables for MIREXClassificationEvalMain Constructor
-		String matlabPath = "/usr/local/bin/matlab";
+		File matlabPath = new File("/usr/local/bin/matlab");
 		File gtFile = new File(gtFileName[0]);
 	    File procResDir = new File(processResultsDir);
 	    String processResultsDirName = processResultsDir;
@@ -171,13 +174,14 @@ import org.meandre.core.ComponentExecutionException;
 		    File rootEvaluationDir = new File(processResultsDirName + File.separator + "overall");
 	
 		    // call constructor and evaluation method
-	        TaskDescription task = new TaskDescription(-1, taskName, taskDesc, metadata, -1, datasetName, datasetDesc);
+	        NemaTask task = new NemaTask(-1, taskName, taskDesc, -1, metadata, -1);
+	        NemaDataset dataset = new NemaDataset(-1,datasetName,datasetDesc,-1,-1,-1,null,null,-1,metadata,-1,null);
 	        
 	        //init evaluator
-	        org.imirsel.m2k.evaluation.classification.ClassificationEvaluator eval;
+	        ClassificationEvaluator eval;
 			try {
-				eval = new 
-					org.imirsel.m2k.evaluation.classification.ClassificationEvaluator(task,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile,_handler);
+				eval = new ClassificationEvaluator(task,dataset,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile);
+				eval.addLogHandler(_handler);
 			} catch (FileNotFoundException e) {
 				ComponentExecutionException ex = new ComponentExecutionException("FileNotFoundException occured when setting up evaluator!",e);
 				throw ex;
@@ -187,10 +191,11 @@ import org.meandre.core.ComponentExecutionException;
 			}
 		    
 			//read Ground-truth
-	        org.imirsel.m2k.evaluation.classification.ClassificationTextFile reader = new 
-	        	org.imirsel.m2k.evaluation.classification.ClassificationTextFile(this.getLogger(),metadata);
+	        ClassificationTextFile reader = new ClassificationTextFile(metadata);
+	        reader.addLogHandler(_handler);
+
 			try {
-				List<DataObj> gt = reader.readFile(gtFile);
+				List<NemaData> gt = reader.readFile(gtFile);
 				eval.setGroundTruth(gt);
 			} catch (Exception e) {
 				ComponentExecutionException ex = new ComponentExecutionException("Exception occured when reading up ground-truth from: " + gtFile.getAbsolutePath(),e);
@@ -204,8 +209,8 @@ import org.meandre.core.ComponentExecutionException;
 	        }
 	        for (int i=0; i<dirLists.length; i++){
 	        	try{
-		        	List<List<DataObj>> results = reader.readDirectory(new File(dirLists[i]),null);
-					for(Iterator<List<DataObj>> it= results.iterator();it.hasNext();){
+		        	List<List<NemaData>> results = reader.readDirectory(new File(dirLists[i]),null);
+					for(Iterator<List<NemaData>> it= results.iterator();it.hasNext();){
 			        	eval.addResults(nameLists[i], ""+i, it.next());
 			        }
 	        	} catch (Exception e) {
@@ -216,7 +221,7 @@ import org.meandre.core.ComponentExecutionException;
 	
 	      //perform evaluation
 	        try {
-				Map<String,DataObj> evalResults = eval.evaluate();
+				Map<String,NemaData> evalResults = eval.evaluate();
 			} catch (Exception e) {
 				ComponentExecutionException ex = new ComponentExecutionException("Exception occured when performing the evaluation!",e);
 				throw ex;

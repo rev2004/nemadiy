@@ -8,12 +8,11 @@ import java.util.Set;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
-import org.imirsel.nema.model.NEMAMetadataEntry;
-import org.imirsel.nema.model.PublishedResult;
+import org.imirsel.nema.model.NemaMetadataEntry;
+import org.imirsel.nema.model.NemaPublishedResult;
 import org.imirsel.nema.renderers.CollectionRenderer;
 import org.imirsel.nema.repository.DatasetListFileGenerator;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
-import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
@@ -52,7 +51,7 @@ import org.meandre.core.ExecutableComponent;
 	private String[] paths;
 	private File[] gt_and_featExt_files;
 	private String[] groundtruth ;
-	private Set<NEMAMetadataEntry>  file_encoding_constraint;
+	private Set<NemaMetadataEntry>  file_encoding_constraint;
 	private String processWorkingDirName;
 	private File processWorkingDir;
 
@@ -83,7 +82,7 @@ import org.meandre.core.ExecutableComponent;
 	}
 	
 	public void dispose(ComponentContextProperties ccp) {
-		// TODO Auto-generated method stub
+
 	}
 	
 	public void execute(ComponentContext ccp)
@@ -93,13 +92,14 @@ import org.meandre.core.ExecutableComponent;
      //   int datasetID = Integer.parseInt(ID);
 		RepositoryClientConnectionPool pool = RepositoryClientConnectionPool.getInstance();
 		RepositoryClientInterface client = pool.getFromPool();
-		List<PublishedResult> resultList = null;
+		List<NemaPublishedResult> resultList = null;
+
 		try{
 		   resultList = client.getPublishedResultsForDataset(datasetid);
 		   names = new String[resultList.size()];
 		   paths = new String[resultList.size()];
 		   int ctr =0;
-			for (PublishedResult thisResult:resultList ){
+			for (NemaPublishedResult thisResult:resultList ){
 				//cout.println("Train File: " + thisFile[0].getCanonicalPath());
 				//cout.println("Test File: " + thisFile[1].getCanonicalPath());
 				paths[ctr]=thisResult.getResult_path();

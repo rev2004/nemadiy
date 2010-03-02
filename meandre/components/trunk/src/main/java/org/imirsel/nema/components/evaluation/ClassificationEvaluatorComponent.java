@@ -19,10 +19,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.m2k.evaluation.TaskDescription;
-import org.imirsel.m2k.evaluation.DataObj;
-import org.imirsel.m2k.evaluation.classification.ClassificationEvaluator;
-import org.imirsel.m2k.evaluation.classification.ClassificationTextFile;
+
+import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
+import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.meandre.annotations.Component;
@@ -34,6 +33,9 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.imirsel.nema.components.NemaComponent;
+import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaTask;
 
 
 /** This executable component executes an external binary using the process builder.
@@ -175,7 +177,7 @@ import org.imirsel.nema.components.NemaComponent;
 		
 		
 		// initialize variables for MIREXClassificationEvalMain Constructor
-		String matlabPath = "/usr/local/bin/matlab";
+		File matlabPath = new File("/usr/local/bin/matlab");
 	    File gtFile = new File(gtFileName[0]);
 	    File procResDir = new File(processResultsDir);
 	    String processResultsDirName;
@@ -191,14 +193,15 @@ import org.imirsel.nema.components.NemaComponent;
 		    // create a directory to move the raw results to
 		    File classificationResultsDir = new File(fileLists[0]);
 		    
-	        // call constructor and evaluation method
-	        TaskDescription task = new TaskDescription(-1, taskName, taskDesc, metadata, -1, datasetName, datasetDesc);
+	        NemaTask task = new NemaTask(-1, taskName, taskDesc, -1, metadata, -1);
+	        NemaDataset dataset = new NemaDataset(-1,datasetName,datasetDesc,-1,-1,-1,null,null,-1,metadata,-1,null);
 	        
 	        //init evaluator
 	        this.getLogger().info("Initializing evaluation toolset");
 	        ClassificationEvaluator eval;
 			try {
-				eval = new ClassificationEvaluator(task,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile,_handler);
+				eval = new ClassificationEvaluator(task,dataset,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile);
+				eval.addLogHandler(_handler);
 			} catch (FileNotFoundException e) {
 				ComponentExecutionException ex = new ComponentExecutionException("FileNotFoundException occured when setting up evaluator!",e);
 				throw ex;
@@ -208,9 +211,10 @@ import org.imirsel.nema.components.NemaComponent;
 			}
 	        
 			//read Ground-truth
-	        ClassificationTextFile reader = new ClassificationTextFile(this.getLogger(),metadata);
+	        ClassificationTextFile reader = new ClassificationTextFile(metadata);
+	        reader.addLogHandler(_handler);
 			try {
-				List<DataObj> gt = reader.readFile(gtFile);
+				List<NemaData> gt = reader.readFile(gtFile);
 				eval.setGroundTruth(gt);
 			} catch (Exception e) {
 				ComponentExecutionException ex = new ComponentExecutionException("Exception occured when reading up ground-truth from: " + gtFile.getAbsolutePath(),e);
@@ -219,8 +223,8 @@ import org.imirsel.nema.components.NemaComponent;
 			
 			//read results
 			try{
-				List<List<DataObj>> results = reader.readDirectory(classificationResultsDir, null);
-				for(Iterator<List<DataObj>> it= results.iterator();it.hasNext();){
+				List<List<NemaData>> results = reader.readDirectory(classificationResultsDir, null);
+				for(Iterator<List<NemaData>> it= results.iterator();it.hasNext();){
 		        	eval.addResults(systemName, systemID, it.next());
 		        }
 			} catch (Exception e) {
@@ -230,7 +234,7 @@ import org.imirsel.nema.components.NemaComponent;
 	        
 			//perform evaluation
 	        try {
-				Map<String,DataObj> evalOutput = eval.evaluate();
+				Map<String,NemaData> evalOutput = eval.evaluate();
 				// output the raw results dir for reprocessing by the summarizer component
 		        String[] outLists = new String[1];
 		        outLists[0] = processResultsDir;
