@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="lib" path="lib/ACE.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl-2.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/jAudio-sanitized-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/nema-artifactservice-0.5.0-SNAPSHOT.jar" sourcepath="/artifactservice"/>
+	<classpathentry kind="lib" path="lib/nema-directoryservice-0.5.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/nema-annotations-0.5-SNAPSHOT.jar" sourcepath="/nema-annotations"/>
+	<classpathentry kind="con" path="org.meandre.MEANDRE_INFRASTRUCTURE/1.4.8"/>
+	<classpathentry kind="lib" path="lib/commons-compress-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.12.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.9.jar"/>
+	<classpathentry kind="lib" path="lib/nema-repositoryservice-0.1.0-SNAPSHOT.jar" sourcepath="/repositoryservice"/>
+	<classpathentry kind="lib" path="lib/nema-repositoryservice-api-0.1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="output" path="bin/target/classes"/>
+</classpath>
