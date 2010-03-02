@@ -22,10 +22,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 import org.imirsel.nema.analytics.evaluation.*;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
 import org.imirsel.nema.analytics.evaluation.util.*;
-import org.imirsel.nema.analytics.evaluation.vis.ConfusionMatrixPlot;
 import org.imirsel.nema.analytics.util.io.*;
 import org.imirsel.nema.model.*;
 
@@ -35,13 +36,8 @@ import org.imirsel.nema.model.*;
  */
 public class ChordEvaluator extends EvaluatorImpl{
 
-	/** Command line harness usage statement. */
-    public static final String USAGE = "args: taskID(int) taskName taskDescription datasetID(int) datasetName datasetDescription subjectMetadata /path/to/GT/file /path/to/output/dir [-h /path/to/hierarchy/file] /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName";
-    
-    private File hierarchyFile = null;
-    private List<String[]> hierarchies = null;
-    private List<String> hierachiesKey = null;
-    private List<String> classNames = null;
+//	/** Command line harness usage statement. */
+//    public static final String USAGE = "args: taskID(int) taskName taskDescription datasetID(int) datasetName datasetDescription subjectMetadata /path/to/GT/file /path/to/output/dir [-h /path/to/hierarchy/file] /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName";
     
     protected boolean performMatlabStatSigTests = true;
 	protected File matlabPath = new File("matlab");
@@ -50,9 +46,8 @@ public class ChordEvaluator extends EvaluatorImpl{
     private static final String SMALL_DIVIDER = "--------------------------------------------------------------------------------\n";
     private static final int COL_WIDTH = 7;
     private static final DecimalFormat dec = new DecimalFormat("0.00");
-    private static final String CONF_MAT_PLOT_EXTENSION = ".conf.png";
-    private static final int CONF_MAT_HEIGHT = 850;
-    private static final int CONF_MAT_WIDTH = 900;
+    private static final String PLOT_EXT = ".chords.png";
+
     
     /**
      * Constructs and instance of the ClassificationEvaluator. 
@@ -85,190 +80,113 @@ public class ChordEvaluator extends EvaluatorImpl{
         super(workingDir_, outputDir_, task_, dataset_);
         performMatlabStatSigTests = performMatlabStatSigTests_;
         matlabPath = matlabPath_;
-        hierarchyFile = hierarchyFile_;
-        if(hierarchyFile != null) {
-            initHierachy();
-        }
     }
     
-    /**
-     * Initialises the class names list from the ground-truth.
-     */
-    private void initClassNames() throws IllegalArgumentException{
-    	String type = task.getSubjectTrackMetadataName();
-    	String aClass;
-    	NemaData data;
-    	Set<String> classes = new HashSet<String>();
-    	for (Iterator<NemaData> it = trackIDToGT.values().iterator(); it.hasNext();){
-    		data = it.next();
-    		aClass = data.getStringMetadata(type);
-    		if(aClass == null){
-    			throw new IllegalArgumentException("Ground-truth example " + data.getId() + " had no metadata of type '" + type + "'");
-    		}else{
-    			classes.add(aClass);
-    		}
-    	}
-    	
-    	classNames = new ArrayList<String>(classes);
-    	Collections.sort(classNames);
-    	String classesMsg = "Classes of type '" + type + "' found in ground-truth:";
-    	for(Iterator<String> it = classNames.iterator();it.hasNext();){
-    		classesMsg += "\n\t" + it.next();
-    	}
-    	_logger.info(classesMsg);
-    }
-    
-
-    /**
-     * Initialises the class hierarchy data-structures if a hierarchy file is in use.
-     */
-    private void initHierachy() throws FileNotFoundException, IOException{
-        //Initialise Hierarchy scoring stuff
-    	String msg = "reading hierarchy file: " + hierarchyFile.getAbsolutePath() + "\n";
-        this.hierarchies = new ArrayList<String[]>();
-        this.hierachiesKey = new ArrayList<String>();
-        BufferedReader textBuffer = null;
-        String[] dataLine = {"init1", "init2"};
-        msg += "Hierarchy data:\n";
-        try {
-            //use buffering
-            //this implementation reads one line at a time
-            textBuffer = new BufferedReader( new FileReader(hierarchyFile) );
-            String line = null; //not declared within while loop
-            while (( line = textBuffer.readLine()) != null) {
-                line = line.trim();
-                if(!line.equals("")){
-                    dataLine = line.split("[\t]+");
-//                    for (int i = 0; i < dataLine.length; i++){
-//                        dataLine[i] = TagClassificationGroundTruthFileReader.cleanTag(dataLine[i]);
-//                    }
-                    this.hierarchies.add(dataLine);
-                    this.hierachiesKey.add(dataLine[0]);
-
-                    msg += "\t" + dataLine[0];
-                    for (int i = 1; i < dataLine.length; i++){
-                        msg += " -> " + dataLine[i];
-                    }
-                    msg += "\n";
-                }
-            }
-            _logger.info(msg);
-        } finally {
-            try {
-                if (textBuffer!= null) {
-                    //flush and close both "input" and its underlying FileReader
-                    textBuffer.close();
-                }
-            } catch (IOException ex) {
-            }
-        }
-    }
-    
-    /** Parse commandline arguments for the main method harness.
-     * 
-     * @param args Full commandline arguments received by the JVM.
-     * @return An instantiated ClassificationEvaluator, based on the arguments, that is ready to run.
-     * @throws IllegalArgumentException Thrown if a results or ground-truth file is not in the expected format.
-     * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
-     * found.
-     * @throws IOException Thrown if there is a problem reading a results or ground-truth file, unrelated to 
-     * format.
-     */
-    public static ChordEvaluator parseCommandLineArgs(String[] args) throws IllegalArgumentException, FileNotFoundException, IOException{
-        if (args.length < 10 ){
-            System.err.println("ERROR: Insufficient arguments!\n" + USAGE);
-            System.exit(1);
-        }
-        
-        //args: taskID(int) taskName taskDescription datasetID(int) datasetName datasetDescription subjectMetadataID subjectMetadataName /path/to/GT/file /path/to/output/dir [-h /path/to/hierarchy/file] /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName
-        NemaTask task = new NemaTask();
-        task.setId(Integer.parseInt(args[0]));
-        task.setName(args[1]);
-        task.setDescription(args[2]);
-        task.setDatasetId(Integer.parseInt(args[3]));
-        task.setSubjectTrackMetadataId(Integer.parseInt(args[6]));
-        task.setSubjectTrackMetadataName(args[7]);
-        
-        NemaDataset dataset = new NemaDataset();
-        dataset.setId(task.getDatasetId());
-        dataset.setName(args[4]);
-        dataset.setDescription(args[5]);
-        
-        File gtFile = new File(args[8]);
-        File workingDir = new File(args[9]);
-        File hierarchyFile = null;
-        String msg = "\n" + 
-        		"Task description:  \n" + task.toString() + 
-    			"Ground-truth file: " + gtFile.getAbsolutePath() + "\n" + 
-    			"Working directory: " + workingDir.getAbsolutePath() + "\n" + 
-    			"OutputDirectory:   " + workingDir.getAbsolutePath() + "\n";
-
-        if (args.length % 2 != 1){
-            System.err.println("WARNING: an even number of arguments was specified, one may have been ignored!\n" + USAGE);
-        }
-        
-        int startIdx = -1;
-        if (args[9].equalsIgnoreCase("-h")){
-            hierarchyFile = new File(args[10]);
-            msg += "Hierarchy file:    " + hierarchyFile.getAbsolutePath() + "\n";
-            startIdx = 11;
-        }else{startIdx = 9;
-            msg += "Hierarchy file:    null\n";
-        }
-        
-        ChordEvaluator eval = new ChordEvaluator(task, dataset, workingDir, workingDir, true, new File("matlab"), hierarchyFile);
-        eval.getLogger().info(msg);
-        
-        //reading ground-truth data
-        ChordIntervalTextFile reader = new ChordIntervalTextFile(task.getSubjectTrackMetadataName());
-        List<NemaData> gt = reader.readFile(gtFile);
-        eval.setGroundTruth(gt);
-        
-        msg = "Results to evaluate:\n";
-        for (int i = startIdx; i < args.length; i+=2) {
-            String systemName = args[i+1];
-            File resultsPath = new File(args[i]);
-            
-            List<List<NemaData>> results = reader.readDirectory(resultsPath,null);
-            for(Iterator<List<NemaData>> it = results.iterator();it.hasNext();){
-            	eval.addResults(systemName, systemName, it.next());
-            }
-            msg += systemName + ": " + resultsPath.getAbsolutePath() + ", read " + results.size() + " result files\n";
-        }
-        eval.getLogger().info(msg);
-        
-        return eval;
-    }
-    
-    /**
-     * Main method harness.
-     * 
-     * @param args Command line arguments that will be parsed by {@link #parseCommandLineArgs(String[] args)}.
-     */
-    public static void main(String[] args) {
-        
-        System.err.println("MIREX Classification evaluator\n" +
-                "\t\tby Kris West (kris.west@gmail.com");
-        System.err.println("");
-        
-        ChordEvaluator eval = null;
-		try {
-			eval = parseCommandLineArgs(args);
-			try{
-				eval.evaluate();
-			}catch(Exception e){
-				eval.getLogger().log(Level.SEVERE, "Exception occured while executing evaluate!",e);
-			}
-		} catch (Exception e) {
-			if (eval != null){
-				eval.getLogger().log(Level.SEVERE, "Exception occured while parsing command line arguments!",e);
-			}else{
-				Logger.getLogger(ChordEvaluator.class.getName()).log(Level.SEVERE, "Exception occured while parsing command line arguments!",e);
-			}
-		}
-        
-        System.err.println("---exit---");
-    }
+//    /** Parse commandline arguments for the main method harness.
+//     * 
+//     * @param args Full commandline arguments received by the JVM.
+//     * @return An instantiated ClassificationEvaluator, based on the arguments, that is ready to run.
+//     * @throws IllegalArgumentException Thrown if a results or ground-truth file is not in the expected format.
+//     * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
+//     * found.
+//     * @throws IOException Thrown if there is a problem reading a results or ground-truth file, unrelated to 
+//     * format.
+//     */
+//    public static ChordEvaluator parseCommandLineArgs(String[] args) throws IllegalArgumentException, FileNotFoundException, IOException{
+//        if (args.length < 10 ){
+//            System.err.println("ERROR: Insufficient arguments!\n" + USAGE);
+//            System.exit(1);
+//        }
+//        
+//        //args: taskID(int) taskName taskDescription datasetID(int) datasetName datasetDescription subjectMetadataID subjectMetadataName /path/to/GT/file /path/to/output/dir [-h /path/to/hierarchy/file] /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName
+//        NemaTask task = new NemaTask();
+//        task.setId(Integer.parseInt(args[0]));
+//        task.setName(args[1]);
+//        task.setDescription(args[2]);
+//        task.setDatasetId(Integer.parseInt(args[3]));
+//        task.setSubjectTrackMetadataId(Integer.parseInt(args[6]));
+//        task.setSubjectTrackMetadataName(args[7]);
+//        
+//        NemaDataset dataset = new NemaDataset();
+//        dataset.setId(task.getDatasetId());
+//        dataset.setName(args[4]);
+//        dataset.setDescription(args[5]);
+//        
+//        File gtFile = new File(args[8]);
+//        File workingDir = new File(args[9]);
+//        File hierarchyFile = null;
+//        String msg = "\n" + 
+//        		"Task description:  \n" + task.toString() + 
+//    			"Ground-truth file: " + gtFile.getAbsolutePath() + "\n" + 
+//    			"Working directory: " + workingDir.getAbsolutePath() + "\n" + 
+//    			"OutputDirectory:   " + workingDir.getAbsolutePath() + "\n";
+//
+//        if (args.length % 2 != 1){
+//            System.err.println("WARNING: an even number of arguments was specified, one may have been ignored!\n" + USAGE);
+//        }
+//        
+//        int startIdx = -1;
+//        if (args[9].equalsIgnoreCase("-h")){
+//            hierarchyFile = new File(args[10]);
+//            msg += "Hierarchy file:    " + hierarchyFile.getAbsolutePath() + "\n";
+//            startIdx = 11;
+//        }else{startIdx = 9;
+//            msg += "Hierarchy file:    null\n";
+//        }
+//        
+//        ChordEvaluator eval = new ChordEvaluator(task, dataset, workingDir, workingDir, true, new File("matlab"), hierarchyFile);
+//        eval.getLogger().info(msg);
+//        
+//        //reading ground-truth data
+//        ChordIntervalTextFile reader = new ChordIntervalTextFile(task.getSubjectTrackMetadataName());
+//        List<NemaData> gt = reader.readFile(gtFile);
+//        eval.setGroundTruth(gt);
+//        
+//        msg = "Results to evaluate:\n";
+//        for (int i = startIdx; i < args.length; i+=2) {
+//            String systemName = args[i+1];
+//            File resultsPath = new File(args[i]);
+//            
+//            List<NemaData> results = reader.readDirectory(resultsPath,null);
+//            for(Iterator<List<NemaData>> it = results.iterator();it.hasNext();){
+//            	eval.addResults(systemName, systemName, it.next());
+//            }
+//            msg += systemName + ": " + resultsPath.getAbsolutePath() + ", read " + results.size() + " result files\n";
+//        }
+//        eval.getLogger().info(msg);
+//        
+//        return eval;
+//    }
+//    
+//    /**
+//     * Main method harness.
+//     * 
+//     * @param args Command line arguments that will be parsed by {@link #parseCommandLineArgs(String[] args)}.
+//     */
+//    public static void main(String[] args) {
+//        
+//        System.err.println("MIREX Classification evaluator\n" +
+//                "\t\tby Kris West (kris.west@gmail.com");
+//        System.err.println("");
+//        
+//        ChordEvaluator eval = null;
+//		try {
+//			eval = parseCommandLineArgs(args);
+//			try{
+//				eval.evaluate();
+//			}catch(Exception e){
+//				eval.getLogger().log(Level.SEVERE, "Exception occured while executing evaluate!",e);
+//			}
+//		} catch (Exception e) {
+//			if (eval != null){
+//				eval.getLogger().log(Level.SEVERE, "Exception occured while parsing command line arguments!",e);
+//			}else{
+//				Logger.getLogger(ChordEvaluator.class.getName()).log(Level.SEVERE, "Exception occured while parsing command line arguments!",e);
+//			}
+//		}
+//        
+//        System.err.println("---exit---");
+//    }
     
     /**
      * Perform the evaluation and block until the results are fully written to the output directory.
@@ -279,40 +197,24 @@ public class ChordEvaluator extends EvaluatorImpl{
      * data or in one of the system's results.
      */
     public Map<String,NemaData> evaluate() throws IllegalArgumentException, IOException{
-
-    	if(classNames == null){
-    		initClassNames();
-    	}
     	
         boolean performStatSigTests = true;
         int numJobs = jobIDToFoldResults.size();
         if(numJobs < 2){
             performStatSigTests = false;
         }
-        int numClasses = classNames.size();
-        int numFolds = -1;
-        String jobID;
-        boolean usingAHierarchy = hierarchyFile != null;
         
-        List<List<NemaData>> sysResults;
-        //check that all systems have the same number of results
-        for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
-        	jobID = it.next();
-        	sysResults = jobIDToFoldResults.get(jobID);
-            if (numFolds == -1) {
-                numFolds = sysResults.size();
-            } else if (numFolds != sysResults.size()) {
-                throw new IllegalArgumentException("The number of folds (" + sysResults.size() + ") detected for system ID: " + jobID + 
-                		", name: " + jobIDToName.get(jobID) + " is not equal to the number detected " + 
-                		"for the preceeding systems (" + numFolds + ")!");
-            }
-        }
+        String jobID;
+		List<List<NemaData>> sysResults;
+		
+		//check num folds and tracks per fold
+		int numFolds = checkFolds();
 
         //evaluate each fold for each system
         Map<String,List<NemaData>> jobIDTofoldEvaluations = new HashMap<String,List<NemaData>>(numJobs); 
         for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
         	jobID = it.next();
-        	_logger.info("Evaluating experiment folds for jobID: " + jobID);
+        	getLogger().info("Evaluating experiment folds for jobID: " + jobID);
         	sysResults = jobIDToFoldResults.get(jobID);
         	List<NemaData> foldResultList = new ArrayList<NemaData>(numFolds);
         	for(Iterator<List<NemaData>> it2 = sysResults.iterator();it2.hasNext();){
@@ -321,363 +223,442 @@ public class ChordEvaluator extends EvaluatorImpl{
         	jobIDTofoldEvaluations.put(jobID, foldResultList);
         }
         
-        //plot confusion matrices for each fold
-        _logger.info("Plotting confusion matrices for each fold");
-        List<NemaData> evalList;
-        NemaData eval;
-        double[][] confusion;
-        Map<String,File[]> jobIDToFoldConfFileList = new HashMap<String,File[]>(numJobs);
-        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
-        	jobID = it.next();
-        	evalList = jobIDTofoldEvaluations.get(jobID);
-        	File[] foldConfFiles = new File[numFolds];
-        	jobIDToFoldConfFileList.put(jobID,foldConfFiles);
-        	new File(outputDir.getAbsolutePath() + File.separator + jobID).mkdirs();
-    		for(int i=0;i<evalList.size();i++){
-        		eval = evalList.get(i);
-        		confusion = eval.get2dDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
-        		foldConfFiles[i] = new File(outputDir.getAbsolutePath() + File.separator + jobID + File.separator + i + CONF_MAT_PLOT_EXTENSION);
-        		
-        		ConfusionMatrixPlot plot = new ConfusionMatrixPlot(getTask().getName() + " - " + jobIDToName.get(jobID) + " - fold " + i, (String[])classNames.toArray(new String[numClasses]), confusion);
-                plot.writeChartToFile(foldConfFiles[i], CONF_MAT_WIDTH, CONF_MAT_HEIGHT);
-        	}
-        }
-        
-        //aggregate results to produce overall evaluation
-        _logger.info("Producing aggregate evaluations over all folds");
-        Map<String,NemaData> jobIDToAggregateEvaluations = new HashMap<String,NemaData>(numJobs); 
-        Map<String,File> jobIDToOverallConfFile = new HashMap<String,File>(numJobs);
-        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
-        	jobID = it.next();
-        	evalList = jobIDTofoldEvaluations.get(jobID);
-        	NemaData aggregateEval = new NemaData(jobID);
-        	int[][][] confFolds = new int[numFolds][][];
-        	for(int f=0;f<numFolds;f++){
-        		confFolds[f] = evalList.get(f).get2dIntArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW);
-        	}
-        	int[][] confusionRaw = new int[numClasses][numClasses];
-        	double[][] confusionPercent = new double[numClasses][numClasses];
+
+		// Make per system result dirs
+		Map<String, File> jobIDToResultDir = new HashMap<String, File>();
+		Map<String, List<File>> jobIDToFoldResultDirs = new HashMap<String, List<File>>();
+		
+		for (Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it
+				.hasNext();) {
+			jobID = it.next();
+			// make a sub-dir for the systems results
+			File sysDir = new File(outputDir.getAbsolutePath() + File.separator + jobID);
+			sysDir.mkdirs();
+			
+			//make a sub-dir for each fold
+			List<File> foldDirs = new ArrayList<File>(numFolds);
+			for (int i = 0; i < numFolds; i++) {
+				File foldDir = new File(sysDir.getAbsolutePath() + File.separator + "fold_" + i);
+				foldDir.mkdirs();
+				foldDirs.add(foldDir);
+			}
+			
+			jobIDToResultDir.put(jobID, sysDir);
+			jobIDToFoldResultDirs.put(jobID, foldDirs);
+		}
+
+		
+        //plot chords for each track in each fold
+		Map<String, List<File[]>> jobIDToResultPlotFileList = new HashMap<String, List<File[]>>();
+        //iterate over systems
+        for(Iterator<String> it_systems = jobIDToFoldResults.keySet().iterator(); it_systems.hasNext();){
+        	jobID = it_systems.next();
+        	getLogger().info("Plotting Chord transcriptions for: " + jobID);
+        	sysResults = jobIDToFoldResults.get(jobID);
         	
-        	int[] sums = new int[numClasses];
-    		for(int i=0;i<numClasses;i++){
-    			sums[i] = 0;
-    			for(int j=0;j<numClasses;j++){
-    				for(int f=0;f<numFolds;f++){
-        				confusionRaw[j][i] += confFolds[f][j][i];
-    				}
-    				sums[i] += confusionRaw[j][i];
-    			}
-    			if(sums[i] > 0){
-	    			for(int j=0;j<numClasses;j++){
-	    				confusionPercent[j][i] = (double)confusionRaw[j][i] / sums[i];
-	    			}
-    			}
-    		}
+        	//iterate over folds
+        	List<File> foldDirs = jobIDToFoldResultDirs.get(jobID);
+        	List<File[]> plotFolds = new ArrayList<File[]>();
+        	Iterator<File> it_foldResDir = foldDirs.iterator();
         	
-    		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW, confusionRaw);
-    		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT, confusionPercent);
-        	
-    		//plot aggregate confusion
-    		File overallConfFile = new File(outputDir.getAbsolutePath() + File.separator + jobID + File.separator + "overall" + CONF_MAT_PLOT_EXTENSION);
-    		jobIDToOverallConfFile.put(jobID, overallConfFile);
-    		ConfusionMatrixPlot plot = new ConfusionMatrixPlot(getTask().getName() + " - " + jobIDToName.get(jobID) + " - overall", (String[])classNames.toArray(new String[numClasses]), confusionPercent);
-            plot.writeChartToFile(overallConfFile, CONF_MAT_WIDTH, CONF_MAT_HEIGHT);
-    		
-    		//Calculate final accuracy as diagonal sum of confusion matrix divided by total number of examples
-	        double finalAccuracy = 0.0;
-	        double finalDiscountedAccuracy = 0.0;
-	        int finalSum = 0;
-	        for (int i=0;i<numClasses; i++) {
-	            finalSum += sums[i];
-	        	finalAccuracy += confusionRaw[i][i];
-	        }
-	        finalAccuracy /= (double)finalSum;
-	        
-	        aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_ACCURACY, finalAccuracy);
-	        
-        	//Calculate Normalised accuracy as mean of percentage confusion matrix diagonal
-	        double finalNormalisedAccuracy = 0.0;
-	        for (int i=0;i<numClasses; i++) {
-	            finalNormalisedAccuracy += confusionPercent[i][i];
-	        }
-	        finalNormalisedAccuracy /= (double)numClasses;
-	        aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY, finalNormalisedAccuracy);
-	        
-	        //repeat for discounted stuff
-        	if(usingAHierarchy){
-        		double[][] discountFoldAccs = new double[numFolds][];
-        		for(int f=0;f<numFolds;f++){
-        			discountFoldAccs[f] = evalList.get(f).getDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW);
-        		}
-	        	double[] discountConfusionRaw = new double[numClasses];
-	        	double[] discountConfusionPercent = new double[numClasses];
-	        	for(int i=0;i<numClasses;i++){
-	        		for(int f=0;f<numFolds;f++){
-	        			discountConfusionRaw[i] += discountFoldAccs[f][i];
-	        		}
-	        		if(sums[i] > 0){
-	        			discountConfusionPercent[i] = discountConfusionRaw[i] / sums[i];
-	        		}
-	        	}
-	        	
-	        	aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW, discountConfusionRaw);
-	    		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountConfusionPercent);
-	    		
-	    		for (int i=0;i<numClasses; i++) {
-	                finalDiscountedAccuracy += discountConfusionRaw[i];
-	            }
-	            finalDiscountedAccuracy /= finalSum;
-	            aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY, finalDiscountedAccuracy);
-	            
-	            //Calculate Normalised accuracy as mean of percentage discounted confusion matrix diagonal
-	            double finalNormalisedDiscountedAccuracy = 0.0;
-	            for (int i=0;i<numClasses; i++) {
-	                finalNormalisedDiscountedAccuracy += discountConfusionPercent[i];
-	            }
-	            finalNormalisedDiscountedAccuracy /= (double)numClasses;
-	            aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY, finalNormalisedDiscountedAccuracy);    
-        	}
-        	
-        	jobIDToAggregateEvaluations.put(jobID, aggregateEval);
+        	for (Iterator<List<NemaData>> it_folds = sysResults.iterator(); it_folds.hasNext();) {
+				List<NemaData> list = it_folds.next();
+				File[] plots = new File[list.size()];
+				File foldDir = it_foldResDir.next();
+				
+				//iterate over tracks
+				int plotCount = 0;
+				for (Iterator<NemaData> it_tracks = list.iterator(); it_tracks.hasNext();) {
+					NemaData nemaData = it_tracks.next();
+					
+					File plotFile = new File(foldDir.getAbsolutePath() + File.separator + nemaData.getId() + PLOT_EXT);
+					plots[plotCount++] = plotFile;
+					
+					//TODO: actually plot the chords
+					
+					
+				}
+				plotFolds.add(plots);
+			}
+        	jobIDToResultPlotFileList.put(jobID, plotFolds);
         }
-        
-        //write out CSV results files
-        _logger.info("Writing out CSV result files over whole task...");
-        String msg = "Job ID to name IDs: ";
-        for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
-        	msg += it.next();
-        	if (it.hasNext()){
-        		msg += ", ";
-        	}
-        }
-        msg += "\n";
-        msg += "Job ID to fold evaluation IDs: ";
-        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator();it.hasNext();){
-        	msg += it.next();
-        	if (it.hasNext()){
-        		msg += ", ";
-        	}
-        }
-        msg += "\n";
-        msg += "Job ID to aggregate evaluation IDs: ";
-        for(Iterator<String> it = jobIDToAggregateEvaluations.keySet().iterator();it.hasNext();){
-        	msg += it.next();
-        	if (it.hasNext()){
-        		msg += ", ";
-        	}
-        }
-        msg += "\n";
-        _logger.fine(msg);
-        
-        File perClassCSV = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassResults.csv");
-        WriteChordResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT,perClassCSV);
-        
-        File perFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "PerFoldResults.csv");
-        WriteChordResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY,perFoldCSV);
-        
-        //write out results summary CSV
-        File summaryCSV = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
-        WriteChordResultFiles.prepSummaryResultDataCSV(jobIDToAggregateEvaluations,jobIDToName,classNames,summaryCSV,usingAHierarchy);
-        
-        //write out discounted results summary CSVs
-        File discountedPerClassCSV = null;
-        File discountedPerFoldCSV = null;
-        if (hierarchyFile != null){
-            discountedPerClassCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerClassResults.csv");
-            WriteChordResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountedPerClassCSV);
-            discountedPerFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerFoldResults.csv");
-            WriteChordResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY,discountedPerFoldCSV);
-        }
-        
-        //perform statistical tests
-        File friedmanClassTablePNG = null;
-        File friedmanClassTable = null;
-        File friedmanFoldTablePNG = null;
-        File friedmanFoldTable = null;
-        File friedmanDiscountClassTablePNG = null;
-        File friedmanDiscountClassTable = null;
-        File friedmanDiscountFoldTablePNG = null;
-        File friedmanDiscountFoldTable = null;
-        if (getPerformMatlabStatSigTests() && performStatSigTests){
-            _logger.info("Performing Friedman's tests in Matlab...");
-//            String[] systemNamesArr = jobIDToName.values().toArray(new String[jobIDToName.size()]);
-            
-//            File[] tmp = performFriedmanTestWithClassAccuracy(outputDir, perClassCSV, systemNamesArr);
-            File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, perClassCSV, 0, 1, 1, numJobs, getMatlabPath());
-            friedmanClassTablePNG = tmp[0];
-            friedmanClassTable = tmp[1];
-
-            //tmp = performFriedmanTestWithFoldAccuracy(outputDir, perFoldCSV, systemNamesArr);
-            tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, perFoldCSV, 0, 1, 1, numJobs, getMatlabPath());
-            friedmanFoldTablePNG = tmp[0];
-            friedmanFoldTable = tmp[1];
-
-            if (hierarchyFile != null){
-                tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, discountedPerClassCSV, 0, 1, 1, numJobs, getMatlabPath());
-                friedmanDiscountClassTablePNG = tmp[0];
-                friedmanDiscountClassTable = tmp[1];
-                
-                tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, discountedPerFoldCSV, 0, 1, 1, numJobs, getMatlabPath());
-                friedmanDiscountFoldTablePNG = tmp[0];
-                friedmanDiscountFoldTable = tmp[1];
-            }
-        }
-        
-        
-        //write text reports
-        _logger.info("Writing text evaluation reports...");
-        Map<String,File> jobIDToReportFile = new HashMap<String,File>(numJobs);
-        for (Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();) {
-        	jobID = it.next();
-        	File reportFile = new File(outputDir.getAbsolutePath() + File.separator + jobID + File.separator + "report.txt");
-        	writeSystemTextReport(jobIDToAggregateEvaluations.get(jobID), jobIDTofoldEvaluations.get(jobID), classNames, jobID, jobIDToName.get(jobID), usingAHierarchy, reportFile);
-        	jobIDToReportFile.put(jobID, reportFile);
-        }
-        
-        
-        //create tarballs of individual result dirs
-        _logger.info("Preparing evaluation data tarballs...");
-        Map<String,File> jobIDToTgz = new HashMap<String,File>(jobIDToName.size());
-        for (Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();) {
-        	jobID = it.next();
-        	jobIDToTgz.put(jobID, IOUtil.tarAndGzip(new File(outputDir.getAbsolutePath() + File.separator + jobID)));
-        }
-        
-        
-        //write result HTML pages
-        _logger.info("Creating result HTML files...");
-
-        List<Page> resultPages = new ArrayList<Page>();
-        List<PageItem> items;
-        Page aPage;
-
-        //do intro page to describe task
-        {
-        	items = new ArrayList<PageItem>();
-	        Table descriptionTable = WriteChordResultFiles.prepTaskTable(task,dataset);
-	        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
-	        aPage = new Page("intro", "Introduction", items, false);
-	        resultPages.add(aPage);
-        }
-        
-        //do summary page
-        {
-	        items = new ArrayList<PageItem>();
-	        Table summaryTable = WriteChordResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName,classNames,usingAHierarchy);
-	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
-	        aPage = new Page("summary", "Summary", items, false);
-	        resultPages.add(aPage);
-        }
-
-        //do per class page
-        {
-            items = new ArrayList<PageItem>();
-            Table perClassTable = WriteChordResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
-            items.add(new TableItem("acc_class", "Accuracy per Class", perClassTable.getColHeaders(), perClassTable.getRows()));
-            if (hierarchyFile != null){
-                Table perDiscClassTable = WriteChordResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
-                items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Class", perDiscClassTable.getColHeaders(), perDiscClassTable.getRows()));
-            }
-            aPage = new Page("acc_per_class", "Accuracy per Class", items, false);
-            resultPages.add(aPage);
-        }
-
-        //do per fold page
-        {
-            items = new ArrayList<PageItem>();
-            Table perFoldTable = WriteChordResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY);
-            items.add(new TableItem("acc_class", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
-            if (hierarchyFile != null){
-                Table perDiscFoldTable = WriteChordResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
-                items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
-            }
-            aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);
-            resultPages.add(aPage);
-        }
-        
-        //do significance tests
-        if (getPerformMatlabStatSigTests() && performStatSigTests){
-            items = new ArrayList<PageItem>();
-            items.add(new ImageItem("friedmanClassTablePNG", "Accuracy Per Class: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanClassTablePNG, outputDir)));
-            items.add(new ImageItem("friedmanFoldTablePNG", "Accuracy Per Fold: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanFoldTablePNG, outputDir)));
-            if(friedmanDiscountClassTable != null){
-                items.add(new ImageItem("friedmanDiscountClassTablePNG", "Discounted Accuracy Per Class: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanDiscountClassTablePNG, outputDir)));
-            }
-            if(friedmanDiscountFoldTable != null){
-                items.add(new ImageItem("friedmanDiscountFoldTablePNG", "Accuracy Per Fold: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanDiscountFoldTablePNG, outputDir)));
-            }
-            aPage = new Page("sig_tests", "Significance Tests", items, true);
-            resultPages.add(aPage);
-        }
-
-        //do confusion matrices
-        List<String> sortedJobIDs = new ArrayList<String>(jobIDToName.keySet());
-        Collections.sort(sortedJobIDs);
-        {
-            items = new ArrayList<PageItem>();
-            
-            for (int i = 0; i < numJobs; i++){
-                items.add(new ImageItem("confusion_" + i, sortedJobIDs.get(i), IOUtil.makeRelative(jobIDToOverallConfFile.get(sortedJobIDs.get(i)), outputDir)));
-            }
-            aPage = new Page("confusion", "Confusion Matrices", items, true);
-            resultPages.add(aPage);
-        }
-
-        //do files page
-        {
-            items = new ArrayList<PageItem>();
-
-            //CSVs
-            List<String> CSVPaths = new ArrayList<String>(4);
-            CSVPaths.add(IOUtil.makeRelative(perClassCSV,outputDir));
-            CSVPaths.add(IOUtil.makeRelative(perFoldCSV,outputDir));
-            if (hierarchyFile != null){
-                CSVPaths.add(IOUtil.makeRelative(discountedPerClassCSV,outputDir));
-                CSVPaths.add(IOUtil.makeRelative(discountedPerFoldCSV,outputDir));
-            }
-            items.add(new FileListItem("dataCSVs", "CSV result files", CSVPaths));
-
-            //Friedman's tables and plots
-            if (getPerformMatlabStatSigTests() && performStatSigTests){
-                //Friedmans tables
-                List<String> sigCSVPaths = new ArrayList<String>(4);
-                sigCSVPaths.add(IOUtil.makeRelative(friedmanClassTable, outputDir));
-                sigCSVPaths.add(IOUtil.makeRelative(friedmanFoldTable, outputDir));
-                if(friedmanDiscountClassTable != null){
-                    sigCSVPaths.add(IOUtil.makeRelative(friedmanDiscountClassTable, outputDir));
-                }
-                if(friedmanDiscountFoldTable != null){
-                    sigCSVPaths.add(IOUtil.makeRelative(friedmanDiscountFoldTable, outputDir));
-                }
-                items.add(new FileListItem("sigCSVs", "Significance test CSVs", sigCSVPaths));
-
-                //Friedmans plots
-                List<String> sigPNGPaths = new ArrayList<String>(4);
-                sigPNGPaths.add(IOUtil.makeRelative(friedmanClassTablePNG, outputDir));
-                sigPNGPaths.add(IOUtil.makeRelative(friedmanFoldTablePNG, outputDir));
-                if(friedmanDiscountClassTable != null){
-                    sigPNGPaths.add(IOUtil.makeRelative(friedmanDiscountClassTablePNG, outputDir));
-                }
-                if(friedmanDiscountFoldTable != null){
-                    sigPNGPaths.add(IOUtil.makeRelative(friedmanDiscountFoldTablePNG, outputDir));
-                }
-                items.add(new FileListItem("sigPNGs", "Significance test plots", sigPNGPaths));
-            }
-
-            //System Tarballs
-            List<String> tarballPaths = new ArrayList<String>(numJobs);
-            for (int i = 0; i < numJobs; i++){
-                tarballPaths.add(IOUtil.makeRelative(jobIDToTgz.get(sortedJobIDs.get(i)),outputDir));
-            }
-            items.add(new FileListItem("tarballs", "Per algorithm evaluation tarball", tarballPaths));
-            aPage = new Page("files", "Raw data files", items, true);
-            resultPages.add(aPage);
-        }
-
-        Page.writeResultPages(task.getName(), outputDir, resultPages);
-        
-        return jobIDToAggregateEvaluations;
+//        
+//        
+//        
+//        
+//        //aggregate results to produce overall evaluation
+//        _logger.info("Producing aggregate evaluations over all folds");
+//        Map<String,NemaData> jobIDToAggregateEvaluations = new HashMap<String,NemaData>(numJobs); 
+//        Map<String,File> jobIDToOverallConfFile = new HashMap<String,File>(numJobs);
+//        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
+//        	jobID = it.next();
+//        	evalList = jobIDTofoldEvaluations.get(jobID);
+//        	NemaData aggregateEval = new NemaData(jobID);
+//        	int[][][] confFolds = new int[numFolds][][];
+//        	for(int f=0;f<numFolds;f++){
+//        		confFolds[f] = evalList.get(f).get2dIntArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW);
+//        	}
+//        	int[][] confusionRaw = new int[numClasses][numClasses];
+//        	double[][] confusionPercent = new double[numClasses][numClasses];
+//        	
+//        	int[] sums = new int[numClasses];
+//    		for(int i=0;i<numClasses;i++){
+//    			sums[i] = 0;
+//    			for(int j=0;j<numClasses;j++){
+//    				for(int f=0;f<numFolds;f++){
+//        				confusionRaw[j][i] += confFolds[f][j][i];
+//    				}
+//    				sums[i] += confusionRaw[j][i];
+//    			}
+//    			if(sums[i] > 0){
+//	    			for(int j=0;j<numClasses;j++){
+//	    				confusionPercent[j][i] = (double)confusionRaw[j][i] / sums[i];
+//	    			}
+//    			}
+//    		}
+//        	
+//    		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW, confusionRaw);
+//    		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT, confusionPercent);
+//        	
+//    		//plot aggregate confusion
+//    		File overallConfFile = new File(outputDir.getAbsolutePath() + File.separator + jobID + File.separator + "overall" + CONF_MAT_PLOT_EXTENSION);
+//    		jobIDToOverallConfFile.put(jobID, overallConfFile);
+//    		ConfusionMatrixPlot plot = new ConfusionMatrixPlot(getTask().getName() + " - " + jobIDToName.get(jobID) + " - overall", (String[])classNames.toArray(new String[numClasses]), confusionPercent);
+//            plot.writeChartToFile(overallConfFile, CONF_MAT_WIDTH, CONF_MAT_HEIGHT);
+//    		
+//    		//Calculate final accuracy as diagonal sum of confusion matrix divided by total number of examples
+//	        double finalAccuracy = 0.0;
+//	        double finalDiscountedAccuracy = 0.0;
+//	        int finalSum = 0;
+//	        for (int i=0;i<numClasses; i++) {
+//	            finalSum += sums[i];
+//	        	finalAccuracy += confusionRaw[i][i];
+//	        }
+//	        finalAccuracy /= (double)finalSum;
+//	        
+//	        aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_ACCURACY, finalAccuracy);
+//	        
+//        	//Calculate Normalised accuracy as mean of percentage confusion matrix diagonal
+//	        double finalNormalisedAccuracy = 0.0;
+//	        for (int i=0;i<numClasses; i++) {
+//	            finalNormalisedAccuracy += confusionPercent[i][i];
+//	        }
+//	        finalNormalisedAccuracy /= (double)numClasses;
+//	        aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY, finalNormalisedAccuracy);
+//	        
+//	        //repeat for discounted stuff
+//        	if(usingAHierarchy){
+//        		double[][] discountFoldAccs = new double[numFolds][];
+//        		for(int f=0;f<numFolds;f++){
+//        			discountFoldAccs[f] = evalList.get(f).getDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW);
+//        		}
+//	        	double[] discountConfusionRaw = new double[numClasses];
+//	        	double[] discountConfusionPercent = new double[numClasses];
+//	        	for(int i=0;i<numClasses;i++){
+//	        		for(int f=0;f<numFolds;f++){
+//	        			discountConfusionRaw[i] += discountFoldAccs[f][i];
+//	        		}
+//	        		if(sums[i] > 0){
+//	        			discountConfusionPercent[i] = discountConfusionRaw[i] / sums[i];
+//	        		}
+//	        	}
+//	        	
+//	        	aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW, discountConfusionRaw);
+//	    		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountConfusionPercent);
+//	    		
+//	    		for (int i=0;i<numClasses; i++) {
+//	                finalDiscountedAccuracy += discountConfusionRaw[i];
+//	            }
+//	            finalDiscountedAccuracy /= finalSum;
+//	            aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY, finalDiscountedAccuracy);
+//	            
+//	            //Calculate Normalised accuracy as mean of percentage discounted confusion matrix diagonal
+//	            double finalNormalisedDiscountedAccuracy = 0.0;
+//	            for (int i=0;i<numClasses; i++) {
+//	                finalNormalisedDiscountedAccuracy += discountConfusionPercent[i];
+//	            }
+//	            finalNormalisedDiscountedAccuracy /= (double)numClasses;
+//	            aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY, finalNormalisedDiscountedAccuracy);    
+//        	}
+//        	
+//        	jobIDToAggregateEvaluations.put(jobID, aggregateEval);
+//        }
+//        
+//        //write out CSV results files
+//        _logger.info("Writing out CSV result files over whole task...");
+//        String msg = "Job ID to name IDs: ";
+//        for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+//        	msg += it.next();
+//        	if (it.hasNext()){
+//        		msg += ", ";
+//        	}
+//        }
+//        msg += "\n";
+//        msg += "Job ID to fold evaluation IDs: ";
+//        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator();it.hasNext();){
+//        	msg += it.next();
+//        	if (it.hasNext()){
+//        		msg += ", ";
+//        	}
+//        }
+//        msg += "\n";
+//        msg += "Job ID to aggregate evaluation IDs: ";
+//        for(Iterator<String> it = jobIDToAggregateEvaluations.keySet().iterator();it.hasNext();){
+//        	msg += it.next();
+//        	if (it.hasNext()){
+//        		msg += ", ";
+//        	}
+//        }
+//        msg += "\n";
+//        _logger.fine(msg);
+//        
+//        File perClassCSV = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassResults.csv");
+//        WriteChordResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT,perClassCSV);
+//        
+//        File perFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "PerFoldResults.csv");
+//        WriteChordResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICAT)ION_ACCURACY,perFoldCSV);
+//        
+//        //write out results summary CSV
+//        File summaryCSV = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
+//        WriteChordResultFiles.prepSummaryResultDataCSV(jobIDToAggregateEvaluations,jobIDToName,classNames,summaryCSV,usingAHierarchy);
+//        
+//        //write out discounted results summary CSVs
+//        File discountedPerClassCSV = null;
+//        File discountedPerFoldCSV = null;
+//        if (hierarchyFile != null){
+//            discountedPerClassCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerClassResults.csv");
+//            WriteChordResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountedPerClassCSV);
+//            discountedPerFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerFoldResults.csv");
+//            WriteChordResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY,discountedPerFoldCSV);
+//        }
+//        
+//        //perform statistical tests
+//        File friedmanClassTablePNG = null;
+//        File friedmanClassTable = null;
+//        File friedmanFoldTablePNG = null;
+//        File friedmanFoldTable = null;
+//        File friedmanDiscountClassTablePNG = null;
+//        File friedmanDiscountClassTable = null;
+//        File friedmanDiscountFoldTablePNG = null;
+//        File friedmanDiscountFoldTable = null;
+//        if (getPerformMatlabStatSigTests() && performStatSigTests){
+//            _logger.info("Performing Friedman's tests in Matlab...");
+////            String[] systemNamesArr = jobIDToName.values().toArray(new String[jobIDToName.size()]);
+//            
+////            File[] tmp = performFriedmanTestWithClassAccuracy(outputDir, perClassCSV, systemNamesArr);
+//            File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, perClassCSV, 0, 1, 1, numJobs, getMatlabPath());
+//            friedmanClassTablePNG = tmp[0];
+//            friedmanClassTable = tmp[1];
+//
+//            //tmp = performFriedmanTestWithFoldAccuracy(outputDir, perFoldCSV, systemNamesArr);
+//            tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, perFoldCSV, 0, 1, 1, numJobs, getMatlabPath());
+//            friedmanFoldTablePNG = tmp[0];
+//            friedmanFoldTable = tmp[1];
+//
+//            if (hierarchyFile != null){
+//                tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, discountedPerClassCSV, 0, 1, 1, numJobs, getMatlabPath());
+//                friedmanDiscountClassTablePNG = tmp[0];
+//                friedmanDiscountClassTable = tmp[1];
+//                
+//                tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, discountedPerFoldCSV, 0, 1, 1, numJobs, getMatlabPath());
+//                friedmanDiscountFoldTablePNG = tmp[0];
+//                friedmanDiscountFoldTable = tmp[1];
+//            }
+//        }
+//        
+//        
+//        //write text reports
+//        _logger.info("Writing text evaluation reports...");
+//        Map<String,File> jobIDToReportFile = new HashMap<String,File>(numJobs);
+//        for (Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();) {
+//        	jobID = it.next();
+//        	File reportFile = new File(outputDir.getAbsolutePath() + File.separator + jobID + File.separator + "report.txt");
+//        	writeSystemTextReport(jobIDToAggregateEvaluations.get(jobID), jobIDTofoldEvaluations.get(jobID), classNames, jobID, jobIDToName.get(jobID), usingAHierarchy, reportFile);
+//        	jobIDToReportFile.put(jobID, reportFile);
+//        }
+//        
+//        
+//        //create tarballs of individual result dirs
+//        _logger.info("Preparing evaluation data tarballs...");
+//        Map<String,File> jobIDToTgz = new HashMap<String,File>(jobIDToName.size());
+//        for (Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();) {
+//        	jobID = it.next();
+//        	jobIDToTgz.put(jobID, IOUtil.tarAndGzip(new File(outputDir.getAbsolutePath() + File.separator + jobID)));
+//        }
+//        
+//        
+//        //write result HTML pages
+//        _logger.info("Creating result HTML files...");
+//
+//        List<Page> resultPages = new ArrayList<Page>();
+//        List<PageItem> items;
+//        Page aPage;
+//
+//        //do intro page to describe task
+//        {
+//        	items = new ArrayList<PageItem>();
+//	        Table descriptionTable = WriteChordResultFiles.prepTaskTable(task,dataset);
+//	        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
+//	        aPage = new Page("intro", "Introduction", items, false);
+//	        resultPages.add(aPage);
+//        }
+//        
+//        //do summary page
+//        {
+//	        items = new ArrayList<PageItem>();
+//	        Table summaryTable = WriteChordResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName,classNames,usingAHierarchy);
+//	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
+//	        aPage = new Page("summary", "Summary", items, false);
+//	        resultPages.add(aPage);
+//        }
+//
+//        //do per class page
+//        {
+//            items = new ArrayList<PageItem>();
+//            Table perClassTable = WriteChordResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
+//            items.add(new TableItem("acc_class", "Accuracy per Class", perClassTable.getColHeaders(), perClassTable.getRows()));
+//            if (hierarchyFile != null){
+//                Table perDiscClassTable = WriteChordResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
+//                items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Class", perDiscClassTable.getColHeaders(), perDiscClassTable.getRows()));
+//            }
+//            aPage = new Page("acc_per_class", "Accuracy per Class", items, false);
+//            resultPages.add(aPage);
+//        }
+//
+//        //do per fold page
+//        {
+//            items = new ArrayList<PageItem>();
+//            Table perFoldTable = WriteChordResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY);
+//            items.add(new TableItem("acc_class", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
+//            if (hierarchyFile != null){
+//                Table perDiscFoldTable = WriteChordResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
+//                items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
+//            }
+//            aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);
+//            resultPages.add(aPage);
+//        }
+//        
+//        //do significance tests
+//        if (getPerformMatlabStatSigTests() && performStatSigTests){
+//            items = new ArrayList<PageItem>();
+//            items.add(new ImageItem("friedmanClassTablePNG", "Accuracy Per Class: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanClassTablePNG, outputDir)));
+//            items.add(new ImageItem("friedmanFoldTablePNG", "Accuracy Per Fold: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanFoldTablePNG, outputDir)));
+//            if(friedmanDiscountClassTable != null){
+//                items.add(new ImageItem("friedmanDiscountClassTablePNG", "Discounted Accuracy Per Class: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanDiscountClassTablePNG, outputDir)));
+//            }
+//            if(friedmanDiscountFoldTable != null){
+//                items.add(new ImageItem("friedmanDiscountFoldTablePNG", "Accuracy Per Fold: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanDiscountFoldTablePNG, outputDir)));
+//            }
+//            aPage = new Page("sig_tests", "Significance Tests", items, true);
+//            resultPages.add(aPage);
+//        }
+//
+//        //do confusion matrices
+//        List<String> sortedJobIDs = new ArrayList<String>(jobIDToName.keySet());
+//        Collections.sort(sortedJobIDs);
+//        {
+//            items = new ArrayList<PageItem>();
+//            
+//            for (int i = 0; i < numJobs; i++){
+//                items.add(new ImageItem("confusion_" + i, sortedJobIDs.get(i), IOUtil.makeRelative(jobIDToOverallConfFile.get(sortedJobIDs.get(i)), outputDir)));
+//            }
+//            aPage = new Page("confusion", "Confusion Matrices", items, true);
+//            resultPages.add(aPage);
+//        }
+//
+//        //do files page
+//        {
+//            items = new ArrayList<PageItem>();
+//
+//            //CSVs
+//            List<String> CSVPaths = new ArrayList<String>(4);
+//            CSVPaths.add(IOUtil.makeRelative(perClassCSV,outputDir));
+//            CSVPaths.add(IOUtil.makeRelative(perFoldCSV,outputDir));
+//            if (hierarchyFile != null){
+//                CSVPaths.add(IOUtil.makeRelative(discountedPerClassCSV,outputDir));
+//                CSVPaths.add(IOUtil.makeRelative(discountedPerFoldCSV,outputDir));
+//            }
+//            items.add(new FileListItem("dataCSVs", "CSV result files", CSVPaths));
+//
+//            //Friedman's tables and plots
+//            if (getPerformMatlabStatSigTests() && performStatSigTests){
+//                //Friedmans tables
+//                List<String> sigCSVPaths = new ArrayList<String>(4);
+//                sigCSVPaths.add(IOUtil.makeRelative(friedmanClassTable, outputDir));
+//                sigCSVPaths.add(IOUtil.makeRelative(friedmanFoldTable, outputDir));
+//                if(friedmanDiscountClassTable != null){
+//                    sigCSVPaths.add(IOUtil.makeRelative(friedmanDiscountClassTable, outputDir));
+//                }
+//                if(friedmanDiscountFoldTable != null){
+//                    sigCSVPaths.add(IOUtil.makeRelative(friedmanDiscountFoldTable, outputDir));
+//                }
+//                items.add(new FileListItem("sigCSVs", "Significance test CSVs", sigCSVPaths));
+//
+//                //Friedmans plots
+//                List<String> sigPNGPaths = new ArrayList<String>(4);
+//                sigPNGPaths.add(IOUtil.makeRelative(friedmanClassTablePNG, outputDir));
+//                sigPNGPaths.add(IOUtil.makeRelative(friedmanFoldTablePNG, outputDir));
+//                if(friedmanDiscountClassTable != null){
+//                    sigPNGPaths.add(IOUtil.makeRelative(friedmanDiscountClassTablePNG, outputDir));
+//                }
+//                if(friedmanDiscountFoldTable != null){
+//                    sigPNGPaths.add(IOUtil.makeRelative(friedmanDiscountFoldTablePNG, outputDir));
+//                }
+//                items.add(new FileListItem("sigPNGs", "Significance test plots", sigPNGPaths));
+//            }
+//
+//            //System Tarballs
+//            List<String> tarballPaths = new ArrayList<String>(numJobs);
+//            for (int i = 0; i < numJobs; i++){
+//                tarballPaths.add(IOUtil.makeRelative(jobIDToTgz.get(sortedJobIDs.get(i)),outputDir));
+//            }
+//            items.add(new FileListItem("tarballs", "Per algorithm evaluation tarball", tarballPaths));
+//            aPage = new Page("files", "Raw data files", items, true);
+//            resultPages.add(aPage);
+//        }
+//
+//        Page.writeResultPages(task.getName(), outputDir, resultPages);
+//        
+//        return jobIDToAggregateEvaluations;
     }
+
+	private int checkFolds() {
+		int numFolds = -1;
+        String jobID;
+        
+        List<List<NemaData>> sysResults;
+        List<Integer> tracksPerFold = null;
+        //check that all systems have the same number of folds
+        for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
+        	jobID = it.next();
+        	sysResults = jobIDToFoldResults.get(jobID);
+            if (numFolds == -1) {
+                numFolds = sysResults.size();
+                tracksPerFold = new ArrayList<Integer>(numFolds);
+                for (Iterator<List<NemaData>> it2 = sysResults.iterator(); it2.hasNext();) {
+					tracksPerFold.add(it2.next().size());
+				}
+            } else if (numFolds != sysResults.size()) {
+                throw new IllegalArgumentException("The number of folds (" + sysResults.size() + ") detected for system ID: " + jobID + 
+                		", name: " + jobIDToName.get(jobID) + " is not equal to the number detected " + 
+                		"for the preceeding systems (" + numFolds + ")!");
+            } else{
+            	Iterator<Integer> it3 = tracksPerFold.iterator();
+            	int foldCount = 0;
+            	for (Iterator<List<NemaData>> it2 = sysResults.iterator(); it2.hasNext();) {
+            		int num = it2.next().size();
+            		int expected = it3.next().intValue();
+					if(num != expected){
+						throw new IllegalArgumentException("The number of tracks (" + num + ") for fold " + foldCount + " detected for system ID: " + jobID + 
+		                		", name: " + jobIDToName.get(jobID) + " is not equal to the number detected " + 
+		                		"for the preceeding systems (" + expected + ")!");
+					}
+					foldCount++;
+				}
+            }
+        }
+		return numFolds;
+	}
     
     /**
      * Evaluates a single iteration/fold of the experiment and returns an Object representing the 
@@ -689,165 +670,37 @@ public class ChordEvaluator extends EvaluatorImpl{
      * @return an Object representing the evaluation results.
      */
     private NemaData evaluateResultFold(String jobID, List<NemaData> theData) {
-                
         int numExamples = theData.size();
-        boolean usingAHierarchy = hierarchyFile != null;
-        String type = getTask().getSubjectTrackMetadataName();
-        
-        int errors = 0;
-        int[][] confusion = new int[classNames.size()][classNames.size()];
-        double[] discountedConfusion = null;
-        if(usingAHierarchy) {
-            discountedConfusion = new double[classNames.size()];
-        }
         
         NemaData outObj = new NemaData(jobID);
         
         NemaData data;
         NemaData gtData;
-        String classString;
-        int classification;
-        String truthString;
-        int truth;
         
-        for(int x=0; x<theData.size(); x++) {
+        List<NemaChord> systemChords;
+        List<NemaChord> gtChords;
+        
+        //iterate through tracks
+        for(int x=0; x<numExamples; x++) {
             //Do simple evaluation
         	data = theData.get(x);
-        	classString = data.getStringMetadata(type);
-            classification = classNames.indexOf(classString);
-            gtData = trackIDToGT.get(data.getId());
-            truthString = gtData.getStringMetadata(type);
-            truth = classNames.indexOf(truthString);
-            
-            confusion[classification][truth]++;
-            if(usingAHierarchy&&(truthString.equalsIgnoreCase(classString)))
-            {
-                discountedConfusion[truth] += 1.0;
-            }
-            if (!truthString.equals(classString)) {
-                errors++;
-                
-                // do hierarchical discounting of confusions if necessary
-                if(usingAHierarchy) {
-                    ArrayList<String[]> trueHierachies = new ArrayList<String[]>(this.hierarchies);
-                    ArrayList<String> trueKeys = new ArrayList<String>(this.hierachiesKey);
-                    
-                    double highestDiscountScore = 0.0;
-                    
-                    int trueIndex = trueKeys.indexOf(truthString);
-                    while(trueIndex != -1)
-                    {
-                        double discountScore = 0.0;
-                        ArrayList<String[]> classifiedHierachies = new ArrayList<String[]>(this.hierarchies);
-                        ArrayList<String> classifiedKeys = new ArrayList<String>(this.hierachiesKey);
-                        int classifiedIndex = classifiedKeys.indexOf(classString);
-                    
-                        trueKeys.remove(trueIndex);
-                        String[] tempTrue = (String[])trueHierachies.remove(trueIndex);
-                        ArrayList<String> truePath = new ArrayList<String>();
-                        for(int i=0;i<tempTrue.length;i++) {
-                            truePath.add(tempTrue[i]);
-                        }
-                        while(classifiedIndex != -1)
-                        {
-                            classifiedKeys.remove(classifiedIndex);
-                            String[] tempClassification = (String[])classifiedHierachies.remove(classifiedIndex);
-                            ArrayList<String> classifiedPath = new ArrayList<String>();
-                            for(int i=0;i<tempClassification.length;i++) {
-                                classifiedPath.add(tempClassification[i]);
-                            }
-                            for (int i=0;i<classifiedPath.size();i++) {
-                                if (truePath.indexOf(classifiedPath.get(i)) != - 1) {
-                                    discountScore += 1.0 / ((double)truePath.size());
-                                }
-                            }
-                            
-                            if (discountScore > highestDiscountScore){
-                                highestDiscountScore = discountScore;
-                            }
-                            classifiedIndex = classifiedKeys.indexOf(classString);                    
-                        }
-                        trueIndex = trueKeys.indexOf(truthString);
-                    }
-                
-                    discountedConfusion[truth] += highestDiscountScore;
-                }
-            }
+        	gtData = trackIDToGT.get(data.getId());
+
+        	systemChords = (List<NemaChord>)data.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+        	gtChords = (List<NemaChord>)gtData.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+        	
+        	
+        	//evaluate here
+        	
+        	
+        	
+        	//set eval metrics on input obj for track
+        	
+        	
         }
         
-        //Store class names
-        outObj.setMetadata(NemaDataConstants.CLASSIFICATION_EXPERIMENT_CLASSNAMES, classNames);
         
-        //store raw confusion matrices
-        outObj.setMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW, confusion);
-        //If necessary, store discounted confusion matrices
-        if(usingAHierarchy) {
-        	outObj.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW, discountedConfusion);
-        }
-        
-        //calculate percentage confusion matrix and, if necessary, discounted confusion matrix for this iteration
-        double[][] percentConfusion = new double[classNames.size()][classNames.size()];
-        double[] percentDiscountedConfusion = null;
-        if (usingAHierarchy) {
-            percentDiscountedConfusion = new double[classNames.size()];
-        }
-        for(int y=0; y<classNames.size(); y++) {
-            int tot = 0;
-            for(int x=0; x<classNames.size(); x++) {
-                tot += confusion[x][y];
-            }
-            
-            if(tot > 0){
-	            if(usingAHierarchy) {
-	                percentDiscountedConfusion[y] = discountedConfusion[y] / (double)tot;
-	            }
-	            for(int x=0; x<classNames.size(); x++) {
-	                percentConfusion[x][y] = (double)confusion[x][y] / (double)tot;
-	            }
-            }
-        }
-        
-        //store percentage confusion matrices
-        outObj.setMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT, percentConfusion);
-        //If necessary, store discounted confusion matrices
-        if(usingAHierarchy) {
-        	outObj.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, percentDiscountedConfusion);
-        }
-        
-        //Calculate accuracy as diagonal sum of confusion matrix divided by total number of examples
-        double Accuracy = 0.0;//(double)(theSignalsLength - errors) / (double)(theSignalsLength);
-        double DiscountedAccuracy = 0.0;
-        for (int i=0;i<classNames.size(); i++) {
-            Accuracy += confusion[i][i];
-        }
-        Accuracy /= (double)numExamples;
-        outObj.setMetadata(NemaDataConstants.CLASSIFICATION_ACCURACY, Accuracy);
-        if (usingAHierarchy) {
-            //Calculate accuracy as diagonal sum of discounted confusion matrix divided by total number of examples
-            for (int i=0;i<classNames.size(); i++) {
-                DiscountedAccuracy += discountedConfusion[i];
-            }
-            DiscountedAccuracy /= (double)numExamples;
-            outObj.setMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY, DiscountedAccuracy);
-        }
-        
-        //Calculate Normalised accuracy as mean of percentage confusion matrix diagonal
-        double NormalisedAccuracy = 0.0;
-        double NormalisedDiscountedAccuracy = 0.0;
-        for (int i=0;i<classNames.size(); i++) {
-            NormalisedAccuracy += percentConfusion[i][i];
-        }
-        NormalisedAccuracy /= classNames.size();
-        outObj.setMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY, NormalisedAccuracy);
-        
-        if (usingAHierarchy) {
-            //Calculate Normalised accuracy as mean of percentage discounted confusion matrix diagonal
-            for (int i=0;i<classNames.size(); i++) {
-                NormalisedDiscountedAccuracy += percentDiscountedConfusion[i];
-            }
-            NormalisedDiscountedAccuracy /= (double)classNames.size();
-            outObj.setMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY, NormalisedDiscountedAccuracy);
-        }
+        //set eval metrics on eval object for fold
 
         return outObj;
     }
