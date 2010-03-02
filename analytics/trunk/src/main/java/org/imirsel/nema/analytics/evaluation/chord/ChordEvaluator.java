@@ -679,7 +679,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         
         List<NemaChord> systemChords;
         List<NemaChord> gtChords;
-        
+
         //iterate through tracks
         for(int x=0; x<numExamples; x++) {
             //Do simple evaluation
@@ -691,9 +691,47 @@ public class ChordEvaluator extends EvaluatorImpl{
         	
         	
         	//evaluate here
+        	int res = 1000; //The grid resolution. 
+        	//Create grid for the ground-truth
+        	int lnGT = (int)(res*gtChords.get(gtChords.size()-1).getOffset()) ;
+        	if (lnGT == 0 ){
+        		throw new IllegalArgumentException("Length of GT is 0!");
+        	}        		
+        	int[][] gridGT = new int[lnGT][];
+        	for (int i = 0; i < gtChords.size(); i++) {
+        		NemaChord currentChord = gtChords.get(i);
+        		int onset_index = (int)(currentChord.getOnset()*res);
+        		int offset_index = (int)(currentChord.getOffset()*res);
+        		for (int j= onset_index; j<offset_index; j++){
+        			gridGT[j]=currentChord.getNotes();
+        		}
+			}
+        
+        	// Create grid for the system
+        	int lnSys = (int)(res*systemChords.get(systemChords.size()-1).getOffset());
+        	if (lnSys == 0 ){
+        		throw new IllegalArgumentException("Length of DT is 0!");
+        	}
+        	int[][] gridSys = new int[lnSys][];        	
+        	for (int i = 0; i < systemChords.size(); i++) {
+        		NemaChord currentChord = systemChords.get(i);
+        		int onset_index = (int)(currentChord.getOnset()*res);
+        		int offset_index = (int)(currentChord.getOffset()*res);
+        		for (int j= onset_index; j<offset_index; j++){
+        			gridSys[j]=currentChord.getNotes();
+        		}
+			}
         	
+        	int[] overlaps = new int[lnGT]; 
+        	int  overlap_total =0;
+        	//Calculate the overlap score 
+        	for (int i = 0; i <lnGT; i++ ){
+        		int[] gtFrame = gridGT[i]; 
+        		int[] sysFrame = gridSys[i];
+        		overlap_total = overlap_total +  calcOverlap(gtFrame,sysFrame);        		
+        	}
         	
-        	
+        	double overlap_score = overlap_total / lnGT;
         	//set eval metrics on input obj for track
         	
         	
@@ -918,6 +956,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         label.append((char) ('A' + keyIndex));
         return pad(label.toString() + "  ", COL_WIDTH);
     }
+ 
 
     /** 
      * Format a decimal number for column output
@@ -958,6 +997,24 @@ public class ChordEvaluator extends EvaluatorImpl{
             paddedString.length() - padLength);
     }
 
+    private int calcOverlap(int[] gt, int[] sys) {
+    	
+    	if (gt.length!=sys.length){
+    		return 0;
+    	}
+    	else {
+    		for (int i = 0; i < gt.length; i++) {
+				if(!(gt[i]==sys[i])){
+					return 0;
+				}
+			}
+    		return 1;
+    	}
+
+    	
+    }    
+    
+    
     public boolean getPerformMatlabStatSigTests() {
         return performMatlabStatSigTests;
     }
