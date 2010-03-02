@@ -219,7 +219,7 @@ public class DeliminatedTextFileUtilities {
      * @throws java.io.IOException Thrown if there was a problem reading the deliminated text file.
      * @throws java.io.FileNotFoundException Thrown if the deliminated text file was not found.
      */
-    public static String[] loadDelimTextHeaders(File delimTextFile, String delimiter, int headerRow) throws IOException, FileNotFoundException{
+    public static String[] loadDelimTextHeaders(File delimTextFile, String delimiter, int headerRow) throws IOException, FileNotFoundException, IllegalArgumentException{
         if (delimTextFile.exists())
         {
             if(delimTextFile.canRead()){
@@ -243,6 +243,9 @@ public class DeliminatedTextFileUtilities {
                         count++;
                     }
                     String[] headers = parseDelimTextLine(line,delimiter);
+                    if(headers == null){
+                    	throw new IllegalArgumentException("No content found on line " + headerRow + " (N.B. row indices are zero based)");
+                    }
                     for (int i = 0; i < headers.length; i++) {
                         headers[i] = headers[i].trim();
                     }
@@ -302,10 +305,12 @@ public class DeliminatedTextFileUtilities {
                     {
                         if (!line.trim().equals("")){
                             String[] row = parseDelimTextLine(line,delimiter);
-                            rowData.add(row);
-                            if (row.length > maxRowLength)
-                            {
-                                maxRowLength = row.length;
+                            if (row != null){
+                            	rowData.add(row);
+	                            if (row.length > maxRowLength)
+	                            {
+	                                maxRowLength = row.length;
+	                            }
                             }
                         }
                         line = textBuffer.readLine();
@@ -480,7 +485,7 @@ public class DeliminatedTextFileUtilities {
      * bad delimiter or line.
      */
     public static String[] parseDelimTextLine(String line, String delimiter) throws IllegalArgumentException{
-    	if (line == null){
+    	if (line == null || line.trim().equals("")){
     		return null;
     	}
         ArrayList<String> output = new ArrayList<String>();
