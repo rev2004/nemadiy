@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.imirsel.nema.analytics.evaluation.EvalFileTypeImpl;
+import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.PathAndTagCleaner;
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 import org.imirsel.nema.model.NemaData;
@@ -26,9 +27,9 @@ import org.imirsel.nema.model.NemaDataConstants;
  *
  * @author kris.west@gmail.com
  */
-public class ChordNumberTextFile extends EvalFileTypeImpl {
+public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 
-	public static final String READ_DELIMITER = "\\s";
+	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";	
 	String type;
 	public ChordNumberTextFile(String type) {
@@ -36,7 +37,7 @@ public class ChordNumberTextFile extends EvalFileTypeImpl {
 	}
 	
 	@Override
-	public List<NemaData> readFile(File theFile)
+	public NemaData readFile(File theFile)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
 		
 		String[][] chordStringsData = DeliminatedTextFileUtilities.loadDelimTextData(theFile, READ_DELIMITER, -1);
@@ -51,41 +52,43 @@ public class ChordNumberTextFile extends EvalFileTypeImpl {
 		for(int r = 0; r < nrows-1; r++) {
 			onset = Double.parseDouble(chordStringsData[r][0]);
 			offset = Double.parseDouble(chordStringsData[r+1][0]);
-			no = Integer.parseInt(chordStringsData[r][1]);
-			notes = ChordConversionUtil.convertChordNumbersToNoteNumbers(no);
+			notes = ChordConversionUtil.convertChordNumbersToNoteNumbers(chordStringsData[r][1]);
 			chords.add(new NemaChord(onset, offset, notes));
 		}
 		
-		// Form the NemaData Object for this file and return as a length-1 list
-		List<NemaData> out = new ArrayList<NemaData>(1);
 		NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
 		obj.setMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE, chords);
-		out.add(obj);
-		return out;
+		return obj;
 	}
 	
 	@Override
-	public void writeFile(File theFile, List<NemaData> data)
+	public void writeFile(File theFile, NemaData data)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
 		//TODO implement me
 		BufferedWriter writer = null;
 		try{
-			writer = new BufferedWriter(new FileWriter(theFile));
-			NemaData obj;
-			for (Iterator<NemaData> it = data.iterator(); it.hasNext();) {
-				obj = it.next();
-				writer.write(obj.getStringMetadata(NemaDataConstants.PROP_ID) + WRITE_DELIMITER + obj.getStringMetadata(type));
-				writer.newLine();
+			List<NemaChord> chords = null;
+			try{
+				Object obj = data.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+				chords = (List<NemaChord>)obj;
+			}catch(Exception e){
+				throw new IllegalArgumentException("Failed to retrieve chords from: " + data.getId()); 
 			}
+			writer = new BufferedWriter(new FileWriter(theFile));
 			
-			_logger.info(data.size() + " examples with " + type + " metadata written to file: " + theFile.getAbsolutePath());
+			NemaChord nemaChord;
+			for (Iterator<NemaChord> it = chords.iterator(); it.hasNext();) {
+				nemaChord = it.next();
+				writer.write(nemaChord.onset + WRITE_DELIMITER + nemaChord.offset + WRITE_DELIMITER + ChordConversionUtil.convertNotenumbersToChordnumbers(nemaChord.notes) + "\n");
+			}
+			getLogger().info(type + " metadata for " + data.getId() + " written to file: " + theFile.getAbsolutePath());
 		} finally {
 			if (writer != null) {
 				try {
 					writer.flush();
 					writer.close();
 				} catch (IOException ex) {
-					_logger.log(Level.SEVERE, null, ex);
+					getLogger().log(Level.SEVERE, null, ex);
 				}
 			}
 		}
