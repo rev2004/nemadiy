@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -473,32 +475,50 @@ public class DeliminatedTextFileUtilities {
      * 
      * @param line The line to parse.
      * @param delimiter The delimiter to be used to segment the line.
-     * @return A String[] representing the data from the deliminated line.
+     * @return A String[] representing the data from the delimited line.
+     * @throws IllegalArgumentException Thrown if an exception is casued by bad a
+     * bad delimiter or line.
      */
-    public static String[] parseDelimTextLine(String line, String delimiter){
+    public static String[] parseDelimTextLine(String line, String delimiter) throws IllegalArgumentException{
+    	if (line == null){
+    		return null;
+    	}
         ArrayList<String> output = new ArrayList<String>();
         String tmp = line.trim();
-        char delimChar = delimiter.charAt(0);
+//        char delimChar = delimiter.charAt(0);
+        
+        //add boundary requirement to delimiter
+        Pattern pattern = Pattern.compile("^" + delimiter);
+        Matcher matcher = pattern.matcher(line);
+        //set use Anchoring bounds 
+        matcher.useAnchoringBounds(true);
+        
         
         boolean encounteredSpeechMarks = false;
         boolean insideSpeechMarks = false;
+        int end = tmp.length();
         int lastIdx = 0;
         int i = 0;
         try{
-            for (; i < tmp.length(); i++){
-                if (tmp.charAt(i) == delimChar && !insideSpeechMarks){
+            for (; i < end; i++){
+            	matcher.region(i, end);
+            	
+                if (matcher.find() && !insideSpeechMarks){
                     if (encounteredSpeechMarks){
                         output.add(tmp.substring(lastIdx+1, i-1));
                         encounteredSpeechMarks = false;
-                        lastIdx = i+1;
+                        lastIdx = matcher.end();
+                        i=lastIdx;
                     }else{
                         output.add(tmp.substring(lastIdx, i));
-                        lastIdx = i+1;
+                        lastIdx = matcher.end();
+                        i=lastIdx;
                     }
                 }else if (tmp.charAt(i) == '"'){
                     encounteredSpeechMarks = true;
                     insideSpeechMarks = !insideSpeechMarks;
                 }
+                
             }
             if (lastIdx != i){
                 if (encounteredSpeechMarks){
@@ -514,61 +534,12 @@ public class DeliminatedTextFileUtilities {
             }
             
         }catch(Exception e){
-            System.out.println("Error parsing line:\n\t[" + tmp + "]");
-            System.out.println("Was at index: " + i);
-            System.out.println("Encountered speech marks: " + encounteredSpeechMarks);
-            System.out.println("lastIdx: " + lastIdx);
-            System.out.println("Exception: " + e.getMessage());
-            System.out.println("");
-            System.exit(1);
+        	throw new IllegalArgumentException("Error parsing line:\n\t[" + tmp + "]\n" + 
+        			"Was at index: " + i + "\n" +
+					"Encountered speech marks: " + encounteredSpeechMarks+ "\n" +
+					"lastIdx: " + lastIdx + "\n",e);
         }
-        
-        
-//        
-//        String[] comps = tmp.split(delimiter);
-//        for (int i = 0; i < comps.length; i++) {
-//            
-//            if ((comps[i].length() > 1) && (comps[i].charAt(0) == '"')){
-//                //remove speechmarks
-//                comps[i] = comps[i].substring(1);
-//                comps[i] = comps[i].substring(0, comps[i].length() - 1);
-//            }
-//            output.add(comps[i]);
-//
-//        }
-
-        
-//        while(tmp.length()>0)
-//        {
-//            
-//            
-//            if (tmp.charAt(0) == '"')
-//            {//remove speechmarks
-//                tmp = tmp.substring(1);
-//                int end = tmp.indexOf('"');
-//                output.add(tmp.substring(0,end));
-//                tmp = tmp.substring(end+1,tmp.length()).trim();
-//                int next = tmp.indexOf(delimiter);
-//                if (next > -1)
-//                {
-//                    tmp = tmp.substring(next+1,tmp.length()).trim();
-//                }else{
-//                    tmp = "";
-//                }
-//                
-//            }else{//delimiters only
-//                int next = tmp.indexOf(delimiter);
-//                if (next > -1)
-//                {
-//                    output.add(tmp.substring(0,next).trim());
-//                    tmp = tmp.substring(next+1,tmp.length()).trim();
-//                }else{
-//                    output.add(tmp);
-//                    tmp = "";
-//                }
-//            }
-//        }
-        
+                
         String[] outLine = output.toArray(new String[output.size()]);
         
         return outLine;
