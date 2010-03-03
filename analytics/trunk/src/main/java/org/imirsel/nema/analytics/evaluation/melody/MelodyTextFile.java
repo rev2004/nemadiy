@@ -19,7 +19,7 @@ import org.imirsel.nema.model.NemaDataConstants;
 
 public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
 
-	public static final String READ_DELIMITER = "\t";
+	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";
 	public static final DecimalFormat TIMESTAMP_DEC = new DecimalFormat("0.0000");
 	public static final DecimalFormat F0_DEC = new DecimalFormat("0.00");
@@ -36,11 +36,25 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
 		String[][] melodyDataStrArray = DeliminatedTextFileUtilities.loadDelimTextData(theFile, READ_DELIMITER, -1);
 		// Convert the data to a 2D double array
 		int nrows = melodyDataStrArray.length;
-		int ncols = melodyDataStrArray[0].length;
+		int ncols = 2;
 		double[][] melodyDataRaw = new double[nrows][ncols];
 		for(int r = 0; r < nrows; r++) {
-			for(int c = 0; c < ncols; c++) {
-				melodyDataRaw[r][c] = Double.valueOf(melodyDataStrArray[r][c]);
+			try{
+				for(int c = 0; c < ncols; c++) {
+					melodyDataRaw[r][c] = Double.valueOf(melodyDataStrArray[r][c]);
+				}
+			}catch(Exception e){
+				String msg = "Failed to parse line " + r + " of file " + theFile.getAbsolutePath() + "\n" +
+				"Content: \n";
+				for (int i = 0; i < melodyDataStrArray[r].length; i++) {
+					msg += "'" + melodyDataStrArray[r][i] + "'";
+					if (i<melodyDataStrArray[r].length-1){
+						msg += ",";
+					}
+					
+				}
+				msg += "\n";
+				throw new IllegalArgumentException(msg,e);
 			}
 		}
 		
