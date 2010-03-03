@@ -679,7 +679,10 @@ public class ChordEvaluator extends EvaluatorImpl{
         
         List<NemaChord> systemChords;
         List<NemaChord> gtChords;
-
+        
+        double overlapAccum = 0.0;
+        double weightedAverageOverlapAccum = 0.0;
+        double lengthAccum = 0.0;
         //iterate through tracks
         for(int x=0; x<numExamples; x++) {
             //Do simple evaluation
@@ -731,15 +734,27 @@ public class ChordEvaluator extends EvaluatorImpl{
         		overlap_total = overlap_total +  calcOverlap(gtFrame,sysFrame);        		
         	}
         	
-        	double overlap_score = overlap_total / lnGT;
         	//set eval metrics on input obj for track
+        	double overlap_score = overlap_total / lnGT;
         	
+        	weightedAverageOverlapAccum += overlap_score*lnGT;
+        	lengthAccum +=lnGT; 
+        	overlapAccum += overlap_score;
         	
+        	data.setMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO, overlap_score);
         }
+        
+        //produce avg chord ratio
+        double avg = overlapAccum / numExamples;
+        double weightedAverageOverlap = weightedAverageOverlapAccum / lengthAccum;
+        
+        //produce weighted average chord ratio
         
         
         //set eval metrics on eval object for fold
-
+        outObj.setMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO, avg);
+        outObj.setMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO, weightedAverageOverlap);
+        
         return outObj;
     }
     
