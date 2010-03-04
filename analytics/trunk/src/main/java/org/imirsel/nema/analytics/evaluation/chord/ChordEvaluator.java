@@ -205,7 +205,7 @@ public class ChordEvaluator extends EvaluatorImpl{
             performStatSigTests = false;
         }
         
-        String jobID;
+        String jobId;
 		List<List<NemaData>> sysResults;
 		
 		//check num folds and tracks per fold
@@ -214,14 +214,14 @@ public class ChordEvaluator extends EvaluatorImpl{
         //evaluate each fold for each system
         Map<String,List<NemaData>> jobIDTofoldEvaluations = new HashMap<String,List<NemaData>>(numJobs); 
         for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
-        	jobID = it.next();
-        	getLogger().info("Evaluating experiment folds for jobID: " + jobID);
-        	sysResults = jobIDToFoldResults.get(jobID);
+        	jobId = it.next();
+        	getLogger().info("Evaluating experiment folds for jobID: " + jobId);
+        	sysResults = jobIDToFoldResults.get(jobId);
         	List<NemaData> foldResultList = new ArrayList<NemaData>(numFolds);
         	for(Iterator<List<NemaData>> it2 = sysResults.iterator();it2.hasNext();){
-        		foldResultList.add(evaluateResultFold(jobID, it2.next()));
+        		foldResultList.add(evaluateResultFold(jobId, it2.next()));
         	}
-        	jobIDTofoldEvaluations.put(jobID, foldResultList);
+        	jobIDTofoldEvaluations.put(jobId, foldResultList);
         }
         
 
@@ -231,9 +231,9 @@ public class ChordEvaluator extends EvaluatorImpl{
 		
 		for (Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it
 				.hasNext();) {
-			jobID = it.next();
+			jobId = it.next();
 			// make a sub-dir for the systems results
-			File sysDir = new File(outputDir.getAbsolutePath() + File.separator + jobID);
+			File sysDir = new File(outputDir.getAbsolutePath() + File.separator + jobId);
 			sysDir.mkdirs();
 			
 			//make a sub-dir for each fold
@@ -244,8 +244,8 @@ public class ChordEvaluator extends EvaluatorImpl{
 				foldDirs.add(foldDir);
 			}
 			
-			jobIDToResultDir.put(jobID, sysDir);
-			jobIDToFoldResultDirs.put(jobID, foldDirs);
+			jobIDToResultDir.put(jobId, sysDir);
+			jobIDToFoldResultDirs.put(jobId, foldDirs);
 		}
 
 		
@@ -253,12 +253,12 @@ public class ChordEvaluator extends EvaluatorImpl{
 		Map<String, List<File[]>> jobIDToResultPlotFileList = new HashMap<String, List<File[]>>();
         //iterate over systems
         for(Iterator<String> it_systems = jobIDToFoldResults.keySet().iterator(); it_systems.hasNext();){
-        	jobID = it_systems.next();
-        	getLogger().info("Plotting Chord transcriptions for: " + jobID);
-        	sysResults = jobIDToFoldResults.get(jobID);
+        	jobId = it_systems.next();
+        	getLogger().info("Plotting Chord transcriptions for: " + jobId);
+        	sysResults = jobIDToFoldResults.get(jobId);
         	
         	//iterate over folds
-        	List<File> foldDirs = jobIDToFoldResultDirs.get(jobID);
+        	List<File> foldDirs = jobIDToFoldResultDirs.get(jobId);
         	List<File[]> plotFolds = new ArrayList<File[]>();
         	Iterator<File> it_foldResDir = foldDirs.iterator();
         	
@@ -281,16 +281,16 @@ public class ChordEvaluator extends EvaluatorImpl{
 				}
 				plotFolds.add(plots);
 			}
-        	jobIDToResultPlotFileList.put(jobID, plotFolds);
+        	jobIDToResultPlotFileList.put(jobId, plotFolds);
         }
 
         //aggregate results to produce overall evaluation
-        _logger.info("Producing aggregate evaluations over all folds");
+        getLogger().info("Producing aggregate evaluations over all folds");
         Map<String,NemaData> jobIDToAggregateEvaluations = new HashMap<String,NemaData>(numJobs); 
         for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
-        	jobID = it.next();
-        	List<NemaData> evalList = jobIDTofoldEvaluations.get(jobID);
-        	NemaData aggregateEval = new NemaData(jobID);
+        	jobId = it.next();
+        	List<NemaData> evalList = jobIDTofoldEvaluations.get(jobId);
+        	NemaData aggregateEval = new NemaData(jobId);
         	
         	double avgOverlap = 0.0;
         	double avgWeightedOverlap = 0.0;
@@ -309,39 +309,40 @@ public class ChordEvaluator extends EvaluatorImpl{
     		
     		
         //write out per metric CSV results files
-        _logger.info("Writing out CSV result files over whole task...");
-        File overlapCSV = new File(outputDir.getAbsolutePath()+ File.separator + "overlap.csv");
+        getLogger().info("Writing out CSV result files over whole task...");
+        File overlapCsv = new File(outputDir.getAbsolutePath()+ File.separator + "overlap.csv");
         WriteChordResultFiles.writeTableToCsv(
         		WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults,jobIDToName,NemaDataConstants.CHORD_OVERLAP_RATIO),
-        		overlapCSV
+        		overlapCsv
     		);
         
-        File weightOverlapCSV = new File(outputDir.getAbsolutePath() + File.separator + "weightedOverlap.csv");
+        File weightOverlapCsv = new File(outputDir.getAbsolutePath() + File.separator + "weightedOverlap.csv");
         WriteChordResultFiles.writeTableToCsv(
         		WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults,jobIDToName,NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO),
-        		weightOverlapCSV
+        		weightOverlapCsv
         	);
         
         //write out results summary CSV
-        File summaryCSV = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
+        File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
         WriteChordResultFiles.writeTableToCsv(
         		WriteChordResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName),
-        		summaryCSV
+        		summaryCsv
         	);
         
         //write out per system CSVs
+        getLogger().info("Writing out CSV result files for each system...");
         Map<String, File> jobIDToCSV = new HashMap<String, File>(numJobs);
 		for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
-			jobID = it.next();
-			sysResults = jobIDToFoldResults.get(jobID);
+			jobId = it.next();
+			sysResults = jobIDToFoldResults.get(jobId);
 			
-			File sysDir = jobIDToResultDir.get(jobID);
+			File sysDir = jobIDToResultDir.get(jobId);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "results.csv");
 			WriteChordResultFiles.writeTableToCsv(
 					WriteChordResultFiles.prepTableDataOverTracks(sysResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO}),
 					trackCSV
 				);
-			jobIDToCSV.put(jobID, trackCSV);
+			jobIDToCSV.put(jobId, trackCSV);
 		}
         
         
@@ -353,161 +354,159 @@ public class ChordEvaluator extends EvaluatorImpl{
         File friedmanWeightedOverlapTable = null;
         
         if (getPerformMatlabStatSigTests() && performStatSigTests){
-            _logger.info("Performing Friedman's tests in Matlab...");
+        	getLogger().info("Performing Friedman's tests in Matlab...");
 
-            File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, overlapCSV, 0, 2, 1, numJobs, getMatlabPath());
+            File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, overlapCsv, 0, 2, 1, numJobs, getMatlabPath());
             friedmanOverlapTablePNG = tmp[0];
             friedmanOverlapTable = tmp[1];
 
             //tmp = performFriedmanTestWithFoldAccuracy(outputDir, perFoldCSV, systemNamesArr);
-            tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, weightOverlapCSV, 0, 2, 1, numJobs, getMatlabPath());
+            tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, weightOverlapCsv, 0, 2, 1, numJobs, getMatlabPath());
             friedmanWeightedOverlapTablePNG = tmp[0];
             friedmanWeightedOverlapTable = tmp[1];
         }
         
         //create tarballs of individual result dirs
-        _logger.info("Preparing evaluation data tarballs...");
+        getLogger().info("Preparing evaluation data tarballs...");
         Map<String,File> jobIDToTgz = new HashMap<String,File>(jobIDToName.size());
         for (Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();) {
-        	jobID = it.next();
-        	jobIDToTgz.put(jobID, IOUtil.tarAndGzip(new File(outputDir.getAbsolutePath() + File.separator + jobID)));
+        	jobId = it.next();
+        	jobIDToTgz.put(jobId, IOUtil.tarAndGzip(new File(outputDir.getAbsolutePath() + File.separator + jobId)));
         }
 
         
-//        //write result HTML pages
-//        _logger.info("Creating result HTML files...");
-//
-//        List<Page> resultPages = new ArrayList<Page>();
-//        List<PageItem> items;
-//        Page aPage;
-//
-//        //do intro page to describe task
-//        {
-//        	items = new ArrayList<PageItem>();
-//	        Table descriptionTable = WriteChordResultFiles.prepTaskTable(task,dataset);
-//	        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
-//	        aPage = new Page("intro", "Introduction", items, false);
-//	        resultPages.add(aPage);
-//        }
-//        
-//        //do summary page
-//        {
-//	        items = new ArrayList<PageItem>();
-//	        Table summaryTable = WriteChordResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName,classNames,usingAHierarchy);
-//	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
-//	        aPage = new Page("summary", "Summary", items, false);
-//	        resultPages.add(aPage);
-//        }
-//
-//        //do per class page
-//        {
-//            items = new ArrayList<PageItem>();
-//            Table perClassTable = WriteChordResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
-//            items.add(new TableItem("acc_class", "Accuracy per Class", perClassTable.getColHeaders(), perClassTable.getRows()));
-//            if (hierarchyFile != null){
-//                Table perDiscClassTable = WriteChordResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
-//                items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Class", perDiscClassTable.getColHeaders(), perDiscClassTable.getRows()));
-//            }
-//            aPage = new Page("acc_per_class", "Accuracy per Class", items, false);
-//            resultPages.add(aPage);
-//        }
-//
-//        //do per fold page
-//        {
-//            items = new ArrayList<PageItem>();
-//            Table perFoldTable = WriteChordResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY);
-//            items.add(new TableItem("acc_class", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
-//            if (hierarchyFile != null){
-//                Table perDiscFoldTable = WriteChordResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
-//                items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
-//            }
-//            aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);
-//            resultPages.add(aPage);
-//        }
-//        
-//        //do significance tests
-//        if (getPerformMatlabStatSigTests() && performStatSigTests){
-//            items = new ArrayList<PageItem>();
-//            items.add(new ImageItem("friedmanClassTablePNG", "Accuracy Per Class: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanClassTablePNG, outputDir)));
-//            items.add(new ImageItem("friedmanFoldTablePNG", "Accuracy Per Fold: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanFoldTablePNG, outputDir)));
-//            if(friedmanDiscountClassTable != null){
-//                items.add(new ImageItem("friedmanDiscountClassTablePNG", "Discounted Accuracy Per Class: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanDiscountClassTablePNG, outputDir)));
-//            }
-//            if(friedmanDiscountFoldTable != null){
-//                items.add(new ImageItem("friedmanDiscountFoldTablePNG", "Accuracy Per Fold: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanDiscountFoldTablePNG, outputDir)));
-//            }
-//            aPage = new Page("sig_tests", "Significance Tests", items, true);
-//            resultPages.add(aPage);
-//        }
-//
-//        //do confusion matrices
-//        List<String> sortedJobIDs = new ArrayList<String>(jobIDToName.keySet());
-//        Collections.sort(sortedJobIDs);
-//        {
-//            items = new ArrayList<PageItem>();
-//            
-//            for (int i = 0; i < numJobs; i++){
-//                items.add(new ImageItem("confusion_" + i, sortedJobIDs.get(i), IOUtil.makeRelative(jobIDToOverallConfFile.get(sortedJobIDs.get(i)), outputDir)));
-//            }
-//            aPage = new Page("confusion", "Confusion Matrices", items, true);
-//            resultPages.add(aPage);
-//        }
-//
-//        //do files page
-//        {
-//            items = new ArrayList<PageItem>();
-//
-//            //CSVs
-//            List<String> CSVPaths = new ArrayList<String>(4);
-//            CSVPaths.add(IOUtil.makeRelative(perClassCSV,outputDir));
-//            CSVPaths.add(IOUtil.makeRelative(perFoldCSV,outputDir));
-//            if (hierarchyFile != null){
-//                CSVPaths.add(IOUtil.makeRelative(discountedPerClassCSV,outputDir));
-//                CSVPaths.add(IOUtil.makeRelative(discountedPerFoldCSV,outputDir));
-//            }
-//            items.add(new FileListItem("dataCSVs", "CSV result files", CSVPaths));
-//
-//            //Friedman's tables and plots
-//            if (getPerformMatlabStatSigTests() && performStatSigTests){
-//                //Friedmans tables
-//                List<String> sigCSVPaths = new ArrayList<String>(4);
-//                sigCSVPaths.add(IOUtil.makeRelative(friedmanClassTable, outputDir));
-//                sigCSVPaths.add(IOUtil.makeRelative(friedmanFoldTable, outputDir));
-//                if(friedmanDiscountClassTable != null){
-//                    sigCSVPaths.add(IOUtil.makeRelative(friedmanDiscountClassTable, outputDir));
-//                }
-//                if(friedmanDiscountFoldTable != null){
-//                    sigCSVPaths.add(IOUtil.makeRelative(friedmanDiscountFoldTable, outputDir));
-//                }
-//                items.add(new FileListItem("sigCSVs", "Significance test CSVs", sigCSVPaths));
-//
-//                //Friedmans plots
-//                List<String> sigPNGPaths = new ArrayList<String>(4);
-//                sigPNGPaths.add(IOUtil.makeRelative(friedmanClassTablePNG, outputDir));
-//                sigPNGPaths.add(IOUtil.makeRelative(friedmanFoldTablePNG, outputDir));
-//                if(friedmanDiscountClassTable != null){
-//                    sigPNGPaths.add(IOUtil.makeRelative(friedmanDiscountClassTablePNG, outputDir));
-//                }
-//                if(friedmanDiscountFoldTable != null){
-//                    sigPNGPaths.add(IOUtil.makeRelative(friedmanDiscountFoldTablePNG, outputDir));
-//                }
-//                items.add(new FileListItem("sigPNGs", "Significance test plots", sigPNGPaths));
-//            }
-//
-//            //System Tarballs
-//            List<String> tarballPaths = new ArrayList<String>(numJobs);
-//            for (int i = 0; i < numJobs; i++){
-//                tarballPaths.add(IOUtil.makeRelative(jobIDToTgz.get(sortedJobIDs.get(i)),outputDir));
-//            }
-//            items.add(new FileListItem("tarballs", "Per algorithm evaluation tarball", tarballPaths));
-//            aPage = new Page("files", "Raw data files", items, true);
-//            resultPages.add(aPage);
-//        }
-//
-//        Page.writeResultPages(task.getName(), outputDir, resultPages);
-//        
-//        return jobIDToAggregateEvaluations;
+        //write result HTML pages
+        writeHtmlResultPages(performStatSigTests, numJobs,
+				jobIDToAggregateEvaluations, overlapCsv, weightOverlapCsv,
+				summaryCsv, jobIDToCSV, friedmanOverlapTablePNG,
+				friedmanOverlapTable, friedmanWeightedOverlapTablePNG,
+				friedmanWeightedOverlapTable, jobIDToTgz);
+        
+        return jobIDToAggregateEvaluations;
     }
+
+	private void writeHtmlResultPages(boolean performStatSigTests, int numJobs,
+			Map<String, NemaData> jobIDToAggregateEvaluations, File overlapCsv,
+			File weightOverlapCsv, File summaryCsv,
+			Map<String, File> jobIDToCSV, File friedmanOverlapTablePNG,
+			File friedmanOverlapTable, File friedmanWeightedOverlapTablePNG,
+			File friedmanWeightedOverlapTable, Map<String, File> jobIDToTgz) {
+		String jobId;
+		List<List<NemaData>> sysResults;
+		getLogger().info("Creating result HTML files...");
+
+        List<Page> resultPages = new ArrayList<Page>();
+        List<PageItem> items;
+        Page aPage;
+
+        //do intro page to describe task
+        {
+        	items = new ArrayList<PageItem>();
+	        Table descriptionTable = WriteChordResultFiles.prepTaskTable(task,dataset);
+	        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
+	        aPage = new Page("intro", "Introduction", items, false);
+	        resultPages.add(aPage);
+        }
+        
+        //do summary page
+        {
+	        items = new ArrayList<PageItem>();
+	        Table summaryTable = WriteChordResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName);
+	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
+	        aPage = new Page("summary", "Summary", items, false);
+	        resultPages.add(aPage);
+        }
+
+        //do per metric pages
+        {
+            items = new ArrayList<PageItem>();
+            Table overlapTable = WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults, jobIDToName, NemaDataConstants.CHORD_OVERLAP_RATIO);
+            items.add(new TableItem("chord_overlap", "Chord Overlap", overlapTable.getColHeaders(), overlapTable.getRows()));
+            
+            Table weightedOverlapTable = WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults, jobIDToName, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
+            items.add(new TableItem("chord_weighted overlap", "Chord Weighted Overlap", weightedOverlapTable.getColHeaders(), weightedOverlapTable.getRows()));
+            
+            
+            aPage = new Page("all_system_metrics", "Detailed Evaluation Metrics", items, true);
+            resultPages.add(aPage);
+        }
+
+        //do per system pages
+        {
+        	for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
+    			jobId = it.next();
+    			sysResults = jobIDToFoldResults.get(jobId);
+    			
+    			Table systemTable = WriteChordResultFiles.prepTableDataOverTracks(sysResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO});
+    			items.add(new TableItem(jobId, jobIDToName.get(jobId), systemTable.getColHeaders(), systemTable.getRows()));
+                
+    			aPage = new Page(jobId, jobIDToName.get(jobId), items, false);
+                resultPages.add(aPage);
+        	}            
+        }
+        
+        //do significance tests
+        if (getPerformMatlabStatSigTests() && performStatSigTests){
+            items = new ArrayList<PageItem>();
+            items.add(new ImageItem("friedmanOverlapTablePNG", "Chord Overlap: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanOverlapTablePNG, outputDir)));
+            items.add(new ImageItem("friedmanWeightedOverlapTablePNG", "Chord Weighted Overlap: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanWeightedOverlapTablePNG, outputDir)));
+            
+            aPage = new Page("sig_tests", "Significance Tests", items, true);
+            resultPages.add(aPage);
+        }
+
+        //do files page
+        {
+            items = new ArrayList<PageItem>();
+
+          //Overall CSVs
+            List<String> overallCsvs = new ArrayList<String>(3);
+            
+            overallCsvs.add(IOUtil.makeRelative(summaryCsv,outputDir));
+            overallCsvs.add(IOUtil.makeRelative(overlapCsv,outputDir));
+            overallCsvs.add(IOUtil.makeRelative(weightOverlapCsv,outputDir));
+            
+            items.add(new FileListItem("overallCSVs", "Overall CSV result files", overallCsvs));
+
+          //Per system CSVs
+            List<String> perSystemCsvs = new ArrayList<String>(numJobs);
+            for (Iterator<String> it = jobIDToCSV.keySet().iterator(); it.hasNext();) {
+    			jobId = it.next();
+    			File file = jobIDToCSV.get(jobId);
+    			perSystemCsvs.add(IOUtil.makeRelative(file,outputDir));
+            }
+            items.add(new FileListItem("perSystemCSVs", "Per-system CSV result files", perSystemCsvs));
+
+            //Friedman's tables and plots
+            if (getPerformMatlabStatSigTests() && performStatSigTests){
+                //Friedmans tables
+                List<String> sigCSVPaths = new ArrayList<String>(2);
+                sigCSVPaths.add(IOUtil.makeRelative(friedmanOverlapTable, outputDir));
+                sigCSVPaths.add(IOUtil.makeRelative(friedmanWeightedOverlapTable, outputDir));
+                
+                items.add(new FileListItem("sigCSVs", "Significance test CSVs", sigCSVPaths));
+
+                //Friedmans plots
+                List<String> sigPNGPaths = new ArrayList<String>(2);
+                sigPNGPaths.add(IOUtil.makeRelative(friedmanOverlapTablePNG, outputDir));
+                sigPNGPaths.add(IOUtil.makeRelative(friedmanWeightedOverlapTablePNG, outputDir));
+                
+                items.add(new FileListItem("sigPNGs", "Significance test plots", sigPNGPaths));
+            }
+
+            //System Tarballs
+            List<String> tarballPaths = new ArrayList<String>(numJobs);
+            for (Iterator<String> it = jobIDToCSV.keySet().iterator(); it.hasNext();) {
+    			jobId = it.next();
+                tarballPaths.add(IOUtil.makeRelative(jobIDToTgz.get(jobId),outputDir));
+            }
+            items.add(new FileListItem("tarballs", "Per algorithm evaluation tarball", tarballPaths));
+            aPage = new Page("files", "Raw data files", items, true);
+            resultPages.add(aPage);
+        }
+
+        Page.writeResultPages(task.getName(), outputDir, resultPages);
+	}
 
 	private int checkFolds() {
 		int numFolds = -1;
