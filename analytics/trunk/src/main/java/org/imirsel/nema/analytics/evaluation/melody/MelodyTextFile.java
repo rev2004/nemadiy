@@ -23,18 +23,26 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
 	public static final String WRITE_DELIMITER = "\t";
 	public static final DecimalFormat TIMESTAMP_DEC = new DecimalFormat("0.0000");
 	public static final DecimalFormat F0_DEC = new DecimalFormat("0.00");
-	private static final double TIMEINC = 0.01;
+	private static final double TIMEINC = 0.01;		// MIREX-spec 10ms time-increment
 
+	/**
+	 * Constructor
+	 */
 	public MelodyTextFile() {
 		super();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public NemaData readFile(File theFile)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
-		// Read a space-delimited melody text file as a 2D string array
+
+		/* Read a space-delimited melody text file as a 2D string array */
 		String[][] melodyDataStrArray = DeliminatedTextFileUtilities.loadDelimTextData(theFile, READ_DELIMITER, -1);
-		// Convert the data to a 2D double array
+
+		/* Convert the 2D string data to a 2D double array */
 		int nrows = melodyDataStrArray.length;
 		int ncols = 2;
 		double[][] melodyDataRaw = new double[nrows][ncols];
@@ -58,34 +66,55 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
 			}
 		}
 		
-		// Set up the 0th-order interpolation to convert to the MIREX-spec 10ms time-grid 
+		/* 
+		 * Set up the 0th-order interpolation to convert to the 
+		 * MIREX-spec 10ms time-grid 
+		 */
 		List<Double> melodyInterpTimeStamp = new ArrayList<Double>();
 		List<Double> melodyInterpF0 = new ArrayList<Double>();
 		melodyInterpF0.add(0, new Double(0.0));
     	melodyInterpTimeStamp.add(0, new Double(0.0));
 		
-    	// Begin interpolation
+    	/* Indices into the new, interpolated data array-list */
         int index = 0;
         int oldindex = -1;
+
+        /*
+         *  minDiff and currDiff represent time-stamp differences to make 
+         *  sure the f0 value we use in the original data is the one 
+         *  closest-in-time to the MIREX-spec desired time-stamp
+         */
         double minDiff = 10000000.0;
+        double currDiff = 0.0;
+        
+        /* Loop through original arbitrary time-stamped data */
         for (int i = 0; i < nrows; i++) {
             index = (int)Math.round(melodyDataRaw[i][0]/TIMEINC);
-            // Case where the file's time-step is less than 10ms
+            
+            /* Case where the file's time-step is less than 10ms */
             if (index == oldindex) {
-                double currDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*(double)index);
+                currDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*(double)index);
                 if (currDiff < minDiff) {	
                 	melodyInterpF0.set(index, new Double(melodyDataRaw[i][1]));
                 	melodyInterpTimeStamp.set(index, new Double(TIMEINC*(double)index));
                     minDiff = currDiff;
                 }
             }
-         	// Case where the file's time-step is 10ms or has 'caught up' if less than 10ms
+            
+         	/*
+         	 *  Case where the file's time-step is 10ms or has 'caught up' if 
+         	 *  less than 10ms and gone on to the next index in the 10ms grid
+         	 */
             else if (index == oldindex + 1) {
             	melodyInterpF0.add(new Double(melodyDataRaw[i][1]));
             	melodyInterpTimeStamp.add(new Double(TIMEINC*(double)index));
                 minDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*(double)index);
             }
-            // Case where the file's time-step is greater than 10ms, and the sample-hold takes place
+            
+            /* 
+             * Case where the file's time-step is greater than 10ms, and
+             * the sample-hold takes place, i.e. repeat f0's multiple times
+             */
             else if (index > oldindex + 1) {
                 int indDiff = index - oldindex;
                 for (int j = 0; j < indDiff-1; j++) {
@@ -99,25 +128,32 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
             oldindex = index;                                
         }   
 
+        /*
+         *  Put the contents of the Time-stamp and F0 array-lists into a 
+         *  single 2 column 2d-double array 
+         */
         double[][] melodyDataInterpolated = new double[melodyInterpF0.size()][2];
         for (int i = 0; i < melodyDataInterpolated.length; i++) {
         	melodyDataInterpolated[i][0] = (melodyInterpTimeStamp.get(i)).doubleValue();
         	melodyDataInterpolated[i][1] = (melodyInterpF0.get(i)).doubleValue();
         }
 		
-		// Form the NemaData Object for this file and return as a length-1 list
+		/* Form the NemaData Object for this file and return it */
 		NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
 		obj.setMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA, melodyDataInterpolated);
 		return obj;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void writeFile(File theFile, NemaData data)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
 		
 		double[][] melodyData = data.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
 		
-		// Convert the data to a 2D double array
+		/* Convert the data to a 2D double array */
 		int nrows = melodyData.length;
 
 		String[][] melodyDataStrArray = new String[nrows][2];
