@@ -392,23 +392,23 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 //        _logger.fine(msg);
         
         File perClassCSV = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassResults.csv");
-        WriteClassificationResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT,perClassCSV);
+        WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT),perClassCSV);
         
         File perFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "PerFoldResults.csv");
-        WriteClassificationResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY,perFoldCSV);
+        WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY),perFoldCSV);
         
         //write out results summary CSV
         File summaryCSV = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
-        WriteClassificationResultFiles.prepSummaryResultDataCSV(jobIDToAggregateEvaluations,jobIDToName,classNames,summaryCSV,usingAHierarchy);
+        WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName,classNames,usingAHierarchy),summaryCSV);
         
         //write out discounted results summary CSVs
         File discountedPerClassCSV = null;
         File discountedPerFoldCSV = null;
         if (hierarchyFile != null){
             discountedPerClassCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerClassResults.csv");
-            WriteClassificationResultFiles.prepFriedmanTestDataCSVOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT, discountedPerClassCSV);
+            WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT),discountedPerClassCSV);
             discountedPerFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerFoldResults.csv");
-            WriteClassificationResultFiles.prepFriedmanTestDataCSVOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY,discountedPerFoldCSV);
+            WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepTableDataOverFolds(jobIDTofoldEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY),discountedPerFoldCSV);
         }
         
         //perform statistical tests

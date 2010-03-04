@@ -34,16 +34,10 @@ public class WriteChordResultFiles extends AbstractWriteResultFiles {
     
     /**
      * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
-     * of the table and the rows are the different classes of data in the evaluation.
+     * of the table and the rows are the different tracks in the evaluation.
      * 
-     * @param jobIDToAggregateEval Map linking jobID to its overall evaluation data Object.
-     * @param jobIDToName Map linking jobID to the Job name to use in the Table for each set of results.
-     * @param classNames A list of the class names used.
-     * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
-     * a 1 or 2 dimensional double array giving the accuracies or confusions for each class.
-     * @return The prepared table.
      */
-    public static Table prepTableDataOverClasses(Map<String,NemaData> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
+    public static Table prepTableDataOverTracksAndSystems(Map<String,List<List<NemaData>>> jobIDToTrackEval, Map<String,String> jobIDToName, String metricKey) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
     	String[][] jobIDandName = new String[numAlgos][];
@@ -59,213 +53,114 @@ public class WriteChordResultFiles extends AbstractWriteResultFiles {
     		}
     	});
     	
-        String[] colNames = new String[numAlgos + 1];
-        colNames[0] = "Class";
+    	//set column names
+    	int numCols = numAlgos + 2;
+        String[] colNames = new String[numCols];
+        colNames[0] = "Fold";
+        colNames[1] = "Track";
         for (int i = 0; i < numAlgos; i++) {
-            colNames[i+1] = jobIDandName[i][1];
+            colNames[i+2] = jobIDandName[i][1];
         }
 
-        List<String[]> rows = new ArrayList<String[]>();
+        //count number of rows to produce
+        int numTracks = 0;
+        String firstJob = jobIDandName[0][0];
+        {
+	        List<List<NemaData>> firstResList = jobIDToTrackEval.get(firstJob);
+	        for (Iterator<List<NemaData>> iterator = firstResList.iterator(); iterator.hasNext();) {
+				List<NemaData> list = iterator.next();
+				numTracks += list.size();
+			}
+        }
         
-        for (int c = 0; c < classNames.size(); c++) {
-            String[] row = new String[numAlgos + 1];
-            row[0] = classNames.get(c).replaceAll(",", " ");
+        //produce rows (assume but check that results are ordered the same for each system)
+        List<String[]> rows = new ArrayList<String[]>();
+        int fold = 0;
+        int foldTrackCount = 0;
+        int actualRowCount = 0;
+        String[] row;
+        List<List<NemaData>> firstResList;
+        NemaData data;
+        while(actualRowCount < numTracks){
+        	row = new String[numCols];
+        	row[0] = "" + fold;
+        	firstResList = jobIDToTrackEval.get(firstJob);
+        	row[1] = firstResList.get(fold).get(foldTrackCount).getId();
+        	for(int i=0;i<numAlgos;i++){
+        		try{
+	        		data = jobIDToTrackEval.get(jobIDandName[i][0]).get(fold).get(foldTrackCount);
+	        		if (!data.getId().equals(row[1])){
+	        			throw new IllegalArgumentException("Results from job ID: " + jobIDandName[i][0] + " are not ordered the same as results from job ID: " + firstJob);
+	        		}
+	        		
+	        		row[i+2] = "" + data.getDoubleMetadata(metricKey);
+        		}catch(Exception e){
+        			throw new IllegalArgumentException("Some of the evaluation data for jobID " + jobIDandName[i][0] + " was missing!");
+        		}
+        	}
+        	rows.add(row);
 
-            for (int j = 0 ; j < numAlgos; j++){  
-            	if (jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey).getClass().getComponentType().isArray()){
-            		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c]);
-            	}else{
-            		//discounted types are 1D as there is no residual confusion after discounting
-            		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c]);
-            	}
-            }
-            rows.add(row);
+        	actualRowCount++;
+        	foldTrackCount++;
+        	if (foldTrackCount == firstResList.get(fold).size()){
+        		fold++;
+        	}
         }
+        
         return new Table(colNames, rows);
     }
-
+    
     /**
-     * Prepares a CSV file representing the specified evaluation metadata, where the systems are the columns
-     * of the CSV and the rows are the different classes of data in the evaluation.
+     * Prepares a Table Object representing the specified evaluation metadata, where the metrics are the columns
+     * of the table and the rows are the different tracks in the evaluation.
      * 
-     * @param jobIDToAggregateEval Map linking jobID to its overall evaluation data Object.
-     * @param jobIDToName Map linking jobID to the Job name to use in the CSV for each set of results.
-     * @param classNames A list of the class names used.
-     * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
-     * a 1 or 2 dimensional double array giving the accuracies or confusions for each class.
-     * @param outputFile The file to write the CSV encoded data to.
      */
-    public static void prepFriedmanTestDataCSVOverClasses(Map<String,NemaData> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey, File outputFile) 
-    		throws IOException{
-    	
-        //sort systems alphabetically
-    	int numAlgos = jobIDToName.size();
-    	String[][] jobIDandName = new String[numAlgos][];
-    	int idx=0;
-    	String id;
-    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
-    		id = it.next();
-    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id).replaceAll(",", " ")};
-    	}
-    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
-    		public int compare(String[] a, String[] b){
-    			return a[1].compareTo(b[1]);
-    		}
-    	});
-
-        String csv = "*Class,";
-        for (int i = 0; i < numAlgos; i++) {
-        	csv += jobIDandName[i][1];
-            if (i<numAlgos-1){
-            	csv += ",";
-            }
+    public static Table prepTableDataOverTracks(List<List<NemaData>> trackEval, String[] metricKeys) {
+    	//set column names
+    	int numMetrics = metricKeys.length;
+    	int numCols = numMetrics + 2;
+        String[] colNames = new String[numCols];
+        colNames[0] = "Fold";
+        colNames[1] = "Track";
+        for (int i = 0; i < numMetrics; i++) {
+            colNames[i+2] = metricKeys[i];
         }
-        csv += "\n";
+
+        //count number of rows to produce
+        int numTracks = 0;
+        for (Iterator<List<NemaData>> iterator = trackEval.iterator(); iterator.hasNext();) {
+			List<NemaData> list = iterator.next();
+			numTracks += list.size();
+		}
         
-        for (int c = 0; c < classNames.size(); c++) {
-            csv += classNames.get(c).replaceAll(",", " ") + ",";
-
-            for (int j = 0 ; j < numAlgos; j++){
-            	if (jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey).getClass().getComponentType().isArray()){
-            		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c];
-            	}else{
-            		//discounted types are 1D as there is no residual confusion after discounting
-            		csv += "" + jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c];
-            	}
-                if (j < numAlgos-1){
-                	csv += ",";
-                }
-            }
-            csv += "\n";
-        }
         
-        BufferedWriter output = null;
-        try {
-            output = new BufferedWriter(new FileWriter(outputFile));
-            output.write(csv);
-        }finally{
-        	try {
-	        	if(output != null){
-	        		output.flush();
-	        		output.close();
-	        	}
-        	} catch (IOException ex) {}
-        }
-    }
-
-    /**
-     * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
-     * of the table and the rows are the folds or iterations of the experiment evaluated.
-     * 
-     * @param jobIDToFoldEval Map linking jobID to a list of evaluation data Objects for each fold/iteration
-     * of the experiment. This list is expected to be consistently ordered across all systems.
-     * @param jobIDToName Map linking jobID to the Job name to use in the Table for each set of results.
-     * @param classNames A list of the class names used.
-     * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
-     * a single double value giving the accuracy or performance estimate for the experiment fold.
-     * @return The prepared table.
-     */
-    public static Table prepTableDataOverFolds(Map<String,List<NemaData>> jobIDToFoldEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
-    	//sort systems alphabetically
-    	int numAlgos = jobIDToName.size();
-    	String[][] jobIDandName = new String[numAlgos][];
-    	int idx=0;
-    	String id;
-    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
-    		id = it.next();
-    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
-    	}
-    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
-    		public int compare(String[] a, String[] b){
-    			return a[1].compareTo(b[1]);
-    		}
-    	});
-
-        int numFolds = jobIDToFoldEval.get(jobIDandName[0][0]).size();
-
-        String[] colNames = new String[numAlgos + 1];
-        colNames[0] = "Classification fold";
-        for (int i = 0; i < numAlgos; i++) {
-            colNames[i+1] = jobIDandName[i][1];
-        }
-
+        //produce rows (assume but check that results are ordered the same for each system)
         List<String[]> rows = new ArrayList<String[]>();
-        for (int r = 0; r < numFolds; r++) {
-            String[] row = new String[numAlgos + 1];
-            row[0] = "" + (r+1);
+        int fold = 0;
+        int foldTrackCount = 0;
+        int actualRowCount = 0;
+        String[] row;
+        NemaData data;
+        while(actualRowCount < numTracks){
+        	row = new String[numCols];
+        	row[0] = "" + fold;
+        	row[1] = trackEval.get(fold).get(foldTrackCount).getId();
+        	for(int i=0;i<numMetrics;i++){
+        		data = trackEval.get(fold).get(foldTrackCount);
+        		row[i+2] = "" + data.getDoubleMetadata(metricKeys[i]);
+        	}
+        	rows.add(row);
 
-            for (int j = 0 ; j < numAlgos; j++){
-                row[j+1] = DEC.format(100.0 * jobIDToFoldEval.get(jobIDandName[j][0]).get(r).getDoubleMetadata(metadataKey));
-            }
-            rows.add(row);
+        	actualRowCount++;
+        	foldTrackCount++;
+        	if (foldTrackCount == trackEval.get(fold).size()){
+        		fold++;
+        	}
         }
+        
         return new Table(colNames, rows);
     }
-
-    /**
-     * Prepares a CSV file representing the specified evaluation metadata, where the systems are the columns
-     * of the table and the rows are the folds or iterations of the experiment evaluated.
-     * 
-     * @param jobIDToFoldEval Map linking jobID to a list of evaluation data Objects for each fold/iteration
-     * of the experiment. This list is expected to be consistently ordered across all systems.
-     * @param jobIDToName Map linking jobID to the Job name to use in the CSV for each set of results.
-     * @param classNames A list of the class names used.
-     * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
-     * a single double value giving the accuracy or performance estimate for the experiment fold.
-     * @param outputFile The file to write the CSV encoded data to.
-     */
-    public static void prepFriedmanTestDataCSVOverFolds(Map<String,List<NemaData>> jobIDToFoldEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey, File outputFile) 
-    		throws IOException{
-        //sort systems alphabetically
-    	int numAlgos = jobIDToName.size();
-    	String[][] jobIDandName = new String[numAlgos][];
-    	int idx=0;
-    	String id;
-    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
-    		id = it.next();
-    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
-    	}
-    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
-    		public int compare(String[] a, String[] b){
-    			return a[1].compareTo(b[1]);
-    		}
-    	});
-
-        int numFolds = jobIDToFoldEval.get(jobIDandName[0][0]).size();
-
-        String csv = "*Classification fold,";
-        for (int i = 0; i < numAlgos; i++) {
-            csv += jobIDandName[i][1];
-            if (i< numAlgos-1){
-                csv += ",";
-            }
-        }
-        csv += "\n";
-        
-        for (int i = 0; i < numFolds; i++) {
-            csv += i + ",";
-            for (int j = 0 ; j < numAlgos; j++){
-                csv += "" + jobIDToFoldEval.get(jobIDandName[j][0]).get(i).getDoubleMetadata(metadataKey);
-                if (j<numAlgos-1){
-                    csv += ",";
-                }
-            }
-            csv += "\n";
-        }
-
-        BufferedWriter output = null;
-        try {
-            output = new BufferedWriter(new FileWriter(outputFile));
-            output.write(csv);
-        }finally{
-        	try {
-	        	if(output != null){
-	        		output.flush();
-	        		output.close();
-	        	}
-        	} catch (IOException ex) {}
-        }
-    }
+    
 
     /**
      * Prepares a summary table for the classification task which displays multiple evaluation metrics
@@ -278,7 +173,7 @@ public class WriteChordResultFiles extends AbstractWriteResultFiles {
      * true then additional metrics based on the hierarchical discounting procedure are reported.
      * @return The prepared table.
      */
-    public static Table prepSummaryTable(Map<String,NemaData> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, boolean usingAHierarchy) {
+    public static Table prepSummaryTable(Map<String,NemaData> jobIDToAggregateEval, Map<String,String> jobIDToName) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
     	String[][] jobIDandName = new String[numAlgos][];
@@ -295,91 +190,22 @@ public class WriteChordResultFiles extends AbstractWriteResultFiles {
     	});
 
         String[] colNames;
-        if(usingAHierarchy){
-            colNames = new String[5];
-            colNames[0] = "Job";
-            colNames[1] = "Overall Accuracy";
-            colNames[2] = "Normalised Overall Accuracy";
-            colNames[3] = "Overall Discounted Accuracy";
-            colNames[4] = "Normalised Overall Discounted Accuracy";
-        }else{
-            colNames = new String[3];
-            colNames[0] = "Job";
-            colNames[1] = "Overall Accuracy";
-            colNames[2] = "Normalised Overall Accuracy";
-        }
+        colNames = new String[3];
+        colNames[0] = "Job";
+        colNames[1] = NemaDataConstants.CHORD_OVERLAP_RATIO;
+        colNames[2] = NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO;
+    
 
         List<String[]> rows = new ArrayList<String[]>();
         for (int i = 0; i < numAlgos; i++) {
             String[] row = new String[colNames.length];
             row[0] = jobIDandName[i][1];
-            row[1] = DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(NemaDataConstants.CLASSIFICATION_ACCURACY) * 100.0) + "%";
-            row[2] = DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY) * 100.0) + "%";
-            if(usingAHierarchy){
-            	row[3] = DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY) * 100.0) + "%";
-            	row[4] = DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY) * 100.0) + "%";
-            }
+            row[1] = DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO) * 100.0) + "%";
+            row[2] = DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO) * 100.0) + "%";
+            
             rows.add(row);
         }
         return new Table(colNames, rows);
-    }
-
-    /**
-     * Prepares a summary CSV file for the classification task which encodes multiple evaluation metrics
-     * averaged over all folds of the experiment.
-     * 
-     * @param jobIDToAggregateEval Map linking jobID to its overall evaluation data Object.
-     * @param jobIDToName Map linking jobID to the Job name to use in the CSV for each set of results.
-     * @param classNames A list of the class names used.
-     * @param outputFile The file to write the CSV encoded data to.
-     * @param usingAHierarchy A flag that indicates whether hierarchical discounting was performed. If 
-     * true then additional metrics based on the hierarchical discounting procedure are reported.
-     */
-    public static void prepSummaryResultDataCSV(Map<String,NemaData> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, File outputFile, boolean usingAHierarchy) 
-    		throws IOException{
-    	//sort systems alphabetically
-    	int numAlgos = jobIDToName.size();
-    	String[][] jobIDandName = new String[numAlgos][];
-    	int idx=0;
-    	String id;
-    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
-    		id = it.next();
-    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
-    	}
-    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
-    		public int compare(String[] a, String[] b){
-    			return a[1].compareTo(b[1]);
-    		}
-    	});
-        
-        String csv = "*Participant,Overall Accuracy,Overall Normalised Accuracy";
-        if (usingAHierarchy){
-        	csv += ",Overall Discounted Accuracy,Overall Normalised Accuracy";
-        }
-        csv += "\n";
-        for (int i = 0; i < numAlgos; i++) {
-        	csv += jobIDandName[i][1];
-        	csv += "," + DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(NemaDataConstants.CLASSIFICATION_ACCURACY) * 100.0) + "%";
-        	csv += "," + DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY) * 100.0) + "%";
-        	if(usingAHierarchy){
-        		csv += "," + DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY) * 100.0) + "%";
-            	csv += "," + DEC.format(jobIDToAggregateEval.get(jobIDandName[i][0]).getDoubleMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY) * 100.0) + "%";
-        	}
-        	csv += "\n";
-        }
-        
-        BufferedWriter output = null;
-        try {
-            output = new BufferedWriter(new FileWriter(outputFile));
-            output.write(csv);
-        }finally{
-        	try {
-	        	if(output != null){
-	        		output.flush();
-	        		output.close();
-	        	}
-        	} catch (IOException ex) {}
-        }
     }
     
 }
