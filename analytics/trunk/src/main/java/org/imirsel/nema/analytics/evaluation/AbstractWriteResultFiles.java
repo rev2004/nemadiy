@@ -1,7 +1,12 @@
 package org.imirsel.nema.analytics.evaluation;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.imirsel.nema.analytics.evaluation.util.resultpages.Table;
@@ -40,9 +45,49 @@ public class AbstractWriteResultFiles {
 	    
 	    return new Table(colNames, rows);
 	}
-
-	public AbstractWriteResultFiles() {
-		super();
-	}
+	
+	/**
+	 * Writes a Table Object to a CSV file.
+	 * @param table Table to write.
+	 * @param outputFile File to write to.
+	 * @throws IOException
+	 */
+    public static void writeTableToCsv(Table table, File outputFile) throws IOException{
+		int cols = table.getColHeaders().length;
+				
+		String csv = "*";
+		for (int i = 0; i < cols; i++) {
+			csv += table.getColHeaders()[i];
+		    if (i<cols-1){
+		    	csv += ",";
+		    }
+		}
+		csv += "\n";
+		
+		List<String[]> rows = table.getRows();
+		for (Iterator<String[]> iterator = rows.iterator(); iterator.hasNext();) {
+			String[] row = iterator.next();
+			for (int i = 0; i < cols; i++) {
+		    	csv += row[i];
+		        if (i<cols-1){
+		        	csv += ",";
+		        }
+		    }
+		    csv += "\n";
+		}
+		
+		BufferedWriter output = null;
+		try {
+		    output = new BufferedWriter(new FileWriter(outputFile));
+		    output.write(csv);
+		}finally{
+			try {
+		    	if(output != null){
+		    		output.flush();
+		    		output.close();
+		    	}
+			} catch (IOException ex) {}
+		}
+    }
 
 }

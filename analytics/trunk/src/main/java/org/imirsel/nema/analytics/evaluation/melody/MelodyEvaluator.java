@@ -90,8 +90,10 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		_logger.info("Writing out CSV result files over whole task...");
 		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator
 				+ "allResults.csv");
-		WriteMelodyResultFiles.prepSummaryCsv(jobIdToEvaluation, jobIDToName,
-				summaryCsv);
+		WriteMelodyResultFiles.writeTableToCsv(
+				WriteMelodyResultFiles.prepSummaryTableData(jobIdToEvaluation, jobIDToName),
+				summaryCsv
+			);
 
 		// write out per track CSV for each system
 
@@ -104,9 +106,10 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			resultList = sysResults.get(0);
 			File sysDir = jobIDToResultDir.get(jobID);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "perTrack.csv");
-			WriteMelodyResultFiles.prepPerTrackCsv(
-					resultList, jobIDToName.get(jobID),
-					trackCSV);
+			WriteMelodyResultFiles.writeTableToCsv(
+					WriteMelodyResultFiles.prepPerTrackTableData(resultList, jobIDToName.get(jobID)),
+					trackCSV
+				);
 			jobIDToPerTrackCSV.put(jobID, trackCSV);
 		}
 

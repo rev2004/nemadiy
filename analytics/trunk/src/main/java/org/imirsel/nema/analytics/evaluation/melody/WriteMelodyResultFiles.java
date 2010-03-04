@@ -71,57 +71,6 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
         return new Table(colNames, rows);
     }
 
-	/**
-	 * 
-	 * @param jobIdToEval
-	 * @param jobIdToName
-	 * @param outputFile
-	 * @throws IOException
-	 */
-    public static void prepSummaryCsv(Map<String,NemaData> jobIdToEval, Map<String,String> jobIdToName, File outputFile) 
-    		throws IOException{
-
-    	// create the csv file as a string
-    	String delim = ",";
-        String csv = "*Algorithm";
-        csv += delim + NemaDataConstants.MELODY_RAW_PITCH_ACCURACY;
-		csv += delim + NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY;
-		csv += delim + NemaDataConstants.MELODY_VOICING_RECALL;
-		csv += delim + NemaDataConstants.MELODY_VOICING_FALSE_ALARM;
-		csv += delim + NemaDataConstants.MELODY_OVERALL_ACCURACY;
-		csv += "\n";
-        
-		NemaData eval;
-		String jobId;
-		String jobName;
-        for (Iterator<String> it = jobIdToEval.keySet().iterator();it.hasNext();) {
-        	jobId = it.next();
-        	jobName = jobIdToName.get(jobId);
-        	eval = jobIdToEval.get(jobId);
-            csv += jobName;
-            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY);
-            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY);
-            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_RECALL);
-            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM);
-            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY);
-            csv += "\n";   
-        }
-        
-        // write the csv string out to a file
-        BufferedWriter output = null;
-        try {
-            output = new BufferedWriter(new FileWriter(outputFile));
-            output.write(csv);
-        }finally{
-        	try {
-	        	if(output != null){
-	        		output.flush();
-	        		output.close();
-	        	}
-        	} catch (IOException ex) {}
-        }
-    }
-    
     /**
      * 
      * @param evalList
@@ -156,53 +105,6 @@ public class WriteMelodyResultFiles extends AbstractWriteResultFiles{
         }
 
         return new Table(colNames, rows);
-    }
-
-    /**
-     * 
-     * @param evalList
-     * @param jobName
-     * @param outputFile
-     * @throws IOException
-     */
-    public static void prepPerTrackCsv(List<NemaData> evalList, String jobName, File outputFile) 
-    		throws IOException{
-    	
-    	// create the csv file as a string
-    	String delim = ",";
-        String csv = "*Track";
-        csv += delim + NemaDataConstants.MELODY_RAW_PITCH_ACCURACY;
-		csv += delim + NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY;
-		csv += delim + NemaDataConstants.MELODY_VOICING_RECALL;
-		csv += delim + NemaDataConstants.MELODY_VOICING_FALSE_ALARM;
-		csv += delim + NemaDataConstants.MELODY_OVERALL_ACCURACY;
-		csv += "\n";
-        
-		NemaData eval;
-        for (Iterator<NemaData> it = evalList.iterator();it.hasNext();) {
-        	eval = it.next();
-            csv += eval.getId();
-            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY);
-            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY);
-            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_RECALL);
-            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_VOICING_FALSE_ALARM);
-            csv += delim + eval.getDoubleMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY);
-            csv += "\n";   
-        }
-        
-        // write the csv string out to a file
-        BufferedWriter output = null;
-        try {
-            output = new BufferedWriter(new FileWriter(outputFile));
-            output.write(csv);
-        }finally{
-        	try {
-	        	if(output != null){
-	        		output.flush();
-	        		output.close();
-	        	}
-        	} catch (IOException ex) {}
-        }
     }
 
 }
