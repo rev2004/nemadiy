@@ -107,5 +107,7 @@ public class NemaDataConstants {
     
     
     public static final String CHORD_LABEL_SEQUENCE = "Chord label sequence";
-    
+    public static final String CHORD_OVERLAP_RATIO = "Chord Overlap ratio";
+    public static final String CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO = "Chord weighted average overlap ratio";
+
 }
