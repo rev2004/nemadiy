@@ -504,38 +504,50 @@ public class DeliminatedTextFileUtilities {
         int lastIdx = 0;
         int i = 0;
         try{
-        	
+        	System.out.println("'" + line + "'");
         	if (line.contains("\"")){
         		boolean encounteredSpeechMarks = false;
                 boolean insideSpeechMarks = false;
         	
 	            for (; i < end; i++){
+	            	System.out.println("char: " + line.charAt(i));
 	            	if(line.charAt(i) == '\"'){
 	            		encounteredSpeechMarks = true;
 	                    insideSpeechMarks = !insideSpeechMarks;
+	                    System.out.println("encountered speechmark, insideSpeechMarks=" + insideSpeechMarks);
 	            	}
 	            	if(!insideSpeechMarks){
-	            		
-		            	matcher.region(i, end);
+	            		matcher.region(i, end);
 		            	
 		                if (matcher.find()){
+		                	System.out.println("did find");
 		                    if (encounteredSpeechMarks){
-		                        output.add(tmp.substring(lastIdx+1, i-1));
+		                    	String comp = tmp.substring(lastIdx+1, i-1);
+		                        output.add(comp);
+		                        System.out.println("added " + comp + " in speech mark block");
 		                        encounteredSpeechMarks = false;
 		                        lastIdx = matcher.end();
-		                        i=lastIdx;
+		                        i=lastIdx-1;
+		                        System.out.println("lastIdx set to " + lastIdx);
 		                    }else{
-		                        output.add(tmp.substring(lastIdx, i));
+		                    	String comp = tmp.substring(lastIdx, i);
+		                        output.add(comp);
+		                        System.out.println("added " + comp + " in NO speech mark block");
+		                        
 		                        lastIdx = matcher.end();
 		                        i=lastIdx;
+		                        System.out.println("lastIdx set to " + lastIdx);
 		                    }
+		                }else{
+		                	System.out.println("didn't find");
 		                }
 	            	}
 	            }
-	            if (lastIdx != end-1){
+	            if (lastIdx != i){
 	                if (encounteredSpeechMarks){
 	                    if (insideSpeechMarks){
-	                        System.out.println("WARNING: -DeliminatedTextFileUtilities.parseDelimTextLine(): unclosed quotes (\") encountered on line '" + line + "'");
+	                        System.out.println("WARNING: DeliminatedTextFileUtilities.parseDelimTextLine(): unclosed quotes (\") encountered on line '" + line + "'\n" +
+	                        		"lastIdx=" + lastIdx + "\ti=" + i );
 	                        output.add(tmp.substring(lastIdx+1, i));
 	                    }else{
 	                        output.add(tmp.substring(lastIdx+1, i-1));

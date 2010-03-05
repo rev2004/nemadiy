@@ -35,6 +35,8 @@ public class DeliminatedTextFileUtilitiesTest extends BaseManagerTestCase{
 		String[] valsShouldBe = new String[]{"col_a","col_b","col_c"};
 		String testLine = quote + valsShouldBe[0] + quote + delim + quote + valsShouldBe[1] + quote + delim + quote + valsShouldBe[2] + quote;
 		
+		
+		
 		String[] out = DeliminatedTextFileUtilities.parseDelimTextLine(testLine, delim);
 		
 		for (int i = 0; i < out.length; i++) {
