@@ -3,12 +3,14 @@ package org.imirsel.nema.repository.tests;
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.imirsel.nema.model.NemaCollection;
 import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
@@ -87,36 +89,63 @@ public class RepositoryClientImplTest {
 		
 	}
 	
+	@Test
+	public final void testGetCollectionSubset(){
+		NemaTrackList tracklist = null;
+		try {
+			tracklist=clientImpl.getCollectionSubset(10);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assertTrue(tracklist!=null);
+		
+		  System.out.println(tracklist);
+	}
+	
+
+	@Test
+	public final void testGetFile(){
+	
+		NemaFile filelist = null;
+		 HashSet<NemaMetadataEntry> constraint = new HashSet<NemaMetadataEntry>();
+	            constraint.add(new NemaMetadataEntry("encoding", "mp3"));
+	        
+		try {
+			filelist=clientImpl.getFile("b004001", constraint);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assertTrue(filelist!=null);
+		
+		  System.out.println(filelist);
+		  
+		  // quotes around ? 
+		  // line 532
+		  // change db name in query to dev db 
+	}
+	
 //	@Test
-//	public final void testGetCollectionSubset(){
-//		NemaTrackList tracklist = null;
+//	public final void testGetTracks(){
+//	//return list<NemaTrack>, int	
+//		List<String> idtracklist = null;
 //		try {
-//			tracklist=clientImpl.getCollectionSubset(10);
+//			idtracklist=clientImpl.getTrackIDs(1);
 //		} catch (SQLException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-//		assertTrue(tracklist!=null);
+//		assertTrue(idtracklist!=null);
 //		
-//		  System.out.println(tracklist);
+//		  System.out.println(idtracklist);
 //	}
-	
 
-//	@Test
-//	public final void testGetFile(NemaTrack track, Set<NemaMetadataEntry> constraint){
-//	//return NemaFile	
-//	}
-//	
-//	@Test
-//	public final void testGetTracks(NemaTrackList set){
-//	//return list<NemaTrack>	
-//	}
-//
 //	@Test
 //	public final void testGetTrackMetadataNameMap() {
 //		fail("Not yet implemented"); // TODO
 //	}
-//
+
 //	@Test
 //	public final void testGetTrackMetadataName() {
 //		fail("Not yet implemented"); // TODO
