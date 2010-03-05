@@ -34,10 +34,8 @@ public class ChordIntervalTextFile extends SingleTrackEvalFileTypeImpl {
 
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";	
-	String type;
-	public ChordIntervalTextFile(String type) {
-		this.type = type;
-	}
+	
+	
 	
 	@Override
 	public NemaData readFile(File theFile)
@@ -56,7 +54,7 @@ public class ChordIntervalTextFile extends SingleTrackEvalFileTypeImpl {
 			onset = Double.parseDouble(chordStringsData[r][0]);
 			offset = Double.parseDouble(chordStringsData[r][1]);
 			interval = chordStringsData[r][2];
-			notes = ChordConversionUtil.convertIntervalsToNotenumbers(interval);
+			notes = ChordConversionUtil.getInstance().convertIntervalsToNotenumbers(interval);
 			chords.add(new NemaChord(onset, offset, notes));
 		}
 		
@@ -71,6 +69,7 @@ public class ChordIntervalTextFile extends SingleTrackEvalFileTypeImpl {
 			throws IllegalArgumentException, FileNotFoundException, IOException {
 		//TODO implement me
 		BufferedWriter writer = null;
+		
 		try{
 			List<NemaChord> chords = null;
 			try{
@@ -84,9 +83,9 @@ public class ChordIntervalTextFile extends SingleTrackEvalFileTypeImpl {
 			NemaChord nemaChord;
 			for (Iterator<NemaChord> it = chords.iterator(); it.hasNext();) {
 				nemaChord = it.next();
-				writer.write(nemaChord.onset + WRITE_DELIMITER + nemaChord.offset + WRITE_DELIMITER + ChordConversionUtil.convertNotenumbersToIntervals(nemaChord.notes) + "\n");
+				writer.write(nemaChord.onset + WRITE_DELIMITER + nemaChord.offset + WRITE_DELIMITER + ChordConversionUtil.getInstance().convertNotenumbersToIntervals(nemaChord.notes) + "\n");
 			}
-			getLogger().info(type + " metadata for " + data.getId() + " written to file: " + theFile.getAbsolutePath());
+			getLogger().info(NemaDataConstants.CHORD_LABEL_SEQUENCE + " metadata for " + data.getId() + " written to file: " + theFile.getAbsolutePath());
 		} finally {
 			if (writer != null) {
 				try {

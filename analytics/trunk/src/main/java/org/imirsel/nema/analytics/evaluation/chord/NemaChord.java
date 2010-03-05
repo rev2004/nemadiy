@@ -34,7 +34,7 @@ public class NemaChord {
 
 	@Override
 	public String toString() {
-		return onset + "\t" + offset + "\t" + ChordConversionUtil.convertNoteNumbersToShorthand(notes);
+		return onset + "\t" + offset + "\t" + ChordConversionUtil.getInstance().convertNoteNumbersToShorthand(notes);
 	}
 	
 	public static NemaChord fromString(String chordString){
@@ -44,7 +44,7 @@ public class NemaChord {
 		}
 		double onset = Double.valueOf(comps[0]);
 		double offset = Double.valueOf(comps[1]);
-		int[] notes = ChordConversionUtil.convertShorthandToNotenumbers(comps[2]);
+		int[] notes = ChordConversionUtil.getInstance().convertShorthandToNotenumbers(comps[2]);
 		if (notes == null){
 			throw new IllegalArgumentException("Couldn't parse NemaChord from String: " + chordString);
 		}
