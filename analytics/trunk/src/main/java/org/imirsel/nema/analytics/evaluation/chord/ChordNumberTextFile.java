@@ -31,10 +31,6 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";	
-	String type;
-	public ChordNumberTextFile(String type) {
-		this.type = type;
-	}
 	
 	@Override
 	public NemaData readFile(File theFile)
@@ -52,7 +48,7 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 		for(int r = 0; r < nrows-1; r++) {
 			onset = Double.parseDouble(chordStringsData[r][0]);
 			offset = Double.parseDouble(chordStringsData[r+1][0]);
-			notes = ChordConversionUtil.convertChordNumbersToNoteNumbers(chordStringsData[r][1]);
+			notes = ChordConversionUtil.getInstance().convertChordNumbersToNoteNumbers(chordStringsData[r][1]);
 			chords.add(new NemaChord(onset, offset, notes));
 		}
 		
@@ -79,9 +75,9 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 			NemaChord nemaChord;
 			for (Iterator<NemaChord> it = chords.iterator(); it.hasNext();) {
 				nemaChord = it.next();
-				writer.write(nemaChord.onset + WRITE_DELIMITER + nemaChord.offset + WRITE_DELIMITER + ChordConversionUtil.convertNotenumbersToChordnumbers(nemaChord.notes) + "\n");
+				writer.write(nemaChord.onset + WRITE_DELIMITER + nemaChord.offset + WRITE_DELIMITER + ChordConversionUtil.getInstance().convertNotenumbersToChordnumbers(nemaChord.notes) + "\n");
 			}
-			getLogger().info(type + " metadata for " + data.getId() + " written to file: " + theFile.getAbsolutePath());
+			getLogger().info(NemaDataConstants.CHORD_LABEL_SEQUENCE + " metadata for " + data.getId() + " written to file: " + theFile.getAbsolutePath());
 		} finally {
 			if (writer != null) {
 				try {

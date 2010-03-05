@@ -28,6 +28,24 @@ public class DeliminatedTextFileUtilitiesTest extends BaseManagerTestCase{
 	
 
 	@Test
+	public void testParseCommaDelimTextLineWithQuotes() {
+
+		String delim = ",";
+		String quote = "\"";
+		String[] valsShouldBe = new String[]{"col_a","col_b","col_c"};
+		String testLine = quote + valsShouldBe[0] + quote + delim + quote + valsShouldBe[1] + quote + delim + quote + valsShouldBe[2] + quote;
+		
+		String[] out = DeliminatedTextFileUtilities.parseDelimTextLine(testLine, delim);
+		
+		for (int i = 0; i < out.length; i++) {
+			if (!out[i].equals(valsShouldBe[i])){
+				fail("Values produced by parser don't match true values.\nParsed: '" + out[i] + "'" + "\nActual: '" + valsShouldBe[i] + "'");
+			}
+		}
+	}
+	
+
+	@Test
 	public void testParseTabDelimTextLine() {
 		String delim = "\t";
 		String[] valsShouldBe = new String[]{"col_a","col_b","  col_c"};

@@ -459,7 +459,7 @@ public class DeliminatedTextFileUtilities {
         catch (java.lang.NullPointerException npe)
         {
             textBuffer.close();
-            throw new RuntimeException("NullPointerException caused by classpath: " + classPath, npe);
+            throw new IllegalArgumentException("NullPointerException caused by classpath: " + classPath, npe);
         }
 
         String[][] outputData = new String[rowData.size()][maxRowLength];
@@ -493,55 +493,77 @@ public class DeliminatedTextFileUtilities {
 //        char delimChar = delimiter.charAt(0);
         
         //add boundary requirement to delimiter
-        Pattern pattern = Pattern.compile("^" + delimiter);
-        Matcher matcher = pattern.matcher(line);
+        Pattern delimPattern = Pattern.compile("^" + delimiter);
+        Matcher matcher = delimPattern.matcher(line);
         //set use Anchoring bounds 
         matcher.useAnchoringBounds(true);
         
         
-        boolean encounteredSpeechMarks = false;
-        boolean insideSpeechMarks = false;
+        
         int end = tmp.length();
         int lastIdx = 0;
         int i = 0;
         try{
-            for (; i < end; i++){
-            	matcher.region(i, end);
-            	
-                if (matcher.find() && !insideSpeechMarks){
-                    if (encounteredSpeechMarks){
-                        output.add(tmp.substring(lastIdx+1, i-1));
-                        encounteredSpeechMarks = false;
+        	
+        	if (line.contains("\"")){
+        		boolean encounteredSpeechMarks = false;
+                boolean insideSpeechMarks = false;
+        	
+	            for (; i < end; i++){
+	            	if(line.charAt(i) == '\"'){
+	            		encounteredSpeechMarks = true;
+	                    insideSpeechMarks = !insideSpeechMarks;
+	            	}
+	            	if(!insideSpeechMarks){
+	            		
+		            	matcher.region(i, end);
+		            	
+		                if (matcher.find()){
+		                    if (encounteredSpeechMarks){
+		                        output.add(tmp.substring(lastIdx+1, i-1));
+		                        encounteredSpeechMarks = false;
+		                        lastIdx = matcher.end();
+		                        i=lastIdx;
+		                    }else{
+		                        output.add(tmp.substring(lastIdx, i));
+		                        lastIdx = matcher.end();
+		                        i=lastIdx;
+		                    }
+		                }
+	            	}
+	            }
+	            if (lastIdx != end-1){
+	                if (encounteredSpeechMarks){
+	                    if (insideSpeechMarks){
+	                        System.out.println("WARNING: -DeliminatedTextFileUtilities.parseDelimTextLine(): unclosed quotes (\") encountered on line '" + line + "'");
+	                        output.add(tmp.substring(lastIdx+1, i));
+	                    }else{
+	                        output.add(tmp.substring(lastIdx+1, i-1));
+	                    }
+	                }else{
+	                    output.add(tmp.substring(lastIdx, i));
+	                }
+	            }
+            
+        	}else{
+	        	
+	            for (; i < end; i++){
+	            	matcher.region(i, end);
+	            	
+	                if (matcher.find()){
+	                    output.add(tmp.substring(lastIdx, i));
                         lastIdx = matcher.end();
                         i=lastIdx;
-                    }else{
-                        output.add(tmp.substring(lastIdx, i));
-                        lastIdx = matcher.end();
-                        i=lastIdx;
-                    }
-                }else if (tmp.charAt(i) == '"'){
-                    encounteredSpeechMarks = true;
-                    insideSpeechMarks = !insideSpeechMarks;
-                }
-                
-            }
-            if (lastIdx != i){
-                if (encounteredSpeechMarks){
-                    if (insideSpeechMarks){
-                        System.out.println("WARNING: DeliminatedTextFileUtilities.parseDelimTextLine(): unclosed quotes (\") encountered on line '" + line + "'");
-                        output.add(tmp.substring(lastIdx, i));
-                    }else{
-                        output.add(tmp.substring(lastIdx+1, i-1));
-                    }
-                }else{
+	                }
+	            }
+	            if (lastIdx != i){
                     output.add(tmp.substring(lastIdx, i));
-                }
-            }
+	            }
+        	}
             
         }catch(Exception e){
         	throw new IllegalArgumentException("Error parsing line:\n\t[" + tmp + "]\n" + 
         			"Was at index: " + i + "\n" +
-					"Encountered speech marks: " + encounteredSpeechMarks+ "\n" +
 					"lastIdx: " + lastIdx + "\n",e);
         }
                 

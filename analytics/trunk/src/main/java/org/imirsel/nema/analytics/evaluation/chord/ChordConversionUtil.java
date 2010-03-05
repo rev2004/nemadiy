@@ -1,5 +1,6 @@
 package org.imirsel.nema.analytics.evaluation.chord;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,45 +12,61 @@ import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 
 public class ChordConversionUtil {
 	
-	private static Map<String,int[]> shorthandToNoteNumbers;
-	private static Map<String,String> noteNumbersToShorthand;
+	private static ChordConversionUtil instance = null;
 	
-	private static Map<String,int[]> intervalsToNoteNumbers;
-	private static Map<String,String> NoteNumbersToIntervals;
+	private Map<String,int[]> shorthandToNoteNumbers;
+	private Map<String,String> noteNumbersToShorthand;
 	
-	private static Map<String,int[]> chordNumberToNoteNumbers;
-	private static Map<String,String> NoteNumbersToChordNumbers;
+	private Map<String,int[]> intervalsToNoteNumbers;
+	private Map<String,String> NoteNumbersToIntervals;
 	
-	public static final String INTERVAL_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/IntervalDictionary.txt";
-	public static final String SHORTHAND_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/IntervalDictionary.txt";
-	public static final String CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/IntervalDictionary.txt";
+	private Map<String,int[]> chordNumberToNoteNumbers;
+	private Map<String,String> NoteNumbersToChordNumbers;
+	
+	public final String INTERVAL_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/IntervalDictionary.txt";
+	public final String SHORTHAND_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/ShorthandDictionary.txt";
+	public final String CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/NoteNumbersDictionary.txt";
 
-	static{
+	public static ChordConversionUtil getInstance(){
+		if (instance == null){
+			instance = new ChordConversionUtil();
+		}
+		return instance;
+	}
+	
+	public ChordConversionUtil(){
 		//read dictionaries
-		
-		try{
+
+		try {
 			intervalsToNoteNumbers = readChordDictionary(INTERVAL_DICTIONARY_CLASSPATH);
 			NoteNumbersToIntervals = reverseMap(intervalsToNoteNumbers);
-			
+		} catch (Exception e) {
+			throw new IllegalArgumentException(
+					"Failed to read chord dictionary from classpath: "
+							+ INTERVAL_DICTIONARY_CLASSPATH, e);
+		}
+		try {
 			shorthandToNoteNumbers = readChordDictionary(SHORTHAND_DICTIONARY_CLASSPATH);
 			noteNumbersToShorthand = reverseMap(shorthandToNoteNumbers);
-			
-			chordNumberToNoteNumbers = readChordDictionary(CHORDNUMBERS_DICTIONARY_CLASSPATH);
-			NoteNumbersToChordNumbers = reverseMap(chordNumberToNoteNumbers);
-			
-			
-		}catch(Exception e){
-			throw new IllegalArgumentException("Failed to read chord dictionary from classpath: " + INTERVAL_DICTIONARY_CLASSPATH);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(
+					"Failed to read chord dictionary from classpath: "
+							+ SHORTHAND_DICTIONARY_CLASSPATH, e);
 		}
 		
-		
-		
-		
+		try {
+			chordNumberToNoteNumbers = readChordDictionary(CHORDNUMBERS_DICTIONARY_CLASSPATH);
+			NoteNumbersToChordNumbers = reverseMap(chordNumberToNoteNumbers);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(
+					"Failed to read chord dictionary from classpath: "
+							+ CHORDNUMBERS_DICTIONARY_CLASSPATH, e);
+		}
 		
 	}
 
 	
-	public static int[] convertIntervalsToNotenumbers(String intervalString) throws IllegalArgumentException{
+	public int[] convertIntervalsToNotenumbers(String intervalString) throws IllegalArgumentException{
 		int[] out = intervalsToNoteNumbers.get(intervalString);
 		if (out == null){
 			throw new IllegalArgumentException("Could not interpret '" + intervalString + "' as notes!");
@@ -57,7 +74,7 @@ public class ChordConversionUtil {
 		return out; 
 	}
 	
-	public static String convertNotenumbersToIntervals(int[] notes) throws IllegalArgumentException{
+	public String convertNotenumbersToIntervals(int[] notes) throws IllegalArgumentException{
 		String key = createKey(notes);
 		String out = NoteNumbersToIntervals.get(key);
 		if (out == null){
@@ -72,7 +89,7 @@ public class ChordConversionUtil {
 	}
 
 	
-	public static int[] convertShorthandToNotenumbers(String shorthandChordLabel){
+	public int[] convertShorthandToNotenumbers(String shorthandChordLabel){
 		int[] out = shorthandToNoteNumbers.get(shorthandChordLabel);
 		if (out == null){
 			throw new IllegalArgumentException("Could not interpret '" + shorthandChordLabel + "' as notes!");
@@ -80,7 +97,7 @@ public class ChordConversionUtil {
 		return out; 
 	}
 	
-	public static String convertNoteNumbersToShorthand(int[] notes){
+	public String convertNoteNumbersToShorthand(int[] notes){
 		String key = createKey(notes);
 		String out = NoteNumbersToIntervals.get(key);
 		if (out == null){
@@ -97,14 +114,14 @@ public class ChordConversionUtil {
 	
 	
 	
-	public static int[] convertChordNumbersToNoteNumbers(String no){
+	public int[] convertChordNumbersToNoteNumbers(String no){
 		int[] out = chordNumberToNoteNumbers.get(no) ;
 		if (out == null){
 			throw new IllegalArgumentException("Could not interpret '" + no + "' as notes!");
 		}		
 		return out; 		
 	}
-	public static String convertNotenumbersToChordnumbers(int[] notes){
+	public String convertNotenumbersToChordnumbers(int[] notes){
 		
 		String key = createKey(notes);
 		String out = NoteNumbersToChordNumbers.get(key);
@@ -120,32 +137,49 @@ public class ChordConversionUtil {
 		
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	private static Map<String,int[]> readChordDictionary(String classpath) throws IOException{
+//	
+	public static Map<String,int[]> readChordDictionary(String classpath) throws IOException{
 		String[][] chordMappings = DeliminatedTextFileUtilities.loadDelimTextData(classpath, ",", -1);
 		try{
-			int nrows = chordMappings.length;
-			Map<String,int[]> map = new HashMap<String, int[]>(nrows);
-			for(int r = 0; r < nrows; r++) {
-				String key = chordMappings[r][0];
-				String val = chordMappings[r][1];
-				String[] comps = val.split("\\s+");
-				int[] valArray = new int[comps.length];
-				for (int i = 0; i < valArray.length; i++) {
-					valArray[i] = Integer.valueOf(comps[i]);
-				}
-				map.put(key, valArray);
-			}
-			return map;
+			return produceChordMap(chordMappings);
 		}catch(Exception e){
-			throw new IllegalArgumentException("Failed to read chord dictionary from classpath: " + classpath + "\nPlease check the file format.");
+			throw new IllegalArgumentException(
+					"Failed to read chord dictionary from classpath: " + classpath + "\nPlease check the file format.",e);
 		}
+	}
+	
+	public static Map<String,int[]> readChordDictionary(File file) throws IOException{
+		String[][] chordMappings = DeliminatedTextFileUtilities.loadDelimTextData(file, ",", -1);
+		try{
+			return produceChordMap(chordMappings);
+		}catch(Exception e){
+			boolean exists = file.exists();
+			String msg = "Failed to read chord dictionary from file: " + file.getAbsolutePath();
+			if (exists){
+				msg += "\nFile does exist, hence please check format";
+			}else{
+				msg += "\nFile does not exist!";
+			}
+			throw new IllegalArgumentException(msg,e);
+		}
+	}
+
+	private static Map<String, int[]> produceChordMap(String[][] chordMappings) {
+
+		int nrows = chordMappings.length;
+		Map<String,int[]> map = new HashMap<String, int[]>(nrows);
+		for(int r = 0; r < nrows; r++) {
+			String key = chordMappings[r][0];
+			String val = chordMappings[r][1];
+			String[] comps = val.split("\\s+");
+			int[] valArray = new int[comps.length];
+			for (int i = 0; i < valArray.length; i++) {
+				valArray[i] = Integer.valueOf(comps[i]);
+			}
+			map.put(key, valArray);
+		}
+		return map;
+		
 	}	
 	
 	private static String createKey(int[] arr){

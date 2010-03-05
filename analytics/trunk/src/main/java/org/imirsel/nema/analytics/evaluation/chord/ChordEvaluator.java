@@ -63,8 +63,6 @@ public class ChordEvaluator extends EvaluatorImpl{
      * are performed (N.B. this is ignored if there is only one result to evaluate).
      * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
      * the significance tests.
-     * @param hierarchyFile_ If non-null the specified genre hierarchy will be used to discount 
-     * confusions and produce an extra evaluation metric that takes into account near misses.
      * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
      * found.
      * @throws IOException Thrown if there is a problem reading the hierarchy file.
@@ -75,8 +73,7 @@ public class ChordEvaluator extends EvaluatorImpl{
             File outputDir_,
             File workingDir_,
             boolean performMatlabStatSigTests_,
-            File matlabPath_,
-            File hierarchyFile_) 
+            File matlabPath_) 
     		throws FileNotFoundException, IOException{
         super(workingDir_, outputDir_, task_, dataset_);
         performMatlabStatSigTests = performMatlabStatSigTests_;
@@ -285,27 +282,8 @@ public class ChordEvaluator extends EvaluatorImpl{
         }
 
         //aggregate results to produce overall evaluation
-        getLogger().info("Producing aggregate evaluations over all folds");
-        Map<String,NemaData> jobIDToAggregateEvaluations = new HashMap<String,NemaData>(numJobs); 
-        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
-        	jobId = it.next();
-        	List<NemaData> evalList = jobIDTofoldEvaluations.get(jobId);
-        	NemaData aggregateEval = new NemaData(jobId);
-        	
-        	double avgOverlap = 0.0;
-        	double avgWeightedOverlap = 0.0;
-        	
-        	for (Iterator<NemaData> it2 = evalList.iterator(); it2.hasNext();) {
-				NemaData nemaData = (NemaData) it2.next();
-				avgOverlap += nemaData.getDoubleMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO);
-	            avgWeightedOverlap += nemaData.getDoubleMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
-			}
-        	avgOverlap /= evalList.size();
-        	avgWeightedOverlap /= evalList.size();
-        	
-        	aggregateEval.setMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO, avgOverlap);
-        	aggregateEval.setMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO, avgWeightedOverlap);
-        }
+        Map<String, NemaData> jobIDToAggregateEvaluations = aggregateFoldEvaluations(
+				numJobs, jobIDTofoldEvaluations);
     		
     		
         //write out per metric CSV results files
@@ -356,7 +334,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         if (getPerformMatlabStatSigTests() && performStatSigTests){
         	getLogger().info("Performing Friedman's tests in Matlab...");
 
-            File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, overlapCsv, 0, 2, 1, numJobs, getMatlabPath());
+            File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, overlapCsv,  0, 2, 1, numJobs, getMatlabPath());
             friedmanOverlapTablePNG = tmp[0];
             friedmanOverlapTable = tmp[1];
 
@@ -385,12 +363,40 @@ public class ChordEvaluator extends EvaluatorImpl{
         return jobIDToAggregateEvaluations;
     }
 
+	private Map<String, NemaData> aggregateFoldEvaluations(int numJobs,
+			Map<String, List<NemaData>> jobIDTofoldEvaluations) {
+		String jobId;
+		getLogger().info("Producing aggregate evaluations over all folds");
+        Map<String,NemaData> jobIDToAggregateEvaluations = new HashMap<String,NemaData>(numJobs); 
+        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
+        	jobId = it.next();
+        	List<NemaData> evalList = jobIDTofoldEvaluations.get(jobId);
+        	NemaData aggregateEval = new NemaData(jobId);
+        	
+        	double avgOverlap = 0.0;
+        	double avgWeightedOverlap = 0.0;
+        	
+        	for (Iterator<NemaData> it2 = evalList.iterator(); it2.hasNext();) {
+				NemaData nemaData = (NemaData) it2.next();
+				avgOverlap += nemaData.getDoubleMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO);
+	            avgWeightedOverlap += nemaData.getDoubleMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
+			}
+        	avgOverlap /= evalList.size();
+        	avgWeightedOverlap /= evalList.size();
+        	
+        	aggregateEval.setMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO, avgOverlap);
+        	aggregateEval.setMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO, avgWeightedOverlap);
+        }
+		return jobIDToAggregateEvaluations;
+	}
+
 	private void writeHtmlResultPages(boolean performStatSigTests, int numJobs,
 			Map<String, NemaData> jobIDToAggregateEvaluations, File overlapCsv,
 			File weightOverlapCsv, File summaryCsv,
 			Map<String, File> jobIDToCSV, File friedmanOverlapTablePNG,
 			File friedmanOverlapTable, File friedmanWeightedOverlapTablePNG,
 			File friedmanWeightedOverlapTable, Map<String, File> jobIDToTgz) {
+		
 		String jobId;
 		List<List<NemaData>> sysResults;
 		getLogger().info("Creating result HTML files...");
@@ -435,6 +441,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         {
         	for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
     			jobId = it.next();
+    			items = new ArrayList<PageItem>();
     			sysResults = jobIDToFoldResults.get(jobId);
     			
     			Table systemTable = WriteChordResultFiles.prepTableDataOverTracks(sysResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO});
