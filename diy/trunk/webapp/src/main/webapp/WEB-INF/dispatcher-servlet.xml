@@ -137,8 +137,8 @@
             /JobManager.selectJobForSubmission=selectJobForSubmission
             /JobManager.getNotification=getNotification
             
-            /JobManager.jobDetail.json=jobdetail
-            /JobManager.getUserJobs.json=getuserjobs
+            /JobManager.jobDetail.json=getJobDetail
+            /JobManager.getUserJobs.json=getUserJobs
             /JobManager.getSubmissions.json=getSubmissions
             
             </value>
