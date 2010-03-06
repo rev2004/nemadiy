@@ -9,8 +9,8 @@ import java.io.Serializable;
 
 /**
  * A class representing a NEMA dataset. <code>NemaDataset</code>s have an ID, name, description, 
- * a link to a <code>NemaTrackList</code> defining the tracks in the set, a number of splits in the set 
- * (e.g. a number of paired test and train sets), a number of sets per split (e.g. 2 for a classic
+ * a link to a <code>NemaTrackList</code> defining the tracks in the set, a number of folds in the set 
+ * (e.g. a number of paired test and train sets), a number of sets per fold (e.g. 2 for a classic
  * train/test classification experiment, 1 for an analysis dataset), a subject metadata type id (e.g.
  * 1 for genre, -1 for none) which experiments based on the dataset will be based on (e.g. genre
  * for genre classification) and the split will have been optimised for (i.e. making sure that all
@@ -26,9 +26,9 @@ public class NemaDataset implements Serializable {
     private int id = -1;
     private String name = null;
     private String description = null;
-    private int subsetSetId = -1;
-    private int numSplits = -1;
-    private int numSetPerSplit = -1;
+    private int subsetTrackListId = -1;
+    private int numFolds = -1;
+    private int numTrackListsPerFold = -1;
     private String splitClass = null;
     private String splitParametersString = null;
     private int subjectTrackMetadataId = -1;
@@ -58,9 +58,9 @@ public class NemaDataset implements Serializable {
      * * @param id The dataset ID.
      * @param name The dataset name.
      * @param description The description of the dataset.
-     * @param subsetSetId the ID of the subset defining the tracks in the subset.
-     * @param numSplits The number of splits in the dataset, 1 or more.
-     * @param numSetPerSplit The number of sets in each split, 1 or more.
+     * @param subsetTrackListId the ID of the subset defining the tracks in the subset.
+     * @param numFolds The number of splits in the dataset, 1 or more.
+     * @param numTrackListsPerFold The number of sets in each split, 1 or more.
      * @param splitClass Placeholder to be used to hold the method used to produce the split.
      * @param splitParametersString Placeholder to be used to hold the parameters of the split 
      * method used to produce the split.
@@ -75,16 +75,16 @@ public class NemaDataset implements Serializable {
      * @param filterTrackMetadataName The filter metadata type name.
      */
     public NemaDataset(int id, String name, String description, 
-                       int subsetSetId, int numSplits, int numSetPerSplit,
+                       int subsetTrackListId, int numFolds, int numTrackListsPerFold,
                        String splitClass, String splitParametersString,
                        int subjectTrackMetadataId, String subjectTrackMetadataName,
                        int filterTrackMetadataId, String filterTrackMetadataName){
         this.id = id;
         this.name = name;
         this.description = description;
-        this.subsetSetId = subsetSetId;
-        this.numSplits = numSplits;
-        this.numSetPerSplit = numSetPerSplit;
+        this.subsetTrackListId = subsetTrackListId;
+        this.numFolds = numFolds;
+        this.numTrackListsPerFold = numTrackListsPerFold;
         this.splitClass = splitClass;
         this.splitParametersString = splitParametersString;
         this.subjectTrackMetadataId = subjectTrackMetadataId;
@@ -146,51 +146,51 @@ public class NemaDataset implements Serializable {
      * in the dataset.
      * @return The ID of the <code>NemaTrackList</code> defining the subset of tracks.
      */
-    public int getSubsetSetId(){
-        return subsetSetId;
+    public int getSubsetTrackListId(){
+        return subsetTrackListId;
     }
 
     /**
      * Sets the ID of the <code>NemaTrackList</code> defining the subset of tracks under the NEMA repository 
      * in the dataset.
-     * @param subsetSetId Sets the ID of the <code>NemaTrackList</code> defining the subset of tracks.
+     * @param subsetTrackListId Sets the ID of the <code>NemaTrackList</code> defining the subset of tracks.
      */
-    public void setSubsetSetId(int subsetSetId){
-        this.subsetSetId = subsetSetId;
+    public void setSubsetTrackListId(int subsetTrackListId){
+        this.subsetTrackListId = subsetTrackListId;
     }
 
     /**
-     * Returns the number of splits.
-     * @return the number of splits.
+     * Returns the number of folds.
+     * @return the number of folds.
      */
-    public int getNumSplits(){
-        return numSplits;
+    public int getNumFolds(){
+        return numFolds;
     }
 
     /**
-     * Sets the number of splits in the dataset. Must be kept in sync with the split numbers
+     * Sets the number of folds in the dataset. Must be kept in sync with the fold numbers
      * stored against the NemaTrackList Objects linked to the dataset in the repository.
-     * @param numSplits the number of splits in the dataset to set.
+     * @param numFolds the number of splits in the dataset to set.
      */
-    public void setNumSplits(int numSplits){
-        this.numSplits = numSplits;
+    public void setNumFolds(int numFolds){
+        this.numFolds = numFolds;
     }
 
     /**
      * Returns the number of sets in each split of the dataset.
      * @return the number of sets in each split of the dataset.
      */
-    public int getNumSetPerSplit(){
-        return numSetPerSplit;
+    public int getNumTrackListsPerFold(){
+        return numTrackListsPerFold;
     }
 
     /**
-     * Sets the number of sets in each split of the dataset. Must be kept in sync with the 
+     * Sets the number of track lists in each fold of the dataset. Must be kept in sync with the 
      * NemaTrackList Objects linked to the dataset in the repository.
-     * @param numSetPerSplit the number of sets in each split of the dataset to set.
+     * @param numTrackListsPerFold the number of track lists in each fold of the dataset to set.
      */
-    public void setNumSetPerSplit(int numSetPerSplit){
-        this.numSetPerSplit = numSetPerSplit;
+    public void setNumTrackListsPerFold(int numTrackListsPerFold){
+        this.numTrackListsPerFold = numTrackListsPerFold;
     }
 
     /**
@@ -319,7 +319,7 @@ public class NemaDataset implements Serializable {
     @Override
     public String toString(){
         return "org.imirsel.nema.repository.NEMADataset[id=" + id + ", name=" + name + ", description=" + description + ", " +
-        		", subsetSetId=" + subsetSetId + ", numSplits=" + numSplits + ", numSetPerSplit=" + numSetPerSplit + ", " +
+        		", subsetTrackListId=" + subsetTrackListId + ", numFolds=" + numFolds + ", numTrackListsPerFold=" + numTrackListsPerFold + ", " +
         		"splitClass=" + splitClass + ", splitParametersString=" + splitParametersString + ", " +
         		"subjectTrackMetadataId=" + subjectTrackMetadataId + ", subjectTrackMetadataName=" + subjectTrackMetadataName + ", " +
         		"filterTrackMetadataId=" + filterTrackMetadataId + ", filterTrackMetadataName=" + filterTrackMetadataName + "]";

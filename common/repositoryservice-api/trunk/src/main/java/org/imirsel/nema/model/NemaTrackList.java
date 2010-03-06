@@ -20,12 +20,12 @@ public class NemaTrackList implements Serializable {
 
     private int id;
     private Integer datasetId;
-    private Integer setTypeId;
-    private String setTypeName;
-    private Integer splitNumber;
+    private Integer trackListTypeId;
+    private String trackListTypeName;
+    private Integer foldNumber;
 
     /**
-     * Constructor. Sets only the set ID. All other parameters must be manually set if they are used.
+     * Constructor. Sets only the track list ID. All other parameters must be manually set if they are used.
      * @param id The ID to set.
      */
     public NemaTrackList(int id){
@@ -33,20 +33,20 @@ public class NemaTrackList implements Serializable {
     }
 
     /**
-     * Constructor. Sets the ID, dataset ID, set type ID, set type name and split number.
+     * Constructor. Sets the ID, dataset ID, track list type ID, track list type name and fold number.
      * @param id The set ID.
      * @param datasetId The dataset ID to which this set belongs.
-     * @param setTypeId The type ID of the set.
-     * @param setTypeName The type name corresponding to the set type ID (e.g. subset, train, test etc.)
-     * @param splitNumber The split number within the dataset to which the set belongs. 
+     * @param trackListTypeId The type ID of the track list.
+     * @param trackListTypeName The type name corresponding to the track list type ID (e.g. subset, train, test etc.)
+     * @param foldNumber The fold number within the dataset to which the set belongs. 
      */
     public NemaTrackList(int id, int datasetId, int setTypeId, String setTypeName,
                    int splitNumber){
         this.id = id;
         this.datasetId = datasetId;
-        this.setTypeId = setTypeId;
-        this.setTypeName = setTypeName;
-        this.splitNumber = splitNumber;
+        this.trackListTypeId = setTypeId;
+        this.trackListTypeName = setTypeName;
+        this.foldNumber = splitNumber;
     }
 
     /**
@@ -85,48 +85,48 @@ public class NemaTrackList implements Serializable {
      * Returns the set type ID.
      * @return the set type ID.
      */
-    public int getSetTypeId(){
-        return setTypeId;
+    public int getTrackListTypeId(){
+        return trackListTypeId;
     }
 
     /**
      * Sets the set type ID.
-     * @param setTypeId the set type ID to set.
+     * @param trackListTypeId the set type ID to set.
      */
-    public void setSetTypeId(int setTypeId){
-        this.setTypeId = setTypeId;
+    public void setTrackListTypeId(int setTypeId){
+        this.trackListTypeId = setTypeId;
     }
 
     /**
      * Returns the set type name.
-     * @return the setTypeName.
+     * @return the trackListTypeName.
      */
-    public String getSetTypeName(){
-        return setTypeName;
+    public String getTrackListTypeName(){
+        return trackListTypeName;
     }
 
     /**
      * Sets the set type name.
-     * @param setTypeName the setTypeName to set
+     * @param trackListTypeName the trackListTypeName to set
      */
-    public void setSetTypeName(String setTypeName){
-        this.setTypeName = setTypeName;
+    public void setTrackListTypeName(String trackListTypeName){
+        this.trackListTypeName = trackListTypeName;
     }
     
     /**
      * Returns the split number within the dataset that the set belongs to.
      * @return the split number.
      */
-    public int getSplitNumber(){
-        return splitNumber;
+    public int getFoldNumber(){
+        return foldNumber;
     }
 
     /**
      * Sets the split number within the dataset that the set belongs to.
-     * @param splitNumber the split number to set.
+     * @param foldNumber the split number to set.
      */
-    public void setSplitNumber(int splitNumber){
-        this.splitNumber = splitNumber;
+    public void setFoldNumber(int foldNumber){
+        this.foldNumber = foldNumber;
     }
 
     @Override
@@ -157,8 +157,8 @@ public class NemaTrackList implements Serializable {
 
     @Override
     public String toString(){
-        return "org.imirsel.nema.repository.NEMASet[id=" + id + ", datasetID=" + datasetId + ", splitNum=" + splitNumber + "," +
-        		" setTypeID=" + setTypeId + ", setTypeName=" + setTypeName + "]";
+        return "org.imirsel.nema.repository.NEMASet[id=" + id + ", datasetID=" + datasetId + ", splitNum=" + foldNumber + "," +
+        		" setTypeID=" + trackListTypeId + ", trackListTypeName=" + trackListTypeName + "]";
     }
 
 }
