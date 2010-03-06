@@ -15,6 +15,7 @@ import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.repository.RepositoryClientImpl;
+import org.imirsel.nema.repository.RepositoryProperties;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -27,6 +28,8 @@ public class RepositoryClientImplTest {
 	@Before
     public void setUp() throws Exception {
 		clientImpl = new RepositoryClientImpl();
+		System.out.println(RepositoryProperties.DB_LOCATOR + "=" + RepositoryProperties.getProperty(RepositoryProperties.DB_LOCATOR));
+		System.out.println(RepositoryProperties.DB_NAME + "=" + RepositoryProperties.getProperty(RepositoryProperties.DB_NAME));
 	}
 	
 	
@@ -43,7 +46,6 @@ public class RepositoryClientImplTest {
 		try {
 			dataset=clientImpl.getDatasets();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		assertTrue(dataset!=null);
@@ -90,10 +92,10 @@ public class RepositoryClientImplTest {
 	}
 	
 	@Test
-	public final void testGetCollectionSubset(){
+	public final void testGetDatasetSubset(){
 		NemaTrackList tracklist = null;
 		try {
-			tracklist=clientImpl.getCollectionSubset(10);
+			tracklist=clientImpl.getDatasetSubset(10);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
