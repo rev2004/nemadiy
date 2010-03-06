@@ -170,23 +170,22 @@ public interface RepositoryClientInterface {
 //     */
 //    public List<NemaDataset> getDatasetsForTask(int taskId) throws SQLException;
 //
-//    /**
-//     * Retrieves a NemaTrackList Object describing the subset of a Collection that
-//     * is relevant to a dataset. This may be resolved to a list of tracks using
-//     * <code>getTracks(NemaTrackList set)</code> and that to a list of files using
-//     * <code>getFiles(List<NemaTrack> trackList, Set<NemaMetadataEntry> constraint)</code>.
-//     * Finally, the file type versions (each defined by a set of metadata
-//     * entries) that the dataset is available in may be retrieved using
-//     * <code>getSetVersions(NemaTrackList set)</code>.
-//     *
-//     * @param dataset The dataset to retrieve the collection subset for.
-//     *
-//     * @return A NemaTrackList Object describing the collection subset.
-//     *
-//     * @throws SQLException
-//     */
-    
-    public NemaTrackList getCollectionSubset(NemaDataset dataset) throws SQLException;
+    /**
+     * Retrieves a NemaTrackList Object describing the set of tracks that
+     * is relevant to a dataset. This may be resolved to a list of tracks using
+     * <code>getTracks(NemaTrackList set)</code> and that to a list of files using
+     * <code>getFiles(List<NemaTrack> trackList, Set<NemaMetadataEntry> constraint)</code>.
+     * Finally, the file type versions (each defined by a set of metadata
+     * entries) that the dataset is available in may be retrieved using
+     * <code>getTrackListVersions(NemaTrackList set)</code>.
+     *
+     * @param dataset The dataset to retrieve the collection subset for.
+     *
+     * @return A NemaTrackList Object describing the collection subset.
+     *
+     * @throws SQLException
+     */
+    public NemaTrackList getDatasetSubset(NemaDataset dataset) throws SQLException;
     /**
      * Retrieves a NemaTrackList Object describing the subset of a Collection that
      * is relevant to a dataset. This may be resolved to a list of tracks using
@@ -194,7 +193,7 @@ public interface RepositoryClientInterface {
      * <code>getFiles(List<NemaTrack> trackList, Set<NemaMetadataEntry> constraint)</code>.
      * Finally, the file type versions (each defined by a set of metadata
      * entries) that the dataset is available in may be retrieved using
-     * <code>getSetVersions(NemaTrackList set)</code>.
+     * <code>getTrackListVersions(NemaTrackList set)</code>.
      *
      * @param datasetId The dataset ID to retrieve the collection subset for.
      *
@@ -202,14 +201,14 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
-    public NemaTrackList getCollectionSubset(int datasetId) throws SQLException;
+    public NemaTrackList getDatasetSubset(int datasetId) throws SQLException;
 
 
     /**
-     * Retrieves a Set containing Sets of NemaMetadataEntry Objects which define
-     * the different file types that the <emph>complete</emph> set of tracks,
-     * corresponding to the NemaTrackList, are available in.
-     * The inner Set defines a unique combination of different metadata values
+     * Retrieves a List containing Lists of NemaMetadataEntry Objects where
+     * each List defines the different file types that the <emph>complete</emph> 
+     * set of tracks, corresponding to the NemaTrackList, are available in.
+     * The inner List defines a unique combination of different metadata values
      * that appears in the NemaTrackList. To be returned by this method a file
      * with that combination of metadata values must exist for all tracks
      * in the NemaTrackList.
@@ -219,18 +218,18 @@ public interface RepositoryClientInterface {
      *
      * @param set The NemaTrackList to find complete file type version lists for.
      *
-     * @return a Set containing Sets of NemaMetadataEntry Objects which define
+     * @return a List containing Lists of NemaMetadataEntry Objects which define
      * the different file types that the <emph>complete</emph> set of tracks
      * for the NemaTrackList are available in.
      *
      * @throws SQLException
      */
-    public List<List<NemaMetadataEntry>> getSetVersions(NemaTrackList set) throws SQLException;
+    public List<List<NemaMetadataEntry>> getTrackListVersions(NemaTrackList trackList) throws SQLException;
     /**
-     * Retrieves a Set containing Sets of NemaMetadataEntry Objects which define
+     * Retrieves a List containing Lists of NemaMetadataEntry Objects which define
      * the different file types that the <emph>complete</emph> set of tracks,
      * corresponding to the NemaTrackList, are available in.
-     * The inner Set defines a unique combination of different metadata values
+     * The inner List defines a unique combination of different metadata values
      * that appears in the NemaTrackList. To be returned by this method a file
      * with that combination of metadata values must exist for all tracks
      * in the NemaTrackList.
@@ -246,35 +245,33 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
-    public List<List<NemaMetadataEntry>> getSetVersions(int setId) throws SQLException;
+    public List<List<NemaMetadataEntry>> getTrackListVersions(int trackListId) throws SQLException;
 
 
     /**
      * Retrieves a List of Lists of NemaTrackList Objects that describe the
-     * experimental track sets for each iteration of the experiment defined by
-     * the NemaDataset. The outer list enumerates the sets by iteration and the
-     * inner List groups the sets by relationship. Hence, for a 3-fold
+     * experimental track lists for each iteration of the experiment defined by
+     * the NemaDataset. The outer list enumerates the folds. Hence, for a 3-fold
      * cross-validated classification experiment the outer list would
-     * contain 3 lists each containing two sets defining the test and training
-     * sets.
+     * contain 3 lists each containing two list, one defining the test and the
+     * other the training set.
      *
-     * @param dataset The dataset to retrieve the experiment sets for.
+     * @param dataset The dataset to retrieve the experiment lists for.
      *
      * @return a List of Lists of NemaTrackList Objects that describe the
-     * experimental track sets for each iteration of the experiment defined by
+     * experimental track lists for each iteration of the experiment defined by
      * the NemaDataset.
      *
      * @throws SQLException
      */
-    public List<List<NemaTrackList>> getExperimentSets(NemaDataset dataset) throws SQLException;
+    public List<List<NemaTrackList>> getExperimentTrackLists(NemaDataset dataset) throws SQLException;
     /**
      * Retrieves a List of Lists of NemaTrackList Objects that describe the
-     * experimental track sets for each iteration of the experiment defined by
+     * experimental track lists for each iteration of the experiment defined by
      * the NemaDataset corresponding to the datasetID passed. The outer list
-     * enumerates the sets by iteration and the inner List groups the sets by
-     * relationship. Hence, for a 3-fold cross-validated classification
-     * experiment the outer list would contain 3 lists each containing two sets
-     * defining the test and training sets.
+     * enumerates the folds. Hence, for a 3-fold cross-validated classification
+     * experiment the outer list would contain 3 lists each containing two track lists
+     * defining the test and training list.
      *
      * @param datasetID The dataset ID to retrieve the experiment sets for.
      *
@@ -284,54 +281,54 @@ public interface RepositoryClientInterface {
      *
      * @throws SQLException
      */
-    public List<List<NemaTrackList>> getExperimentSets(int datasetID) throws SQLException;
+    public List<List<NemaTrackList>> getExperimentTrackLists(int datasetID) throws SQLException;
 
 
     /**
      * Retrieves a List of NemaTrack Objects defining the tracks corresponding
      * to a NemaTrackList Object.
      *
-     * @param set The NemaTrackList to retreve a track list for.
+     * @param trackList The NemaTrackList to retreve a track list for.
      *
      * @return a List of NemaTrack Objects.
      *
      * @throws SQLException
      */
-    public List<NemaTrack> getTracks(NemaTrackList set) throws SQLException;
+    public List<NemaTrack> getTracks(NemaTrackList trackList) throws SQLException;
     /**
      * Retrieves a List of NemaTrack Objects defining the tracks corresponding
      * to a NemaTrackList Object.
      *
-     * @param setId The NemaTrackList to retreve a track list for.
+     * @param trackListId The NemaTrackList to retrieve a track list for.
      *
      * @return a List of NemaTrack Objects.
      *
      * @throws SQLException
      */
-    public List<NemaTrack> getTracks(int setId) throws SQLException;
+    public List<NemaTrack> getTracks(int trackListId) throws SQLException;
 
     /**
      * Retrieves a List of NemaTrack Objects defining the tracks corresponding
      * to a NemaTrackList Object.
      *
-     * @param set The NemaTrackList to retreve a track list for.
+     * @param trackList The NemaTrackList to retrieve a track list for.
      *
      * @return a List of NemaTrack Objects.
      *
      * @throws SQLException
      */
-    public List<String> getTrackIDs(NemaTrackList set) throws SQLException;
+    public List<String> getTrackIDs(NemaTrackList trackList) throws SQLException;
     /**
      * Retrieves a List of NemaTrack Objects defining the tracks corresponding
      * to a NemaTrackList Object.
      *
-     * @param setId The NemaTrackList to retreve a track list for.
+     * @param trackListId The NemaTrackList to retrieve a track list for.
      *
      * @return a List of NemaTrack Objects.
      *
      * @throws SQLException
      */
-    public List<String> getTrackIDs(int setId) throws SQLException;
+    public List<String> getTrackIDs(int trackListId) throws SQLException;
 
     /**
      * Returns a NemaFile matching the the NemaTrack specified and having
@@ -605,7 +602,7 @@ public interface RepositoryClientInterface {
      * Returns an unmodifiable map linking set type names to their IDs.
      * @return an unmodifiable map.
      */
-    public Map<String,Integer> getSetTypeMap();
+    public Map<String,Integer> getTrackListTypeMap();
     
     /**
      * Returns the name for a track metadata type ID.
@@ -626,7 +623,7 @@ public interface RepositoryClientInterface {
      * @param typeId metadata type ID to retrieve name for.
      * @return metadata type name.
      */
-    public String getSetTypeName(int typeId);
+    public String getTrackListTypeName(int typeId);
 
     /**
      * Returns the integer ID for the specified Track metadata type name.
@@ -647,7 +644,7 @@ public interface RepositoryClientInterface {
      * @param typeName metadata type name to retrieve ID for.
      * @return metadata type ID.
      */
-    public int getSetTypeID(String typeName);
+    public int getTrackListTypeID(String typeName);
 
 
 }

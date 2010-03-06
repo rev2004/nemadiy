@@ -229,28 +229,28 @@ public interface RepositoryUpdateClientInterface extends
             List<String> subsetList) throws SQLException;
 
     /**
-     * Adds a Set to the repository DB. The set must be linked to a dataset (if it is to retrievable)
-     * and a set type specified. A split number must also be specified if this is a test or training set.
-     * For analysis sets (unsplit datasets) please enter a split number of 1. For dataset subsets, please
-     * enter -1 (as they don't belong to a split number).
+     * Adds a track list to the repository DB. The track list must be linked to a dataset (if it is to retrievable)
+     * and a track list type specified. A fold number must also be specified if this is a test or training set.
+     * For analysis datasets (unsplit datasets) please enter a fold number of 1. For dataset subsets, please
+     * enter -1 (as they don't belong to a fold number).
      * 
      * @param datasetId The dataset ID to link the Set to.
-     * @param setTypeId The set type ID.
-     * @param splitNumber The split number.
+     * @param trackListTypeId The set type ID.
+     * @param foldNumber The split number.
      * @return The ID of the Set inserted.
      * @throws SQLException
      */
-    public int insertSetDescription(int datasetId, int setTypeId, int splitNumber) throws SQLException;
+    public int insertTrackListDescription(int datasetId, int trackListTypeId, int foldNumber) throws SQLException;
 
     /**
-     * Links the specified track IDs to the specified Set in the repository DB. The track IDs must already
-     * exist in the DB and tracks to be inserted against experiment sets must also appear in the subset
+     * Links the specified track IDs to the specified track list in the repository DB. The track IDs must already
+     * exist in the DB and tracks must also appear in the subset
      * for the dataset that they are relevant to (N.B. this is not checked). 
      * 
-     * @param setID The set to link the tracks to.
-     * @param tracks The list of track IDs to link to the Set.
+     * @param trackListId The track list to link the tracks to.
+     * @param tracks The list of track IDs to link to the track list.
      * @throws SQLException
      */
-    public void insertSetTracks(int setID, List<String> tracks) throws SQLException;
+    public void insertTrackListTracks(int trackListId, List<String> tracks) throws SQLException;
 	
 }
