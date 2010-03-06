@@ -855,7 +855,7 @@
 	</node>
 	<node uin="-tdsqjufzcvrksf8d2yyw">
 		<property name="$metaclass" value="Class20"/>
-		<property name="$name" value="Flow"/>
+		<property name="$name" value="Flow Instance"/>
 		<node uin="12l8pfzcvwlkd-pw1h1x">
 			<property name="$metaclass" value="Property20"/>
 			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
@@ -868,6 +868,18 @@
 			<link uin="gimpjfzcvwlkd-lh2sib">
 				<property name="$metaclass" value="TypeLink"/>
 				<participant referencedUin="design:node:::12l8pfzcvwlkd-pw1h1x:-tdsqjufzcvrksf8d2yyw" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="9mivhg6gpw7d08z1mrl">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="uri"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="1dy97g6gpw7d0-nv9nir">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::9mivhg6gpw7d08z1mrl:-tdsqjufzcvrksf8d2yyw" role="Client"></participant>
 				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
 			</link>
 		</node>
@@ -931,28 +943,11 @@
 				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
 			</link>
 		</node>
-		<node uin="hnimszfzcvve47-e47yuf">
-			<property name="$metaclass" value="Property20"/>
-			<property name="mod_Visibility" value="$packageLocal"/>
-			<property name="lower" value="1"/>
-			<property name="upper" value="1"/>
-			<property name="multiplicity" value="1"/>
-			<property name="$name" value="isTemplate"/>
-			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
-			<property name="mod__type" value="String"/>
-			<link uin="ieje0rfzcvvwyyzbvs3c">
-				<property name="$metaclass" value="TypeLink"/>
-				<participant referencedUin="design:node:::hnimszfzcvve47-e47yuf:-tdsqjufzcvrksf8d2yyw" role="Client"></participant>
-				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
-			</link>
-		</node>
-		<link uin="ieje0rg5a0w8phibhmgw">
+		<link uin="ieje0rg6gqgt9nguknsh">
 			<property name="$metaclass" value="KernelAssociation20"/>
-			<property name="supplierNavigability" value="$supplierNavigable"/>
-			<property name="clientNavigability" value="$clientNavigableExplicitly"/>
-			<property name="label" value="requires a configurable"/>
+			<property name="supplierCardinality" value="1..*"/>
 			<participant referencedUin="design:node:::-tdsqjufzcvrksf8d2yyw" role="Client"></participant>
-			<participant referencedUin="design:node:::-tdsqjug58ihkn0yl6wum" role="Supplier"></participant>
+			<participant referencedUin="design:node:::-tdsqjug6gqgmar-zie7u4" role="Supplier"></participant>
 		</link>
 	</node>
 	<node uin="-tdsqjug58ihkn0yl6wum">
@@ -998,7 +993,7 @@
 			<property name="$metaclass" value="KernelAssociation20"/>
 			<property name="supplierNavigability" value="$supplierNavigableExplicitly"/>
 			<property name="clientCardinality" value="1"/>
-			<property name="label" value="results in a configured"/>
+			<property name="label" value="results in a"/>
 			<participant referencedUin="design:node:::-tdsqjug58ihkn0yl6wum" role="Client"></participant>
 			<participant referencedUin="design:node:::-tdsqjufzcvrksf8d2yyw" role="Supplier"></participant>
 		</link>
@@ -1076,10 +1071,13 @@
 		</link>
 		<node uin="hnimszg59z24qqg5dqrl">
 			<property name="$metaclass" value="Property20"/>
-			<property name="mod_Visibility" value="$packageLocal"/>
-			<property name="$name" value="name"/>
 			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
 			<property name="mod__type" value="String"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="type"/>
 			<link uin="ieje0rg59z2bam31vk9i">
 				<property name="$metaclass" value="TypeLink"/>
 				<participant referencedUin="design:node:::hnimszg59z24qqg5dqrl:-tdsqjug58j9jnl-zwc2l" role="Client"></participant>
@@ -1097,6 +1095,10 @@
 				<participant referencedUin="design:node:::hnimszg59z2epy32zk5o:-tdsqjug58j9jnl-zwc2l" role="Client"></participant>
 				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
 			</link>
+		</node>
+		<node uin="1g64yg6gqp4u1-j0mjqx">
+			<property name="$metaclass" value="Note"/>
+			<property name="$name" value="Note1"/>
 		</node>
 	</node>
 	<node uin="1g64yg58mbgqhrxhq9p">
@@ -1119,20 +1121,11 @@
 	</node>
 	<node uin="1g64yg58p4u7mwakxuf">
 		<property name="$metaclass" value="Note"/>
-		<property name="$note_text" value="The physical manifestation&#10; of a track."/>
+		<property name="$note_text" value="Reference to a physical manifestation of a track."/>
 		<link uin="ieje0rg58p68neyqvfa2">
 			<property name="$metaclass" value="Note Link"/>
 			<participant referencedUin="design:node:::1g64yg58p4u7mwakxuf" role="Client"></participant>
 			<participant referencedUin="design:node:::-tdsqjug58j2kyd-ycogso" role="Supplier"></participant>
-		</link>
-	</node>
-	<node uin="1g64yg59ytlgszcae7f">
-		<property name="$metaclass" value="Note"/>
-		<property name="$note_text" value="Group of related songs, selected by a human, taken from one or more track collections."/>
-		<link uin="ieje0rg59yyjem-jvnbym">
-			<property name="$metaclass" value="Note Link"/>
-			<participant referencedUin="design:node:::1g64yg59ytlgszcae7f" role="Client"></participant>
-			<participant referencedUin="design:node:::-tdsqjug58j9jnl-zwc2l" role="Supplier"></participant>
 		</link>
 	</node>
 	<node uin="1g64yg5a02y6o-h1ufv0">
@@ -1190,6 +1183,12 @@
 				<participant referencedUin="design:node:::PrimitiveType.Integer" role="Supplier"></participant>
 			</link>
 		</node>
+		<link uin="ieje0rg6gqum6ztyhprf">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="label" value="requires"/>
+			<participant referencedUin="design:node:::-tdsqjug5a301wrkijram" role="Client"></participant>
+			<participant referencedUin="design:node:::-tdsqjug6gqu7bt2yf3cw" role="Supplier"></participant>
+		</link>
 	</node>
 	<node uin="1g64yg5a49tcp-p6ghtf">
 		<property name="$metaclass" value="Note"/>
@@ -1246,7 +1245,7 @@
 			<property name="$metaclass" value="KernelAssociation20"/>
 			<property name="supplierCardinality" value="1..*"/>
 			<participant referencedUin="design:node:::-tdsqjug5biq60vybymta" role="Client"></participant>
-			<participant referencedUin="design:node:::-tdsqjug58j9jnl-zwc2l" role="Supplier"></participant>
+			<participant referencedUin="design:node:::-tdsqjug6gqlvaj-4hzflc" role="Supplier"></participant>
 		</link>
 		<node uin="hnimszg5bjwplq-p96yt2">
 			<property name="$metaclass" value="Property20"/>
@@ -1272,6 +1271,18 @@
 				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
 			</link>
 		</node>
+		<node uin="hnimszg6goy0v0z4swfm">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="siteDependency"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="ieje0rg6goygp9-npxf6c">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6goy0v0z4swfm:-tdsqjug5biq60vybymta" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
 	</node>
 	<node uin="1g64yg5idf4zky103x2">
 		<property name="$metaclass" value="Note"/>
@@ -1284,7 +1295,7 @@
 	</node>
 	<node uin="1g64yg5idmeqxmuz0w4">
 		<property name="$metaclass" value="Note"/>
-		<property name="$note_text" value="Meandre Flows that can be either templates, where the parameter settings have not been specified, or configured flows that can be readily executed."/>
+		<property name="$note_text" value="Meandre Flows can be either templates, where the parameter settings have not been specified, or configured flows that can be readily executed. When flows are configured"/>
 		<link uin="ieje0rg5idqi6a-iuvrq7">
 			<property name="$metaclass" value="Note Link"/>
 			<participant referencedUin="design:node:::1g64yg5idmeqxmuz0w4" role="Client"></participant>
@@ -1322,6 +1333,12 @@
 			<participant referencedUin="design:node:::-tdsqjug5pratvjm0hpji" role="Client"></participant>
 			<participant referencedUin="design:node:::-tdsqjug5bfmn5iig06to" role="Supplier"></participant>
 		</link>
+		<link uin="ieje0rg6gquqfy-3r2xpi">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="label" value="requires"/>
+			<participant referencedUin="design:node:::-tdsqjug5pratvjm0hpji" role="Client"></participant>
+			<participant referencedUin="design:node:::-tdsqjug6gqu7bt2yf3cw" role="Supplier"></participant>
+		</link>
 	</node>
 	<node uin="1g64yg5prbxpul9ofps">
 		<property name="$metaclass" value="Note"/>
@@ -1340,5 +1357,293 @@
 			<participant referencedUin="design:node:::1g64yg5pro76f-itp0gl" role="Client"></participant>
 			<participant referencedUin="design:node:::-tdsqjug5bfmn5iig06to" role="Supplier"></participant>
 		</link>
+	</node>
+	<node uin="-tdsqjug6gq3hfndr0b1">
+		<property name="$metaclass" value="Class20"/>
+		<property name="$name" value="Flow Template"/>
+		<node uin="672jeg6gq887d-f5uwhn">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="name"/>
+			<link uin="jmfzg6gq887d-zf96w2">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::672jeg6gq887d-f5uwhn:-tdsqjug6gq3hfndr0b1" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="8g25bg6gq8dk79dgdi9">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="uri"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="dwcvkg6gq8dk7ej248u">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::8g25bg6gq8dk79dgdi9:-tdsqjug6gq3hfndr0b1" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="2pr3jg6gq8ht64tkox">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="description"/>
+			<link uin="8h0h4g6gq8ht6fwbeyh">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::2pr3jg6gq8ht64tkox:-tdsqjug6gq3hfndr0b1" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="jnwbig6gq8kdg-z6jadi">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="dateCreated"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.Date"/>
+			<property name="mod__type" value="Date"/>
+			<link uin="33yfog6gq8kdg-hgav9i">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::jnwbig6gq8kdg-z6jadi:-tdsqjug6gq3hfndr0b1" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.Date" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="ecxkzg6gq7ks3q9sl50">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.Integer"/>
+			<property name="mod__type" value="Integer"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="creator"/>
+			<link uin="8ccwmg6gq7ks3-t0tohg">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::ecxkzg6gq7ks3q9sl50:-tdsqjug6gq3hfndr0b1" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.Integer" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="hqtiyg6gq7ks3-cgf69v">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="keyWords"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="h1fx5g6gq7ks361edhl">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hqtiyg6gq7ks3-cgf69v:-tdsqjug6gq3hfndr0b1" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+		<link uin="39q8bg6gq9th6vuk149">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="supplierNavigability" value="$supplierNavigable"/>
+			<property name="clientNavigability" value="$clientNavigableExplicitly"/>
+			<property name="label" value="requires a"/>
+			<participant referencedUin="design:node:::-tdsqjug6gq3hfndr0b1" role="Client"></participant>
+			<participant referencedUin="design:node:::-tdsqjug58ihkn0yl6wum" role="Supplier"></participant>
+		</link>
+		<link uin="ieje0rg6gqbfs8-g852ph">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="label" value="is derived from"/>
+			<property name="supplierCardinality" value="1..*"/>
+			<participant referencedUin="design:node:::-tdsqjug6gq3hfndr0b1" role="Client"></participant>
+			<participant referencedUin="design:node:::-tdsqjufzcvrksf8d2yyw" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="-tdsqjug6gq4smr-oczrns">
+		<property name="$metaclass" value="Class20"/>
+		<property name="$name" value="Person"/>
+		<node uin="hnimszg6gq5f489yrya9">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="firstName"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="ieje0rg6gq5ivf-blm7ca">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6gq5f489yrya9:-tdsqjug6gq4smr-oczrns" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="hnimszg6gq5m1t-tw4n2u">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="lastName"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="ieje0rg6gq5r18-mbvzfb">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6gq5m1t-tw4n2u:-tdsqjug6gq4smr-oczrns" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="hnimszg6gq5uk7-7jf6x9">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="email"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="ieje0rg6gq5y8d-juhcz7">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6gq5uk7-7jf6x9:-tdsqjug6gq4smr-oczrns" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="hnimszg6gq60ty-lw32nm">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="url"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="ieje0rg6gq69exs34imv">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6gq60ty-lw32nm:-tdsqjug6gq4smr-oczrns" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="hnimszg6gq6c6l7p1a2a">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="affiliation"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="ieje0rg6gq6uqslb3izm">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6gq6c6l7p1a2a:-tdsqjug6gq4smr-oczrns" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+	<node uin="-tdsqjug6gqgmar-zie7u4">
+		<property name="$metaclass" value="Class20"/>
+		<property name="$name" value="Involvement"/>
+		<link uin="ieje0rg6gqgw9zmjnt8e">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="supplierCardinality" value="1..*"/>
+			<participant referencedUin="design:node:::-tdsqjug6gqgmar-zie7u4" role="Client"></participant>
+			<participant referencedUin="design:node:::-tdsqjug6gq4smr-oczrns" role="Supplier"></participant>
+		</link>
+		<node uin="hnimszg6gqhu6o-vd9nuu">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="role"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.String"/>
+			<property name="mod__type" value="String"/>
+			<link uin="ieje0rg6gqhyya-gti9lk">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6gqhu6o-vd9nuu:-tdsqjug6gqgmar-zie7u4" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.String" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+	<node uin="-tdsqjug6gqlvaj-4hzflc">
+		<property name="$metaclass" value="Class20"/>
+		<property name="$name" value="Fold"/>
+		<link uin="ieje0rg6gqm4jc-s1d42n">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="supplierCardinality" value="1..*"/>
+			<participant referencedUin="design:node:::-tdsqjug6gqlvaj-4hzflc" role="Client"></participant>
+			<participant referencedUin="design:node:::-tdsqjug58j9jnl-zwc2l" role="Supplier"></participant>
+		</link>
+		<node uin="hnimszg6gqmgii-qj5ddy">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.Integer"/>
+			<property name="mod__type" value="Integer"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="index"/>
+			<link uin="ieje0rg6gqmgiigfxvi1">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6gqmgii-qj5ddy:-tdsqjug6gqlvaj-4hzflc" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.Integer" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+	<node uin="1g64yg6gqp6yq-abdmsm">
+		<property name="$metaclass" value="Note"/>
+		<property name="$note_text" value="Type could be test, train, subset, validation"/>
+		<link uin="ieje0rg6gqq2cv-ybejqi">
+			<property name="$metaclass" value="Note Link"/>
+			<participant referencedUin="design:node:::1g64yg6gqp6yq-abdmsm" role="Client"></participant>
+			<participant referencedUin="design:node:::-tdsqjug58j9jnl-zwc2l" role="Supplier"></participant>
+		</link>
+	</node>
+	<node uin="-tdsqjug6gqsuaufotya8">
+		<property name="$metaclass" value="Class20"/>
+		<property name="$name" value="Evaluation Result"/>
+		<node uin="hnimszg6gqz61ybu5dky">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.Integer"/>
+			<property name="mod__type" value="Integer"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="overallEvaluation"/>
+			<link uin="ieje0rg6gqz62eftl73">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6gqz61ybu5dky:-tdsqjug6gqsuaufotya8" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.Integer" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="hnimszg6gqznzm9bm4hr">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.Integer"/>
+			<property name="mod__type" value="Integer"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="perFoldEvaluation"/>
+			<link uin="ieje0rg6gqzo02-5vqtdi">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6gqznzm9bm4hr:-tdsqjug6gqsuaufotya8" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.Integer" role="Supplier"></participant>
+			</link>
+		</node>
+		<node uin="hnimszg6gqzyj898empm">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod__typeReferencedElement" value="design:node:::PrimitiveType.Integer"/>
+			<property name="mod__type" value="Integer"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="lower" value="1"/>
+			<property name="upper" value="1"/>
+			<property name="multiplicity" value="1"/>
+			<property name="$name" value="perTrack"/>
+			<link uin="ieje0rg6gqzyjo-wawz4q">
+				<property name="$metaclass" value="TypeLink"/>
+				<participant referencedUin="design:node:::hnimszg6gqzyj898empm:-tdsqjug6gqsuaufotya8" role="Client"></participant>
+				<participant referencedUin="design:node:::PrimitiveType.Integer" role="Supplier"></participant>
+			</link>
+		</node>
+	</node>
+	<node uin="-tdsqjug6gqu7bt2yf3cw">
+		<property name="$metaclass" value="Class20"/>
+		<property name="$name" value="Evaluation"/>
+		<link uin="ieje0rg6gqvvf09itdgm">
+			<property name="$metaclass" value="KernelAssociation20"/>
+			<property name="label" value="produces"/>
+			<participant referencedUin="design:node:::-tdsqjug6gqu7bt2yf3cw" role="Client"></participant>
+			<participant referencedUin="design:node:::-tdsqjug6gqsuaufotya8" role="Supplier"></participant>
+		</link>
+		<node uin="hnimszg6gr12qk7i1he7">
+			<property name="$metaclass" value="Property20"/>
+			<property name="mod_Visibility" value="$packageLocal"/>
+			<property name="$name" value="metrics"/>
+			<property name="mod__type" value="List"/>
+		</node>
 	</node>
 </nodeSet>
