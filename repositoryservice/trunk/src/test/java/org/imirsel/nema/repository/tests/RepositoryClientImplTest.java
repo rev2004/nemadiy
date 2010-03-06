@@ -4,20 +4,16 @@ import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.imirsel.nema.model.NemaCollection;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
-import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.imirsel.nema.repository.RepositoryProperties;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
