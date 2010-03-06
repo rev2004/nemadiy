@@ -67,7 +67,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 //    public static final String GET_FILE_FOR_TRACK = "SELECT file.* FROM file WHERE file.track_id=? AND ";
     public static final String GET_CONSTRAINED_FILE_FOR_TRACK = 
             "SELECT file.* from file WHERE file.id IN (\n" +
-            "SELECT file_id from file,file_metadata,file_file_metadata_link WHERE file.track_id='?' AND file.id=file_file_metadata_link.file_id \n";
+            "SELECT file_id from file,file_metadata,file_file_metadata_link WHERE file.track_id=? AND file.id=file_file_metadata_link.file_id \n";
 
     public static final String GET_CONSTRAINED_FILES =
             "SELECT file.* from file WHERE file.id IN (\n" +
@@ -528,7 +528,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             }
         }
         query += ")";
-//        System.out.println("Executing constructed query: " + query);
+        System.out.println("Executing constructed query: " + query);
         PreparedStatement st = dbCon.con.prepareStatement(query);
         List<Map<String, String>> results = executeStatement(st, trackId);
 
