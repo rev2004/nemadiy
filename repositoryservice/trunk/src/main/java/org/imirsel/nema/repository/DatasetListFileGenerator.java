@@ -29,6 +29,7 @@ import org.imirsel.nema.model.*;
  */
 public class DatasetListFileGenerator {
 
+	private static final Logger logger = Logger.getLogger(DatasetListFileGenerator.class.getName());
     
     /**
      * Utility method to help build file type constraints which are used to
@@ -43,7 +44,6 @@ public class DatasetListFileGenerator {
      *
      * @return Constraints that can be passed to retrieve file sets.
      */
-	private static final Logger logger = Logger.getLogger(DatasetListFileGenerator.class.getName());
 	public static Set<NemaMetadataEntry> buildConstraints(String bitrate, String channels, String clip_type, String encoding, String sample_rate){
         HashSet<NemaMetadataEntry> constraint = new HashSet<NemaMetadataEntry>();
         if (bitrate != null && !bitrate.trim().equals("")){
@@ -98,14 +98,14 @@ public class DatasetListFileGenerator {
         int subjectMetadata = dataset.getSubjectTrackMetadataId();
 
         ArrayList<File[]> out = new ArrayList<File[]>();
-        List<List<NemaTrackList>> sets = client.getExperimentSets(dataset);
+        List<List<NemaTrackList>> sets = client.getExperimentTrackLists(dataset);
         for (Iterator<List<NemaTrackList>> it = sets.iterator(); it.hasNext();){
             List<NemaTrackList> list = it.next();
             LinkedList<File> files = new LinkedList<File>();
             String setType;
             for (Iterator<NemaTrackList> it1 = list.iterator(); it1.hasNext();){
                 NemaTrackList set = it1.next();
-                setType = set.getSetTypeName();
+                setType = set.getTrackListTypeName();
 
                 if (setType.equalsIgnoreCase("test")){
                     files.add(writeOutSingleTestFile(client, setType, set.getId(), directory, file_encoding_constraint));
@@ -144,7 +144,7 @@ public class DatasetListFileGenerator {
         }
         RepositoryClientInterface client = new RepositoryClientImpl();
         NemaDataset dataset = client.getDataset(dataset_id);
-        int subset = dataset.getSubsetSetId();
+        int subset = dataset.getSubsetTrackListId();
         int subjectMetadata = dataset.getSubjectTrackMetadataId();
         return writeOutGTAndExtractListFiles(client, delimiter, subset, subjectMetadata, directory, file_encoding_constraint);
     }
