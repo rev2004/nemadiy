@@ -103,21 +103,20 @@ public class RepositoryClientImplTest {
 	
 
 	@Test
-	public final void testGetFile(){
+	public final void testGetFile() throws SQLException{
 	
-		NemaFile filelist = null;
-		 HashSet<NemaMetadataEntry> constraint = new HashSet<NemaMetadataEntry>();
-	            constraint.add(new NemaMetadataEntry("encoding", "mp3"));
-	        
-		try {
-			filelist=clientImpl.getFile("b004001", constraint);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		assertTrue(filelist!=null);
+		NemaFile file = null;
+		//setup constraint
+		HashSet<NemaMetadataEntry> constraint = new HashSet<NemaMetadataEntry>();
+        constraint.add(new NemaMetadataEntry("encoding", "mp3"));
+	    
+        //try to get file
+		file=clientImpl.getFile("b004001", constraint);
 		
-		  System.out.println(filelist);
+		//check we got the file
+		assertTrue(file!=null);
+		
+		  System.out.println(file);
 		  
 		  // quotes around ? 
 		  // line 532
