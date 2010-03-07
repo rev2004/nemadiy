@@ -62,49 +62,33 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 	
 	
 	@Test
-	public void testEvaluateShortHandBasedSystem() { 
+	public void testEvaluateShortHandBasedSystem() throws FileNotFoundException, IOException, IllegalArgumentException, IOException{ 
 		File groundTruthDirectory = new File("src/test/resources/chord/groundtruth");
 		File resultsDirectory = new File("src/test/resources/chord/CH");
 		String	systemName = "CH-System";
 		ChordEvaluator evaluator = null;
 		
 		//test reader and setup for evaluation
-		try {
-			evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, false, null);
-			SingleTrackEvalFileType reader = new ChordShortHandTextFile();
-			
-			List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, null);
-			evaluator.setGroundTruth(groundTruth);
+		evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, false, null);
+		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
-			List<NemaData> resultsForAllTracks = reader.readDirectory(resultsDirectory, null);
-			evaluator.addResults(systemName, systemName, resultsForAllTracks);
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
+		List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, null);
+		evaluator.setGroundTruth(groundTruth);
+	
+		List<NemaData> resultsForAllTracks = reader.readDirectory(resultsDirectory, null);
+		evaluator.addResults(systemName, systemName, resultsForAllTracks);
+		
 		
 		//test evaluation
-	
-		try {
-			Map<String,NemaData> jobIdToAggregateResults = evaluator.evaluate();
-			for(String key:jobIdToAggregateResults.keySet()){
-				assertTrue(key.equals(systemName));
-			}
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
+		Map<String,NemaData> jobIdToAggregateResults = evaluator.evaluate();
+		for(String key:jobIdToAggregateResults.keySet()){
+			assertTrue(key.equals(systemName));
 		}
+	
 	}
 
 	@Test
-	public void testEvaluateTwoShortHandBasedSystems() { 
+	public void testEvaluateTwoShortHandBasedSystems() throws FileNotFoundException, IOException, IllegalArgumentException, IOException{ 
 		File groundTruthDirectory = new File("src/test/resources/chord/groundtruth");
 		File resultsDirectory1 = new File("src/test/resources/chord/CH");
 		File resultsDirectory2 = new File("src/test/resources/chord/MD");
@@ -113,40 +97,23 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 		ChordEvaluator evaluator = null;
 		
 		//test reader and setup for evaluation
-		try {
-			evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, true, new File("/usr/local/bin/matlab"));
-			SingleTrackEvalFileType reader = new ChordShortHandTextFile();
-			
-			List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, null);
-			evaluator.setGroundTruth(groundTruth);
+		evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, true, new File("/usr/local/bin/matlab"));
+		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
-			//read system 1 results
-			List<NemaData> resultsForAllTracks = reader.readDirectory(resultsDirectory1, null);
-			evaluator.addResults(systemName1, systemName1, resultsForAllTracks);
-			
-			//read system 2 results
-			resultsForAllTracks = reader.readDirectory(resultsDirectory2, null);
-			evaluator.addResults(systemName2, systemName2, resultsForAllTracks);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
+		List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, null);
+		evaluator.setGroundTruth(groundTruth);
+	
+		//read system 1 results
+		List<NemaData> resultsForAllTracks = reader.readDirectory(resultsDirectory1, null);
+		evaluator.addResults(systemName1, systemName1, resultsForAllTracks);
+		
+		//read system 2 results
+		resultsForAllTracks = reader.readDirectory(resultsDirectory2, null);
+		evaluator.addResults(systemName2, systemName2, resultsForAllTracks);
 		
 		//test evaluation
-	
-		try {
-			Map<String,NemaData> jobIdToAggregateResults = evaluator.evaluate();
+		Map<String,NemaData> jobIdToAggregateResults = evaluator.evaluate();
 			
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
 	}
 	
 	@After
