@@ -110,7 +110,7 @@
            	 /FlowManager.getTemplateFlows.json=getTemplateFlows
            	 /FlowManager.getServerList.json=getMeandreServerList
            	 /FlowManager.getServerStatus.json=getMeandreServerStatus
-           	 /FlowManager.getAllMeandreServerStatus.json =getAllMeandreServerStatus
+           	 /FlowManager.getAllServerStatus.json =getAllMeandreServerStatus
             </value>
         </property>
     </bean>

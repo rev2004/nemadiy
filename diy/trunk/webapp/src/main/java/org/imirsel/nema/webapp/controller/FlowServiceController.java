@@ -47,7 +47,7 @@ public class FlowServiceController extends MultiActionController{
 	 * @return
 	 */
 	public ModelAndView getAllMeandreServerStatus(HttpServletRequest request, HttpServletResponse response){
-		Map<MeandreServerProxyConfig, MeandreServerProxyStatus> meadreServerProxyStatusMap=this.flowService.getMeandreServerProxyStatus();
+		Map<String, MeandreServerProxyStatus> meadreServerProxyStatusMap=this.flowService.getMeandreServerProxyStatus();
 		ModelAndView mav=new ModelAndView("jsonView");
 		mav.addObject(Constants.MEANDRE_SERVER_STATUS, meadreServerProxyStatusMap);
 		return mav;
@@ -98,7 +98,7 @@ public class FlowServiceController extends MultiActionController{
 	 * @return
 	 */
 	public ModelAndView getMeandreServerList(HttpServletRequest request, HttpServletResponse response){
-		List<MeandreServerProxyConfig> list=this.flowService.getSchedulerConfig();
+		List<String> list=this.flowService.getMeandreServerList();
 		ModelAndView mav=new ModelAndView("jsonView");
 		mav.addObject(Constants.MEANDRE_SERVER_LIST, list);
 		return mav;
