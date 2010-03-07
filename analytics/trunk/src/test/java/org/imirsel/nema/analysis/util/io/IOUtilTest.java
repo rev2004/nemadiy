@@ -22,10 +22,10 @@ public class IOUtilTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
-	public void testWriteStringToFile() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testWriteStringToFile() {
+//		fail("Not yet implemented");
+//	}
 
 	@Test
 	public void testMakeRelative() {
@@ -41,40 +41,40 @@ public class IOUtilTest {
 		
 	}
 
-	@Test
-	public void testTarAndGzipFile() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testTarAndGzipFile() {
+//		fail("Not yet implemented");
+//	}
 
-	@Test
-	public void testTarAndGzipFileStringArray() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testTarAndGzipFileStringArray() {
+//		fail("Not yet implemented");
+//	}
 
-	@Test
-	public void testTarAndGzipFileFileStringArray() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testTarAndGzipFileFileStringArray() {
+//		fail("Not yet implemented");
+//	}
 
-	@Test
-	public void testWriteObject() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testWriteObject() {
+//		fail("Not yet implemented");
+//	}
 
-	@Test
-	public void testReadObject() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testReadObject() {
+//		fail("Not yet implemented");
+//	}
 
-	@Test
-	public void testGetFilteredPathStrings() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testGetFilteredPathStrings() {
+//		fail("Not yet implemented");
+//	}
 
-	@Test
-	public void testReadFileList() {
-		fail("Not yet implemented");
-	}
+//	@Test
+//	public void testReadFileList() {
+//		fail("Not yet implemented");
+//	}
 
 	@Test
 	public void testListFiles() {

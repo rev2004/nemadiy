@@ -3,6 +3,7 @@ package org.imirsel.nema.analysis.evaluation;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.chord.ChordConversionUtil;
@@ -46,14 +47,10 @@ public class ChordConversionUtilTest {
 //	}
 
 	@Test
-	public void testReadChordDictionaryFile() {
-		try{
-			File dictFile = new File("src/test/resources/chord/ShorthandDictionary.txt");
-			Map<String,int[]> map = ChordConversionUtil.readChordDictionary(dictFile);
-		}catch(Exception e){
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
+	public void testReadChordDictionaryFile() throws IOException{
+		File dictFile = new File("src/test/resources/chord/ShorthandDictionary.txt");
+		Map<String,int[]> map = ChordConversionUtil.readChordDictionary(dictFile);
+		assertTrue(map!=null);
 	}
 
 }
