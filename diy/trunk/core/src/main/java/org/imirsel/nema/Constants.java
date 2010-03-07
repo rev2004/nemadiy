@@ -5,7 +5,7 @@ package org.imirsel.nema;
  * Constant values used throughout the application.
  * 
  *
- * @author <a href="mailto:matt@raibledesigns.com">Matt Raible</a>
+ * @author kumaramit01
  */
 public class Constants {
     //~ Static fields/initializers =============================================
@@ -129,4 +129,14 @@ public class Constants {
 	public static final String REP_DATASET = "repDataset";
 
 	public static final String FLOW_TYPE = "flowType";
+
+	/**
+	 * The list of meandre servers available
+	 */
+	public static final String MEANDRE_SERVER_LIST = "meandreServerList";
+
+	/**
+	 * The server status -number of jobs running and the number of jobs aborted
+	 */
+	public static final String MEANDRE_SERVER_STATUS = "meandreServerStatus";
 }
