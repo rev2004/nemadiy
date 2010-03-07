@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +36,11 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
-
+/**
+ * 
+ * @author kumaramit01
+ * @since 0.4.0
+ */
 public class JobController extends MultiActionController {
 
 	static private Log logger=LogFactory.getLog(JobController.class);
@@ -51,7 +54,6 @@ public class JobController extends MultiActionController {
     public void setSubmissionManager(SubmissionManager submissionManager) {
 		this.submissionManager = submissionManager;
 	}
-
 
     public FlowService getFlowService() {
 		return flowService;
@@ -256,7 +258,7 @@ public class JobController extends MultiActionController {
 	}
 
 	
-	/**
+	/**Returns the list of submission
 	 * 
 	 * @param req
 	 * @param res
@@ -288,6 +290,12 @@ public class JobController extends MultiActionController {
 	}
 	
 
+	/**Returns the job detail of the job with id
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	public ModelAndView getJobDetail(HttpServletRequest req,
 			HttpServletResponse res) {
 		String _jobId = req.getParameter("id");
@@ -320,15 +328,15 @@ public class JobController extends MultiActionController {
 		}
 	}
 
-	
-	private String processUrl(String url) {
-		String identifier="published_resources/nema";
-		int index = url.indexOf(identifier);
-		String resultFolder = url.substring(index+identifier.length());
-		return "http://nema.lis.uiuc.edu/nema_out"+resultFolder;
-		
-	}
 
+
+	/**Adds a job to the submission list
+	 * 
+	 * @param req
+	 * @param res
+	 * @return
+	 * @throws SQLException
+	 */
 	public ModelAndView submissionAction(HttpServletRequest req,
 			HttpServletResponse res) throws SQLException {
 		String _submissionId = req.getParameter("id");
@@ -364,7 +372,13 @@ public class JobController extends MultiActionController {
 	}
 
 	
-	
+	/**Allows users to delete or abort a job
+	 * 
+	 * @param req
+	 * @param res
+	 * @return
+	 * @throws MeandreServerException
+	 */
 	public ModelAndView doJobAction(HttpServletRequest req,HttpServletResponse res) throws MeandreServerException{
 		String _jobId = req.getParameter("id");
 		long jobId = Long.parseLong(_jobId);
@@ -385,6 +399,12 @@ public class JobController extends MultiActionController {
 
 
 
+	/**Returns the list of jobs for the current user
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	public ModelAndView getUserJobs(HttpServletRequest req,
 			HttpServletResponse res) {
 		User user = userManager.getCurrentUser();
@@ -392,17 +412,16 @@ public class JobController extends MultiActionController {
     	long userId = user.getId();
 		logger.debug("start to list the jobs of   " + user.getUsername());
 		List<Job> jobs = flowService.getUserJobs(userId);
-		/** SO FUGLY **/
-		HashMap<Long,Job> jobMap = new HashMap<Long,Job>();
-		
-		for(Job job:jobs){
-			jobMap.put(job.getId(), job);
-			logger.debug(job.getId() +" " +job.getName() + " " + job.getJobStatus());
-		}
-		return new ModelAndView("job/jobList", Constants.JOBLIST, jobMap.values());
+		return new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
 	}
 
 	
+	/**Returns list of notifications for the user
+	 * 
+	 * @param req
+	 * @param res
+	 * @return
+	 */
 	public ModelAndView getNotification(HttpServletRequest req, HttpServletResponse res){
 		User user=this.userManager.getCurrentUser();
 		List<Notification> notifications=this.flowService.getUserNotifications(user.getId());
@@ -449,8 +468,15 @@ public class JobController extends MultiActionController {
 	}
 	
 
-
-	public RepositoryClientInterface getRepositoryClient() {
+	
+	private String processUrl(String url) {
+		String identifier="published_resources/nema";
+		int index = url.indexOf(identifier);
+		String resultFolder = url.substring(index+identifier.length());
+		return "http://nema.lis.uiuc.edu/nema_out"+resultFolder;
+		
+	}
+	private RepositoryClientInterface getRepositoryClient() {
 		return repositoryClientConnectionPool.getFromPool();
 	}
 	

@@ -92,7 +92,7 @@
     
     
     <!-- flow controller -->
-    <bean id="flowController" class="org.imirsel.nema.webapp.controller.FlowController">
+    <bean id="flowController" class="org.imirsel.nema.webapp.controller.FlowServiceController">
     	<property name="flowService" ref="realFlowService"/>
     	 <property name="methodNameResolver"  ref="flowMethodResolver" />
     </bean>
@@ -108,6 +108,9 @@
            	 
            	 /FlowManager.getFlowList.json=getTemplateFlows
            	 /FlowManager.getTemplateFlows.json=getTemplateFlows
+           	 /FlowManager.getServerList.json=getMeandreServerList
+           	 /FlowManager.getServerStatus.json=getMeandreServerStatus
+           	 /FlowManager.getAllMeandreServerStatus.json =getAllMeandreServerStatus
             </value>
         </property>
     </bean>

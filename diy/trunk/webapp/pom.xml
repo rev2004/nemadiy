@@ -13,7 +13,7 @@
 
 	<artifactId>nema-webapp</artifactId>
 	<packaging>war</packaging>
-	<name>NEMA Modular Application - Web</name>
+	<name>Nema Modular Application - Web</name>
 
 	<build>
 		<plugins>
