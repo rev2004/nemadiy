@@ -6,11 +6,16 @@ package org.imirsel.nema.flowservice.config;
  * @since 0.5.0
  */
 public class MeandreServerProxyStatus {
+	// number of flows that are running
 	private int numRunning;
+	// number of flows that have been asked to abort
 	private int numAborting;
-	public MeandreServerProxyStatus(int numJobsRunning, int numJobsAborting) {
+	// number of flows that can run concurrently
+	private int maxConcurrentJobs;
+	public MeandreServerProxyStatus(int numJobsRunning, int numJobsAborting, int numCapacity) {
 		this.numRunning = numJobsRunning;
 		this.numAborting = numJobsAborting;
+		this.maxConcurrentJobs = numCapacity;
 	}
 	// default constructor
 	public MeandreServerProxyStatus() {
@@ -43,4 +48,11 @@ public class MeandreServerProxyStatus {
 	public void setNumAborting(int numAborting) {
 		this.numAborting = numAborting;
 	}
+	public int getMaxConcurrentJobs() {
+		return maxConcurrentJobs;
+	}
+	public void setMaxConcurrentJobs(int maxConcurrentJobs) {
+		this.maxConcurrentJobs = maxConcurrentJobs;
+	}
+
 }
