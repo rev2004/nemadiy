@@ -8,6 +8,13 @@ package org.imirsel.nema.flowservice.config;
 public class MeandreServerProxyStatus {
 	private int numRunning;
 	private int numAborting;
+	public MeandreServerProxyStatus(int numJobsRunning, int numJobsAborting) {
+		this.numRunning = numJobsRunning;
+		this.numAborting = numJobsAborting;
+	}
+	// default constructor
+	public MeandreServerProxyStatus() {
+	}
 	/**
 	 * @return the numRunning
 	 * @since 0.5.0

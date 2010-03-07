@@ -121,7 +121,7 @@ public interface FlowService {
    /**
     * Returns {@link MeandreJobSchedulerConfig} for the server
     * @return List<MeandreServerProxyConfig> List of MeandreServerProxyConfig 
-    * @since 0.5.0
+    * @since 0.5.1
     */
    public List<MeandreServerProxyConfig> getSchedulerConfig();
    
@@ -129,7 +129,7 @@ public interface FlowService {
    /**
     * Returns a Map of the MeandreServerProxyConfig as key and the MeandreServerProxyStatus as value
     * @return Map of {@link org.imirsel.nema.flowservice.config.MeandreServerProxyConfig} as key {@link MeandreServerProxyStatus} as value
-    * @since 0.5.0
+    * @since 0.5.1
     */
    public Map<MeandreServerProxyConfig,MeandreServerProxyStatus> getMeandreServerProxyStatus();
    
@@ -138,7 +138,7 @@ public interface FlowService {
     * @param host The meandre servers address
     * @param port The meandre servers port
     * @return MeandreServerProxyStatus The Server's runtime status
-    * @since 0.5.0
+    * @since 0.5.1
     */
    public MeandreServerProxyStatus getMeandreServerProxyStatus(String host, int port);
    
