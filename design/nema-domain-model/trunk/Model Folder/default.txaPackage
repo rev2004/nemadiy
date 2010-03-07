@@ -946,6 +946,9 @@
 		<link uin="ieje0rg6gqgt9nguknsh">
 			<property name="$metaclass" value="KernelAssociation20"/>
 			<property name="supplierCardinality" value="1..*"/>
+			<property name="clientNavigability" value="$clientNavigable"/>
+			<property name="supplierNavigability" value="$supplierNavigableExplicitly"/>
+			<property name="label" value="is created by an"/>
 			<participant referencedUin="design:node:::-tdsqjufzcvrksf8d2yyw" role="Client"></participant>
 			<participant referencedUin="design:node:::-tdsqjug6gqgmar-zie7u4" role="Supplier"></participant>
 		</link>
@@ -1186,6 +1189,7 @@
 		<link uin="ieje0rg6gqum6ztyhprf">
 			<property name="$metaclass" value="KernelAssociation20"/>
 			<property name="label" value="requires"/>
+			<property name="clientNavigability" value="$clientNavigableExplicitly"/>
 			<participant referencedUin="design:node:::-tdsqjug5a301wrkijram" role="Client"></participant>
 			<participant referencedUin="design:node:::-tdsqjug6gqu7bt2yf3cw" role="Supplier"></participant>
 		</link>
@@ -1336,6 +1340,7 @@
 		<link uin="ieje0rg6gquqfy-3r2xpi">
 			<property name="$metaclass" value="KernelAssociation20"/>
 			<property name="label" value="requires"/>
+			<property name="clientNavigability" value="$clientNavigableExplicitly"/>
 			<participant referencedUin="design:node:::-tdsqjug5pratvjm0hpji" role="Client"></participant>
 			<participant referencedUin="design:node:::-tdsqjug6gqu7bt2yf3cw" role="Supplier"></participant>
 		</link>
@@ -1460,6 +1465,7 @@
 			<property name="$metaclass" value="KernelAssociation20"/>
 			<property name="label" value="is derived from"/>
 			<property name="supplierCardinality" value="1..*"/>
+			<property name="clientNavigability" value="$clientNavigableExplicitly"/>
 			<participant referencedUin="design:node:::-tdsqjug6gq3hfndr0b1" role="Client"></participant>
 			<participant referencedUin="design:node:::-tdsqjufzcvrksf8d2yyw" role="Supplier"></participant>
 		</link>
@@ -1533,7 +1539,8 @@
 		<property name="$name" value="Involvement"/>
 		<link uin="ieje0rg6gqgw9zmjnt8e">
 			<property name="$metaclass" value="KernelAssociation20"/>
-			<property name="supplierCardinality" value="1..*"/>
+			<property name="supplierCardinality" value="1"/>
+			<property name="clientCardinality" value="1..*"/>
 			<participant referencedUin="design:node:::-tdsqjug6gqgmar-zie7u4" role="Client"></participant>
 			<participant referencedUin="design:node:::-tdsqjug6gq4smr-oczrns" role="Supplier"></participant>
 		</link>
@@ -1636,6 +1643,7 @@
 		<link uin="ieje0rg6gqvvf09itdgm">
 			<property name="$metaclass" value="KernelAssociation20"/>
 			<property name="label" value="produces"/>
+			<property name="supplierNavigability" value="$supplierNavigableExplicitly"/>
 			<participant referencedUin="design:node:::-tdsqjug6gqu7bt2yf3cw" role="Client"></participant>
 			<participant referencedUin="design:node:::-tdsqjug6gqsuaufotya8" role="Supplier"></participant>
 		</link>
@@ -1645,5 +1653,14 @@
 			<property name="$name" value="metrics"/>
 			<property name="mod__type" value="List"/>
 		</node>
+	</node>
+	<node uin="1g64yg6hws76r-x8dqup">
+		<property name="$metaclass" value="Note"/>
+		<property name="$note_text" value="e.g. author, contributor, etc."/>
+		<link uin="ieje0rg6hwt2hvyqyxyz">
+			<property name="$metaclass" value="Note Link"/>
+			<participant referencedUin="design:node:::1g64yg6hws76r-x8dqup" role="Client"></participant>
+			<participant referencedUin="design:node:::-tdsqjug6gqgmar-zie7u4" role="Supplier"></participant>
+		</link>
 	</node>
 </nodeSet>
