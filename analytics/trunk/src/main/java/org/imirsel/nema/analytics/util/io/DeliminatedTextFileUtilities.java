@@ -429,7 +429,7 @@ public class DeliminatedTextFileUtilities {
         int maxRowLength = 0;
 
         try{
-            InputStream iStream = ClassLoader.getSystemResourceAsStream(classPath);
+            InputStream iStream = DeliminatedTextFileUtilities.class.getResourceAsStream(classPath);
             textBuffer = new BufferedReader(new InputStreamReader(iStream));
 
             String line = null; 
@@ -453,12 +453,16 @@ public class DeliminatedTextFileUtilities {
         }
         catch (java.io.IOException ioe)
         {
-            textBuffer.close();
+        	if (textBuffer != null){
+        		textBuffer.close();
+        	}
             throw new java.io.IOException("An IOException occured while reading file: " + classPath + "\n" + ioe);
         }
         catch (java.lang.NullPointerException npe)
         {
-            textBuffer.close();
+        	if (textBuffer != null){
+        		textBuffer.close();
+        	}
             throw new IllegalArgumentException("NullPointerException caused by classpath: " + classPath, npe);
         }
 
@@ -510,36 +514,36 @@ public class DeliminatedTextFileUtilities {
                 boolean insideSpeechMarks = false;
         	
 	            for (; i < end; i++){
-	            	System.out.println("char: " + line.charAt(i));
+	            	//System.out.println("char: " + line.charAt(i));
 	            	if(line.charAt(i) == '\"'){
 	            		encounteredSpeechMarks = true;
 	                    insideSpeechMarks = !insideSpeechMarks;
-	                    System.out.println("encountered speechmark, insideSpeechMarks=" + insideSpeechMarks);
+	                    //System.out.println("encountered speechmark, insideSpeechMarks=" + insideSpeechMarks);
 	            	}
 	            	if(!insideSpeechMarks){
 	            		matcher.region(i, end);
 		            	
 		                if (matcher.find()){
-		                	System.out.println("did find");
+		                	//System.out.println("did find");
 		                    if (encounteredSpeechMarks){
 		                    	String comp = tmp.substring(lastIdx+1, i-1);
 		                        output.add(comp);
-		                        System.out.println("added " + comp + " in speech mark block");
+		                        //System.out.println("added " + comp + " in speech mark block");
 		                        encounteredSpeechMarks = false;
 		                        lastIdx = matcher.end();
 		                        i=lastIdx-1;
-		                        System.out.println("lastIdx set to " + lastIdx);
+		                        //System.out.println("lastIdx set to " + lastIdx);
 		                    }else{
 		                    	String comp = tmp.substring(lastIdx, i);
 		                        output.add(comp);
-		                        System.out.println("added " + comp + " in NO speech mark block");
+		                        //System.out.println("added " + comp + " in NO speech mark block");
 		                        
 		                        lastIdx = matcher.end();
 		                        i=lastIdx;
-		                        System.out.println("lastIdx set to " + lastIdx);
+		                        //System.out.println("lastIdx set to " + lastIdx);
 		                    }
 		                }else{
-		                	System.out.println("didn't find");
+		                	//System.out.println("didn't find");
 		                }
 	            	}
 	            }
