@@ -50,6 +50,7 @@ import org.meandre.core.ExecutableComponent;
        @ComponentOutput(description="jAudio Batch Object", name="BatchObjectOut")
        final static String DATA_OUTPUT_1= "BatchObjectOut";
 
+       //TODO make this a resource - we don't support anything other than default plugins
        @StringDataType(hide=true)
        @ComponentProperty(defaultValue="jAudioFiles/features.xml",
                        description="jAudio features.xml path, contains what features extractors are available",
@@ -287,6 +288,8 @@ import org.meandre.core.ExecutableComponent;
                                                                                        .getPath(), null, false);
                }// for i in names
 
+               
+               
                // Get location of features.xml for building the datamodel and
                // initializing features on/off and attributes hashmaps;
                fFile = String.valueOf(cc.getProperty(DATA_PROPERTY_FFILE));
@@ -335,7 +338,7 @@ import org.meandre.core.ExecutableComponent;
                fdFile = String.valueOf(cc.getProperty(DATA_PROPERTY_FDFILE));
 
                //String fid = cc.getPublicResourcesDirectory()+ File.separator + "results" + File.separator + cc.getFlowExecutionInstanceID().substring(25);
-               String fid = processResultsDir ;
+               String fid = processResultsDir;
        File outDir = new File(fid);
        if (!outDir.exists())
        {
