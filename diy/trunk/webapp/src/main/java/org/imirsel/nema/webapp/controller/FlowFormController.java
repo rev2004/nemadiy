@@ -56,8 +56,8 @@ public class FlowFormController extends MultiActionController{
 	public void setFlowService(FlowService flowService) {
 		this.flowService = flowService;
 	}
-
-
+	
+	
 	/**
 	 * This function renders the flow Templates. It forwards to a jsp page that
 	 * with the flow, the component list, the role of the user and the jsp pages does the

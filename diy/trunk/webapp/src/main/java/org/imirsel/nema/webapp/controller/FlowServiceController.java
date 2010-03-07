@@ -2,6 +2,7 @@ package org.imirsel.nema.webapp.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,9 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
-import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
+import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
+import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
+import org.imirsel.nema.model.Property;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -39,6 +42,79 @@ public class FlowServiceController extends MultiActionController{
 	public void setFlowService(FlowService flowService) {
 		this.flowService = flowService;
 	}
+	
+	/**Returns Component Data Property
+	 * 
+	 * @param request reads componentUri/flowUri parameters
+	 * @param response
+	 * @return
+	 * @throws MeandreServerException
+	 */
+	public ModelAndView getComponentDataType(HttpServletRequest request, HttpServletResponse response)
+	throws  MeandreServerException{
+		String componentUri=request.getParameter("componentUri");
+		String flowUri = request.getParameter("flowUri");
+		if(componentUri==null || flowUri==null){
+			try {
+				response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED,"Missing componentUri or flowUri");
+				return null;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		List<Component> componentList=flowService.getComponents(flowUri);
+		Component component = null;
+		for(Component thisComponent:componentList){
+			if(thisComponent.getUri().equalsIgnoreCase(componentUri)){
+				component = thisComponent;
+			}
+		}
+		if(component!=null){
+			HashMap<String, Property> map=(HashMap<String, Property>)flowService.getComponentPropertyDataType(component, flowUri);
+			ModelAndView mav=new ModelAndView("jsonView");
+			mav.addObject(Constants.COMPONENTPROPERTYMAP, map);
+			return mav;
+		}else{
+			try {
+				response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED,"component with uri "+
+						componentUri + " in flow "+ flowUri + " was not found." );
+				return null;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	/**Returns the component list as JSON string
+	 * 
+	 * @param request reads flowUri parameter
+	 * @param response
+	 * @return
+	 * @throws MeandreServerException
+	 */
+	public ModelAndView getComponentList(HttpServletRequest request, HttpServletResponse response)
+	throws  MeandreServerException{
+		String _id=request.getParameter("flowUri");
+		if(_id==null){
+			try {
+				response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED,"Missing flowId");
+				return null;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		int id = Integer.parseInt(_id);
+		Flow flow=this.flowService.getFlow(id);
+		List<Component> componentList=flowService.getComponents(flow.getUrl());
+		ModelAndView mav=new ModelAndView("jsonView");
+		mav.addObject(Constants.COMPONENTLIST, componentList);
+		return mav;
+	}
+
 	
 	/**Returns the status for all the meandre servers
 	 * 
@@ -65,6 +141,7 @@ public class FlowServiceController extends MultiActionController{
 		if(host ==null || _port== null){
 			try {
 				response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED,"Missing host or port");
+				return null;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -79,6 +156,7 @@ public class FlowServiceController extends MultiActionController{
 		if(port==-1){
 			try {
 				response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED,"Invalid port");
+				return null;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

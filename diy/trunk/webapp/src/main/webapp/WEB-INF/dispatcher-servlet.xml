@@ -111,6 +111,8 @@
            	 /FlowManager.getServerList.json=getMeandreServerList
            	 /FlowManager.getServerStatus.json=getMeandreServerStatus
            	 /FlowManager.getAllServerStatus.json =getAllMeandreServerStatus
+           	 /FlowManager.getComponentDataType.json=getComponentDataType
+             /FlowManager.getComponentList.json=getComponentList
             </value>
         </property>
     </bean>
