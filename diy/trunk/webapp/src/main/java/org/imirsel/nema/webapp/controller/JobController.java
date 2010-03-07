@@ -33,8 +33,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 /**
  * 
@@ -425,24 +423,9 @@ public class JobController extends MultiActionController {
 	public ModelAndView getNotification(HttpServletRequest req, HttpServletResponse res){
 		User user=this.userManager.getCurrentUser();
 		List<Notification> notifications=this.flowService.getUserNotifications(user.getId());
-//		XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
-//		    public HierarchicalStreamWriter createWriter(Writer writer) {
-//		        return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
-//		    }
-//		});
-		XStream xstream = new XStream(new JsonHierarchicalStreamDriver() );
-		 //XStream xstream = new XStream(new JettisonMappedXmlDriver());
-
-        xstream.setMode(XStream.NO_REFERENCES);
-        String xmlString=xstream.toXML(notifications);
-		 try {
-			 res.setContentType("application/json");
-			 res.getOutputStream().print(xmlString);
-			 } catch (IOException e) {
-			 
-			 logger.error(e,e);
-			 }
- 		return null;
+		ModelAndView mav=new ModelAndView("jsonView");
+		mav.addObject(notifications);
+		return mav;
 	}
 	
 	
