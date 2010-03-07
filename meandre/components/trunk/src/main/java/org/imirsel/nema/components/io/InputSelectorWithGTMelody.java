@@ -51,7 +51,7 @@ public class InputSelectorWithGTMelody implements ExecutableComponent {
 			"/data/raid3/collections/audiomelody/adc04/wavs/all/opera_male3.wav,/data/raid3/collections/audiomelody/adc04/groundtruth_10ms/opera_male3.txt",
 			"/data/raid3/collections/audiomelody/adc04/wavs/all/jazz1.wav,/data/raid3/collections/audiomelody/adc04/groundtruth_10ms/jazz1.txt",
 			"/data/raid3/collections/audiomelody/adc04/wavs/all/pop1.wav,/data/raid3/collections/audiomelody/adc04/groundtruth_10ms/pop1.txt",
-			})//,
+			})
 			
 	@ComponentProperty(defaultValue = "/data/raid3/collections/audiomelody/adc04/wavs/all/daisy1.wav,/data/raid3/collections/audiomelody/adc04/groundtruth_10ms/daisy1.txt", description = "Select a file from the dataset. If this is chosen, the FileListURL or the SingleFileURL  properties will be ignored. ", name = "Select a file")
 	final static String DATA_PROPERTY_3 = "Select a file";
