@@ -6,19 +6,16 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
-public class TestNemaComponent extends  NemaComponent{
+public class TestNemaComponent extends NemaComponent{
 
 	@Override
 	public void execute(ComponentContext cc)
 			throws ComponentExecutionException, ComponentContextException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
-		
 	}
 	
 	

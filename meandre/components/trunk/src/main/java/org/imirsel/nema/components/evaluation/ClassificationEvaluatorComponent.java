@@ -201,7 +201,7 @@ import org.imirsel.nema.model.NemaTask;
 	        ClassificationEvaluator eval;
 			try {
 				eval = new ClassificationEvaluator(task,dataset,rootEvaluationDir,rootEvaluationDir,false,matlabPath,hierarchyFile);
-				eval.addLogHandler(_handler);
+				eval.addLogDestination(getLogDestination());
 			} catch (FileNotFoundException e) {
 				ComponentExecutionException ex = new ComponentExecutionException("FileNotFoundException occured when setting up evaluator!",e);
 				throw ex;
@@ -212,7 +212,7 @@ import org.imirsel.nema.model.NemaTask;
 	        
 			//read Ground-truth
 	        ClassificationTextFile reader = new ClassificationTextFile(metadata);
-	        reader.addLogHandler(_handler);
+	        reader.addLogDestination(getLogDestination());
 			try {
 				List<NemaData> gt = reader.readFile(gtFile);
 				eval.setGroundTruth(gt);

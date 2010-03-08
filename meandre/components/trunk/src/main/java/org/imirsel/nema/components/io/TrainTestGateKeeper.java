@@ -12,6 +12,7 @@ package org.imirsel.nema.components.io;
 
 import java.util.logging.Logger;
 
+import org.imirsel.nema.components.NemaComponent;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
@@ -30,13 +31,13 @@ import org.meandre.core.ExecutableComponent;
 		"that feature extraction has completed.", 
 		name="TrainTestGateKeeper",
 		tags="test ft please hello")
-		public class TrainTestGateKeeper implements ExecutableComponent {
+		public class TrainTestGateKeeper extends NemaComponent {
 
 
 	//@ComponentInput(description="Java File Object In", name="fileObjectIn")
 	//final static String DATA_INPUT_1= "fileObjectIn";
 
-	@ComponentInput(description="Trigger Input (usually from a RunBinaryOneInput component that is responsible " +
+	@ComponentInput(description="Trigger Input (usually from a RunBinaryOneInputComponent component that is responsible " +
 			"for executing external feature extraction code prior to a train test run", name="Trigger")
 	final static String DATA_INPUT_1= "Trigger";
 	
@@ -55,17 +56,13 @@ import org.meandre.core.ExecutableComponent;
 	final static String DATA_OUTPUT_2= "Testing List Files Out";
 
     
-	// log messages are here
-	private Logger _logger;
-	java.io.PrintStream cout;
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
 	 *
 	 * @param ccp The properties associated to a component context
 	 */
 	public void initialize ( ComponentContextProperties ccp ) {
-		this._logger = ccp.getLogger();
-		cout = ccp.getOutputConsole();
+		super.initialize(ccp);
 	}
 
 	/** This method just pushes a concatenated version of the entry to the
@@ -84,10 +81,9 @@ import org.meandre.core.ExecutableComponent;
 		Object Trigger = cc.getDataComponentFromInput(DATA_INPUT_1);
 		String[] TrainLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
 		String[] TestLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_3);
-		cout.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-		cout.println("GATEKEEPER: Pushing Training and Testing Lists off for Training and Classification");
-		cout.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-		cout.flush();
+		getLogger().info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n" +
+				"GATEKEEPER: Pushing Training and Testing Lists off for Training and Classification\n" +
+				">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, TrainLists);
 		cc.pushDataComponentToOutput(DATA_OUTPUT_2, TestLists);
 	}
@@ -96,10 +92,10 @@ import org.meandre.core.ExecutableComponent;
 	/** This method is called when the Menadre Flow execution is completed.
 	 *
 	 * @param ccp The properties associated to a component context
+	 * @throws ComponentContextException 
 	 */
-	public void dispose ( ComponentContextProperties ccp ) {
-		cout.close();
-
+	public void dispose ( ComponentContextProperties ccp ) throws ComponentContextException {
+		super.dispose(ccp);
 	}
 
 }

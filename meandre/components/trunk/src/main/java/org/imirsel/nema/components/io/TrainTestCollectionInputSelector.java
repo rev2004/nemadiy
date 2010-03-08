@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.renderers.CollectionRenderer;
 import org.imirsel.nema.repository.DatasetListFileGenerator;
@@ -27,7 +28,7 @@ import org.meandre.core.ExecutableComponent;
 				"4) an array of test file paths", name = "CollectionSelector",//resources={"RepositoryProperties.properties"},
 					tags = "input, collection, train/test", firingPolicy = Component.FiringPolicy.all)
 	
-	public class TrainTestCollectionInputSelector implements ExecutableComponent {
+	public class TrainTestCollectionInputSelector extends NemaComponent {
 
 	
 	
@@ -80,7 +81,7 @@ import org.meandre.core.ExecutableComponent;
 	@ComponentProperty(defaultValue = "\t", description = "Delimiter for the ground-truth files", name = "Delim")
 	final static String DATA_PROPERTY_DELIM = "Delim";
 
-	private static final String IOexception = null;
+
 	private String delim = "\t";
 	
 	
@@ -97,19 +98,16 @@ import org.meandre.core.ExecutableComponent;
 	private File[] gt_and_featExt_files;
 	private Set<NemaMetadataEntry>  file_encoding_constraint;
 	
-	private java.io.PrintStream cout;
-
-	
-	public void initialize(ComponentContextProperties cc) throws  ComponentExecutionException {
+	public void initialize(ComponentContextProperties ccp) throws  ComponentExecutionException, ComponentContextException {
+		super.initialize(ccp);
+		datasetID = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_DATASET_ID));		
+		bitRate = String.valueOf(ccp.getProperty(DATA_PROPERTY_BIT_RATE));
+		channels = String.valueOf(ccp.getProperty(DATA_PROPERTY_CHANNELS));
+		clip_type = String.valueOf(ccp.getProperty(DATA_PROPERTY_CLIP_TYPE));
+		encoding = String.valueOf(ccp.getProperty(DATA_PROPERTY_ENCODING));
+		sample_rate = String.valueOf(ccp.getProperty(DATA_PROPERTY_SAMPLE_RATE));			
+		delim = String.valueOf(ccp.getProperty(DATA_PROPERTY_DELIM));					
 		
-		datasetID = Integer.valueOf(cc.getProperty(DATA_PROPERTY_DATASET_ID));		
-		bitRate = String.valueOf(cc.getProperty(DATA_PROPERTY_BIT_RATE));
-		channels = String.valueOf(cc.getProperty(DATA_PROPERTY_CHANNELS));
-		clip_type = String.valueOf(cc.getProperty(DATA_PROPERTY_CLIP_TYPE));
-		encoding = String.valueOf(cc.getProperty(DATA_PROPERTY_ENCODING));
-		sample_rate = String.valueOf(cc.getProperty(DATA_PROPERTY_SAMPLE_RATE));			
-		delim = String.valueOf(cc.getProperty(DATA_PROPERTY_DELIM));					
-		cout = cc.getOutputConsole();			
 		try {
 			//processWorkingDirName=ArtifactManagerImpl.getInstance()
 			//.getAbsoluteProcessWorkingDirectory(
@@ -118,7 +116,7 @@ import org.meandre.core.ExecutableComponent;
 		
 			//Debugging 01/26/2010
 			//processWorkingDirName=ArtifactManagerImpl.getInstance().getResultLocationForJob(cc.getFlowExecutionInstanceID());//.getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
-			processWorkingDirName=ArtifactManagerImpl.getInstance(cc.getPublicResourcesDirectory()).getProcessWorkingDirectory(cc.getFlowExecutionInstanceID());
+			processWorkingDirName=ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).getProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
 			
 			
 		} catch (IOException e1) {
@@ -143,15 +141,15 @@ import org.meandre.core.ExecutableComponent;
 			System.err.println ("Unable to write to files " + processWorkingDirName  + " or " + datasetidtxt );
 			System.exit(-1);
 		}
-		cout.println("Dataset ID " + datasetID + " is selected ");
-		cout.println("Dataset properties are:\nbitRate=" + bitRate
+		getLogger().info("Dataset ID " + datasetID + " is selected\n" +
+				"Dataset properties are:\nbitRate=" + bitRate
 				+ "\nChannles=" + channels + "\nClip Type=" + clip_type
 				+ "\nEncoding=" + encoding + "\nSample Rate=" + sample_rate);
 		
 	}
 	
-	public void dispose(ComponentContextProperties ccp) {
-		// TODO Auto-generated method stub
+	public void dispose(ComponentContextProperties ccp) throws ComponentContextException {
+		super.dispose(ccp);
 	}
 	
 	public void execute(ComponentContext ccp)
@@ -164,8 +162,7 @@ import org.meandre.core.ExecutableComponent;
 	    try {
 			traintest_split_files = DatasetListFileGenerator.writeOutExperimentSplitFiles(datasetID, delim, processWorkingDir, file_encoding_constraint);									
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ComponentExecutionException("SQLException in " + this.getClass().getName(),e);
 		} 
 		
 		train_files = new String[traintest_split_files.size()];
@@ -191,34 +188,34 @@ import org.meandre.core.ExecutableComponent;
 		try {
 			gt_and_featExt_files = DatasetListFileGenerator.writeOutGroundTruthAndExtractionListFile(datasetID, delim, processWorkingDir, file_encoding_constraint);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ComponentExecutionException("SQLException in " + this.getClass().getName(),e);
 		}
 		
 		groundtruth = new String[gt_and_featExt_files.length / 2];
 		featExtList = new String[gt_and_featExt_files.length / 2];
-		cout.println("the size of gt " + gt_and_featExt_files.length);
+		getLogger().info("the size of gt " + gt_and_featExt_files.length);
 		 try {
 			groundtruth[0] = gt_and_featExt_files[0].getCanonicalPath();
 			featExtList[0] = gt_and_featExt_files[1].getCanonicalPath();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ComponentExecutionException("IOException in " + this.getClass().getName(),e);
 		}
 		
 		//Print info about the data
 		for (int i=0;i<featExtList.length;i++){
-			System.out.println("Feature Extraction file no." +i +":" + featExtList[i]);		
+			getLogger().info("Feature Extraction file no." +i +":" + featExtList[i]);		
 		}			
 		for (int i=0;i<groundtruth.length;i++){
-			System.out.println("Ground-truth file no." +i +":"+ groundtruth[i]);
+			getLogger().info("Ground-truth file no." +i +":"+ groundtruth[i]);
 		}					
-		cout.println("Train/Test files:");
+		
+		String msg = "Train/Test files:\n";
 		for (int i=0;i<train_files.length;i++){
-			System.out.println("Train  no." +i +":"+ train_files[i]);
-			System.out.println("Test  no." +i +":"+ test_files[i]);			
+			msg += "Train  no." +i +":"+ train_files[i] + "\n";
+			msg += "Test  no." +i +":"+ test_files[i] + "\n";			
 		}		
+		getLogger().info(msg);
 		
 		//Push the data out
 		ccp.pushDataComponentToOutput(DATA_OUTPUT_FeatExtList, featExtList);
