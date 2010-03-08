@@ -60,8 +60,10 @@ import org.meandre.core.ExecutableComponent;
 	 * getting run.
 	 *
 	 * @param ccp The properties associated to a component context
+	 * @throws ComponentContextException 
+	 * @throws ComponentExecutionException 
 	 */
-	public void initialize ( ComponentContextProperties ccp ) {
+	public void initialize ( ComponentContextProperties ccp ) throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
 	}
 
