@@ -2,6 +2,7 @@ package org.imirsel.nema.analytics.util.process;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
@@ -14,10 +15,10 @@ public interface ProcessExecutorInterface {
 	public Logger getLogger();
 
 	/**
-	 * Adds a handler to the logger for this instance.
-	 * @param handler The handler to add to the logger.
+	 * Ensures that the log output is also sent to the specified PrintStream.
+	 * @param stream The PrintStream to send the log output to.
 	 */
-	public void addLogHandler(Handler handler);
+	public void addLogDestination(PrintStream stream);
 
 	/**
 	 * Kills the process. The runCommand method should them exit gracefully, immeadiately.
@@ -36,6 +37,19 @@ public interface ProcessExecutorInterface {
 	public int runCommand(final Object[] input)
 			throws IllegalArgumentException, IOException;
 
+	/**
+	 * Return a String indicating the type of code being executed, e.g. BINARY,
+	 * JAVA, MATLAB, VAMP.
+	 * @return String indicating the type of code being executed
+	 */
+	public String getProcessType();
+	
+	/**
+	 * Return a String giving the name of the executable being run for logging purposes.
+	 * @return  a String giving the name of the executable being run.
+	 */
+	public String getExecutableName();
+	
 	/**
 	 * @return the outpath
 	 */

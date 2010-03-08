@@ -20,7 +20,6 @@ import org.imirsel.nema.model.NemaData;
 public abstract class MultipleTrackEvalFileTypeImpl extends EvalFileTypeImpl implements MultipleTrackEvalFileType {
 
 	public MultipleTrackEvalFileTypeImpl() {
-		_logger = Logger.getLogger(this.getClass().getName());
 	}
 	
 
@@ -32,7 +31,7 @@ public abstract class MultipleTrackEvalFileTypeImpl extends EvalFileTypeImpl imp
 		File[] files = theDir.listFiles();
 		ArrayList<File> filesToUse = new ArrayList<File>();
 		
-		_logger.info("got " + files.length + " files for " + theDir.getAbsolutePath());
+		getLogger().info("got " + files.length + " files for " + theDir.getAbsolutePath());
 		
 		if(extension == null){
 			for (int i = 0; i < files.length; i++){
@@ -58,7 +57,7 @@ public abstract class MultipleTrackEvalFileTypeImpl extends EvalFileTypeImpl imp
 			out.add(readFile(it.next()));
 		}
 		
-		_logger.info("Retrieved " + out.size() + " of " + files.length + " files from " + theDir.getAbsolutePath());
+		getLogger().info("Retrieved " + out.size() + " of " + files.length + " files from " + theDir.getAbsolutePath());
 		
 		
 		return out;

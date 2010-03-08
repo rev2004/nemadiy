@@ -31,11 +31,13 @@ public class ProcessOutputReceiver extends Thread
 	 * constructor
 	 *
 	 * @param is inputstream to receive data from child
-	 * @param logger util.logger
+	 * @param logger The logger to use to report console output from the process being monitored.
 	 */
 	public ProcessOutputReceiver( InputStream is, Logger logger )
 	{
 		this.is = is;
+		//this should be the only class where we pass loggers around. Elsewhere the logger
+		//from the specific class should be used instead.
 		this.logger = logger;
 	}
 	

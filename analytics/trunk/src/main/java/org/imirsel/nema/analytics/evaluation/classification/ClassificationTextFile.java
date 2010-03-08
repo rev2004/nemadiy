@@ -54,7 +54,7 @@ public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
             examples.add(obj);
         }
         
-        _logger.info(examples.size() + " examples with " + type + " metadata read from file: " + theFile.getAbsolutePath());
+        getLogger().info(examples.size() + " examples with " + type + " metadata read from file: " + theFile.getAbsolutePath());
         
         return examples;
 	}
@@ -73,14 +73,14 @@ public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
 				writer.newLine();
 			}
 			
-			_logger.info(data.size() + " examples with " + type + " metadata written to file: " + theFile.getAbsolutePath());
+			getLogger().info(data.size() + " examples with " + type + " metadata written to file: " + theFile.getAbsolutePath());
 		} finally {
 			if (writer != null) {
 				try {
 					writer.flush();
 					writer.close();
 				} catch (IOException ex) {
-					_logger.log(Level.SEVERE, null, ex);
+					getLogger().log(Level.SEVERE, null, ex);
 				}
 			}
 		}
@@ -185,7 +185,7 @@ public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
 
         br.close();
 
-        _logger.info("Read " + dataRead.size() + " paths from " + toRead.getAbsolutePath());
+        getLogger().info("Read " + dataRead.size() + " paths from " + toRead.getAbsolutePath());
         return dataRead;
     }
 

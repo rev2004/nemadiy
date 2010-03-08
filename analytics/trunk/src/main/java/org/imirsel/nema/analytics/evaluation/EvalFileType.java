@@ -1,5 +1,6 @@
 package org.imirsel.nema.analytics.evaluation;
 
+import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
@@ -13,11 +14,10 @@ public interface EvalFileType {
 	 */
 	public abstract Logger getLogger();
 
-	/**
-	 * Adds a handler to the logger (for getting log messages to alternate printstreams).
-	 * 
-	 * @param logHandler
+    /**
+	 * Ensures that the log output is also sent to the specified PrintStream.
+	 * @param stream The PrintStream to send the log output to.
 	 */
-	public abstract void addLogHandler(Handler logHandler);
-
+	public void addLogDestination(PrintStream stream);
+	
 }
