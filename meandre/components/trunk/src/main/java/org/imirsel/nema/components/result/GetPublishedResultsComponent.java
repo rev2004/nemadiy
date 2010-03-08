@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaPublishedResult;
 import org.imirsel.nema.renderers.CollectionRenderer;
@@ -24,10 +25,10 @@ import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
 
-@Component(creator = "Mert Bay", description = "Takes the collection ID and pushes the names, paths for the publised results for the collection and associated groundtruth", name = "GetPublishedResults",resources={"../../../../RepositoryProperties.properties"},
+@Component(creator = "Mert Bay", description = "Takes the collection ID and pushes the names, paths for the publised results for the collection and associated groundtruth", name = "GetPublishedResultsComponent",resources={"../../../../RepositoryProperties.properties"},
 		tags = "dataset, published, results", firingPolicy = Component.FiringPolicy.all)
 	
-	public class GetPublishedResults implements ExecutableComponent {
+	public class GetPublishedResultsComponent extends NemaComponent {
 
 	@StringDataType(renderer=CollectionRenderer.class)
 	@ComponentProperty(description = "integer datasetID", name = "datasetID", defaultValue = "5")
@@ -74,7 +75,7 @@ import org.meandre.core.ExecutableComponent;
 			throw new ComponentExecutionException(e1);
 		}
 		processWorkingDir = new File(processWorkingDirName);
-		System.out.println("Process working dir name: "  + processWorkingDir.getAbsolutePath());
+		getLogger().info("Process working dir name: "  + processWorkingDir.getAbsolutePath());
 		datasetid = Integer.parseInt(String.valueOf(cc.getProperty(DATA_INPUT_ID))) ;
 
 
@@ -110,8 +111,7 @@ import org.meandre.core.ExecutableComponent;
 			}	
 		   
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ComponentExecutionException("SQLException in " + this.getClass().getName(),e);
 		}
 		finally{
 		   pool.returnToPool(client);

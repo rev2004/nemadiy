@@ -12,13 +12,9 @@ package org.imirsel.nema.components.process;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.imirsel.nema.analytics.util.process.CommandLineExecutorImpl;
-import org.imirsel.nema.analytics.util.process.ProcessOutputReceiver;
 import org.imirsel.nema.annotations.BooleanDataType;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
@@ -33,8 +29,6 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
-
-
 /** This executable component executes an external binary using the process builder.
  *
  * @author Andreas F. Ehmann and Kris West
@@ -42,29 +36,26 @@ import org.meandre.core.ComponentExecutionException;
  */
 @Component(creator="Andreas F. Ehmann", description="Runs external code " +
 		"using the process builder. This module accepts one File input.", 
-		name="RunBinaryTwoInput",
+		name="RunBinaryOneInputComponent",
 		tags="process")
-		public class RunBinaryTwoInput extends NemaComponent {
+		public class RunBinaryOneInputComponent extends NemaComponent {
 
-	@ComponentInput(description="Input file list of audio files for input1, String[][]", name="FileList1")
-	final static String DATA_INPUT_1= "FileList1";
-	
-	@ComponentInput(description="Input file list of audio files for input2, String[][]", name="FileList2")
-	final static String DATA_INPUT_2= "FileList2";
+	@ComponentInput(description="Input file list of audio files, String[]", name="FileList")
+	final static String DATA_INPUT_1= "FileList";
 
 	@ComponentOutput(description="List of files output by the external binary processes run", name="fileListOut")
 	final static String DATA_OUTPUT_1= "fileListOut";
-	
+
 	@StringDataType()
-	@ComponentProperty(defaultValue="$m -anOption $s $1 $2 $o",
-			description="Command format string. $m is the binary/script name. $1 represents the " +
-			"input file 1. $2 represents input file2. $o represents the output file. $s is a scratch directory (if needed). Any number of command line options" +
+	@ComponentProperty(defaultValue="$m $s -anOption $i $o",
+			description="Command format string. $m is the binary/script name. $i represents the " +
+			"input file. $o represents the output file. $s is a scratch directory (if needed). Any number of command line options" +
 			"can also be specified. Example: if from the command line you run: myProgramName " +
-			"-t 0.1 -fl 1024 <inputfile1> <inputfile2> -o <outputfile>, the proper format string would be: " +
-			"$m -t 0.1 -fl 1024 $1 $2 -o $o.",
+			"-t 0.1 -fl 1024 -i <inputfile> -o <outputfile>, the proper format string would be: " +
+			"$m -t 0.1 -fl 1024 -i $i -o $o.",
 			name="Command Format String")
 			final static String DATA_PROPERTY_FORMATSTRING = "Command Format String";
-	private String commandFormattingStr = "$m -anOption $1 $2 $o";
+	private String commandFormattingStr = "$m -anOption $i $o";
 
 	@StringDataType(editRole=RoleAdmin.class)
 	@ComponentProperty(defaultValue="/path/to/executable",
@@ -120,8 +111,9 @@ import org.meandre.core.ComponentExecutionException;
 	private String processResultsDir;
 	private boolean isAborted = false;
 	CommandLineExecutorImpl executor;
+
+	// log messages are set to go to cout in the superclass NemaComponent
 	
-	// logger is setup to got cout in superclass NemaComponent
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
 	 *
@@ -133,10 +125,11 @@ import org.meandre.core.ComponentExecutionException;
 		executor = null;
 		isAborted = false;
 		try {
-			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).
-				getAbsoluteProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
-			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).
-				getResultLocationForJob(ccp.getFlowExecutionInstanceID());
+			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
+					.getAbsoluteProcessWorkingDirectory(
+							ccp.getFlowExecutionInstanceID());
+			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
+			.getResultLocationForJob(ccp.getFlowExecutionInstanceID());
 		} catch (IOException e1) {
 			try {
 				throw new ComponentExecutionException(e1);
@@ -146,6 +139,7 @@ import org.meandre.core.ComponentExecutionException;
 			}
 		}
 		getLogger().info("RUNBINARY: PROCESS WORKING DIR: " + processWorkingDir);
+
 
 	}
 
@@ -168,55 +162,44 @@ import org.meandre.core.ComponentExecutionException;
 		env_var = String.valueOf(cc.getProperty(DATA_PROPERTY_ENV_VAR));
 		outputFileName = String.valueOf(cc.getProperty(DATA_PROPERTY_OUPUTFILENAME)); 
 		outputIsDir = Boolean.valueOf(cc.getProperty(DATA_PROPERTY_OUPUTISDIRECTORY));
-		String[] fileLists1 = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
-		String[] fileLists2 = (String[])cc.getDataComponentFromInput(DATA_INPUT_2);
-		String[] outLists = new String[fileLists1.length];
-		
-
-		// sanity check that both filelists are same length
-		if (fileLists1.length != fileLists2.length) {
-			getLogger().severe("ERROR: File lists for input1 and input2 are different lengths!");
-			
-			return;
-		}
+		String[] fileLists = (String[])cc.getDataComponentFromInput(DATA_INPUT_1);
+		String[] outLists = new String[fileLists.length];
 		getLogger().info("\n" +
 				"=============================================================\n" +
 				"Starting execution of external binaries\n" +
 				"=============================================================\n" +
-				"Number of files to process: " + fileLists1.length + "\n");
-
-		for (int i = 0; i < fileLists1.length; i++) {
+				"Number of files to process: " + fileLists.length + "\n");
+		
+		for (int i = 0; i < fileLists.length; i++) {
 			getLogger().info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
-					"FILE:  " + (i+1) +"/" + fileLists1.length);
-
+					"FILE:  " + (i+1) +"/" + fileLists.length + "\n");
 			if(isAborted) {
-				getLogger().info("Execution of external binaries aborted");
+				getLogger().info("\n" +
+					"Execution of external binaries aborted");
 				break;
 			}
 
-			File inFile1 = new File(fileLists1[i]);
-			File inFile2 = new File(fileLists2[i]);
+			File inFile = new File(fileLists[i]);
 
 			try {
 				if(addExtension){
 					executor = new CommandLineExecutorImpl(
-						new File(execPath).getParentFile(), new File(processResultsDir), 
-						new File(processWorkingDir), commandFormattingStr, 
+						new File(execPath).getParentFile(), new File(processResultsDir), new File(processWorkingDir), commandFormattingStr, 
 						new File(execPath), 0, extension, env_var);
 				}else{
 					executor = new CommandLineExecutorImpl(new File(processResultsDir + File.separator + outputFileName), outputIsDir, 
 							new File(execPath).getParentFile(), new File(processResultsDir), new File(processWorkingDir), commandFormattingStr, 
 							new File(execPath), env_var);
 				}
-				int exitVal = executor.runCommand(new Object[]{inFile1,inFile2});
+				executor.addLogDestination(getLogDestination());
+				int exitVal = executor.runCommand(new Object[]{inFile});
 				getLogger().info("Process exited with code " + exitVal);
 				
 				outLists[i] = executor.getOutpath().getCanonicalPath(); 
-
 			} catch (IOException e) {
-				getLogger().log(Level.SEVERE,"IOException occured while working with input file1: '" + inFile1.getAbsolutePath() + "' and input file2: '" + inFile2.getAbsolutePath() + "'",e); 
+				getLogger().log(Level.SEVERE,"IOException occured while working with input file: " + inFile.getAbsolutePath(),e); 
 			} catch (RuntimeException e) {
-				getLogger().log(Level.SEVERE,"Runtime occured while working with input file1: '" + inFile1.getAbsolutePath() + "' and input file2: '" + inFile2.getAbsolutePath() + "'",e); 
+				getLogger().log(Level.SEVERE,"Runtime occured while working with input file: " + inFile.getAbsolutePath(),e);
 			}
 		}
 		getLogger().info("=============================================================\n" +
@@ -234,8 +217,8 @@ import org.meandre.core.ComponentExecutionException;
 		super.dispose(ccp);
 		if(executor != null) {
 			executor.killProcess();
-       }
+        }
 		isAborted = true;
-	}	
+	}
 
 }

@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
+import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.components.util.FileCopy;
 import org.imirsel.nema.components.util.FileDownload;
 import org.imirsel.nema.renderers.FileRenderer;
@@ -30,7 +31,7 @@ import org.meandre.core.ExecutableComponent;
 		"The inputListfiles should be  properly formed. If individual file field is not empty, the file list" +
 		" will be ignored.", name = "Phase Vocoder Input", tags = "input, file, URL,file download, CSV reader, XML reader",
 		 firingPolicy = Component.FiringPolicy.all)
-public class Input implements ExecutableComponent {
+public class Input extends NemaComponent {
 	
 	@ComponentOutput(description = "String[] that holds the fileLocations for the audio", name = "inputFiles")
 	public final static String DATA_OUTPUT = "inputFiles";
@@ -67,28 +68,24 @@ public class Input implements ExecutableComponent {
 	private String selectFile = "";	
 	
 	private String localListFilePath;
-	private Logger logger = null;
-	private java.io.PrintStream out;
+
 	private String processWorkingDir;
 	private String commonStorageDir;
 	public void initialize(ComponentContextProperties ccp)
-			throws ComponentExecutionException {
-		out = ccp.getOutputConsole();
-		logger = ccp.getLogger();
+			throws ComponentContextException, ComponentExecutionException {
+		super.initialize(ccp);
 		try {
 			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
 					.getProcessWorkingDirectory(
 							ccp.getFlowExecutionInstanceID());
 			commonStorageDir=ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).getCommonStorageLocation() + File.separator + "inputSelectorDownloadedFiles";
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			throw new ComponentExecutionException(e1);
+		} catch (IOException e) {
+			throw new ComponentExecutionException(e.getClass().getSimpleName() + " in " + this.getClass().getName(),e);
 		}
 	}
 
-	public void dispose(ComponentContextProperties ccp) {
-		// TODO Auto-generated method stub
-		out.close();
+	public void dispose(ComponentContextProperties ccp) throws ComponentContextException {
+		super.dispose(ccp);
 	}
 
 	public void execute(ComponentContext ccp)
@@ -101,7 +98,7 @@ public class Input implements ExecutableComponent {
 		
 		if (!uploadFile.contentEquals("")) {
 			String[] inputFiles = new String[1];
-			out.println("File upload is selected");
+			getLogger().info("File upload is selected");
 			if (uploadFile.contains("http")
 					|| uploadFile.contains("ftp")) {
 				 //String workingDirName = processWorkingDir;
@@ -112,7 +109,7 @@ public class Input implements ExecutableComponent {
 				inputFiles[0] = uploadFile;
 			}
 			//inputFiles[0][1] = "";
-			out.println("no 1:\tFileName="
+			getLogger().info("no 1:\tFileName="
 					+ uploadFile.subSequence(uploadFile
 							.lastIndexOf("/") + 1, uploadFile.length()));
 				//	+ "\t\tClassName= " + "\t\t added to output");
@@ -122,7 +119,7 @@ public class Input implements ExecutableComponent {
 		
 		else if (!selectFile.contentEquals("")) {
 			String[] inputFiles = new String[1];
-			out.println("selectFile file is selected");
+			getLogger().info("selectFile file is selected");
 			if (selectFile.contains("http")
 					|| selectFile.contains("ftp")) {
 				 //String workingDirName = processWorkingDir;
@@ -134,13 +131,12 @@ public class Input implements ExecutableComponent {
 					String copiedFile = FileCopy.copy(selectFile, dstname);
 					inputFiles[0] = copiedFile;
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new ComponentExecutionException(e.getClass().getSimpleName() + " in " + this.getClass().getName(),e);
 				}
 				
 			}
 		//	inputFiles[0][1] = "";
-			out.println("no 1:\tFileName="
+			getLogger().info("no 1:\tFileName="
 					+ selectFile.subSequence(selectFile
 							.lastIndexOf("/") + 1, selectFile.length()));
 			//		+ "\t\tClassName= " + "\t\t added to output");
@@ -149,7 +145,7 @@ public class Input implements ExecutableComponent {
 		}
 		else if (!SingleFileURL.contentEquals("")) {
 			String[] inputFiles = new String[1];
-			out.println("Individual file is selected");
+			getLogger().info("Individual file is selected");
 			if (SingleFileURL.contains("http")
 					|| SingleFileURL.contains("ftp")) {
 				 //String workingDirName = processWorkingDir;
@@ -161,13 +157,12 @@ public class Input implements ExecutableComponent {
 					String copiedFile = FileCopy.copy(SingleFileURL, dstname);
 					inputFiles[0] = copiedFile;
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new ComponentExecutionException(e.getClass().getSimpleName() + " in " + this.getClass().getName(),e);
 				}
 	
 			}
 		//	inputFiles[0][1] = "";
-			out.println("no 1:\tFileName="
+			getLogger().info("no 1:\tFileName="
 					+ SingleFileURL.subSequence(SingleFileURL
 							.lastIndexOf("/") + 1, SingleFileURL.length()));
 			//		+ "\t\tClassName= " + "\t\t added to output");
@@ -208,10 +203,10 @@ public class Input implements ExecutableComponent {
 				// If it is a CSV file
 				if (FileListURL.substring(FileListURL.length() - 3,
 						FileListURL.length()).equalsIgnoreCase("csv")) {
-					out.println("The collection format is "
+					getLogger().info("The collection format is "
 							+ FileListURL.substring(FileListURL.length() - 3,
 									FileListURL.length()));
-					out.println("There are " + noLines
+					getLogger().info("There are " + noLines
 							+ " records in the collection");
 					// Read the header info from the file
 					String Header = textBuffer.readLine();
@@ -224,12 +219,12 @@ public class Input implements ExecutableComponent {
 						if (str.countTokens() == 1) {
 							fileLocation = str.nextToken();
 							classname = "";
-							out.println("There is no class label");
+							getLogger().info("There is no class label");
 						} else if (str.countTokens() == 2) {
 							fileLocation = str.nextToken();
 							classname = str.nextToken();
 						} else {
-							out.println("Mistake in Record no " + i
+							getLogger().info("Mistake in Record no " + i
 									+ ". Continuing...");
 							continue;
 						}
@@ -241,7 +236,7 @@ public class Input implements ExecutableComponent {
 						} else {
 							inputFiles[i] = fileLocation;
 						}
-						out.println("no "
+						getLogger().info("no "
 								+ (i + 1)
 								+ ":\tFileName="
 								+ fileLocation.subSequence(fileLocation
@@ -258,8 +253,8 @@ public class Input implements ExecutableComponent {
 					// To be implemented
 					SegmentedClassification[] inputXML = SegmentedClassification
 							.parseClassificationsFile(localListFilePath);
-					out.println("The collection format is xml");
-					out.println("There are " + inputXML.length
+					getLogger().info("The collection format is xml");
+					getLogger().info("There are " + inputXML.length
 							+ " records in the collection.");
 					String[] inputFiles = new String[inputXML.length];
 					for (int i = 0; i < inputXML.length; i++) {
@@ -270,7 +265,7 @@ public class Input implements ExecutableComponent {
 							classname = classes[0];
 						} else {
 							classname = "";
-							out.println("There is no class label");
+							getLogger().info("There is no class label");
 						}
 						if (fileLocation.contains("http")
 								|| fileLocation.contains("ftp")) {
@@ -281,13 +276,13 @@ public class Input implements ExecutableComponent {
 							inputFiles[i] = fileLocation;
 						}
 					//	inputFiles[i][0] = dir_prefix+ inputFiles[i][0].subSequence(inputFiles[i][0].lastIndexOf("/") + 1, inputFiles[i][0]						.length());
-						out.println("no "
+						getLogger().info("no "
 								+ (i + 1)
 								+ ":\tFileName="
 								+ inputFiles[i].subSequence(inputFiles[i]
 										.lastIndexOf("/") + 1, inputFiles[i].length()) + "\t\tClassName="
 								+ classname + "\t\t  added to output.");
-						out.println("Debuggin no "
+						getLogger().info("Debugging no "
 								+ (i + 1)
 								+ ":\tFileName="
 								+ inputFiles[i] + "\t\tClassName="
@@ -296,19 +291,19 @@ public class Input implements ExecutableComponent {
 					}
 					ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
 				} else {
-					out.println("Unsupported input file format "
+					getLogger().info("Unsupported input file format "
 							+ FileListURL.substring(FileListURL.length() - 3,
 									FileListURL.length()));
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new ComponentExecutionException(e.getClass().getSimpleName() + " in " + this.getClass().getName(),e);
 			}
 		}
 	}
 
 	public String downloadFiles(String fileLocation, String workingDirName) {
 
-		out.println("\nDownloading file from " + fileLocation);
+		getLogger().info("\nDownloading file from " + fileLocation);
 
 		File workingDir = new File(workingDirName);
 		if (!workingDir.exists()) {
@@ -326,11 +321,11 @@ public class Input implements ExecutableComponent {
 		
 		File localFile = new File(localFileName);
 		if (localFile.exists()) {
-			out.println("The file " + fileLocation
+			getLogger().info("The file " + fileLocation
 					+ " alredy exists locally, avoiding re-download.");
 		} else {
 			FileDownload.download(fileLocation, localFileName);
-			out.println("File downloaded to local path." );
+			getLogger().info("File downloaded to local path." );
 		}
 		return localFileName;
 	}

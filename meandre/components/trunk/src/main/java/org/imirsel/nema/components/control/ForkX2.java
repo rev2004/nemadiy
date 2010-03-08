@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.imirsel.nema.components.NemaComponent;
 import org.meandre.core.ExecutableComponent;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ComponentContextException;
@@ -17,7 +18,7 @@ import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContextProperties;
 
 @Component(creator="Tester", description="", tags="seasr fork redundant", name="ForkX2")
-public class ForkX2 implements ExecutableComponent {
+public class ForkX2 extends NemaComponent {
 
     static public final int s_REFERENCE = 0;
     static public final int s_CLONE_SHALLOW = 1;
@@ -43,10 +44,12 @@ public class ForkX2 implements ExecutableComponent {
     }
 
     
-    public void initialize(ComponentContextProperties ccp) {
+    public void initialize(ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException {
+    	super.initialize(ccp);
     }
 
-    public void dispose(ComponentContextProperties ccp) {
+    public void dispose(ComponentContextProperties ccp) throws ComponentContextException {
+    	super.dispose(ccp);
     }
 
 

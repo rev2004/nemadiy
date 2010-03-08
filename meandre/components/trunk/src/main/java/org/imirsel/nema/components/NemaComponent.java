@@ -3,11 +3,13 @@
  */
 package org.imirsel.nema.components;
 
+import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
+import org.imirsel.nema.analytics.logging.AnalyticsLogFormatter;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -23,7 +25,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 
 	// log messages are here
 	private Logger _logger;
-	protected static Handler _handler;
+	private PrintStream logDestination = null;
 	
 	
 	/**
@@ -36,7 +38,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 	 */
 	public void dispose(ComponentContextProperties componentContextProperties) 
 			throws ComponentContextException {
-		_logger.fine("Disposing of " + this.getClass().getName());
+		getLogger().fine("Disposing of " + this.getClass().getName());
 		componentContextProperties.getOutputConsole().flush();
 	}
 
@@ -55,23 +57,27 @@ public abstract class NemaComponent implements ExecutableComponent {
 	 */
 	public void initialize(ComponentContextProperties componentContextProperties)
 			throws ComponentExecutionException, ComponentContextException {
-		_logger = Logger.getLogger(this.getClass().getName());
-		_logger.setLevel(Level.FINEST);
+		getLogger().setLevel(Level.FINEST);
 		synchronized(NemaComponent.class){
-			if(_handler==null){
-				_handler = new StreamHandler(componentContextProperties.getOutputConsole(), new ComponentLogFormatter());
-			}
+			addLogDestination(componentContextProperties.getOutputConsole());
+			getLogger().info("Initialized logging for " + this.getClass().getName());
 		}
-		_logger.addHandler(_handler);
-		_logger.info("Initializing logging for " + this.getClass().getName()) ;
 	}
 	
-	/**
-	 * 
-	 * @return logger initiated in the initialize
-	 */
-	public Logger getLogger(){
-		return this._logger;
+	public Logger getLogger() {
+		if (_logger == null){
+			_logger = Logger.getLogger(this.getClass().getName());
+		}
+		return _logger;
 	}
 
+	public void addLogDestination(PrintStream stream) {
+		logDestination = stream;
+		Handler handler = new StreamHandler(logDestination, new AnalyticsLogFormatter());
+		getLogger().addHandler(handler);
+	}
+
+	public PrintStream getLogDestination(){
+		return logDestination;
+	}
 }
