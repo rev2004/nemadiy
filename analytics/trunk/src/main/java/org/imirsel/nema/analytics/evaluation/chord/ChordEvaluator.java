@@ -296,7 +296,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         
         File weightOverlapCsv = new File(outputDir.getAbsolutePath() + File.separator + "weightedOverlap.csv");
         WriteChordResultFiles.writeTableToCsv(
-        		WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults,jobIDToName,NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO),
+        		WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults,jobIDToName, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO),
         		weightOverlapCsv
         	);
         
