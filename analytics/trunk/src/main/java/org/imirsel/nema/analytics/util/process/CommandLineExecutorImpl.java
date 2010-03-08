@@ -65,13 +65,6 @@ public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 		this.process = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.imirsel.nema.analytics.util.process.ProcessExecutorInterface#killProcess
-	 * ()
-	 */
 	public void killProcess() {
 		if (process != null) {
 			process.destroy();
@@ -81,13 +74,6 @@ public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.imirsel.nema.analytics.util.process.ProcessExecutorInterface#runCommand
-	 * (java.lang.Object[])
-	 */
 	public int runCommand(final Object[] input)
 			throws IllegalArgumentException, IOException {
 		isRunning = true;
@@ -303,7 +289,7 @@ public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 				+ "\n";
 		msg += "Sending results to: " + processResultsDir.getCanonicalPath()
 				+ "\n";
-		_logger.info(msg);
+		getLogger().info(msg);
 
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
 		Map<String, String> env = pb.environment();
@@ -313,10 +299,10 @@ public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 					String[] envPair = envp[i].split("=");
 					if (envPair.length == 2) {
 						env.put(envPair[0], envPair[1]);
-						_logger.info("Environment variable " + envPair[0] + "="
+						getLogger().info("Environment variable " + envPair[0] + "="
 								+ envPair[1] + " succesfully set.");
 					} else {
-						_logger.info("The environment variable " + envVar
+						getLogger().info("The environment variable " + envVar
 								+ " can not be parsed !!!");
 					}
 				}
@@ -328,19 +314,19 @@ public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 		try {
 			process = pb.start();
 			is = process.getInputStream();
-			_logger.info("*******************************************\n"
+			getLogger().info("*******************************************\n"
 					+ "EXTERNAL PROCESS STDOUT AND STDERR:");
 
-			procOutputReceiverThread = new ProcessOutputReceiver(is, _logger);
+			procOutputReceiverThread = new ProcessOutputReceiver(is, getLogger());
 			procOutputReceiverThread.start();
 			int exitStatus;
 			try {
 				exitStatus = process.waitFor();
-				_logger.info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus
+				getLogger().info("EXTERNAL PROCESS EXIT STATUS: " + exitStatus
 						+ "\n" + "*******************************************");
 				return exitStatus;
 			} catch (InterruptedException e) {
-				_logger.log(Level.WARNING,
+				getLogger().log(Level.WARNING,
 						"Interupted while waiting for process to exit", e);
 			}
 		} finally {
@@ -358,35 +344,26 @@ public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 		return -1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.imirsel.nema.analytics.util.process.ProcessExecutorInterface#isAborted
-	 * ()
-	 */
 	public boolean isRunning() {
 		return isRunning;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.imirsel.nema.analytics.util.process.ProcessExecutorInterface#
-	 * getCommandFormattingStr()
-	 */
 	public String getCommandFormattingStr() {
 		return commandFormattingStr;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.imirsel.nema.analytics.util.process.ProcessExecutorInterface#
-	 * getExecutablePath()
-	 */
 	public File getExecutablePath() {
 		return executablePath;
+	}
+	
+	@Override
+	public String getExecutableName() {
+		return getExecutablePath().getName();
+	}
+
+	@Override
+	public String getProcessType() {
+		return "BINARY";
 	}
 
 }

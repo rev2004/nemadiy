@@ -146,7 +146,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     	for(Iterator<String> it = classNames.iterator();it.hasNext();){
     		classesMsg += "\n\t" + it.next();
     	}
-    	_logger.info(classesMsg);
+    	getLogger().info(classesMsg);
     }
     
 
@@ -183,7 +183,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
                     msg += "\n";
                 }
             }
-            _logger.info(msg);
+            getLogger().info(msg);
         } finally {
             try {
                 if (textBuffer!= null) {
@@ -332,7 +332,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         Map<String, List<NemaData>> jobIDTofoldEvaluations = evaluateAllResultFolds(numJobs, numFolds);
         
         //plot confusion matrices for each fold
-		_logger.info("Plotting confusion matrices for each fold for each job");
+		getLogger().info("Plotting confusion matrices for each fold for each job");
         Map<String,File[]> jobIDToFoldConfFileList = new HashMap<String,File[]>(numJobs);
         for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
         	jobID = it.next();
@@ -342,7 +342,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         }
         
         //aggregate results to produce overall evaluation
-        _logger.info("Producing aggregate evaluations over all folds for each job");
+        getLogger().info("Producing aggregate evaluations over all folds for each job");
         Map<String,NemaData> jobIDToAggregateEvaluations = new HashMap<String,NemaData>(numJobs); 
         List<NemaData> evalList;
 		for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
@@ -353,7 +353,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         }
 		
 		//plot aggregate confusion for each job
-		_logger.info("Plotting overall confusion matrices for each job");
+		getLogger().info("Plotting overall confusion matrices for each job");
 		Map<String,File> jobIDToOverallConfFile = new HashMap<String,File>(numJobs);
         for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
         	jobID = it.next();
@@ -364,7 +364,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 		
         
         //write out CSV results files
-        _logger.info("Writing out CSV result files over whole task...");
+        getLogger().info("Writing out CSV result files over whole task...");
 //        String msg = "Job ID to name IDs: ";
 //        for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
 //        	msg += it.next();
@@ -389,7 +389,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 //        	}
 //        }
 //        msg += "\n";
-//        _logger.fine(msg);
+//        getLogger().fine(msg);
         
         File perClassCSV = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassResults.csv");
         WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepTableDataOverClasses(jobIDToAggregateEvaluations,jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT),perClassCSV);
@@ -421,7 +421,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         File friedmanDiscountFoldTablePNG = null;
         File friedmanDiscountFoldTable = null;
         if (getPerformMatlabStatSigTests() && performStatSigTests){
-            _logger.info("Performing Friedman's tests...");
+            getLogger().info("Performing Friedman's tests...");
 
             File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, perClassCSV, 0, 1, 1, numJobs, getMatlabPath());
             friedmanClassTablePNG = tmp[0];
@@ -444,7 +444,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         
         
         //write text reports
-        _logger.info("Writing text evaluation reports...");
+        getLogger().info("Writing text evaluation reports...");
         Map<String,File> jobIDToReportFile = new HashMap<String,File>(numJobs);
         for (Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();) {
         	jobID = it.next();
@@ -455,7 +455,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         
         
         //create tarballs of individual result dirs
-        _logger.info("Preparing evaluation data tarballs...");
+        getLogger().info("Preparing evaluation data tarballs...");
         Map<String,File> jobIDToTgz = new HashMap<String,File>(jobIDToName.size());
         for (Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();) {
         	jobID = it.next();
@@ -464,7 +464,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         
         
         //write result HTML pages
-        _logger.info("Creating result HTML files...");
+        getLogger().info("Creating result HTML files...");
         writeHtmlResultPages(performStatSigTests, numJobs, usingAHierarchy,
 				jobIDTofoldEvaluations, jobIDToAggregateEvaluations,
 				jobIDToOverallConfFile, perClassCSV, perFoldCSV,
@@ -724,7 +724,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 		Map<String,List<NemaData>> jobIDTofoldEvaluations = new HashMap<String,List<NemaData>>(numJobs); 
         for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
         	jobID = it.next();
-        	_logger.info("Evaluating experiment folds for jobID: " + jobID);
+        	getLogger().info("Evaluating experiment folds for jobID: " + jobID);
         	sysResults = jobIDToFoldResults.get(jobID);
         	List<NemaData> foldResultList = new ArrayList<NemaData>(numFolds);
         	for(Iterator<List<NemaData>> it2 = sysResults.iterator();it2.hasNext();){

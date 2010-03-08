@@ -1,8 +1,11 @@
 package org.imirsel.nema.analytics.util.process;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
+import org.imirsel.nema.analytics.logging.ProcessExecutorLogFormatter;
 
 public abstract class ProcessExecutorImpl implements ProcessExecutorInterface{
 
@@ -105,12 +108,20 @@ public abstract class ProcessExecutorImpl implements ProcessExecutorInterface{
 	}
 
 	public Logger getLogger() {
-		return this._logger;
+		if (_logger == null){
+			_logger = Logger.getLogger(this.getClass().getName());
+		}
+		return _logger;
 	}
 
-	public void addLogHandler(Handler handler) {
-		this._logger.addHandler(handler);
+	public void addLogDestination(PrintStream stream) {
+		Handler handler = new StreamHandler(stream, new ProcessExecutorLogFormatter(getProcessType(), getExecutableName()));
+		getLogger().addHandler(handler);
 	}
+	
+	public abstract String getProcessType();
+	
+	public abstract String getExecutableName();
 
 	public File getOutpath() {
 		return outpath;

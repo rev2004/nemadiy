@@ -12,12 +12,15 @@ package org.imirsel.nema.analytics.evaluation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
 
 
+import org.imirsel.nema.analytics.logging.ProcessExecutorLogFormatter;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaTask;
@@ -105,11 +108,10 @@ public interface Evaluator {
     public Logger getLogger();
     
     /**
-     * Adds a handler to the logger (for getting log messages to alternate printstreams).
-     * 
-     * @param logHandler
-     */
-	public void addLogHandler(Handler logHandler);
+	 * Ensures that the log output is also sent to the specified PrintStream.
+	 * @param stream The PrintStream to send the log output to.
+	 */
+	public void addLogDestination(PrintStream stream);
 	
     /**
      * Perform the evaluation and block until the results are fully written to the output directory.

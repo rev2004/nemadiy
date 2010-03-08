@@ -6,6 +6,7 @@ package org.imirsel.nema.analytics.evaluation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
+
+import org.imirsel.nema.analytics.logging.AnalyticsLogFormatter;
+import org.imirsel.nema.analytics.logging.ProcessExecutorLogFormatter;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
@@ -62,11 +67,15 @@ public abstract class EvaluatorImpl implements Evaluator {
 	}
 	
 	public Logger getLogger() {
+		if (_logger == null){
+			_logger = Logger.getLogger(this.getClass().getName());
+		}
 		return _logger;
 	}
-	
-	public void addLogHandler(Handler logHandler){
-		getLogger().addHandler(logHandler);
+
+	public void addLogDestination(PrintStream stream) {
+		Handler handler = new StreamHandler(stream, new AnalyticsLogFormatter());
+		getLogger().addHandler(handler);
 	}
 
 	public void setOutputDir(File outputDir_) throws FileNotFoundException {

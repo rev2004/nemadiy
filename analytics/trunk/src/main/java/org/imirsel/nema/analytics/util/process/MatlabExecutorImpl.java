@@ -295,4 +295,14 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
     public void setMatlabBin(File bin) {
         this.matlabBin = bin;
     }
+
+	@Override
+	public String getExecutableName() {
+		return getFunctionName();
+	}
+
+	@Override
+	public String getProcessType() {
+		return "MATLAB";
+	}
 }

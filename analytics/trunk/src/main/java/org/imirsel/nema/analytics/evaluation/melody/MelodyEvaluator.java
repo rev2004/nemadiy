@@ -50,7 +50,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it
 				.hasNext();) {
 			jobID = it.next();
-			_logger.info("Evaluating experiment for jobID: " + jobID);
+			getLogger().info("Evaluating experiment for jobID: " + jobID);
 			sysResults = jobIDToFoldResults.get(jobID);
 			NemaData result = evaluateResult(jobID, sysResults.get(0));
 			jobIdToEvaluation.put(jobID, result);
@@ -87,7 +87,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		}
 
 		// write out summary CSV
-		_logger.info("Writing out CSV result files over whole task...");
+		getLogger().info("Writing out CSV result files over whole task...");
 		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator
 				+ "allResults.csv");
 		WriteMelodyResultFiles.writeTableToCsv(
@@ -115,7 +115,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 
 
 		// create tarballs of individual result dirs
-		_logger.info("Preparing evaluation data tarballs...");
+		getLogger().info("Preparing evaluation data tarballs...");
 		Map<String, File> jobIDToTgz = new HashMap<String, File>(jobIDToName
 				.size());
 		for (Iterator<String> it = jobIDToName.keySet().iterator(); it
@@ -126,7 +126,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		}
 
 		// write result HTML pages
-		_logger.info("Creating result HTML files...");
+		getLogger().info("Creating result HTML files...");
 
 		writeResultHtmlPages(numJobs, jobIdToEvaluation,
 				jobIDToResultPlotFileList, summaryCsv, jobIDToPerTrackCSV,
