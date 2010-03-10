@@ -40,7 +40,7 @@ public final class HttpProxyServlet extends HttpServlet {
 	private DefaultHttpMethodRetryHandler retryhandler;
 	private AuthScope scope;
 	private UsernamePasswordCredentials credentials;
-
+	private HttpClient proxy;
   @Override
   public void init(final ServletConfig config) throws ServletException {
     super.init(config);
@@ -50,6 +50,7 @@ public final class HttpProxyServlet extends HttpServlet {
     retryhandler = new DefaultHttpMethodRetryHandler(0,false);
     scope = new AuthScope(AuthScope.ANY);
     credentials = new UsernamePasswordCredentials(username, password);
+    proxy = new HttpClient();
   }
 
   @Override
@@ -59,13 +60,13 @@ public final class HttpProxyServlet extends HttpServlet {
 	String call = request.getParameter("call");
 	System.out.println("proxy call is: " + host+call);
 	URL url;
-	HttpClient proxy;
+	
 	try {
 	      url = new URL(host+call);
 	    } catch (MalformedURLException me) {
 	      throw new ServletException("Proxy URL is invalid", me);
 	    }
-	proxy = new HttpClient();
+	
 	proxy.getHostConfiguration().setHost(url.getHost());
 	proxy.getState().setCredentials(scope, credentials);
 	proxy.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, retryhandler); 
@@ -105,13 +106,11 @@ public final class HttpProxyServlet extends HttpServlet {
 	
 	
 	URL url;
-	HttpClient proxy;
 	try {
 	      url = new URL(host+call);
 	    } catch (MalformedURLException me) {
 	      throw new ServletException("Proxy URL is invalid", me);
 	    }
-	proxy = new HttpClient();
 	proxy.getHostConfiguration().setHost(url.getHost());
 	proxy.getState().setCredentials(scope, credentials);
 	proxy.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, retryhandler); 
