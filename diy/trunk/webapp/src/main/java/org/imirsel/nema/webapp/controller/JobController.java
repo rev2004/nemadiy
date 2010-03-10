@@ -105,13 +105,22 @@ public class JobController extends MultiActionController {
 	 * @return submission/submissionList.jsp
 	 */
 	public ModelAndView getSubmissions(HttpServletRequest req,	HttpServletResponse res){
+		
+		ModelAndView mav;
+		String uri = req.getRequestURI();
+		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
+			mav = new ModelAndView("jsonView");
+		} else {
+			mav =new ModelAndView("submission/submissionList");
+		}
 		User user=this.userManager.getCurrentUser();
 		List<Submission> submissions=this.submissionManager.getSubmissions(user);
 		logger.info("Submissions are: " +submissions);
 		if(submissions!=null){
 			logger.info("submission size is: " + submissions.size());
 		}
-		return new ModelAndView("submission/submissionList", Constants.SUBMISSIONLIST, submissions);
+		mav.addObject(Constants.SUBMISSIONLIST, submissions);
+		return mav;
 	}
 	
 	
@@ -405,12 +414,20 @@ public class JobController extends MultiActionController {
 	 */
 	public ModelAndView getUserJobs(HttpServletRequest req,
 			HttpServletResponse res) {
+		ModelAndView mav;
+		String uri = req.getRequestURI();
+		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
+			mav = new ModelAndView("jsonView");
+		} else {
+			mav =new ModelAndView("job/jobList");
+		}
 		User user = userManager.getCurrentUser();
 		logger.debug("getting user " + user.getUsername());
     	long userId = user.getId();
 		logger.debug("start to list the jobs of   " + user.getUsername());
 		List<Job> jobs = flowService.getUserJobs(userId);
-		return new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
+		mav.addObject(Constants.JOBLIST,jobs);
+		return mav;
 	}
 
 	
