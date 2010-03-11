@@ -24,6 +24,15 @@ public class MelodyEvaluator extends EvaluatorImpl {
 	private static final int UPPER_BOUND = 440;
 	private static final double TOLERANCE = 0.5;
 
+	/**
+	 * Constructor
+	 * @param task_ 		the evaluation task e.g. melody, onset, etc
+	 * @param dataset_ 		the data-set being worked on
+	 * @param outputDir_ 	the output directory to write evaluation results to
+	 * @param workingDir_ 	the working directory for writing temporary files, etc
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public MelodyEvaluator(NemaTask task_, NemaDataset dataset_,
 			File outputDir_, File workingDir_) throws FileNotFoundException,
 			IOException {
@@ -31,20 +40,24 @@ public class MelodyEvaluator extends EvaluatorImpl {
 
 	}
 
+	/**
+	 * {inheritDoc}
+	 */
 	@Override
 	public Map<String, NemaData> evaluate() throws IllegalArgumentException,
 			IOException {
 		String jobID;
 		int numJobs = jobIDToFoldResults.size();
 		
-		//check all systems have just one result set
+		/* Check all systems have just one result set */
 		List<List<NemaData>> sysResults;
 		
-		// Make sure we only have one set of results per jobId (i.e. system), 
-		// as this is not a cross-fold validated experiment
+		/* 
+		 * Make sure we only have one set of results per jobId (i.e. system), 
+		 * as this is not a cross-fold validated experiment */
 		checkFolds();
 		
-		// Perform the evaluations on all jobIds (systems)
+		/* Perform the evaluations on all jobIds (systems) */
 		Map<String, NemaData> jobIdToEvaluation = new HashMap<String, NemaData>(
 				numJobs);
 		for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it
@@ -56,27 +69,26 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			jobIdToEvaluation.put(jobID, result);
 		}
 
-		// Make per system result dirs
+		/* Make per system result directories */
 		Map<String, File> jobIDToResultDir = new HashMap<String, File>();
 		for (Iterator<String> it = jobIdToEvaluation.keySet().iterator(); it
 				.hasNext();) {
 			jobID = it.next();
-			// make a sub-dir for the systems results
+			/* Make a sub-directory for the systems results */
 			File sysDir = new File(outputDir.getAbsolutePath() + File.separator
 					+ jobID);
 			sysDir.mkdirs();
 			jobIDToResultDir.put(jobID, sysDir);
 		}
 
-		// plot melody transcription against GT for each track result for each
-		// system
+		/* Plot melody transcription against GT for each track result for each system */
 		List<NemaData> resultList;
 		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
 		for (Iterator<String> it = jobIdToEvaluation.keySet().iterator(); it.hasNext();) {
 			jobID = it.next();
 			File sysDir = jobIDToResultDir.get(jobID);
 		
-			// get results to plot
+			/* Get results to plot */
 			sysResults = jobIDToFoldResults.get(jobID);
 			resultList = sysResults.get(0);
 		
@@ -86,7 +98,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			jobIDToResultPlotFileList.put(jobID, plotFiles);
 		}
 
-		// write out summary CSV
+		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");
 		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator
 				+ "allResults.csv");
@@ -95,8 +107,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				summaryCsv
 			);
 
-		// write out per track CSV for each system
-
+		/* Write out per track CSV for each system */
 		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(
 				numJobs);
 		for (Iterator<String> it = jobIDToName.keySet().iterator(); it
@@ -114,7 +125,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		}
 
 
-		// create tarballs of individual result dirs
+		/* Create tar-balls of individual result directories */
 		getLogger().info("Preparing evaluation data tarballs...");
 		Map<String, File> jobIDToTgz = new HashMap<String, File>(jobIDToName
 				.size());
@@ -125,7 +136,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 					.tarAndGzip(jobIDToResultDir.get(jobID)));
 		}
 
-		// write result HTML pages
+		/* Write result HTML pages */
 		getLogger().info("Creating result HTML files...");
 
 		writeResultHtmlPages(numJobs, jobIdToEvaluation,
@@ -135,6 +146,16 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		return jobIdToEvaluation;
 	}
 
+	/**
+	 * Writes the result HTML pages for the evaluation of multiple jobs/algorithms
+	 * 
+	 * @param numJobs 					the number of jobs/algorithms to evaluation
+	 * @param jobIdToEvaluation 		map of a jobId to evaluation results for that job
+	 * @param jobIDToResultPlotFileList map of a jobId to the results plots for that job
+	 * @param summaryCsv 				the summary csv file that summarizes all jobs
+	 * @param jobIDToPerTrackCSV 		map of jobId to individual per-track results csv files for that job
+	 * @param jobIDToTgz 				map of jobId to the tar-balls of individual job results
+	 */
 	private void writeResultHtmlPages(int numJobs,
 			Map<String, NemaData> jobIdToEvaluation,
 			Map<String, File[]> jobIDToResultPlotFileList, File summaryCsv,
@@ -146,7 +167,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		List<PageItem> items;
 		Page aPage;
 
-		// do intro page to describe task
+		/* Do intro page to describe task */
 		{
 			items = new ArrayList<PageItem>();
 			Table descriptionTable = WriteMelodyResultFiles.prepTaskTable(task,
@@ -158,7 +179,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			resultPages.add(aPage);
 		}
 
-		// do summary page
+		/* Do summary page */
 		{
 			items = new ArrayList<PageItem>();
 			Table summaryTable = WriteMelodyResultFiles.prepSummaryTableData(
@@ -169,7 +190,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			resultPages.add(aPage);
 		}
 
-		// do per system pages
+		/* Do per system pages */
 		{
 			for (Iterator<String> it = jobIDToName.keySet().iterator(); it
 					.hasNext();) {
@@ -177,7 +198,8 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				items = new ArrayList<PageItem>();
 				sysResults = jobIDToFoldResults.get(jobID);
 				resultList = sysResults.get(0);
-				// add per track table
+				
+				/* Add per track table */
 				Table perTrackTable = WriteMelodyResultFiles
 						.prepPerTrackTableData(resultList,
 								jobIDToName.get(jobID));
@@ -186,7 +208,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));
 
-				// add list of plots
+				/* Add list of plots */
 				List<String> plotPathList = new ArrayList<String>(numJobs);
 				File[] plotPaths = jobIDToResultPlotFileList.get(jobID);
 				for (int i = 0; i < plotPaths.length; i++) {
@@ -202,11 +224,11 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			}
 		}
 
-		// do files page
+		/* Do files page */
 		{
 			items = new ArrayList<PageItem>();
 
-			// CSVs
+			/* CSVs */
 			List<String> CSVPaths = new ArrayList<String>(4);
 			CSVPaths.add(IOUtil.makeRelative(summaryCsv, outputDir));
 			for (Iterator<String> it = jobIDToName.keySet().iterator(); it
@@ -219,7 +241,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			items.add(new FileListItem("dataCSVs", "CSV result files",
 							CSVPaths));
 
-			// System Tarballs
+			/* System tar-balls */
 			List<String> tarballPaths = new ArrayList<String>(numJobs);
 			for (Iterator<String> it = jobIDToName.keySet().iterator(); it
 					.hasNext();) {
@@ -236,6 +258,10 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		Page.writeResultPages(task.getName(), outputDir, resultPages);
 	}
 
+	/**
+	 * Checks that the algorithm results contain only a single fold of results. This evaluation 
+	 * task is not cross-fold validated
+	 */
 	private void checkFolds() {
 		String jobID;
 		List<List<NemaData>> sysResults;
@@ -257,10 +283,19 @@ public class MelodyEvaluator extends EvaluatorImpl {
 	}
 
 
-	private File[] plotTranscriptionForJob(String jobID,
+	/**
+	 * Plots the melody transcriptions for each job, for each file
+	 * 
+	 * @param jobId			the jobId we wish to plot results for
+	 * @param resultList	a list of the transcriptions to plot
+	 * @param sysDir		directory to store plots in
+	 * @return				a file array containing all the plots
+	 */
+	private File[] plotTranscriptionForJob(String jobId,
 			List<NemaData> resultList, File sysDir) {
 		NemaData result;
-		// plot each result
+
+		/* Plot each result */
 		File[] plotFiles = new File[resultList.size()];
 		
 		int idx = 0;
@@ -268,7 +303,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				.hasNext();) {
 			result = iterator.next();
 			plotFiles[idx++] = new File(sysDir.getAbsolutePath()
-					+ File.separator + jobID + File.separator
+					+ File.separator + jobId + File.separator
 					+ result.getId() + MELODY_PLOT_EXT);
 
 			// TODO actually plot the result
@@ -276,6 +311,12 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		return plotFiles;
 	}
 
+	/**
+	 * The core evaluation method. Evaluates each file against its ground-truth for a given jobId
+	 * @param jobID		the jobId to evaluate
+	 * @param theData	the results to evaluate for the jobId. Individual results for each file are added back to this List
+	 * @return 			a single NemaData object that contains the average/summary/overall evaluation	
+	 */
 	private NemaData evaluateResult(String jobID, List<NemaData> theData) {
 
 		NemaData outObj = new NemaData(jobID);
@@ -293,7 +334,8 @@ public class MelodyEvaluator extends EvaluatorImpl {
 
 		int numTracks = theData.size();
 		for (int x = 0; x < numTracks; x++) {
-			// pull the algorithm and ground-truth raw data
+			
+			/* Pull the algorithm and ground-truth raw data */
 			data = theData.get(x);
 			gtData = trackIDToGT.get(data.getId());
 			rawData = data
@@ -301,7 +343,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			rawGtData = gtData
 					.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
 
-			// initialize frame-by-frame counters for the evaluation measures
+			/* Initialize frame-by-frame counters for the evaluation measures */
 			int correct = 0;
 			int nomelcorrect = 0;
 			int incorrect = 0;
@@ -315,7 +357,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			int octaveFalseNegatives = 0;
 			int octaveFalseNegCorF0 = 0;
 			
-			// perform evaluation
+			/* Perform evaluation */
 			int tot = rawGtData.length;
 			for (int t = 0; t < tot; t++) {
 				double gtF0 = rawGtData[t][1];
@@ -348,7 +390,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				}
 			}
 
-			// Do one octave evaluation
+			/* Do one octave evaluation */
 			for (int t = 0; t < tot; t++) {
 				double gtF0 = rawGtData[t][1];
 				double detF0;
@@ -358,7 +400,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 					detF0 = rawData[t][1];
 				}
 
-				// map to one octave
+				/* Map to one octave */
 				if (gtF0 != 0) {
 					while (!((gtF0 >= LOWER_BOUND) && (gtF0 < UPPER_BOUND))) {
 						gtF0 = (gtF0 >= UPPER_BOUND) ? (gtF0 / 2) : (gtF0 * 2);
@@ -439,11 +481,9 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				} else {
 					octaveIncorrect++;
 				}
-			} // end counts for a single trackID evaluation
-
+			} 
 			
-			
-			// Calculate the evaluation measures for this track
+			/* Calculate the evaluation measures for this track*/
 			int gv = correct + incorrect + falseNegatives;
 			int gu = nomelcorrect + falsePositives;
 			double vxRecall = ((double) correct + (double) incorrect)
@@ -472,6 +512,9 @@ public class MelodyEvaluator extends EvaluatorImpl {
 
 		}
 		
+		/* 
+		 * Calculate summary/overall evaluation results. Populate a summary NemaData object with 
+		 * the evaluations, and return it */
 		
 		vxRecallOvarall = vxRecallOvarall / ((double) numTracks);
 		vxFalseAlarmOverall = vxFalseAlarmOverall / ((double) numTracks);
