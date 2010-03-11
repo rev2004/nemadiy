@@ -96,15 +96,22 @@ public class NemaDataConstants {
     public static final String OVERALL_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples overall";
     public static final String OVERALL_NUM_NEGATIVE_EXAMPLES = "Tag classification number of negative examples overall";
     
-    // Melody Extraction Evaluator Constants
+    /* Melody Extraction Evaluator Constants */
     public static final String MELODY_EXTRACTION_DATA = "Raw melody transcription data with timestamps and F0 in Hz";
-    public static final String MELODY_RAW_PITCH_ACCURACY = "Melody raw pitch accuracy ignoring segmentation errors";
-    public static final String MELODY_RAW_CHROMA_ACCURACY = "Melody raw chroma accuracy ignoring segmentation and octave errors";
-    public static final String MELODY_VOICING_RECALL = "Melody voiced section recall rate";
-    public static final String MELODY_VOICING_FALSE_ALARM = "Melody voiced section false-alarm rate";
-    public static final String MELODY_OVERALL_ACCURACY = "Melody overall accuracy";
+    public static final String MELODY_RAW_PITCH_ACCURACY = "Raw Pitch Accuracy";
+    public static final String MELODY_RAW_CHROMA_ACCURACY = "Raw Chroma Accuracy";
+    public static final String MELODY_VOICING_RECALL = "Voicing Recall Rate";
+    public static final String MELODY_VOICING_FALSE_ALARM = "Voicing False-Alarm Rate";
+    public static final String MELODY_OVERALL_ACCURACY = "Overall Accuracy";
     
-    
+    /* Key Detection Evaluator Constants */
+    public static final String KEY_DETECTION_DATA = "The musical key (tonic/mode)";
+    public static final String KEY_DETECTION_WEIGHTED_SCORE ="Weighted Key Score";
+    public static final String KEY_DETECTION_CORRECT = "Correct Key(s)";
+    public static final String KEY_DETECTION_PERFECT_FIFTH_ERROR = "Perfect Fifth Error(s)";
+    public static final String KEY_DETECTION_RELATIVE_ERROR = "Relative Major/Minor Error(s)";
+    public static final String KEY_DETECTION_PARALLEL_ERROR = "Parallel Major/Minor Error(s)";
+    public static final String KEY_DETECTION_ERROR = "Pure Non-disconounted Error(s)";
     
     public static final String CHORD_LABEL_SEQUENCE = "Chord label sequence";
     public static final String CHORD_OVERLAP_RATIO = "Chord Overlap ratio";
