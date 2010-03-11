@@ -10,6 +10,7 @@ import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
 
 
+import org.springframework.security.providers.encoding.PasswordEncoder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -26,7 +27,7 @@ import org.springframework.web.servlet.mvc.Controller;
 public class UserController implements Controller {
     private transient final Log log = LogFactory.getLog(UserController.class);
     private UserManager mgr = null;
-
+ 
     public void setUserManager(UserManager userManager) {
         this.mgr = userManager;
     }
@@ -40,4 +41,5 @@ public class UserController implements Controller {
 
         return new ModelAndView("admin/userList", Constants.USER_LIST, mgr.getUsers(new User()));
     }
+
 }
