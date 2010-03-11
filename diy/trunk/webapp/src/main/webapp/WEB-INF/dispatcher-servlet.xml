@@ -182,6 +182,8 @@
         <property name="userManager" ref="userManager"/>
         <property name="methodNameResolver"
             ref="usersMethodResolver" />
+        <property name="passwordEncoder"
+        	ref="passwordEncoder"/>
     </bean>
 
     <bean id="usersMethodResolver"
