@@ -178,6 +178,21 @@
         <property name="userManager" ref="userManager"/>
     </bean>
 
+     <bean id="userControllerAction" class="org.imirsel.nema.webapp.controller.users.UserController">
+        <property name="userManager" ref="userManager"/>
+        <property name="methodNameResolver"
+            ref="usersMethodResolver" />
+    </bean>
+
+    <bean id="usersMethodResolver"
+        class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+        <property name="mappings">
+            <value>
+                /UserManager.login.json=login
+            </value>
+        </property>
+    </bean> 
+
     <bean id="userFormController" class="org.imirsel.nema.webapp.controller.UserFormController">
         <property name="validator" ref="beanValidator"/>
         <property name="formView" value="userForm"/>
@@ -204,6 +219,7 @@
     <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <value>
+            /UserManager.*=userControllerAction
            	   /JobManager.*=jobController
            	    /FlowManager.*=flowController
            	    /FlowFormManager.*=flowFormController
