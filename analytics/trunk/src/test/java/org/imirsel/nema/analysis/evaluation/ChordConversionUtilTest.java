@@ -52,5 +52,10 @@ public class ChordConversionUtilTest {
 		Map<String,int[]> map = ChordConversionUtil.readChordDictionary(dictFile);
 		assertTrue(map!=null);
 	}
+	
+
+	
+	
+	
 
 }

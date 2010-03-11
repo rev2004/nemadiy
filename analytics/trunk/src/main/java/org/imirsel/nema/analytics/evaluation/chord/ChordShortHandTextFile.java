@@ -49,6 +49,15 @@ public class ChordShortHandTextFile extends SingleTrackEvalFileTypeImpl {
 			onset = Double.parseDouble(chordStringsData[r][0]);
 			offset = Double.parseDouble(chordStringsData[r][1]);
 			shorthand = chordStringsData[r][2];
+			//Delete * character
+	//		if (shorthand.contains("*")){		
+	//			String firstPart = shorthand.substring(0,shorthand.indexOf("*"));
+	//			String secondPart = shorthand.substring(shorthand.indexOf("*")+1,shorthand.length());		
+	//			shorthand = firstPart + secondPart;
+	//		}
+			
+			
+
 			notes = ChordConversionUtil.getInstance().convertShorthandToNotenumbers(shorthand);
 			chords.add(new NemaChord(onset, offset, notes));
 		}
