@@ -208,12 +208,6 @@ public class Job implements Serializable, Cloneable {
 	}
 	
 	public void setStatusCode(Integer statusCode) {
-		// This is a nasty hack to work around the race condition that exists
-		// when the Meandre server updates the job as started, and then the
-		// flow service writes it as submitted.
-		if(this.statusCode==2 && statusCode < 2) {
-			return;
-		}
 		if(!this.statusCode.equals(statusCode)) {
 		  setUpdateTimestamp(new Date());
 		  this.statusCode = statusCode;
