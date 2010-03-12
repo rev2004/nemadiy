@@ -26,6 +26,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param task_ 		the evaluation task e.g. melody, onset, etc
 	 * @param dataset_ 		the data-set being worked on
 	 * @param outputDir_ 	the output directory to write evaluation results to
