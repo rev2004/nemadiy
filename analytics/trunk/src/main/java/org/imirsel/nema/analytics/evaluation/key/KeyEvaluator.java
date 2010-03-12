@@ -24,17 +24,17 @@ import org.imirsel.nema.model.NemaTask;
 
 public class KeyEvaluator extends EvaluatorImpl {
 	
+	/**
+     * Constant definition for the plot file type.
+     */
 	public static final String MELODY_PLOT_EXT = ".png";
-	private static final int LOWER_BOUND = 220;
-	private static final int UPPER_BOUND = 440;
-	private static final double TOLERANCE = 0.5;
 	
 	/**
-     * Constant definition for Major circle of fifths.
+     * Constant definition for Major circle-of-fifths.
      */
     public static final String[] MAJOR_CIRCLE = {"c","g","d","a","e","b","f#","db","ab","eb","bb","f"};
     /**
-     * Constant definition for Minor circle of fifths.
+     * Constant definition for Minor circle-of-fifths.
      */
     public static final String[] MINOR_CIRCLE = {"a","e","b","f#","c#","g#","eb","bb","f","c","g","d"};
     /**
@@ -114,6 +114,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 		for (Iterator<String> it = jobIdToEvaluation.keySet().iterator(); it
 				.hasNext();) {
 			jobID = it.next();
+			
 			/* Make a sub-directory for the systems results */
 			File sysDir = new File(outputDir.getAbsolutePath() + File.separator
 					+ jobID);
@@ -121,21 +122,19 @@ public class KeyEvaluator extends EvaluatorImpl {
 			jobIDToResultDir.put(jobID, sysDir);
 		}
 
-		/* Plot melody transcription against GT for each track result for each system */
+		/* Plot summary bar plot for each system */
 		List<NemaData> resultList;
 		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
 		for (Iterator<String> it = jobIdToEvaluation.keySet().iterator(); it.hasNext();) {
 			jobID = it.next();
 			File sysDir = jobIDToResultDir.get(jobID);
 		
-			/* Get results to plot */
-			sysResults = jobIDToFoldResults.get(jobID);
-			resultList = sysResults.get(0);
-		
-			File[] plotFiles = plotTranscriptionForJob(jobID, resultList,
+			/* Get summary results to plot */	
+			File[] summaryPlot = new File[1];
+			summaryPlot[0] = plotSummaryForJob(jobID, jobIdToEvaluation,
 					sysDir);
 			
-			jobIDToResultPlotFileList.put(jobID, plotFiles);
+			jobIDToResultPlotFileList.put(jobID, summaryPlot);
 		}
 
 		/* Write out summary CSV */
@@ -255,7 +254,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 					plotPathList.add(IOUtil.makeRelative(plotPaths[i],
 							outputDir));
 				}
-				items.add(new FileListItem("plots", "Per track result plots",
+				items.add(new FileListItem("plots", "System summary plot",
 						plotPathList));
 
 				aPage = new Page(jobID + "_results", jobIDToName.get(jobID),
@@ -331,24 +330,17 @@ public class KeyEvaluator extends EvaluatorImpl {
 	 * @param sysDir		directory to store plots in
 	 * @return				a file array containing all the plots
 	 */
-	private File[] plotTranscriptionForJob(String jobId,
-			List<NemaData> resultList, File sysDir) {
-		NemaData result;
+	private File plotSummaryForJob(String jobId,
+			Map<String, NemaData> jobIdToEvaluation, File sysDir) {
+
+		NemaData resultSummary = jobIdToEvaluation.get(jobId);
 
 		/* Plot each result */
-		File[] plotFiles = new File[resultList.size()];
-		
-		int idx = 0;
-		for (Iterator<NemaData> iterator = resultList.iterator(); iterator
-				.hasNext();) {
-			result = iterator.next();
-			plotFiles[idx++] = new File(sysDir.getAbsolutePath()
-					+ File.separator + jobId + File.separator
-					+ result.getId() + MELODY_PLOT_EXT);
+		File plotFile = null;
 
-			// TODO actually plot the result
-		}
-		return plotFiles;
+		// TODO actually plot the result
+
+		return plotFile;
 	}
 
 	/**
