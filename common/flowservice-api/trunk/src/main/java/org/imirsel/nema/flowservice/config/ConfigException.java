@@ -7,18 +7,18 @@ import java.io.IOException;
  * @author amitku
  * @since 0.5.0
  */
-public class MeandreServerProxyConfigException extends Exception {
+public class ConfigException extends Exception {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6424395100840248364L;
 
-	public MeandreServerProxyConfigException(String message) {
+	public ConfigException(String message) {
 		super(message);
 	}
 
-	public MeandreServerProxyConfigException(IOException e) {
+	public ConfigException(IOException e) {
 		super(e);
 	}
 

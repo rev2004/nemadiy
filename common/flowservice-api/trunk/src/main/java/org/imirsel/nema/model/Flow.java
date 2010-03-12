@@ -38,7 +38,7 @@ public class Flow implements Serializable {
 		public String getName() {
 			return name;
 		}
-        @Override
+      @Override
 		public String toString() {
 			return name;
 		}
@@ -71,8 +71,7 @@ public class Flow implements Serializable {
 	private String keyWords;
 	private Boolean template = false;
 	private String typeName;
-	// TODO: change this to uri rather than url
-	private String url;
+	private String uri;
 	private Long creatorId;
 	private Flow instanceOf = null;
 
@@ -148,13 +147,13 @@ public class Flow implements Serializable {
     	this.typeName = flowType.getName();
     }
     
-	@Column(name = "url", nullable = false)
-	public String getUrl() {
-		return url;
+	@Column(name = "uri", nullable = false)
+	public String getUri() {
+		return uri;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 
 	@Column(name = "creatorId", nullable = false)
@@ -176,83 +175,31 @@ public class Flow implements Serializable {
 		this.instanceOf = instanceOf;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((creatorId == null) ? 0 : creatorId.hashCode());
-		result = prime * result
-				+ ((dateCreated == null) ? 0 : dateCreated.hashCode());
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((instanceOf == null) ? 0 : instanceOf.hashCode());
-		result = prime * result
-				+ ((template == null) ? 0 : template.hashCode());
-		result = prime * result
-				+ ((keyWords == null) ? 0 : keyWords.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((url == null) ? 0 : url.hashCode());
-		return result;
-	}
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      return result;
+   }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Flow other = (Flow) obj;
-		if (creatorId == null) {
-			if (other.creatorId != null)
-				return false;
-		} else if (!creatorId.equals(other.creatorId))
-			return false;
-		if (dateCreated == null) {
-			if (other.dateCreated != null)
-				return false;
-		} else if (!dateCreated.equals(other.dateCreated))
-			return false;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (instanceOf == null) {
-			if (other.instanceOf != null)
-				return false;
-		} else if (!instanceOf.equals(other.instanceOf))
-			return false;
-		if (template == null) {
-			if (other.template != null)
-				return false;
-		} else if (!template.equals(other.template))
-			return false;
-		if (keyWords == null) {
-			if (other.keyWords != null)
-				return false;
-		} else if (!keyWords.equals(other.keyWords))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (url == null) {
-			if (other.url != null)
-				return false;
-		} else if (!url.equals(other.url))
-			return false;
-		return true;
-	}
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Flow other = (Flow) obj;
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
+         return false;
+      return true;
+   }
+
+
 
 }
