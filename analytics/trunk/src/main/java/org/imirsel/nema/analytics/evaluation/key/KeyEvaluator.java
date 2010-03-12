@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
-import org.imirsel.nema.analytics.evaluation.melody.WriteMelodyResultFiles;
+import org.imirsel.nema.analytics.evaluation.key.WriteKeyResultFiles;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.PageItem;
@@ -142,8 +142,8 @@ public class KeyEvaluator extends EvaluatorImpl {
 		getLogger().info("Writing out CSV result files over whole task...");
 		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator
 				+ "allResults.csv");
-		WriteMelodyResultFiles.writeTableToCsv(
-				WriteMelodyResultFiles.prepSummaryTableData(jobIdToEvaluation, jobIDToName),
+		WriteKeyResultFiles.writeTableToCsv(
+				WriteKeyResultFiles.prepSummaryTableData(jobIdToEvaluation, jobIDToName),
 				summaryCsv
 			);
 
@@ -157,8 +157,8 @@ public class KeyEvaluator extends EvaluatorImpl {
 			resultList = sysResults.get(0);
 			File sysDir = jobIDToResultDir.get(jobID);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "perTrack.csv");
-			WriteMelodyResultFiles.writeTableToCsv(
-					WriteMelodyResultFiles.prepPerTrackTableData(resultList, jobIDToName.get(jobID)),
+			WriteKeyResultFiles.writeTableToCsv(
+					WriteKeyResultFiles.prepPerTrackTableData(resultList, jobIDToName.get(jobID)),
 					trackCSV
 				);
 			jobIDToPerTrackCSV.put(jobID, trackCSV);
@@ -210,7 +210,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 		/* Do intro page to describe task */
 		{
 			items = new ArrayList<PageItem>();
-			Table descriptionTable = WriteMelodyResultFiles.prepTaskTable(task,
+			Table descriptionTable = WriteKeyResultFiles.prepTaskTable(task,
 					dataset);
 			items.add(new TableItem("task_description", "Task Description",
 					descriptionTable.getColHeaders(), descriptionTable
@@ -222,7 +222,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 		/* Do summary page */
 		{
 			items = new ArrayList<PageItem>();
-			Table summaryTable = WriteMelodyResultFiles.prepSummaryTableData(
+			Table summaryTable = WriteKeyResultFiles.prepSummaryTableData(
 					jobIdToEvaluation, jobIDToName);
 			items.add(new TableItem("summary_results", "Summary Results",
 					summaryTable.getColHeaders(), summaryTable.getRows()));
@@ -240,7 +240,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 				resultList = sysResults.get(0);
 				
 				/* Add per track table */
-				Table perTrackTable = WriteMelodyResultFiles
+				Table perTrackTable = WriteKeyResultFiles
 						.prepPerTrackTableData(resultList,
 								jobIDToName.get(jobID));
 				items.add(new TableItem(jobID + "_results", jobIDToName
