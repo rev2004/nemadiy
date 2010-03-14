@@ -56,7 +56,8 @@ public interface FlowService {
 	 * will be executed.
 	 * @param userEmail Email address for the user where notifications about 
 	 * {@link Job} status changes should be sent.
-	 * @return Job
+	 * @return The {@link Job} instance that was created as a result of the
+	 * new execution.
 	 * @since 0.4.0
 	 */
    public Job executeJob(
@@ -110,28 +111,30 @@ public interface FlowService {
    public Long storeFlowInstance(Flow instance);
    
    /**
-    * Returns {@link Flow} with the id
-    * @param flowId flowId of the flow to be returned
-    * @return Flow
+    * Return the {@link Flow} with the specified ID.
+    * 
+    * @param flowId ID of the {@link Flow} to return.
+    * @return The {@link Flow} with the specified ID.
     * @since 0.4.0
     */
    public Flow getFlow(long flowId);
    
    
-   /**
-    * Returns server list for the server
-    * @return List<String> List of Meandre server string 
-    * @since 0.5.1
-    */
-   public List<String> getMeandreServerList();
+
+   public MeandreServerProxyConfig getHeadConfig();
+   
+
+   public Set<MeandreServerProxyConfig> getWorkerConfigs();
+   
+   public MeandreServerProxyStatus getHeadStatus();
    
    
    /**
     * Returns a Map of the MeandreServerProxyConfig as key and the MeandreServerProxyStatus as value
     * @return Map of {@link org.imirsel.nema.flowservice.config.MeandreServerProxyConfig} as key {@link MeandreServerProxyStatus} as value
-    * @since 0.5.1
+    * @since 0.6.0
     */
-   public Map<String,MeandreServerProxyStatus> getMeandreServerProxyStatus();
+   public Map<MeandreServerProxyConfig,MeandreServerProxyStatus> getWorkerStatus();
    
    /**
     * Returns the MeandreServerProxyStatus for the Server
@@ -140,7 +143,7 @@ public interface FlowService {
     * @return MeandreServerProxyStatus The Server's runtime status
     * @since 0.5.1
     */
-   public MeandreServerProxyStatus getMeandreServerProxyStatus(String host, int port);
+   public MeandreServerProxyStatus getWorkerStatus(String host, int port);
    
    
    /**

@@ -4,30 +4,35 @@ import java.io.Serializable;
 
 /**
  * Stores {@link MeandreServerProxy} Status
+ * 
  * @author kumaramit01
  * @since 0.5.0
  */
-public class MeandreServerProxyStatus implements Serializable{
-	/**
-	 * 
-	 */
+public class MeandreServerProxyStatus implements Serializable {
+
+   /** Version of this class */
 	private static final long serialVersionUID = 2032279664228170577L;
-	private boolean isHead;
-	// number of flows that are running
+	
 	private int numRunning;
-	// number of flows that have been asked to abort
 	private int numAborting;
-	// number of flows that can run concurrently
-	private int maxConcurrentJobs;
-	public MeandreServerProxyStatus(int numJobsRunning, int numJobsAborting, int numCapacity, boolean isHead) {
+	
+	/**
+	 * Create a new instance with the given initial state.
+	 * 
+	 * @param numJobsRunning Number of jobs running.
+	 * @param numJobsAborting Number of jobs pending abort.
+	 */
+	public MeandreServerProxyStatus(int numJobsRunning, int numJobsAborting) {
 		this.numRunning = numJobsRunning;
 		this.numAborting = numJobsAborting;
-		this.maxConcurrentJobs = numCapacity;
-		this.isHead= isHead;
 	}
-	// default constructor
+	
+	/**
+	 * Create a new instance.
+	 */
 	public MeandreServerProxyStatus() {
 	}
+	
 	/**
 	 * @return the numRunning
 	 * @since 0.5.0
@@ -55,18 +60,6 @@ public class MeandreServerProxyStatus implements Serializable{
 	 */
 	public void setNumAborting(int numAborting) {
 		this.numAborting = numAborting;
-	}
-	public int getMaxConcurrentJobs() {
-		return maxConcurrentJobs;
-	}
-	public void setMaxConcurrentJobs(int maxConcurrentJobs) {
-		this.maxConcurrentJobs = maxConcurrentJobs;
-	}
-	public void setHead(boolean isHead) {
-		this.isHead = isHead;
-	}
-	public boolean isHead() {
-		return isHead;
 	}
 
 }
