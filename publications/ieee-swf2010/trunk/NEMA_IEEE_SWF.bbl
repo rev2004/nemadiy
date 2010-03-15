@@ -95,4 +95,14 @@ I.~Witten, S.~Boddie, D.~Bainbridge, and R.~McNab, ``{Greenstone: a
   \emph{Proceedings of the fifth ACM conference on Digital libraries}.\hskip
   1em plus 0.5em minus 0.4em\relax ACM New York, NY, USA, 2000, pp. 113--121.
 
+\bibitem{lee2000jndi}
+R.~Lee and S.~Seligman, \emph{{The JNDI API tutorial and reference: building
+  directory-enabled Java applications}}.\hskip 1em plus 0.5em minus 0.4em\relax
+  Addison-Wesley Longman Publishing Co., Inc. Boston, MA, USA, 2000.
+
+\bibitem{payette-flexible}
+S.~PAYETTE and C.~LAGOZE, ``{Flexible and extensible digital object and
+  repository architecture(FEDORA)},'' \emph{Lecture notes in computer science},
+  pp. 41--59, 1998.
+
 \end{thebibliography}

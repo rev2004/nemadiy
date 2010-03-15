@@ -469,12 +469,11 @@ The NEMA service infrastructure provides each task execution with a unique ident
 The design of the linked data system or \emph{repository} for the NEMA project is beyond the scope of this paper. However, it is hoped that the NEMA service infrastructure will one day be used to provide on-demand processing required to satisfy queries submitted via the repository endpoint (i.e. extracting and/or predicting metadata for content that is not already known).
 
 \subsection{Implementation}
-	NEMA Analytics\\
-	Architecture\\
-	Domain model\\
-	Use cases\\
-	Meandre Implementation with NEMA extensions\\
+NEMA uses Meandre \footnote{\url{http://seasr.org/meandre/}} to implement it's worklow processes. Meandre is a semantic-web-driven data-intensive flow execution environment. Meandre provides basic infrastructure for data-intensive computation. It provides a high-level language to describe flows, and multicore and distributed execution environment based on a service-oriented paradigm. The Meandre Infrastructure provides a plugin model similar to the servlets in a Java Enterprise Enviornment where  custom functionality can be implemented, NEMA uses plugins to make data sources available as a JNDI \cite{lee2000jndi} resource to all the tasks.
 
+The Meandre Infrastructure allows NEMA to Monitor the lifecycle of a task.  The task is submitted to the NEMA Flow Service, that schedules the experiment to run on one of the Meandre Servers. The Meandre Servers assembles the experiment by downloading the work flow definitions and code from possibly distributed locations and starts the execution. 
+
+The flow execution can depend upon a Virtual machine with a preset execution environment, such as a particular version of python, JVM or other libraries The NEMA Executor Service runs on each virtual machine and handles the process execution and the lifecycle of the process. It  reports back to the flow asynchronously the success or failure of the process. The artifacts produced by the process are serialized and moved to the flow server as input to the next the component. We are currently working on an implementation that would store the results in a central NEMA Repository service based on  Flexible and Extensible Digital Object and Repository Architecture (Fedora) \cite{payette-flexible} with a client interface that would allow tasks to retrieve the artifacts.
 
 % conference papers do not normally have an appendix
 
