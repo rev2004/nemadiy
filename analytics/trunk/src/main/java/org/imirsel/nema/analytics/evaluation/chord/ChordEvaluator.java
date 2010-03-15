@@ -606,24 +606,40 @@ public class ChordEvaluator extends EvaluatorImpl{
         	// Create grid for the system
         	int lnSys = (int)(res*systemChords.get(systemChords.size()-1).getOffset());
         	if (lnSys == 0 ){
-        		throw new IllegalArgumentException("Length of DT is 0!");
+        		throw new IllegalArgumentException("Length of SYS is 0!");
         	}
-        	int[][] gridSys = new int[lnSys][];        	
+        	
+
+        	int[][] gridSys = new int[lnSys][];	
+//        	System.out.println("ln Sys " + lnSys + " last offset " + systemChords.get(systemChords.size()-1).getOffset());
+//        	System.out.println("System chords length " + systemChords.size());
         	for (int i = 0; i < systemChords.size(); i++) {
         		NemaChord currentChord = systemChords.get(i);
         		int onset_index = (int)(currentChord.getOnset()*res);
         		int offset_index = (int)(currentChord.getOffset()*res);
+        	//	System.out.println("Chord no " + i + " onset="+onset_index + "offset=" + offset_index);
         		for (int j= onset_index; j<offset_index; j++){
         			gridSys[j]=currentChord.getNotes();
         		}
 			}
         	
-        	int[] overlaps = new int[lnGT]; 
+        	
+        	int lnOverlap = Math.min(lnGT, lnSys);
+        	int[] overlaps = new int[lnOverlap]; 
         	int  overlap_total =0;
         	//Calculate the overlap score 
-        	for (int i = 0; i <lnGT; i++ ){
+        	for (int i = 0; i <lnOverlap-1; i++ ){
         		int[] gtFrame = gridGT[i]; 
+        		if(gtFrame == null)
+        			System.out.println("GT Null at " +i + "ith frame");
+        		
+        		
         		int[] sysFrame = gridSys[i];
+        		
+        		if(sysFrame == null)
+        			System.out.println("System Null at " +i + "ith frame");
+        		
+        		
         		overlap_total = overlap_total +  calcOverlap(gtFrame,sysFrame);        		
         	}
         	
