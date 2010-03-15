@@ -87,16 +87,17 @@ public class WriteChordResultFiles extends AbstractWriteResultFiles {
         	firstResList = jobIDToTrackEval.get(firstJob);
         	row[1] = firstResList.get(fold).get(foldTrackCount).getId();
         	for(int i=0;i<numAlgos;i++){
-        		try{
+        		//try{
+        			System.err.println("data id " );
 	        		data = jobIDToTrackEval.get(jobIDandName[i][0]).get(fold).get(foldTrackCount);
+
 	        		if (!data.getId().equals(row[1])){
+	        			System.out.println("HERE ERROR");
 	        			throw new IllegalArgumentException("Results from job ID: " + jobIDandName[i][0] + " are not ordered the same as results from job ID: " + firstJob);
 	        		}
 	        		
 	        		row[i+2] = "" + data.getDoubleMetadata(metricKey);
-        		}catch(Exception e){
-        			throw new IllegalArgumentException("Some of the evaluation data for jobID " + jobIDandName[i][0] + " was missing!");
-        		}
+        	
         	}
         	rows.add(row);
 

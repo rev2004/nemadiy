@@ -87,7 +87,7 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 	
 	}
 
-	@Test
+
 	public void testEvaluateTwoShortHandBasedSystems() throws FileNotFoundException, IOException, IllegalArgumentException, IOException{ 
 		File groundTruthDirectory = new File("src/test/resources/chord/groundtruth");
 		File resultsDirectory1 = new File("src/test/resources/chord/CH");
