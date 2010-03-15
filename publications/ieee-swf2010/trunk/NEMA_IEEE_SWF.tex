@@ -373,7 +373,6 @@ Further, although MIREX provides a snapshot of the state-of-the-art in each MIRE
 \section{Solution}
 %	MIREX -  Build computational infrastructure allowing participants to upload and execute their own submissions
 The stated goals of the NEMA project include the establishment of a computational infrastructure to facilitate submission of MIR compute tasks against remotely held content and metadata collections, interoperability between almost arbitrary systems for well defined MIR tasks, standardised and automated experimentation/evaluation and the exposure of metadata and results in a standardised form suitable for integration with a full linked data architecture for MIR. 
-  
 %		MIREX is excellent model for field wide computational infrastructure and interoperability project
 Though the NEMA project is not intended to replace MIREX, MIREX offers an excellent starting point for a field-wide computational infrastructure and interoperability project as it defines standardised tasks, experiment formats, collections and low-level file formats that are already supported by a very large number of implementations across the research community. 
 
@@ -391,7 +390,14 @@ Though the NEMA project is not intended to replace MIREX, MIREX offers an excell
 
 The NEMA infrastructure includes the definition of an extensible data model and data structures that can encode data relating to all aspects of music and, music metadata, music informatics and MIR evaluation that have been encountered at MIREX, in the jMIR framework \cite{mckay2009jmir} or in the MIR related ontologies developed by the OMRAS2 project \cite{raimond2007music}. In order to facilitate interoperability between diverse components forming part of or submitted to NEMA by third parties, this data model is exclusively used to communicate between components of the system. 
 %maybe break this sentence up
-Each third party component application used with the NEMA service is wrapped in a component harness that uses contextual information about both the experiment and third party component code to raise or lower the data model to or from a suitable file format in order to supply data to and harvest results from the application, construct valid calls to the application to achieve the desired result and satisfy resource and dependency requirements in order to run the application. 
+Each third party component application used with the NEMA service is wrapped in a component harness that uses contextual information about both the experiment and third party component code to raise or lower the data model to or from a suitable file format in order to supply data to and harvest results from the application, construct valid calls to the application to achieve the desired result and satisfy resource and dependency requirements in order to run the application.  A diagrammatic overview of the NEMA service infrastrcture is given in figure \ref{fig_infrastructure}.
+\begin{figure}[!t]
+\centering
+\includegraphics[width=2.65in]{infrastructure}
+  \caption{An overview of the NEMA service infrastructure}
+\label{fig_infrastructure}
+\end{figure}
+
 %FIGURE service layer or ER diagam? representing the infrastructure for running external binary/matlab/java/VAMP components - include on it file formats conversions, implementation specific component harnesses, VMs and resource allocation
 
 \subsubsection{Workflow and Dependency infrastructure}
