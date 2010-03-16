@@ -112,7 +112,7 @@ public class NemaDataConstants {
     public static final String KEY_DETECTION_RELATIVE_ERROR = "Relative Major/Minor Error(s)";
     public static final String KEY_DETECTION_PARALLEL_ERROR = "Parallel Major/Minor Error(s)";
     public static final String KEY_DETECTION_ERROR = "Pure Non-disconounted Error(s)";
-    
+    // Chord Estimation Evaluator Constants
     public static final String CHORD_LABEL_SEQUENCE = "Chord label sequence";
     public static final String CHORD_OVERLAP_RATIO = "Chord Overlap ratio";
     public static final String CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO = "Chord weighted average overlap ratio";
