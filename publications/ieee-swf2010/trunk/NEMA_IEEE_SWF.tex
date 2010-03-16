@@ -343,7 +343,7 @@ One solution to this problem is the use of creative commons collections, particu
 
 \subsection{The Music Information Retrieval Evaluation eXchange}
 %	This leads to MIREX
-These challenges led to establishment of an annual `Music Information Retrieval Evaluation eXchange'  or MIREX  \cite{downie2006mir} hosted by the IMIRSEL lab at the University of Illinois at Urbana-Champaign. MIREX is based on the TREC approach \cite{taguesutcliffe1995sat}, where algorithms and applications are submitted by the MIR community to up to 26 separate, community defined tasks and evaluated using standardised queries, collections and evaluation measures. 
+These challenges led to establishment of an annual `Music Information Retrieval Evaluation eXchange'  or MIREX  \cite{downie2008mirex} hosted by the IMIRSEL lab at the University of Illinois at Urbana-Champaign. MIREX is based on the TREC approach \cite{taguesutcliffe1995sat}, where algorithms and applications are submitted by the MIR community to up to 26 separate, community defined tasks and evaluated using standardised queries, collections and evaluation measures. 
 %		Send code to data
 The large number of tasks and datasets involved necessitates the sending of the code for each submission to the data, rather than the reverse (as is the case in most if not all other fields). 
 
@@ -351,7 +351,8 @@ The large number of tasks and datasets involved necessitates the sending of the 
 Since the establishment of MIREX in 2005 (and its predecessor, the `Audio Description Contest' hosted by the Music Technology Group at Universitat Pompeu Fabra in 2004), the annual evaluation campaign has been a strong driver of research in MIR by encouraging the community to clearly define tasks and research goals, develop and gain consensus on standardised evaluation procedures and provide detailed and statistically valid comparisons of techniques for a given task. Finally, in order to run MIREX a series of extremely simple Unicode text file format standards have been developed to encode data for each highly specific task context, in order to keep the implementation cost for participating systems as low as possible.\\
 
 %	Huge challenge to run MIREX each year
-Given that MIREX submissions must be delivered to MIREX and executed by the IMIRSEL team on the task datasets, the running of a MIREX evaluation is no small job. In 2009 alone IMIRSEL received submissions from 138 individuals, in 26 tasks, generating a total of 289 runs. 
+Given that MIREX submissions must be delivered to MIREX and executed by the IMIRSEL team on the task datasets, the running of a MIREX evaluation is no small job. In 2009 alone IMIRSEL received submissions from 138 individuals, in 26 tasks, generating a total of 289 runs.  Since 2005, nearly 800 formal evaluation runs have been conducted. The IMIRSEL lab also maintains over 4Tb of audio files relating to more than 300,000 distinct tracks that can be used in the various evaluation tasks.
+
 %		Lots of code that must be run in a glut (2 months of hell)
 The association of MIREX with the annual ISMIR conference, where the results are presented, can also be problematic as this means that most or all of the submissions will be received and must be executed within the same eight week period each year. 
 %		Often poor code quality 
@@ -378,30 +379,20 @@ Though the NEMA project is not intended to replace MIREX, MIREX offers an excell
 
 \subsection{Key concepts}
 \subsubsection{The NEMA Data Model}
-% Internal, well-specified yet extensible data model is passed around
-
-
-
-%mention ACE XML and OMRAS2 ontologes
-
-
-
-
-
 The NEMA infrastructure includes the definition of an extensible data model and data structures that can encode data relating to all aspects of music and, music metadata, music informatics and MIR evaluation that have been encountered at MIREX, in the jMIR framework \cite{mckay2009jmir} or in the MIR related ontologies developed by the OMRAS2 project \cite{raimond2007music}. In order to facilitate interoperability between diverse components forming part of or submitted to NEMA by third parties, this data model is exclusively used to communicate between components of the system. 
 %maybe break this sentence up
-Each third party component application used with the NEMA service is wrapped in a component harness that uses contextual information about both the experiment and third party component code to raise or lower the data model to or from a suitable file format in order to supply data to and harvest results from the application, construct valid calls to the application to achieve the desired result and satisfy resource and dependency requirements in order to run the application.  A diagrammatic overview of the NEMA service infrastrcture is given in figure \ref{fig_infrastructure}.
-\begin{figure}[!t]
-\centering
-\includegraphics[width=2.65in]{infrastructure}
-  \caption{An overview of the NEMA service infrastructure}
-\label{fig_infrastructure}
-\end{figure}
-
+Each third party component application used with the NEMA service is wrapped in a component harness that uses contextual information about both the experiment and third party component code to raise or lower the data model to or from a suitable file format in order to supply data to and harvest results from the application, construct valid calls to the application to achieve the desired result and satisfy resource and dependency requirements in order to run the application.  
 %FIGURE service layer or ER diagam? representing the infrastructure for running external binary/matlab/java/VAMP components - include on it file formats conversions, implementation specific component harnesses, VMs and resource allocation
 
 \subsubsection{Workflow and Dependency infrastructure}
-The NEMA infrastructure is initially intended to support component harnesses to execute Java, Matlab, VAMP API plugins \cite{cannam2006sonic} and arbitrary binary executables and shell scripts (that launch processes compatible with the host operating system and architecture). This provides an immediate path to integration of most, if not all software types and offers a model and examples for building more convenient hosts for particular languages or plugin environments.
+\begin{figure}[!t]
+\centering
+\includegraphics[width=2.8in]{infrastructure}
+  \caption{An overview of the NEMA service infrastructure}
+\label{fig_infrastructure}
+\end{figure}
+The NEMA infrastructure is initially intended to support component harnesses to execute Java, Matlab, VAMP API plugins \cite{cannam2006sonic} and arbitrary binary executables and shell scripts (that launch processes compatible with the host operating system and architecture). This provides an immediate path to integration of most, if not all software types and offers a model and examples for building more convenient hosts for particular languages or plugin environments. A diagrammatic overview of the NEMA service infrastructure and its workflow implementation in the Meandre framework is given in figure \ref{fig_infrastructure}.
+
 % Workflow facilitates use of differing sites, dependencies and IO formats
 By using a workflow approach to defining experiment tasks, those tasks are naturally broken down into discrete units or components which may be independently scheduled and distributed to satisfy collection access restrictions, software/architecture dependencies or IO file format requirements. For example a user of the NEMA service would be able to conduct an experiment in which:
 \begin{enumerate}
@@ -413,6 +404,9 @@ By using a workflow approach to defining experiment tasks, those tasks are natur
 \item and finally both the prediction and evaluation data is exposed by the NEMA service in the standardised data model and eventually will be integrated into a linked data repository.
 \end{enumerate}
 %FIGURE experiment flow diagram showing differing sites, machine/VM hosts and IO formats  
+
+
+
 
 \subsubsection{Experiment and Workflow Sharing}
 %	Break up tasks into smaller units (multi-part feature extraction, classification, meta-classification)
