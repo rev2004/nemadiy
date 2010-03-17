@@ -91,20 +91,7 @@ public class RepositoryClientImplTest  extends BaseManagerTestCase{
 		
 	}
 	
-	@Test
-	public final void testGetCollectionSubset(){
-		NemaTrackList trackList = null;
-		try {
-			trackList=clientImpl.getCollectionSubset(10);
-		} catch (SQLException e) {
-			
-			e.printStackTrace();
-		}
-		assertTrue(trackList!=null);
-		
-		this.getLogger().info(trackList.toString());
-	}
-	
+
 
 	@Test
 	public final void testGetFile() throws SQLException{
