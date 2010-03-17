@@ -294,11 +294,11 @@ public class ChordEvaluator extends EvaluatorImpl{
         		overlapCsv
     		);
         
-        File weightOverlapCsv = new File(outputDir.getAbsolutePath() + File.separator + "weightedOverlap.csv");
-        WriteChordResultFiles.writeTableToCsv(
-        		WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults,jobIDToName, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO),
-        		weightOverlapCsv
-        	);
+//        File weightOverlapCsv = new File(outputDir.getAbsolutePath() + File.separator + "weightedOverlap.csv");
+//        WriteChordResultFiles.writeTableToCsv(
+//        		WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults,jobIDToName, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO),
+//        		weightOverlapCsv
+//        	);
         
         //write out results summary CSV
         File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
@@ -339,7 +339,7 @@ public class ChordEvaluator extends EvaluatorImpl{
             friedmanOverlapTable = tmp[1];
 
             //tmp = performFriedmanTestWithFoldAccuracy(outputDir, perFoldCSV, systemNamesArr);
-            tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, weightOverlapCsv, 0, 2, 1, numJobs, getMatlabPath());
+            tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, overlapCsv, 0, 2, 1, numJobs, getMatlabPath());
             friedmanWeightedOverlapTablePNG = tmp[0];
             friedmanWeightedOverlapTable = tmp[1];
         }
@@ -355,7 +355,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         
         //write result HTML pages
         writeHtmlResultPages(performStatSigTests, numJobs,
-				jobIDToAggregateEvaluations, overlapCsv, weightOverlapCsv,
+				jobIDToAggregateEvaluations, overlapCsv,
 				summaryCsv, jobIDToCSV, friedmanOverlapTablePNG,
 				friedmanOverlapTable, friedmanWeightedOverlapTablePNG,
 				friedmanWeightedOverlapTable, jobIDToTgz);
@@ -392,7 +392,7 @@ public class ChordEvaluator extends EvaluatorImpl{
 
 	private void writeHtmlResultPages(boolean performStatSigTests, int numJobs,
 			Map<String, NemaData> jobIDToAggregateEvaluations, File overlapCsv,
-			File weightOverlapCsv, File summaryCsv,
+			File summaryCsv,
 			Map<String, File> jobIDToCSV, File friedmanOverlapTablePNG,
 			File friedmanOverlapTable, File friedmanWeightedOverlapTablePNG,
 			File friedmanWeightedOverlapTable, Map<String, File> jobIDToTgz) {
@@ -471,7 +471,7 @@ public class ChordEvaluator extends EvaluatorImpl{
             
             overallCsvs.add(IOUtil.makeRelative(summaryCsv,outputDir));
             overallCsvs.add(IOUtil.makeRelative(overlapCsv,outputDir));
-            overallCsvs.add(IOUtil.makeRelative(weightOverlapCsv,outputDir));
+//            overallCsvs.add(IOUtil.makeRelative(weightOverlapCsv,outputDir));
             
             items.add(new FileListItem("overallCSVs", "Overall CSV result files", overallCsvs));
 
