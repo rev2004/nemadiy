@@ -350,7 +350,7 @@ These challenges led to establishment of an annual `Music Information Retrieval 
 The large number of tasks and datasets involved necessitates the sending of the code for each submission to the data, rather than the reverse (as is the case in most if not all other fields). 
 
 %		Strong driver of research in the field and generates ad hoc collaborations on the definition of tasks and simple data formats
-Since the establishment of MIREX in 2005 (and its predecessor, the `Audio Description Contest' hosted by the Music Technology Group at Universitat Pompeu Fabra in 2004), the annual evaluation campaign has been a strong driver of research in MIR by encouraging the community to clearly define tasks and research goals, develop and gain consensus on standardised evaluation procedures and provide detailed and statistically valid comparisons of techniques for a given task. Finally, in order to run MIREX a series of extremely simple Unicode text file format standards have been developed to encode data for each highly specific task context, in order to keep the implementation cost for participating systems as low as possible.\\
+Since the establishment of MIREX in 2005 (and its predecessor, the `Audio Description Contest' hosted by the Music Technology Group at Universitat Pompeu Fabra in 2004), the annual evaluation campaign has been a strong driver of research in MIR by encouraging the community to clearly define tasks and research goals, develop and gain consensus on standardised evaluation procedures and provide detailed and statistically valid comparisons of techniques for a given task. Finally, in order to run MIREX a series of extremely simple Unicode text file format standards have been developed to encode data for each highly specific task context, in order to keep the implementation cost for participating systems as low as possible.
 
 %	Huge challenge to run MIREX each year
 Given that MIREX submissions must be delivered to MIREX and executed by the IMIRSEL team on the task datasets, the running of a MIREX evaluation is no small job. In 2009 alone IMIRSEL received submissions from 138 individuals, in 26 tasks, generating a total of 289 runs.  Since 2005, nearly 800 formal evaluation runs have been conducted. The IMIRSEL lab also maintains over 4Tb of audio files relating to more than 300,000 distinct tracks that can be used in the various evaluation tasks.
@@ -364,7 +364,7 @@ The association of MIREX with the annual ISMIR conference, where the results are
 %			Endless runs and/or poorly chosen parameters
 Further, the research-grade code received is often problematic owing to missing dependencies or platforms, variance from the defined IO file formats, poor error handling/reporting, lack of runtime feedback (is it working?) and extraordinary runtimes. 
 %		Reporting challenges (wikis take a long time to populate with data)
-Finally, the reporting and dissemination of results is also a challenge as detailed statistical analyses must be rapidly conducted and then presented for each of the hosted tasks in time for the ISMIR conference. This presently takes the form of a report encoded in a page on that year's MIREX wiki\footnote{e.g. the MIREX 2009 wiki is at \url{http://www.music-ir.org/mirex/2009}}.\\
+Finally, the reporting and dissemination of results is also a challenge as detailed statistical analyses must be rapidly conducted and then presented for each of the hosted tasks in time for the ISMIR conference. This presently takes the form of a report encoded in a page on that year's MIREX wiki\footnote{e.g. the MIREX 2009 wiki is at \url{http://www.music-ir.org/mirex/2009}}.
 
 %		Has brought about standardised evaluation procedures, but not standardised software
 MIREX has brought about standardised evaluation procedures and some limited, but standardised file formats.
@@ -374,43 +374,42 @@ However, MIREX has so far failed to facilitate easy cross-pollination of researc
 Further, although MIREX provides a snapshot of the state-of-the-art in each MIREX task, it does not facilitate access to a wide range of published MIR techniques for less technical members of the MIR community such as Musicologists and LIS researchers (the natural consumers of many MIR techniques). Hence, the NEMA project was established to address many perhaps all of these issues.
 
 \section{Solution}
+\subsection{Goals}
 %	MIREX -  Build computational infrastructure allowing participants to upload and execute their own submissions
 The stated goals of the NEMA project include the establishment of a computational infrastructure to facilitate submission of MIR compute tasks against remotely held content and metadata collections, interoperability between arbitrary systems for well defined MIR tasks, standardised and automated experimentation/evaluation and the exposure of metadata and results in a standardised form suitable for integration with a full linked data architecture for MIR. 
 %		MIREX is excellent model for field wide computational infrastructure and interoperability project
 Though the NEMA project is not intended to replace MIREX, MIREX offers an excellent starting point for a field-wide computational infrastructure and interoperability project as it defines standardised tasks, experiment formats, collections and low-level file formats that are already supported by a very large number of implementations across the research community. 
 
-\subsection{Key concepts}
-\subsubsection{The NEMA Data Model}
+
+\subsection{The NEMA Data Model}
 The NEMA infrastructure includes the definition of an extensible data model and data structures that can encode data relating to all aspects of music and, music metadata, music informatics and MIR evaluation that have been encountered at MIREX, in the jMIR framework \cite{mckay2009jmir} or in the MIR related ontologies developed by the OMRAS2 project \cite{raimond2007music}. In order to facilitate interoperability between diverse components forming part of or submitted to NEMA by third parties, this data model is exclusively used to communicate between components of the system. 
 %maybe break this sentence up
 Each third party component application used with the NEMA service is wrapped in a component harness that uses contextual information about both the experiment and third party component code to raise or lower the data model to or from a suitable file format in order to supply data to and harvest results from the application, construct valid calls to the application to achieve the desired result and satisfy resource and dependency requirements in order to run the application.  
 %FIGURE service layer or ER diagam? representing the infrastructure for running external binary/matlab/java/VAMP components - include on it file formats conversions, implementation specific component harnesses, VMs and resource allocation
 
-\subsubsection{Workflow and Dependency infrastructure}
+\subsection{Workflow and Dependency infrastructure}
 \begin{figure}[!t]
 \centering
 \includegraphics[width=2.8in]{infrastructure}
   \caption{An overview of the NEMA service infrastructure}
 \label{fig_infrastructure}
 \end{figure}
-The NEMA infrastructure is initially intended to support component harnesses to execute Java, Matlab, VAMP API plugins \cite{cannam2006sonic} and arbitrary binary executables and shell scripts (that launch processes compatible with the host operating system and architecture). This provides an immediate path to integration of most, if not all software types and offers a model and examples for building more convenient hosts for particular languages or plugin environments. A diagrammatic overview of the NEMA service infrastructure and its workflow implementation in the Meandre framework is given in figure \ref{fig_infrastructure}.
+The NEMA infrastructure currently supports component harnesses to execute Java, Matlab, VAMP API plugins \cite{cannam2006sonic} and arbitrary binary executables or shell scripts (that launch processes compatible with the host operating system and architecture). This provides an immediate path to integration of most, if not all software types and offers a model and examples for building more convenient hosts for particular languages or plugin environments. A diagrammatic overview of the NEMA service infrastructure and its workflow implementation in the Meandre framework is given in figure \ref{fig_infrastructure}.
 
 % Workflow facilitates use of differing sites, dependencies and IO formats
 By using a workflow approach to defining experiment tasks, those tasks are naturally broken down into discrete units or components which may be independently scheduled and distributed to satisfy collection access restrictions, software/architecture dependencies or IO file format requirements. For example a user of the NEMA service would be able to conduct an experiment in which:
-\begin{enumerate}
+\begin{itemize}
 \item a collection of tracks held at a remote site, which cannot be distributed, is analysed by Matlab code outputting into Weka's ARFF file format \cite{witten1999wpm}, 
 \item the resulting audio analysis based features are raised into the data model and transmitted to another NEMA site with greater compute infrastructure, 
 \item one or more machine learning frameworks or procedures are launched using automatically constructed shell commands, on specified Virtual Machine infrastructures, to predict a metadata field or transcription for each track, which is then serialized in a MIREX file format,
 \item the MIREX format file is read and interpreted in the context of the experiment into the NEMA data model,
 \item the results of the experiment are evaluated using Java-based MIR evaluation components provided by the NEMA project,
 \item and finally both the prediction and evaluation data is exposed by the NEMA service in the standardised data model and eventually will be integrated into a linked data repository.
-\end{enumerate}
-%FIGURE experiment flow diagram showing differing sites, machine/VM hosts and IO formats  
+\end{itemize}
 
 
 
-
-\subsubsection{Experiment and Workflow Sharing}
+\subsection{Experiment and Workflow Sharing}
 %	Break up tasks into smaller units (multi-part feature extraction, classification, meta-classification)
 The workflow sharing approach designed for NEMA has been modelled after the myExperiment Virtual Research Environment \cite{de2007designing} and directly addresses many of the same issues. It is expected that the NEMA service will fully integrate with myExperiment at some stage in the future.  This approach facilitates the easy sharing and reuse of experiment setups and partially or fully-specified implementations of those experiments. For example, a MIREX task may be defined in terms of a component to provide an input dataset and task description (e.g. classify music by genre), and number of required but unspecified process components (e.g. perform feature extraction, train classifier, apply classifier to test dataset) and an evaluation component. A participating lab would then configure components to perform each of the specified processes and execute the configured workflow to perform the task and receive evaluation results.  Similarly a researcher might publish an experiment definition (a fully defined task) and fully configured workflows or simply computed results representing experiments in published paper or thesis, allowing other researchers to accurately compare their work or build on the results.
 
@@ -435,7 +434,7 @@ The evaluation tools and IO/Interoperability framework developed to implement th
 Out of the box, the toolkit enables the interoperability of AudioDB \cite{casey2008audiodb}, jMIR \cite{mckay2009jmir}, Sonic Annotator and the VAMP API \cite{cannam2006sonic}, ACE \cite{mckay2005ace} and the Weka Machine-Learning toolkit \cite{witten1999wpm}.  
 
 
-\subsubsection{Resource Resolution, Security and Attribution}
+\subsection{Resource Resolution, Security and Attribution}
 %security
 Given that security is a prime concern for any NEMA-hosted collections, it is vital that the analysis code is sent to the data and that result data is only returned in a controlled model in which the transmission of the original audio content (or a reconstructable form thereof) may be prevented.
 %	OMEN - extract feats at remote sites running infrastructure
@@ -451,8 +450,8 @@ The security of code submitted to the NEMA service is also prime concern, as the
 Additionally, full author attribution information and citation information is captured with each component profile in order to facilitate correct attribution in cases of reuse and the viewing of the components themselves as collections of documents and metadata. 
 %		Treat code and its metadata as data?
 
-\section{Implementation}
-\subsection{Using and re-using the NEMA service}
+\subsection{Implementation}
+\subsubsection{Using and re-using the NEMA service}
 %	Users can try to solve their own problems
 The existing approach to the running of MIREX evaluations involves the hand execution of extremely diverse pieces of code by around a half dozen research students over short period of time and may therefore be considered expensive in terms of human resources.  One of the key advantages of the NEMA `self-service' infrastructure is that it exposes, in a controlled manner, the configuration of component execution to the user. This enables the user to solve their own issues, in such a way that, they can rapidly make corrections/alterations to their own codebase or configuration to produce a successful run, avoiding the often drawn out testing, email communication, bug report and update cycles that incurred each year at MIREX.
  %	MIREX - Testing datasets (can't even share those at times!)
@@ -465,13 +464,13 @@ Eventually, it is hoped, a user customisable VM container system will be exposed
 %		Sandboxing
 Obviously, such modified VMs or indeed any VM running potentially unknown code must be suitably sand-boxed and: is permitted read access only to its component code and data required for a particular experiment or task; is permitted write access only to specified scratch and output locations; is required to return its output in a range of specified formats, such that it may be appropriately inspected or interpreted; and is permitted no access to the outside world.
 
-\subsection{Exposing Results, Metadata, Predictions and Provenance}
+\subsubsection{Exposing Metadata, Predictions, Results and Provenance}
 %unique ids, persistent storage
 The NEMA service infrastructure provides each task execution with a unique identifier and persistent storage of logs, execution information / provenance, predictions and evaluation results. This data may be published by a user within NEMA so that it maybe accessed by the community through either a provided digital library framework (Greenstone \cite{witten2000greenstone}) or linked data repository/SPARQL endpoint. 
 %Predict/extract data that is not available\\
 The design of the linked data system or \emph{repository} for the NEMA project is beyond the scope of this paper. However, it is hoped that the NEMA service infrastructure will one day be used to provide on-demand processing required to satisfy queries submitted via the repository endpoint (i.e. extracting and/or predicting metadata for content that is not already known).
 
-\subsection{Workflow Implementation}
+\subsubsection{Workflow Implementation}
 NEMA uses Meandre\footnote{\url{http://seasr.org/meandre/}} to implement its worklow processes. Meandre is a semantic-web-driven data-intensive flow execution environment. Meandre provides basic infrastructure for data-intensive computation. It provides a high-level language to describe flows and both a multicore and distributed execution environment based on a service-oriented paradigm. The Meandre Infrastructure provides a plugin model similar to the servlets in a Java Enterprise Enviornment where custom functionality is implemented, NEMA uses plugins to make data sources available as a JNDI \cite{lee2000jndi} resource to all the tasks.
 %
 %The Meandre Infrastructure allows NEMA to Monitor the lifecycle of a task.  The task is submitted to the NEMA Flow Service, that schedules the experiment to run on one of the Meandre Servers. The Meandre Servers assembles the experiment by downloading the work flow definitions and code from possibly distributed locations and starts the execution. 
