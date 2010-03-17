@@ -96,7 +96,7 @@ public class NemaDataConstants {
     public static final String OVERALL_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples overall";
     public static final String OVERALL_NUM_NEGATIVE_EXAMPLES = "Tag classification number of negative examples overall";
     
-    /* Melody Extraction Evaluator Constants */
+    // Melody Extraction Evaluator Constants
     public static final String MELODY_EXTRACTION_DATA = "Raw melody transcription data with timestamps and F0 in Hz";
     public static final String MELODY_RAW_PITCH_ACCURACY = "Raw Pitch Accuracy";
     public static final String MELODY_RAW_CHROMA_ACCURACY = "Raw Chroma Accuracy";
@@ -104,7 +104,7 @@ public class NemaDataConstants {
     public static final String MELODY_VOICING_FALSE_ALARM = "Voicing False-Alarm Rate";
     public static final String MELODY_OVERALL_ACCURACY = "Overall Accuracy";
     
-    /* Key Detection Evaluator Constants */
+    // Key Detection Evaluator Constants
     public static final String KEY_DETECTION_DATA = "The musical key (tonic/mode)";
     public static final String KEY_DETECTION_WEIGHTED_SCORE ="Weighted Key Score";
     public static final String KEY_DETECTION_CORRECT = "Correct Key(s)";
@@ -112,6 +112,13 @@ public class NemaDataConstants {
     public static final String KEY_DETECTION_RELATIVE_ERROR = "Relative Major/Minor Error(s)";
     public static final String KEY_DETECTION_PARALLEL_ERROR = "Parallel Major/Minor Error(s)";
     public static final String KEY_DETECTION_ERROR = "Pure Non-disconounted Error(s)";
+    
+    // Tempo Extraction Evaluator Constants
+    public static final String TEMPO_EXTRACTION_DATA = "Two predominant tempi, and the salience of the first reported tempo";
+    public static final String TEMPO_EXTRACTION_P_SCORE ="Tempo P-Score";
+    public static final String TEMPO_EXTRACTION_ONE_CORRECT = "Atleast One Tempo Correct";
+    public static final String TEMPO_EXTRACTION_TWO_CORRECT = "Both Tempi Correct";    
+    
     // Chord Estimation Evaluator Constants
     public static final String CHORD_LABEL_SEQUENCE = "Chord label sequence";
     public static final String CHORD_OVERLAP_RATIO = "Chord Overlap ratio";
