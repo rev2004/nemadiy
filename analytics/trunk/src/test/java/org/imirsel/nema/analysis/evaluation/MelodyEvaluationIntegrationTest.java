@@ -1,7 +1,7 @@
 package org.imirsel.nema.analysis.evaluation;
 
 
-import static org.imirsel.nema.test.matchers.NemaMatchers.fileContentEquals;
+//import static org.imirsel.nema.test.matchers.NemaMatchers.fileContentEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
