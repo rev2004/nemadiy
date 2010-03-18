@@ -51,7 +51,7 @@ public class FriedmansAnovaTkHsd {
 			throws IOException, IllegalArgumentException{
         //make sure readtext.m is in the working directory for Matlab
         File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/m2k/evaluation/tagsClassification/resources/readtext.m", readtextMFile);
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/util/resources/readtext.m", readtextMFile);
         
         //create an m-file to run the test
         String name = CSVResultFile.getName().replaceAll(".csv", "");
