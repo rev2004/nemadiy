@@ -508,7 +508,7 @@ public class DeliminatedTextFileUtilities {
         int lastIdx = 0;
         int i = 0;
         try{
-        	System.out.println("'" + line + "'");
+//        	System.out.println("'" + line + "'");
         	if (line.contains("\"")){
         		boolean encounteredSpeechMarks = false;
                 boolean insideSpeechMarks = false;
