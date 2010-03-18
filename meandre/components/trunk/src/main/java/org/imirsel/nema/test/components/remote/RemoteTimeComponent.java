@@ -33,7 +33,7 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 		name = "RemoteTimeComponent", tags = "remote time test")
 public class RemoteTimeComponent implements ExecutableComponent{
 	
-	@ComponentProperty(defaultValue = "testProcessExecutionWithIOResults", description = "name of the execution Profile", name = "execProfile")
+	@ComponentProperty(defaultValue = "timeOfTheDay", description = "name of the execution Profile", name = "execProfile")
 	private static final String PROPERTY_1 ="execProfile";
 	@ComponentProperty(defaultValue = "localhost", description = "Executor Service Host", name = "host")
 	private static final String PROPERTY_2 = "host";
@@ -96,15 +96,12 @@ public class RemoteTimeComponent implements ExecutableComponent{
 			
 			ProcessExecutionProperties pep = new ProcessExecutionProperties();
 			pep.setId("0");
-			
 			pep.setProcessTemplate(processTemplate);
-			ProcessArtifact pa = new ProcessArtifact();
-			pa.setResourcePath("/tmp/"+pep.getId()+".date");
-			pa.setResourceType("file");
+			ProcessArtifact pa = new ProcessArtifact("/tmp/"+pep.getId()+".date","file");
 			List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
 			outputs.add(pa);
 			pep.setOutputs(outputs);
-			pep.setInputs(outputs);
+			pep.setInputs(null);
 			RemoteOutputStream ros = new SimpleRemoteOutputStream(cc.getOutputConsole());
 			
 			RemoteProcessMonitor processMonitor = new RecordStreamProcessMonitor(latch, ros,resultQueue);
@@ -123,7 +120,12 @@ public class RemoteTimeComponent implements ExecutableComponent{
 			System.out.println("process finished -we can push data out now");
 	
 			List<ProcessArtifact> result=resultQueue.poll();
+			System.out.println("--> result length: " + result.size());
 			
+			for(ProcessArtifact par:result){
+				System.out.println(par.toString());
+			}
+			System.out.println("====> "+ result);
 			if(result!=null){
 				cc.pushDataComponentToOutput(DATA_OUTPUT_1, result);
 			}else{
