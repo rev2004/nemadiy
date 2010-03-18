@@ -3,8 +3,11 @@ package org.imirsel.nema.test;
 
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
+import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.test.components.remote.RemoteTimeComponent;
 import org.junit.After;
 import org.junit.Before;
@@ -38,9 +41,13 @@ public class TestRemoteTimeComponent {
 		// hashtable values of input
 		Hashtable<String, Object> htInput = new Hashtable<String,Object>();
 	
+		ProcessArtifact pa = new ProcessArtifact("/tmp/0.date","file");
+		List<ProcessArtifact> list = new ArrayList<ProcessArtifact>();
+		list.add(pa);
+		
 		//hashtable values of output
 		Hashtable<String,Object> htOutput = new Hashtable<String,Object>();
-		htOutput.put("processResult", "/tmp/0.date");
+		htOutput.put("processResult", list);
 		
 		
 		try {

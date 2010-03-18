@@ -288,4 +288,9 @@ import org.meandre.core.ExecutableComponent;
 	public void dispose ( ComponentContextProperties ccp ) {
 
 	}
+	
+	public DataTypeTestComponent(){
+		System.out.println("Came here - Data Type Component" );
+	}
+	
 }
