@@ -35,8 +35,6 @@ public class ChordIntervalTextFile extends SingleTrackEvalFileTypeImpl {
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";	
 	
-	
-	
 	@Override
 	public NemaData readFile(File theFile)
 			throws IllegalArgumentException, FileNotFoundException, IOException {

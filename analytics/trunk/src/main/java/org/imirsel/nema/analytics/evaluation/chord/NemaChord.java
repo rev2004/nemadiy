@@ -16,7 +16,13 @@ public class NemaChord {
 	
 	public NemaChord(double onset, double offset, final int[] notes){
 		this.onset = onset;
+		if(this.onset < 0){
+			this.onset = 0;
+		}
 		this.offset = offset;
+		if(this.offset < 0){
+			this.offset = 0;
+		}
 		this.notes = notes;
 	}
 	
