@@ -32,7 +32,7 @@ public class WriteChordResultFiles extends AbstractWriteResultFiles {
 
 	public static final DecimalFormat DEC = new DecimalFormat("0.00");
     
-    /**
+	/**
      * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
      * of the table and the rows are the different tracks in the evaluation.
      * 
@@ -87,17 +87,12 @@ public class WriteChordResultFiles extends AbstractWriteResultFiles {
         	firstResList = jobIDToTrackEval.get(firstJob);
         	row[1] = firstResList.get(fold).get(foldTrackCount).getId();
         	for(int i=0;i<numAlgos;i++){
-        		//try{
-        			System.err.println("data id " );
 	        		data = jobIDToTrackEval.get(jobIDandName[i][0]).get(fold).get(foldTrackCount);
 
 	        		if (!data.getId().equals(row[1])){
-	        			System.out.println("HERE ERROR");
 	        			throw new IllegalArgumentException("Results from job ID: " + jobIDandName[i][0] + " are not ordered the same as results from job ID: " + firstJob);
 	        		}
-	        		
 	        		row[i+2] = "" + data.getDoubleMetadata(metricKey);
-        	
         	}
         	rows.add(row);
 
@@ -106,6 +101,57 @@ public class WriteChordResultFiles extends AbstractWriteResultFiles {
         	if (foldTrackCount == firstResList.get(fold).size()){
         		fold++;
         	}
+        }
+        
+        return new Table(colNames, rows);
+    }
+    
+    /**
+     * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
+     * of the table and the rows are the different tracks in the evaluation.
+     * 
+     */
+    public static Table prepTableDataOverFoldsAndSystems(Map<String,List<NemaData>> jobIDToFoldEval, Map<String,String> jobIDToName, String metricKey) {
+    	//sort systems alphabetically
+    	int numAlgos = jobIDToName.size();
+    	String[][] jobIDandName = new String[numAlgos][];
+    	int idx=0;
+    	String id;
+    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+    		id = it.next();
+    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
+    	}
+    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
+    		public int compare(String[] a, String[] b){
+    			return a[1].compareTo(b[1]);
+    		}
+    	});
+    	
+    	//set column names
+    	int numCols = numAlgos + 1;
+        String[] colNames = new String[numCols];
+        colNames[0] = "Fold";
+        for (int i = 0; i < numAlgos; i++) {
+            colNames[i+1] = jobIDandName[i][1];
+        }
+
+        //count number of rows to produce
+        int numFolds = jobIDToFoldEval.get(jobIDandName[0][0]).size();
+        
+        
+        //produce rows (assume but check that results are ordered the same for each system)
+        List<String[]> rows = new ArrayList<String[]>();
+        int fold = 0;
+        String[] row;
+        NemaData data;
+        for(int f=0;f<numFolds;f++){
+        	row = new String[numCols];
+        	row[0] = "" + fold;
+        	for(int i=0;i<numAlgos;i++){
+        		data = jobIDToFoldEval.get(jobIDandName[i][0]).get(f);
+        		row[i+1] = "" + data.getDoubleMetadata(metricKey);
+        	}
+        	rows.add(row);
         }
         
         return new Table(colNames, rows);
@@ -157,6 +203,41 @@ public class WriteChordResultFiles extends AbstractWriteResultFiles {
         	if (foldTrackCount == trackEval.get(fold).size()){
         		fold++;
         	}
+        }
+        
+        return new Table(colNames, rows);
+    }
+    
+    /**
+     * Prepares a Table Object representing the specified evaluation metadata, where the metrics are the columns
+     * of the table and the rows are the different tracks in the evaluation.
+     * 
+     */
+    public static Table prepTableDataOverFolds(List<NemaData> foldEval, String[] metricKeys) {
+    	//set column names
+    	int numMetrics = metricKeys.length;
+    	int numCols = numMetrics + 1;
+        String[] colNames = new String[numCols];
+        colNames[0] = "Fold";
+        for (int i = 0; i < numMetrics; i++) {
+            colNames[i+1] = metricKeys[i];
+        }
+
+        //count number of rows to produce
+        int numFolds = foldEval.size();
+        
+        //produce rows (assume but check that results are ordered the same for each system)
+        List<String[]> rows = new ArrayList<String[]>();
+        String[] row;
+        NemaData data;
+        for(int i=0;i<numFolds;i++){
+        	row = new String[numCols];
+        	row[0] = "" + i;
+        	for(int m=0;m<numMetrics;m++){
+        		data = foldEval.get(i);
+        		row[m+1] = "" + data.getDoubleMetadata(metricKeys[m]);
+        	}
+        	rows.add(row);
         }
         
         return new Table(colNames, rows);
