@@ -679,7 +679,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         	}
         	
         	//set eval metrics on input obj for track
-        	double overlap_score = overlap_total / lnGT;
+        	double overlap_score = (double)overlap_total / (double)lnGT;
         	
         	weightedAverageOverlapAccum += overlap_score*lnGT;
         	lengthAccum +=lnGT; 
@@ -691,7 +691,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         }
         
         //produce avg chord ratio
-        double avg = overlapAccum / numExamples;
+        double avg = (double)overlapAccum / (double)numExamples;
         //produce weighted average chord ratio
         double weightedAverageOverlap = weightedAverageOverlapAccum / lengthAccum;
         
@@ -710,6 +710,7 @@ public class ChordEvaluator extends EvaluatorImpl{
     	if (gt == null || sys == null || gt.length!=sys.length){
     		return 0;
     	}
+    		
     	else {
     		for (int i = 0; i < gt.length; i++) {
 				if(gt[i] != sys[i]){
