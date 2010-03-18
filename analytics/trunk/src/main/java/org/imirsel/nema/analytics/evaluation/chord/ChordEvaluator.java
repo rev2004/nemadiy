@@ -307,23 +307,39 @@ public class ChordEvaluator extends EvaluatorImpl{
         		summaryCsv
         	);
         
-        //write out per system CSVs
+        //write out per system CSVs - per track
         getLogger().info("Writing out CSV result files for each system...");
-        Map<String, File> jobIDToCSV = new HashMap<String, File>(numJobs);
+        Map<String, List<File>> jobIDToCSVs = new HashMap<String, List<File>>(numJobs);
 		for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
 			jobId = it.next();
 			sysResults = jobIDToFoldResults.get(jobId);
 			
 			File sysDir = jobIDToResultDir.get(jobId);
-			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "results.csv");
+			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "per_track_results.csv");
 			WriteChordResultFiles.writeTableToCsv(
-					WriteChordResultFiles.prepTableDataOverTracks(sysResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO}),
+					WriteChordResultFiles.prepTableDataOverTracks(sysResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO}),
 					trackCSV
 				);
-			jobIDToCSV.put(jobId, trackCSV);
+			ArrayList<File> list = new ArrayList<File>(2);
+			list.add(trackCSV);
+			jobIDToCSVs.put(jobId, list);
 		}
         
-        
+        //write out per system CSVs - per fold
+		getLogger().info("Writing out CSV result files for each system...");
+		
+		for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
+			jobId = it.next();
+			List<NemaData> sysFoldResults = jobIDTofoldEvaluations.get(jobId);
+			
+			File sysDir = jobIDToResultDir.get(jobId);
+			File foldCSV = new File(sysDir.getAbsolutePath() + File.separator + "per_fold_results.csv");
+			WriteChordResultFiles.writeTableToCsv(
+					WriteChordResultFiles.prepTableDataOverFolds(sysFoldResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO}),
+					foldCSV
+				);
+			jobIDToCSVs.get(jobId).add(foldCSV);
+		}
         
         //perform statistical tests
         File friedmanOverlapTablePNG = null;
@@ -355,8 +371,9 @@ public class ChordEvaluator extends EvaluatorImpl{
         
         //write result HTML pages
         writeHtmlResultPages(performStatSigTests, numJobs,
-				jobIDToAggregateEvaluations, overlapCsv,
-				summaryCsv, jobIDToCSV, friedmanOverlapTablePNG,
+				jobIDToAggregateEvaluations, jobIDTofoldEvaluations,
+				jobIDToFoldResults, overlapCsv,
+				summaryCsv, jobIDToCSVs, friedmanOverlapTablePNG,
 				friedmanOverlapTable, friedmanWeightedOverlapTablePNG,
 				friedmanWeightedOverlapTable, jobIDToTgz);
         
@@ -386,19 +403,24 @@ public class ChordEvaluator extends EvaluatorImpl{
         	
         	aggregateEval.setMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO, avgOverlap);
         	aggregateEval.setMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO, avgWeightedOverlap);
+        	jobIDToAggregateEvaluations.put(jobId, aggregateEval);
         }
 		return jobIDToAggregateEvaluations;
 	}
 
 	private void writeHtmlResultPages(boolean performStatSigTests, int numJobs,
-			Map<String, NemaData> jobIDToAggregateEvaluations, File overlapCsv,
-			File summaryCsv,
-			Map<String, File> jobIDToCSV, File friedmanOverlapTablePNG,
+			Map<String, NemaData> jobIDToAggregateEvaluations, 
+			Map<String, List<NemaData>> jobIDToFoldEvaluations,
+			Map<String, List<List<NemaData>>> jobIDToFold, 
+			File overlapCsv, 
+			File summaryCsv, 
+			Map<String, List<File>> jobIDToCSV, File friedmanOverlapTablePNG,
 			File friedmanOverlapTable, File friedmanWeightedOverlapTablePNG,
 			File friedmanWeightedOverlapTable, Map<String, File> jobIDToTgz) {
 		
 		String jobId;
 		List<List<NemaData>> sysResults;
+		List<NemaData> systemFoldResults;
 		getLogger().info("Creating result HTML files...");
 
         List<Page> resultPages = new ArrayList<Page>();
@@ -423,15 +445,18 @@ public class ChordEvaluator extends EvaluatorImpl{
 	        resultPages.add(aPage);
         }
 
-        //do per metric pages
+        //do per metric page
         {
             items = new ArrayList<PageItem>();
+            
+            Table weightedOverlapTablePerFold = WriteChordResultFiles.prepTableDataOverFoldsAndSystems(jobIDToFoldEvaluations, jobIDToName, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
+            items.add(new TableItem("chord_weighted_overlap_per_fold", "Chord Weighted Average Overlap Per Fold", weightedOverlapTablePerFold.getColHeaders(), weightedOverlapTablePerFold.getRows()));
+            
+            Table overlapTablePerFold = WriteChordResultFiles.prepTableDataOverFoldsAndSystems(jobIDToFoldEvaluations, jobIDToName, NemaDataConstants.CHORD_OVERLAP_RATIO);
+            items.add(new TableItem("chord_overlap_per_fold", "Chord Average Overlap Per Fold", overlapTablePerFold.getColHeaders(), overlapTablePerFold.getRows()));
+            
             Table overlapTable = WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults, jobIDToName, NemaDataConstants.CHORD_OVERLAP_RATIO);
-            items.add(new TableItem("chord_overlap", "Chord Overlap", overlapTable.getColHeaders(), overlapTable.getRows()));
-            
-            Table weightedOverlapTable = WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults, jobIDToName, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
-            items.add(new TableItem("chord_weighted overlap", "Chord Weighted Overlap", weightedOverlapTable.getColHeaders(), weightedOverlapTable.getRows()));
-            
+            items.add(new TableItem("chord_overlap_per_track", "Chord Average Overlap Per Track", overlapTable.getColHeaders(), overlapTable.getRows()));
             
             aPage = new Page("all_system_metrics", "Detailed Evaluation Metrics", items, true);
             resultPages.add(aPage);
@@ -442,10 +467,14 @@ public class ChordEvaluator extends EvaluatorImpl{
         	for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
     			jobId = it.next();
     			items = new ArrayList<PageItem>();
-    			sysResults = jobIDToFoldResults.get(jobId);
+    			sysResults = jobIDToFold.get(jobId);
+    			systemFoldResults = jobIDToFoldEvaluations.get(jobId);
     			
-    			Table systemTable = WriteChordResultFiles.prepTableDataOverTracks(sysResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO});
-    			items.add(new TableItem(jobId, jobIDToName.get(jobId), systemTable.getColHeaders(), systemTable.getRows()));
+    			Table systemFoldTable = WriteChordResultFiles.prepTableDataOverFolds(systemFoldResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO});
+    			items.add(new TableItem(jobId+"_per_fold", jobIDToName.get(jobId) + " per fold results", systemFoldTable.getColHeaders(), systemFoldTable.getRows()));
+                
+    			Table systemTrackTable = WriteChordResultFiles.prepTableDataOverTracks(sysResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO});
+    			items.add(new TableItem(jobId+"_per_track", jobIDToName.get(jobId) + " per track results", systemTrackTable.getColHeaders(), systemTrackTable.getRows()));
                 
     			aPage = new Page(jobId, jobIDToName.get(jobId), items, false);
                 resultPages.add(aPage);
@@ -476,11 +505,13 @@ public class ChordEvaluator extends EvaluatorImpl{
             items.add(new FileListItem("overallCSVs", "Overall CSV result files", overallCsvs));
 
           //Per system CSVs
-            List<String> perSystemCsvs = new ArrayList<String>(numJobs);
+            List<String> perSystemCsvs = new ArrayList<String>(numJobs*2);
             for (Iterator<String> it = jobIDToCSV.keySet().iterator(); it.hasNext();) {
     			jobId = it.next();
-    			File file = jobIDToCSV.get(jobId);
-    			perSystemCsvs.add(IOUtil.makeRelative(file,outputDir));
+    			List<File> files = jobIDToCSV.get(jobId);
+    			for (Iterator<File> iterator = files.iterator(); iterator.hasNext();) {
+    				perSystemCsvs.add(IOUtil.makeRelative((File)iterator.next(),outputDir));
+				}
             }
             items.add(new FileListItem("perSystemCSVs", "Per-system CSV result files", perSystemCsvs));
 
