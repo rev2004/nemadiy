@@ -72,7 +72,7 @@ public final class MeandreMockFactoryImpl extends BaseMeandreMockFactory impleme
 			
 			allowing(componentContextProperties).getProperty(with(aValidProperty(propertyNames))); will(returnPropertyValue(propertyDefaultValues));
 			
-			allowing(componentContextProperties).getOutputConsole();will(returnValue(System.out));
+			allowing(componentContextProperties).getOutputConsole();will(returnValue(System.err));
 			allowing(componentContextProperties).getExecutionInstanceID(); will(returnValue(name+"execution_instance_id"));
 			allowing(componentContextProperties).getFlowExecutionInstanceID(); will(returnValue(name+"flow_instance_id"));
 			allowing(componentContextProperties).getFlowID(); will(returnValue(name+"flow_id"));
