@@ -629,7 +629,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         		NemaChord currentChord = gtChords.get(i);
         		int onset_index = (int)(currentChord.getOnset()*res);
         		int offset_index = (int)(currentChord.getOffset()*res);
-        		for (int j= onset_index; j<offset_index; j++){
+        		for (int j = onset_index; j<offset_index; j++){
         			gridGT[j]=currentChord.getNotes();
         		}
 			}
@@ -637,7 +637,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         	// Create grid for the system
         	int lnSys = (int)(res*systemChords.get(systemChords.size()-1).getOffset());
         	if (lnSys == 0 ){
-        		throw new IllegalArgumentException("Length of SYS is 0!");
+        		throw new IllegalArgumentException("Length of system results is 0!");
         	}
         	
 
@@ -649,29 +649,33 @@ public class ChordEvaluator extends EvaluatorImpl{
         		int onset_index = (int)(currentChord.getOnset()*res);
         		int offset_index = (int)(currentChord.getOffset()*res);
         	//	System.out.println("Chord no " + i + " onset="+onset_index + "offset=" + offset_index);
-        		for (int j= onset_index; j<offset_index; j++){
+        		for (int j = onset_index; j < offset_index; j++){
         			gridSys[j]=currentChord.getNotes();
+        			if (gridSys[j] == null){
+        				getLogger().warning("Returned null notes for track: " + data.getId() + ", chord " + i + ", onset index: " + onset_index + ", offset index: " + offset_index);
+        			}
+        				
         		}
 			}
         	
         	
         	int lnOverlap = Math.min(lnGT, lnSys);
-        	int[] overlaps = new int[lnOverlap]; 
-        	int  overlap_total =0;
+        	//int[] overlaps = new int[lnOverlap]; 
+        	int  overlap_total = 0;
         	//Calculate the overlap score 
-        	for (int i = 0; i <lnOverlap-1; i++ ){
+        	for (int i = 0; i < lnOverlap; i++ ){
         		int[] gtFrame = gridGT[i]; 
-        		if(gtFrame == null)
-        			System.out.println("GT Null at " +i + "ith frame");
-        		
+//        		if(gtFrame == null){
+//        			getLogger().warning("GT chord Null at " +i + "-ith frame");
+//        		}
         		
         		int[] sysFrame = gridSys[i];
+        		//disabled check as some systems do not mark data until first chord 
+//        		if(sysFrame == null){
+//        			getLogger().warning("System chord Null at " +i + "-ith frame");
+//        		}
+        		overlap_total +=  calcOverlap(gtFrame,sysFrame);        	
         		
-        		if(sysFrame == null)
-        			System.out.println("System Null at " +i + "ith frame");
-        		
-        		
-        		overlap_total = overlap_total +  calcOverlap(gtFrame,sysFrame);        		
         	}
         	
         	//set eval metrics on input obj for track
@@ -681,15 +685,18 @@ public class ChordEvaluator extends EvaluatorImpl{
         	lengthAccum +=lnGT; 
         	overlapAccum += overlap_score;
         	
+        	getLogger().info("jobID: " + jobID + ", track: " + data.getId() + ", overlap score: " + overlap_score);
+        	
         	data.setMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO, overlap_score);
         }
         
         //produce avg chord ratio
         double avg = overlapAccum / numExamples;
+        //produce weighted average chord ratio
         double weightedAverageOverlap = weightedAverageOverlapAccum / lengthAccum;
         
-        //produce weighted average chord ratio
-        
+        getLogger().info("jobID: " + jobID + ", average overlap score: " + avg);
+        getLogger().info("jobID: " + jobID + ", weighted average overlap score: " + weightedAverageOverlap);
         
         //set eval metrics on eval object for fold
         outObj.setMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO, avg);
@@ -700,12 +707,12 @@ public class ChordEvaluator extends EvaluatorImpl{
     
     private int calcOverlap(int[] gt, int[] sys) {
     	
-    	if (gt.length!=sys.length){
+    	if (gt == null || sys == null || gt.length!=sys.length){
     		return 0;
     	}
     	else {
     		for (int i = 0; i < gt.length; i++) {
-				if(!(gt[i]==sys[i])){
+				if(gt[i] != sys[i]){
 					return 0;
 				}
 			}
