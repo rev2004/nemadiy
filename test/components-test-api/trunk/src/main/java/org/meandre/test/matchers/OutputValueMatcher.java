@@ -9,8 +9,10 @@
  */
 package org.meandre.test.matchers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -39,8 +41,36 @@ public class OutputValueMatcher<T> extends BaseMatcher<T> {
 					}
 				}
 			}
-			// item is not an array
-			if(!item.getClass().isArray()){
+			
+			if(obj instanceof ArrayList){
+				ArrayList alist1 = (ArrayList)obj;
+				if(item instanceof ArrayList){
+					ArrayList alist2 = (ArrayList)item;
+				
+					if(alist1.size()==alist2.size()){
+						
+						Iterator i1 = alist1.iterator();
+						Iterator i2 = alist2.iterator();
+						boolean comparison = true;
+						while (i1.hasNext() && i2.hasNext()) {
+							Object o1 = i1.next();
+							Object o2 = i2.next();
+							if(!o1.equals(o2)){
+								comparison = false;
+							}
+						}
+					
+					
+						if(comparison){ return true;}
+					}
+				}
+				
+				
+				
+				
+				
+			}else if(!item.getClass().isArray()){
+				// item is not an array
 				if(item.equals(obj)){
 					return true;
 				}
