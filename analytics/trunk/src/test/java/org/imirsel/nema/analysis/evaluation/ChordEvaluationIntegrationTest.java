@@ -87,7 +87,7 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 	
 	}
 
-
+	@Test
 	public void testEvaluateTwoShortHandBasedSystems() throws FileNotFoundException, IOException, IllegalArgumentException, IOException{ 
 		File groundTruthDirectory = new File("src/test/resources/chord/groundtruth");
 		File resultsDirectory1 = new File("src/test/resources/chord/CH");
@@ -97,7 +97,7 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 		ChordEvaluator evaluator = null;
 		
 		//test reader and setup for evaluation
-		evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, true, new File("/usr/local/bin/matlab"));
+		evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, false, new File("/usr/local/bin/matlab"));
 		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
 		List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, null);
