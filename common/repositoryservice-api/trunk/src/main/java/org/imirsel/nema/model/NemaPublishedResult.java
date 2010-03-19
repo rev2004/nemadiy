@@ -11,7 +11,7 @@ import java.util.Date;
 /**
  * Class representing a published result for an algorithm against a dataset. 
  * 
- * @author kriswest
+ * @author kris.west@gmail.com
  */
 public class NemaPublishedResult implements Serializable{
     public static final long serialVersionUID = 1L;
@@ -109,6 +109,13 @@ public class NemaPublishedResult implements Serializable{
     public void setUsername(String username){
         this.username = username;
     }
+
+	@Override
+	public String toString() {
+		return "org.imirsel.nema.model.NemaPublishedResult [date=" + date + ", id=" + id + ", name="
+				+ name + ", result_path=" + result_path + ", username="
+				+ username + "]";
+	}
 
 
 }

@@ -8,8 +8,21 @@ package org.imirsel.nema.model;
 import java.io.Serializable;
 
 /**
- * To be redesigned.... probably with a linked dataset and evaluator type.
- * @author kriswest
+ * A class representing a 'task' for NEMA. A task is a specific experiment definition
+ * describing what must done, but abstracts details of how that should be accomplished.
+ * For example a task might be defined as the classification of music according to
+ * genre on a specified dataset. The performance of multiple solutions to a task
+ * can be evaluated together and statistical comparison of results performed.
+ * 
+ * In the context of the NEMA service a NemaTask will be associated with a specific
+ * flow  template that may be completed to implement a solution to the task. The flow
+ * will define components to provide access to the dataset, perform evaluation 
+ * of results and a number of external execution components that can execute code 
+ * external to the NEMA service to perform specific tasks (e.g. feature extraction, 
+ * model training and application of the model to produce classifications for novel 
+ * examples).
+ * 
+ * @author kris.west@gmail.com
  */
 public class NemaTask implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -88,11 +101,6 @@ public class NemaTask implements Serializable {
         return false;
     }
 
-    @Override
-    public String toString(){
-        return "org.imirsel.nema.repository.NEMATask[id=" + id + "]";
-    }
-
     /**
      * @return the subjectTrackMetadataID
      */
@@ -120,5 +128,14 @@ public class NemaTask implements Serializable {
     public void setDatasetId(int datasetId){
         this.datasetId = datasetId;
     }
+
+	@Override
+	public String toString() {
+		return "org.imirsel.nema.model.NemaTask [datasetId=" + datasetId + ", description="
+				+ description + ", id=" + id + ", name=" + name
+				+ ", subjectTrackMetadataId=" + subjectTrackMetadataId
+				+ ", subjectTrackMetadataName=" + subjectTrackMetadataName
+				+ "]";
+	}
 
 }

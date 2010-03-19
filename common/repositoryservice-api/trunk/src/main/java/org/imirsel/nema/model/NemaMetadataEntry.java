@@ -88,4 +88,11 @@ public class NemaMetadataEntry implements Serializable{
         return false;
     }
 
+	@Override
+	public String toString() {
+		return "org.imirsel.nema.model.NemaMetadataEntry [type=" + type + ", value=" + value + "]";
+	}
+    
+    
+
 }

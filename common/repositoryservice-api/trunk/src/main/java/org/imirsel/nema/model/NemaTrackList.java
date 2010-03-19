@@ -6,6 +6,7 @@
 package org.imirsel.nema.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * A class representing a set of tracks from the NEMA repository. Sets are primarily used to 
@@ -13,7 +14,7 @@ import java.io.Serializable;
  * Objects have a unique ID, a <code>NemaDataset</code> ID to which they belong, set type information
  * and a split number (identifying which split within the dataset that the set belongs to). 
  * 
- * @author kriswest
+ * @author kris.west@gmail.com
  */
 public class NemaTrackList implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -23,6 +24,7 @@ public class NemaTrackList implements Serializable {
     private Integer trackListTypeId;
     private String trackListTypeName;
     private Integer foldNumber;
+    private List<NemaTrack> tracks;
 
     /**
      * Constructor. Sets only the track list ID. All other parameters must be manually set if they are used.
@@ -30,26 +32,50 @@ public class NemaTrackList implements Serializable {
      */
     public NemaTrackList(int id){
         this.id = id;
+        this.tracks = null;
     }
 
     /**
-     * Constructor. Sets the ID, dataset ID, track list type ID, track list type name and fold number.
-     * @param id The set ID.
+     * Constructor. Sets the ID, dataset ID, track list type ID, track list type name and fold number. List
+     * of tracks is null.
+     * @param id The list ID.
      * @param datasetId The dataset ID to which this set belongs.
      * @param trackListTypeId The type ID of the track list.
-     * @param trackListTypeName The type name corresponding to the track list type ID (e.g. subset, train, test etc.)
+     * @param trackListTypeName The type name corresponding to the track list type ID (e.g. subset, train, test etc.).
      * @param foldNumber The fold number within the dataset to which the set belongs. 
      */
-    public NemaTrackList(int id, int datasetId, int setTypeId, String setTypeName,
-                   int splitNumber){
+    public NemaTrackList(int id, int datasetId, int trackListTypeId, String trackListTypeName,int foldNumber){
         this.id = id;
         this.datasetId = datasetId;
-        this.trackListTypeId = setTypeId;
-        this.trackListTypeName = setTypeName;
-        this.foldNumber = splitNumber;
+        this.trackListTypeId = trackListTypeId;
+        this.trackListTypeName = trackListTypeName;
+        this.foldNumber = foldNumber;
+        this.tracks = null;
     }
+    
+    
 
     /**
+	 * Constructor. Sets the ID, dataset ID, track list type ID, track list type name, fold number and List
+     * of tracks.
+     * @param id The list ID.
+	 * @param datasetId The dataset ID to which this set belongs.
+	 * @param trackListTypeId The type ID of the track list.
+	 * @param trackListTypeName The type name corresponding to the track list type ID (e.g. subset, train, test etc.).
+	 * @param foldNumber The fold number within the dataset to which the set belongs. 
+	 * @param tracks The list of NemaTrack Objects in the list.
+	 */
+	public NemaTrackList(int id, int datasetId, int trackListTypeId,
+			String trackListTypeName, int foldNumber, List<NemaTrack> tracks) {
+		this.id = id;
+		this.datasetId = datasetId;
+		this.trackListTypeId = trackListTypeId;
+		this.trackListTypeName = trackListTypeName;
+		this.foldNumber = foldNumber;
+		this.tracks = tracks;
+	}
+
+	/**
      * Returns the ID of the set.
      * @return the ID.
      */
@@ -128,6 +154,22 @@ public class NemaTrackList implements Serializable {
     public void setFoldNumber(int foldNumber){
         this.foldNumber = foldNumber;
     }
+    
+    /**
+     * Returns the list of NemaTrack Objects in the list.
+     * @return the list of NemaTrack Objects.
+     */
+    public List<NemaTrack> getTracks(){
+    	return tracks;
+    }
+    
+    /**
+     * Sets the list of NemaTrack Objects in the list.
+     * @param tracks the list of NemaTrack Objects to set.
+     */
+    public void setTracks(List<NemaTrack> tracks){
+    	this.tracks = tracks;
+    }
 
     @Override
     /**
@@ -157,7 +199,7 @@ public class NemaTrackList implements Serializable {
 
     @Override
     public String toString(){
-        return "org.imirsel.nema.repository.NEMASet[id=" + id + ", datasetID=" + datasetId + ", splitNum=" + foldNumber + "," +
+        return "org.imirsel.nema.model.NemaTrackList[id=" + id + ", datasetID=" + datasetId + ", splitNum=" + foldNumber + "," +
         		" setTypeID=" + trackListTypeId + ", trackListTypeName=" + trackListTypeName + "]";
     }
 

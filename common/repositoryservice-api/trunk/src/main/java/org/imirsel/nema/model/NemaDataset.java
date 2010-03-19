@@ -18,7 +18,7 @@ import java.io.Serializable;
  * (e.g. 2 for artist, -1 for none) which was used to filter the split (i.e. making sure the artist
  * only appears in either train or test sets). 
  *
- * @author kriswest
+ * @author kris.west@gmail.com
  */
 public class NemaDataset implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -316,12 +316,19 @@ public class NemaDataset implements Serializable {
         return false;
     }
 
-    @Override
-    public String toString(){
-        return "org.imirsel.nema.repository.NEMADataset[id=" + id + ", name=" + name + ", description=" + description + ", " +
-        		", subsetTrackListId=" + subsetTrackListId + ", numFolds=" + numFolds + ", numTrackListsPerFold=" + numTrackListsPerFold + ", " +
-        		"splitClass=" + splitClass + ", splitParametersString=" + splitParametersString + ", " +
-        		"subjectTrackMetadataId=" + subjectTrackMetadataId + ", subjectTrackMetadataName=" + subjectTrackMetadataName + ", " +
-        		"filterTrackMetadataId=" + filterTrackMetadataId + ", filterTrackMetadataName=" + filterTrackMetadataName + "]";
-    }
+	@Override
+	public String toString() {
+		return "org.imirsel.nema.model.NemaDataset [description=" + description
+				+ ", filterTrackMetadataId=" + filterTrackMetadataId
+				+ ", filterTrackMetadataName=" + filterTrackMetadataName
+				+ ", id=" + id + ", name=" + name + ", numFolds=" + numFolds
+				+ ", numTrackListsPerFold=" + numTrackListsPerFold
+				+ ", splitClass=" + splitClass + ", splitParametersString="
+				+ splitParametersString + ", subjectTrackMetadataId="
+				+ subjectTrackMetadataId + ", subjectTrackMetadataName="
+				+ subjectTrackMetadataName + ", subsetTrackListId="
+				+ subsetTrackListId + "]";
+	}
+
+    
 }
