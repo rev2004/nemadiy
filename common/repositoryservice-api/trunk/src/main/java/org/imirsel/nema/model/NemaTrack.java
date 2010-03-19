@@ -71,9 +71,11 @@ public class NemaTrack implements Serializable {
         return false;
     }
 
-    @Override
-    public String toString(){
-        return "org.imirsel.nema.repository.NEMATrack[id=" + id + "]";
-    }
+	@Override
+	public String toString() {
+		return "org.imirsel.nema.model.NemaTrack [id=" + id + "]";
+	}
+
+
 
 }

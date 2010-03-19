@@ -129,10 +129,13 @@ public class NemaFile implements Serializable {
         return false;
     }
 
-    @Override
-    public String toString(){
-        return "org.imirsel.nema.repository.NEMAFile[id=" + id + ", trackID=" + trackId + ", path=" + path + "]";
-    }
+	@Override
+	public String toString() {
+		return "org.imirsel.nema.model.NemaFile [id=" + id + ", path=" + path + ", trackId=" + trackId
+				+ "]";
+	}
+
+
 
 }
 

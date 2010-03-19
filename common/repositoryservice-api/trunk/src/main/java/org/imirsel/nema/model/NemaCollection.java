@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Class representing a collection of tracks in the NEMA repository. A collection is merely an 
  * organisational unit, although permissions may be applied at the collection level at some point.
  * 
- * @author kriswest
+ * @author kris.west@gmail.com
  */
 public class NemaCollection implements Serializable {
 
@@ -24,7 +24,7 @@ public class NemaCollection implements Serializable {
     }
 
     /**
-     * Constructor. Sets all varaibles (id, name, description).
+     * Constructor. Sets all variables (id, name, description).
      * @param id The ID to create the Object with.
      * @param name The name to create the Object with.
      * @param description The description to create the Object with.
@@ -110,9 +110,12 @@ public class NemaCollection implements Serializable {
         return false;
     }
 
-    @Override
-    public String toString(){
-        return "org.imirsel.nema.repository.NEMACollection[id=" + id + ", name=" + name + ", description=" + description + "]";
-    }
+	@Override
+	public String toString() {
+		return "NemaCollection [description=" + description + ", id=" + id
+				+ ", name=" + name + "]";
+	}
+
+    
 
 }
