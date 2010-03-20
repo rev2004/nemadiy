@@ -23,7 +23,9 @@ import java.util.logging.StreamHandler;
 import org.imirsel.nema.analytics.logging.ProcessExecutorLogFormatter;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTask;
+import org.imirsel.nema.model.NemaTrackList;
 
 /**
  * Interface defining the methods of a evaluation utility for an MIR task.
@@ -70,6 +72,46 @@ public interface Evaluator {
     public void setDataset(NemaDataset dataset);
     
     /**
+     * Set the list of training datasets relevant to the experiment. 
+     * 
+     * @param trainingSets the list of training datasets relevant to the experiment.
+     */
+    public void setTrainingSets(List<NemaTrackList> trainingSets);
+    
+    /**
+     * Set the list of test datasets relevent to the experiment.
+     * 
+     * @param testSets the list of test datasets relevent to the experiment.
+     */
+    public void setTestSets(List<NemaTrackList> testSets);
+    
+    /**
+     * Initializes a NemaEvaluationResultSet Object with the experiment description, ready to be 
+     * populated with results.
+     * 
+     * @return a NemaEvaluationResultSet Object.
+     */
+    public NemaEvaluationResultSet getEmptyEvaluationResultSet();
+    
+	/**
+	 * @return a List of the String keys for the evaluation metrics expected to be present in 
+	 * overall evaluation Objects.
+	 */
+	public List<String> getOverallEvalMetricsKeys();
+
+	/**
+	 * @return a List of the String keys for the evaluation metrics expected to be present in 
+	 * per-fold evaluation Objects.
+	 */
+	public List<String> getFoldEvalMetricsKeys();
+
+	/**
+	 * @return a List of the String keys for the evaluation metrics and results that were evauated
+	 * expected to be present in per-track evaluation Objects.
+	 */
+	public List<String> getTrackEvalMetricsAndResultsKeys();
+
+    /**
      * Sets the <code>List</code> of groundtruth data to be used to evaluate results. In a 
      * multi-iteration experiment this ground-truth should provide a superset of ground-truth 
      * data to cover all iterations.
@@ -95,9 +137,10 @@ public interface Evaluator {
      * @param systemName The name of the system (for printing on result output).
      * @param jobID Primary key for systems, can be a unique system name or URI for flow/config of
      * job that produced results. Used in encoded results.
-     * @param results A <code>List</code> of <code>EvaluationDataObjects</code>
+     * @param results A <code>List</code> of <code>EvaluationDataObjects</code>.
+     * @param fold The NemaTrackList Object defining the test set that the results relate to.
      */
-    public void addResults(String systemName, String jobID, List<NemaData> results);
+    public void addResults(String systemName, String jobID, NemaTrackList fold, List<NemaData> results);
     
     /**
      * Returns the logger in use. Can be used to change the logging verbosity 
@@ -117,10 +160,19 @@ public interface Evaluator {
      * Perform the evaluation and block until the results are fully written to the output directory.
      * Also return a map encoding the evaluation results for each job in case they are needed for further processing.
      * 
-     * @return a map encoding the evaluation results for each job and other data. 
+     * @return a NemaEvaluationResultSet Object encoding the evaluation results for each system
+     * overall, per-fold and per-track. The predictions returned for each track are also encoded.
      * @throws IllegalArgumentException Thrown if required metadata is not found, either in the ground-truth
      * data or in one of the system's results.
      */
-    public Map<String,NemaData> evaluate() throws IllegalArgumentException, IOException;
+    public NemaEvaluationResultSet evaluate() throws IllegalArgumentException, IOException;
     
+    /**
+     * Render results from the Evaluator to a folder on disk.
+     * 
+     * @param results The results Object to render.
+     * @param outputDir The directory to render the results into.
+     * @throws IOException Thrown if an IOException occurs while rendering the results.
+     */
+    public void renderResults(NemaEvaluationResultSet results, File outputDir) throws IOException;
 }
