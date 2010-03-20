@@ -15,7 +15,9 @@ import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTask;
+import org.imirsel.nema.model.NemaTrackList;
 
 public class MelodyEvaluator extends EvaluatorImpl {
 
@@ -31,148 +33,219 @@ public class MelodyEvaluator extends EvaluatorImpl {
 	 * @param dataset_ 		the data-set being worked on
 	 * @param outputDir_ 	the output directory to write evaluation results to
 	 * @param workingDir_ 	the working directory for writing temporary files, etc
+	 * @param trainingSets_ the list of training NemaTrackLists used.
+	 * @param testSets_     the list of testing NemaTrackLists used.
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
 	public MelodyEvaluator(NemaTask task_, NemaDataset dataset_,
-			File outputDir_, File workingDir_) throws FileNotFoundException,
+			File outputDir_, File workingDir_, List<NemaTrackList> trainingSets_,
+			List<NemaTrackList> testSets_) throws FileNotFoundException,
 			IOException {
-		super(workingDir_, outputDir_, task_, dataset_);
-
+		super(workingDir_, outputDir_, task_, dataset_, trainingSets_, testSets_);
+		setupEvalMetrics();
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param task_ 		the evaluation task e.g. melody, onset, etc
+	 * @param dataset_ 		the data-set being worked on
+	 * @param outputDir_ 	the output directory to write evaluation results to
+	 * @param workingDir_ 	the working directory for writing temporary files, etc
+	 * @param testSets_     the list of testing NemaTrackLists used.
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public MelodyEvaluator(NemaTask task_, NemaDataset dataset_,
+			File outputDir_, File workingDir_, List<NemaTrackList> testSets_) throws FileNotFoundException,
+			IOException { 
+		super(workingDir_, outputDir_, task_, dataset_, testSets_);
+		setupEvalMetrics();
+	}
+	
+	private void setupEvalMetrics() {
+		this.trackEvalMetricsAndResults.clear();
+		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_EXTRACTION_DATA);
+		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_OVERALL_ACCURACY);
+		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY);
+		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY);
+		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_VOICING_RECALL);
+		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_VOICING_FALSE_ALARM);
+		
+		this.overallEvalMetrics.clear();
+		this.overallEvalMetrics.add(NemaDataConstants.MELODY_OVERALL_ACCURACY);
+		this.overallEvalMetrics.add(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY);
+		this.overallEvalMetrics.add(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY);
+		this.overallEvalMetrics.add(NemaDataConstants.MELODY_VOICING_RECALL);
+		this.overallEvalMetrics.add(NemaDataConstants.MELODY_VOICING_FALSE_ALARM);
+		
+		//same as overall metrics - single fold experiment format
+		this.foldEvalMetrics = this.overallEvalMetrics;
 	}
 
 	/**
 	 * {inheritDoc}
 	 */
 	@Override
-	public Map<String, NemaData> evaluate() throws IllegalArgumentException,
+	public NemaEvaluationResultSet evaluate() throws IllegalArgumentException,
 			IOException {
-		String jobID;
+		String jobId;
+		String jobName;
 		int numJobs = jobIDToFoldResults.size();
 		
 		/* Check all systems have just one result set */
-		List<List<NemaData>> sysResults;
+		Map<NemaTrackList,List<NemaData>> sysResults;
 		
 		/* 
 		 * Make sure we only have one set of results per jobId (i.e. system), 
 		 * as this is not a cross-fold validated experiment */
 		checkFolds();
 		
-		/* Perform the evaluations on all jobIds (systems) */
-		Map<String, NemaData> jobIdToEvaluation = new HashMap<String, NemaData>(
-				numJobs);
-		for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it
-				.hasNext();) {
-			jobID = it.next();
-			getLogger().info("Evaluating experiment for jobID: " + jobID);
-			sysResults = jobIDToFoldResults.get(jobID);
-			NemaData result = evaluateResult(jobID, sysResults.get(0));
-			jobIdToEvaluation.put(jobID, result);
-		}
+		/* prepare NemaEvaluationResultSet*/
+		NemaEvaluationResultSet results = getEmptyEvaluationResultSet();
+		
+		{
+			/* Perform the evaluations on all jobIds (systems) */
+			Map<String, Map<NemaTrackList,NemaData>> jobIdToFoldEvaluation = new HashMap<String, Map<NemaTrackList,NemaData>>(numJobs);
+			for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();) {
+				jobId = it.next();
+				getLogger().info("Evaluating experiment for jobID: " + jobId);
+				sysResults = jobIDToFoldResults.get(jobId);
+				Map<NemaTrackList,NemaData> foldEvals = new HashMap<NemaTrackList,NemaData>(testSets.size());
+				for (Iterator<NemaTrackList> trackIt = sysResults.keySet().iterator(); trackIt.hasNext();) {
+					NemaTrackList trackList = trackIt.next();
+					NemaData result = evaluateResult(jobId, sysResults.get(trackList));
+					foldEvals.put(trackList, result);
+				}
+				jobIdToFoldEvaluation.put(jobId, foldEvals);
+			}
+			
+			/* Aggregated evaluation to produce overall results */
+			Map<String, NemaData> jobIdToOverallEvaluation = new HashMap<String, NemaData>(numJobs);
+			for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();) {
+				jobId = it.next();
+				getLogger().info("Aggregating results for jobID: " + jobId);
+				Map<NemaTrackList,NemaData> foldEvals = jobIdToFoldEvaluation.get(jobId);
+				NemaData overall = averageFoldMetrics(jobId, foldEvals.values());
+				jobIdToOverallEvaluation.put(jobId, overall);
+			}
+			
+			/* Populate NemaEvaluationResultSet */
+			for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
+				jobId = it.next();
+				jobName = jobIDToName.get(jobId);
+				results.addCompleteResultSet(jobId, jobName, jobIdToOverallEvaluation.get(jobId), jobIdToFoldEvaluation.get(jobId), jobIDToFoldResults.get(jobId));
+			}
+		}			
+		
+		getLogger().info("Rendering results");
+		renderResults(results, outputDir);
 
+		return results;
+	}
+
+	public void renderResults(NemaEvaluationResultSet results, File outputDir) throws IOException {
+		String jobId;
+		int numJobs = results.getJobIds().size();
+		Map<NemaTrackList, List<NemaData>> sysResults;
 		/* Make per system result directories */
 		Map<String, File> jobIDToResultDir = new HashMap<String, File>();
-		for (Iterator<String> it = jobIdToEvaluation.keySet().iterator(); it
-				.hasNext();) {
-			jobID = it.next();
+		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
+			jobId = it.next();
 			/* Make a sub-directory for the systems results */
-			File sysDir = new File(outputDir.getAbsolutePath() + File.separator
-					+ jobID);
+			File sysDir = new File(outputDir.getAbsolutePath() + File.separator + jobId);
 			sysDir.mkdirs();
-			jobIDToResultDir.put(jobID, sysDir);
+			jobIDToResultDir.put(jobId, sysDir);
 		}
 
 		/* Plot melody transcription against GT for each track result for each system */
 		List<NemaData> resultList;
 		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
-		for (Iterator<String> it = jobIdToEvaluation.keySet().iterator(); it.hasNext();) {
-			jobID = it.next();
-			File sysDir = jobIDToResultDir.get(jobID);
+		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
+			jobId = it.next();
+			File sysDir = jobIDToResultDir.get(jobId);
 		
 			/* Get results to plot */
-			sysResults = jobIDToFoldResults.get(jobID);
+			sysResults = results.getPerTrackEvaluationAndResults(jobId);
+			//TODO handle multiple folds
 			resultList = sysResults.get(0);
 		
-			File[] plotFiles = plotTranscriptionForJob(jobID, resultList,
+			File[] plotFiles = plotTranscriptionForJob(jobId, resultList,
 					sysDir);
 			
-			jobIDToResultPlotFileList.put(jobID, plotFiles);
+			jobIDToResultPlotFileList.put(jobId, plotFiles);
 		}
 
 		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");
-		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator
-				+ "allResults.csv");
+		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "allResults.csv");
 		WriteMelodyResultFiles.writeTableToCsv(
-				WriteMelodyResultFiles.prepSummaryTableData(jobIdToEvaluation, jobIDToName),
+				WriteMelodyResultFiles.prepSummaryTableData(results.getJobIdToOverallEvaluation(), results.getJobIdToJobName()),
 				summaryCsv
 			);
 
 		/* Write out per track CSV for each system */
-		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(
-				numJobs);
-		for (Iterator<String> it = jobIDToName.keySet().iterator(); it
+		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(numJobs);
+		for (Iterator<String> it = results.getJobIds().iterator(); it
 				.hasNext();) {
-			jobID = it.next();
-			sysResults = jobIDToFoldResults.get(jobID);
+			jobId = it.next();
+			sysResults = results.getPerTrackEvaluationAndResults(jobId);
+			//TODO handle multiple folds
 			resultList = sysResults.get(0);
-			File sysDir = jobIDToResultDir.get(jobID);
+			File sysDir = jobIDToResultDir.get(jobId);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "perTrack.csv");
 			WriteMelodyResultFiles.writeTableToCsv(
-					WriteMelodyResultFiles.prepPerTrackTableData(resultList, jobIDToName.get(jobID)),
+					WriteMelodyResultFiles.prepPerTrackTableData(resultList, results.getJobName(jobId)),
 					trackCSV
 				);
-			jobIDToPerTrackCSV.put(jobID, trackCSV);
+			jobIDToPerTrackCSV.put(jobId, trackCSV);
 		}
 
 
 		/* Create tar-balls of individual result directories */
 		getLogger().info("Preparing evaluation data tarballs...");
-		Map<String, File> jobIDToTgz = new HashMap<String, File>(jobIDToName
-				.size());
-		for (Iterator<String> it = jobIDToName.keySet().iterator(); it
-				.hasNext();) {
-			jobID = it.next();
-			jobIDToTgz.put(jobID, IOUtil
-					.tarAndGzip(jobIDToResultDir.get(jobID)));
+		Map<String, File> jobIDToTgz = new HashMap<String, File>(numJobs);
+		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
+			jobId = it.next();
+			jobIDToTgz.put(jobId, IOUtil
+					.tarAndGzip(jobIDToResultDir.get(jobId)));
 		}
 
 		/* Write result HTML pages */
 		getLogger().info("Creating result HTML files...");
 
-		writeResultHtmlPages(numJobs, jobIdToEvaluation,
+		writeResultHtmlPages(results,
 				jobIDToResultPlotFileList, summaryCsv, jobIDToPerTrackCSV,
-				jobIDToTgz);
-
-		return jobIdToEvaluation;
+				jobIDToTgz, outputDir);
 	}
 
 	/**
 	 * Writes the result HTML pages for the evaluation of multiple jobs/algorithms
 	 * 
-	 * @param numJobs 					the number of jobs/algorithms to evaluation
-	 * @param jobIdToEvaluation 		map of a jobId to evaluation results for that job
-	 * @param jobIDToResultPlotFileList map of a jobId to the results plots for that job
-	 * @param summaryCsv 				the summary csv file that summarizes all jobs
-	 * @param jobIDToPerTrackCSV 		map of jobId to individual per-track results csv files for that job
-	 * @param jobIDToTgz 				map of jobId to the tar-balls of individual job results
+	 * @param results                   The NemaEvaluationResultSet to write results pages for.
+	 * @param jobIDToResultPlotFileList map of a jobId to the results plots for that job.
+	 * @param summaryCsv 				the summary csv file that summarizes all jobs.
+	 * @param jobIDToPerTrackCSV 		map of jobId to individual per-track results csv files for that job.
+	 * @param jobIDToTgz 				map of jobId to the tar-balls of individual job results.
+	 * @param outputDir                 directory to write the HTML pages to.
 	 */
-	private void writeResultHtmlPages(int numJobs,
-			Map<String, NemaData> jobIdToEvaluation,
+	private static void writeResultHtmlPages(NemaEvaluationResultSet results,
 			Map<String, File[]> jobIDToResultPlotFileList, File summaryCsv,
-			Map<String, File> jobIDToPerTrackCSV, Map<String, File> jobIDToTgz) {
-		String jobID;
-		List<List<NemaData>> sysResults;
+			Map<String, File> jobIDToPerTrackCSV, Map<String, File> jobIDToTgz, File outputDir) {
+		String jobId;
+		Map<NemaTrackList,List<NemaData>> sysResults;
 		List<NemaData> resultList;
 		List<Page> resultPages = new ArrayList<Page>();
 		List<PageItem> items;
 		Page aPage;
+		int numJobs = results.getJobIds().size();
 
 		/* Do intro page to describe task */
 		{
 			items = new ArrayList<PageItem>();
-			Table descriptionTable = WriteMelodyResultFiles.prepTaskTable(task,
-					dataset);
+			Table descriptionTable = WriteMelodyResultFiles.prepTaskTable(results.getTask(),
+					results.getDataset());
 			items.add(new TableItem("task_description", "Task Description",
 					descriptionTable.getColHeaders(), descriptionTable
 							.getRows()));
@@ -184,7 +257,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		{
 			items = new ArrayList<PageItem>();
 			Table summaryTable = WriteMelodyResultFiles.prepSummaryTableData(
-					jobIdToEvaluation, jobIDToName);
+					results.getJobIdToOverallEvaluation(), results.getJobIdToJobName());
 			items.add(new TableItem("summary_results", "Summary Results",
 					summaryTable.getColHeaders(), summaryTable.getRows()));
 			aPage = new Page("summary", "Summary", items, false);
@@ -193,25 +266,24 @@ public class MelodyEvaluator extends EvaluatorImpl {
 
 		/* Do per system pages */
 		{
-			for (Iterator<String> it = jobIDToName.keySet().iterator(); it
+			for (Iterator<String> it = results.getJobIds().iterator(); it
 					.hasNext();) {
-				jobID = it.next();
+				jobId = it.next();
 				items = new ArrayList<PageItem>();
-				sysResults = jobIDToFoldResults.get(jobID);
+				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				resultList = sysResults.get(0);
 				
 				/* Add per track table */
 				Table perTrackTable = WriteMelodyResultFiles
 						.prepPerTrackTableData(resultList,
-								jobIDToName.get(jobID));
-				items.add(new TableItem(jobID + "_results", jobIDToName
-						.get(jobID)
+								results.getJobName(jobId));
+				items.add(new TableItem(jobId + "_results", results.getJobName(jobId)
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));
 
 				/* Add list of plots */
 				List<String> plotPathList = new ArrayList<String>(numJobs);
-				File[] plotPaths = jobIDToResultPlotFileList.get(jobID);
+				File[] plotPaths = jobIDToResultPlotFileList.get(jobId);
 				for (int i = 0; i < plotPaths.length; i++) {
 					plotPathList.add(IOUtil.makeRelative(plotPaths[i],
 							outputDir));
@@ -219,7 +291,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				items.add(new FileListItem("plots", "Per track result plots",
 						plotPathList));
 
-				aPage = new Page(jobID + "_results", jobIDToName.get(jobID),
+				aPage = new Page(jobId + "_results", results.getJobName(jobId),
 						items, true);
 				resultPages.add(aPage);
 			}
@@ -232,10 +304,10 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			/* CSVs */
 			List<String> CSVPaths = new ArrayList<String>(4);
 			CSVPaths.add(IOUtil.makeRelative(summaryCsv, outputDir));
-			for (Iterator<String> it = jobIDToName.keySet().iterator(); it
+			for (Iterator<String> it = results.getJobIds().iterator(); it
 					.hasNext();) {
-				jobID = it.next();
-				CSVPaths.add(IOUtil.makeRelative(jobIDToPerTrackCSV.get(jobID),
+				jobId = it.next();
+				CSVPaths.add(IOUtil.makeRelative(jobIDToPerTrackCSV.get(jobId),
 						outputDir));
 			}
 
@@ -244,10 +316,10 @@ public class MelodyEvaluator extends EvaluatorImpl {
 
 			/* System tar-balls */
 			List<String> tarballPaths = new ArrayList<String>(numJobs);
-			for (Iterator<String> it = jobIDToName.keySet().iterator(); it
+			for (Iterator<String> it = results.getJobIds().iterator(); it
 					.hasNext();) {
-				jobID = it.next();
-				tarballPaths.add(IOUtil.makeRelative(jobIDToTgz.get(jobID),
+				jobId = it.next();
+				tarballPaths.add(IOUtil.makeRelative(jobIDToTgz.get(jobId),
 						outputDir));
 			}
 			items.add(new FileListItem("tarballs",
@@ -256,32 +328,10 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			resultPages.add(aPage);
 		}
 
-		Page.writeResultPages(task.getName(), outputDir, resultPages);
+		Page.writeResultPages(results.getTask().getName(), outputDir, resultPages);
 	}
 
-	/**
-	 * Checks that the algorithm results contain only a single fold of results. This evaluation 
-	 * task is not cross-fold validated
-	 */
-	private void checkFolds() {
-		String jobID;
-		List<List<NemaData>> sysResults;
-		for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it
-				.hasNext();) {
-			jobID = it.next();
-			sysResults = jobIDToFoldResults.get(jobID);
-			if (sysResults.size() != 1) {
-				throw new IllegalArgumentException(
-						"The number of folds ("
-								+ sysResults.size()
-								+ ") detected for system ID: "
-								+ jobID
-								+ ", name: "
-								+ jobIDToName.get(jobID)
-								+ " is not 1 (Melody Evaluation is not cross-validated)!");
-			}
-		}
-	}
+	
 
 
 	/**
