@@ -120,79 +120,100 @@ public interface FlowService {
    public Flow getFlow(long flowId);
    
    
-
+   /**
+    * Return the configuration for the head server. The head server is the
+    * Meandre server the flow service uses for management and storage of flows.
+    * 
+    * @return Config for the head server.
+    * @since 0.6.0
+    */
    public MeandreServerProxyConfig getHeadConfig();
    
-
+   /**
+    * Return the configurations for the worker servers. Worker servers perform
+    * the actual execution of Meandre flows.
+    * 
+    * @return Set of worker server configurations.
+    * @since 0.6.0
+    */
    public Set<MeandreServerProxyConfig> getWorkerConfigs();
    
+   /**
+    * Return the status of the head server.
+    * 
+    * @return Status of the head server.
+    * @since 0.6.0
+    */
    public MeandreServerProxyStatus getHeadStatus();
    
    
    /**
-    * Returns a Map of the MeandreServerProxyConfig as key and the MeandreServerProxyStatus as value
-    * @return Map of {@link org.imirsel.nema.flowservice.config.MeandreServerProxyConfig} as key {@link MeandreServerProxyStatus} as value
+    * Return the current status for all worker servers. The keys in the
+    * returned map contain the specifics for each server (e.g. address, port)
+    * and the values in the returned map contain the server status.
+    * 
+    * @return Map containing the current status for all worker servers.
     * @since 0.6.0
     */
    public Map<MeandreServerProxyConfig,MeandreServerProxyStatus> getWorkerStatus();
    
    /**
-    * Returns the MeandreServerProxyStatus for the Server
-    * @param host The meandre servers address
-    * @param port The meandre servers port
-    * @return MeandreServerProxyStatus The Server's runtime status
-    * @since 0.5.1
+    * Return the current status for the specified server.
+    * 
+    * @return The current status for the specified server.
+    * @since 0.6.0
     */
    public MeandreServerProxyStatus getWorkerStatus(String host, int port);
    
+   /**
+    * Return the console for the specified job.
+    * 
+    * @param job The job for which the console should be returned.
+    * @return The output console that was printed while the job was running.
+    * @since 0.5.0
+    */
+   public String getConsole(Job job);
    
    /**
-    * Returns the console for the executing flow 
-    * @param URI The URI of the flow
-    * @return console as string
-    * @throws MeandreServerException 
+    * Create a new flow using the flow at the specified URI as a template to
+    * which the supplied parameters will be applied.
+    * 
+    * @param paramMap Map of flow parameter names to values. These parameters
+    * will be applied to the template flow at the specified URI.
+    * @param flowUri The URI of the flow to use as the template.
+    * @param userId The ID of the user who is creating this flow.
+    * @return The URI of the new flow.
     * @since 0.5.0
     */
-   public String getConsole(String URI) throws MeandreServerException;
-   
-   /**
-    * Creates a new flow with the parameters based on the flowURI template
-    * @param paramMap HashMap of Parameter names and values.
-    * @param flowURI  The URI of the flow
-    * @param userId The user id who is creating this flow
-    * @return URI The URI of the flow
-    * @throws MeandreServerException 
-    * @since 0.5.0
-    */
-   public String createNewFlow(HashMap<String,String> paramMap,String flowURI, long userId) throws MeandreServerException;
+   public String createNewFlow(HashMap<String,String> paramMap, String flowUri, long userId);
 
    /**
-    * Returns the Component Data Property
-    * @param component
-    * @param URI The URI of the flow
-    * @return Map<String, Property> The Map of component name and property.
-    * @throws MeandreServerException 
+    * Return a map of component properties and their data types.
+    * 
+    * @param component The {@link Component} to get the property data types for.
+    * @param flowUri The URI of the flow containing the component to get the data.
+    * types for.
+    * @return The Map of component names and properties.
     * @since 0.5.0
     */
-   public Map<String, Property> getComponentPropertyDataType(Component component, String URI) throws MeandreServerException;
+   public Map<String, Property> getComponentPropertyDataType(Component component, String flowUri);
 
    /**
-    * Returns the list of Component
-    * @param URI The URI of the flow
-    * @return List<Component> 
-    * @throws MeandreServerException 
+    * Return the {@link Component}s contained in the flow at the specified URI.
+    * 
+    * @param flowUri The URI of the flow for which components should be returned.
+    * @return Components in the flow at the specified URL.
     * @since 0.5.0
     */
-   public List<Component> getComponents(String URI) throws MeandreServerException;
+   public List<Component> getComponents(String flowUri);
 
    /** 
-    * Remove the flow with the url
-    * @param URI The URI of the flow
-    * @return success True or False
-    * @throws MeandreServerException 
+    * Remove the flow with the specified URI.
+    * @param flowUri The URI of the flow to remove.
+    * @return True if the flow was successfully removed.
     * @since 0.5.0
     */
-   public boolean removeFlow(String URI) throws MeandreServerException;
+   public boolean removeFlow(String flowUri);
 		
    
 
