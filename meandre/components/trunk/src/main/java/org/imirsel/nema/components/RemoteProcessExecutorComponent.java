@@ -11,6 +11,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
@@ -34,7 +35,8 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
  * @author kumaramit01
  * @since 0.2.0-SNAPSHOT
  */
-public abstract class RemoteProcessExecutorComponent implements ExecutableComponent {
+public abstract class RemoteProcessExecutorComponent extends NemaComponent implements ExecutableComponent {
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@ComponentProperty(defaultValue = "localhost", description = "Executor Service Host", name = "host")
 	private static final String PROPERTY_2 = "host";
@@ -55,7 +57,7 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
-	
+		super.initialize(ccp);
 		String host = ccp.getProperty(PROPERTY_2);
 		String _port = ccp.getProperty(PROPERTY_3);	
 		int port = Integer.parseInt(_port);
@@ -67,7 +69,6 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 			registry = LocateRegistry.getRegistry(host,port);
 			executorService = ( ProcessExecutorService) registry.lookup(serviceName);
 			System.out.println(executorService.getProcessTemplates());
-		
 			RemoteOutputStream ros = new SimpleRemoteOutputStream(ccp.getOutputConsole());
 			setProcessMonitor(new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue));
 		} catch (RemoteException e) {
@@ -77,6 +78,7 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 			e.printStackTrace();
 			throw new ComponentExecutionException(e);
 		}
+		logger.info("ExecutorService found");
 	}
 
 
@@ -86,8 +88,15 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	
 
 
+	/**This method aborts all the running processes when the component is disposed.
+	 * 
+	 */
 	public void dispose(ComponentContextProperties ccp)
-			throws ComponentExecutionException, ComponentContextException {
+			throws ComponentContextException {
+		super.dispose(ccp);
+		// abort all the processes that are still running -we are disposing the flow.
+		logger.info("Aborting all the running processes.");
+		abortAllProcesses();
 	}
 
 	
@@ -185,7 +194,9 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 		if(process == null){
 			throw new IllegalArgumentException("Invalid process");
 		}
+		logger.info("Aborting: " + process.getId());
 		boolean success=this.getExecutorService().abort(process);
+		logger.info("Abort success: " + success);
 		return success;
 	}
 	
@@ -199,6 +210,7 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 		while(np.hasNext()){
 			NemaProcess process = np.next();
 			if(np!=null){
+				logger.severe("Aborting: " + process.getId());
 				try{
 					abortProcess(process);
 				}catch(Exception ex){

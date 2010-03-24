@@ -15,6 +15,7 @@ import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
+import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
 @Component(creator = "Amit Kumar", description = "Test Remote Component Based on abstract class",
@@ -28,6 +29,17 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 	@ComponentOutput(description = "This is the process artifact data",name = "processResult")
 	private static final String DATA_OUTPUT_1="processResult";
 	
+	
+	public void initialize(ComponentContextProperties ccp)
+	throws ComponentExecutionException, ComponentContextException {
+		super.initialize(ccp);
+	}
+	
+	public void dispose(ComponentContextProperties ccp)
+	throws ComponentContextException {
+		super.dispose(ccp);
+	}
+
 	
 	
 
