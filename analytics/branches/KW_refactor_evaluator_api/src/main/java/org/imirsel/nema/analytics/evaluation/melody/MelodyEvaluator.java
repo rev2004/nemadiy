@@ -114,8 +114,9 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				sysResults = jobIDToFoldResults.get(jobId);
 				Map<NemaTrackList,NemaData> foldEvals = new HashMap<NemaTrackList,NemaData>(testSets.size());
 				for (Iterator<NemaTrackList> trackIt = sysResults.keySet().iterator(); trackIt.hasNext();) {
-					NemaTrackList trackList = trackIt.next();
-					NemaData result = evaluateResult(jobId, sysResults.get(trackList));
+					//make sure we use the evaluators copy of the track list
+					NemaTrackList trackList = testSets.get(testSets.indexOf(trackIt.next()));
+					NemaData result = evaluateResultFold(jobId, trackList, sysResults.get(trackList));
 					foldEvals.put(trackList, result);
 				}
 				jobIdToFoldEvaluation.put(jobId, foldEvals);
@@ -160,7 +161,6 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		}
 
 		/* Plot melody transcription against GT for each track result for each system */
-		List<NemaData> resultList;
 		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
 		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
 			jobId = it.next();
@@ -168,11 +168,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		
 			/* Get results to plot */
 			sysResults = results.getPerTrackEvaluationAndResults(jobId);
-			//TODO handle multiple folds
-			resultList = sysResults.get(0);
-		
-			File[] plotFiles = plotTranscriptionForJob(jobId, resultList,
-					sysDir);
+			File[] plotFiles = plotTranscriptionForJob(jobId, sysResults, sysDir);
 			
 			jobIDToResultPlotFileList.put(jobId, plotFiles);
 		}
@@ -191,14 +187,17 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				.hasNext();) {
 			jobId = it.next();
 			sysResults = results.getPerTrackEvaluationAndResults(jobId);
-			//TODO handle multiple folds
-			resultList = sysResults.get(0);
+			
 			File sysDir = jobIDToResultDir.get(jobId);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "perTrack.csv");
 			WriteMelodyResultFiles.writeTableToCsv(
-					WriteMelodyResultFiles.prepPerTrackTableData(resultList, results.getJobName(jobId)),
-					trackCSV
-				);
+					WriteMelodyResultFiles.prepTableDataOverTracks(testSets, sysResults, new String[]{
+							NemaDataConstants.MELODY_RAW_PITCH_ACCURACY,
+							NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY,
+							NemaDataConstants.MELODY_VOICING_RECALL,
+							NemaDataConstants.MELODY_VOICING_FALSE_ALARM, 
+							NemaDataConstants.MELODY_OVERALL_ACCURACY
+						}),trackCSV);
 			jobIDToPerTrackCSV.put(jobId, trackCSV);
 		}
 
@@ -208,8 +207,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		Map<String, File> jobIDToTgz = new HashMap<String, File>(numJobs);
 		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
 			jobId = it.next();
-			jobIDToTgz.put(jobId, IOUtil
-					.tarAndGzip(jobIDToResultDir.get(jobId)));
+			jobIDToTgz.put(jobId, IOUtil.tarAndGzip(jobIDToResultDir.get(jobId)));
 		}
 
 		/* Write result HTML pages */
@@ -271,12 +269,19 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				jobId = it.next();
 				items = new ArrayList<PageItem>();
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
-				resultList = sysResults.get(0);
 				
 				/* Add per track table */
-				Table perTrackTable = WriteMelodyResultFiles
-						.prepPerTrackTableData(resultList,
-								results.getJobName(jobId));
+				Table perTrackTable = WriteMelodyResultFiles.prepTableDataOverTracks(
+						results.getTestSetTrackLists(), sysResults, 
+						new String[]{
+							NemaDataConstants.MELODY_RAW_PITCH_ACCURACY,
+							NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY,
+							NemaDataConstants.MELODY_VOICING_RECALL,
+							NemaDataConstants.MELODY_VOICING_FALSE_ALARM, 
+							NemaDataConstants.MELODY_OVERALL_ACCURACY
+						}
+					);
+				
 				items.add(new TableItem(jobId + "_results", results.getJobName(jobId)
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));
@@ -337,39 +342,38 @@ public class MelodyEvaluator extends EvaluatorImpl {
 	/**
 	 * Plots the melody transcriptions for each job, for each file
 	 * 
-	 * @param jobId			the jobId we wish to plot results for
-	 * @param resultList	a list of the transcriptions to plot
-	 * @param sysDir		directory to store plots in
-	 * @return				a file array containing all the plots
+	 * @param jobId    the jobId we wish to plot results for
+	 * @param results  a map of fold to the transcriptions to plot
+	 * @param sysDir   directory to store plots in
+	 * @return         a file array containing all the plots
 	 */
 	private File[] plotTranscriptionForJob(String jobId,
-			List<NemaData> resultList, File sysDir) {
+			Map<NemaTrackList, List<NemaData>> results, File sysDir) {
 		NemaData result;
 
 		/* Plot each result */
-		File[] plotFiles = new File[resultList.size()];
+		List<File> plotFiles = new ArrayList<File>();
 		
 		int idx = 0;
-		for (Iterator<NemaData> iterator = resultList.iterator(); iterator
-				.hasNext();) {
-			result = iterator.next();
-			plotFiles[idx++] = new File(sysDir.getAbsolutePath()
-					+ File.separator + jobId + File.separator
-					+ result.getId() + MELODY_PLOT_EXT);
-
-			// TODO actually plot the result
+		for (Iterator<NemaTrackList> foldIt = results.keySet().iterator(); foldIt.hasNext();){
+			NemaTrackList testSet = foldIt.next();
+			for (Iterator<NemaData> iterator = results.get(testSet).iterator(); iterator
+					.hasNext();) {
+				result = iterator.next();
+				plotFiles.add(new File(sysDir.getAbsolutePath()
+						+ File.separator + jobId + File.separator
+						+ "fold_" + testSet.getFoldNumber() + MELODY_PLOT_EXT));
+	
+				// TODO actually plot the result
+			}
 		}
-		return plotFiles;
+		return plotFiles.toArray(new File[plotFiles.size()]);
 	}
 
-	/**
-	 * The core evaluation method. Evaluates each file against its ground-truth for a given jobId
-	 * @param jobID		the jobId to evaluate
-	 * @param theData	the results to evaluate for the jobId. Individual results for each file are added back to this List
-	 * @return 			a single NemaData object that contains the average/summary/overall evaluation	
-	 */
-	private NemaData evaluateResult(String jobID, List<NemaData> theData) {
-
+	public NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData) {
+		//count the number of examples returned and search for any missing tracks in the results returned for the fold
+    	int numExamples = checkFoldResultsAreComplete(jobID, testSet, theData);
+		
 		NemaData outObj = new NemaData(jobID);
 
 		NemaData data;
@@ -383,8 +387,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		double rawChromaOverall = 0.0;
 		double accuracyOverall = 0.0;
 
-		int numTracks = theData.size();
-		for (int x = 0; x < numTracks; x++) {
+		for (int x = 0; x < theData.size(); x++) {
 			
 			/* Pull the algorithm and ground-truth raw data */
 			data = theData.get(x);
@@ -567,11 +570,11 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		 * Calculate summary/overall evaluation results. Populate a summary NemaData object with 
 		 * the evaluations, and return it */
 		
-		vxRecallOvarall = vxRecallOvarall / ((double) numTracks);
-		vxFalseAlarmOverall = vxFalseAlarmOverall / ((double) numTracks);
-		rawPitchOverall = rawPitchOverall / ((double) numTracks);
-		rawChromaOverall = rawChromaOverall / ((double) numTracks);
-		accuracyOverall = accuracyOverall / ((double) numTracks);
+		vxRecallOvarall = vxRecallOvarall / ((double) numExamples);
+		vxFalseAlarmOverall = vxFalseAlarmOverall / ((double) numExamples);
+		rawPitchOverall = rawPitchOverall / ((double) numExamples);
+		rawChromaOverall = rawChromaOverall / ((double) numExamples);
+		accuracyOverall = accuracyOverall / ((double) numExamples);
 		
 		outObj.setMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY, accuracyOverall);
 		outObj.setMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY, rawPitchOverall);

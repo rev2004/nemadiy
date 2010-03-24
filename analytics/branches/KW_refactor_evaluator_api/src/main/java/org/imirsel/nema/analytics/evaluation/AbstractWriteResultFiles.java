@@ -16,6 +16,7 @@ import org.imirsel.nema.analytics.evaluation.util.resultpages.Table;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaTask;
+import org.imirsel.nema.model.NemaTrackList;
 
 public class AbstractWriteResultFiles {
 
@@ -55,7 +56,7 @@ public class AbstractWriteResultFiles {
      * of the table and the rows are the different tracks in the evaluation.
      * 
      */
-    public static Table prepTableDataOverTracksAndSystems(Map<String,List<List<NemaData>>> jobIDToTrackEval, Map<String,String> jobIDToName, String metricKey) {
+    public static Table prepTableDataOverTracksAndSystems(List<NemaTrackList> testSets, Map<String,Map<NemaTrackList,List<NemaData>>> jobIDToTrackEval, Map<String,String> jobIDToName, String metricKey) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
     	String[][] jobIDandName = new String[numAlgos][];
@@ -84,8 +85,8 @@ public class AbstractWriteResultFiles {
         int numTracks = 0;
         String firstJob = jobIDandName[0][0];
         {
-	        List<List<NemaData>> firstResList = jobIDToTrackEval.get(firstJob);
-	        for (Iterator<List<NemaData>> iterator = firstResList.iterator(); iterator.hasNext();) {
+	        Map<NemaTrackList,List<NemaData>> firstResList = jobIDToTrackEval.get(firstJob);
+	        for (Iterator<List<NemaData>> iterator = firstResList.values().iterator(); iterator.hasNext();) {
 				List<NemaData> list = iterator.next();
 				numTracks += list.size();
 			}
@@ -93,19 +94,25 @@ public class AbstractWriteResultFiles {
         
         //produce rows (assume but check that results are ordered the same for each system)
         List<String[]> rows = new ArrayList<String[]>();
-        int fold = 0;
+        int foldNum = 0;
+        NemaTrackList foldList = testSets.get(foldNum);
         int foldTrackCount = 0;
         int actualRowCount = 0;
         String[] row;
-        List<List<NemaData>> firstResList;
+        Map<NemaTrackList,List<NemaData>> firstResList;
         NemaData data;
-        while(actualRowCount < numTracks){
+        firstResList = jobIDToTrackEval.get(firstJob);
+    	while(actualRowCount < numTracks){
+        	if (foldTrackCount == firstResList.get(foldList).size()){
+        		foldNum++;
+        		foldList  = testSets.get(foldNum);
+        	}
+        	
         	row = new String[numCols];
-        	row[0] = "" + fold;
-        	firstResList = jobIDToTrackEval.get(firstJob);
-        	row[1] = firstResList.get(fold).get(foldTrackCount).getId();
+        	row[0] = "" + foldList.getFoldNumber();
+        	row[1] = firstResList.get(foldList).get(foldTrackCount).getId();
         	for(int i=0;i<numAlgos;i++){
-	        		data = jobIDToTrackEval.get(jobIDandName[i][0]).get(fold).get(foldTrackCount);
+	        		data = jobIDToTrackEval.get(jobIDandName[i][0]).get(foldList).get(foldTrackCount);
 
 	        		if (!data.getId().equals(row[1])){
 	        			throw new IllegalArgumentException("Results from job ID: " + jobIDandName[i][0] + " are not ordered the same as results from job ID: " + firstJob);
@@ -116,9 +123,6 @@ public class AbstractWriteResultFiles {
 
         	actualRowCount++;
         	foldTrackCount++;
-        	if (foldTrackCount == firstResList.get(fold).size()){
-        		fold++;
-        	}
         }
         
         return new Table(colNames, rows);
@@ -129,7 +133,7 @@ public class AbstractWriteResultFiles {
      * of the table and the rows are the different tracks in the evaluation.
      * 
      */
-    public static Table prepTableDataOverFoldsAndSystems(Map<String,List<NemaData>> jobIDToFoldEval, Map<String,String> jobIDToName, String metricKey) {
+    public static Table prepTableDataOverFoldsAndSystems(List<NemaTrackList> testSets, Map<String, Map<NemaTrackList,NemaData>> jobIDToFoldEval, Map<String,String> jobIDToName, String metricKey) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
     	String[][] jobIDandName = new String[numAlgos][];
@@ -163,10 +167,11 @@ public class AbstractWriteResultFiles {
         String[] row;
         NemaData data;
         for(int f=0;f<numFolds;f++){
-        	row = new String[numCols];
+        	NemaTrackList foldList = testSets.get(fold);
+            row = new String[numCols];
         	row[0] = "" + fold;
         	for(int i=0;i<numAlgos;i++){
-        		data = jobIDToFoldEval.get(jobIDandName[i][0]).get(f);
+        		data = jobIDToFoldEval.get(jobIDandName[i][0]).get(foldList);
         		row[i+1] = "" + data.getDoubleMetadata(metricKey);
         	}
         	rows.add(row);
@@ -180,7 +185,7 @@ public class AbstractWriteResultFiles {
      * of the table and the rows are the different tracks in the evaluation.
      * 
      */
-    public static Table prepTableDataOverTracks(List<List<NemaData>> trackEval, String[] metricKeys) {
+    public static Table prepTableDataOverTracks(List<NemaTrackList> testSets, Map<NemaTrackList,List<NemaData>> trackEval, String[] metricKeys) {
     	//set column names
     	int numMetrics = metricKeys.length;
     	int numCols = numMetrics + 2;
@@ -193,7 +198,7 @@ public class AbstractWriteResultFiles {
 
         //count number of rows to produce
         int numTracks = 0;
-        for (Iterator<List<NemaData>> iterator = trackEval.iterator(); iterator.hasNext();) {
+        for (Iterator<List<NemaData>> iterator = trackEval.values().iterator(); iterator.hasNext();) {
 			List<NemaData> list = iterator.next();
 			numTracks += list.size();
 		}
@@ -201,26 +206,28 @@ public class AbstractWriteResultFiles {
         
         //produce rows (assume but check that results are ordered the same for each system)
         List<String[]> rows = new ArrayList<String[]>();
-        int fold = 0;
+        int foldNum = 0;
+        NemaTrackList foldList = testSets.get(foldNum);
         int foldTrackCount = 0;
         int actualRowCount = 0;
         String[] row;
         NemaData data;
         while(actualRowCount < numTracks){
+        	if (foldTrackCount == trackEval.get(foldList).size()){
+        		foldNum++;
+        		foldList = testSets.get(foldNum);
+        	}
         	row = new String[numCols];
-        	row[0] = "" + fold;
-        	row[1] = trackEval.get(fold).get(foldTrackCount).getId();
+        	row[0] = "" + foldList.getFoldNumber();
+        	row[1] = trackEval.get(foldList).get(foldTrackCount).getId();
         	for(int i=0;i<numMetrics;i++){
-        		data = trackEval.get(fold).get(foldTrackCount);
+        		data = trackEval.get(foldList).get(foldTrackCount);
         		row[i+2] = "" + data.getDoubleMetadata(metricKeys[i]);
         	}
         	rows.add(row);
 
         	actualRowCount++;
         	foldTrackCount++;
-        	if (foldTrackCount == trackEval.get(fold).size()){
-        		fold++;
-        	}
         }
         
         return new Table(colNames, rows);
@@ -231,7 +238,7 @@ public class AbstractWriteResultFiles {
      * of the table and the rows are the different tracks in the evaluation.
      * 
      */
-    public static Table prepTableDataOverFolds(List<NemaData> foldEval, String[] metricKeys) {
+    public static Table prepTableDataOverFolds(List<NemaTrackList> testSets, Map<NemaTrackList, NemaData> foldEval, String[] metricKeys) {
     	//set column names
     	int numMetrics = metricKeys.length;
     	int numCols = numMetrics + 1;
@@ -252,7 +259,7 @@ public class AbstractWriteResultFiles {
         	row = new String[numCols];
         	row[0] = "" + i;
         	for(int m=0;m<numMetrics;m++){
-        		data = foldEval.get(i);
+        		data = foldEval.get(testSets.get(i));
         		row[m+1] = "" + data.getDoubleMetadata(metricKeys[m]);
         	}
         	rows.add(row);

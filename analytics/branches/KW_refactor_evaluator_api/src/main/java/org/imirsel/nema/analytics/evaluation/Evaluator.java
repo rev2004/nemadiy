@@ -168,6 +168,18 @@ public interface Evaluator {
     public NemaEvaluationResultSet evaluate() throws IllegalArgumentException, IOException;
     
     /**
+     * Evaluates a single iteration/fold of the experiment and returns an Object 
+     * representing the evaluation results.
+     * 
+     * @param jobID The jobID by which the results will be referred to.
+     * @param testSet the testSet being evaluated.
+     * @param theData The list of data Objects each representing a prediction 
+     * about a track to be evaluated.
+     * @return an Object representing the evaluation results.
+     */
+    public NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData);
+    
+    /**
      * Render results from the Evaluator to a folder on disk.
      * 
      * @param results The results Object to render.

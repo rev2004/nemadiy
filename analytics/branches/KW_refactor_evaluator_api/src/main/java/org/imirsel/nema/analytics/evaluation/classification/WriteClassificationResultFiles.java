@@ -88,15 +88,15 @@ public class WriteClassificationResultFiles extends AbstractWriteResultFiles {
      * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
      * of the table and the rows are the folds or iterations of the experiment evaluated.
      * 
-     * @param jobIDToFoldEval Map linking jobID to a list of evaluation data Objects for each fold/iteration
-     * of the experiment. This list is expected to be consistently ordered across all systems.
+     * @param jobIDToFoldEval Map linking jobID to a Map of testSet to evaluation data Objects for each fold/iteration
+     * of the experiment.
      * @param jobIDToName Map linking jobID to the Job name to use in the Table for each set of results.
      * @param classNames A list of the class names used.
      * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
      * a single double value giving the accuracy or performance estimate for the experiment fold.
      * @return The prepared table.
      */
-    public static Table prepTableDataOverFolds(Map<String,List<NemaData>> jobIDToFoldEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
+    public static Table prepTableDataOverFolds(List<NemaTrackList> testSets, Map<String,Map<NemaTrackList,NemaData>> jobIDToFoldEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
     	String[][] jobIDandName = new String[numAlgos][];
@@ -112,8 +112,6 @@ public class WriteClassificationResultFiles extends AbstractWriteResultFiles {
     		}
     	});
 
-        int numFolds = jobIDToFoldEval.get(jobIDandName[0][0]).size();
-
         String[] colNames = new String[numAlgos + 1];
         colNames[0] = "Classification fold";
         for (int i = 0; i < numAlgos; i++) {
@@ -121,12 +119,13 @@ public class WriteClassificationResultFiles extends AbstractWriteResultFiles {
         }
 
         List<String[]> rows = new ArrayList<String[]>();
-        for (int r = 0; r < numFolds; r++) {
-            String[] row = new String[numAlgos + 1];
-            row[0] = "" + (r+1);
+        for (Iterator<NemaTrackList> foldIt = testSets.iterator();foldIt.hasNext();) {
+            NemaTrackList testSet = foldIt.next();
+        	String[] row = new String[numAlgos + 1];
+            row[0] = "" + testSet.getFoldNumber();
 
             for (int j = 0 ; j < numAlgos; j++){
-                row[j+1] = DEC.format(100.0 * jobIDToFoldEval.get(jobIDandName[j][0]).get(r).getDoubleMetadata(metadataKey));
+                row[j+1] = DEC.format(100.0 * jobIDToFoldEval.get(jobIDandName[j][0]).get(testSet).getDoubleMetadata(metadataKey));
             }
             rows.add(row);
         }

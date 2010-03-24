@@ -2,26 +2,25 @@ package org.imirsel.nema.analysis.evaluation;
 
 
 //import static org.imirsel.nema.test.matchers.NemaMatchers.fileContentEquals;
-import static org.junit.Assert.assertThat;
+
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
-import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
-import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyEvaluator;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTask;
+import org.imirsel.nema.model.NemaTrack;
+import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.test.BaseManagerTestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -32,6 +31,7 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 
 	private NemaTask task;
 	private NemaDataset dataset;
+	List<NemaTrackList> testSets;
 	private static File workingDirectory;
 	private static File outputDirectory;
 	
@@ -58,45 +58,38 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
         dataset.setId(task.getDatasetId());
         dataset.setName("dataset name");
         dataset.setDescription("some description");
+        
+        ArrayList<NemaTrack> trackList = new ArrayList<NemaTrack>(4);
+        trackList.add(new NemaTrack("daisy1"));
+        trackList.add(new NemaTrack("daisy2"));
+        trackList.add(new NemaTrack("daisy3"));
+        trackList.add(new NemaTrack("daisy4"));
+        testSets = new ArrayList<NemaTrackList>(1);
+        int id = 0;
+        testSets.add(new NemaTrackList(id, task.getDatasetId(), 3, "test", id, trackList));
+        id++;
     }
 	
 	
 	@Test
-	public void testEvaluateKD() { 
-	File groundTruthDirectory = new File("src/test/resources/melody/groundtruth");
-	File resultsDirectory = new File("src/test/resources/melody/KD");
-	String	systemName = "KD-System";
-	MelodyEvaluator evaluator = null;
-	try {
-		evaluator = new MelodyEvaluator(task, dataset, outputDirectory, workingDirectory);
+	public void testEvaluateKD()  throws IllegalArgumentException, IOException{ 
+		File groundTruthDirectory = new File("src/test/resources/melody/groundtruth");
+		File resultsDirectory = new File("src/test/resources/melody/KD");
+		String	systemName = "KD-System";
+		MelodyEvaluator evaluator = null;
+		
+		evaluator = new MelodyEvaluator(task, dataset, outputDirectory, workingDirectory, testSets);
 		SingleTrackEvalFileType reader = new MelodyTextFile();
 		
 		List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, ".txt");
 		evaluator.setGroundTruth(groundTruth);
 	
 		List<NemaData> resultsForAllTracks = reader.readDirectory(resultsDirectory, null);
-		evaluator.addResults(systemName, systemName, resultsForAllTracks);
-	} catch (FileNotFoundException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	} catch (IOException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	}
+		evaluator.addResults(systemName, systemName, testSets.get(0), resultsForAllTracks);
 	
-	
-	try {
-		Map<String,NemaData> jobIdToAggregateResults = evaluator.evaluate();
-		for(String key:jobIdToAggregateResults.keySet()){
-			assertTrue(key.equals(systemName));
-		}
-	} catch (IllegalArgumentException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	} catch (IOException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	}
+		NemaEvaluationResultSet results = evaluator.evaluate();
+		assertTrue(results != null);
+		
 		
 	  //File resultFile = new File("src/test/resources/classification/evaluation/GT1/report.txt");
 	  //File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");

@@ -72,7 +72,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 	 * @param dataset_ 		the data-set being worked on.
 	 * @param outputDir_ 	the output directory to write evaluation results to.
 	 * @param workingDir_ 	the working directory for writing temporary files, etc.
-	 * @param trainingSets_ the list of training NemaTrackLists used.
+	 * @param trainingSets_ the list of training NemaTrackLists used, can be null.
 	 * @param testSets_     the list of testing NemaTrackLists used.
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -130,17 +130,13 @@ public class KeyEvaluator extends EvaluatorImpl {
 	 * {inheritDoc}
 	 */
 	@Override
-	public NemaEvaluationResultSet evaluate() throws IllegalArgumentException,
-			IOException {
+	public NemaEvaluationResultSet evaluate() throws IllegalArgumentException, IOException {
 		String jobId, jobName;
 		int numJobs = jobIDToFoldResults.size();
 		
-		/* Check all systems have just one result set */
-		Map<NemaTrackList,List<NemaData>> sysResults;
-		
 		/* 
-		 * Make sure we only have one set of results per jobId (i.e. system), 
-		 * as this is not a cross-fold validated experiment */
+		 * Make sure we have same number of sets of results per jobId (i.e. system), 
+		 * as defined in the experiment */
 		checkFolds();
 		
 		/* prepare NemaEvaluationResultSet*/
@@ -148,6 +144,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 		
 		{
 			/* Perform the evaluations on all jobIds (systems) */
+			Map<NemaTrackList,List<NemaData>> sysResults;
 			Map<String, Map<NemaTrackList,NemaData>> jobIdToFoldEvaluation = new HashMap<String, Map<NemaTrackList,NemaData>>(numJobs);
 			for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();) {
 				jobId = it.next();
@@ -155,8 +152,9 @@ public class KeyEvaluator extends EvaluatorImpl {
 				sysResults = jobIDToFoldResults.get(jobId);
 				Map<NemaTrackList,NemaData> foldEvals = new HashMap<NemaTrackList,NemaData>(testSets.size());
 				for (Iterator<NemaTrackList> trackIt = sysResults.keySet().iterator(); trackIt.hasNext();) {
-					NemaTrackList trackList = trackIt.next();
-					NemaData result = evaluateResult(jobId, sysResults.get(trackList));
+					//make sure we use the evaluators copy of the track list
+					NemaTrackList trackList = testSets.get(testSets.indexOf(trackIt.next()));
+					NemaData result = evaluateResultFold(jobId, trackList, sysResults.get(trackList));
 					foldEvals.put(trackList, result);
 				}
 				jobIdToFoldEvaluation.put(jobId, foldEvals);
@@ -191,6 +189,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 		int numJobs = results.getJobIds().size();
 		String jobId;
 		Map<NemaTrackList, List<NemaData>> sysResults;
+		
 		/* Make per system result directories */
 		Map<String, File> jobIDToResultDir = new HashMap<String, File>();
 		for (Iterator<String> it = results.getJobIds().iterator(); it
@@ -198,8 +197,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 			jobId = it.next();
 			
 			/* Make a sub-directory for the systems results */
-			File sysDir = new File(outputDir.getAbsolutePath() + File.separator
-					+ jobId);
+			File sysDir = new File(outputDir.getAbsolutePath() + File.separator + jobId);
 			sysDir.mkdirs();
 			jobIDToResultDir.put(jobId, sysDir);
 		}
@@ -232,6 +230,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 				.hasNext();) {
 			jobId = it.next();
 			sysResults = results.getPerTrackEvaluationAndResults(jobId);
+			
 			//TODO: modify this to handle multiple folds
 			resultList = sysResults.get(0);
 			File sysDir = jobIDToResultDir.get(jobId);
@@ -390,14 +389,11 @@ public class KeyEvaluator extends EvaluatorImpl {
 		return plotFile;
 	}
 
-	/**
-	 * The core evaluation method. Evaluates each file against its ground-truth for a given jobId
-	 * @param jobID		the jobId to evaluate
-	 * @param theData	the results to evaluate for the jobId. Individual results for each file are added back to this List
-	 * @return 			a single NemaData object that contains the average/summary/overall evaluation	
-	 */
-	private NemaData evaluateResult(String jobID, List<NemaData> theData) {
-
+	public NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData) {
+		//count the number of examples returned and search for any missing tracks in the results returned for the fold
+    	int numExamples = checkFoldResultsAreComplete(jobID, testSet, theData);
+    	
+		
 		NemaData outObj = new NemaData(jobID);
 
 		NemaData data;
