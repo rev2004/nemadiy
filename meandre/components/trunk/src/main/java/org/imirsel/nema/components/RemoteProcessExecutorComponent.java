@@ -1,5 +1,6 @@
 package org.imirsel.nema.components;
 
+
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -12,6 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
+
 
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
@@ -35,7 +37,7 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
  * @author kumaramit01
  * @since 0.2.0-SNAPSHOT
  */
-public abstract class RemoteProcessExecutorComponent extends NemaComponent implements ExecutableComponent {
+public abstract class RemoteProcessExecutorComponent implements ExecutableComponent {
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@ComponentProperty(defaultValue = "localhost", description = "Executor Service Host", name = "host")
@@ -57,7 +59,6 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent imple
 	
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
-		super.initialize(ccp);
 		String host = ccp.getProperty(PROPERTY_2);
 		String _port = ccp.getProperty(PROPERTY_3);	
 		int port = Integer.parseInt(_port);
@@ -93,7 +94,6 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent imple
 	 */
 	public void dispose(ComponentContextProperties ccp)
 			throws ComponentContextException {
-		super.dispose(ccp);
 		// abort all the processes that are still running -we are disposing the flow.
 		logger.info("Aborting all the running processes.");
 		abortAllProcesses();
@@ -220,6 +220,15 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent imple
 		}
 		
 	}
+	
+	/**Returns the Logger
+	 * 
+	 * @return Logger
+	 */
+	public Logger getLogger(){
+		return this.logger;
+	}
+
 
 
 }
