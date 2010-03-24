@@ -35,7 +35,7 @@ public class RemoteTimeComponent implements ExecutableComponent{
 	
 	@ComponentProperty(defaultValue = "timeOfTheDay", description = "name of the execution Profile", name = "execProfile")
 	private static final String PROPERTY_1 ="execProfile";
-	@ComponentProperty(defaultValue = "localhost", description = "Executor Service Host", name = "host")
+	@ComponentProperty(defaultValue = "nema.lis.uiuc.edu", description = "Executor Service Host", name = "host")
 	private static final String PROPERTY_2 = "host";
 	
 	@ComponentProperty(defaultValue = "1098", description = "Executor Service port", name = "port")
@@ -45,7 +45,7 @@ public class RemoteTimeComponent implements ExecutableComponent{
 	@ComponentProperty(defaultValue = "ExecutorService", description = "Executor Service Name", name = "serviceName")
 	private static final String PROPERTY_4 = "serviceName";
 	
-	@ComponentOutput(description = "This is the process artifat data",
+	@ComponentOutput(description = "This is the process artifact data",
 			name = "processResult")
 	private static final String DATA_OUTPUT_1="processResult";
 	
