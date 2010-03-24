@@ -6,7 +6,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -53,7 +55,7 @@ public class RemoteTimeComponent implements ExecutableComponent{
 	
 	private CountDownLatch latch = new CountDownLatch(1);
 	private BlockingQueue<List<ProcessArtifact>> resultQueue = new LinkedBlockingQueue<List<ProcessArtifact>>();
-	
+	private Queue<NemaProcess> processList = new ConcurrentLinkedQueue<NemaProcess>();
 	
 	public void initialize(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
@@ -104,7 +106,7 @@ public class RemoteTimeComponent implements ExecutableComponent{
 			pep.setInputs(null);
 			RemoteOutputStream ros = new SimpleRemoteOutputStream(cc.getOutputConsole());
 			
-			RemoteProcessMonitor processMonitor = new RecordStreamProcessMonitor(latch, ros,resultQueue);
+			RemoteProcessMonitor processMonitor = new RecordStreamProcessMonitor(latch, ros,resultQueue,processList);
 			// start the process
 			@SuppressWarnings("unused")
 			NemaProcess process=service.executeProcess(pep, processMonitor);
