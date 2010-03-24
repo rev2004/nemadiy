@@ -5,27 +5,16 @@
 
 package org.imirsel.nema.analytics.evaluation.chord;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JOptionPane;
 
 import org.imirsel.nema.analytics.evaluation.*;
-import org.imirsel.nema.analytics.evaluation.melody.WriteMelodyResultFiles;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
 import org.imirsel.nema.analytics.evaluation.util.*;
 import org.imirsel.nema.analytics.util.io.*;
@@ -33,7 +22,7 @@ import org.imirsel.nema.model.*;
 
 /**
  *
- * @author kris.west@gmail.com
+ * @author mert.bay@gmail.com & kris.west@gmail.com
  */
 public class ChordEvaluator extends EvaluatorImpl{
 
@@ -43,15 +32,16 @@ public class ChordEvaluator extends EvaluatorImpl{
     protected boolean performMatlabStatSigTests = true;
 	protected File matlabPath = new File("matlab");
     
-    private static final String BIG_DIVIDER =    "================================================================================\n";
-    private static final String SMALL_DIVIDER = "--------------------------------------------------------------------------------\n";
-    private static final int COL_WIDTH = 7;
-    private static final DecimalFormat dec = new DecimalFormat("0.00");
+//    private static final String BIG_DIVIDER =    "================================================================================\n";
+//    private static final String SMALL_DIVIDER = "--------------------------------------------------------------------------------\n";
+//    private static final int COL_WIDTH = 7;
+//    private static final DecimalFormat dec = new DecimalFormat("0.00");
     private static final String PLOT_EXT = ".chords.png";
 
+    private static final int GRID_RESOLUTION = 1000; //The grid resolution. 
     
     /**
-     * Constructs and instance of the ClassificationEvaluator. 
+     * Constructs and instance of the ChordEvaluator. 
      * 
      * 
      * @param task_ A description of the task being evaluated. The task must at least contain 
@@ -63,7 +53,9 @@ public class ChordEvaluator extends EvaluatorImpl{
      * are performed (N.B. this is ignored if there is only one result to evaluate).
      * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
      * the significance tests.
-     * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
+     * @param trainingSets_ the list of training NemaTrackLists used, can be null.
+	 * @param testSets_     the list of testing NemaTrackLists used.
+	 * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
      * found.
      * @throws IOException Thrown if there is a problem reading the hierarchy file.
      */
@@ -71,14 +63,63 @@ public class ChordEvaluator extends EvaluatorImpl{
     		NemaTask task_,
             NemaDataset dataset_,
             File outputDir_,
-            File workingDir_,
+            File workingDir_, 
+            List<NemaTrackList> trainingSets_,
+			List<NemaTrackList> testSets_,
             boolean performMatlabStatSigTests_,
             File matlabPath_) 
     		throws FileNotFoundException, IOException{
-        super(workingDir_, outputDir_, task_, dataset_);
+        super(workingDir_, outputDir_, task_, dataset_, trainingSets_, testSets_);
         performMatlabStatSigTests = performMatlabStatSigTests_;
         matlabPath = matlabPath_;
+        setupEvalMetrics();
     }
+    
+    /**
+     * Constructs and instance of the ChordEvaluator. 
+     * 
+     * 
+     * @param task_ A description of the task being evaluated. The task must at least contain 
+     * the metadata class to be predicted (N.B. the default class is 'genre'). The description 
+     * will be used on the HTML evaluation report and textual evaluation reports output.
+     * @param outputDir_ The directory to output results into.
+     * @param workingDir_ The working directory to use for any temp files.
+     * @param performMatlabStatSigTests_ A flag that determines whether the significance tests
+     * are performed (N.B. this is ignored if there is only one result to evaluate).
+     * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
+     * the significance tests.
+     * @param testSets_     the list of testing NemaTrackLists used.
+	 * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
+     * found.
+     * @throws IOException Thrown if there is a problem reading the hierarchy file.
+     */
+    public ChordEvaluator(
+    		NemaTask task_,
+            NemaDataset dataset_,
+            File outputDir_,
+            File workingDir_, 
+			List<NemaTrackList> testSets_,
+            boolean performMatlabStatSigTests_,
+            File matlabPath_) 
+    		throws FileNotFoundException, IOException{
+        super(workingDir_, outputDir_, task_, dataset_, testSets_);
+        performMatlabStatSigTests = performMatlabStatSigTests_;
+        matlabPath = matlabPath_;
+        setupEvalMetrics();
+    }
+    
+    private void setupEvalMetrics() {
+		this.trackEvalMetricsAndResults.clear();
+		this.trackEvalMetricsAndResults.add(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+		this.trackEvalMetricsAndResults.add(NemaDataConstants.CHORD_OVERLAP_RATIO);
+		
+		this.overallEvalMetrics.clear();
+		this.overallEvalMetrics.add(NemaDataConstants.CHORD_OVERLAP_RATIO);
+		this.overallEvalMetrics.add(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
+		
+		//same as overall metrics
+		this.foldEvalMetrics = this.overallEvalMetrics;
+	}
     
 //    /** Parse commandline arguments for the main method harness.
 //     * 
@@ -186,48 +227,73 @@ public class ChordEvaluator extends EvaluatorImpl{
 //        System.err.println("---exit---");
 //    }
     
-    /**
-     * Perform the evaluation and block until the results are fully written to the output directory.
-     * Also return a map encoding the evaluation results for each job in case they are needed for further processing.
-     * 
-     * @return a map encoding the evaluation results for each job and other data. 
-     * @throws IllegalArgumentException Thrown if required metadata is not found, either in the ground-truth
-     * data or in one of the system's results.
-     */
-    public Map<String,NemaData> evaluate() throws IllegalArgumentException, IOException{
+    public NemaEvaluationResultSet evaluate() throws IllegalArgumentException, IOException{
     	
-        boolean performStatSigTests = true;
-        int numJobs = jobIDToFoldResults.size();
-        if(numJobs < 2){
-            performStatSigTests = false;
-        }
+		/* prepare NemaEvaluationResultSet*/
+		NemaEvaluationResultSet results = getEmptyEvaluationResultSet();
+		{
+			/* Make sure we have same number of sets of results per jobId (i.e. system), 
+			 * as defined in the experiment */
+			checkFolds();
+			
+			int numJobs = jobIDToFoldResults.size();
+	        
+	        String jobId, jobName;
+	        Map<NemaTrackList,List<NemaData>> sysResults;
+			
+	        //evaluate each fold for each system
+			Map<String, Map<NemaTrackList,NemaData>> jobIdToFoldEvaluation = new HashMap<String, Map<NemaTrackList,NemaData>>(numJobs);
+			for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
+	        	jobId = it.next();
+	        	getLogger().info("Evaluating experiment folds for jobID: " + jobId);
+	        	sysResults = jobIDToFoldResults.get(jobId);
+	        	Map<NemaTrackList,NemaData> foldEvals = new HashMap<NemaTrackList,NemaData>(testSets.size());
+				for (Iterator<NemaTrackList> trackIt = sysResults.keySet().iterator(); trackIt.hasNext();) {
+					//make sure we use the evaluators copy of the track list
+					NemaTrackList trackList = testSets.get(testSets.indexOf(trackIt.next()));
+					NemaData result = evaluateResultFold(jobId, trackList, sysResults.get(trackList));
+					foldEvals.put(trackList, result);
+				}
+	
+	        	jobIdToFoldEvaluation.put(jobId, foldEvals);
+	        }
+			
+			/* Aggregated evaluation to produce overall results */
+			Map<String, NemaData> jobIdToOverallEvaluation = new HashMap<String, NemaData>(numJobs);
+			for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();) {
+				jobId = it.next();
+				getLogger().info("Aggregating results for jobID: " + jobId);
+				Map<NemaTrackList,NemaData> foldEvals = jobIdToFoldEvaluation.get(jobId);
+				NemaData overall = averageFoldMetrics(jobId, foldEvals.values());
+				jobIdToOverallEvaluation.put(jobId, overall);
+			}
+			
+			/* Populate NemaEvaluationResultSet */
+			for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
+				jobId = it.next();
+				jobName = jobIDToName.get(jobId);
+				results.addCompleteResultSet(jobId, jobName, jobIdToOverallEvaluation.get(jobId), jobIdToFoldEvaluation.get(jobId), jobIDToFoldResults.get(jobId));
+			}
+	    }
         
-        String jobId;
-		List<List<NemaData>> sysResults;
+		getLogger().info("Rendering results");
+		renderResults(results, outputDir);
 		
-		//check num folds and tracks per fold
-		int numFolds = checkFolds();
-
-        //evaluate each fold for each system
-        Map<String,List<NemaData>> jobIDTofoldEvaluations = new HashMap<String,List<NemaData>>(numJobs); 
-        for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
-        	jobId = it.next();
-        	getLogger().info("Evaluating experiment folds for jobID: " + jobId);
-        	sysResults = jobIDToFoldResults.get(jobId);
-        	List<NemaData> foldResultList = new ArrayList<NemaData>(numFolds);
-        	for(Iterator<List<NemaData>> it2 = sysResults.iterator();it2.hasNext();){
-        		foldResultList.add(evaluateResultFold(jobId, it2.next()));
-        	}
-        	jobIDTofoldEvaluations.put(jobId, foldResultList);
-        }
+        return results;
+    }
+    
+    public void renderResults(NemaEvaluationResultSet results, File outputDir) throws IOException {
+    	String jobId;
+        Map<NemaTrackList,List<NemaData>> sysResults;
         
-
 		// Make per system result dirs
 		Map<String, File> jobIDToResultDir = new HashMap<String, File>();
 		Map<String, List<File>> jobIDToFoldResultDirs = new HashMap<String, List<File>>();
 		
-		for (Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it
-				.hasNext();) {
+		int numFolds = results.getTestSetTrackLists().size();
+		int numJobs = results.getJobIds().size();
+		
+		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
 			jobId = it.next();
 			// make a sub-dir for the systems results
 			File sysDir = new File(outputDir.getAbsolutePath() + File.separator + jobId);
@@ -249,18 +315,20 @@ public class ChordEvaluator extends EvaluatorImpl{
         //plot chords for each track in each fold
 		Map<String, List<File[]>> jobIDToResultPlotFileList = new HashMap<String, List<File[]>>();
         //iterate over systems
-        for(Iterator<String> it_systems = jobIDToFoldResults.keySet().iterator(); it_systems.hasNext();){
+        for(Iterator<String> it_systems = results.getJobIds().iterator(); it_systems.hasNext();){
         	jobId = it_systems.next();
         	getLogger().info("Plotting Chord transcriptions for: " + jobId);
-        	sysResults = jobIDToFoldResults.get(jobId);
+        	sysResults = results.getPerTrackEvaluationAndResults(jobId);
         	
         	//iterate over folds
         	List<File> foldDirs = jobIDToFoldResultDirs.get(jobId);
         	List<File[]> plotFolds = new ArrayList<File[]>();
         	Iterator<File> it_foldResDir = foldDirs.iterator();
         	
-        	for (Iterator<List<NemaData>> it_folds = sysResults.iterator(); it_folds.hasNext();) {
-				List<NemaData> list = it_folds.next();
+        	for (Iterator<NemaTrackList> it_folds = sysResults.keySet().iterator(); it_folds.hasNext();) {
+        		NemaTrackList testSet = it_folds.next();
+				List<NemaData> list = sysResults.get(testSet);
+				
 				File[] plots = new File[list.size()];
 				File foldDir = it_foldResDir.next();
 				
@@ -269,10 +337,12 @@ public class ChordEvaluator extends EvaluatorImpl{
 				for (Iterator<NemaData> it_tracks = list.iterator(); it_tracks.hasNext();) {
 					NemaData nemaData = it_tracks.next();
 					
-					File plotFile = new File(foldDir.getAbsolutePath() + File.separator + nemaData.getId() + PLOT_EXT);
+					File plotFile = new File(foldDir.getAbsolutePath() + File.separator + jobId + "-" + "fold" + testSet.getFoldNumber() + PLOT_EXT);
 					plots[plotCount++] = plotFile;
 					
 					//TODO: actually plot the chords
+					
+					
 					
 					
 				}
@@ -281,43 +351,32 @@ public class ChordEvaluator extends EvaluatorImpl{
         	jobIDToResultPlotFileList.put(jobId, plotFolds);
         }
 
-        //aggregate results to produce overall evaluation
-        Map<String, NemaData> jobIDToAggregateEvaluations = aggregateFoldEvaluations(
-				numJobs, jobIDTofoldEvaluations);
-    		
-    		
         //write out per metric CSV results files
         getLogger().info("Writing out CSV result files over whole task...");
         File overlapCsv = new File(outputDir.getAbsolutePath()+ File.separator + "overlap.csv");
         WriteChordResultFiles.writeTableToCsv(
-        		WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults,jobIDToName,NemaDataConstants.CHORD_OVERLAP_RATIO),
+        		WriteChordResultFiles.prepTableDataOverTracksAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerTrackEvaluationAndResults(),results.getJobIdToJobName(),NemaDataConstants.CHORD_OVERLAP_RATIO),
         		overlapCsv
     		);
-        
-//        File weightOverlapCsv = new File(outputDir.getAbsolutePath() + File.separator + "weightedOverlap.csv");
-//        WriteChordResultFiles.writeTableToCsv(
-//        		WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults,jobIDToName, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO),
-//        		weightOverlapCsv
-//        	);
         
         //write out results summary CSV
         File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
         WriteChordResultFiles.writeTableToCsv(
-        		WriteChordResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName),
+        		WriteChordResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName()),
         		summaryCsv
         	);
         
         //write out per system CSVs - per track
         getLogger().info("Writing out CSV result files for each system...");
         Map<String, List<File>> jobIDToCSVs = new HashMap<String, List<File>>(numJobs);
-		for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
+		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
 			jobId = it.next();
-			sysResults = jobIDToFoldResults.get(jobId);
+			sysResults = results.getPerTrackEvaluationAndResults(jobId);
 			
 			File sysDir = jobIDToResultDir.get(jobId);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "per_track_results.csv");
 			WriteChordResultFiles.writeTableToCsv(
-					WriteChordResultFiles.prepTableDataOverTracks(sysResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO}),
+					WriteChordResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO}),
 					trackCSV
 				);
 			ArrayList<File> list = new ArrayList<File>(2);
@@ -330,18 +389,24 @@ public class ChordEvaluator extends EvaluatorImpl{
 		
 		for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
 			jobId = it.next();
-			List<NemaData> sysFoldResults = jobIDTofoldEvaluations.get(jobId);
+			Map<NemaTrackList, NemaData> sysFoldResults = results.getPerFoldEvaluation(jobId);
 			
 			File sysDir = jobIDToResultDir.get(jobId);
 			File foldCSV = new File(sysDir.getAbsolutePath() + File.separator + "per_fold_results.csv");
 			WriteChordResultFiles.writeTableToCsv(
-					WriteChordResultFiles.prepTableDataOverFolds(sysFoldResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO}),
+					WriteChordResultFiles.prepTableDataOverFolds(results.getTestSetTrackLists(), sysFoldResults, new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO}),
 					foldCSV
 				);
 			jobIDToCSVs.get(jobId).add(foldCSV);
 		}
         
         //perform statistical tests
+		/* Do we need to stats tests? */
+		boolean performStatSigTests = true;
+        if(numJobs < 2){
+            performStatSigTests = false;
+        }
+        
         File friedmanOverlapTablePNG = null;
         File friedmanOverlapTable = null;
         File friedmanWeightedOverlapTablePNG = null;
@@ -370,57 +435,54 @@ public class ChordEvaluator extends EvaluatorImpl{
 
         
         //write result HTML pages
-        writeHtmlResultPages(performStatSigTests, numJobs,
-				jobIDToAggregateEvaluations, jobIDTofoldEvaluations,
-				jobIDToFoldResults, overlapCsv,
+        writeHtmlResultPages(performStatSigTests, results, overlapCsv,
 				summaryCsv, jobIDToCSVs, friedmanOverlapTablePNG,
 				friedmanOverlapTable, friedmanWeightedOverlapTablePNG,
 				friedmanWeightedOverlapTable, jobIDToTgz);
-        
-        return jobIDToAggregateEvaluations;
-    }
 
-	private Map<String, NemaData> aggregateFoldEvaluations(int numJobs,
-			Map<String, List<NemaData>> jobIDTofoldEvaluations) {
-		String jobId;
-		getLogger().info("Producing aggregate evaluations over all folds");
-        Map<String,NemaData> jobIDToAggregateEvaluations = new HashMap<String,NemaData>(numJobs); 
-        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
-        	jobId = it.next();
-        	List<NemaData> evalList = jobIDTofoldEvaluations.get(jobId);
-        	NemaData aggregateEval = new NemaData(jobId);
-        	
-        	double avgOverlap = 0.0;
-        	double avgWeightedOverlap = 0.0;
-        	
-        	for (Iterator<NemaData> it2 = evalList.iterator(); it2.hasNext();) {
-				NemaData nemaData = (NemaData) it2.next();
-				avgOverlap += nemaData.getDoubleMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO);
-	            avgWeightedOverlap += nemaData.getDoubleMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
-			}
-        	avgOverlap /= evalList.size();
-        	avgWeightedOverlap /= evalList.size();
-        	
-        	aggregateEval.setMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO, avgOverlap);
-        	aggregateEval.setMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO, avgWeightedOverlap);
-        	jobIDToAggregateEvaluations.put(jobId, aggregateEval);
-        }
-		return jobIDToAggregateEvaluations;
-	}
+}
 
-	private void writeHtmlResultPages(boolean performStatSigTests, int numJobs,
-			Map<String, NemaData> jobIDToAggregateEvaluations, 
-			Map<String, List<NemaData>> jobIDToFoldEvaluations,
-			Map<String, List<List<NemaData>>> jobIDToFold, 
+//	private Map<String, NemaData> aggregateFoldEvaluations(int numJobs,
+//			Map<String, List<NemaData>> jobIDTofoldEvaluations) {
+//		String jobId;
+//		getLogger().info("Producing aggregate evaluations over all folds");
+//        Map<String,NemaData> jobIDToAggregateEvaluations = new HashMap<String,NemaData>(numJobs); 
+//        for(Iterator<String> it = jobIDTofoldEvaluations.keySet().iterator(); it.hasNext();){
+//        	jobId = it.next();
+//        	List<NemaData> evalList = jobIDTofoldEvaluations.get(jobId);
+//        	NemaData aggregateEval = new NemaData(jobId);
+//        	
+//        	double avgOverlap = 0.0;
+//        	double avgWeightedOverlap = 0.0;
+//        	
+//        	for (Iterator<NemaData> it2 = evalList.iterator(); it2.hasNext();) {
+//				NemaData nemaData = (NemaData) it2.next();
+//				avgOverlap += nemaData.getDoubleMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO);
+//	            avgWeightedOverlap += nemaData.getDoubleMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
+//			}
+//        	avgOverlap /= evalList.size();
+//        	avgWeightedOverlap /= evalList.size();
+//        	
+//        	aggregateEval.setMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO, avgOverlap);
+//        	aggregateEval.setMetadata(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO, avgWeightedOverlap);
+//        	jobIDToAggregateEvaluations.put(jobId, aggregateEval);
+//        }
+//		return jobIDToAggregateEvaluations;
+//	}
+
+	private void writeHtmlResultPages(boolean performStatSigTests, 
+			NemaEvaluationResultSet results,
 			File overlapCsv, 
 			File summaryCsv, 
 			Map<String, List<File>> jobIDToCSV, File friedmanOverlapTablePNG,
 			File friedmanOverlapTable, File friedmanWeightedOverlapTablePNG,
 			File friedmanWeightedOverlapTable, Map<String, File> jobIDToTgz) {
 		
+		int numJobs = results.getJobIds().size();
+        
 		String jobId;
-		List<List<NemaData>> sysResults;
-		List<NemaData> systemFoldResults;
+		Map<NemaTrackList,List<NemaData>> sysResults;
+		Map<NemaTrackList,NemaData> systemFoldResults;
 		getLogger().info("Creating result HTML files...");
 
         List<Page> resultPages = new ArrayList<Page>();
@@ -439,7 +501,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         //do summary page
         {
 	        items = new ArrayList<PageItem>();
-	        Table summaryTable = WriteChordResultFiles.prepSummaryTable(jobIDToAggregateEvaluations,jobIDToName);
+	        Table summaryTable = WriteChordResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),jobIDToName);
 	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
 	        aPage = new Page("summary", "Summary", items, false);
 	        resultPages.add(aPage);
@@ -449,13 +511,13 @@ public class ChordEvaluator extends EvaluatorImpl{
         {
             items = new ArrayList<PageItem>();
             
-            Table weightedOverlapTablePerFold = WriteChordResultFiles.prepTableDataOverFoldsAndSystems(jobIDToFoldEvaluations, jobIDToName, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
+            Table weightedOverlapTablePerFold = WriteChordResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(), results.getJobIdToJobName(), NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
             items.add(new TableItem("chord_weighted_overlap_per_fold", "Chord Weighted Average Overlap Per Fold", weightedOverlapTablePerFold.getColHeaders(), weightedOverlapTablePerFold.getRows()));
             
-            Table overlapTablePerFold = WriteChordResultFiles.prepTableDataOverFoldsAndSystems(jobIDToFoldEvaluations, jobIDToName, NemaDataConstants.CHORD_OVERLAP_RATIO);
+            Table overlapTablePerFold = WriteChordResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(), results.getJobIdToJobName(), NemaDataConstants.CHORD_OVERLAP_RATIO);
             items.add(new TableItem("chord_overlap_per_fold", "Chord Average Overlap Per Fold", overlapTablePerFold.getColHeaders(), overlapTablePerFold.getRows()));
             
-            Table overlapTable = WriteChordResultFiles.prepTableDataOverTracksAndSystems(jobIDToFoldResults, jobIDToName, NemaDataConstants.CHORD_OVERLAP_RATIO);
+            Table overlapTable = WriteChordResultFiles.prepTableDataOverTracksAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerTrackEvaluationAndResults(), results.getJobIdToJobName(), NemaDataConstants.CHORD_OVERLAP_RATIO);
             items.add(new TableItem("chord_overlap_per_track", "Chord Average Overlap Per Track", overlapTable.getColHeaders(), overlapTable.getRows()));
             
             aPage = new Page("all_system_metrics", "Detailed Evaluation Metrics", items, true);
@@ -464,16 +526,16 @@ public class ChordEvaluator extends EvaluatorImpl{
 
         //do per system pages
         {
-        	for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
+        	for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
     			jobId = it.next();
     			items = new ArrayList<PageItem>();
-    			sysResults = jobIDToFold.get(jobId);
-    			systemFoldResults = jobIDToFoldEvaluations.get(jobId);
+    			sysResults = results.getPerTrackEvaluationAndResults(jobId);
+    			systemFoldResults = results.getPerFoldEvaluation(jobId);
     			
-    			Table systemFoldTable = WriteChordResultFiles.prepTableDataOverFolds(systemFoldResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO});
+    			Table systemFoldTable = WriteChordResultFiles.prepTableDataOverFolds(results.getTestSetTrackLists(), systemFoldResults, new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO});
     			items.add(new TableItem(jobId+"_per_fold", jobIDToName.get(jobId) + " per fold results", systemFoldTable.getColHeaders(), systemFoldTable.getRows()));
                 
-    			Table systemTrackTable = WriteChordResultFiles.prepTableDataOverTracks(sysResults,new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO});
+    			Table systemTrackTable = WriteChordResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO});
     			items.add(new TableItem(jobId+"_per_track", jobIDToName.get(jobId) + " per track results", systemTrackTable.getColHeaders(), systemTrackTable.getRows()));
                 
     			aPage = new Page(jobId, jobIDToName.get(jobId), items, false);
@@ -545,59 +607,50 @@ public class ChordEvaluator extends EvaluatorImpl{
 
         Page.writeResultPages(task.getName(), outputDir, resultPages);
 	}
-
-	private int checkFolds() {
-		int numFolds = -1;
-        String jobID;
-        
-        List<List<NemaData>> sysResults;
-        List<Integer> tracksPerFold = null;
-        //check that all systems have the same number of folds
-        for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
-        	jobID = it.next();
-        	sysResults = jobIDToFoldResults.get(jobID);
-            if (numFolds == -1) {
-                numFolds = sysResults.size();
-                tracksPerFold = new ArrayList<Integer>(numFolds);
-                for (Iterator<List<NemaData>> it2 = sysResults.iterator(); it2.hasNext();) {
-					tracksPerFold.add(it2.next().size());
-				}
-            } else if (numFolds != sysResults.size()) {
-                throw new IllegalArgumentException("The number of folds (" + sysResults.size() + ") detected for system ID: " + jobID + 
-                		", name: " + jobIDToName.get(jobID) + " is not equal to the number detected " + 
-                		"for the preceeding systems (" + numFolds + ")!");
-            } else{
-            	Iterator<Integer> it3 = tracksPerFold.iterator();
-            	int foldCount = 0;
-            	for (Iterator<List<NemaData>> it2 = sysResults.iterator(); it2.hasNext();) {
-            		int num = it2.next().size();
-            		int expected = it3.next().intValue();
-					if(num != expected){
-						throw new IllegalArgumentException("The number of tracks (" + num + ") for fold " + foldCount + " detected for system ID: " + jobID + 
-		                		", name: " + jobIDToName.get(jobID) + " is not equal to the number detected " + 
-		                		"for the preceeding systems (" + expected + ")!");
-					}
-					foldCount++;
-				}
-            }
-        }
-		return numFolds;
-	}
+//
+//	private int checkFolds() {
+//		int numFolds = -1;
+//        String jobID;
+//        
+//        List<List<NemaData>> sysResults;
+//        List<Integer> tracksPerFold = null;
+//        //check that all systems have the same number of folds
+//        for(Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();){
+//        	jobID = it.next();
+//        	sysResults = jobIDToFoldResults.get(jobID);
+//            if (numFolds == -1) {
+//                numFolds = sysResults.size();
+//                tracksPerFold = new ArrayList<Integer>(numFolds);
+//                for (Iterator<List<NemaData>> it2 = sysResults.iterator(); it2.hasNext();) {
+//					tracksPerFold.add(it2.next().size());
+//				}
+//            } else if (numFolds != sysResults.size()) {
+//                throw new IllegalArgumentException("The number of folds (" + sysResults.size() + ") detected for system ID: " + jobID + 
+//                		", name: " + jobIDToName.get(jobID) + " is not equal to the number detected " + 
+//                		"for the preceeding systems (" + numFolds + ")!");
+//            } else{
+//            	Iterator<Integer> it3 = tracksPerFold.iterator();
+//            	int foldCount = 0;
+//            	for (Iterator<List<NemaData>> it2 = sysResults.iterator(); it2.hasNext();) {
+//            		int num = it2.next().size();
+//            		int expected = it3.next().intValue();
+//					if(num != expected){
+//						throw new IllegalArgumentException("The number of tracks (" + num + ") for fold " + foldCount + " detected for system ID: " + jobID + 
+//		                		", name: " + jobIDToName.get(jobID) + " is not equal to the number detected " + 
+//		                		"for the preceeding systems (" + expected + ")!");
+//					}
+//					foldCount++;
+//				}
+//            }
+//        }
+//		return numFolds;
+//	}
     
-    /**
-     * Evaluates a single iteration/fold of the experiment and returns an Object representing the 
-     * evaluation results.
-     * 
-     * @param jobID The jobID by which the results will be referred to.
-     * @param theData The list of data Objects each representing a prediction about a track to be
-     * evaluated.
-     * @return an Object representing the evaluation results.
-     */
-    private NemaData evaluateResultFold(String jobID, List<NemaData> theData) {
-        int numExamples = theData.size();
-        
+    public NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData) {
+    	//count the number of examples returned and search for any missing tracks in the results returned for the fold
+    	int numExamples = checkFoldResultsAreComplete(jobID, testSet, theData);
+    	
         NemaData outObj = new NemaData(jobID);
-        
         NemaData data;
         NemaData gtData;
         
@@ -607,8 +660,36 @@ public class ChordEvaluator extends EvaluatorImpl{
         double overlapAccum = 0.0;
         double weightedAverageOverlapAccum = 0.0;
         double lengthAccum = 0.0;
+        
+        
+        //iterate through GT tracks and compute true length of GT
+        HashMap<String,Integer> trackIdToLnGT = new HashMap<String, Integer>();
+        List<NemaTrack> tracks = testSet.getTracks();
+    	if (tracks == null){
+    		getLogger().warning("The list of tracks in the test set was not " +
+    				"provided, hence, it cannot be confirmed that job ID " 
+    				+ jobID + " returned results for the entire set.");
+    		for (Iterator<NemaData> iterator = theData.iterator(); iterator.hasNext();) {
+    			String id = iterator.next().getId();
+	    		gtData = trackIDToGT.get(id);
+	    		gtChords = (List<NemaChord>)gtData.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+	    		int lnGT = (int)(GRID_RESOLUTION*gtChords.get(gtChords.size()-1).getOffset()) ;
+	    		lengthAccum += lnGT; 
+	    		trackIdToLnGT.put(id, lnGT);
+			}
+    	}else{
+    		for (Iterator<NemaTrack> iterator = tracks.iterator(); iterator.hasNext();) {
+    			String id = iterator.next().getId();
+	    		gtData = trackIDToGT.get(id);
+	    		gtChords = (List<NemaChord>)gtData.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+	    		int lnGT = (int)(GRID_RESOLUTION*gtChords.get(gtChords.size()-1).getOffset()) ;
+	    		lengthAccum += lnGT; 
+	    		trackIdToLnGT.put(id, lnGT);
+			}
+    	}
+        
         //iterate through tracks
-        for(int x=0; x<numExamples; x++) {
+        for(int x=0; x < theData.size(); x++) {
             //Do simple evaluation
         	data = theData.get(x);
         	gtData = trackIDToGT.get(data.getId());
@@ -616,26 +697,25 @@ public class ChordEvaluator extends EvaluatorImpl{
         	systemChords = (List<NemaChord>)data.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
         	gtChords = (List<NemaChord>)gtData.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
         	
-        	
         	//evaluate here
-        	int res = 1000; //The grid resolution. 
+        	
         	//Create grid for the ground-truth
-        	int lnGT = (int)(res*gtChords.get(gtChords.size()-1).getOffset()) ;
+        	int lnGT = trackIdToLnGT.get(data.getId()) ;
         	if (lnGT == 0 ){
         		throw new IllegalArgumentException("Length of GT is 0!");
         	}        		
         	int[][] gridGT = new int[lnGT][];
         	for (int i = 0; i < gtChords.size(); i++) {
         		NemaChord currentChord = gtChords.get(i);
-        		int onset_index = (int)(currentChord.getOnset()*res);
-        		int offset_index = (int)(currentChord.getOffset()*res);
+        		int onset_index = (int)(currentChord.getOnset()*GRID_RESOLUTION);
+        		int offset_index = (int)(currentChord.getOffset()*GRID_RESOLUTION);
         		for (int j = onset_index; j<offset_index; j++){
         			gridGT[j]=currentChord.getNotes();
         		}
 			}
         
         	// Create grid for the system
-        	int lnSys = (int)(res*systemChords.get(systemChords.size()-1).getOffset());
+        	int lnSys = (int)(GRID_RESOLUTION*systemChords.get(systemChords.size()-1).getOffset());
         	if (lnSys == 0 ){
         		throw new IllegalArgumentException("Length of system results is 0!");
         	}
@@ -646,8 +726,8 @@ public class ChordEvaluator extends EvaluatorImpl{
 //        	System.out.println("System chords length " + systemChords.size());
         	for (int i = 0; i < systemChords.size(); i++) {
         		NemaChord currentChord = systemChords.get(i);
-        		int onset_index = (int)(currentChord.getOnset()*res);
-        		int offset_index = (int)(currentChord.getOffset()*res);
+        		int onset_index = (int)(currentChord.getOnset()*GRID_RESOLUTION);
+        		int offset_index = (int)(currentChord.getOffset()*GRID_RESOLUTION);
         	//	System.out.println("Chord no " + i + " onset="+onset_index + "offset=" + offset_index);
         		for (int j = onset_index; j < offset_index; j++){
         			gridSys[j]=currentChord.getNotes();
@@ -682,7 +762,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         	double overlap_score = (double)overlap_total / (double)lnGT;
         	
         	weightedAverageOverlapAccum += overlap_score*lnGT;
-        	lengthAccum +=lnGT; 
+        	
         	overlapAccum += overlap_score;
         	
         	getLogger().info("jobID: " + jobID + ", track: " + data.getId() + ", overlap score: " + overlap_score);
@@ -706,7 +786,6 @@ public class ChordEvaluator extends EvaluatorImpl{
     }
     
     private int calcOverlap(int[] gt, int[] sys) {
-    	
     	if (gt == null || sys == null || gt.length!=sys.length){
     		return 0;
     	}
@@ -719,8 +798,6 @@ public class ChordEvaluator extends EvaluatorImpl{
 			}
     		return 1;
     	}
-
-    	
     }    
     
     public boolean getPerformMatlabStatSigTests() {

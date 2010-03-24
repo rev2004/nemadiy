@@ -10,9 +10,11 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
@@ -24,6 +26,7 @@ import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTask;
+import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
 
 /**
@@ -114,7 +117,7 @@ public abstract class EvaluatorImpl implements Evaluator {
     }
     
     public NemaEvaluationResultSet getEmptyEvaluationResultSet(){
-    	return new NemaEvaluationResultSet(dataset, task, trainingSets, trainingSets, getOverallEvalMetricsKeys(), getFoldEvalMetricsKeys(), getTrackEvalMetricsAndResultsKeys());
+    	return new NemaEvaluationResultSet(dataset, task, trainingSets, testSets, getOverallEvalMetricsKeys(), getFoldEvalMetricsKeys(), getTrackEvalMetricsAndResultsKeys());
     }
 	
 	public List<String> getOverallEvalMetricsKeys() {
@@ -152,9 +155,12 @@ public abstract class EvaluatorImpl implements Evaluator {
 	
 	/**
 	 * Checks that the algorithm results contain only a single fold of results. This evaluation 
-	 * task is not cross-fold validated
+	 * task is not cross-fold validated.
+	 * 
+	 * @throws IllegalArgumentException Thrown if the results for one of te systems does not match
+	 * the experiment definition.
 	 */
-	protected void checkFolds() {
+	protected int checkFolds() throws IllegalArgumentException{
 		String jobID;
 		Map<NemaTrackList,List<NemaData>> sysResults;
 		for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it
@@ -166,6 +172,65 @@ public abstract class EvaluatorImpl implements Evaluator {
 						"The folds detected for job Id '" + jobID + "' do not match the dataset!");
 			}
 		}
+		return testSets.size();
+	}
+	
+	/** Checks that results are returned for all tracks in the test set and 
+	 * returns the number of results that should be present for use in the 
+	 * evaluation statistics.
+	 * 
+	 * @param jobID The job ID being tested.
+	 * @param testSet The test set to compare to.
+	 * @param theData The list of results returned encoded as NemaData Objects.
+	 * @return The number of examples that are in the test set.
+	 */
+	protected int checkFoldResultsAreComplete(String jobID,
+			NemaTrackList testSet, List<NemaData> theData) {
+		List<NemaTrack> tracks = testSet.getTracks();
+    	int numExamples = -1;
+    	if (tracks == null){
+    		numExamples = theData.size();
+    		getLogger().warning("The list of tracks in the test set was not " +
+    				"provided, hence, it cannot be confirmed that job ID " 
+    				+ jobID + " returned results for the entire set.");
+    	}else{
+    		numExamples = tracks.size();
+    		if (numExamples != theData.size()){
+    			getLogger().warning("job ID " + jobID + " returned results for " +
+    					theData.size() + " tracks, when the test contains " + 
+    					numExamples + ". Missing tracks will still be counted in" +
+    							" the final accuracy score.");
+    			
+    			//find missing results and report
+    			Set<String> returnedIds = new HashSet<String>(numExamples);
+    			for (Iterator<NemaData> iterator = theData.iterator(); iterator
+						.hasNext();) {
+					returnedIds.add(iterator.next().getId());
+				}
+    			List<String> missing = new ArrayList<String>();
+    			for (Iterator<NemaTrack> iterator = tracks.iterator(); iterator
+						.hasNext();) {
+					String id = iterator.next().getId();
+					if (!returnedIds.contains(id)){
+						missing.add(id);
+					}
+				}
+    			if (!missing.isEmpty()){
+    				String msg = "No predictions were returned for the following track ID(s): ";
+    				for (Iterator<String> iterator = missing.iterator(); iterator
+							.hasNext();) {
+    					String id = iterator.next();
+						msg += id;
+						if (iterator.hasNext()){
+							msg += ", ";
+						}
+						
+					}
+    				getLogger().warning(msg);
+    			}
+    		}
+    	}
+		return numExamples;
 	}
 
 	public Logger getLogger() {
@@ -196,14 +261,19 @@ public abstract class EvaluatorImpl implements Evaluator {
 		}
 	}
 	
-	public void addResults(String systemName, String jobID, NemaTrackList fold, List<NemaData> results) {
+	public void addResults(String systemName, String jobID, NemaTrackList fold, List<NemaData> results) throws IllegalArgumentException{
 		jobIDToName.put(jobID, systemName);
 		Map<NemaTrackList,List<NemaData>> resultList = jobIDToFoldResults.get(jobID);
 		if (resultList == null){
 			resultList = new HashMap<NemaTrackList,List<NemaData>>(testSets.size());
 			jobIDToFoldResults.put(jobID, resultList);
 		}
-		resultList.put(testSets.get(testSets.indexOf(fold)),results);
+		int testSetIdx = testSets.indexOf(fold);
+		if(testSetIdx == -1){
+			throw new IllegalArgumentException("Fold number " + fold.getFoldNumber() + ", id " + fold.getId() + " was not found in the experiment definition (which includes " + testSets.size() + " sets)");
+		}
+		NemaTrackList testSet = testSets.get(testSetIdx);
+		resultList.put(testSet,results);
 	}
 	
 
@@ -237,5 +307,18 @@ public abstract class EvaluatorImpl implements Evaluator {
 	}
 
 	public abstract NemaEvaluationResultSet evaluate() throws IllegalArgumentException, IOException;
+	
+	/**
+     * Evaluates a single iteration/fold of the experiment and returns an Object 
+     * representing the evaluation results.
+     * 
+     * @param jobID The jobID by which the results will be referred to.
+     * @param testSet the testSet being evaluated.
+     * @param theData The list of data Objects each representing a prediction 
+     * about a track to be evaluated.
+     * @return an Object representing the evaluation results.
+     */
+    public abstract NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData);
+
 
 }
