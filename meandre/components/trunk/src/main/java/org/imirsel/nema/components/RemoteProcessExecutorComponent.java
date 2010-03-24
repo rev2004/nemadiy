@@ -4,8 +4,11 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -43,9 +46,9 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	@ComponentProperty(defaultValue = "ExecutorService", description = "Executor Service Name", name = "serviceName")
 	private static final String PROPERTY_4 = "serviceName";
 
-	
-	private CountDownLatch latch = new CountDownLatch(1);
 	private BlockingQueue<List<ProcessArtifact>> resultQueue = new LinkedBlockingQueue<List<ProcessArtifact>>();
+	private Queue<NemaProcess> processQueue = new ConcurrentLinkedQueue<NemaProcess>();
+	private CountDownLatch latch = new CountDownLatch(1);
 	private ProcessExecutorService  executorService;
 	private RemoteProcessMonitor processMonitor;
 
@@ -66,7 +69,7 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 			System.out.println(executorService.getProcessTemplates());
 		
 			RemoteOutputStream ros = new SimpleRemoteOutputStream(ccp.getOutputConsole());
-			setProcessMonitor(new RecordStreamProcessMonitor(latch, ros,resultQueue));
+			setProcessMonitor(new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			throw new ComponentExecutionException(e);
@@ -168,8 +171,8 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 		if(processExecutionProperties.getId()==null){
 			throw new IllegalArgumentException("ProcessExecutionProperties -id is not set");
 		}
-		
-		return this.getExecutorService().executeProcess(processExecutionProperties, this.getProcessMonitor());	
+		NemaProcess np = this.getExecutorService().executeProcess(processExecutionProperties, this.getProcessMonitor());	
+		return np;
 	}
 	
 	/** Aborts the remote process.
@@ -184,6 +187,26 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 		}
 		boolean success=this.getExecutorService().abort(process);
 		return success;
+	}
+	
+	
+	
+	/**Dispatches abort process message to all the processes this component is running.
+	 *  This method is called by the dispose method
+	 */
+	public final void abortAllProcesses(){
+		Iterator<NemaProcess> np = processQueue.iterator();
+		while(np.hasNext()){
+			NemaProcess process = np.next();
+			if(np!=null){
+				try{
+					abortProcess(process);
+				}catch(Exception ex){
+					System.err.println("Error dispatching abort command to the process: " + process.getId());
+				}
+			}
+		}
+		
 	}
 
 
