@@ -53,7 +53,8 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 				
 				
 				System.out.println("Running process now...");
-				NemaProcess np=this.executeProcess(pep);
+				@SuppressWarnings("unused")
+				final NemaProcess np=this.executeProcess(pep);
 				System.out.println("After running process. Now waiting for the process to finish.");
 				this.waitForProcess();
 				System.out.println("Process finished -now getting result.");
