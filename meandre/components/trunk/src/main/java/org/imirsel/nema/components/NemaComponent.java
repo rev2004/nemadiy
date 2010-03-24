@@ -9,7 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
-import org.imirsel.nema.analytics.logging.AnalyticsLogFormatter;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -73,7 +72,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 
 	public void addLogDestination(PrintStream stream) {
 		logDestination = stream;
-		Handler handler = new StreamHandler(logDestination, new AnalyticsLogFormatter());
+		Handler handler = new StreamHandler(logDestination, new ComponentLogFormatter());
 		getLogger().addHandler(handler);
 	}
 
