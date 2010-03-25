@@ -397,8 +397,8 @@ public class JobController extends MultiActionController {
 			flowService.abortJob(job.getId());
 		} else if (_submitType.equals("Delete This Job")) {
 			flowService.deleteJob(job.getId());
-			logger.info("deleting flow: "+ job.getFlow().getUrl());
-			flowService.removeFlow(job.getFlow().getUrl());
+			logger.info("deleting flow: "+ job.getFlow().getUri());
+			flowService.removeFlow(job.getFlow().getUri());
 		}
 		//, Constants.JOB, job
 		return new ModelAndView(new RedirectView("JobManager.getUserJobs",true));
@@ -456,6 +456,8 @@ public class JobController extends MultiActionController {
 	 */
 	public ModelAndView getConsole(HttpServletRequest request, HttpServletResponse response) throws MeandreServerException{
 		String uri = request.getParameter("uri");
+		
+		//We need either change the parameter to job or we need to add a new method in flowService.
 		String text=this.flowService.getConsole(uri);
 		try {
 			response.setContentType("text/plain");

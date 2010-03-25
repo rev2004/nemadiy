@@ -54,7 +54,7 @@ description and the parameters to run the flow.</p>
 	</c:if>
 
 </c:forEach> <input type="hidden" name="flowTemplateId" value="${flow.id}" /> <input
-	type="hidden" name="flowTemplateUri" value="${flow.url}" />
+	type="hidden" name="flowTemplateUri" value="${flow.uri}" />
 <fieldset id="button"><input id="submitform" tabindex="6"
 	value="Run Job" type="submit"></fieldset>
 </div>
