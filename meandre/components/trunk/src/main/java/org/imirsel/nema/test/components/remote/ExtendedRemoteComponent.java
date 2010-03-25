@@ -23,7 +23,7 @@ import org.meandre.core.ComponentExecutionException;
 public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 	
 	
-	@ComponentProperty(defaultValue = "timeOfTheDay", description = "name of the execution Profile", name = "execProfile")
+	@ComponentProperty(defaultValue = "longWithChildRunning", description = "name of the execution Profile", name = "execProfile")
 	private static final String PROPERTY_1 ="execProfile";
 	
 	@ComponentOutput(description = "This is the process artifact data",name = "processResult")
@@ -37,7 +37,7 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 	
 	public void dispose(ComponentContextProperties ccp)
 	throws ComponentContextException {
-		super.dispose(ccp);
+		//super.dispose(ccp);
 	}
 
 	
@@ -48,15 +48,17 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 			throws ComponentExecutionException, ComponentContextException {
 		    String profile = componentContext.getProperty(PROPERTY_1);
 		    try {
-		    	ProcessExecutionProperties pep = new ProcessExecutionProperties();
+		    	ProcessTemplate pt = this.getProcessTemplate(profile);
 		    	
 		    	ProcessArtifact pa = new ProcessArtifact("/tmp/0.date","file");
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
 				outputs.add(pa);
-				pep.setId(componentContext.getExecutionInstanceID());
+				
+				ProcessExecutionProperties pep = new ProcessExecutionProperties();
+		    	pep.setId(componentContext.getExecutionInstanceID());
 				pep.setOutputs(outputs);
 				pep.setInputs(null);
-				ProcessTemplate pt = this.getProcessTemplate(profile);
+				
 				pep.setProcessTemplate(pt);
 				pep.setInputs(null);
 				pep.setOutputs(outputs);
@@ -79,15 +81,12 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 				}
 				
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new ComponentExecutionException(e);
 			} catch (InvalidProcessMonitorException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new ComponentExecutionException(e);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new ComponentExecutionException(e);
 			}

@@ -40,7 +40,7 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 public abstract class RemoteProcessExecutorComponent implements ExecutableComponent {
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
-	@ComponentProperty(defaultValue = "localhost", description = "Executor Service Host", name = "host")
+	@ComponentProperty(defaultValue = "nema.lis.uiuc.edu", description = "Executor Service Host", name = "host")
 	private static final String PROPERTY_2 = "host";
 	
 	@ComponentProperty(defaultValue = "2098", description = "Executor Service port", name = "port")
