@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.imirsel.nema.model.ProcessArtifact;
+import org.imirsel.nema.test.components.remote.ExtendedRemoteComponent;
 import org.imirsel.nema.test.components.remote.RemoteTimeComponent;
 import org.junit.After;
 import org.junit.Before;
@@ -37,7 +38,7 @@ public class TestRemoteTimeComponent {
 	@Test
 	public void testRemoteTimeComponent(){
 		MeandreMockFactory  meandreMockFactory = MeandreMockFactoryImpl.getInstance();
-		RemoteTimeComponent rtc = new RemoteTimeComponent();
+		ExtendedRemoteComponent rtc = new ExtendedRemoteComponent();
 		// hashtable values of input
 		Hashtable<String, Object> htInput = new Hashtable<String,Object>();
 	
@@ -52,9 +53,9 @@ public class TestRemoteTimeComponent {
 		
 		try {
 			componentContextProperties =  
-			meandreMockFactory.getComponentContextProperties("defaultProperties",RemoteTimeComponent.class);
+			meandreMockFactory.getComponentContextProperties("defaultProperties",ExtendedRemoteComponent.class);
 			componentContext = 
-			meandreMockFactory.getComponentContext("defaultComponent", RemoteTimeComponent.class, htInput, htOutput);
+			meandreMockFactory.getComponentContext("defaultComponent", ExtendedRemoteComponent.class, htInput, htOutput);
 			rtc.initialize(componentContextProperties);
 			rtc.execute(componentContext);
 			rtc.dispose(componentContextProperties);
