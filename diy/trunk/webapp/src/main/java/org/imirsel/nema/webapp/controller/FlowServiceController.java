@@ -109,7 +109,7 @@ public class FlowServiceController extends MultiActionController{
 		}
 		int id = Integer.parseInt(_id);
 		Flow flow=this.flowService.getFlow(id);
-		List<Component> componentList=flowService.getComponents(flow.getUrl());
+		List<Component> componentList=flowService.getComponents(flow.getUri());
 		ModelAndView mav=new ModelAndView("jsonView");
 		mav.addObject(Constants.COMPONENTLIST, componentList);
 		return mav;
