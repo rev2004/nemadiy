@@ -18,6 +18,11 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
+/**
+ * 
+ * @author kumaramit01
+ * @since 0.2.0
+ */
 @Component(creator = "Amit Kumar", description = "Test Remote Component Based on abstract class",
 		name = "ExtendedRemoteComponent", tags = "test remote abstract")
 public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
