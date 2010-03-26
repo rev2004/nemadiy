@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
+import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
@@ -123,7 +124,8 @@ public class FlowServiceController extends MultiActionController{
 	 * @return
 	 */
 	public ModelAndView getAllMeandreServerStatus(HttpServletRequest request, HttpServletResponse response){
-		Map<String, MeandreServerProxyStatus> meadreServerProxyStatusMap=this.flowService.getMeandreServerProxyStatus();
+		Map<MeandreServerProxyConfig, MeandreServerProxyStatus> meadreServerProxyStatusMap=this.flowService.getWorkerStatus();
+		meadreServerProxyStatusMap.put(this.flowService.getHeadConfig(), this.flowService.getHeadStatus());
 		ModelAndView mav=new ModelAndView("jsonView");
 		mav.addObject(Constants.MEANDRE_SERVER_STATUS, meadreServerProxyStatusMap);
 		return mav;
@@ -163,7 +165,7 @@ public class FlowServiceController extends MultiActionController{
 			}
 		}
 		
-		MeandreServerProxyStatus meadreServerProxyStatus=this.flowService.getMeandreServerProxyStatus(host, port);
+		MeandreServerProxyStatus meadreServerProxyStatus=this.flowService.getWorkerStatus(host, port);
 		ModelAndView mav=new ModelAndView("jsonView");
 		mav.addObject(Constants.MEANDRE_SERVER_STATUS, meadreServerProxyStatus);
 		return mav;
@@ -176,7 +178,13 @@ public class FlowServiceController extends MultiActionController{
 	 * @return
 	 */
 	public ModelAndView getMeandreServerList(HttpServletRequest request, HttpServletResponse response){
-		List<String> list=this.flowService.getMeandreServerList();
+		Map<MeandreServerProxyConfig, MeandreServerProxyStatus> map=this.flowService.getWorkerStatus();
+		List<MeandreServerProxyConfig> list = new ArrayList<MeandreServerProxyConfig>();
+		for(MeandreServerProxyConfig mp: map.keySet()){
+			list.add(mp);
+		}
+		MeandreServerProxyConfig mpc=this.flowService.getHeadConfig();
+		list.add(mpc);
 		ModelAndView mav=new ModelAndView("jsonView");
 		mav.addObject(Constants.MEANDRE_SERVER_LIST, list);
 		return mav;
