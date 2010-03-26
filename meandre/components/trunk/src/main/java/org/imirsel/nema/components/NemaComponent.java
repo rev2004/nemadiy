@@ -3,6 +3,8 @@
  */
 package org.imirsel.nema.components;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -18,6 +20,7 @@ import org.meandre.core.ExecutableComponent;
 /**
  * This abstract class is extended by all the Nema Components.
  * @author kriswest
+ * @author kumaramit01
  * @since 0.5.0
  */
 public abstract class NemaComponent implements ExecutableComponent {
@@ -25,6 +28,15 @@ public abstract class NemaComponent implements ExecutableComponent {
 	// log messages are here
 	private Logger _logger;
 	private PrintStream logDestination = null;
+	private String flowExecutionInstanceID= null;
+	private String publicResourceDirectory = null;
+	private String nemaResourceDirectory=null;
+	private String processWorkingDirectory=null;
+	private String processWorkingDirectoryAbsolutePath=null;
+	private String resultLocationDirectory=null;
+	private String resultLocationDirectoryAbsolutePath=null;
+	private String commonLocationDirectory=null;
+	private String commonLocationDirectoryAbsolutePath=null;
 	
 	
 	/**
@@ -56,13 +68,67 @@ public abstract class NemaComponent implements ExecutableComponent {
 	 */
 	public void initialize(ComponentContextProperties componentContextProperties)
 			throws ComponentExecutionException, ComponentContextException {
+		flowExecutionInstanceID= componentContextProperties.getFlowExecutionInstanceID();
+		publicResourceDirectory=componentContextProperties.getPublicResourcesDirectory();
+		
 		getLogger().setLevel(Level.FINEST);
 		synchronized(NemaComponent.class){
+			nemaResourceDirectory =publicResourceDirectory+ File.separator+"nema";
+			if(!(new File(nemaResourceDirectory)).exists()){
+				File file = new File(nemaResourceDirectory);
+				file.mkdir();
+			}
+			String jobId = getJobId(flowExecutionInstanceID);
+			processWorkingDirectory = nemaResourceDirectory + File.separator + jobId;
+			File file = new File(processWorkingDirectory);
+			file.mkdir();
+			try {
+				processWorkingDirectoryAbsolutePath = file.getCanonicalPath();
+				processWorkingDirectory = file.getPath();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			resultLocationDirectory= processWorkingDirectory + File.separator + "results";
+			File file1 = new File(resultLocationDirectory);
+			file1.mkdir();
+			try {
+				resultLocationDirectory = file1.getPath();
+				resultLocationDirectoryAbsolutePath = file1.getCanonicalPath();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			commonLocationDirectory= publicResourceDirectory+ File.separator + "common";
+			File file2 = new File(commonLocationDirectory);
+			file2.mkdir();
+			try {
+				commonLocationDirectoryAbsolutePath = file2.getCanonicalPath();
+				commonLocationDirectory = file2.getPath();
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
 			addLogDestination(componentContextProperties.getOutputConsole());
 			getLogger().info("Initialized logging for " + this.getClass().getName());
 		}
 	}
 	
+	private String getJobId(String flowExecutionInstanceID) {
+		String jobId=flowExecutionInstanceID.replaceAll(":", "");
+		jobId = jobId.replaceAll("/","_");
+		return jobId;
+	}
+
+	/**
+	 * 
+	 * @return Logger for the components
+	 */
 	public Logger getLogger() {
 		if (_logger == null){
 			_logger = Logger.getLogger(this.getClass().getName());
@@ -79,4 +145,61 @@ public abstract class NemaComponent implements ExecutableComponent {
 	public PrintStream getLogDestination(){
 		return logDestination;
 	}
+	
+	/**
+	 * 
+	 * @return process working directory
+	 */
+	public String getProcessWorkingDirectory(){
+		return this.processWorkingDirectory;
+	}
+	
+	/**
+	 * 
+	 * @return result location for the the job
+	 */
+	public String getResultLocationForJob(){
+		return this.resultLocationDirectory;
+	}
+	
+	/**
+	 * 
+	 * @return absolute result location for the job
+	 */
+	public String getAbsoluteResultLocationForJob(){
+		return this.resultLocationDirectoryAbsolutePath;
+	}
+	
+	/**
+	 * 
+	 * @return common storage location -relative to the meandre
+	 */
+	public String getCommonStorageLocation(){
+		return this.commonLocationDirectory;
+	}
+	
+	/**
+	 * 
+	 * @return absolute common storage location
+	 */
+	public String getAbsoluteCommonStorageLocation(){
+		return this.commonLocationDirectoryAbsolutePath;
+	}
+	
+	/**
+	 * 
+	 * @return absolute process working directory
+	 */
+	public String getAbsoluteProcessWorkingDirectory(){
+		return this.processWorkingDirectoryAbsolutePath;
+	}
+	
+	/**
+	 * 
+	 * @return public resource directory
+	 */
+	public String getPublicResourceDirectory(){
+		return this.publicResourceDirectory;
+	}
+	
 }

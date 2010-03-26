@@ -70,8 +70,10 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 			registry = LocateRegistry.getRegistry(host,port);
 			executorService = ( ProcessExecutorService) registry.lookup(serviceName);
 			System.out.println(executorService.getProcessTemplates());
+			//TODO: Make this the gzip output stream
 			RemoteOutputStream ros = new SimpleRemoteOutputStream(ccp.getOutputConsole());
-			setProcessMonitor(new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue));
+			RemoteProcessMonitor remoteProcessMonitor=new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue);
+			setProcessMonitor(remoteProcessMonitor);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			throw new ComponentExecutionException(e);
@@ -228,7 +230,6 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	public Logger getLogger(){
 		return this.logger;
 	}
-
 
 
 }
