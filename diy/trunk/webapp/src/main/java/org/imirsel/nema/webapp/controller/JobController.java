@@ -449,16 +449,19 @@ public class JobController extends MultiActionController {
 	
 	/**Returns the console
 	 * 
-	 * @param request
+	 * @param request requires jobId http request parameter
 	 * @param response
 	 * @return console The String output
 	 * @throws TransmissionException 
 	 */
 	public ModelAndView getConsole(HttpServletRequest request, HttpServletResponse response) throws MeandreServerException{
-		String uri = request.getParameter("uri");
+		String _jobId = request.getParameter("jobId");
+		long jobId = Long.parseLong(_jobId);
 		
 		//We need either change the parameter to job or we need to add a new method in flowService.
-		String text=this.flowService.getConsole(uri);
+		Job job=this.flowService.getJob(jobId);
+		
+		String text=this.flowService.getConsole(job);
 		try {
 			response.setContentType("text/plain");
 			response.getOutputStream().println(text);

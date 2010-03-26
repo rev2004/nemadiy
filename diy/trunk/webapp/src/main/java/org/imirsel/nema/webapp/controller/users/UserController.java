@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.imirsel.nema.Constants;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
 
@@ -59,12 +58,9 @@ public class UserController extends MultiActionController {
                 user.getUsername(), user.getConfirmPassword(), user.getAuthorities());
         auth.setDetails(user);
         SecurityContextHolder.getContext().setAuthentication(auth);
-        
-        String uri = req.getRequestURI();
-		ModelAndView mav = new ModelAndView("jsonView");
+       ModelAndView mav = new ModelAndView("jsonView");
 		mav.addObject("success",true);
         return mav;
-    	
     }
     
     
