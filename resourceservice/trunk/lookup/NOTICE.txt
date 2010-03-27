@@ -1,0 +1,11 @@
+===============================================================================
+==         NEMA EXECUTOR SERVICE  Lookup Discovery and Registration          ==
+===============================================================================
+
+Nema Executor Service  Lookup Discovery and Registration
+Copyright IMIRSEL Graduate School Library Information Science University of 
+Illinois Urbana Champaign
+
+This product includes software developed by
+
+The Apache Software Foundation (http://www.apache.org/).

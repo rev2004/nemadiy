@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="registration/src/test/resources"/>
+	<classpathentry kind="src" path="registration/src/main/java"/>
+	<classpathentry kind="src" path="registration/src/main/resources"/>
+	<classpathentry kind="src" path="registration/src/test/java"/>
+	<classpathentry kind="src" path="lookup/src/test/resources"/>
+	<classpathentry kind="src" path="lookup/src/test/java"/>
+	<classpathentry kind="src" path="lookup/src/main/java"/>
+	<classpathentry kind="src" path="lookup/src/main/resources"/>
+	<classpathentry kind="src" path="discovery/src/main/resources"/>
+	<classpathentry kind="src" path="discovery/src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
