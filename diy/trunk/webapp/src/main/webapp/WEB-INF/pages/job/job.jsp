@@ -130,7 +130,7 @@
     new Ajax.PeriodicalUpdater('console', "<c:url value='/get/JobManager.getConsole'/>",
 		  {
 		    method: 'get',
-		    parameters: {uri:"${job.executionInstanceId}" },
+		    parameters: {jobId:"${job.id}" },
 		    frequency: 5,
 		    decay:2
 		});
