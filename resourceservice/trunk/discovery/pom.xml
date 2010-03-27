@@ -1,0 +1,243 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.imirsel.service</groupId>
+  <artifactId>nema-resource-discovery</artifactId>
+  <packaging>jar</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>discovery</name>
+  <url>http://maven.apache.org</url>
+  
+  
+  <distributionManagement>
+		<repository>
+			<name>IMIRSEL Releases</name>
+			<id>nema.lis.uiuc.edu-releases</id>
+			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
+
+		</repository>
+		<snapshotRepository>
+			<id>nema.lis.uiuc.edu-snapshots</id>
+			<name>IMIRSEL Snapshots</name>
+			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-snapshots-local</url>
+		</snapshotRepository>
+
+		<downloadUrl>http://nema.lis.uiuc.edu/artifactory/</downloadUrl>
+	</distributionManagement>
+  <parent>
+  	<artifactId>resourceservice</artifactId>
+  	<groupId>org.imirsel.service</groupId>
+  	<version>0.0.1-SNAPSHOT</version>
+  	<relativePath>../pom.xml</relativePath>
+  </parent>
+	
+	
+		<issueManagement>
+		<system>Google Code</system>
+		<url>http://code.google.com/p/nemadiy/issues/list</url>
+	</issueManagement>
+
+	<developers>
+		<developer>
+			<id>amitku</id>
+			<name>Amit Kumar</name>
+			<email>amitku@illinois.edu</email>
+			<timezone>-5</timezone>
+		</developer>
+	</developers>
+	
+		<repositories>
+		<repository>
+			<id>nema-artifactory-repo</id>
+			<url>http://nema.lis.uiuc.edu/artifactory/repo</url>
+		</repository>
+		<repository>
+			<id>nema-artifactory-remote</id>
+			<url>http://nema.lis.uiuc.edu/artifactory/remote-repos</url>
+		</repository>
+	</repositories>
+  
+  
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.7</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.sun.jini</groupId>
+    	<artifactId>start</artifactId>
+    	<version>2.1.0</version>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.sun.jini</groupId>
+    	<artifactId>jsk-lib</artifactId>
+    	<version>2.1.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.sun.jini</groupId>
+    	<artifactId>jsk-platform</artifactId>
+    	<version>2.1.0</version>
+    </dependency>
+  </dependencies>
+  
+  
+  	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<archive>
+						<manifest>
+                            <mainClass>org.imirsel.nema.service.executor.server.NemaExecutorApp</mainClass>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <classpathLayoutType>repository</classpathLayoutType>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Build>${buildNumber}</Implementation-Build>
+						</manifestEntries>
+					</archive>
+
+					<excludes>
+						<exclude>**/*.xml</exclude>
+						<exclude>**/*.properties</exclude>
+						<exclude>**/applicationContext.xml</exclude>
+						<exclude>**/*.sh</exclude>
+					</excludes>
+				</configuration>
+
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-5</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/assemblies/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<configuration>
+					<format>{0,number}</format>
+					<items>
+						<item>buildNumber</item>
+					</items>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.0-beta-3</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>true</doCheck>
+					<doUpdate>true</doUpdate>
+					<providerImplementations>
+						<svn>javasvn</svn>
+					</providerImplementations>
+				</configuration>
+			</plugin>
+
+
+
+
+		</plugins>
+
+
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+					<include>**/*.sh</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+	
+	<properties>
+	</properties>
+  
+  
+  <profiles>
+		<profile>
+			<id>attach-docs-and-sources</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+
+
+
+				</plugins>
+			</build>
+
+		</profile>
+
+	</profiles>
+  
+</project>
