@@ -27,11 +27,16 @@
     </file>
      <file>
       <source>${project.basedir}/src/main/resources/reggie.policy</source>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>/config/</outputDirectory>
       <filtered>true</filtered>
     </file>
     <file>
       <source>${project.basedir}/src/main/resources/reggie.config</source>
+      <outputDirectory>/config/</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+     <file>
+      <source>${project.basedir}/src/main/resources/ClassServer.properties</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
     </file>
