@@ -81,6 +81,19 @@
     	<artifactId>jsk-platform</artifactId>
     	<version>2.1.0</version>
     </dependency>
+    <dependency>
+    	<groupId>com.sun.jini</groupId>
+    	<artifactId>tools</artifactId>
+    	<version>2.1.0</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.sun.jini</groupId>
+    	<artifactId>reggie</artifactId>
+    	<version>2.1.0</version>
+    	<scope>compile</scope>
+    </dependency>
   </dependencies>
   
   
@@ -102,7 +115,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-                            <mainClass>org.imirsel.nema.service.executor.server.NemaExecutorApp</mainClass>
+                            <mainClass>org.imirsel.service.lookup.RunReggieLookup</mainClass>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
@@ -172,10 +185,6 @@
 					</providerImplementations>
 				</configuration>
 			</plugin>
-
-
-
-
 		</plugins>
 
 
@@ -194,6 +203,9 @@
 	</build>
 	
 	<properties>
+	<HOST>127.0.0.1</HOST>
+	<PORT>4949</PORT>
+	<INSTALL_HOME>/content/workspace-nema/nema-resourceservice/lookup/target/nema-resource-lookup-0.0.1-SNAPSHOT/</INSTALL_HOME>
 	</properties>
   
   

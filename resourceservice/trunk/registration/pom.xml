@@ -102,7 +102,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-                            <mainClass>org.imirsel.nema.service.executor.server.NemaExecutorApp</mainClass>
+                            <mainClass>org.imirsel</mainClass>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
