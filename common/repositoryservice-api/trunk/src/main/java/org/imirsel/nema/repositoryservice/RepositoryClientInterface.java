@@ -14,6 +14,7 @@ import org.imirsel.nema.model.NemaCollection;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
+import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaPublishedResult;
@@ -78,98 +79,56 @@ public interface RepositoryClientInterface {
 
     /**
      * Retrieves a List of NemaDataset Objects describing the datasets that are
-     * available for a particular Collection. No guarantee is given that the
+     * available. No guarantee is given that the
      * datasets described have complete audio file sets in any particular
      * file version.
      *
-     * @param collection The collection to retrieve the list of datasets for.
-     *
      * @return a List of NemaDataset Objects describing the datasets that are
-     * available for the specified Collection.
+     * available.
      *
      * @throws SQLException
      */
     public List<NemaDataset> getDatasets() throws SQLException;
 
     /**
-     * Retrieves a List of NemaDataset Objects describing the datasets that are
-     * available for a particular Collection. No guarantee is given that the
-     * datasets described have complete audio file sets in any particular
-     * file version.
-     * @param dataset_id 
+     * Retrieves a NemaDataset Object describing the requested dataset. No 
+     * guarantee is given that the datasets described has a complete audio file 
+     * set in any particular file version.
+     * @param dataset_id The dataset id to retrieve.
      *
-     * @param collection The collection to retrieve the list of datasets for.
+     * @return a List of NemaDataset Objects describing the datasets that are
+     * available.
+     *
+     * @throws SQLException
+     */
+    public NemaDataset getDataset(int dataset_id) throws SQLException;
+    
+    /**
+     * Retrieves a List of NemaTask Objects describing the tasks that are
+     * available. No guarantee is given that the tasks described have 
+     * complete audio file sets in any particular file version.
+     *
+     * @return a List of NemaTask Objects describing the tasks that are
+     * available.
+     *
+     * @throws SQLException
+     */
+    public List<NemaTask> getTasks() throws SQLException;
+
+    /**
+     * Retrieves a NemaTask Object describing the requested task. No guarantee 
+     * is given that the task described has a complete audio file set in any 
+     * particular file version.
+     * 
+     * @param task_id the task id to retrieve.
      *
      * @return a List of NemaDataset Objects describing the datasets that are
      * available for the specified Collection.
      *
      * @throws SQLException
      */
-    public NemaDataset getDataset(int dataset_id) throws SQLException;
+    public NemaTask getTask(int task_id) throws SQLException;
 
-    //Deprecated these as currently dataset links to task, where task should link to dataset;
-    //    dataset 1 -> * task
-    // and collection is really just an organisational unit and datasets should be able to span collections
-//    /**
-//     * Retrieves a List of NemaDataset Objects describing the datasets that are
-//     * available for a particular Collection. No guarantee is given that the
-//     * datasets described have complete audio file sets in any particular
-//     * file version.
-//     *
-//     * @param collection The collection to retrieve the list of datasets for.
-//     *
-//     * @return a List of NemaDataset Objects describing the datasets that are
-//     * available for the specified Collection.
-//     *
-//     * @throws SQLException
-//     */
-//    public List<NemaDataset> getDatasetsForCollection(NemaCollection collection) throws SQLException;
-//    /**
-//     * Retrieves a List of NemaDataset Objects describing the datasets that are
-//     * available for a particular Collection. No guarantee is given that the
-//     * datasets described have complete audio file sets in any particular
-//     * file version.
-//     *
-//     * @param collectionId The collection ID to retrieve the list of datasets
-//     * for.
-//     *
-//     * @return a List of NemaDataset Objects describing the datasets that are
-//     * available for the specified Collection.
-//     *
-//     * @throws SQLException
-//     */
-//    public List<NemaDataset> getDatasetsForCollection(int collectionId) throws SQLException;
-//
-//    /**
-//     * Retrieves a List of NemaDataset Objects describing the datasets that are
-//     * available for a particular task. No guarantee is given that the
-//     * datasets described have complete audio file sets in any particular
-//     * file version.
-//     *
-//     * @param task The task to retrieve the list of datasets for.
-//     *
-//     * @return a List of NemaDataset Objects describing the datasets that are
-//     * available for the specified task.
-//     *
-//     * @throws SQLException
-//     */
-//    public List<NemaDataset> getDatasetsForTask(NemaTask task) throws SQLException;
-//    /**
-//     * Retrieves a List of NemaDataset Objects describing the datasets that are
-//     * available for a particular task. No guarantee is given that the
-//     * datasets described have complete audio file sets in any particular
-//     * file version.
-//     *
-//     * @param taskId The task ID to retrieve the list of datasets
-//     * for.
-//     *
-//     * @return a List of NemaDataset Objects describing the datasets that are
-//     * available for the specified task.
-//     *
-//     * @throws SQLException
-//     */
-//    public List<NemaDataset> getDatasetsForTask(int taskId) throws SQLException;
-//
     /**
      * Retrieves a NemaTrackList Object describing the set of tracks that
      * is relevant to a dataset. This may be resolved to a list of tracks using
