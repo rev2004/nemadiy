@@ -37,7 +37,7 @@ public class TestDataListFileGenerator {
 	
 	private static final Logger logger = Logger.getLogger(TestDataListFileGenerator.class.getName());
 	
-	public  static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException{
 		
 		
 		 List<File[]> traintest_split_files;
