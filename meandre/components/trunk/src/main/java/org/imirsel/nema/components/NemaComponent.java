@@ -86,8 +86,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 				processWorkingDirectoryAbsolutePath = file.getCanonicalPath();
 				processWorkingDirectory = file.getPath();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new ComponentContextException("Failed to get process working directory paths",e);
 			}
 			
 			resultLocationDirectory= processWorkingDirectory + File.separator + "results";
@@ -97,8 +96,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 				resultLocationDirectory = file1.getPath();
 				resultLocationDirectoryAbsolutePath = file1.getCanonicalPath();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new ComponentContextException("Failed to get process results directory paths",e);
 			}
 			
 			commonLocationDirectory= publicResourceDirectory+ File.separator + "common";
@@ -107,10 +105,8 @@ public abstract class NemaComponent implements ExecutableComponent {
 			try {
 				commonLocationDirectoryAbsolutePath = file2.getCanonicalPath();
 				commonLocationDirectory = file2.getPath();
-				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new ComponentContextException("Failed to get common storage directory paths",e);
 			}
 			
 			
