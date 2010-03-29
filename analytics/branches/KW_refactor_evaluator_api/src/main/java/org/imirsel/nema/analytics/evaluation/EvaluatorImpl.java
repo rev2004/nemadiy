@@ -154,11 +154,11 @@ public abstract class EvaluatorImpl implements Evaluator {
 	}
 	
 	/**
-	 * Checks that the algorithm results contain only a single fold of results. This evaluation 
-	 * task is not cross-fold validated.
+	 * Checks that the algorithm results contain results for each of the test 
+	 * sets declared in the experiment.
 	 * 
-	 * @throws IllegalArgumentException Thrown if the results for one of te systems does not match
-	 * the experiment definition.
+	 * @throws IllegalArgumentException Thrown if the results for one of the 
+	 * systems does not match the experiment definition.
 	 */
 	protected int checkFolds() throws IllegalArgumentException{
 		String jobID;
@@ -308,17 +308,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 
 	public abstract NemaEvaluationResultSet evaluate() throws IllegalArgumentException, IOException;
 	
-	/**
-     * Evaluates a single iteration/fold of the experiment and returns an Object 
-     * representing the evaluation results.
-     * 
-     * @param jobID The jobID by which the results will be referred to.
-     * @param testSet the testSet being evaluated.
-     * @param theData The list of data Objects each representing a prediction 
-     * about a track to be evaluated.
-     * @return an Object representing the evaluation results.
-     */
-    public abstract NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData);
+	public abstract NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData);
 
-
+    public abstract void renderResults(NemaEvaluationResultSet results, File outputDir) throws IOException;
 }
