@@ -12,16 +12,11 @@ package org.imirsel.nema.components.process;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.imirsel.nema.analytics.util.process.CommandLineExecutorImpl;
-import org.imirsel.nema.analytics.util.process.ProcessOutputReceiver;
 import org.imirsel.nema.annotations.BooleanDataType;
 import org.imirsel.nema.annotations.StringDataType;
-import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.role.RoleAdmin;
 import org.meandre.annotations.Component;
@@ -116,8 +111,6 @@ import org.meandre.core.ComponentExecutionException;
 	private String extension= ".result";
 
 	
-	private String processWorkingDir;
-	private String processResultsDir;
 	private boolean isAborted = false;
 	CommandLineExecutorImpl executor;
 	
@@ -132,20 +125,8 @@ import org.meandre.core.ComponentExecutionException;
 		
 		executor = null;
 		isAborted = false;
-		try {
-			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).
-				getAbsoluteProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
-			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory()).
-				getResultLocationForJob(ccp.getFlowExecutionInstanceID());
-		} catch (IOException e1) {
-			try {
-				throw new ComponentExecutionException(e1);
-			} catch (ComponentExecutionException e) {
-				getLogger().log(Level.SEVERE, "IOException in initialise!",e);
-				throw e;
-			}
-		}
-		getLogger().info("RUNBINARY: PROCESS WORKING DIR: " + processWorkingDir);
+		
+		getLogger().info("RUNBINARY: PROCESS WORKING DIR: " + getAbsoluteProcessWorkingDirectory());
 
 	}
 
@@ -200,12 +181,12 @@ import org.meandre.core.ComponentExecutionException;
 			try {
 				if(addExtension){
 					executor = new CommandLineExecutorImpl(
-						new File(execPath).getParentFile(), new File(processResultsDir), 
-						new File(processWorkingDir), commandFormattingStr, 
+						new File(execPath).getParentFile(), new File(getAbsoluteResultLocationForJob()), 
+						new File(getAbsoluteProcessWorkingDirectory()), commandFormattingStr, 
 						new File(execPath), 0, extension, env_var);
 				}else{
-					executor = new CommandLineExecutorImpl(new File(processResultsDir + File.separator + outputFileName), outputIsDir, 
-							new File(execPath).getParentFile(), new File(processResultsDir), new File(processWorkingDir), commandFormattingStr, 
+					executor = new CommandLineExecutorImpl(new File(new File(getAbsoluteResultLocationForJob()).getAbsolutePath() + File.separator + outputFileName), outputIsDir, 
+							new File(execPath).getParentFile(), new File(getAbsoluteResultLocationForJob()), new File(getAbsoluteProcessWorkingDirectory()), commandFormattingStr, 
 							new File(execPath), env_var);
 				}
 				executor.addLogDestination(getLogDestination());
@@ -226,7 +207,7 @@ import org.meandre.core.ComponentExecutionException;
 		cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 	}
 
-	/** This method is called when the Menadre Flow execution is completed.
+	/** This method is called when the Meandre Flow execution is completed.
 	 *
 	 * @param ccp The properties associated to a component context
 	 * @throws ComponentContextException 

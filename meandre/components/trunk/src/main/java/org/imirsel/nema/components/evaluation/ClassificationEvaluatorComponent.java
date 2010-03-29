@@ -122,7 +122,6 @@ import org.imirsel.nema.model.NemaTask;
 	private String metadata;
 	private File hierarchyFile;
 	
-	private String processResultsDir;
 	
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
@@ -134,16 +133,6 @@ import org.imirsel.nema.model.NemaTask;
 	public void initialize (ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException{
 		super.initialize(ccp);
 		System.out.println("Init " + this.getClass().getName());
-		try {
-//			processWorkingDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
-//					.getProcessWorkingDirectory(ccp.getFlowExecutionInstanceID());
-			processResultsDir = ArtifactManagerImpl.getInstance(ccp.getPublicResourcesDirectory())
-					.getResultLocationForJob(ccp.getFlowExecutionInstanceID());
-		} catch (IOException e1) {
-			ComponentExecutionException ex = new ComponentExecutionException("IOException occured when getting working and result directories!",e1);
-			this.getLogger().log(Level.SEVERE, "Terminating execution",ex);
-			throw ex;
-		}
 
 		taskName = ccp.getProperty(DATA_TASK_NAME);
 		taskDesc = ccp.getProperty(DATA_TASK_DESC);
@@ -179,7 +168,7 @@ import org.imirsel.nema.model.NemaTask;
 		// initialize variables for MIREXClassificationEvalMain Constructor
 		File matlabPath = new File("/usr/local/bin/matlab");
 	    File gtFile = new File(gtFileName[0]);
-	    File procResDir = new File(processResultsDir);
+	    File procResDir = new File(getAbsoluteResultLocationForJob());
 	    String processResultsDirName;
 	    try{
 			try {
@@ -237,7 +226,7 @@ import org.imirsel.nema.model.NemaTask;
 				Map<String,NemaData> evalOutput = eval.evaluate();
 				// output the raw results dir for reprocessing by the summarizer component
 		        String[] outLists = new String[1];
-		        outLists[0] = processResultsDir;
+		        outLists[0] = procResDir.getAbsolutePath();
 				cc.pushDataComponentToOutput(DATA_OUTPUT_1, outLists);
 				
 		        this.getLogger().info("Evaluation Complete\n" +
