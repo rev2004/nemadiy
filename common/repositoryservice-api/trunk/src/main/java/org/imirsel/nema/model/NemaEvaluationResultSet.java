@@ -60,6 +60,11 @@ public class NemaEvaluationResultSet {
 		this.overallEvalMetrics = overallEvalMetrics;
 		this.foldEvalMetrics = foldEvalMetrics;
 		this.trackEvalMetricsAndResults = trackEvalMetricsAndResults;
+		
+		jobIdToJobName = new HashMap<String,String>();
+		jobIdToOverallEvaluation = new HashMap<String,NemaData>();
+		jobIdToPerFoldEvaluation = new HashMap<String,Map<NemaTrackList,NemaData>>();
+		jobIdToPerTrackEvaluationAndResults = new HashMap<String,Map<NemaTrackList,List<NemaData>>>();
 	}
 	
 	/**
@@ -90,6 +95,11 @@ public class NemaEvaluationResultSet {
 		this.overallEvalMetrics = overallEvalMetrics;
 		this.foldEvalMetrics = foldEvalMetrics;
 		this.trackEvalMetricsAndResults = trackEvalMetricsAndResults;
+		
+		jobIdToJobName = new HashMap<String,String>();
+		jobIdToOverallEvaluation = new HashMap<String,NemaData>();
+		jobIdToPerFoldEvaluation = new HashMap<String,Map<NemaTrackList,NemaData>>();
+		jobIdToPerTrackEvaluationAndResults = new HashMap<String,Map<NemaTrackList,List<NemaData>>>();
 	}
 	
 	/**
@@ -179,15 +189,16 @@ public class NemaEvaluationResultSet {
 		}
 		
 		//check results from each system for each fold have data for all the tracks
-		for (Iterator<NemaTrackList> testSetIt = testSetTrackLists.iterator(); testSetIt.hasNext();) {
-			NemaTrackList list = testSetIt.next();
-			if(list.getTracks() != null){ //check if we know the actual track list contents
-				List<NemaTrack> trackList = list.getTracks();
-				if(perTrackEvalAndResults.get(list).size() != trackList.size()){
-					throw new IllegalArgumentException("Expected " + trackList.size() + " per-track results relating to NemaTrackList " + list.getId() + ", received results for " + perTrackEvalAndResults.get(list).size() + " tracks on that fold for jobId: " + jobId);
-				}
-			}
-		}
+		//KW: disabled as evaluators now account for missing tracks in their scores and multiple systems appear to skip tracks they don't like
+//		for (Iterator<NemaTrackList> testSetIt = testSetTrackLists.iterator(); testSetIt.hasNext();) {
+//			NemaTrackList list = testSetIt.next();
+//			if(list.getTracks() != null){ //check if we know the actual track list contents
+//				List<NemaTrack> trackList = list.getTracks();
+//				if(perTrackEvalAndResults.get(list).size() != trackList.size()){
+//					throw new IllegalArgumentException("Expected " + trackList.size() + " per-track results relating to NemaTrackList " + list.getId() + ", received results for " + perTrackEvalAndResults.get(list).size() + " tracks on that fold for jobId: " + jobId);
+//				}
+//			}
+//		}
 		
 		//check the expected metrics are all there
 		//overall
