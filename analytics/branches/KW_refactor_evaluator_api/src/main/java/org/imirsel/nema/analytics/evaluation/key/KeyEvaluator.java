@@ -24,6 +24,14 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 
+/**
+ * Key classification evaluation and rendering.
+ * 
+ * @author afe405@gmail.com
+ * @author kris.west@gmail.com
+ * @since 0.1.0
+ *
+ */
 public class KeyEvaluator extends EvaluatorImpl {
 	
 	/**
@@ -64,6 +72,17 @@ public class KeyEvaluator extends EvaluatorImpl {
      */
     public static final double MISSED_SCORE = 0.0;
 
+    /**
+	 * Constructor (no arg - task, dataset, output and working dirs, training
+	 * and test sets must be set manually).
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public KeyEvaluator() {
+		super();
+		setupEvalMetrics();
+	}
     
     /**
 	 * Constructor
