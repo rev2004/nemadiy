@@ -286,7 +286,6 @@ public class KeyEvaluator extends EvaluatorImpl {
 		String jobId;
 		int numJobs = results.getJobIds().size();
 		
-		List<NemaData> resultList;
 		List<Page> resultPages = new ArrayList<Page>();
 		List<PageItem> items;
 		Page aPage;
@@ -421,8 +420,7 @@ public class KeyEvaluator extends EvaluatorImpl {
         double overallPerf = 0.0;
 
         /* Begin track by track evaluation */
-		int numTracks = theData.size();
-		for (int x = 0; x < numTracks; x++) {
+		for (int x = 0; x < theData.size(); x++) {
 			
 			data = theData.get(x);
 			gtData = trackIDToGT.get(data.getId());
@@ -578,11 +576,11 @@ public class KeyEvaluator extends EvaluatorImpl {
 					+ MISSED_SCORE*(double)overallErrors;
 
 		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE, overallPerf);
-		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_CORRECT, (double)overallCorrect/(double)numTracks);
-		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_PERFECT_FIFTH_ERROR, (double)overallPerfectFifths/(double)numTracks);
-		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_RELATIVE_ERROR, (double)overallRelative/(double)numTracks);
-		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_PARALLEL_ERROR, (double)overallParallel/(double)numTracks);
-		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_ERROR, (double)overallErrors/(double)numTracks);
+		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_CORRECT, (double)overallCorrect/(double)numExamples);
+		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_PERFECT_FIFTH_ERROR, (double)overallPerfectFifths/(double)numExamples);
+		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_RELATIVE_ERROR, (double)overallRelative/(double)numExamples);
+		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_PARALLEL_ERROR, (double)overallParallel/(double)numExamples);
+		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_ERROR, (double)overallErrors/(double)numExamples);
 
 		return outObj;
 	}

@@ -248,7 +248,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 	 * @param jobIDToTgz 				map of jobId to the tar-balls of individual job results.
 	 * @param outputDir                 directory to write the HTML pages to.
 	 */
-	private static void writeResultHtmlPages(NemaEvaluationResultSet results,
+	private void writeResultHtmlPages(NemaEvaluationResultSet results,
 			Map<String, File[]> jobIDToResultPlotFileList, File summaryCsv,
 			Map<String, File> jobIDToPerTrackCSV, Map<String, File> jobIDToTgz, File outputDir) {
 		String jobId;
