@@ -31,8 +31,9 @@ import org.imirsel.nema.analytics.util.io.*;
 import org.imirsel.nema.model.*;
 
 /**
- *
+ * Classification evaluation and result rendering.
  * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public class ClassificationEvaluator extends EvaluatorImpl{
 
@@ -44,9 +45,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     private List<String> hierachiesKey = null;
     private List<String> classNames = null;
     
-    protected boolean performMatlabStatSigTests = true;
-	protected File matlabPath = new File("matlab");
-    
     private static final String BIG_DIVIDER =    "================================================================================\n";
     private static final String SMALL_DIVIDER = "--------------------------------------------------------------------------------\n";
     private static final int COL_WIDTH = 7;
@@ -54,6 +52,18 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     private static final String CONF_MAT_PLOT_EXTENSION = ".conf.png";
     private static final int CONF_MAT_HEIGHT = 850;
     private static final int CONF_MAT_WIDTH = 900;
+    
+    /**
+	 * Constructor (no arg - task, dataset, output and working dirs, training
+	 * and test sets must be set manually).
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public ClassificationEvaluator() {
+		super();
+		setupEvalMetrics();
+	}
     
     /**
      * Constructs and instance of the ClassificationEvaluator. 
@@ -88,8 +98,8 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             File hierarchyFile_) 
     		throws FileNotFoundException, IOException{
         super(workingDir_, outputDir_, task_, dataset_, trainingSets_, testSets_);
-        performMatlabStatSigTests = performMatlabStatSigTests_;
-        matlabPath = matlabPath_;
+        setPerformMatlabStatSigTests(performMatlabStatSigTests_);
+        setMatlabPath(matlabPath_);
         hierarchyFile = hierarchyFile_;
         if(hierarchyFile != null) {
             initHierachy();
@@ -127,8 +137,8 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             File matlabPath_) 
     		throws FileNotFoundException, IOException{
         super(workingDir_, outputDir_, task_, dataset_, trainingSets_, testSets_);
-        performMatlabStatSigTests = performMatlabStatSigTests_;
-        matlabPath = matlabPath_;
+        setPerformMatlabStatSigTests(performMatlabStatSigTests_);
+        setMatlabPath(matlabPath_);
         hierarchyFile = null;
         setupEvalMetrics();
     }
@@ -531,7 +541,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 			File outputDir) {
 		
 		int numJobs = results.getJobIds().size();
-		boolean performStatSigTests = (numJobs > 1) && this.performMatlabStatSigTests;
+		boolean performStatSigTests = (numJobs > 1) && this.getPerformMatlabStatSigTests();
 		boolean usingAHierarchy = this.hierarchyFile != null;
 		
 		List<Page> resultPages = new ArrayList<Page>();
@@ -1295,13 +1305,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
             paddedString.length() - padLength);
     }
 
-    public boolean getPerformMatlabStatSigTests() {
-        return performMatlabStatSigTests;
-    }
-
-    public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests) {
-        this.performMatlabStatSigTests = performMatlabStatSigTests;
-    }
 
 	public void setHierarchyFile(File hierarchyFile) {
 		this.hierarchyFile = hierarchyFile;
@@ -1310,14 +1313,5 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 	public File getHierarchyFile() {
 		return hierarchyFile;
 	}
-
-	public File getMatlabPath() {
-        return matlabPath;
-    }
-
-    public void setMatlabPath(File matlabPath) {
-        this.matlabPath = matlabPath;
-    }
-
 	
 }

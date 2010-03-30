@@ -31,6 +31,7 @@ import org.imirsel.nema.model.NemaTrackList;
  * Interface defining the methods of a evaluation utility for an MIR task.
  * 
  * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public interface Evaluator { 
     
@@ -184,7 +185,36 @@ public interface Evaluator {
      * 
      * @param results The results Object to render.
      * @param outputDir The directory to render the results into.
-     * @throws IOException Thrown if an IOException occurs while rendering the results.
+     * @throws IOException Thrown if an IOException occurs while rendering the 
+     * results.
      */
     public void renderResults(NemaEvaluationResultSet results, File outputDir) throws IOException;
+    
+    //TODO: remove these temporary methods when we get a java implementation of stats tests
+    
+    /**
+     * Sets a flag determining whether significance tests are performed in 
+     * matlab.
+     * @param performMatlabStatSigTests The flag to set.
+     */
+	public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests);
+
+	/**
+	 * Returns a flag determining whether significance tests are performed in 
+	 * matlab.
+	 * @return The flag value.
+	 */
+	public boolean getPerformMatlabStatSigTests();
+
+	/**
+	 * Sets the path to the matlab executable.
+	 * @param matlabPath The executable path.
+	 */
+	public void setMatlabPath(File matlabPath);
+
+	/**
+	 * Returns  the path to the matlab executable.
+	 * @return matlabPath The executable path.
+	 */
+	public File getMatlabPath();
 }

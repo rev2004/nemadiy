@@ -30,7 +30,10 @@ import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
 
 /**
+ * Abstract implementation of Evaluator.
+ * 
  * @author kris.west@gmail.com
+ * @since 0.1.0
  *
  */
 public abstract class EvaluatorImpl implements Evaluator {
@@ -49,6 +52,24 @@ public abstract class EvaluatorImpl implements Evaluator {
 	protected List<String> foldEvalMetrics;
 	protected List<String> trackEvalMetricsAndResults;
 	
+	//temporary variables for matlab until we have java implementation of stats tests
+	protected boolean performMatlabStatSigTests = true;
+	protected File matlabPath = new File("matlab");
+		
+	public EvaluatorImpl(){
+		_logger = Logger.getLogger(this.getClass().getName());
+		
+		trackIDToGT = new HashMap<String,NemaData>();
+		jobIDToFoldResults = new HashMap<String,Map<NemaTrackList,List<NemaData>>>();
+		jobIDToName = new HashMap<String,String>();
+		task = null;
+		dataset = null;
+		trainingSets = null;
+		testSets = null;
+		overallEvalMetrics = new ArrayList<String>();
+		foldEvalMetrics = new ArrayList<String>();
+		trackEvalMetricsAndResults = new ArrayList<String>();
+	}
 	
 	public EvaluatorImpl(File workingDir_, File outputDir_)  throws FileNotFoundException{
 		_logger = Logger.getLogger(this.getClass().getName());
@@ -304,6 +325,22 @@ public abstract class EvaluatorImpl implements Evaluator {
 	
 	public NemaDataset getDataset() {
 		return dataset;
+	}
+
+	public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests) {
+		this.performMatlabStatSigTests = performMatlabStatSigTests;
+	}
+
+	public boolean getPerformMatlabStatSigTests() {
+		return performMatlabStatSigTests;
+	}
+
+	public void setMatlabPath(File matlabPath) {
+		this.matlabPath = matlabPath;
+	}
+
+	public File getMatlabPath() {
+		return matlabPath;
 	}
 
 	public abstract NemaEvaluationResultSet evaluate() throws IllegalArgumentException, IOException;

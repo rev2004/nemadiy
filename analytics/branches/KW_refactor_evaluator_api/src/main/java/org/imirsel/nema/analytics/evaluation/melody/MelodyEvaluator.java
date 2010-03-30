@@ -19,6 +19,14 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 
+/**
+ * Melody (single F0) evaluation and result rendering.
+ * 
+ * @author afe405@gmail.com
+ * @author kris.west@gmail.com
+ * @since 0.1.0
+ *
+ */
 public class MelodyEvaluator extends EvaluatorImpl {
 
 	public static final String MELODY_PLOT_EXT = ".png";
@@ -26,6 +34,18 @@ public class MelodyEvaluator extends EvaluatorImpl {
 	private static final int UPPER_BOUND = 440;
 	private static final double TOLERANCE = 0.5;
 
+	/**
+	 * Constructor (no arg - task, dataset, output and working dirs, training
+	 * and test sets must be set manually).
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public MelodyEvaluator() {
+		super();
+		setupEvalMetrics();
+	}
+	
 	/**
 	 * Constructor
 	 * 

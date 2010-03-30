@@ -21,16 +21,15 @@ import org.imirsel.nema.analytics.util.io.*;
 import org.imirsel.nema.model.*;
 
 /**
- *
- * @author mert.bay@gmail.com & kris.west@gmail.com
+ * Chord estimation evaluation and results rendering,
+ * @author mert.bay@gmail.com
+ * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public class ChordEvaluator extends EvaluatorImpl{
 
 //	/** Command line harness usage statement. */
 //    public static final String USAGE = "args: taskID(int) taskName taskDescription datasetID(int) datasetName datasetDescription subjectMetadata /path/to/GT/file /path/to/output/dir [-h /path/to/hierarchy/file] /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName";
-    
-    protected boolean performMatlabStatSigTests = true;
-	protected File matlabPath = new File("matlab");
     
 //    private static final String BIG_DIVIDER =    "================================================================================\n";
 //    private static final String SMALL_DIVIDER = "--------------------------------------------------------------------------------\n";
@@ -40,6 +39,18 @@ public class ChordEvaluator extends EvaluatorImpl{
 
     private static final int GRID_RESOLUTION = 1000; //The grid resolution. 
     
+    /**
+	 * Constructor (no arg - task, dataset, output and working dirs, training
+	 * and test sets must be set manually).
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public ChordEvaluator() {
+		super();
+		setupEvalMetrics();
+	}
+	
     /**
      * Constructs and instance of the ChordEvaluator. 
      * 
@@ -799,20 +810,4 @@ public class ChordEvaluator extends EvaluatorImpl{
     		return 1;
     	}
     }    
-    
-    public boolean getPerformMatlabStatSigTests() {
-        return performMatlabStatSigTests;
-    }
-
-    public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests) {
-        this.performMatlabStatSigTests = performMatlabStatSigTests;
-    }
-
-	public File getMatlabPath() {
-        return matlabPath;
-    }
-
-    public void setMatlabPath(File matlabPath) {
-        this.matlabPath = matlabPath;
-    }
 }
