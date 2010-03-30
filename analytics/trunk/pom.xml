@@ -69,8 +69,18 @@
 		</plugins>
 		<resources>
 			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
 				<filtering>true</filtering>
 				<directory>src/main/resources</directory>
+                                 <excludes>
+                                 <exclude>**/*.png</exclude>
+                                 <exclude>**/*.jpg</exclude>
+                                 <exclude>**/*.bmp</exclude>
+                                 <exclude>**/*.tiff</exclude>
+                                 </excludes>
 			</resource>
 		</resources>
 	</build>
