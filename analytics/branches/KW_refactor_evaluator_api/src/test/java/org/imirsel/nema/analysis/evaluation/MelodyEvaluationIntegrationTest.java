@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.imirsel.nema.analytics.evaluation.Evaluator;
+import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyEvaluator;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile;
@@ -72,13 +74,15 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 	
 	
 	@Test
-	public void testEvaluateKD()  throws IllegalArgumentException, IOException{ 
+	public void testEvaluateKD()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		File groundTruthDirectory = new File("src/test/resources/melody/groundtruth");
 		File resultsDirectory = new File("src/test/resources/melody/KD");
 		String	systemName = "KD-System";
-		MelodyEvaluator evaluator = null;
+		Evaluator evaluator = null;
 		
-		evaluator = new MelodyEvaluator(task, dataset, outputDirectory, workingDirectory, testSets);
+		//evaluator = new MelodyEvaluator(task, dataset, outputDirectory, workingDirectory, testSets);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
+		
 		SingleTrackEvalFileType reader = new MelodyTextFile();
 		
 		List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, ".txt");

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.imirsel.nema.analytics.evaluation.Evaluator;
+import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.chord.ChordEvaluator;
 import org.imirsel.nema.analytics.evaluation.chord.ChordShortHandTextFile;
@@ -77,14 +79,15 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 	
 	
 	@Test
-	public void testEvaluateShortHandBasedSystem() throws FileNotFoundException, IOException, IllegalArgumentException, IOException{ 
+	public void testEvaluateShortHandBasedSystem() throws FileNotFoundException, IOException, IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		File groundTruthDirectory = new File("src/test/resources/chord/groundtruth");
 		File resultsDirectory = new File("src/test/resources/chord/CH");
 		String	systemName = "CH-System";
-		ChordEvaluator evaluator = null;
+		Evaluator evaluator = null;
 		
 		//test reader and setup for evaluation
-		evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, false, null);
+//		evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, false, null);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
 		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
 		List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, null);
@@ -100,16 +103,16 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 	}
 
 	@Test
-	public void testEvaluateTwoShortHandBasedSystems() throws FileNotFoundException, IOException, IllegalArgumentException, IOException{ 
+	public void testEvaluateTwoShortHandBasedSystems() throws FileNotFoundException, IOException, IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		File groundTruthDirectory = new File("src/test/resources/chord/groundtruth");
 		File resultsDirectory1 = new File("src/test/resources/chord/CH");
 		File resultsDirectory2 = new File("src/test/resources/chord/MD");
 		String	systemName1 = "CH-System";
 		String	systemName2 = "MD-System";
-		ChordEvaluator evaluator = null;
+		Evaluator evaluator = null;
 		
 		//test reader and setup for evaluation
-		evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, false, null);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
 		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
 		List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, null);

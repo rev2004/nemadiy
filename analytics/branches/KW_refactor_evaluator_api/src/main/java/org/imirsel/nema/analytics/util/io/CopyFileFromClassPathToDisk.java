@@ -5,12 +5,11 @@
 
 package org.imirsel.nema.analytics.util.io;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +20,7 @@ import java.util.logging.Logger;
 public class CopyFileFromClassPathToDisk {
     
     public static void copy(String classPath, File fileLocation){
-        BufferedOutputStream out = null;
+        OutputStream out = null;
         try {
 //            ClassLoader loader = ClassLoader.getSystemClassLoader();
 //            URL loc = loader.getResource(classPath);
@@ -31,13 +30,13 @@ public class CopyFileFromClassPathToDisk {
             if (iStream == null){
                  Logger.getLogger(CopyFileFromClassPathToDisk.class.getName()).log(Level.SEVERE, "Resource not found! Classpath: " + classPath);
             }
-            BufferedInputStream in = new BufferedInputStream(iStream);
-            out = new BufferedOutputStream(new FileOutputStream(fileLocation));
+
+            out = new FileOutputStream(fileLocation);
 
             // Transfer bytes from in to out
             byte[] buf = new byte[1024];
             int len;
-            while ((len = in.read(buf)) > 0) {
+            while ((len = iStream.read(buf)) > 0) {
                 out.write(buf, 0, len);
             }
             out.flush();

@@ -14,12 +14,23 @@ import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.util.resultpages.Table;
 import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 
-public class AbstractWriteResultFiles {
+/**
+ * Utility class for preparing tables and writing CSV results files from 
+ * collections of NEMA model classes representing the results and experiment 
+ * details.
+ * 
+ * @author kris.west@gmail.com
+ * @since 0.1.0
+ */
+public class WriteCsvResultFiles {
 
+	public static final DecimalFormat DEC = new DecimalFormat("0.0000");
+    
 	/**
 	 * Prepares a Table Object that encodes the description of the specified task. To be
 	 * used to construct introduction pages for the results.
@@ -52,11 +63,67 @@ public class AbstractWriteResultFiles {
 	}
 	
 	/**
-     * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
-     * of the table and the rows are the different tracks in the evaluation.
-     * 
-     */
-    public static Table prepTableDataOverTracksAndSystems(List<NemaTrackList> testSets, Map<String,Map<NemaTrackList,List<NemaData>>> jobIDToTrackEval, Map<String,String> jobIDToName, String metricKey) {
+	 * Prepares a Table Object that encodes the overall evaluation metrics for
+	 * the specified overall evaluation Objects.
+	 * 
+	 * @param jobIdToOverallEval Map of job Id to overall evaluation results
+	 * encode as a NemaData Object.
+	 * @param jobIdToName Map of Job Id to Job name.
+	 * @param metricKeys A List of the String metadata keys to use in the table.
+	 * @return The prepared Table.
+	 */
+	public static Table prepSummaryTable(
+			Map<String,NemaData> jobIdToOverallEval, 
+			Map<String,String> jobIdToName,
+			List<String> metricKeys
+		) {
+
+    	// create the table
+		int numMetrics = metricKeys.size();
+        String[] colNames = new String[1+numMetrics];
+        colNames[0] = "Algorithm";
+        for (int i = 0; i < numMetrics; i++) {
+        	colNames[i+1] = metricKeys.get(i);
+		}
+        
+        List<String[]> rows = new ArrayList<String[]>();
+        
+        NemaData eval;
+		String jobId;
+		String jobName;
+        for (Iterator<String> it = jobIdToOverallEval.keySet().iterator();it.hasNext();) {
+        	jobId = it.next();
+        	jobName = jobIdToName.get(jobId);
+        	eval = jobIdToOverallEval.get(jobId);
+        	String[] row = new String[6];
+        	row[0] = jobName;
+        	for (int i = 0; i < numMetrics; i++) {
+        		row[i+1] = DEC.format(eval.getDoubleMetadata(metricKeys.get(i)));
+        	}
+            rows.add(row);
+        }
+
+        return new Table(colNames, rows);
+    }
+	
+	/**
+	 * Prepares a Table Object representing the specified evaluation metadata, 
+     * where the systems are the columns of the table and the rows are the 
+     * different tracks in the evaluation.
+     *
+	 * @param testSets An ordered list of the test sets.
+	 * @param jobIDToTrackEval Map of job ID to a Map of test set to a List of 
+	 * Track prediction/results Objects for a particular fold of the experiment.
+	 * @param jobIDToName Map of job ID to job name.
+	 * @param metricKey The String key of teh metric to write out.
+	 * @return The prepared Table.
+	 */
+    public static Table prepTableDataOverTracksAndSystems(
+    		List<NemaTrackList> testSets, 
+    		Map<String,Map<NemaTrackList,List<NemaData>>> jobIDToTrackEval, 
+    		Map<String,String> jobIDToName, 
+    		String metricKey
+    	) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
     	String[][] jobIDandName = new String[numAlgos][];
@@ -117,7 +184,7 @@ public class AbstractWriteResultFiles {
 	        		if (!data.getId().equals(row[1])){
 	        			throw new IllegalArgumentException("Results from job ID: " + jobIDandName[i][0] + " are not ordered the same as results from job ID: " + firstJob);
 	        		}
-	        		row[i+2] = "" + data.getDoubleMetadata(metricKey);
+	        		row[i+2] = "" + DEC.format(data.getDoubleMetadata(metricKey));
         	}
         	rows.add(row);
 
@@ -132,8 +199,20 @@ public class AbstractWriteResultFiles {
      * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
      * of the table and the rows are the different tracks in the evaluation.
      * 
+     * @param testSets  An ordered list of the test sets.
+	 * @param jobIDToFoldEval Map of job ID to a Map of test set to the 
+	 * evaluation results for that particular fold of the experiment, encoded
+	 * as a NemaData Object.
+	 * @param jobIDToName Map of job ID to job name.
+	 * @param metricKey The String key of the metric to write out.
+	 * @return The prepared Table.
      */
-    public static Table prepTableDataOverFoldsAndSystems(List<NemaTrackList> testSets, Map<String, Map<NemaTrackList,NemaData>> jobIDToFoldEval, Map<String,String> jobIDToName, String metricKey) {
+    public static Table prepTableDataOverFoldsAndSystems(
+    		List<NemaTrackList> testSets, 
+    		Map<String, Map<NemaTrackList,NemaData>> jobIDToFoldEval, 
+    		Map<String,String> jobIDToName, 
+    		String metricKey
+    	) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
     	String[][] jobIDandName = new String[numAlgos][];
@@ -172,7 +251,7 @@ public class AbstractWriteResultFiles {
         	row[0] = "" + fold;
         	for(int i=0;i<numAlgos;i++){
         		data = jobIDToFoldEval.get(jobIDandName[i][0]).get(foldList);
-        		row[i+1] = "" + data.getDoubleMetadata(metricKey);
+        		row[i+1] = "" + DEC.format(data.getDoubleMetadata(metricKey));
         	}
         	rows.add(row);
         }
@@ -181,19 +260,25 @@ public class AbstractWriteResultFiles {
     }
     
     /**
-     * Prepares a Table Object representing the specified evaluation metadata, where the metrics are the columns
-     * of the table and the rows are the different tracks in the evaluation.
+     * Prepares a Table Object representing the specified evaluation metadata, 
+     * where the metrics are the columns of the table and the rows are the 
+     * different tracks in the evaluation.
      * 
+     * @param testSets  An ordered list of the test sets.
+     * @param trackEval Map of test set to a List of Track prediction/results 
+     * Objects for a particular fold of the experiment.
+	 * @param metricKey The String key of the metric to write out.
+	 * @return The prepared Table.
      */
-    public static Table prepTableDataOverTracks(List<NemaTrackList> testSets, Map<NemaTrackList,List<NemaData>> trackEval, String[] metricKeys) {
+    public static Table prepTableDataOverTracks(List<NemaTrackList> testSets, Map<NemaTrackList,List<NemaData>> trackEval, List<String> metricKeys) {
     	//set column names
-    	int numMetrics = metricKeys.length;
+    	int numMetrics = metricKeys.size();
     	int numCols = numMetrics + 2;
         String[] colNames = new String[numCols];
         colNames[0] = "Fold";
         colNames[1] = "Track";
         for (int i = 0; i < numMetrics; i++) {
-            colNames[i+2] = metricKeys[i];
+            colNames[i+2] = metricKeys.get(i);
         }
 
         //count number of rows to produce
@@ -222,7 +307,7 @@ public class AbstractWriteResultFiles {
         	row[1] = trackEval.get(foldList).get(foldTrackCount).getId();
         	for(int i=0;i<numMetrics;i++){
         		data = trackEval.get(foldList).get(foldTrackCount);
-        		row[i+2] = "" + data.getDoubleMetadata(metricKeys[i]);
+        		row[i+2] = "" + DEC.format(data.getDoubleMetadata(metricKeys.get(i)));
         	}
         	rows.add(row);
 
@@ -237,15 +322,20 @@ public class AbstractWriteResultFiles {
      * Prepares a Table Object representing the specified evaluation metadata, where the metrics are the columns
      * of the table and the rows are the different tracks in the evaluation.
      * 
+     * @param testSets An ordered list of the test sets.
+     * @param foldEval Map of test set to the evaluation results for that 
+     * particular fold of the experiment, encoded as a NemaData Object.
+     * @param metricKey The String key of the metric to write out.
+	 * @return The prepared Table.
      */
-    public static Table prepTableDataOverFolds(List<NemaTrackList> testSets, Map<NemaTrackList, NemaData> foldEval, String[] metricKeys) {
+    public static Table prepTableDataOverFolds(List<NemaTrackList> testSets, Map<NemaTrackList, NemaData> foldEval, List<String> metricKeys) {
     	//set column names
-    	int numMetrics = metricKeys.length;
+    	int numMetrics = metricKeys.size();
     	int numCols = numMetrics + 1;
         String[] colNames = new String[numCols];
         colNames[0] = "Fold";
         for (int i = 0; i < numMetrics; i++) {
-            colNames[i+1] = metricKeys[i];
+            colNames[i+1] = metricKeys.get(i);
         }
 
         //count number of rows to produce
@@ -260,7 +350,7 @@ public class AbstractWriteResultFiles {
         	row[0] = "" + i;
         	for(int m=0;m<numMetrics;m++){
         		data = foldEval.get(testSets.get(i));
-        		row[m+1] = "" + data.getDoubleMetadata(metricKeys[m]);
+        		row[m+1] = "" + DEC.format(data.getDoubleMetadata(metricKeys.get(m)));
         	}
         	rows.add(row);
         }
@@ -270,6 +360,7 @@ public class AbstractWriteResultFiles {
 	
 	/**
 	 * Writes a Table Object to a CSV file.
+	 * 
 	 * @param table Table to write.
 	 * @param outputFile File to write to.
 	 * @throws IOException
@@ -312,4 +403,55 @@ public class AbstractWriteResultFiles {
 		}
     }
 
+    /**
+     * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
+     * of the table and the rows are the different classes of data in the evaluation.
+     * 
+     * @param jobIDToAggregateEval Map linking jobID to its overall evaluation data Object.
+     * @param jobIDToName Map linking jobID to the Job name to use in the Table for each set of results.
+     * @param classNames A list of the class names used.
+     * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
+     * a 1 or 2 dimensional double array giving the accuracies or confusions for each class.
+     * @return The prepared table.
+     */
+    public static Table prepTableDataOverClasses(Map<String,NemaData> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
+    	//sort systems alphabetically
+    	int numAlgos = jobIDToName.size();
+    	String[][] jobIDandName = new String[numAlgos][];
+    	int idx=0;
+    	String id;
+    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+    		id = it.next();
+    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
+    	}
+    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
+    		public int compare(String[] a, String[] b){
+    			return a[1].compareTo(b[1]);
+    		}
+    	});
+    	
+        String[] colNames = new String[numAlgos + 1];
+        colNames[0] = "Class";
+        for (int i = 0; i < numAlgos; i++) {
+            colNames[i+1] = jobIDandName[i][1];
+        }
+
+        List<String[]> rows = new ArrayList<String[]>();
+        
+        for (int c = 0; c < classNames.size(); c++) {
+            String[] row = new String[numAlgos + 1];
+            row[0] = classNames.get(c).replaceAll(",", " ");
+
+            for (int j = 0 ; j < numAlgos; j++){  
+            	if (jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey).getClass().getComponentType().isArray()){
+            		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).get2dDoubleArrayMetadata(metadataKey)[c][c]);
+            	}else{
+            		//discounted types are 1D as there is no residual confusion after discounting
+            		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c]);
+            	}
+            }
+            rows.add(row);
+        }
+        return new Table(colNames, rows);
+    }
 }

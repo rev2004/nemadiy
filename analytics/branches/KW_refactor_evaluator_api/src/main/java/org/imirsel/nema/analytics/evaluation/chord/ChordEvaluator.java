@@ -36,8 +36,8 @@ public class ChordEvaluator extends EvaluatorImpl{
 //    private static final String SMALL_DIVIDER = "--------------------------------------------------------------------------------\n";
 //    private static final int COL_WIDTH = 7;
 //    private static final DecimalFormat dec = new DecimalFormat("0.00");
+	
     private static final String PLOT_EXT = ".chords.png";
-
     private static final int GRID_RESOLUTION = 1000; //The grid resolution. 
     
     /**
@@ -49,81 +49,11 @@ public class ChordEvaluator extends EvaluatorImpl{
 	 */
 	public ChordEvaluator() {
 		super();
-		setupEvalMetrics();
 	}
-	
-    /**
-     * Constructs and instance of the ChordEvaluator. 
-     * 
-     * 
-     * @param task_ A description of the task being evaluated. The task must at least contain 
-     * the metadata class to be predicted (N.B. the default class is 'genre'). The description 
-     * will be used on the HTML evaluation report and textual evaluation reports output.
-     * @param outputDir_ The directory to output results into.
-     * @param workingDir_ The working directory to use for any temp files.
-     * @param performMatlabStatSigTests_ A flag that determines whether the significance tests
-     * are performed (N.B. this is ignored if there is only one result to evaluate).
-     * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
-     * the significance tests.
-     * @param trainingSets_ the list of training NemaTrackLists used, can be null.
-	 * @param testSets_     the list of testing NemaTrackLists used.
-	 * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
-     * found.
-     * @throws IOException Thrown if there is a problem reading the hierarchy file.
-     */
-    public ChordEvaluator(
-    		NemaTask task_,
-            NemaDataset dataset_,
-            File outputDir_,
-            File workingDir_, 
-            List<NemaTrackList> trainingSets_,
-			List<NemaTrackList> testSets_,
-            boolean performMatlabStatSigTests_,
-            File matlabPath_) 
-    		throws FileNotFoundException, IOException{
-        super(workingDir_, outputDir_, task_, dataset_, trainingSets_, testSets_);
-        performMatlabStatSigTests = performMatlabStatSigTests_;
-        matlabPath = matlabPath_;
-        setupEvalMetrics();
-    }
-    
-    /**
-     * Constructs and instance of the ChordEvaluator. 
-     * 
-     * 
-     * @param task_ A description of the task being evaluated. The task must at least contain 
-     * the metadata class to be predicted (N.B. the default class is 'genre'). The description 
-     * will be used on the HTML evaluation report and textual evaluation reports output.
-     * @param outputDir_ The directory to output results into.
-     * @param workingDir_ The working directory to use for any temp files.
-     * @param performMatlabStatSigTests_ A flag that determines whether the significance tests
-     * are performed (N.B. this is ignored if there is only one result to evaluate).
-     * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
-     * the significance tests.
-     * @param testSets_     the list of testing NemaTrackLists used.
-	 * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
-     * found.
-     * @throws IOException Thrown if there is a problem reading the hierarchy file.
-     */
-    public ChordEvaluator(
-    		NemaTask task_,
-            NemaDataset dataset_,
-            File outputDir_,
-            File workingDir_, 
-			List<NemaTrackList> testSets_,
-            boolean performMatlabStatSigTests_,
-            File matlabPath_) 
-    		throws FileNotFoundException, IOException{
-        super(workingDir_, outputDir_, task_, dataset_, testSets_);
-        performMatlabStatSigTests = performMatlabStatSigTests_;
-        matlabPath = matlabPath_;
-        setupEvalMetrics();
-    }
-    
-    private void setupEvalMetrics() {
-		this.trackEvalMetricsAndResults.clear();
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.CHORD_LABEL_SEQUENCE);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.CHORD_OVERLAP_RATIO);
+
+    protected void setupEvalMetrics() {
+		this.trackEvalMetrics.clear();
+		this.trackEvalMetrics.add(NemaDataConstants.CHORD_OVERLAP_RATIO);
 		
 		this.overallEvalMetrics.clear();
 		this.overallEvalMetrics.add(NemaDataConstants.CHORD_OVERLAP_RATIO);
@@ -366,15 +296,15 @@ public class ChordEvaluator extends EvaluatorImpl{
         //write out per metric CSV results files
         getLogger().info("Writing out CSV result files over whole task...");
         File overlapCsv = new File(outputDir.getAbsolutePath()+ File.separator + "overlap.csv");
-        WriteChordResultFiles.writeTableToCsv(
-        		WriteChordResultFiles.prepTableDataOverTracksAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerTrackEvaluationAndResults(),results.getJobIdToJobName(),NemaDataConstants.CHORD_OVERLAP_RATIO),
+        WriteCsvResultFiles.writeTableToCsv(
+        		WriteCsvResultFiles.prepTableDataOverTracksAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerTrackEvaluationAndResults(),results.getJobIdToJobName(),NemaDataConstants.CHORD_OVERLAP_RATIO),
         		overlapCsv
     		);
         
         //write out results summary CSV
         File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
-        WriteChordResultFiles.writeTableToCsv(
-        		WriteChordResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName()),
+        WriteCsvResultFiles.writeTableToCsv(
+        		WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),this.getOverallEvalMetricsKeys()),
         		summaryCsv
         	);
         
@@ -387,8 +317,8 @@ public class ChordEvaluator extends EvaluatorImpl{
 			
 			File sysDir = jobIDToResultDir.get(jobId);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "per_track_results.csv");
-			WriteChordResultFiles.writeTableToCsv(
-					WriteChordResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO}),
+			WriteCsvResultFiles.writeTableToCsv(
+					WriteCsvResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, this.getTrackEvalMetricKeys()),
 					trackCSV
 				);
 			ArrayList<File> list = new ArrayList<File>(2);
@@ -405,8 +335,8 @@ public class ChordEvaluator extends EvaluatorImpl{
 			
 			File sysDir = jobIDToResultDir.get(jobId);
 			File foldCSV = new File(sysDir.getAbsolutePath() + File.separator + "per_fold_results.csv");
-			WriteChordResultFiles.writeTableToCsv(
-					WriteChordResultFiles.prepTableDataOverFolds(results.getTestSetTrackLists(), sysFoldResults, new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO}),
+			WriteCsvResultFiles.writeTableToCsv(
+					WriteCsvResultFiles.prepTableDataOverFolds(results.getTestSetTrackLists(), sysFoldResults, this.getFoldEvalMetricsKeys()),
 					foldCSV
 				);
 			jobIDToCSVs.get(jobId).add(foldCSV);
@@ -504,7 +434,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         //do intro page to describe task
         {
         	items = new ArrayList<PageItem>();
-	        Table descriptionTable = WriteChordResultFiles.prepTaskTable(task,dataset);
+	        Table descriptionTable = WriteCsvResultFiles.prepTaskTable(task,dataset);
 	        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
 	        aPage = new Page("intro", "Introduction", items, false);
 	        resultPages.add(aPage);
@@ -513,7 +443,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         //do summary page
         {
 	        items = new ArrayList<PageItem>();
-	        Table summaryTable = WriteChordResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),jobIDToName);
+	        Table summaryTable = WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),jobIDToName,this.getOverallEvalMetricsKeys());
 	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
 	        aPage = new Page("summary", "Summary", items, false);
 	        resultPages.add(aPage);
@@ -523,13 +453,13 @@ public class ChordEvaluator extends EvaluatorImpl{
         {
             items = new ArrayList<PageItem>();
             
-            Table weightedOverlapTablePerFold = WriteChordResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(), results.getJobIdToJobName(), NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
+            Table weightedOverlapTablePerFold = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(), results.getJobIdToJobName(), NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO);
             items.add(new TableItem("chord_weighted_overlap_per_fold", "Chord Weighted Average Overlap Per Fold", weightedOverlapTablePerFold.getColHeaders(), weightedOverlapTablePerFold.getRows()));
             
-            Table overlapTablePerFold = WriteChordResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(), results.getJobIdToJobName(), NemaDataConstants.CHORD_OVERLAP_RATIO);
+            Table overlapTablePerFold = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(), results.getJobIdToJobName(), NemaDataConstants.CHORD_OVERLAP_RATIO);
             items.add(new TableItem("chord_overlap_per_fold", "Chord Average Overlap Per Fold", overlapTablePerFold.getColHeaders(), overlapTablePerFold.getRows()));
             
-            Table overlapTable = WriteChordResultFiles.prepTableDataOverTracksAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerTrackEvaluationAndResults(), results.getJobIdToJobName(), NemaDataConstants.CHORD_OVERLAP_RATIO);
+            Table overlapTable = WriteCsvResultFiles.prepTableDataOverTracksAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerTrackEvaluationAndResults(), results.getJobIdToJobName(), NemaDataConstants.CHORD_OVERLAP_RATIO);
             items.add(new TableItem("chord_overlap_per_track", "Chord Average Overlap Per Track", overlapTable.getColHeaders(), overlapTable.getRows()));
             
             aPage = new Page("all_system_metrics", "Detailed Evaluation Metrics", items, true);
@@ -544,10 +474,10 @@ public class ChordEvaluator extends EvaluatorImpl{
     			sysResults = results.getPerTrackEvaluationAndResults(jobId);
     			systemFoldResults = results.getPerFoldEvaluation(jobId);
     			
-    			Table systemFoldTable = WriteChordResultFiles.prepTableDataOverFolds(results.getTestSetTrackLists(), systemFoldResults, new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO, NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO});
+    			Table systemFoldTable = WriteCsvResultFiles.prepTableDataOverFolds(results.getTestSetTrackLists(), systemFoldResults, this.getFoldEvalMetricsKeys());
     			items.add(new TableItem(jobId+"_per_fold", jobIDToName.get(jobId) + " per fold results", systemFoldTable.getColHeaders(), systemFoldTable.getRows()));
                 
-    			Table systemTrackTable = WriteChordResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, new String[]{NemaDataConstants.CHORD_OVERLAP_RATIO});
+    			Table systemTrackTable = WriteCsvResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, this.getTrackEvalMetricKeys());
     			items.add(new TableItem(jobId+"_per_track", jobIDToName.get(jobId) + " per track results", systemTrackTable.getColHeaders(), systemTrackTable.getRows()));
                 
     			aPage = new Page(jobId, jobIDToName.get(jobId), items, false);

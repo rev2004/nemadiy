@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.imirsel.nema.analytics.evaluation.*;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
@@ -63,105 +61,26 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 	 */
 	public ClassificationEvaluator() {
 		super();
-		setupEvalMetrics();
 	}
-    
-    /**
-     * Constructs and instance of the ClassificationEvaluator. 
-     * 
-     * 
-     * @param task_ A description of the task being evaluated. The task must at least contain 
-     * the metadata class to be predicted (N.B. the default class is 'genre'). The description 
-     * will be used on the HTML evaluation report and textual evaluation reports output.
-     * @param outputDir_ The directory to output results into.
-     * @param workingDir_ The working directory to use for any temp files.
-     * @param performMatlabStatSigTests_ A flag that determines whether the significance tests
-     * are performed (N.B. this is ignored if there is only one result to evaluate).
-     * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
-     * the significance tests.
-     * @param hierarchyFile_ If non-null the specified genre hierarchy will be used to discount 
-     * confusions and produce an extra evaluation metric that takes into account near misses.
-     * @param trainingSets_ the list of training NemaTrackLists used, can be null.
-	 * @param testSets_     the list of testing NemaTrackLists used.
-	 * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
-     * found.
-     * @throws IOException Thrown if there is a problem reading the hierarchy file.
-     */
-    public ClassificationEvaluator(
-    		NemaTask task_,
-            NemaDataset dataset_,
-            File outputDir_,
-            File workingDir_, 
-            List<NemaTrackList> trainingSets_,
-			List<NemaTrackList> testSets_,
-            boolean performMatlabStatSigTests_,
-            File matlabPath_,
-            File hierarchyFile_) 
-    		throws FileNotFoundException, IOException{
-        super(workingDir_, outputDir_, task_, dataset_, trainingSets_, testSets_);
-        setPerformMatlabStatSigTests(performMatlabStatSigTests_);
-        setMatlabPath(matlabPath_);
-        hierarchyFile = hierarchyFile_;
-        if(hierarchyFile != null) {
-            initHierachy();
-        }
-        setupEvalMetrics();
-    }
-    
-    /**
-     * Constructs and instance of the ClassificationEvaluator. 
-     * 
-     * 
-     * @param task_ A description of the task being evaluated. The task must at least contain 
-     * the metadata class to be predicted (N.B. the default class is 'genre'). The description 
-     * will be used on the HTML evaluation report and textual evaluation reports output.
-     * @param outputDir_ The directory to output results into.
-     * @param workingDir_ The working directory to use for any temp files.
-     * @param performMatlabStatSigTests_ A flag that determines whether the significance tests
-     * are performed (N.B. this is ignored if there is only one result to evaluate).
-     * @param matlabPath_ The path to the matlab executable or command. To be used to perform 
-     * the significance tests.
-     * @param trainingSets_ the list of training NemaTrackLists used, can be null.
-	 * @param testSets_     the list of testing NemaTrackLists used.
-	 * @throws FileNotFoundException Thrown if a non-null hierarchy file is passed, but cannot be 
-     * found.
-     * @throws IOException Thrown if there is a problem reading the hierarchy file.
-     */
-    public ClassificationEvaluator(
-    		NemaTask task_,
-            NemaDataset dataset_,
-            File outputDir_,
-            File workingDir_,
-            List<NemaTrackList> trainingSets_,
-			List<NemaTrackList> testSets_,
-            boolean performMatlabStatSigTests_,
-            File matlabPath_) 
-    		throws FileNotFoundException, IOException{
-        super(workingDir_, outputDir_, task_, dataset_, trainingSets_, testSets_);
-        setPerformMatlabStatSigTests(performMatlabStatSigTests_);
-        setMatlabPath(matlabPath_);
-        hierarchyFile = null;
-        setupEvalMetrics();
-    }
-    
-    private void setupEvalMetrics() {
-		this.trackEvalMetricsAndResults.clear();
-		this.trackEvalMetricsAndResults.add(task.getSubjectTrackMetadataName());
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.CLASSIFICATION_ACCURACY);
+  
+    protected void setupEvalMetrics() {
+		this.trackEvalMetrics.clear();
+		this.trackEvalMetrics.add(NemaDataConstants.CLASSIFICATION_ACCURACY);
 		if(this.hierarchyFile != null){
-			this.trackEvalMetricsAndResults.add(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
+			this.trackEvalMetrics.add(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
 		}
 		
 		this.overallEvalMetrics.clear();
 		this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_ACCURACY);
 		this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY);
-		this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW);
-		this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
+		//TODO think again what to do about matrix based eval metrics...
+//		this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW);
+//		this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
 		if(this.hierarchyFile != null){
 			this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
 			this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY);
-			this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW);
-			this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
+//			this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW);
+//			this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
 		}
 		
 		//same as overall metrics - single fold experiment format
@@ -447,24 +366,25 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 		//write out CSV results files
 		getLogger().info("Writing out CSV result files over whole task...");
 		File perClassCSV = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassResults.csv");
-		WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT),perClassCSV);
+		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT),perClassCSV);
 		
 		File perFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "PerFoldResults.csv");
-		WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepTableDataOverFolds(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_ACCURACY),perFoldCSV);
-		
-		//write out results summary CSV
-		File summaryCSV = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
-		WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),jobIDToName,classNames,hierarchyFile!=null),summaryCSV);
+		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(), jobIDToName,NemaDataConstants.CLASSIFICATION_ACCURACY),perFoldCSV);
 		
 		//write out discounted results summary CSVs
 		File discountedPerClassCSV = null;
 		File discountedPerFoldCSV = null;
 		if (hierarchyFile != null){
 		    discountedPerClassCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerClassResults.csv");
-		    WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT),discountedPerClassCSV);
+		    WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT),discountedPerClassCSV);
 		    discountedPerFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerFoldResults.csv");
-		    WriteClassificationResultFiles.writeTableToCsv(WriteClassificationResultFiles.prepTableDataOverFolds(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),jobIDToName,classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY),discountedPerFoldCSV);
+		    WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),jobIDToName,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY),discountedPerFoldCSV);
 		}
+		
+		//write out results summary CSV
+		File summaryCSV = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
+		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),jobIDToName,this.getOverallEvalMetricsKeys()),summaryCSV);
+		
 		
 		//perform statistical tests
 		File friedmanClassTablePNG = null;
@@ -552,7 +472,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do intro page to describe task
         {
         	items = new ArrayList<PageItem>();
-	        Table descriptionTable = WriteClassificationResultFiles.prepTaskTable(results.getTask(),results.getDataset());
+	        Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),results.getDataset());
 	        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
 	        aPage = new Page("intro", "Introduction", items, false);
 	        resultPages.add(aPage);
@@ -561,7 +481,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do summary page
         {
 	        items = new ArrayList<PageItem>();
-	        Table summaryTable = WriteClassificationResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,usingAHierarchy);
+	        Table summaryTable = WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),this.getOverallEvalMetricsKeys());
 	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
 	        aPage = new Page("summary", "Summary", items, false);
 	        resultPages.add(aPage);
@@ -570,10 +490,10 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do per class page
         {
             items = new ArrayList<PageItem>();
-            Table perClassTable = WriteClassificationResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
+            Table perClassTable = WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
             items.add(new TableItem("acc_class", "Accuracy per Class", perClassTable.getColHeaders(), perClassTable.getRows()));
             if (usingAHierarchy){
-                Table perDiscClassTable = WriteClassificationResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
+                Table perDiscClassTable = WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Class", perDiscClassTable.getColHeaders(), perDiscClassTable.getRows()));
             }
             aPage = new Page("acc_per_class", "Accuracy per Class", items, false);
@@ -583,10 +503,10 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //do per fold page
         {
             items = new ArrayList<PageItem>();
-            Table perFoldTable = WriteClassificationResultFiles.prepTableDataOverFolds(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_ACCURACY);
+            Table perFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.CLASSIFICATION_ACCURACY);
             items.add(new TableItem("acc_class", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
             if (usingAHierarchy){
-                Table perDiscFoldTable = WriteClassificationResultFiles.prepTableDataOverFolds(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
+                Table perDiscFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
             }
             aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);
