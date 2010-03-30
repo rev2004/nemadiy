@@ -21,7 +21,8 @@ import org.imirsel.nema.analytics.util.io.*;
 import org.imirsel.nema.model.*;
 
 /**
- * Chord estimation evaluation and results rendering,
+ * Chord estimation evaluation and results rendering.
+ * 
  * @author mert.bay@gmail.com
  * @author kris.west@gmail.com
  * @since 0.1.0

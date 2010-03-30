@@ -32,6 +32,7 @@ import org.imirsel.nema.model.*;
 
 /**
  * Classification evaluation and result rendering.
+ * 
  * @author kris.west@gmail.com
  * @since 0.1.0
  */

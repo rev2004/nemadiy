@@ -2,6 +2,13 @@ package org.imirsel.nema.analytics.evaluation.chord;
 
 import java.util.Arrays;
 
+/**
+ * Model representing a single Chord.
+ * 
+ * @author mert.bay@gmail.com
+ * @author kris.west@gmail.com
+ * @since 0.1.0
+ */
 public class NemaChord {
 	
 	double onset;

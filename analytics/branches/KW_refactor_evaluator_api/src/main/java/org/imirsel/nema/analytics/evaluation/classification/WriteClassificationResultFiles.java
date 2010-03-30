@@ -27,6 +27,7 @@ import org.imirsel.nema.analytics.evaluation.util.resultpages.Table;
  * data for use in the output of HTML result pages.
  * 
  * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public class WriteClassificationResultFiles extends AbstractWriteResultFiles {
 
