@@ -53,7 +53,19 @@
         <include>*.jar</include>
       </includes>
     </fileSet>
+      <fileSet>
+      <directory>${project.basedir}/src/main/resources/lib-dl</directory>
+      <outputDirectory>lib-dl</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
   </fileSets>
+  
+ 
+  
+  
+  
    <repositories>
     <repository>
       <includeMetadata>false</includeMetadata>
