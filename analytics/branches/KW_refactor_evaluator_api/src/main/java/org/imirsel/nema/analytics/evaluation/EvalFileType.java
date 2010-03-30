@@ -20,4 +20,9 @@ public interface EvalFileType {
 	 */
 	public void addLogDestination(PrintStream stream);
 	
+	/**
+	 * Returns the name of the file type operated on by this class.
+	 * @return The file type name.
+	 */
+	public String getTypeName();
 }

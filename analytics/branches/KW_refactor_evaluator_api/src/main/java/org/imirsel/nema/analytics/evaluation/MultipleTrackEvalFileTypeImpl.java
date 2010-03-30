@@ -19,7 +19,8 @@ import org.imirsel.nema.model.NemaData;
  */
 public abstract class MultipleTrackEvalFileTypeImpl extends EvalFileTypeImpl implements MultipleTrackEvalFileType {
 
-	public MultipleTrackEvalFileTypeImpl() {
+	public MultipleTrackEvalFileTypeImpl(String typeName) {
+		super(typeName);
 	}
 	
 

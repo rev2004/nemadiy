@@ -20,8 +20,8 @@ import org.imirsel.nema.model.NemaData;
  */
 public abstract class SingleTrackEvalFileTypeImpl extends EvalFileTypeImpl implements SingleTrackEvalFileType {
 
-	public SingleTrackEvalFileTypeImpl() {
-		
+	public SingleTrackEvalFileTypeImpl(String typeName) {
+		super(typeName);
 	}
     
     public List<NemaData> readDirectory(File theDir, String extension)

@@ -10,6 +10,11 @@ import org.imirsel.nema.analytics.logging.AnalyticsLogFormatter;
 public class EvalFileTypeImpl {
 
 	protected Logger _logger;
+	private String typeName;
+	
+	public EvalFileTypeImpl(String typeName) {
+		this.typeName = typeName;
+	}
 	
 	public Logger getLogger() {
 		if (_logger == null){
@@ -21,6 +26,10 @@ public class EvalFileTypeImpl {
 	public void addLogDestination(PrintStream stream) {
 		Handler handler = new StreamHandler(stream, new AnalyticsLogFormatter());
 		getLogger().addHandler(handler);
+	}
+
+	public String getTypeName() {
+		return typeName;
 	}
 
 }

@@ -24,16 +24,14 @@ import org.imirsel.nema.model.NemaTrackList;
  */
 public class EvaluatorFactory {
 	
-	private static Map<String,Class<? extends Evaluator>> EVALUATOR_REGISTRY;
+	private static final Map<String,Class<? extends Evaluator>> EVALUATOR_REGISTRY = new HashMap<String, Class<? extends Evaluator>>();;
 	static{
-		EVALUATOR_REGISTRY = new HashMap<String, Class<? extends Evaluator>>();
-
-		//register all the known evaluators
+		//register all the known evaluators for known metadata keys
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, ChordEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.MELODY_EXTRACTION_DATA, MelodyEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, KeyEvaluator.class);
 		
-		//classification tasks
+			//classification tasks
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, ClassificationEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ARTIST, ClassificationEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, ClassificationEvaluator.class);

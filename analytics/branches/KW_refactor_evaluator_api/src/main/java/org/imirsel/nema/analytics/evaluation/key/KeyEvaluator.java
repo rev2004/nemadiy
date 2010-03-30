@@ -243,19 +243,16 @@ public class KeyEvaluator extends EvaluatorImpl {
 			);
 
 		/* Write out per track CSV for each system */
-		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(
-				numJobs);
+		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(numJobs);
 		for (Iterator<String> it = results.getJobIds().iterator(); it
 				.hasNext();) {
 			jobId = it.next();
 			sysResults = results.getPerTrackEvaluationAndResults(jobId);
 			
-			//TODO: modify this to handle multiple folds
-			resultList = sysResults.get(0);
 			File sysDir = jobIDToResultDir.get(jobId);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "perTrack.csv");
 			WriteKeyResultFiles.writeTableToCsv(
-					WriteKeyResultFiles.prepPerTrackTableData(resultList, results.getJobName(jobId)),
+					WriteKeyResultFiles.prepTableDataOverTracks(testSets, sysResults, this.trackEvalMetricsAndResults.toArray(new String[this.trackEvalMetricsAndResults.size()])),
 					trackCSV
 				);
 			jobIDToPerTrackCSV.put(jobId, trackCSV);
@@ -284,7 +281,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 	 * @param jobIDToPerTrackCSV 		map of jobId to individual per-track results csv files for that job
 	 * @param jobIDToTgz 				map of jobId to the tar-balls of individual job results
 	 */
-	private static void writeResultHtmlPages(NemaEvaluationResultSet results, Map<String,File[]> jobIDToResultPlotFileList, 
+	private void writeResultHtmlPages(NemaEvaluationResultSet results, Map<String,File[]> jobIDToResultPlotFileList, 
 			File summaryCsv, Map<String, File> jobIDToPerTrackCSV, Map<String, File> jobIDToTgz, File outputDir) {
 		String jobId;
 		int numJobs = results.getJobIds().size();
@@ -325,13 +322,8 @@ public class KeyEvaluator extends EvaluatorImpl {
 				items = new ArrayList<PageItem>();
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				
-				//TODO: modify this to deal with multiple folds
-				resultList = sysResults.get(0);
-				
 				/* Add per track table */
-				Table perTrackTable = WriteKeyResultFiles
-						.prepPerTrackTableData(resultList,
-								results.getJobName(jobId));
+				Table perTrackTable = WriteKeyResultFiles.prepTableDataOverTracks(testSets, sysResults, this.trackEvalMetricsAndResults.toArray(new String[this.trackEvalMetricsAndResults.size()]));
 				items.add(new TableItem(jobId + "_results", results.getJobName(jobId)
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));

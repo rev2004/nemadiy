@@ -10,6 +10,13 @@ import java.util.logging.Handler;
 
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 
+/**
+ * Utility to convert chord representations.
+ * 
+ * @author mert.bay@gmail.com
+ * @author kris.west@gmail.com
+ * @since 0.1.0
+ */
 public class ChordConversionUtil {
 	
 	private static ChordConversionUtil instance = null;

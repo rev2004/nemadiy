@@ -5,10 +5,6 @@
 
 package org.imirsel.nema.analytics.evaluation.chord;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +22,9 @@ import org.imirsel.nema.analytics.evaluation.util.resultpages.Table;
  * results, encoding them for use in significance testing (as CSV files) and formatting
  * data for use in the output of HTML result pages.
  * 
+ * @author mert.bay@gmail.com
  * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public class WriteChordResultFiles extends AbstractWriteResultFiles {
 
