@@ -67,6 +67,13 @@ public class RunReggieLookup {
 		properties.load(is);
 		String port =(String)properties.get("port");
 		String webDirectory=(String)properties.get("webDirectory");
+		webDirectory = System.getProperty("user.dir") + System.getProperty("file.separator") + webDirectory;
+		
+		System.out.println("Web Directory: "+ webDirectory);
+		if(!new File(webDirectory).exists()){
+			System.out.println("web directory "+ webDirectory + " does not exist");
+			System.exit(2);
+		}
 		String[] classServerArgs= new String[]{"-port",port,"-dir",webDirectory,"-verbose"};
 		ClassServerThread classServerThread = new ClassServerThread(classServerArgs);
 		Future<Void> value=executorService.submit(classServerThread);
