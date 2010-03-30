@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
-import org.imirsel.nema.analytics.evaluation.key.WriteKeyResultFiles;
+import org.imirsel.nema.analytics.evaluation.WriteCsvResultFiles;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.PageItem;
@@ -19,9 +19,7 @@ import org.imirsel.nema.analytics.evaluation.util.resultpages.TableItem;
 import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
-import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
-import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 
 /**
@@ -81,57 +79,16 @@ public class KeyEvaluator extends EvaluatorImpl {
 	 */
 	public KeyEvaluator() {
 		super();
-		setupEvalMetrics();
-	}
-    
-    /**
-	 * Constructor
-	 * 
-	 * @param task_ 		the evaluation task e.g. melody, onset, etc.
-	 * @param dataset_ 		the data-set being worked on.
-	 * @param outputDir_ 	the output directory to write evaluation results to.
-	 * @param workingDir_ 	the working directory for writing temporary files, etc.
-	 * @param trainingSets_ the list of training NemaTrackLists used, can be null.
-	 * @param testSets_     the list of testing NemaTrackLists used.
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public KeyEvaluator(NemaTask task_, NemaDataset dataset_,
-			File outputDir_, File workingDir_, List<NemaTrackList> trainingSets_,
-			List<NemaTrackList> testSets_) throws FileNotFoundException,
-			IOException {
-		super(workingDir_, outputDir_, task_, dataset_, trainingSets_, testSets_);
-		setupEvalMetrics();
-	}
-
-	/**
-	 * Constructor
-	 * 
-	 * @param task_ 		the evaluation task e.g. melody, onset, etc.
-	 * @param dataset_ 		the data-set being worked on.
-	 * @param outputDir_ 	the output directory to write evaluation results to.
-	 * @param workingDir_ 	the working directory for writing temporary files, etc.
-	 * @param testSets_     the list of testing NemaTrackLists used.
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public KeyEvaluator(NemaTask task_, NemaDataset dataset_,
-			File outputDir_, File workingDir_, 
-			List<NemaTrackList> testSets_) throws FileNotFoundException,
-			IOException {
-		super(workingDir_, outputDir_, task_, dataset_, testSets_);
-		setupEvalMetrics();
 	}
 	
-	private void setupEvalMetrics() {
-		this.trackEvalMetricsAndResults.clear();
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.KEY_DETECTION_DATA);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.KEY_DETECTION_CORRECT);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.KEY_DETECTION_PERFECT_FIFTH_ERROR);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.KEY_DETECTION_RELATIVE_ERROR);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.KEY_DETECTION_PARALLEL_ERROR);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.KEY_DETECTION_ERROR);
+	protected void setupEvalMetrics() {
+		this.trackEvalMetrics.clear();
+		this.trackEvalMetrics.add(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE);
+		this.trackEvalMetrics.add(NemaDataConstants.KEY_DETECTION_CORRECT);
+		this.trackEvalMetrics.add(NemaDataConstants.KEY_DETECTION_PERFECT_FIFTH_ERROR);
+		this.trackEvalMetrics.add(NemaDataConstants.KEY_DETECTION_RELATIVE_ERROR);
+		this.trackEvalMetrics.add(NemaDataConstants.KEY_DETECTION_PARALLEL_ERROR);
+		this.trackEvalMetrics.add(NemaDataConstants.KEY_DETECTION_ERROR);
 		
 		this.overallEvalMetrics.clear();
 		this.overallEvalMetrics.add(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE);
@@ -237,8 +194,8 @@ public class KeyEvaluator extends EvaluatorImpl {
 
 		/* Write out summary CSV */
 		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "allResults.csv");
-		WriteKeyResultFiles.writeTableToCsv(
-				WriteKeyResultFiles.prepSummaryTableData(results.getJobIdToOverallEvaluation(), results.getJobIdToJobName()),
+		WriteCsvResultFiles.writeTableToCsv(
+				WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), this.getOverallEvalMetricsKeys()),
 				summaryCsv
 			);
 
@@ -251,8 +208,8 @@ public class KeyEvaluator extends EvaluatorImpl {
 			
 			File sysDir = jobIDToResultDir.get(jobId);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "perTrack.csv");
-			WriteKeyResultFiles.writeTableToCsv(
-					WriteKeyResultFiles.prepTableDataOverTracks(testSets, sysResults, this.trackEvalMetricsAndResults.toArray(new String[this.trackEvalMetricsAndResults.size()])),
+			WriteCsvResultFiles.writeTableToCsv(
+					WriteCsvResultFiles.prepTableDataOverTracks(testSets, sysResults, this.getTrackEvalMetricKeys()),
 					trackCSV
 				);
 			jobIDToPerTrackCSV.put(jobId, trackCSV);
@@ -294,7 +251,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 		/* Do intro page to describe task */
 		{
 			items = new ArrayList<PageItem>();
-			Table descriptionTable = WriteKeyResultFiles.prepTaskTable(results.getTask(),
+			Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),
 					results.getDataset());
 			items.add(new TableItem("task_description", "Task Description",
 					descriptionTable.getColHeaders(), descriptionTable
@@ -306,8 +263,8 @@ public class KeyEvaluator extends EvaluatorImpl {
 		/* Do summary page */
 		{
 			items = new ArrayList<PageItem>();
-			Table summaryTable = WriteKeyResultFiles.prepSummaryTableData(
-					results.getJobIdToOverallEvaluation(), results.getJobIdToJobName());
+			Table summaryTable = WriteCsvResultFiles.prepSummaryTable(
+					results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), this.getOverallEvalMetricsKeys());
 			items.add(new TableItem("summary_results", "Summary Results",
 					summaryTable.getColHeaders(), summaryTable.getRows()));
 			aPage = new Page("summary", "Summary", items, false);
@@ -322,7 +279,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				
 				/* Add per track table */
-				Table perTrackTable = WriteKeyResultFiles.prepTableDataOverTracks(testSets, sysResults, this.trackEvalMetricsAndResults.toArray(new String[this.trackEvalMetricsAndResults.size()]));
+				Table perTrackTable = WriteCsvResultFiles.prepTableDataOverTracks(testSets, sysResults, this.getTrackEvalMetricKeys());
 				items.add(new TableItem(jobId + "_results", results.getJobName(jobId)
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));

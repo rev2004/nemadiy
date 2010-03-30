@@ -14,13 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Handler;
 import java.util.logging.Logger;
-import java.util.logging.StreamHandler;
 
-
-import org.imirsel.nema.analytics.logging.ProcessExecutorLogFormatter;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
@@ -110,7 +105,7 @@ public interface Evaluator {
 	 * @return a List of the String keys for the evaluation metrics and results that were evauated
 	 * expected to be present in per-track evaluation Objects.
 	 */
-	public List<String> getTrackEvalMetricsAndResultsKeys();
+	public List<String> getTrackEvalMetricKeys();
 
     /**
      * Sets the <code>List</code> of groundtruth data to be used to evaluate results. In a 

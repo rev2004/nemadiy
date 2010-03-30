@@ -12,10 +12,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.imirsel.nema.analytics.evaluation.Evaluator;
+import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTask;
@@ -58,7 +61,7 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
         task.setDescription("test description");
         task.setDatasetId(10);
         task.setSubjectTrackMetadataId(1);
-        task.setSubjectTrackMetadataName("genre");
+        task.setSubjectTrackMetadataName(NemaDataConstants.CLASSIFICATION_GENRE);
         
         dataset = new NemaDataset();
         dataset.setId(task.getDatasetId());
@@ -66,7 +69,7 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
         dataset.setDescription("some description");
         
         File resultsDirectory = new File("src/test/resources/classification/HNOS1");
-        MultipleTrackEvalFileType reader = new ClassificationTextFile("genre");
+        MultipleTrackEvalFileType reader = new ClassificationTextFile(NemaDataConstants.CLASSIFICATION_GENRE);
         List<List<NemaData>> groundTruth = reader.readDirectory(resultsDirectory,".txt");
         
         testSets = new ArrayList<NemaTrackList>(3);
@@ -90,15 +93,17 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 	}
 
 	@Test
-	public void testEvaluateGT1() throws IllegalArgumentException, IOException{ 
+	public void testEvaluateGT1() throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		File groundTruthFile = new File("src/test/resources/classification/audiolatin.all.gt.txt");
 		File hierarchyFile = null;
 		File resultsDirectory = new File("src/test/resources/classification/GT1");
 		String	systemName = "GT1-System";
-		ClassificationEvaluator evaluator = null;
+		Evaluator evaluator = null;
 
-		evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
-		MultipleTrackEvalFileType reader = new ClassificationTextFile("genre");
+		//evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
+		
+		MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
 		List<NemaData> groundTruth = reader.readFile(groundTruthFile);
 		evaluator.setGroundTruth(groundTruth);
 	
@@ -121,17 +126,19 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 	}
 	
 	@Test
-	public void testEvaluateGT1AndHNOS1()  throws IllegalArgumentException, IOException{ 
+	public void testEvaluateGT1AndHNOS1()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		File groundTruthFile = new File("src/test/resources/classification/audiolatin.all.gt.txt");
 		File hierarchyFile = null;
 		File resultsDirectory1 = new File("src/test/resources/classification/GT1");
 		String	systemName1 = "GT1-System";
 		File resultsDirectory2 = new File("src/test/resources/classification/HNOS1");
 		String	systemName2 = "HNOS1-System";
-		ClassificationEvaluator evaluator = null;
+		Evaluator evaluator = null;
 		
-		evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
-		MultipleTrackEvalFileType reader = new ClassificationTextFile("genre");
+		//evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
+		
+		MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
 		List<NemaData> groundTruth = reader.readFile(groundTruthFile);
 		evaluator.setGroundTruth(groundTruth);
 	

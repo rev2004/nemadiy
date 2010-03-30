@@ -10,13 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
+import org.imirsel.nema.analytics.evaluation.WriteCsvResultFiles;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
 import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
-import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
-import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 
 /**
@@ -43,55 +42,15 @@ public class MelodyEvaluator extends EvaluatorImpl {
 	 */
 	public MelodyEvaluator() {
 		super();
-		setupEvalMetrics();
 	}
 	
-	/**
-	 * Constructor
-	 * 
-	 * @param task_ 		the evaluation task e.g. melody, onset, etc
-	 * @param dataset_ 		the data-set being worked on
-	 * @param outputDir_ 	the output directory to write evaluation results to
-	 * @param workingDir_ 	the working directory for writing temporary files, etc
-	 * @param trainingSets_ the list of training NemaTrackLists used.
-	 * @param testSets_     the list of testing NemaTrackLists used.
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public MelodyEvaluator(NemaTask task_, NemaDataset dataset_,
-			File outputDir_, File workingDir_, List<NemaTrackList> trainingSets_,
-			List<NemaTrackList> testSets_) throws FileNotFoundException,
-			IOException {
-		super(workingDir_, outputDir_, task_, dataset_, trainingSets_, testSets_);
-		setupEvalMetrics();
-	}
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param task_ 		the evaluation task e.g. melody, onset, etc
-	 * @param dataset_ 		the data-set being worked on
-	 * @param outputDir_ 	the output directory to write evaluation results to
-	 * @param workingDir_ 	the working directory for writing temporary files, etc
-	 * @param testSets_     the list of testing NemaTrackLists used.
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public MelodyEvaluator(NemaTask task_, NemaDataset dataset_,
-			File outputDir_, File workingDir_, List<NemaTrackList> testSets_) throws FileNotFoundException,
-			IOException { 
-		super(workingDir_, outputDir_, task_, dataset_, testSets_);
-		setupEvalMetrics();
-	}
-	
-	private void setupEvalMetrics() {
-		this.trackEvalMetricsAndResults.clear();
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_EXTRACTION_DATA);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_OVERALL_ACCURACY);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_VOICING_RECALL);
-		this.trackEvalMetricsAndResults.add(NemaDataConstants.MELODY_VOICING_FALSE_ALARM);
+	protected void setupEvalMetrics() {
+		this.trackEvalMetrics.clear();
+		this.trackEvalMetrics.add(NemaDataConstants.MELODY_OVERALL_ACCURACY);
+		this.trackEvalMetrics.add(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY);
+		this.trackEvalMetrics.add(NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY);
+		this.trackEvalMetrics.add(NemaDataConstants.MELODY_VOICING_RECALL);
+		this.trackEvalMetrics.add(NemaDataConstants.MELODY_VOICING_FALSE_ALARM);
 		
 		this.overallEvalMetrics.clear();
 		this.overallEvalMetrics.add(NemaDataConstants.MELODY_OVERALL_ACCURACY);
@@ -196,8 +155,8 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");
 		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "allResults.csv");
-		WriteMelodyResultFiles.writeTableToCsv(
-				WriteMelodyResultFiles.prepSummaryTableData(results.getJobIdToOverallEvaluation(), results.getJobIdToJobName()),
+		WriteCsvResultFiles.writeTableToCsv(
+				WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), this.getOverallEvalMetricsKeys()),
 				summaryCsv
 			);
 
@@ -210,14 +169,9 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			
 			File sysDir = jobIDToResultDir.get(jobId);
 			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "perTrack.csv");
-			WriteMelodyResultFiles.writeTableToCsv(
-					WriteMelodyResultFiles.prepTableDataOverTracks(testSets, sysResults, new String[]{
-							NemaDataConstants.MELODY_RAW_PITCH_ACCURACY,
-							NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY,
-							NemaDataConstants.MELODY_VOICING_RECALL,
-							NemaDataConstants.MELODY_VOICING_FALSE_ALARM, 
-							NemaDataConstants.MELODY_OVERALL_ACCURACY
-						}),trackCSV);
+			WriteCsvResultFiles.writeTableToCsv(
+					WriteCsvResultFiles.prepTableDataOverTracks(testSets, sysResults, this.getTrackEvalMetricKeys())
+					,trackCSV);
 			jobIDToPerTrackCSV.put(jobId, trackCSV);
 		}
 
@@ -262,7 +216,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		/* Do intro page to describe task */
 		{
 			items = new ArrayList<PageItem>();
-			Table descriptionTable = WriteMelodyResultFiles.prepTaskTable(results.getTask(),
+			Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),
 					results.getDataset());
 			items.add(new TableItem("task_description", "Task Description",
 					descriptionTable.getColHeaders(), descriptionTable
@@ -274,8 +228,8 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		/* Do summary page */
 		{
 			items = new ArrayList<PageItem>();
-			Table summaryTable = WriteMelodyResultFiles.prepSummaryTableData(
-					results.getJobIdToOverallEvaluation(), results.getJobIdToJobName());
+			Table summaryTable = WriteCsvResultFiles.prepSummaryTable(
+					results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), this.getOverallEvalMetricsKeys());
 			items.add(new TableItem("summary_results", "Summary Results",
 					summaryTable.getColHeaders(), summaryTable.getRows()));
 			aPage = new Page("summary", "Summary", items, false);
@@ -291,15 +245,9 @@ public class MelodyEvaluator extends EvaluatorImpl {
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				
 				/* Add per track table */
-				Table perTrackTable = WriteMelodyResultFiles.prepTableDataOverTracks(
+				Table perTrackTable = WriteCsvResultFiles.prepTableDataOverTracks(
 						results.getTestSetTrackLists(), sysResults, 
-						new String[]{
-							NemaDataConstants.MELODY_RAW_PITCH_ACCURACY,
-							NemaDataConstants.MELODY_RAW_CHROMA_ACCURACY,
-							NemaDataConstants.MELODY_VOICING_RECALL,
-							NemaDataConstants.MELODY_VOICING_FALSE_ALARM, 
-							NemaDataConstants.MELODY_OVERALL_ACCURACY
-						}
+						this.getTrackEvalMetricKeys()
 					);
 				
 				items.add(new TableItem(jobId + "_results", results.getJobName(jobId)

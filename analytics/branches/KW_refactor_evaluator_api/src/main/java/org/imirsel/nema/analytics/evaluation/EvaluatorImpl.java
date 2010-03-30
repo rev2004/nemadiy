@@ -20,9 +20,7 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
 import org.imirsel.nema.analytics.logging.AnalyticsLogFormatter;
-import org.imirsel.nema.analytics.logging.ProcessExecutorLogFormatter;
 import org.imirsel.nema.model.NemaData;
-import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTask;
@@ -50,7 +48,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 	protected List<NemaTrackList> testSets;
 	protected List<String> overallEvalMetrics;
 	protected List<String> foldEvalMetrics;
-	protected List<String> trackEvalMetricsAndResults;
+	protected List<String> trackEvalMetrics;
 	
 	//temporary variables for matlab until we have java implementation of stats tests
 	protected boolean performMatlabStatSigTests = true;
@@ -68,66 +66,11 @@ public abstract class EvaluatorImpl implements Evaluator {
 		testSets = null;
 		overallEvalMetrics = new ArrayList<String>();
 		foldEvalMetrics = new ArrayList<String>();
-		trackEvalMetricsAndResults = new ArrayList<String>();
+		trackEvalMetrics = new ArrayList<String>();
+		setupEvalMetrics();
 	}
 	
-	public EvaluatorImpl(File workingDir_, File outputDir_)  throws FileNotFoundException{
-		_logger = Logger.getLogger(this.getClass().getName());
-		
-		setWorkingDir(workingDir_);
-		setOutputDir(outputDir_);
-		
-		trackIDToGT = new HashMap<String,NemaData>();
-		jobIDToFoldResults = new HashMap<String,Map<NemaTrackList,List<NemaData>>>();
-		jobIDToName = new HashMap<String,String>();
-		task = null;
-		dataset = null;
-		trainingSets = null;
-		testSets = null;
-		overallEvalMetrics = new ArrayList<String>();
-		foldEvalMetrics = new ArrayList<String>();
-		trackEvalMetricsAndResults = new ArrayList<String>();
-	}
-	
-	public EvaluatorImpl(File workingDir_, File outputDir_, 
-			NemaTask task_, NemaDataset dataset_,
-			List<NemaTrackList> testSets_)  throws FileNotFoundException{
-		_logger = Logger.getLogger(this.getClass().getName());
-		
-		setWorkingDir(workingDir_);
-		setOutputDir(outputDir_);
-		
-		trackIDToGT = new HashMap<String,NemaData>();
-		jobIDToFoldResults = new HashMap<String,Map<NemaTrackList,List<NemaData>>>();
-		jobIDToName = new HashMap<String,String>();
-		task = task_;
-		dataset = dataset_;
-		trainingSets = null;
-		testSets = testSets_;
-		overallEvalMetrics = new ArrayList<String>();
-		foldEvalMetrics = new ArrayList<String>();
-		trackEvalMetricsAndResults = new ArrayList<String>();
-	}
-	
-	public EvaluatorImpl(File workingDir_, File outputDir_, 
-			NemaTask task_, NemaDataset dataset_, List<NemaTrackList> trainingSets_,
-			List<NemaTrackList> testSets_)  throws FileNotFoundException{
-		_logger = Logger.getLogger(this.getClass().getName());
-		
-		setWorkingDir(workingDir_);
-		setOutputDir(outputDir_);
-		
-		trackIDToGT = new HashMap<String,NemaData>();
-		jobIDToFoldResults = new HashMap<String,Map<NemaTrackList,List<NemaData>>>();
-		jobIDToName = new HashMap<String,String>();
-		task = task_;
-		dataset = dataset_;
-		trainingSets = trainingSets_;
-		testSets = testSets_;
-		overallEvalMetrics = new ArrayList<String>();
-		foldEvalMetrics = new ArrayList<String>();
-		trackEvalMetricsAndResults = new ArrayList<String>();
-	}
+	protected abstract void setupEvalMetrics();
 	
     public void setTrainingSets(List<NemaTrackList> trainingSets){
     	this.trainingSets = trainingSets;
@@ -138,7 +81,7 @@ public abstract class EvaluatorImpl implements Evaluator {
     }
     
     public NemaEvaluationResultSet getEmptyEvaluationResultSet(){
-    	return new NemaEvaluationResultSet(dataset, task, trainingSets, testSets, getOverallEvalMetricsKeys(), getFoldEvalMetricsKeys(), getTrackEvalMetricsAndResultsKeys());
+    	return new NemaEvaluationResultSet(dataset, task, trainingSets, testSets, getOverallEvalMetricsKeys(), getFoldEvalMetricsKeys(), getTrackEvalMetricKeys());
     }
 	
 	public List<String> getOverallEvalMetricsKeys() {
@@ -149,8 +92,8 @@ public abstract class EvaluatorImpl implements Evaluator {
 		return foldEvalMetrics;
 	}
 
-	public List<String> getTrackEvalMetricsAndResultsKeys() {
-		return trackEvalMetricsAndResults;
+	public List<String> getTrackEvalMetricKeys() {
+		return trackEvalMetrics;
 	}
 
 	/**
