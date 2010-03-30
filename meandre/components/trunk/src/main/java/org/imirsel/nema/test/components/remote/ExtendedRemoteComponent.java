@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.imirsel.nema.components.InvalidProcessMonitorException;
+import org.imirsel.nema.components.InvalidProcessTemplateException;
 import org.imirsel.nema.components.RemoteProcessExecutorComponent;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
@@ -28,9 +29,6 @@ import org.meandre.core.ComponentExecutionException;
 public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 	
 	
-	@ComponentProperty(defaultValue = "longWithChildRunning", description = "name of the execution Profile", name = "execProfile")
-	private static final String PROPERTY_1 ="execProfile";
-	
 	@ComponentOutput(description = "This is the process artifact data",name = "processResult")
 	private static final String DATA_OUTPUT_1="processResult";
 	
@@ -51,27 +49,22 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 	@Override
 	public void execute(ComponentContext componentContext)
 			throws ComponentExecutionException, ComponentContextException {
-		    String profile = componentContext.getProperty(PROPERTY_1);
-		    try {
-		    	ProcessTemplate pt = this.getProcessTemplate(profile);
-		    	
-		    	ProcessArtifact pa = new ProcessArtifact("/tmp/0.date","file");
+				ProcessArtifact pa = new ProcessArtifact("/tmp/0.date","file");
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
 				outputs.add(pa);
-				
 				ProcessExecutionProperties pep = new ProcessExecutionProperties();
-		    	pep.setId(componentContext.getExecutionInstanceID());
+				pep.setId(componentContext.getExecutionInstanceID());
 				pep.setOutputs(outputs);
 				pep.setInputs(null);
-				
-				pep.setProcessTemplate(pt);
 				pep.setInputs(null);
 				pep.setOutputs(outputs);
 				//pep.setEnvironmentVariables(envorinmentVariables);
 				//pep.setCommandLineFlags(commandLineFlags);
-				
-				
-				System.out.println("Running process now...");
+
+		
+		
+		    try {
+		    	System.out.println("Running process now...");
 				@SuppressWarnings("unused")
 				final NemaProcess np=this.executeProcess(pep);
 				System.out.println("After running process. Now waiting for the process to finish.");
@@ -94,6 +87,9 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				throw new ComponentExecutionException(e);
+			} catch (InvalidProcessTemplateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		
 	
