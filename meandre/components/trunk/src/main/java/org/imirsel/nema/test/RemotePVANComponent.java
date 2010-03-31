@@ -51,6 +51,14 @@ public class RemotePVANComponent extends RemoteProcessExecutorComponent {
 	public void execute(ComponentContext componentContext)
 			throws ComponentExecutionException, ComponentContextException {
 			
+		/*
+				FileList object = (FileList) component.getDataComponentFromInput("TEST");
+				ResourceLocator locator=this.getResourceLocator();
+				String fileName=locator.materialize(object);
+				String fname=locator.findByTrackId(id);
+		*/	
+				
+			
 				String inputFile[] = (String[])componentContext.getDataComponentFromInput(DATA_INPUT_1);
 				
 				ProcessArtifact pa = new ProcessArtifact(inputFile[0]+".pv.an","file");
@@ -67,7 +75,11 @@ public class RemotePVANComponent extends RemoteProcessExecutorComponent {
 				map.put("SNDANDIR","/share/apps/sndanweb/sndan");
 				pep.setEnvironmentVariables(map);
 				//pep.setCommandLineFlags(commandLineFlags);
-
+				
+				
+				
+				
+			
 		
 		
 		    try {
