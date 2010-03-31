@@ -25,4 +25,11 @@ public interface EvalFileType {
 	 * @return The file type name.
 	 */
 	public String getTypeName();
+	
+	/**
+	 * Returns the default file name extension that files of this type have.
+	 * Primarily used to create file names.
+	 * @return String extension, e.g. ".txt".
+	 */
+	public String getFilenameExtension();
 }
