@@ -9,11 +9,9 @@ import org.imirsel.nema.components.InvalidProcessTemplateException;
 import org.imirsel.nema.components.RemoteProcessExecutorComponent;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
-import org.imirsel.nema.model.ProcessTemplate;
 import org.imirsel.nema.monitor.process.NemaProcess;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
-import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -56,15 +54,13 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 				pep.setId(componentContext.getExecutionInstanceID());
 				pep.setOutputs(outputs);
 				pep.setInputs(null);
-				pep.setInputs(null);
-				pep.setOutputs(outputs);
 				//pep.setEnvironmentVariables(envorinmentVariables);
 				//pep.setCommandLineFlags(commandLineFlags);
-
+				
 		
 		
 		    try {
-		    	System.out.println("Running process now...");
+		    	System.out.println("Running process now: " + this.getProfileName());
 				@SuppressWarnings("unused")
 				final NemaProcess np=this.executeProcess(pep);
 				System.out.println("After running process. Now waiting for the process to finish.");
@@ -88,8 +84,8 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 				e.printStackTrace();
 				throw new ComponentExecutionException(e);
 			} catch (InvalidProcessTemplateException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				throw new ComponentExecutionException(e);
 			}
 		
 	
