@@ -74,16 +74,7 @@ import org.imirsel.nema.model.NemaTrackList;
 			"The results will ahve already been rendered to the output directory.", name="Evaluation results")
 	final static String DATA_OUTPUT_EVAL_RESULTS= "Evaluation results";
 
-		
-	private Map<String,String> systemIDToName = null;
-	
-	private NemaTask task = null;
-	private NemaDataset dataset = null;
-	private List<NemaData> gtList = null;
-	private Map<NemaTrackList,List<NemaData>> trainSets = null;
-	private Map<String,Map<NemaTrackList,List<NemaData>>> jobIdToTestSets = null;
-	
-	
+
 	
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
@@ -107,12 +98,12 @@ import org.imirsel.nema.model.NemaTrackList;
 	 */
 	@SuppressWarnings("unchecked")
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
-		task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
-		dataset = (NemaDataset)cc.getDataComponentFromInput(DATA_INPUT_DATASET);
-		gtList = (List<NemaData>)cc.getDataComponentFromInput(DATA_INPUT_GROUNDTRUTH_LIST);
-		trainSets = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TRAIN_SETS);
-		jobIdToTestSets = (Map<String,Map<NemaTrackList,List<NemaData>>>)cc.getDataComponentFromInput(DATA_INPUT_TEST_SETS_MAP);
-		systemIDToName =  (Map<String,String>)cc.getDataComponentFromInput(DATA_INPUT_SYSTEM_NAMES);
+		NemaTask task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
+		NemaDataset dataset = (NemaDataset)cc.getDataComponentFromInput(DATA_INPUT_DATASET);
+		List<NemaData> gtList = (List<NemaData>)cc.getDataComponentFromInput(DATA_INPUT_GROUNDTRUTH_LIST);
+		Map<NemaTrackList,List<NemaData>> trainSets = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TRAIN_SETS);
+		Map<String,Map<NemaTrackList,List<NemaData>>> jobIdToTestSets = (Map<String,Map<NemaTrackList,List<NemaData>>>)cc.getDataComponentFromInput(DATA_INPUT_TEST_SETS_MAP);
+		Map<String,String> systemIDToName =  (Map<String,String>)cc.getDataComponentFromInput(DATA_INPUT_SYSTEM_NAMES);
 		
 		//TODO: get the matlab path used by some evaluators from somewhere? Perhaps environment variable or props file until we can remove the need for it 
 		File matlabPath = new File("/usr/local/bin/matlab");
@@ -159,6 +150,9 @@ import org.imirsel.nema.model.NemaTrackList;
 		    this.getLogger().info("Initializing evaluation toolset for metadata type: " + task.getSubjectTrackMetadataName());
 	        Evaluator eval = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, rootEvaluationDir, procWorkingDir, trainSetList, testSetList, true, matlabPath);
 	        eval.addLogDestination(getLogDestination());
+	        
+	        //add the ground-truth
+	        eval.setGroundTruth(gtList);
 	        
 	        //add the result to the evaluator
 	        for (Iterator<String> jobIt = jobIdToTestSets.keySet().iterator(); jobIt.hasNext();){

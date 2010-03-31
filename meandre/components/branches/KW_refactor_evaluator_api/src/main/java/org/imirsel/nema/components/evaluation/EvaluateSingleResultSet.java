@@ -77,17 +77,7 @@ import org.imirsel.nema.model.NemaTrackList;
 			"The results will ahve already been rendered to the output directory.", name="Evaluation results")
 	final static String DATA_OUTPUT_EVAL_RESULTS= "Evaluation results";
 
-	
 	private String systemID = null;
-	
-	private String systemName = null;
-	//private String systemDesc = null;
-	private NemaTask task = null;
-	private NemaDataset dataset = null;
-	private List<NemaData> gtList = null;
-	private Map<NemaTrackList,List<NemaData>> trainSets = null;
-	private Map<NemaTrackList,List<NemaData>> testSets = null;
-	
 	
 	/** This method is invoked when the Meandre Flow is being prepared for 
 	 * getting run.
@@ -113,12 +103,12 @@ import org.imirsel.nema.model.NemaTrackList;
 	 */
 	@SuppressWarnings("unchecked")
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
-		task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
-		dataset = (NemaDataset)cc.getDataComponentFromInput(DATA_INPUT_DATASET);
-		gtList = (List<NemaData>)cc.getDataComponentFromInput(DATA_INPUT_GROUNDTRUTH_LIST);
-		trainSets = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TRAIN_SETS);
-		testSets = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TEST_SETS);
-		systemName =  (String)cc.getDataComponentFromInput(DATA_INPUT_SYSTEM_NAME);
+		NemaTask task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
+		NemaDataset dataset = (NemaDataset)cc.getDataComponentFromInput(DATA_INPUT_DATASET);
+		List<NemaData> gtList = (List<NemaData>)cc.getDataComponentFromInput(DATA_INPUT_GROUNDTRUTH_LIST);
+		Map<NemaTrackList,List<NemaData>> trainSets = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TRAIN_SETS);
+		Map<NemaTrackList,List<NemaData>> testSets = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TEST_SETS);
+		String systemName =  (String)cc.getDataComponentFromInput(DATA_INPUT_SYSTEM_NAME);
 		//systemDesc =  (String)cc.getDataComponentFromInput(DATA_INPUT_SYSTEM_DESC);
 		
 		//TODO: get the matlab path used by some evaluators from somewhere? Perhaps environment variable or props file until we can remove the need for it 
@@ -162,6 +152,9 @@ import org.imirsel.nema.model.NemaTrackList;
 		    this.getLogger().info("Initializing evaluation toolset for metadata type: " + task.getSubjectTrackMetadataName());
 	        Evaluator eval = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, rootEvaluationDir, procWorkingDir, trainSetList, testSetList, true, matlabPath);
 	        eval.addLogDestination(getLogDestination());
+	        
+	        //add the ground-truth
+	        eval.setGroundTruth(gtList);
 	        
 	        //add the result to the evaluator
 	        for (Iterator<NemaTrackList> iterator = testSetList.iterator(); iterator.hasNext();) {
