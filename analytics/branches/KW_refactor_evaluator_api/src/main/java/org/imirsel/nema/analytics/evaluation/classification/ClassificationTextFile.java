@@ -36,6 +36,11 @@ public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
 	public static final String TYPE_NAME = "Classification text file";
 	private String metadataType;
 	
+	public ClassificationTextFile() {
+		super(TYPE_NAME);
+		this.setMetadataType(NemaDataConstants.CLASSIFICATION_DUMMY);
+	}
+	
 	public ClassificationTextFile(String metadataType) {
 		super(TYPE_NAME);
 		this.setMetadataType(metadataType);
@@ -153,7 +158,7 @@ public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
         return dataRead;
     }
 
-	private void setMetadataType(String metadataType) {
+	public void setMetadataType(String metadataType) {
 		this.metadataType = metadataType;
 	}
 

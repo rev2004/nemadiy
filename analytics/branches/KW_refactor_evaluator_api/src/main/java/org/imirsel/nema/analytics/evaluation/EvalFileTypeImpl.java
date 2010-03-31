@@ -7,10 +7,11 @@ import java.util.logging.StreamHandler;
 
 import org.imirsel.nema.analytics.logging.AnalyticsLogFormatter;
 
-public class EvalFileTypeImpl {
+public abstract class EvalFileTypeImpl {
 
 	protected Logger _logger;
 	private String typeName;
+	private String filenameExtension = ".txt";
 	
 	public EvalFileTypeImpl(String typeName) {
 		this.typeName = typeName;
@@ -32,4 +33,11 @@ public class EvalFileTypeImpl {
 		return typeName;
 	}
 
+	public void setFilenameExtension(String filenameExtension) {
+		this.filenameExtension = filenameExtension;
+	}
+
+	public String getFilenameExtension() {
+		return filenameExtension;
+	}
 }
