@@ -1,10 +1,8 @@
 package org.imirsel.nema.components;
 
 
-import java.rmi.NotBoundException;
+import java.io.IOException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -14,6 +12,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
+
+import net.jini.core.discovery.LookupLocator;
+import net.jini.core.entry.Entry;
+import net.jini.core.lookup.ServiceRegistrar;
+import net.jini.core.lookup.ServiceTemplate;
+import net.jini.lookup.entry.Name;
 
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
@@ -35,52 +39,63 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 /**Extend the RemoteProcessExecutorComponent to call remote processes in your NEMA components.
  * 
  * @author kumaramit01
- * @since 0.2.0-SNAPSHOT
+ * @since 0.2.0
  */
 public abstract class RemoteProcessExecutorComponent implements ExecutableComponent {
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
-	@ComponentProperty(defaultValue = "nema.lis.uiuc.edu", description = "Executor Service Host", name = "host")
-	private static final String PROPERTY_2 = "host";
+	@ComponentProperty(defaultValue = "nema.lis.uiuc.edu", description = "Service Discovery Host", name = "host")
+	private static final String PROPERTY_1 = "host";
 	
-	@ComponentProperty(defaultValue = "2098", description = "Executor Service port", name = "port")
-	private static final String PROPERTY_3 = "port";
-	
-	
-	@ComponentProperty(defaultValue = "ExecutorService", description = "Executor Service Name", name = "serviceName")
-	private static final String PROPERTY_4 = "serviceName";
+
+	@ComponentProperty(defaultValue = "exampleRun", description = "Profile Name", name = "profileName")
+	private static final String PROPERTY_2 ="profileName";
 
 	private BlockingQueue<List<ProcessArtifact>> resultQueue = new LinkedBlockingQueue<List<ProcessArtifact>>();
 	private Queue<NemaProcess> processQueue = new ConcurrentLinkedQueue<NemaProcess>();
 	private CountDownLatch latch = new CountDownLatch(1);
 	private ProcessExecutorService  executorService;
 	private RemoteProcessMonitor processMonitor;
+	private String profileName = null;
 
 	
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
-		String host = ccp.getProperty(PROPERTY_2);
-		String _port = ccp.getProperty(PROPERTY_3);	
-		int port = Integer.parseInt(_port);
-		String serviceName = ccp.getProperty(PROPERTY_4);
-		
-		
-		Registry registry;
+		String host = ccp.getProperty(PROPERTY_1);
+		profileName = ccp.getProperty(PROPERTY_2);
+		LookupLocator locator=null;
 		try {
-			registry = LocateRegistry.getRegistry(host,port);
-			executorService = ( ProcessExecutorService) registry.lookup(serviceName);
-			System.out.println(executorService.getProcessTemplates());
-			//TODO: Make this the gzip output stream
-			RemoteOutputStream ros = new SimpleRemoteOutputStream(ccp.getOutputConsole());
-			RemoteProcessMonitor remoteProcessMonitor=new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue);
-			setProcessMonitor(remoteProcessMonitor);
-		} catch (RemoteException e) {
+			locator = new LookupLocator("jini://"+host);
+		} catch (IOException e) {
 			e.printStackTrace();
-			throw new ComponentExecutionException(e);
-		} catch (NotBoundException e) {
-			e.printStackTrace();
-			throw new ComponentExecutionException(e);
 		}
+		ServiceRegistrar registrar=null;
+		try {
+			registrar= locator.getRegistrar();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Name name = new Name(profileName);
+		Entry[] attrList = new Entry[]{name};
+		Class<ProcessExecutorService>[] classes = new Class[1]; 
+		classes[0] = ProcessExecutorService.class;
+		ServiceTemplate template = new ServiceTemplate(null,classes,attrList);
+	  
+	    RemoteOutputStream ros = new SimpleRemoteOutputStream(ccp.getOutputConsole());
+			RemoteProcessMonitor remoteProcessMonitor = null;
+			try {
+				executorService = ( ProcessExecutorService) registrar.lookup(template);
+				remoteProcessMonitor = new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue);
+				setProcessMonitor(remoteProcessMonitor);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		logger.info("ExecutorService found");
 	}
 
@@ -128,21 +143,14 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	/** Returns Process Template
 	 * 
 	 * @return process template @{link ProcessTemplate"
-	 * @throws ComponentExecutionException 
 	 * @throws RemoteException 
+	 * @throws InvalidProcessTemplateException
 	 */
-	public final ProcessTemplate getProcessTemplate(String profile) throws ComponentExecutionException, RemoteException{
-		List<ProcessTemplate> processTemplateList= executorService.getProcessTemplates();
-		ProcessTemplate processTemplate = null;
-		for(ProcessTemplate pt:processTemplateList){
-			if(pt.getId().equalsIgnoreCase(profile)){
-				processTemplate = pt;
-				break;
-			}
-		}
+	public final ProcessTemplate getProcessTemplate() throws  RemoteException, InvalidProcessTemplateException{
+		ProcessTemplate processTemplate= executorService.getProcessTemplate(profileName);
 		
 		if(processTemplate==null){
-			throw new ComponentExecutionException("Profile: " + profile + "  not found");
+			throw new InvalidProcessTemplateException("Profile: " + profileName + "  not found");
 		}
 		return processTemplate;
 	}
@@ -174,14 +182,18 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	 * @return NemaProcess -reference to remote process
 	 * @throws RemoteException
 	 * @throws InvalidProcessMonitorException
+	 * @throws ComponentExecutionException 
+	 * @throws InvalidProcessTemplateException 
 	 */
-	public final NemaProcess executeProcess(ProcessExecutionProperties processExecutionProperties) throws RemoteException, InvalidProcessMonitorException{
+	public final NemaProcess executeProcess(ProcessExecutionProperties processExecutionProperties) throws RemoteException, InvalidProcessMonitorException, ComponentExecutionException, InvalidProcessTemplateException{
 		if(this.getProcessMonitor()==null){
 			throw new InvalidProcessMonitorException("Process Monitor is NULL");
 		}
 		if(processExecutionProperties.getId()==null){
 			throw new IllegalArgumentException("ProcessExecutionProperties -id is not set");
 		}
+		ProcessTemplate pt=this.getProcessTemplate();
+		processExecutionProperties.setProcessTemplate(pt);
 		NemaProcess np = this.getExecutorService().executeProcess(processExecutionProperties, this.getProcessMonitor());	
 		return np;
 	}
@@ -229,6 +241,13 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	 */
 	public Logger getLogger(){
 		return this.logger;
+	}
+	
+	/**Returns the name of the profile
+	 * 
+	 */
+	public String getProfileName(){
+		return this.profileName;
 	}
 
 
