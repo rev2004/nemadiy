@@ -3,7 +3,6 @@ package org.imirsel.nema.components;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -40,7 +39,7 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 /**Extend the RemoteProcessExecutorComponent to call remote processes in your NEMA components.
  * 
  * @author kumaramit01
- * @since 0.2.0-SNAPSHOT
+ * @since 0.2.0
  */
 public abstract class RemoteProcessExecutorComponent implements ExecutableComponent {
 	private Logger logger = Logger.getLogger(this.getClass().getName());
@@ -62,7 +61,6 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
-		
 		String host = ccp.getProperty(PROPERTY_1);
 		profileName = ccp.getProperty(PROPERTY_2);
 		LookupLocator locator=null;
@@ -243,6 +241,13 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	 */
 	public Logger getLogger(){
 		return this.logger;
+	}
+	
+	/**Returns the name of the profile
+	 * 
+	 */
+	public String getProfileName(){
+		return this.profileName;
 	}
 
 
