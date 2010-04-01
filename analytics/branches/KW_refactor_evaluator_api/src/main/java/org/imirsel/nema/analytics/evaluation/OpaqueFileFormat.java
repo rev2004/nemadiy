@@ -28,11 +28,11 @@ import org.imirsel.nema.analytics.util.io.IOUtil;
  * @author kris.west@gmail.com
  * @since 0.1.0
  */
-public class RawAudioFile extends SingleTrackEvalFileTypeImpl {
+public class OpaqueFileFormat extends SingleTrackEvalFileTypeImpl {
 
-	public static final String TYPE_NAME = "Audio file on disk";
+	public static final String TYPE_NAME = "Opaque format file on disk";
 	
-	public RawAudioFile(File path) {
+	public OpaqueFileFormat(File path) {
 		super(TYPE_NAME);
 		String name = path.getName();
 		int extIdx = name.lastIndexOf('.');

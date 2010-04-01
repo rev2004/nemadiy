@@ -42,7 +42,7 @@ public class EvalFileUtil {
 	static {
 		//register known list file types for known metadata keys
 		{
-			List<Class<? extends EvalFileType>> rawAudioTypeList = new ArrayList<Class<? extends EvalFileType>>(1);
+			List<Class<? extends EvalFileType>> rawAudioTypeList = new ArrayList<Class<? extends EvalFileType>>(4);
 			rawAudioTypeList.add(RawAudioFile.class);
 			//these are tasks where individual audio files are used as input... i.e. there is no list file
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, rawAudioTypeList);
@@ -50,13 +50,18 @@ public class EvalFileUtil {
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, rawAudioTypeList);
 			
 				//classification tasks
-			List<Class<? extends EvalFileType>> trackListTypeList = new ArrayList<Class<? extends EvalFileType>>(1);
+			List<Class<? extends EvalFileType>> trackListTypeList = new ArrayList<Class<? extends EvalFileType>>(5);
 			trackListTypeList.add(TrackListTextFile.class);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, trackListTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ARTIST, trackListTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, trackListTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, trackListTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, trackListTypeList);
+			
+			//components that take opaque file formats (files we don't know how to read but can move around - e.g. model files)
+			List<Class<? extends EvalFileType>> opaqueTypeList = new ArrayList<Class<? extends EvalFileType>>(1);
+			opaqueTypeList.add(OpaqueFileFormat.class);
+			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.FILE_DATA, opaqueTypeList);
 		}
 		
 		//register known GT and prediction file types for known metadata keys
@@ -76,13 +81,18 @@ public class EvalFileUtil {
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, gtTypeList);
 			
 				//classification tasks
-			gtTypeList = new ArrayList<Class<? extends EvalFileType>>(1);
+			gtTypeList = new ArrayList<Class<? extends EvalFileType>>(5);
 			gtTypeList.add(ClassificationTextFile.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, gtTypeList);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ARTIST, gtTypeList);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, gtTypeList);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, gtTypeList);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, gtTypeList);
+			
+			//components that produce opaque file formats (files we don't know how to read but can move around - e.g. model files)
+			List<Class<? extends EvalFileType>> opaqueTypeList = new ArrayList<Class<? extends EvalFileType>>(1);
+			opaqueTypeList.add(OpaqueFileFormat.class);
+			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.FILE_DATA, opaqueTypeList);
 		}
 	}
 	
