@@ -3,6 +3,7 @@ package org.imirsel.nema.analytics.evaluation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,10 @@ import org.imirsel.nema.model.NemaTrackList;
  * file format (to be written to a specified folder and File handle returned) or
  * to read a specified File and return NemaData Objects representing the 
  * contents.
+ * 
+ * These facilities are to be used to prepare data for use in the execution of 
+ * external binary processes and to harvest the output from the same, whilst
+ * preserving as much information as possible.
  * 
  * @author kris.west@gmail.com
  * @since 0.1.0
@@ -105,14 +110,224 @@ public class EvalFileUtil {
 		return GT_AND_PREDICTION_FILE_TYPE_REGISTRY.get(metadataKey);
 	}
 	
-//	public static List<File> prepareExperimentRun(){
-//		
-//	}
-//	
-//	
-//	public static Map<NemaTrackList,List<NemaData>> processResultsOfExperimentRun(){
-//		
-//	}
+	/**
+	 * Given a task file format, output directory path, file type and a Map of 
+	 * NemaTrackList to a List of NemaData Objects encoding the data relating
+	 * to each fold of an experiment this method will prepare files necessary
+	 * to encode the input data and return a List of File Objects to required 
+	 * to perform each fold of the execution of an external process that works 
+	 * with the specified file type.
+	 * 
+	 * Note: NemaData Objects must have been resolved to audio files prior to
+	 * executing this method on them. This can be done using a
+	 * <code>org.imirsel.nema.repository.RepositoryClientImpl</code> instance
+	 * (from the nema-repository project) and the 
+	 * <code>resolveTracksToFiles(List<NemaData> trackDataList, Set<NemaMetadataEntry> constraint)</code>
+	 * method.
+	 * 
+	 * @param outputDirectory Path to write any files created to.
+	 * @param task The NemaTask to be performed on the data.
+	 * @param executionData Map of NemaTrackList to a List of NemaData Objects
+	 * encoding the data to be worked on.
+	 * @param fileType The file type to be used to prepare the data. Note that 
+	 * the RawAudioFile type will cause the list of audio files to be written
+	 * @return Map of NemaTrackList to a list of File Objects representing the 
+	 * files to be used as inputs to the process.
+	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
+	 * EvalFileType is received.
+	 * @throws InstantiationException Thrown if the file writer can't be 
+	 * instantiated (for example if there is no zero-arg constructor).
+	 * @throws IllegalAccessException Thrown if we do not have access to the 
+	 * definition of the specified file type class.
+	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
+	 * found or created.
+	 * @throws IOException Thrown if there is a problem writing the files to
+	 * disk.
+	 */
+	public static Map<NemaTrackList,List<File>> prepareProcessInput(
+			File outputDirectory, 
+			NemaTask task,
+			Map<NemaTrackList,List<NemaData>> executionData, 
+			Class<? extends EvalFileType> fileType
+			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
+		
+		Map<NemaTrackList,List<File>> out = null;
+		if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+			if(fileType.equals(RawAudioFile.class)) {
+				//use raw audio files
+				out = getResourceFilesList(executionData,task,outputDirectory);
+				return out;
+			}else {
+				//write directory of metadata files - ignore isTrainingRun flag 
+				  //as there is nothing else we can other than write the 
+				  //specified file (e.g. QBT writes out timestamps of users 
+				  //tap times which are used as queries - this may eventually 
+				  //happen in other tasks)
+				out = new HashMap<NemaTrackList,List<File>>(executionData.size());
+				for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator
+						.hasNext();) {
+					NemaTrackList testSet = iterator.next();
+					File dir = writeGroundTruthDataFileOrDirectory(testSet,executionData.get(testSet),task, fileType, outputDirectory);
+					List<File> files = Arrays.asList(dir.listFiles());
+					out.put(testSet, files);
+				}
+			}
+		}else if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+			out = new HashMap<NemaTrackList,List<File>>(executionData.size());
+			for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator
+			.hasNext();) {
+				NemaTrackList testSet = iterator.next();
+				File file = writeGroundTruthDataFileOrDirectory(testSet,executionData.get(testSet),task, fileType, outputDirectory);
+				List<File> list = new ArrayList<File>(1);
+				list.add(file);
+				out.put(testSet, list);
+			}
+		}
+		return out;
+	}
+	
+	/**
+	 * Based on a set of inputs that will be used to execute a process, a chosen
+	 * output file format, an output directory and a file name extension to use,
+	 * this method constructs output file names to use to execute the process.
+	 * 
+	 * The data-structure returned is the same as that used by the 
+	 * <code>readProcessOutput</code> method and hence after being used to 
+	 * execute the process, this structure maybe used to read the data files
+	 * produced back in.
+	 * 
+	 * @param executionData The inputs that will be sent to the process (e.g.
+	 * audio files to process, IDs of the test sets etc.).
+	 * @param fileType The file type to use to read the files or directories.
+	 * @param outputFileExt The extension to append to filenames created.
+	 * @param outputDirectory The directory to create the output files in.
+	 * @return Map of NemaTrackList to a list of File Objects representing the 
+	 * files to be created.
+	 */
+	public static Map<NemaTrackList,List<File>> createOutputFileNames(
+			Map<NemaTrackList,List<NemaData>> executionData, 
+			Class<? extends EvalFileType> fileType,
+			String outputFileExt,
+			File outputDirectory
+			) {
+		
+		Map<NemaTrackList,List<File>> out = new HashMap<NemaTrackList,List<File>>(executionData.size());
+		
+		for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator
+		.hasNext();) {
+			NemaTrackList testSet = iterator.next();
+			List<NemaData> data = executionData.get(testSet);
+			List<File> list = null;
+			
+			if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+				//create directory of metadata or new raw audio files
+				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
+				foldDir.mkdirs();
+				
+				list = new ArrayList<File>(data.size());
+				for (Iterator<NemaData> nemaDataIt = data.iterator(); nemaDataIt
+						.hasNext();) {
+					File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
+					String name = fileLoc.getName();
+					File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileExt);
+					list.add(newPath);
+				}
+			}else if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+				//create one output file per fold
+				list = new ArrayList<File>(1);
+				File newPath = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + outputFileExt);
+				list.add(newPath);
+			}
+			
+			out.put(testSet, list);
+		}
+		
+		return out;
+	}
+
+	/**
+	 * Reads the files output by a process using the specified file type. The
+	 * first parameter is a Map of NemaTrackList (each representing
+	 * a fold of the experiment) to a list of File Objects representing files on
+	 * disk in the specified file format, which encode data about a track or 
+	 * tracks (according to the file type). This is the same data-structure as 
+	 * that returned by the <code>createOutputFileNames</code> method and hence
+	 * this may be passed unmodified to read back in the data after a process 
+	 * has been run to generate data files at the specified paths.
+	 * 
+	 * @param filesOrDirectoriesToRead Map of NemaTrackList to a list of File 
+	 * Objects representing the files to be read in.
+	 * @param task The task that the data relates (only required for 
+	 * classification file types).
+	 * @param fileType The file type to use to read the files or directories.
+	 * @return A Map of NemaTrackList to a List of NemaData Objects encoding the 
+	 * data read from each file or directory.
+	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
+	 * EvalFileType is received.
+	 * @throws InstantiationException Thrown if the file reader can't be 
+	 * instantiated (for example if there is no zero-arg constructor).
+	 * @throws IllegalAccessException Thrown if we do not have access to the 
+	 * definition of the specified file type class.
+	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
+	 * found.
+	 * @throws IOException Thrown if there is a problem reading a file.
+	 */
+	public static Map<NemaTrackList,List<NemaData>> readProcessOutput(Map<NemaTrackList,List<File>> filesOrDirectoriesToRead, NemaTask task, Class<? extends EvalFileType> fileType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, FileNotFoundException, IOException{
+		Map<NemaTrackList,List<NemaData>> out = new HashMap<NemaTrackList,List<NemaData>>(filesOrDirectoriesToRead.size());
+		for (Iterator<NemaTrackList> iterator = filesOrDirectoriesToRead.keySet().iterator(); iterator.hasNext();) {
+			NemaTrackList testSet = iterator.next();
+			List<File> files = filesOrDirectoriesToRead.get(testSet);
+			//read all files relevant to the fold and merge into single list for fold
+			List<NemaData> dataRead = new ArrayList<NemaData>();
+			for (Iterator<File> fileIt = files.iterator(); fileIt.hasNext();) {
+				File file = fileIt.next();
+				List<NemaData> data = readData(file, task, fileType);
+				dataRead.addAll(data);
+			}
+			out.put(testSet, dataRead);
+		}
+		return out;
+	}
+	
+	/**
+	 * Reads data from either a file (for file formats that encode data about
+	 * multiple files) or a directory (for file formats that encode data about
+	 * a single track per file).
+	 * 
+	 * @param fileOrDirectoryToRead The file or directory to read.
+	 * @param task The task that the data relates (only required for 
+	 * classification evaluators).
+	 * @param fileType The file type to use to read the file or directory.
+	 * @return A List of NemaData Objects encoding the data read.
+	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
+	 * EvalFileType is received.
+	 * @throws InstantiationException Thrown if the file reader can't be 
+	 * instantiated (for example if there is no zero-arg constructor).
+	 * @throws IllegalAccessException Thrown if we do not have access to the 
+	 * definition of the specified file type class.
+	 * @throws FileNotFoundException Thrown if the file or directory cannot be 
+	 * found.
+	 * @throws IOException Thrown if there is a problem reading the file.
+	 */
+	public static List<NemaData> readData(
+			File fileOrDirectoryToRead, 
+			NemaTask task, 
+			Class<? extends EvalFileType> fileType
+			) throws IllegalArgumentException, InstantiationException, IllegalAccessException, FileNotFoundException, IOException{
+		if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+			SingleTrackEvalFileType typeInstance = (SingleTrackEvalFileType)fileType.newInstance();
+			return typeInstance.readDirectory(fileOrDirectoryToRead, null);
+		}else if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+			MultipleTrackEvalFileType typeInstance = (MultipleTrackEvalFileType)fileType.newInstance();
+			//set type for classification evaluator
+			if (ClassificationTextFile.class.equals(fileType)) {
+				((ClassificationTextFile)typeInstance).setMetadataType(task.getSubjectTrackMetadataName());
+			}
+			return typeInstance.readFile(fileOrDirectoryToRead);
+		}else {
+			throw new IllegalArgumentException("Unrecognized file type: " + fileType.getName());
+		}
+	}
 	
 	/**
 	 * Writes the list of ground-truth NemaData Objects to either a single file or 
@@ -143,8 +358,16 @@ public class EvalFileUtil {
 	 * definition of the specified file type class.
 	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
 	 * found or created.
+	 * @throws IOException Thrown if there is a problem writing the files to
+	 * disk.
 	 */
-	public static File writeGroundTruthDataFileOrDirectory(NemaTrackList fold, List<NemaData> data, NemaTask task, Class<? extends EvalFileType> fileType, File outputDirectory) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
+	public static File writeGroundTruthDataFileOrDirectory(
+			NemaTrackList fold, 
+			List<NemaData> data, 
+			NemaTask task, 
+			Class<? extends EvalFileType> fileType, 
+			File outputDirectory
+			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
 		//mint a file or directory path
 		File outputLocation = new File(outputDirectory.getAbsolutePath() + File.separator + "train-set-" + fold.getId());
 		if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
@@ -200,7 +423,11 @@ public class EvalFileUtil {
 	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
 	 * found or created.
 	 */
-	public static Map<NemaTrackList,List<File>> getResourceFilesList(Map<NemaTrackList,List<NemaData>> testData, NemaTask task, File outputDirectory) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
+	public static Map<NemaTrackList,List<File>> getResourceFilesList(
+			Map<NemaTrackList,List<NemaData>> testData, 
+			NemaTask task, 
+			File outputDirectory
+			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
 		Map<NemaTrackList,List<File>> out = new HashMap<NemaTrackList,List<File>>();
 		
 		for (Iterator<NemaTrackList> iterator = testData.keySet().iterator(); iterator.hasNext();) {
@@ -237,8 +464,15 @@ public class EvalFileUtil {
 	 * definition of the specified file type class.
 	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
 	 * found or created.
+	 * @throws IOException Thrown if there is a problem writing the files to
+	 * disk.
 	 */
-	public static Map<NemaTrackList,File> writeTestListFiles(Map<NemaTrackList,List<NemaData>> testData, NemaTask task, Class<? extends MultipleTrackEvalFileType> fileType, File outputDirectory) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
+	public static Map<NemaTrackList,File> writeTestListFiles(
+			Map<NemaTrackList,List<NemaData>> testData, 
+			NemaTask task, 
+			Class<? extends MultipleTrackEvalFileType> fileType, 
+			File outputDirectory
+			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
 		Map<NemaTrackList,File> out = new HashMap<NemaTrackList,File>();
 		
 		for (Iterator<NemaTrackList> iterator = testData.keySet().iterator(); iterator.hasNext();) {
@@ -268,8 +502,16 @@ public class EvalFileUtil {
 	 * definition of the specified file type class.
 	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
 	 * found or created.
+	 * @throws IOException Thrown if there is a problem writing the files to
+	 * disk.
 	 */
-	public static File writeTestListFile(NemaTrackList testSet, List<NemaData> testData, NemaTask task, Class<? extends MultipleTrackEvalFileType> fileType, File outputDirectory) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
+	public static File writeTestListFile(
+			NemaTrackList testSet, 
+			List<NemaData> testData, 
+			NemaTask task, 
+			Class<? extends MultipleTrackEvalFileType> fileType, 
+			File outputDirectory
+			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
 		if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType)) {
 			MultipleTrackEvalFileType typeInstance = (MultipleTrackEvalFileType)fileType.newInstance();
 			//set type for classification evaluator
@@ -287,72 +529,6 @@ public class EvalFileUtil {
 		
 	}
 
-	/**
-	 * 
-	 * @param filesOrDirectoriesToRead Map of NemaTrackList (each representing
-	 * a fold of the experiment) to a File Object representing a File or 
-	 * directory (as appropriate to the file type) encoding the data to read.
-	 * @param task The task that the data relates (only required for 
-	 * classification file types).
-	 * @param fileType The file type to use to read the files or directories.
-	 * @return A Map of NemaTrackList to a List of NemaData Objects encoding the 
-	 * data read from each file or directory.
-	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * EvalFileType is received.
-	 * @throws InstantiationException Thrown if the file reader can't be 
-	 * instantiated (for example if there is no zero-arg constructor).
-	 * @throws IllegalAccessException Thrown if we do not have access to the 
-	 * definition of the specified file type class.
-	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
-	 * found.
-	 * @throws IOException Thrown if there is a problem reading a file.
-	 */
-	public static Map<NemaTrackList,List<NemaData>> readData(Map<NemaTrackList,File> filesOrDirectoriesToRead, NemaTask task, Class<? extends EvalFileType> fileType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, FileNotFoundException, IOException{
-		Map<NemaTrackList,List<NemaData>> out = new HashMap<NemaTrackList,List<NemaData>>(filesOrDirectoriesToRead.size());
-		for (Iterator<NemaTrackList> iterator = filesOrDirectoriesToRead.keySet().iterator(); iterator.hasNext();) {
-			NemaTrackList testSet = iterator.next();
-			File toRead = filesOrDirectoriesToRead.get(testSet);
-			List<NemaData> data = readData(toRead, task, fileType);
-			out.put(testSet, data);
-		}
-		return out;
-	}
-	
-	/**
-	 * Reads data from either a file (for file formats that encode data about
-	 * multiple files) or a directory (for file formats that encode data about
-	 * a single track per file).
-	 * 
-	 * @param fileOrDirectoryToRead The file or directory to read.
-	 * @param task The task that the data relates (only required for 
-	 * classification evaluators).
-	 * @param fileType The file type to use to read the file or directory.
-	 * @return A List of NemaData Objects encoding the data read.
-	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * EvalFileType is received.
-	 * @throws InstantiationException Thrown if the file reader can't be 
-	 * instantiated (for example if there is no zero-arg constructor).
-	 * @throws IllegalAccessException Thrown if we do not have access to the 
-	 * definition of the specified file type class.
-	 * @throws FileNotFoundException Thrown if the file or directory cannot be 
-	 * found.
-	 * @throws IOException Thrown if there is a problem reading the file.
-	 */
-	public static List<NemaData> readData(File fileOrDirectoryToRead, NemaTask task, Class<? extends EvalFileType> fileType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, FileNotFoundException, IOException{
-		if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
-			SingleTrackEvalFileType typeInstance = (SingleTrackEvalFileType)fileType.newInstance();
-			return typeInstance.readDirectory(fileOrDirectoryToRead, null);
-		}else if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType)) {
-			MultipleTrackEvalFileType typeInstance = (MultipleTrackEvalFileType)fileType.newInstance();
-			//set type for classification evaluator
-			if (ClassificationTextFile.class.equals(fileType)) {
-				((ClassificationTextFile)typeInstance).setMetadataType(task.getSubjectTrackMetadataName());
-			}
-			return typeInstance.readFile(fileOrDirectoryToRead);
-		}else {
-			throw new IllegalArgumentException("Unrecognized file type: " + fileType.getName());
-		}
-	}
 		
 	
 	
