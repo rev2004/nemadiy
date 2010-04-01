@@ -15,7 +15,9 @@ import org.imirsel.nema.components.InvalidProcessMonitorException;
 import org.imirsel.nema.components.InvalidProcessTemplateException;
 import org.imirsel.nema.components.RemoteProcessExecutorComponent;
 import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
@@ -81,20 +83,25 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			Map<NemaTrackList,List<NemaData>> dataToProcess = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_DATA);
 		
 		
-			//resolve track IDs to paths on disk as viewed on the remote machine 
+			//TODO resolve track IDs to paths on disk as viewed on the remote machine 
 			  //and set as NemaDataConstants.PROP_FILE_LOCATION metadata on each NemaData Object
+			  //code not compilable as calls are faked
 			//TODO get any audio encoding constraints set in the ProcessTemplate (e.g. mono 22khz wav) and use them in the resolution to file paths.
 			  //See org.imirsel.nema.repository.RepositoryClientImpl.resolveTracksToFiles(List<NemaData> trackDataList, Set<NemaMetadataEntry> constraint) for current approach
+			Set<NemaMetadataEntry> encodingConstraint = null;
 			
-			/*
-				FileList object = (FileList) component.getDataComponentFromInput("TEST");
-				ResourceLocator locator=this.getResourceLocator();
-				String fileName=locator.materialize(object);
-				String fname=locator.findByTrackId(id);
-			 */	
+			//implementation dealing with file at a time - See org.imirsel.nema.repository.RepositoryClientImpl.resolveTracksToFiles for a version that does only one query but uses a chunk of mem to do this quickly
+			ResourceLocator locator = this.getResourceLocator();
+			for (Iterator<NemaTrackList> setIt = dataToProcess.keySet().iterator(); setIt.hasNext();) {
+				NemaTrackList testSet = setIt.next();
+				List<NemaData> data = dataToProcess.get(testSet);
+				for (Iterator<NemaData> iterator = data.iterator(); iterator.hasNext();) {
+					NemaData nemaData = iterator.next();
+					String remoteFilePath = locator.findByTrackId(nemaData.getId(),encodingConstraint);
+					nemaData.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, remoteFilePath);
+				}
+			}
 			
-			
-		
 			//perform conversion of input data into required formats
 			//TODO get real input file type from somewhere - prob ProccessTemplate
 			Class<? extends EvalFileType> fileType = null;
