@@ -4,7 +4,7 @@
 	<groupId>org.imirsel</groupId>
 	<artifactId>nema-analytics</artifactId>
 	<name>Nema Analytics</name>
-	<version>KW_IO_to_use_models</version>
+	<version>kw-io-model-0.1.0-SNAPSHOT</version>
 	<description>NEMA Analytic code library</description>
 	<scm>
 		<connection>scm:svn:https://nemadiy.googlecode.com/analytics/trunk</connection>
