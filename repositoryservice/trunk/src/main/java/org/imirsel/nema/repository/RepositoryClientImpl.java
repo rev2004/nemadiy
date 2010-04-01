@@ -624,6 +624,35 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return out;
     }
 
+    public List<NemaData> resolveTracksToFiles(List<NemaData> trackDataList, Set<NemaMetadataEntry> constraint) throws SQLException, IllegalArgumentException{
+    	logger.info("Resolving files for " + trackDataList.size() + " tracks");
+        Map<String,NemaData> trackMap = new HashMap<String,NemaData>(trackDataList.size());
+        NemaData tmp;
+        for (Iterator<NemaData> it = trackDataList.iterator(); it.hasNext();) {
+			tmp = it.next();
+        	trackMap.put(tmp.getId(),tmp);
+		}
+        int setSize = trackMap.size();
+        logger.info("tracks in set: " + setSize);
+        List<Map<String, String>> data = getFileData(constraint);
+        logger.info("Query returned data on " + data.size() + " files, filtering");
+        Map<String, String> map;
+        String trackID;
+        int done = 0;
+        for (Iterator<Map<String, String>> it = data.iterator(); it.hasNext() && done < setSize;){
+            map = it.next();
+            trackID = map.get("track_id");
+            tmp = trackMap.get(trackID);
+            if(tmp != null){
+            	tmp.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, map.get("path"));
+                done++;
+            }
+        }
+
+        logger.info("mapped " + done + " / " + setSize + " files to tracks");
+
+        return trackDataList;
+    }
 
 
     public List<List<NemaMetadataEntry>> getCollectionVersions(NemaCollection collection)
