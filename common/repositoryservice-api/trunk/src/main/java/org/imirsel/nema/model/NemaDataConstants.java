@@ -6,22 +6,26 @@ public class NemaDataConstants {
     /** Constant definition for metadata key: column label     */
     public final static String PROP_COLUMN_LABELS = "columnLabels";
     /** Constant definition for metadata key: file location     */
-    public final static String PROP_ID  = "fileLocation";
-    /** Constant definition for metadata key: directory name     */
-    public final static String PROP_DIRECTORY_NAME  = "dirName";
+    public final static String PROP_ID  = "id";
+    /** Constant definition for metadata key: file location     */
+    public final static String PROP_FILE_LOCATION  = "file location";
+    
+    /** Constant definition for metadata key: Raw audio file data. */
+    public static final String AUDIO_FILE_DATA = "Raw audio file data";
+    
 
-    /** Constant definition for performance metadata.     */
-    public final static String PROP_PERF = "Performance";
-    /** Constant definition for algorithm name (used as an identifier in evaluations).     */
-    public final static String PROP_ALG_NAME = "Algorithm name";
-    /** Constant definition for      */
-    public final static String PATH_TO_ARTIST_MAP = "Path to artist map";
-    
-    
-    //Evaluation results constants
-    /** Constant definition for metadata key: Evaluation report*/
-    public static final String SYSTEM_RESULTS_REPORT = "Single system rsult evaluation report";
-    
+//    /** Constant definition for performance metadata.     */
+//    public final static String PROP_PERF = "Performance";
+//    /** Constant definition for algorithm name (used as an identifier in evaluations).     */
+//    public final static String PROP_ALG_NAME = "Algorithm name";
+//    /** Constant definition for      */
+//    public final static String PATH_TO_ARTIST_MAP = "Path to artist map";
+//    
+//    
+//    //Evaluation results constants
+//    /** Constant definition for metadata key: Evaluation report*/
+//    public static final String SYSTEM_RESULTS_REPORT = "Single system rsult evaluation report";
+//    
     
     //File format constants
     /** Constant definition for section divider used in ASCII file     */
@@ -29,7 +33,7 @@ public class NemaDataConstants {
     /** Constant definition for SEPARATOR used in ASCII file     */
     public final static String SEPARATOR = "\t";
     /** Constant definition for header used in ASCII file     */
-    public final static String fileHeader = "M2K NemaData (8th Feb 2010)";
+    public final static String fileHeader = "nema-analytics NemaData (8th Feb 2010)";
     
     //Test/Train classification evaluator constants
     public final static String CLASSIFICATION_EXPERIMENT_CLASSNAMES = "Classification Experiment Classnames";
@@ -41,6 +45,18 @@ public class NemaDataConstants {
     public final static String CLASSIFICATION_DISCOUNTED_ACCURACY = "Classification Discounted Accuracy";
     public final static String CLASSIFICATION_NORMALISED_ACCURACY = "Normalised Classification Accuracy";
     public final static String CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY = "Normalised Classification Discounted Accuracy";
+    
+    //classification types
+    public final static String CLASSIFICATION_DUMMY = "Classification";
+    public final static String CLASSIFICATION_ALBUM = "Album";
+    public final static String CLASSIFICATION_ARTIST = "Artist";
+    public final static String CLASSIFICATION_COMPOSER = "Composer";
+    public final static String CLASSIFICATION_GENRE = "Genre";
+    public final static String CLASSIFICATION_TITLE = "Title";
+    public final static String CLASSIFICATION_MOOD = "Mood";
+    
+    
+    
     
     
     //Tag classification evaluator constants
