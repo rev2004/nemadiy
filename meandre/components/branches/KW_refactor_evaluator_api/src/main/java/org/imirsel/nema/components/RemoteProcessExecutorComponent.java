@@ -41,13 +41,12 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
  * @author kumaramit01
  * @since 0.2.0
  */
-public abstract class RemoteProcessExecutorComponent implements ExecutableComponent {
-	private Logger logger = Logger.getLogger(this.getClass().getName());
+public abstract class RemoteProcessExecutorComponent extends NemaComponent {
+	//private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@ComponentProperty(defaultValue = "nema.lis.uiuc.edu", description = "Service Discovery Host", name = "host")
 	private static final String PROPERTY_1 = "host";
 	
-
 	@ComponentProperty(defaultValue = "exampleRun", description = "Profile Name", name = "profileName")
 	private static final String PROPERTY_2 ="profileName";
 
@@ -61,6 +60,7 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
+		super.initialize(ccp);
 		String host = ccp.getProperty(PROPERTY_1);
 		profileName = ccp.getProperty(PROPERTY_2);
 		LookupLocator locator=null;
@@ -96,7 +96,7 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 				e.printStackTrace();
 			}
 			
-		logger.info("ExecutorService found");
+		getLogger().info("ExecutorService found");
 	}
 
 
@@ -112,8 +112,9 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	public void dispose(ComponentContextProperties ccp)
 			throws ComponentContextException {
 		// abort all the processes that are still running -we are disposing the flow.
-		logger.info("Aborting all the running processes.");
+		getLogger().info("Aborting all the running processes.");
 		abortAllProcesses();
+		super.dispose(ccp);
 	}
 
 	
@@ -208,9 +209,9 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 		if(process == null){
 			throw new IllegalArgumentException("Invalid process");
 		}
-		logger.info("Aborting: " + process.getId());
+		getLogger().info("Aborting: " + process.getId());
 		boolean success=this.getExecutorService().abort(process);
-		logger.info("Abort success: " + success);
+		getLogger().info("Abort success: " + success);
 		return success;
 	}
 	
@@ -224,7 +225,7 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 		while(np.hasNext()){
 			NemaProcess process = np.next();
 			if(np!=null){
-				logger.severe("Aborting: " + process.getId());
+				getLogger().severe("Aborting: " + process.getId());
 				try{
 					abortProcess(process);
 				}catch(Exception ex){
@@ -233,14 +234,6 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 			}
 		}
 		
-	}
-	
-	/**Returns the Logger
-	 * 
-	 * @return Logger
-	 */
-	public Logger getLogger(){
-		return this.logger;
 	}
 	
 	/**Returns the name of the profile
