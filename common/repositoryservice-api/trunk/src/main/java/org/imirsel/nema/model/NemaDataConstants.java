@@ -11,7 +11,7 @@ public class NemaDataConstants {
     public final static String PROP_FILE_LOCATION  = "file location";
     
     /** Constant definition for metadata key: Raw audio file data. */
-    public static final String AUDIO_FILE_DATA = "Raw audio file data";
+    public static final String FILE_DATA = "Raw file byte data";
     
 
 //    /** Constant definition for performance metadata.     */
