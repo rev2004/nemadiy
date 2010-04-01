@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.imirsel.nema.model.NemaCollection;
+import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
@@ -390,6 +391,22 @@ public interface RepositoryClientInterface {
      */
     public List<NemaFile> getFilesByID(List<String> trackIDList, Set<NemaMetadataEntry> constraint) throws SQLException;
 
+    /**
+     * Uses a file encoding constraint set to resolve and add file paths to the
+     * resources whose IDs are given in the input List of NemaData Objects. The
+     * input list is modified and returned.
+     * 
+     * @param trackDataList
+     * @param constraint
+     * @return the updated list of NemaData Objects.
+     * @throws SQLException Thrown if a problem occurs when querying the 
+     * database.
+     * @throws IllegalArgumentException Thrown if the IDs cannot be resolved to 
+     * files using the supplied constraint.
+     */
+    public List<NemaData> resolveTracksToFiles(List<NemaData> trackDataList, Set<NemaMetadataEntry> constraint) throws SQLException, IllegalArgumentException;
+    
+    
     /**
      * Logs a result directory path or identifier and system name against a 
      * specific dataset to facilitate group evaluation and comparison of all
