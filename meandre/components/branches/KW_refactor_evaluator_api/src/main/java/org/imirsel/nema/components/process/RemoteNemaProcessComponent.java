@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.imirsel.nema.analytics.evaluation.EvalFileType;
 import org.imirsel.nema.analytics.evaluation.EvalFileUtil;
@@ -15,6 +16,7 @@ import org.imirsel.nema.components.InvalidProcessTemplateException;
 import org.imirsel.nema.components.RemoteProcessExecutorComponent;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.ProcessArtifact;
@@ -82,6 +84,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			//resolve track IDs to paths on disk as viewed on the remote machine 
 			  //and set as NemaDataConstants.PROP_FILE_LOCATION metadata on each NemaData Object
 			//TODO get any audio encoding constraints set in the ProcessTemplate (e.g. mono 22khz wav) and use them in the resolution to file paths.
+			  //See org.imirsel.nema.repository.RepositoryClientImpl.resolveTracksToFiles(List<NemaData> trackDataList, Set<NemaMetadataEntry> constraint) for current approach
 			
 			/*
 				FileList object = (FileList) component.getDataComponentFromInput("TEST");
@@ -89,9 +92,11 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 				String fileName=locator.materialize(object);
 				String fname=locator.findByTrackId(id);
 			 */	
+			
+			
 		
 			//perform conversion of input data into required formats
-			//TODO get real input file type from somewhere
+			//TODO get real input file type from somewhere - prob ProccessTemplate
 			Class<? extends EvalFileType> fileType = null;
 			inputFiles = EvalFileUtil.prepareProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, dataToProcess, fileType);
 			
@@ -113,7 +118,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 				List<File> inputsForFold = inputFiles.get(testSet);
 				List<File> outputsForFold = outputFiles.get(testSet);
 				
-				//Fudged code here as I want to send multiple inputs to cause multiple runs where there is more than one file for the fold
+				//TODO Fudged API here as I want to send multiple inputs to cause multiple runs where there is more than one file for the fold
 				ProcessArtifact paInputs = new ProcessArtifact(outputsForFold,"List<File>");
 				List<ProcessArtifact> inputs = new ArrayList<ProcessArtifact>();
 				inputs.add(paInputs);
@@ -127,12 +132,12 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 				pep.setOutputs(outputs);
 				pep.setInputs(inputs);
 				
-				//do I need this? Should prob be in/come from ProcessTemplate with some rewriting logic to be corect on each machine
+				//TODO do I need this? Should prob be in/come from ProcessTemplate with some rewriting logic to be corect on each machine
 //				Map<String,String> map = new HashMap<String,String>();
 //				map.put("SNDANDIR","/share/apps/sndanweb/sndan");
 //				pep.setEnvironmentVariables(map);
 				
-				//wanna move this into process template
+				//TODO wanna move this into process template
 				//pep.setCommandLineFlags(commandLineFlags);
 				
 				getLogger().info("Executing process...");
@@ -141,7 +146,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 				getLogger().info("Executed process. Waiting for the process to end...");
 				this.waitForProcess();
 				
-				//do we need this if we already know the paths we are expecting the results to get copied over to?
+				//TODO do we need this if we already know the paths we are expecting the results to get copied over to?
 				//List<ProcessArtifact> list = this.getResult();
 			}
 			
@@ -155,7 +160,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			getLogger().info("Process ended. Processing results...");
 			
 			//read and interpret results from all folds
-			//TODO get real output file type from somewhere
+			//TODO get real output file type from somewhere - prob ProcessTemplate
 			Class<? extends EvalFileType> outputFileType = null;
 			Map<NemaTrackList,List<NemaData>> outputData = EvalFileUtil.readProcessOutput(outputFiles, task, outputFileType);
 			
