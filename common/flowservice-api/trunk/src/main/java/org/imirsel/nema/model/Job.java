@@ -338,26 +338,14 @@ public class Job implements Serializable, Cloneable {
 	
 	@Override
 	public Job clone() {
-		Job clone = new Job();
-		clone.setId(this.getId());
-		clone.setName(this.getName());
-		clone.setDescription(this.getDescription());
-		clone.setSubmitTimestamp(this.getSubmitTimestamp());
-		clone.setStartTimestamp(this.getStartTimestamp());
-		clone.setEndTimestamp(this.getEndTimestamp());
-		clone.setUpdateTimestamp(this.getUpdateTimestamp());
-		clone.setHost(this.getHost());
-		clone.setPort(this.getPort());
-		clone.setFlow(this.getFlow());
-        clone.setExecPort(this.getExecPort());
-        clone.setExecutionInstanceId(this.getExecutionInstanceId());
-        clone.setStatusCode(this.getStatusCode());
-        clone.setNumTries(this.getNumTries());
-        clone.setOwnerEmail(this.getOwnerEmail());
-        clone.setOwnerId(this.getOwnerId());
-        clone.setResults(this.getResults());
-        clone.setToken(this.getToken());
-        return clone;
+		Job clone = null;
+        try {
+			clone = (Job)super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return clone;
 	}
 
 }
