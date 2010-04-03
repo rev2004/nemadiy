@@ -161,7 +161,9 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	 * @throws InterruptedException
 	 */
 	public final void waitForProcess() throws InterruptedException{
+		System.out.println("WAITING ON THE LATCH...");
 		latch.await();
+		System.out.println("LATCH OPENED: ");
 	}
 	
 	
@@ -203,13 +205,17 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	 * @param process
 	 * @return success or failure result
 	 * @throws RemoteException
+	 * @throws InvalidProcessMonitorException 
 	 */
-	public final boolean abortProcess(NemaProcess process) throws RemoteException{
+	public final boolean abortProcess(NemaProcess process) throws RemoteException, InvalidProcessMonitorException{
 		if(process == null){
 			throw new IllegalArgumentException("Invalid process");
 		}
+		if(this.getProcessMonitor()==null){
+			throw new InvalidProcessMonitorException("Process Monitor is NULL");
+		}
 		logger.info("Aborting: " + process.getId());
-		boolean success=this.getExecutorService().abort(process);
+		boolean success=this.getExecutorService().abort(process,this.getProcessMonitor());
 		logger.info("Abort success: " + success);
 		return success;
 	}
