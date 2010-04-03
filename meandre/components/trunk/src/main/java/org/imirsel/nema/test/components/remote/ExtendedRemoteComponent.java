@@ -2,7 +2,9 @@ package org.imirsel.nema.test.components.remote;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.imirsel.nema.components.InvalidProcessMonitorException;
 import org.imirsel.nema.components.InvalidProcessTemplateException;
@@ -48,13 +50,21 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 	public void execute(ComponentContext componentContext)
 			throws ComponentExecutionException, ComponentContextException {
 				ProcessArtifact pa = new ProcessArtifact("/tmp/0.date","file");
+				ProcessArtifact pa1 = new ProcessArtifact("/tmp/1.date","file");
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
 				outputs.add(pa);
+				
+				List<ProcessArtifact> inputs = new ArrayList<ProcessArtifact>();
+				inputs.add(pa1);
+				
 				ProcessExecutionProperties pep = new ProcessExecutionProperties();
 				pep.setId(componentContext.getExecutionInstanceID());
 				pep.setOutputs(outputs);
-				pep.setInputs(null);
-				//pep.setEnvironmentVariables(envorinmentVariables);
+				pep.setInputs(inputs);
+				Map<String,String> map = new HashMap<String,String>();
+				map.put("SNDANDIR","/share/apps/sndanweb/sndan");
+				pep.setEnvironmentVariables(map);
+			
 				//pep.setCommandLineFlags(commandLineFlags);
 				
 		
