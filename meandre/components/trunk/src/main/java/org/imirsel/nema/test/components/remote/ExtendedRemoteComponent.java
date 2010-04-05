@@ -64,10 +64,16 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 				Map<String,String> map = new HashMap<String,String>();
 				map.put("SNDANDIR","/share/apps/sndanweb/sndan");
 				pep.setEnvironmentVariables(map);
-			
-				//pep.setCommandLineFlags(commandLineFlags);
-				
-		
+				try {
+					String commandLineTemplate=this.getProcessTemplate().getCommandLineTemplate().getCommandLineFormatter();
+					String commandLine = pep.getCommandLineFlags();
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InvalidProcessTemplateException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 		
 		    try {
 		    	System.out.println("Running process now: " + this.getProfileName());
