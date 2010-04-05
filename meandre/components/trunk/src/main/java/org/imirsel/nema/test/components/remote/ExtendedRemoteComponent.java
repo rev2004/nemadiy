@@ -59,14 +59,19 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 				
 				ProcessExecutionProperties pep = new ProcessExecutionProperties();
 				pep.setId(componentContext.getExecutionInstanceID());
+				// output must be set... it must list the files/directory expected
+				// that that the binary will create...
 				pep.setOutputs(outputs);
+				// setting inputs is optional 
 				pep.setInputs(inputs);
 				Map<String,String> map = new HashMap<String,String>();
 				map.put("SNDANDIR","/share/apps/sndanweb/sndan");
 				pep.setEnvironmentVariables(map);
+				
 				try {
 					String commandLineTemplate=this.getProcessTemplate().getCommandLineTemplate().getCommandLineFormatter();
-					String commandLine = pep.getCommandLineFlags();
+					String commandLineFlags ="CREATE THE COMMAND LINE ARGUMENTS HERE" ;
+					pep.setCommandLineFlags(commandLineFlags);
 				} catch (RemoteException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
