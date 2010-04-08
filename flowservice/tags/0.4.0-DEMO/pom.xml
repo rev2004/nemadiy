@@ -242,12 +242,12 @@
           <activeByDefault>false</activeByDefault>
          </activation>
          <properties>
-         <meandre.server.address.head>nema.lis.uiuc.edu</meandre.server.address.head>
-         <meandre.server.address1>nema.lis.uiuc.edu</meandre.server.address1>
-         <meandre.server.address2>nema.lis.uiuc.edu</meandre.server.address2>
-         <meandre.server.address3>nema.lis.uiuc.edu</meandre.server.address3>
-         <meandre.server.address4>nema.lis.uiuc.edu</meandre.server.address4>
-         <nema.mail.server>nema.lis.uiuc.edu</nema.mail.server>
+         <meandre.server.address.head>nema-dev.lis.illinois.edu</meandre.server.address.head>
+         <meandre.server.address1>nema-dev.lis.illinois.edu</meandre.server.address1>
+         <meandre.server.address2>nema-dev.lis.illinois.edu</meandre.server.address2>
+         <meandre.server.address3>nema-dev.lis.illinois.edu</meandre.server.address3>
+         <meandre.server.address4>nema-dev.lis.illinois.edu</meandre.server.address4>
+         <nema.mail.server>nema-dev.lis.illinois.edu</nema.mail.server>
          </properties>
       </profile>
 
