@@ -407,7 +407,7 @@
      	  <profile>
       		<id>production</id>
       		<properties>
-      			<meandre.host>nema.lis.uiuc.edu</meandre.host>
+      			<meandre.host>nema-dev.lis.illinois.edu</meandre.host>
       			<meandre.port>11709</meandre.port>
       			<meandre.username>admin</meandre.username>
       			<meandre.password>admin</meandre.password>
