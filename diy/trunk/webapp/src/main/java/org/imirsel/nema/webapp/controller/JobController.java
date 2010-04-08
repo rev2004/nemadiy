@@ -415,7 +415,7 @@ public class JobController extends MultiActionController {
 	public ModelAndView getUserJobs(HttpServletRequest req,
 			HttpServletResponse res) {
 		ModelAndView mav;
-		String uri = req.getRequestURI();
+		String uri = (req!=null)?req.getRequestURI():""; 
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
 			mav = new ModelAndView("jsonView");
 		} else {

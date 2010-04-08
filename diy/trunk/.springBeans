@@ -16,6 +16,7 @@
 		<config>webapp/src/main/webapp/WEB-INF/dispatcher-servlet.xml</config>
 		<config>webapp/src/main/webapp/WEB-INF/security.xml</config>
 		<config>webapp/src/main/webapp/WEB-INF/views.xml</config>
+		<config>webapp/src/test/resources/test-bean.xml</config>
 	</configs>
 	<configSets>
 	</configSets>
