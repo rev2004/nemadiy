@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -75,12 +77,26 @@ public interface Evaluator {
     public void setTrainingSets(List<NemaTrackList> trainingSets);
     
     /**
-     * Set the list of test datasets relevent to the experiment.
+     * Set the list of test datasets relevant to the experiment.
      * 
-     * @param testSets the list of test datasets relevent to the experiment.
+     * @param testSets the list of test datasets relevant to the experiment.
      */
     public void setTestSets(List<NemaTrackList> testSets);
     
+    /**
+     * returns the list of training datasets relevant to the experiment. 
+     * 
+     * @return the list of training datasets relevant to the experiment.
+     */
+    public List<NemaTrackList> getTrainingSets();
+
+    /**
+     * Returns the list of test datasets relevant to the experiment.
+     * 
+     * @return the list of test datasets relevant to the experiment.
+     */
+    public List<NemaTrackList> getTestSets();
+
     /**
      * Initializes a NemaEvaluationResultSet Object with the experiment description, ready to be 
      * populated with results.
@@ -108,23 +124,36 @@ public interface Evaluator {
 	public List<String> getTrackEvalMetricKeys();
 
     /**
-     * Sets the <code>List</code> of groundtruth data to be used to evaluate results. In a 
-     * multi-iteration experiment this ground-truth should provide a superset of ground-truth 
-     * data to cover all iterations.
+     * Sets the <code>Collection</code> of groundtruth data to be used to 
+     * evaluate results. In a multi-iteration experiment this ground-truth 
+     * should provide a superset of ground-truth data to cover all iterations.
      * 
-     * The <code>NemaData</code> may be handled internally as desired, including
-     * the retention and use of the order in which they were supplied (brittle) or indexed in
-     * a one or more map structures (e.g. trackID -> GT data).
-     * 
-     * Where there are multiple groundtruths for a track these should be combined into a single 
-     * <code>NemaData</code> with multiple values for the specified field. E.g.
-     * there might be 4 different annotations of the onset times from different users.
+     * Where there are multiple groundtruths for a track these should be 
+     * combined into a single <code>NemaData</code> with multiple values for the 
+     * specified field. E.g. there might be 4 different annotations of the onset 
+     * times from different users.
      *  
-     * @param groundtruth A list of groundtruth Objects to use in evaluation.
+     * @param groundtruth A Collection of groundtruth Objects to use in 
+     * evaluation.
      */
-    public void setGroundTruth(List<NemaData> groundtruth);
+    public void setGroundTruth(Collection<NemaData> groundtruth);
 
     /**
+     * Returns the <code>Collection</code> of groundtruth data to be used to 
+     * evaluate results. In a multi-iteration experiment this ground-truth 
+     * should provide a superset of ground-truth data to cover all iterations.
+     * 
+     * Where there are multiple groundtruths for a track these should be 
+     * combined into a single <code>NemaData</code> with multiple values for the 
+     * specified field. E.g. there might be 4 different annotations of the onset 
+     * times from different users.
+     *  
+     * @return A Collection of groundtruth Objects that will be used in 
+     * evaluation.
+     */
+	public Collection<NemaData> getGroundTruth();
+
+		/**
      * Adds a set of results to the evaluation. For a single iteration experiment add a single
      * result per jobID. For a multi-iteration experiment add results per iteration (in order) for 
      * each system (it doesn't matter if results from different systems are shuffled together but 

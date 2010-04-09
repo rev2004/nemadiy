@@ -69,12 +69,12 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
         dataset.setDescription("some description");
         
         File resultsDirectory = new File("src/test/resources/classification/HNOS1");
-        MultipleTrackEvalFileType reader = new ClassificationTextFile(NemaDataConstants.CLASSIFICATION_GENRE);
-        List<List<NemaData>> groundTruth = reader.readDirectory(resultsDirectory,".txt");
+        MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
+        List<List<NemaData>> aResultSet = reader.readDirectory(resultsDirectory,".txt");
         
         testSets = new ArrayList<NemaTrackList>(3);
         int id = 0;
-        for (Iterator<List<NemaData>> iterator = groundTruth.iterator(); iterator.hasNext();) {
+        for (Iterator<List<NemaData>> iterator = aResultSet.iterator(); iterator.hasNext();) {
         	ArrayList<NemaTrack> trackList = new ArrayList<NemaTrack>(1000);
             List<NemaData> aList = iterator.next();
         	for (Iterator<NemaData> iterator2 = aList.iterator(); iterator2.hasNext();) {
