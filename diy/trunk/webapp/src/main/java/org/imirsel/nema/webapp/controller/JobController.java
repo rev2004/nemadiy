@@ -21,7 +21,7 @@ import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.JobResult;
 import org.imirsel.nema.model.Notification;
-import org.imirsel.nema.model.PublishedResult;
+import org.imirsel.nema.model.NemaPublishedResult;
 import org.imirsel.nema.model.Submission;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
@@ -356,10 +356,10 @@ public class JobController extends MultiActionController {
 		
 		try{
 			rci=this.getRepositoryClient();
-			List<PublishedResult> resultList=rci.getPublishedResultsForDataset(username);
+			List<NemaPublishedResult> resultList=rci.getPublishedResultsForDataset(username);
 			if(!resultList.isEmpty()){
 				int id =-1;
-				for(PublishedResult pr:resultList){
+				for(NemaPublishedResult pr:resultList){
 					if(pr.getName().equals(submissionName)){
 						id = pr.getId();
 					}
