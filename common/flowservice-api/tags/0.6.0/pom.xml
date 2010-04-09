@@ -23,7 +23,7 @@
 			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-snapshots-local</url>
 		</snapshotRepository>
 
-		<downloadUrl>http://nema.lis.uiuc.edu/artifactory/</downloadUrl>
+		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
 	</distributionManagement>
 
 
@@ -86,11 +86,11 @@
 		</repository>
 		<repository>
 			<id>nema-artifactory-repo</id>
-			<url>http://nema.lis.uiuc.edu/artifactory/repo</url>
+			<url>http://nema-dev.lis.illinois.edu/artifactory/repo</url>
 		</repository>
 		<repository>
 			<id>nema-artifactory-remote</id>
-			<url>http://nema.lis.uiuc.edu/artifactory/remote-repos</url>
+			<url>http://nema-dev.lis.illinois.edu/artifactory/remote-repos</url>
 		</repository>
 
 	</repositories>
