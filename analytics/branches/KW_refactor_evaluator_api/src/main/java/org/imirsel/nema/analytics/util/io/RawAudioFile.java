@@ -25,7 +25,7 @@ import org.imirsel.nema.analytics.util.*;
  * file at the specified path.
  * 
  * @author kris.west@gmail.com
- * @since 0.1.0
+ * @since 0.2.0
  */
 public class RawAudioFile extends SingleTrackEvalFileTypeImpl {
 

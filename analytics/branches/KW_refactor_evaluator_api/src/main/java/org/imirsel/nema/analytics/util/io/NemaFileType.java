@@ -4,6 +4,13 @@ import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
+/**
+ * Class representing a file type definition including facilities to read and 
+ * write the File to/from NemaData Objects.
+ * 
+ * @author kris.west@gmail.com
+ * @since 0.1.0
+ */
 public interface NemaFileType {
 
 	/**
@@ -32,4 +39,13 @@ public interface NemaFileType {
 	 * @return String extension, e.g. ".txt".
 	 */
 	public String getFilenameExtension();
+	
+	/**
+	 * Returns a boolean indicating whether the the FileType refers to track IDs\
+	 * and therefore determines whether encoding constraints etc. need to be
+	 * resolved when retrieving the audio.
+	 * 
+	 * @return a boolean indicating whether the the FileType refers to track IDs
+	 */
+	public boolean refersToTrackIds();
 }

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.imirsel.nema.model.*;
+import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.*;
 
@@ -21,28 +22,18 @@ import org.imirsel.nema.analytics.util.*;
  * and can't read it, but need to move it around - e.g. model files).
  * 
  * @author kris.west@gmail.com
- * @since 0.1.0
+ * @since 0.2.0
  */
-public class OpaqueFileFormat extends SingleTrackEvalFileTypeImpl {
+public class OpaqueFileFormat extends NemaFileTypeImpl {
 
 	public static final String TYPE_NAME = "Opaque format file on disk";
+	String extension;
 	
-	public OpaqueFileFormat(/*File path*/) {
-		super(TYPE_NAME);
-		//not really using the file extensions support at the moment - file 
-		  //paths are fully specified and extensions are not properly preserved 
-		  //according to the filenameExtension variable.
-//		String name = path.getName();
-//		int extIdx = name.lastIndexOf('.');
-//		if (extIdx == -1) {
-//			
-//		}else{
-//			String ext = name.substring(extIdx);
-//			this.setFilenameExtension(ext);
-//		}
+	public OpaqueFileFormat(String extension) {
+		super(TYPE_NAME, false);
+		this.setFilenameExtension(extension);
 	}
 	
-	@Override
 	public NemaData readFile(File theFile)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
 		byte[] data = IOUtil.readBytesFromFile(theFile);
@@ -52,7 +43,6 @@ public class OpaqueFileFormat extends SingleTrackEvalFileTypeImpl {
         return out;
 	}
 	
-	@Override
 	public void writeFile(File theFile, NemaData data)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
 		IOUtil.writeBytesToFile(theFile, (byte[])data.getMetadata(NemaDataConstants.FILE_DATA));
