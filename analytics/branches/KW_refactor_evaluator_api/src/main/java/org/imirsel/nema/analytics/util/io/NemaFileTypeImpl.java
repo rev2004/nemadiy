@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.evaluation;
+package org.imirsel.nema.analytics.util.io;
 
 import java.io.PrintStream;
 import java.util.logging.Handler;
@@ -7,13 +7,13 @@ import java.util.logging.StreamHandler;
 
 import org.imirsel.nema.analytics.logging.AnalyticsLogFormatter;
 
-public abstract class EvalFileTypeImpl {
+public abstract class NemaFileTypeImpl {
 
 	protected Logger _logger;
 	private String typeName;
 	private String filenameExtension = ".txt";
 	
-	public EvalFileTypeImpl(String typeName) {
+	public NemaFileTypeImpl(String typeName) {
 		this.typeName = typeName;
 	}
 	

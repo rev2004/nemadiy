@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 
+import org.imirsel.nema.analytics.util.io.NemaFileTypeImpl;
 import org.imirsel.nema.model.NemaData;
 
 /**
@@ -17,7 +18,7 @@ import org.imirsel.nema.model.NemaData;
  * @author kris.west@gmail.com
  *
  */
-public abstract class MultipleTrackEvalFileTypeImpl extends EvalFileTypeImpl implements MultipleTrackEvalFileType {
+public abstract class MultipleTrackEvalFileTypeImpl extends NemaFileTypeImpl implements MultipleTrackEvalFileType {
 
 	public MultipleTrackEvalFileTypeImpl(String typeName) {
 		super(typeName);

@@ -11,6 +11,7 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 
+import org.imirsel.nema.analytics.util.io.NemaFileTypeImpl;
 import org.imirsel.nema.model.NemaData;
 
 /**
@@ -18,7 +19,7 @@ import org.imirsel.nema.model.NemaData;
  * @author kris.west@gmail.com
  *
  */
-public abstract class SingleTrackEvalFileTypeImpl extends EvalFileTypeImpl implements SingleTrackEvalFileType {
+public abstract class SingleTrackEvalFileTypeImpl extends NemaFileTypeImpl implements SingleTrackEvalFileType {
 
 	public SingleTrackEvalFileTypeImpl(String typeName) {
 		super(typeName);

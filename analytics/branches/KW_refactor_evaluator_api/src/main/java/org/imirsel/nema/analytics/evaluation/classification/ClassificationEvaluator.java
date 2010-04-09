@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.imirsel.nema.analytics.evaluation.*;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
 import org.imirsel.nema.analytics.evaluation.util.*;
@@ -1063,8 +1064,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 	    
 	    bufferString += BIG_DIVIDER;
 	    
-	    IOUtil.writeStringToFile(outputFile, bufferString, "UTF-8");
-	    
+	    FileUtils.writeStringToFile(outputFile, bufferString, "UTF-8");
     }
 
     /**
