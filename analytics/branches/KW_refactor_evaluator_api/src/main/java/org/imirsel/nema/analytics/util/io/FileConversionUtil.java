@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.evaluation;
+package org.imirsel.nema.analytics.util.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileType;
+import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.chord.ChordIntervalTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordNumberTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordShortHandTextFile;
@@ -35,14 +37,14 @@ import org.imirsel.nema.model.NemaTrackList;
  * @author kris.west@gmail.com
  * @since 0.1.0
  */
-public class EvalFileUtil {
+public class FileConversionUtil {
 
-	public static final Map<String,List<Class<? extends EvalFileType>>> TEST_INPUT_FILE_TYPE_REGISTRY = new HashMap<String, List<Class<? extends EvalFileType>>>();
-	public static final Map<String,List<Class<? extends EvalFileType>>> GT_AND_PREDICTION_FILE_TYPE_REGISTRY = new HashMap<String, List<Class<? extends EvalFileType>>>();	
+	public static final Map<String,List<Class<? extends NemaFileType>>> TEST_INPUT_FILE_TYPE_REGISTRY = new HashMap<String, List<Class<? extends NemaFileType>>>();
+	public static final Map<String,List<Class<? extends NemaFileType>>> GT_AND_PREDICTION_FILE_TYPE_REGISTRY = new HashMap<String, List<Class<? extends NemaFileType>>>();	
 	static {
 		//register known list file types for known metadata keys
 		{
-			List<Class<? extends EvalFileType>> rawAudioTypeList = new ArrayList<Class<? extends EvalFileType>>(4);
+			List<Class<? extends NemaFileType>> rawAudioTypeList = new ArrayList<Class<? extends NemaFileType>>(4);
 			rawAudioTypeList.add(RawAudioFile.class);
 			//these are tasks where individual audio files are used as input... i.e. there is no list file
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, rawAudioTypeList);
@@ -50,7 +52,7 @@ public class EvalFileUtil {
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, rawAudioTypeList);
 			
 				//classification tasks
-			List<Class<? extends EvalFileType>> trackListTypeList = new ArrayList<Class<? extends EvalFileType>>(5);
+			List<Class<? extends NemaFileType>> trackListTypeList = new ArrayList<Class<? extends NemaFileType>>(5);
 			trackListTypeList.add(TrackListTextFile.class);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, trackListTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ARTIST, trackListTypeList);
@@ -59,29 +61,29 @@ public class EvalFileUtil {
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, trackListTypeList);
 			
 			//components that take opaque file formats (files we don't know how to read but can move around - e.g. model files)
-			List<Class<? extends EvalFileType>> opaqueTypeList = new ArrayList<Class<? extends EvalFileType>>(1);
+			List<Class<? extends NemaFileType>> opaqueTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			opaqueTypeList.add(OpaqueFileFormat.class);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.FILE_DATA, opaqueTypeList);
 		}
 		
 		//register known GT and prediction file types for known metadata keys
 		{
-			List<Class<? extends EvalFileType>> gtTypeList = new ArrayList<Class<? extends EvalFileType>>(3);
+			List<Class<? extends NemaFileType>> gtTypeList = new ArrayList<Class<? extends NemaFileType>>(3);
 			gtTypeList.add(ChordIntervalTextFile.class);
 			gtTypeList.add(ChordNumberTextFile.class);
 			gtTypeList.add(ChordShortHandTextFile.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, gtTypeList);
 			
-			gtTypeList = new ArrayList<Class<? extends EvalFileType>>(1);
+			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			gtTypeList.add(MelodyTextFile.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.MELODY_EXTRACTION_DATA, gtTypeList);
 
-			gtTypeList = new ArrayList<Class<? extends EvalFileType>>(1);
+			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			gtTypeList.add(KeyTextFile.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, gtTypeList);
 			
 				//classification tasks
-			gtTypeList = new ArrayList<Class<? extends EvalFileType>>(5);
+			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(5);
 			gtTypeList.add(ClassificationTextFile.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, gtTypeList);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ARTIST, gtTypeList);
@@ -90,33 +92,33 @@ public class EvalFileUtil {
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, gtTypeList);
 			
 			//components that produce opaque file formats (files we don't know how to read but can move around - e.g. model files)
-			List<Class<? extends EvalFileType>> opaqueTypeList = new ArrayList<Class<? extends EvalFileType>>(1);
+			List<Class<? extends NemaFileType>> opaqueTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			opaqueTypeList.add(OpaqueFileFormat.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.FILE_DATA, opaqueTypeList);
 		}
 	}
 	
 	/**
-	 * Returns a List of EvalFileType implementations that may be used to read
+	 * Returns a List of NemaFileType implementations that may be used to read
 	 * and write test input files for the specified metadata key. The file type
 	 * <code>RawAudioFile</code> indicates that the raw audio file should be 
 	 * used as an input, which does not need to be processed by the actual 
 	 * <code>RawAudioFile</code> file type class.
 	 * @param metadataKey The metadata type to retrieve file types for.
-	 * @return a List of EvalFileType implementations.
+	 * @return a List of NemaFileType implementations.
 	 */
-	public static List<Class<? extends EvalFileType>> getTestInputFileTypes(String metadataKey){
+	public static List<Class<? extends NemaFileType>> getTestInputFileTypes(String metadataKey){
 		return TEST_INPUT_FILE_TYPE_REGISTRY.get(metadataKey);
 	}
 	
 	/**
-	 * Returns a list of EvalFileType implementations that may be used to read
+	 * Returns a list of NemaFileType implementations that may be used to read
 	 * and write ground-truth or prediction files for the specified metadata 
 	 * key.
 	 * @param metadataKey The metadata type to retrieve file types for.
-	 * @return a List of EvalFileType implementations.
+	 * @return a List of NemaFileType implementations.
 	 */
-	public static List<Class<? extends EvalFileType>> getGTAndPredictionFileTypes(String metadataKey){
+	public static List<Class<? extends NemaFileType>> getGTAndPredictionFileTypes(String metadataKey){
 		return GT_AND_PREDICTION_FILE_TYPE_REGISTRY.get(metadataKey);
 	}
 	
@@ -144,7 +146,7 @@ public class EvalFileUtil {
 	 * @return Map of NemaTrackList to a list of File Objects representing the 
 	 * files to be used as inputs to the process.
 	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * EvalFileType is received.
+	 * NemaFileType is received.
 	 * @throws InstantiationException Thrown if the file writer can't be 
 	 * instantiated (for example if there is no zero-arg constructor).
 	 * @throws IllegalAccessException Thrown if we do not have access to the 
@@ -158,7 +160,7 @@ public class EvalFileUtil {
 			File outputDirectory, 
 			NemaTask task,
 			Map<NemaTrackList,List<NemaData>> executionData, 
-			Class<? extends EvalFileType> fileType
+			Class<? extends NemaFileType> fileType
 			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
 		
 		Map<NemaTrackList,List<File>> out = null;
@@ -216,7 +218,7 @@ public class EvalFileUtil {
 	 */
 	public static Map<NemaTrackList,List<File>> createOutputFileNames(
 			Map<NemaTrackList,List<NemaData>> executionData, 
-			Class<? extends EvalFileType> fileType,
+			NemaFileType fileType,
 			String outputFileExt,
 			File outputDirectory
 			) {
@@ -229,7 +231,7 @@ public class EvalFileUtil {
 			List<NemaData> data = executionData.get(testSet);
 			List<File> list = null;
 			
-			if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+			if (SingleTrackEvalFileType.class.isAssignableFrom(fileType.getClass())) {
 				//create directory of metadata or new raw audio files
 				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
 				foldDir.mkdirs();
@@ -239,13 +241,13 @@ public class EvalFileUtil {
 						.hasNext();) {
 					File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
 					String name = fileLoc.getName();
-					File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileExt);
+					File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileExt + fileType.getFilenameExtension());
 					list.add(newPath);
 				}
-			}else if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+			}else if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType.getClass())) {
 				//create one output file per fold
 				list = new ArrayList<File>(1);
-				File newPath = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + outputFileExt);
+				File newPath = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + outputFileExt + fileType.getFilenameExtension());
 				list.add(newPath);
 			}
 			
@@ -273,7 +275,7 @@ public class EvalFileUtil {
 	 * @return A Map of NemaTrackList to a List of NemaData Objects encoding the 
 	 * data read from each file or directory.
 	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * EvalFileType is received.
+	 * NemaFileType is received.
 	 * @throws InstantiationException Thrown if the file reader can't be 
 	 * instantiated (for example if there is no zero-arg constructor).
 	 * @throws IllegalAccessException Thrown if we do not have access to the 
@@ -282,7 +284,7 @@ public class EvalFileUtil {
 	 * found.
 	 * @throws IOException Thrown if there is a problem reading a file.
 	 */
-	public static Map<NemaTrackList,List<NemaData>> readProcessOutput(Map<NemaTrackList,List<File>> filesOrDirectoriesToRead, NemaTask task, Class<? extends EvalFileType> fileType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, FileNotFoundException, IOException{
+	public static Map<NemaTrackList,List<NemaData>> readProcessOutput(Map<NemaTrackList,List<File>> filesOrDirectoriesToRead, NemaTask task, Class<? extends NemaFileType> fileType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, FileNotFoundException, IOException{
 		Map<NemaTrackList,List<NemaData>> out = new HashMap<NemaTrackList,List<NemaData>>(filesOrDirectoriesToRead.size());
 		for (Iterator<NemaTrackList> iterator = filesOrDirectoriesToRead.keySet().iterator(); iterator.hasNext();) {
 			NemaTrackList testSet = iterator.next();
@@ -310,7 +312,7 @@ public class EvalFileUtil {
 	 * @param fileType The file type to use to read the file or directory.
 	 * @return A List of NemaData Objects encoding the data read.
 	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * EvalFileType is received.
+	 * NemaFileType is received.
 	 * @throws InstantiationException Thrown if the file reader can't be 
 	 * instantiated (for example if there is no zero-arg constructor).
 	 * @throws IllegalAccessException Thrown if we do not have access to the 
@@ -322,7 +324,7 @@ public class EvalFileUtil {
 	public static List<NemaData> readData(
 			File fileOrDirectoryToRead, 
 			NemaTask task, 
-			Class<? extends EvalFileType> fileType
+			Class<? extends NemaFileType> fileType
 			) throws IllegalArgumentException, InstantiationException, IllegalAccessException, FileNotFoundException, IOException{
 		if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
 			SingleTrackEvalFileType typeInstance = (SingleTrackEvalFileType)fileType.newInstance();
@@ -361,7 +363,7 @@ public class EvalFileUtil {
 	 * @param outputDirectory The directory to create the output in.
 	 * @return A File representing the file or directory written out.
 	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * EvalFileType is received.
+	 * NemaFileType is received.
 	 * @throws InstantiationException Thrown if the file writer can't be 
 	 * instantiated (for example if there is no zero-arg constructor).
 	 * @throws IllegalAccessException Thrown if we do not have access to the 
@@ -375,7 +377,7 @@ public class EvalFileUtil {
 			NemaTrackList fold, 
 			List<NemaData> data, 
 			NemaTask task, 
-			Class<? extends EvalFileType> fileType, 
+			Class<? extends NemaFileType> fileType, 
 			File outputDirectory
 			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
 		//mint a file or directory path
@@ -425,7 +427,7 @@ public class EvalFileUtil {
 	 * @return A Map of NemaTrackList to a List of File Objects representing
 	 * the resources.
 	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * EvalFileType is received.
+	 * NemaFileType is received.
 	 * @throws InstantiationException Thrown if the file writer can't be 
 	 * instantiated (for example if there is no zero-arg constructor).
 	 * @throws IllegalAccessException Thrown if we do not have access to the 
@@ -467,7 +469,7 @@ public class EvalFileUtil {
 	 * @param outputDirectory The directory to write the data files to.
 	 * @return 
 	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * EvalFileType is received.
+	 * NemaFileType is received.
 	 * @throws InstantiationException Thrown if the file writer can't be 
 	 * instantiated (for example if there is no zero-arg constructor).
 	 * @throws IllegalAccessException Thrown if we do not have access to the 
@@ -505,7 +507,7 @@ public class EvalFileUtil {
 	 * @param outputDirectory The directory to write the data files to.
 	 * @return 
 	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * EvalFileType is received.
+	 * NemaFileType is received.
 	 * @throws InstantiationException Thrown if the file writer can't be 
 	 * instantiated (for example if there is no zero-arg constructor).
 	 * @throws IllegalAccessException Thrown if we do not have access to the 

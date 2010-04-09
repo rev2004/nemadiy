@@ -3,14 +3,14 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.evaluation;
+package org.imirsel.nema.analytics.util.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.imirsel.nema.model.*;
+import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.*;
-import org.imirsel.nema.analytics.util.io.IOUtil;
 
 /**
  * Reads and writes Raw data files. When reading data is read into a byte[] and

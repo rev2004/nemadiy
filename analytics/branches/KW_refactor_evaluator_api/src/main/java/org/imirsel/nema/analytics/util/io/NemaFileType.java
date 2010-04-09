@@ -1,10 +1,10 @@
-package org.imirsel.nema.analytics.evaluation;
+package org.imirsel.nema.analytics.util.io;
 
 import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
-public interface EvalFileType {
+public interface NemaFileType {
 
 	/**
 	 * Returns the logger in use. Can be used to change the logging verbosity 
