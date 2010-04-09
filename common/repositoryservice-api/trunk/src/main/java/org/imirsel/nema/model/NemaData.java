@@ -131,15 +131,16 @@ public class NemaData implements Serializable{
      * <code>HashMap</code>.
      * @param value The value to be added to the <code>metadata</code>
      * <code>HashMap</code>.
-     * @throws IllegalArgumentException Thrown if both key and value are null.
+     * @throws IllegalArgumentException Thrown if either key and value are null.
      */
     public void setMetadata(String key, Object value) throws IllegalArgumentException {
-        if(value == null)
+    	if(key == null)
         {
-            if (metadata.containsKey(key)){
-                metadata.remove(key);
-            }
-            return;
+        	throw new IllegalArgumentException("The key must not be null!");
+        }
+    	if(value == null)
+        {
+        	throw new IllegalArgumentException("The value must not be null! key=" + key);
         }
         metadata.put(key, value);
     }
@@ -165,7 +166,7 @@ public class NemaData implements Serializable{
             for (int i=0;i<keys.length;i++) {
                 keyString += (String)keys[i] + "\n";
             }
-            throw new IllegalArgumentException("There is no metadata corresponding to the supplied key!\n" +
+            throw new IllegalArgumentException("There is no metadata corresponding to the supplied key for NemaData id: " + this.getId() + "!\n" +
                     "Key supplied = " + key + "\n" +
                     "Keys available:\n" +
                     keyString);
