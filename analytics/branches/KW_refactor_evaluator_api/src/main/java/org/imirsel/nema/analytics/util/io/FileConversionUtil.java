@@ -35,7 +35,7 @@ import org.imirsel.nema.model.NemaTrackList;
  * preserving as much information as possible.
  * 
  * @author kris.west@gmail.com
- * @since 0.1.0
+ * @since 0.2.0
  */
 public class FileConversionUtil {
 
@@ -62,7 +62,7 @@ public class FileConversionUtil {
 			
 			//components that take opaque file formats (files we don't know how to read but can move around - e.g. model files)
 			List<Class<? extends NemaFileType>> opaqueTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
-			opaqueTypeList.add(OpaqueFileFormat.class);
+			opaqueTypeList.add(OpaqueFileFormat.class); 
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.FILE_DATA, opaqueTypeList);
 		}
 		

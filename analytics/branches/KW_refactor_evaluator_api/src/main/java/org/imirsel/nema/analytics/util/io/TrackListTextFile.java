@@ -23,7 +23,7 @@ import org.imirsel.nema.analytics.util.*;
  * Reads and writes list files giving multiple file paths per file.
  * 
  * @author kris.west@gmail.com
- * @since 0.1.0
+ * @since 0.2.0
  */
 public class TrackListTextFile extends MultipleTrackEvalFileTypeImpl {
 

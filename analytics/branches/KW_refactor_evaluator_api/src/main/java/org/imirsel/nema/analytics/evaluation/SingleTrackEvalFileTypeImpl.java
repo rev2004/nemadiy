@@ -17,7 +17,7 @@ import org.imirsel.nema.model.NemaData;
 /**
  * 
  * @author kris.west@gmail.com
- *
+ * @since 0.1.0
  */
 public abstract class SingleTrackEvalFileTypeImpl extends NemaFileTypeImpl implements SingleTrackEvalFileType {
 

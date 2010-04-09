@@ -20,9 +20,12 @@ import org.imirsel.nema.analytics.util.io.NemaFileType;
 import org.imirsel.nema.model.NemaData;
 
 /**
- * Interface defining the methods of classes to read and write evaluation/prediction data files.
+ * Interface defining the methods of classes to read and write 
+ * evaluation/prediction data files where the files contain data on a single
+ * track per file.
  * 
  * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public interface SingleTrackEvalFileType extends NemaFileType{
     
