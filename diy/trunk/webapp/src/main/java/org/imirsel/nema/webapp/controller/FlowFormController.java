@@ -71,7 +71,9 @@ public class FlowFormController extends MultiActionController{
 		String _id=req.getParameter("id");
 		int id = Integer.parseInt(_id);
 		Flow flow=this.flowService.getFlow(id);
+		LOGGER.info("get flow"+(flow==null?"null":flow.getName()));
 		ModelAndView mav= new ModelAndView("flow/flowTemplate");
+		
 		List<Component> componentList=flowService.getComponents(flow.getUri());
 		Collections.sort(componentList);
 		LOGGER.info("componentList: " + componentList.size());
