@@ -46,6 +46,9 @@ public abstract class EvaluatorImpl implements Evaluator {
 	protected NemaDataset dataset;
 	protected List<NemaTrackList> trainingSets;
 	protected List<NemaTrackList> testSets;
+	
+	
+	
 	protected List<String> overallEvalMetrics;
 	protected List<String> foldEvalMetrics;
 	protected List<String> trackEvalMetrics;
@@ -72,7 +75,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 	
 	protected abstract void setupEvalMetrics();
 	
-    public void setTrainingSets(List<NemaTrackList> trainingSets){
+	public void setTrainingSets(List<NemaTrackList> trainingSets){
     	this.trainingSets = trainingSets;
     }
     
@@ -80,6 +83,14 @@ public abstract class EvaluatorImpl implements Evaluator {
     	this.testSets = testSets;
     }
     
+    public List<NemaTrackList> getTrainingSets() {
+		return trainingSets;
+	}
+
+	public List<NemaTrackList> getTestSets() {
+		return testSets;
+	}
+
     public NemaEvaluationResultSet getEmptyEvaluationResultSet(){
     	return new NemaEvaluationResultSet(dataset, task, trainingSets, testSets, getOverallEvalMetricsKeys(), getFoldEvalMetricsKeys(), getTrackEvalMetricKeys());
     }
@@ -226,7 +237,24 @@ public abstract class EvaluatorImpl implements Evaluator {
 	}
 	
 	public void addResults(String systemName, String jobID, NemaTrackList fold, List<NemaData> results) throws IllegalArgumentException{
+		NemaData data;
+		String metaKey = getTask().getSubjectTrackMetadataName();
+		
 		jobIDToName.put(jobID, systemName);
+		for(Iterator<NemaData> it = results.iterator(); it.hasNext();){
+			data = it.next();
+			if (!data.hasMetadata(metaKey)) {
+				String[] avail = data.metadataKeys();
+				String keyString = "";
+	            for (int i=0;i<avail.length;i++) {
+	                keyString += (String)avail[i] + "\t";
+	            }
+				_logger.warning("Results object received for job ID '" + jobID + "', track ID '" + data.getId() + "' does not contain '" + metaKey + "' metadata!\n" +
+						"Metadata keys available:\n"
+						+ keyString);
+			}
+		}
+		
 		Map<NemaTrackList,List<NemaData>> resultList = jobIDToFoldResults.get(jobID);
 		if (resultList == null){
 			resultList = new HashMap<NemaTrackList,List<NemaData>>(testSets.size());
@@ -241,13 +269,28 @@ public abstract class EvaluatorImpl implements Evaluator {
 	}
 	
 
-	public void setGroundTruth(List<NemaData> groundtruth) {
+	public void setGroundTruth(Collection<NemaData> groundtruth) {
 		NemaData data;
+		String metaKey = getTask().getSubjectTrackMetadataName();
 		for(Iterator<NemaData> it = groundtruth.iterator(); it.hasNext();){
 			data = it.next();
+			if (!data.hasMetadata(metaKey)) {
+				String[] avail = data.metadataKeys();
+				String keyString = "";
+	            for (int i=0;i<avail.length;i++) {
+	                keyString += (String)avail[i] + "\t";
+	            }
+				_logger.warning("Ground-truth object received for track ID '" + data.getId() + "' does not contain '" + metaKey + "' metadata!\n" +
+						"Metadata keys available:\n"
+						+ keyString);
+			}
 			trackIDToGT.put(data.getId(), data);
 		}		
 		_logger.info("Received groundtruth for " + groundtruth.size() + " track IDs");
+	}
+	
+	public Collection<NemaData> getGroundTruth() {
+		return trackIDToGT.values();
 	}
 	
 	public NemaData getGroundTruth(String trackID){

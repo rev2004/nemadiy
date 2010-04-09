@@ -57,10 +57,11 @@ public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
         File path;
         String trackID;
         for (Iterator<String> it = data.keySet().iterator();it.hasNext();) {
-            path = new File(it.next());
+            String pathStr = it.next();
+        	path = new File(pathStr);
             trackID = PathAndTagCleaner.convertFileToMIREX_ID(path);
             obj = new NemaData(trackID);
-            obj.setMetadata(getMetadataType(), data.get(trackID));
+            obj.setMetadata(getMetadataType(), data.get(pathStr));
             obj.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, path.getAbsolutePath());
             examples.add(obj);
         }

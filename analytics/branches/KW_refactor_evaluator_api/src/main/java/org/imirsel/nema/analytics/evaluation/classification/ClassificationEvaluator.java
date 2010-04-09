@@ -92,11 +92,12 @@ public class ClassificationEvaluator extends EvaluatorImpl{
      * Initializes the class names list from the ground-truth.
      */
     private void initClassNames() throws IllegalArgumentException{
-    	String type = task.getSubjectTrackMetadataName();
+    	String type = this.getTask().getSubjectTrackMetadataName();
     	String aClass;
     	NemaData data;
     	Set<String> classes = new HashSet<String>();
-    	for (Iterator<NemaData> it = trackIDToGT.values().iterator(); it.hasNext();){
+    	
+    	for (Iterator<NemaData> it = this.getGroundTruth().iterator(); it.hasNext();){
     		data = it.next();
     		aClass = data.getStringMetadata(type);
     		if(aClass == null){
