@@ -60,7 +60,7 @@ public class FileConversionUtil {
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, trackListTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, trackListTypeList);
 			
-			//components that take opaque file formats (files we don't know how to read but can move around - e.g. model files)
+			//arguments that take opaque file formats (files we don't know how to read but can move around - e.g. model files)
 			List<Class<? extends NemaFileType>> opaqueTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			opaqueTypeList.add(OpaqueFileFormat.class); 
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.FILE_DATA, opaqueTypeList);
@@ -91,7 +91,7 @@ public class FileConversionUtil {
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, gtTypeList);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, gtTypeList);
 			
-			//components that produce opaque file formats (files we don't know how to read but can move around - e.g. model files)
+			//arguments that produce opaque file formats (files we don't know how to read but can move around - e.g. model files)
 			List<Class<? extends NemaFileType>> opaqueTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			opaqueTypeList.add(OpaqueFileFormat.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.FILE_DATA, opaqueTypeList);
@@ -225,8 +225,7 @@ public class FileConversionUtil {
 		
 		Map<NemaTrackList,List<File>> out = new HashMap<NemaTrackList,List<File>>(executionData.size());
 		
-		for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator
-		.hasNext();) {
+		for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator.hasNext();) {
 			NemaTrackList testSet = iterator.next();
 			List<NemaData> data = executionData.get(testSet);
 			List<File> list = null;
