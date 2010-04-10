@@ -38,7 +38,7 @@ CREATE TABLE `flow` (
   `keyWords` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `isTemplate` bit(1) NOT NULL,
-  `url` varchar(255) NOT NULL,
+  `uri` varchar(255) NOT NULL,
   `instanceOf` bigint(20) default NULL,
   `typeName` varchar(255) default NULL,
   PRIMARY KEY  (`id`),
