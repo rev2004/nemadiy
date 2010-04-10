@@ -25,15 +25,13 @@ public class RepositoryProperties {
     private static Properties repoProps;
     static {
         repoProps = new Properties();
-        repoProps.setProperty(DB_LOCATOR, "jdbc:mysql://nema.lis.uiuc.edu:3306/");
-        repoProps.setProperty(DB_NAME, "nemadatarepository_dev");
         
         try {
             InputStream iStream = RepositoryProperties.class.getResourceAsStream("/RepositoryProperties.properties");
             if(iStream != null) {
                 repoProps.load(iStream);
             }else {
-                System.out.println("No custom properties found, using default values.");
+               throw new RuntimeException("RepositoryProperties.property file not found");
             }
         } catch (IOException ex) {
             ex.printStackTrace();

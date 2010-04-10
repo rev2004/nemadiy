@@ -15,8 +15,10 @@ import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.imirsel.nema.repository.RepositoryProperties;
+import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.imirsel.nema.test.BaseManagerTestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +39,14 @@ public class RepositoryClientImplTest  extends BaseManagerTestCase{
 	@After
 	public void tearDown() throws Exception {
 		clientImpl = null;
+	}
+	
+	
+	@Test
+	public final  void testClientConnectionPool(){
+		RepositoryClientConnectionPool rcp=RepositoryClientConnectionPool.getInstance();
+		RepositoryClientInterface rci=rcp.getFromPool();
+		rci.close();
 	}
 
 	
