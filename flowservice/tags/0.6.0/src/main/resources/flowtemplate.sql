@@ -1,6 +1,6 @@
 -- MySQL dump 10.11
 --
--- Host: localhost    Database: flowservice060
+-- Host: nema-dev.lis.illinois.edu    Database: flowservice060
 -- ------------------------------------------------------
 -- Server version	5.0.77
 
@@ -28,8 +28,6 @@ USE `flowservice060`;
 --
 
 DROP TABLE IF EXISTS `flow`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
 CREATE TABLE `flow` (
   `id` bigint(20) NOT NULL auto_increment,
   `creatorId` bigint(20) NOT NULL,
@@ -44,7 +42,6 @@ CREATE TABLE `flow` (
   PRIMARY KEY  (`id`),
   KEY `FK30012E4E20E557` (`instanceOf`)
 ) ENGINE=MyISAM AUTO_INCREMENT=132 DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `flow`
@@ -52,7 +49,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `flow` WRITE;
 /*!40000 ALTER TABLE `flow` DISABLE KEYS */;
-INSERT INTO `flow` VALUES (2,-2,'2010-01-23 12:21:37','This algorithm performs structural segmentation (e.g. segmenting music into verse, chorus, bridge, etc) on music. It was submitted to the 2009 iteration of MIREX. This flow performs the segmentation of the music, and subsequently evaluates the algorithms ','analysis, structure, segmentation, evaluation, mirex','Classification: Andreas F. Ehmann','',NULL,'Classification','http://imirsel.org/classification/classification_ehmann/classification_ehmann/'),(3,-2,'2010-01-23 12:21:37','','extraction jAudio','Feature Extraction using jAudio','',NULL,'Feature Extraction','http://imirsel.org/feature_extraction/jaudio_feature_extractor/jaudio_feature_extractor/'),(4,-2,'2010-01-23 12:21:37','This flow executes George Tzanetakis\'s marsyas program to classify audio files. Features are first extracted from audio files. A classifier is then trained on a training set and used to classify unknown music files. The classification performance is evalu','classification, evaluation, mirex','Classification: Marsyas','',NULL,'Classification','http://imirsel.org/classification/classification_marsyas/classification_marsyas/'),(5,-2,'2010-01-23 12:21:37','This algorithm extracts the frequency contour of the main melody in a piece of polyphonic music. It was submitted to the 2009 iteration of MIREX. This flow runs Dressler\'s algorithm on a piece of music, and plots the extracted melody contour against a hum','analysis, melody, evaluation, mirex','Melody Extraction using Dressler','',NULL,'Feature Extraction','http://imirsel.org/analysis/melody/melody_dressler/melody_dressler/'),(6,-2,'2010-01-23 12:21:37','This algorithm extracts the frequency contour of the main melody in a piece of polyphonic music. It was submitted to the 2009 iteration of MIREX. This flow runs Durrieu\'s SIMM algorithm on a piece of music, and plots the extracted melody contour against a','analysis, melody, evaluation, mirex','Melody Extraction using Durrieu','',NULL,'Feature Extraction','http://test.org/datatypetest/'),(7,-2,'2010-01-23 12:21:37','This flow performs phase vocoder analysis. The fundamental frequency of the input is assumed to be not changing much over time. Hence, this analysis is most appropriate for individual notes. The analysis frequency is estimated by performing a monophonic p','phase-vocoder analysis','Phase Vocoder Analysis','',NULL,'Analysis','http://imirsel.org/analysis/phase_vocoder/phase_vocoder/phase_vocoder/'),(8,-2,'2010-01-23 12:21:37','This algorithm performs structural segmentation (e.g. segmenting music into verse, chorus, bridge, etc) on music. It was submitted to the 2009 iteration of MIREX. This flow performs the segmentation of the music, and subsequently evaluates the algorithms ','analysis, structure, segmentation, evaluation, mirex','Structural Segmentation by Mauch','',NULL,'Analysis','http://imirsel.org/analysis/structure/structure_mauch/structure_mauch/'),(10,-2,'2010-01-23 12:21:37','Updates the MIREX evaluation results to the task you are submitting to.','mirex evaluation','Update MIREX Evaluation Results','',NULL,'Analysis','http://imirsel.org/evaluation/mirex_evaluation/mirex_evaluation/'),(11,-2,'2010-01-23 12:21:37','This flow executes Klaus Seyerlehner and Markus Schedle to classify audio files. Features are first extracted from audio files. A classifier is then trained on a training set and used to classify unknown music files. The classification performance is eval','classification, evaluation, mirex','Classification: Seyerlehner','',NULL,'Classification','http://imirsel.org/classification/classification_seyerlehner/classification_seyerlehner/');
+INSERT INTO `flow` VALUES (2,-2,'2010-01-23 12:21:37','This algorithm performs structural segmentation (e.g. segmenting music into verse, chorus, bridge, etc) on music. It was submitted to the 2009 iteration of MIREX. This flow performs the segmentation of the music, and subsequently evaluates the algorithms ','analysis, structure, segmentation, evaluation, mirex','Classification: Andreas F. Ehmann','',NULL,'Classification','http://imirsel.org/classification/classification_ehmann/'),(3,-2,'2010-01-23 12:21:37','','extraction jAudio','Feature Extraction using jAudio','',NULL,'Feature Extraction','http://imirsel.org/feature_extraction/jaudio_feature_extractor/'),(4,-2,'2010-01-23 12:21:37','This flow executes George Tzanetakis\'s marsyas program to classify audio files. Features are first extracted from audio files. A classifier is then trained on a training set and used to classify unknown music files. The classification performance is evalu','classification, evaluation, mirex','Classification: Marsyas','',NULL,'Classification','http://imirsel.org/classification/classification_marsyas/'),(5,-2,'2010-01-23 12:21:37','This algorithm extracts the frequency contour of the main melody in a piece of polyphonic music. It was submitted to the 2009 iteration of MIREX. This flow runs Dressler\'s algorithm on a piece of music, and plots the extracted melody contour against a hum','analysis, melody, evaluation, mirex','Melody Extraction using Dressler','',NULL,'Feature Extraction','http://imirsel.org/analysis/melody/melody_dressler/'),(6,-2,'2010-01-23 12:21:37','This algorithm extracts the frequency contour of the main melody in a piece of polyphonic music. It was submitted to the 2009 iteration of MIREX. This flow runs Durrieu\'s SIMM algorithm on a piece of music, and plots the extracted melody contour against a','analysis, melody, evaluation, mirex','Melody Extraction using Durrieu','',NULL,'Feature Extraction','http://test.org/datatypetest/'),(7,-2,'2010-01-23 12:21:37','This flow performs phase vocoder analysis. The fundamental frequency of the input is assumed to be not changing much over time. Hence, this analysis is most appropriate for individual notes. The analysis frequency is estimated by performing a monophonic p','phase-vocoder analysis','Phase Vocoder Analysis','',NULL,'Analysis','http://imirsel.org/analysis/phase_vocoder/phase_vocoder/'),(8,-2,'2010-01-23 12:21:37','This algorithm performs structural segmentation (e.g. segmenting music into verse, chorus, bridge, etc) on music. It was submitted to the 2009 iteration of MIREX. This flow performs the segmentation of the music, and subsequently evaluates the algorithms ','analysis, structure, segmentation, evaluation, mirex','Structural Segmentation by Mauch','',NULL,'Analysis','http://imirsel.org/analysis/structure/structure_mauch/'),(10,-2,'2010-01-23 12:21:37','Updates the MIREX evaluation results to the task you are submitting to.','mirex evaluation','Update MIREX Evaluation Results','',NULL,'Analysis','http://imirsel.org/evaluation/mirex_evaluation/'),(11,-2,'2010-01-23 12:21:37','This flow executes Klaus Seyerlehner and Markus Schedle to classify audio files. Features are first extracted from audio files. A classifier is then trained on a training set and used to classify unknown music files. The classification performance is eval','classification, evaluation, mirex','Classification: Seyerlehner','',NULL,'Classification','http://imirsel.org/classification/classification_seyerlehner/');
 /*!40000 ALTER TABLE `flow` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -61,8 +58,6 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `job`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
 CREATE TABLE `job` (
   `id` bigint(20) NOT NULL auto_increment,
   `description` longtext,
@@ -84,7 +79,6 @@ CREATE TABLE `job` (
   PRIMARY KEY  (`id`),
   KEY `FK19BBD781BC449` (`flowInstanceId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `job`
@@ -100,8 +94,6 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `jobResult`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
 CREATE TABLE `jobResult` (
   `id` bigint(20) NOT NULL auto_increment,
   `resultType` varchar(255) NOT NULL,
@@ -111,7 +103,6 @@ CREATE TABLE `jobResult` (
   KEY `FK40CDCE3A40A162B8` (`jobId`),
   KEY `FK40CDCE3A3A97C23B` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `jobResult`
@@ -127,8 +118,6 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `notification`;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
 CREATE TABLE `notification` (
   `id` bigint(20) NOT NULL auto_increment,
   `dateCreated` datetime NOT NULL,
@@ -140,7 +129,6 @@ CREATE TABLE `notification` (
   `subject` varchar(255) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping data for table `notification`
@@ -160,4 +148,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-04-10 15:27:25
+-- Dump completed on 2010-04-10 16:16:14
