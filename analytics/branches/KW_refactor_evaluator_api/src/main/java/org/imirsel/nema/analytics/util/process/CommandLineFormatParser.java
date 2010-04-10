@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-
 import org.imirsel.nema.analytics.util.io.NemaFileType;
 
 /**
@@ -14,7 +12,7 @@ import org.imirsel.nema.analytics.util.io.NemaFileType;
  * @author kris.west@gmail.com
  * @since 0.2.0
  */
-public class CommandLineFormatModel {
+public class CommandLineFormatParser {
 
 	List<CommandArgument> arguments = null;
 	private Map<Integer,FileCommandArgument> inputs = null;
@@ -26,7 +24,7 @@ public class CommandLineFormatModel {
 //	Map<Integer,Map<String,String>> outputProperties = null;
 	
 
-	public CommandLineFormatModel(List<CommandArgument> components,
+	public CommandLineFormatParser(List<CommandArgument> components,
 			Map<Integer, Class<? extends NemaFileType>> inputTypes,
 			Map<Integer, Class<? extends NemaFileType>> outputTypes,
 			Map<Integer,Map<String,String>> inputProperties,
@@ -52,7 +50,7 @@ public class CommandLineFormatModel {
 //		this.outputProperties = outputProperties;
 	}
 
-	public CommandLineFormatModel(String commandFormatString) throws
+	public CommandLineFormatParser(String commandFormatString) throws
 			IllegalArgumentException{
 		this.arguments = new ArrayList<CommandArgument>();
 		
