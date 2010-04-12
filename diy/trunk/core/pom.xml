@@ -146,6 +146,14 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
+
+      <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
     </build>
 
     <!-- Dependencies calculated by AppFuse when running full-source plugin -->

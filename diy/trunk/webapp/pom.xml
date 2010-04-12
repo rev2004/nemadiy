@@ -87,7 +87,7 @@
                     </dependentWarExcludes>
 					<webResources>
 						<resource>
-							<directory>webapp/src/main/webapp/WEB-INF</directory>
+							<directory>src/main/webapp/WEB-INF</directory>
 							<targetPath>WEB-INF</targetPath>
 							<!-- enable filtering -->
 							<filtering>true</filtering>
