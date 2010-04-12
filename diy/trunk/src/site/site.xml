@@ -1,19 +1,45 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="nema-diy">
-    <bannerLeft>
-        <name>nema-diy</name>
-        <src>https://appfuse.dev.java.net/images/appfuse-title.gif</src>
-        <href>http://appfuse.org</href>
-    </bannerLeft>
-    <publishDate format="dd MMM yyyy"/>
-    <skin>
-        <groupId>org.apache.tapestry</groupId>
-        <artifactId>maven-skin</artifactId>
-        <version>1.1</version>
-    </skin>
-    <body>
-        <menu ref="modules"/>
-        ${reports}
-    </body>
+  <publishDate position="right" format="MM-dd-yyyy hh:mm" />
+  <version position="right"/>
+  <bannerLeft>
+    <name>NEMA</name>
+    <src>http://code.google.com/p/nemadiy/logo?logo_id=1262666177</src>
+    <href>http://code.google.com/p/nemadiy</href>
+  </bannerLeft>
+  <bannerRight>
+    <name>NEMA DIY Application</name>
+    <src>images/diy.png</src>
+    <href>index.html</href>
+  </bannerRight>
+
+  <body>
+  
+  
+    <breadcrumbs>
+      <item name="NEMA Development" href="http://nema-dev.lis.illinois.edu/"/>
+      <item name="Executor Service" href="http://nema-dev.lis.illinois.edu/development/diy/"/>
+    </breadcrumbs>
+  <links>
+      <item name="NEMA" href="http://nema.lis.illinois.edu/"/>
+       <item name="NEMA DIY@Googlecode" href="http://code.google.com/p/nemadiy/"/>
+  </links>
+  
+  
+  
+  <menu name="Home">
+  	<item name="Index" href="index.html"/>
+  	
+  </menu>
+  <menu name="Reference">
+   <item name="Developer" href="developer.html"/>
+   <item name="Downloads" href="download.html"/>
+   <item name="Installation" href="install.html"/>
+   <item name="Release Notes" href="release-notes.html"/>
+   <item name="Roadmap" href="roadmap.html"/>
+  </menu>
+  <menu ref="reports" />
+  </body>
+  
 </project>
 

@@ -65,7 +65,8 @@
  -->
     <!--  job scheduler end -->
      <bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
-            <property name="serviceUrl" value="${diy.flowservice.location}"/>
+            <!--<property name="serviceUrl" value="${diy.flowservice.location}"/>-->
+            <property name="serviceUrl" value="rmi://nema-dev.lis.illinois.edu:1099/FlowService"/>
             <property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService"/>
             <property name="refreshStubOnConnectFailure" value="true"/>
     </bean>
