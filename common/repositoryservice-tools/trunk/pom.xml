@@ -24,6 +24,14 @@
 		
 		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
 	</distributionManagement>
+  <scm>
+  	<connection>scm:svn:https://nemadiy.googlecode.com/common/repositoryservice-tools/trunk</connection>
+  	<url>https://nemadiy.googlecode.com/common/repositoryservice-tools/trunk</url>
+  </scm>
+  <organization>
+  	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
+  	<url>http://www.lis.illinois.edu</url>
+  </organization>
 	
   
 
@@ -120,7 +128,7 @@
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-analytics</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
+			<version>kw-io-model-0.2.0-SNAPSHOT</version>
 			<type>pom</type>
 			<scope>compile</scope>
 		</dependency>
