@@ -1,10 +1,10 @@
 # Sequel Pro dump
-# Version 654
+# Version 1630
 # http://code.google.com/p/sequel-pro
 #
-# Host: nema.lis.uiuc.edu (MySQL 5.0.22)
-# Database: nemadatarepository
-# Generation Time: 2009-12-14 17:51:11 +0000
+# Host: nema-dev.lis.illinois.edu (MySQL 5.0.77)
+# Database: nemadatarepository020
+# Generation Time: 2010-04-12 16:34:01 +0100
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -28,7 +28,7 @@ CREATE TABLE `collection` (
   `description` text NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
 
@@ -57,7 +57,7 @@ CREATE TABLE `dataset` (
   `id` int(11) NOT NULL auto_increment,
   `name` varchar(128) NOT NULL default '',
   `description` text NOT NULL,
-  `collection_id` int(11) NOT NULL default '-1',
+  `collection_id` int(11) NOT NULL default '1',
   `subset_set_id` int(11) default NULL,
   `num_splits` int(11) NOT NULL default '1',
   `num_set_per_split` int(11) default '1',
@@ -65,15 +65,15 @@ CREATE TABLE `dataset` (
   `split_parameters_string` text,
   `subject_track_metadata_type_id` int(11) NOT NULL default '-1',
   `filter_track_metadata_type_id` int(11) default NULL,
-  `task_id` int(11) NOT NULL default '-1',
   PRIMARY KEY  (`id`),
   KEY `collection_id` (`collection_id`),
   KEY `name` (`name`),
   KEY `subject_track_metadata_id` (`subject_track_metadata_type_id`),
-  KEY `task_id` (`task_id`),
-  CONSTRAINT `collection_id` FOREIGN KEY (`collection_id`) REFERENCES `collection` (`id`),
-  CONSTRAINT `task_id` FOREIGN KEY (`task_id`) REFERENCES `task` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `subset_set_id` (`subset_set_id`),
+  CONSTRAINT `dataset_ibfk_1` FOREIGN KEY (`subject_track_metadata_type_id`) REFERENCES `track_metadata_definitions` (`id`),
+  CONSTRAINT `dataset_ibfk_2` FOREIGN KEY (`collection_id`) REFERENCES `collection` (`id`),
+  CONSTRAINT `dataset_ibfk_3` FOREIGN KEY (`subset_set_id`) REFERENCES `trackList` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 
 
 
@@ -90,7 +90,7 @@ CREATE TABLE `file` (
   KEY `track_id` (`track_id`),
   KEY `path` (`path`(255)),
   CONSTRAINT `file_track_id` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=209608 DEFAULT CHARSET=utf8;
 
 
 
@@ -108,7 +108,7 @@ CREATE TABLE `file_file_metadata_link` (
   UNIQUE KEY `file_metadata_id` (`file_metadata_id`,`file_id`),
   CONSTRAINT `file_id` FOREIGN KEY (`file_id`) REFERENCES `file` (`id`),
   CONSTRAINT `file_metadata_id` FOREIGN KEY (`file_metadata_id`) REFERENCES `file_metadata` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=874221 DEFAULT CHARSET=utf8;
 
 
 
@@ -125,7 +125,7 @@ CREATE TABLE `file_metadata` (
   UNIQUE KEY `metadata_type_id` (`metadata_type_id`,`value`),
   UNIQUE KEY `value` (`value`,`metadata_type_id`),
   CONSTRAINT `file_metadata_metadata_type_id` FOREIGN KEY (`metadata_type_id`) REFERENCES `file_metadata_definitions` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 
 
@@ -139,7 +139,7 @@ CREATE TABLE `file_metadata_definitions` (
   `name` varchar(128) NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 
 
@@ -153,59 +153,12 @@ CREATE TABLE `published_results` (
   `dataset_id` int(11) NOT NULL default '-1',
   `system_name` varchar(128) NOT NULL,
   `result_path` varchar(512) NOT NULL,
-  `timestamp` timestamp NOT NULL default '0000-00-00 00:00:00',
+  `username` varchar(128) NOT NULL default '',
+  `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`),
+  UNIQUE KEY `username` (`username`,`dataset_id`,`system_name`),
   KEY `dataset_id` (`dataset_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table set
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `set`;
-
-CREATE TABLE `set` (
-  `id` int(11) NOT NULL auto_increment,
-  `dataset_id` int(11) default NULL,
-  `set_type_id` int(11) default NULL,
-  `split_number` int(11) default NULL,
-  PRIMARY KEY  (`id`),
-  KEY `set_type_id` (`set_type_id`),
-  KEY `dataset_id` (`dataset_id`),
-  CONSTRAINT `dataset_id` FOREIGN KEY (`dataset_id`) REFERENCES `dataset` (`id`),
-  CONSTRAINT `set_type_id` FOREIGN KEY (`set_type_id`) REFERENCES `set_type_definitions` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table set_track_link
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `set_track_link`;
-
-CREATE TABLE `set_track_link` (
-  `set_id` int(11) default NULL,
-  `track_id` varchar(32) NOT NULL default '',
-  UNIQUE KEY `set_id` (`set_id`,`track_id`),
-  KEY `set_track_link_track_id` (`track_id`),
-  CONSTRAINT `set_track_link_track_id` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`),
-  CONSTRAINT `set_id` FOREIGN KEY (`set_id`) REFERENCES `set` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table set_type_definitions
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `set_type_definitions`;
-
-CREATE TABLE `set_type_definitions` (
-  `id` int(11) NOT NULL auto_increment,
-  `name` varchar(64) default NULL,
-  PRIMARY KEY  (`id`),
-  KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 
 
@@ -215,31 +168,16 @@ CREATE TABLE `set_type_definitions` (
 DROP TABLE IF EXISTS `task`;
 
 CREATE TABLE `task` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` int(11) NOT NULL,
   `name` varchar(128) NOT NULL,
-  `description` mediumtext,
-  `subject_track_metadata_type_id` int(11) NOT NULL default '-1',
-  `task_type_id` int(11) NOT NULL default '-1',
+  `description` text NOT NULL,
+  `subject_track_metadata` int(11) NOT NULL,
+  `dataset_id` int(11) NOT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `name` (`name`),
-  KEY `task_type_id` (`task_type_id`),
-  KEY `subject_track_metadata_type_id` (`subject_track_metadata_type_id`),
-  CONSTRAINT `subject_track_metadata_type_id` FOREIGN KEY (`subject_track_metadata_type_id`) REFERENCES `track_metadata_definitions` (`id`),
-  CONSTRAINT `task_type_id` FOREIGN KEY (`task_type_id`) REFERENCES `task_type` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table task_type
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `task_type`;
-
-CREATE TABLE `task_type` (
-  `id` int(11) NOT NULL auto_increment,
-  `name` varchar(128) NOT NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `name` (`name`)
+  KEY `subject_track_metadata` (`subject_track_metadata`),
+  KEY `dataset_id` (`dataset_id`),
+  CONSTRAINT `task_ibfk_1` FOREIGN KEY (`dataset_id`) REFERENCES `dataset` (`id`),
+  CONSTRAINT `task_ibfk_2` FOREIGN KEY (`subject_track_metadata`) REFERENCES `track_metadata_definitions` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -264,11 +202,10 @@ DROP TABLE IF EXISTS `track_metadata`;
 CREATE TABLE `track_metadata` (
   `id` int(11) NOT NULL auto_increment,
   `metadata_type_id` int(11) NOT NULL default '-1',
-  `value` varchar(180) NOT NULL default '',
+  `value` mediumtext NOT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `metadata_type_id` (`metadata_type_id`,`value`),
-  CONSTRAINT `metadata_type_id` FOREIGN KEY (`metadata_type_id`) REFERENCES `track_metadata_definitions` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `metadata_type_id` (`metadata_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=33503 DEFAULT CHARSET=utf8;
 
 
 
@@ -282,7 +219,7 @@ CREATE TABLE `track_metadata_definitions` (
   `name` varchar(128) NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 
 
@@ -300,7 +237,56 @@ CREATE TABLE `track_track_metadata_link` (
   KEY `track_metadata_id` (`track_metadata_id`),
   CONSTRAINT `track_track_metadata_link_track_id` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`),
   CONSTRAINT `track_track_metadata_link_track_metadata_id` FOREIGN KEY (`track_metadata_id`) REFERENCES `track_metadata` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=225447 DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table trackList
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `trackList`;
+
+CREATE TABLE `trackList` (
+  `id` int(11) NOT NULL auto_increment,
+  `dataset_id` int(11) default NULL,
+  `set_type_id` int(11) default NULL,
+  `split_number` int(11) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `set_type_id` (`set_type_id`),
+  KEY `dataset_id` (`dataset_id`),
+  CONSTRAINT `dataset_id` FOREIGN KEY (`dataset_id`) REFERENCES `dataset` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `set_type_id` FOREIGN KEY (`set_type_id`) REFERENCES `trackList_type_definitions` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table trackList_track_link
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `trackList_track_link`;
+
+CREATE TABLE `trackList_track_link` (
+  `set_id` int(11) default NULL,
+  `track_id` varchar(32) NOT NULL default '',
+  UNIQUE KEY `set_id` (`set_id`,`track_id`),
+  KEY `set_track_link_track_id` (`track_id`),
+  CONSTRAINT `set_id` FOREIGN KEY (`set_id`) REFERENCES `trackList` (`id`),
+  CONSTRAINT `set_track_link_track_id` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table trackList_type_definitions
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `trackList_type_definitions`;
+
+CREATE TABLE `trackList_type_definitions` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(64) default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 
 
