@@ -149,6 +149,8 @@ public class RepositoryTrainTestTaskSelector extends NemaComponent {
         NemaMetadataEntry metadata;
         List<NemaMetadataEntry> meta_list;
 
+        //TODO update this to process metadata from DB with type class if necessary
+        
         Map<String,List<NemaMetadataEntry>> trackToMeta = client.getTrackMetadataByID(tracks, metadata_id);
         for (Iterator<String> it = tracks.iterator(); it.hasNext();){
             id = it.next();
