@@ -160,7 +160,15 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         initTypesMaps();
     }
 
-    /**
+    public DatabaseConnector getDbCon() {
+		return dbCon;
+	}
+
+	public void setDbCon(DatabaseConnector dbCon) {
+		this.dbCon = dbCon;
+	}
+
+	/**
      * Closes the database connection. References to this Object should be cut so that it can be garbage
      * collected as it cannot be brought back into a working state after a call to this method.
      */
