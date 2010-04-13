@@ -7,12 +7,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
+import org.imirsel.nema.analytics.util.PathAndTagCleaner;
+import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.repositoryservice.RepositoryUpdateClientInterface;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.imirsel.nema.repository.RepositoryClientImpl;
@@ -161,6 +164,8 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         insertFileMetaLink.executeUpdate();
     }
 
+    
+    
     public int insertTestOnlyDataset(String name,
             String description,
             int subject_track_metadata_type_id,
@@ -169,40 +174,82 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
     	
         //read up subset tracks
     	ClassificationTextFile reader = new ClassificationTextFile(getTrackMetadataName(subject_track_metadata_type_id));
-        List<String> subsetList = reader.readClassificationFileAsList(dataset_subset_file, true);
-
-        return insertTestOnlyDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, subsetList);
+        //List<String> subsetList = reader.readClassificationFileAsList(dataset_subset_file, true);
+    	//read up test set tracks
+        List<NemaData> testSet = reader.readFile(dataset_subset_file);
+        List<String> testSetList = new ArrayList<String>(testSet.size());
+        for (Iterator<NemaData> iterator = testSet.iterator(); iterator
+				.hasNext();) {
+			NemaData nemaData = iterator.next();
+			testSetList.add(nemaData.getId());
+		}
+    	
+        List<List<String>> listOfLists = new ArrayList<List<String>>(1);
+        listOfLists.add(testSetList);
+    	
+        return insertTestOnlyDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, testSetList, listOfLists);
+    }
+    
+    public int insertTestOnlyDatasetFromDir(String name,
+            String description,
+            int subject_track_metadata_type_id,
+            int filter_track_metadata_type_id,
+            File dataset_dir) throws SQLException, IOException{
+    	
+    	//read up subset tracks
+    	File[] files = dataset_dir.listFiles();
+        //List<String> subsetList = reader.readClassificationFileAsList(dataset_subset_file, true);
+    	//read up test set tracks
+        List<String> testSetList = new ArrayList<String>(files.length);
+        for (int i=0; i<files.length; i++) {
+			String id = PathAndTagCleaner.convertFileToMIREX_ID(files[i]);
+			testSetList.add(id);
+		}
+    	
+        List<List<String>> listOfLists = new ArrayList<List<String>>(1);
+        listOfLists.add(testSetList);
+        
+        return insertTestOnlyDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, testSetList, listOfLists);
     }
     
     public int insertTestOnlyDataset(String name,
             String description,
             int subject_track_metadata_type_id,
             int filter_track_metadata_type_id,
-            List<String> datasetTrackIDList) throws SQLException{
+            List<String> subsetList,
+            List<List<String>> testLists) throws SQLException{
         
         startTransation();
         int datasetId = -1;
         try{
 
             //insert dataset description
-            datasetId = insertDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, datasetTrackIDList);
+            datasetId = insertDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, subsetList);
 
             int testType = getTrackListTypeID("test");
-            int trainType = getTrackListTypeID("train");
 
-            logger.info("Inserting test set size: " + datasetTrackIDList.size());
+          //for each split test set
+            List<String> testList;
+            int setNum = 0;
+            for (Iterator<List<String>> it = testLists.iterator(); it.hasNext();){
+                testList = it.next();
 
-            //insert test and training sets
-            int testSetId = insertTrackListDescription(datasetId, testType, 1);
-            insertTrackListTracks(testSetId, datasetTrackIDList);
+                logger.info("Inserting test set size: " + testList.size());
+
+                //insert test and training sets
+                int testSetId = insertTrackListDescription(datasetId, testType, setNum);
+                insertTrackListTracks(testSetId, testList);
+                
+                setNum++;
+            }
 
             //update dataset description with number of splits and number of sets per split
             //UPDATE dataset SET num_splits=?, num_set_per_split=? WHERE id=?
-            updateDatasetWithNumSplits.setInt(1, 1);
+            updateDatasetWithNumSplits.setInt(1, setNum);
             updateDatasetWithNumSplits.setInt(2, 1);
             updateDatasetWithNumSplits.setInt(3,datasetId);
             updateDatasetWithNumSplits.executeUpdate();
-            
+
             endTransation();
         }catch(SQLException e){
             rollback();
@@ -270,23 +317,6 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         return datasetId;
     }
     
-    public void startTransation() throws SQLException{
-    	logger.info(this.getClass().getName() + ": Starting transaction");
-    	dbCon.con.setAutoCommit(false);
-	}
-    
-    public void endTransation() throws SQLException{
-    	logger.info(this.getClass().getName() + ": Commiting transaction");
-    	dbCon.con.commit();
-    	dbCon.con.setAutoCommit(true);
-	}
-        
-    public void rollback() throws SQLException{
-    	logger.info(this.getClass().getName() + ": Rolling-back transaction");
-    	dbCon.con.rollback();
-    	dbCon.con.setAutoCommit(true);
-	}
-    
     public int insertTestTrainDataset(String name,
             String description,
             int subject_track_metadata_type_id,
@@ -296,7 +326,11 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         //read up subset tracks
     	logger.info("Reading subset file: " + dataset_subset_file.getAbsolutePath());
     	ClassificationTextFile reader = new ClassificationTextFile(getTrackMetadataName(subject_track_metadata_type_id));
-        List<String> subsetList = reader.readClassificationFileAsList(dataset_subset_file, true);
+    	
+    	//List<List<NemaData>> testSets = new ArrayList<List<NemaData>>(testset_files.size());
+    	HashSet<String> subset = new HashSet<String>();
+    	
+        //List<String> subsetList = reader.readClassificationFileAsList(dataset_subset_file, true);
         List<List<String>> testLists = new ArrayList<List<String>>(testset_files.size());
         
         for (Iterator<File> it = testset_files.iterator(); it.hasNext();){
@@ -304,10 +338,18 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
             logger.info("Reading test set file: " + testSetFile.getAbsolutePath());
             
             //read up test set tracks
-            testLists.add(reader.readClassificationFileAsList(testSetFile, true));
+            List<NemaData> testSet = reader.readFile(testSetFile);
+            List<String> testSetList = new ArrayList<String>(testSet.size());
+            for (Iterator<NemaData> iterator = testSet.iterator(); iterator
+					.hasNext();) {
+				NemaData nemaData = iterator.next();
+				subset.add(nemaData.getId());
+				testSetList.add(nemaData.getId());
+			}
+            testLists.add(testSetList);
         }
 
-        return insertTestTrainDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, subsetList, testLists);
+        return insertTestTrainDataset(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, new ArrayList<String>(subset), testLists);
     }
 
     public int insertDataset(
@@ -404,4 +446,22 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         }
         return setId;
     }
+
+    public void startTransation() throws SQLException{
+    	logger.info(this.getClass().getName() + ": Starting transaction");
+    	dbCon.con.setAutoCommit(false);
+	}
+    
+    public void endTransation() throws SQLException{
+    	logger.info(this.getClass().getName() + ": Commiting transaction");
+    	dbCon.con.commit();
+    	dbCon.con.setAutoCommit(true);
+	}
+        
+    public void rollback() throws SQLException{
+    	logger.info(this.getClass().getName() + ": Rolling-back transaction");
+    	dbCon.con.rollback();
+    	dbCon.con.setAutoCommit(true);
+	}
+    
 }
