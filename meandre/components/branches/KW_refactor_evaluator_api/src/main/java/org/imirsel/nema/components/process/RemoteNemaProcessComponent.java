@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.analytics.util.io.FileConversionUtil;
@@ -82,7 +84,8 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
 			//dataset = (NemaDataset)cc.getDataComponentFromInput(DATA_INPUT_DATASET);
 			Map<NemaTrackList,List<NemaData>> dataToProcess = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_DATA);
-		
+			
+				
 			//get command formatting string and parse
 			ProcessTemplate pTemplate = this.getProcessTemplate();
 			CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
