@@ -41,14 +41,12 @@ import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
-@Component(creator = "Kris West and Mert Bay", description = "Selects a Train / Test dataset from NEMA repository service. "
+@Component(creator = "Kris West and Mert Bay", description = "Select a Melody task from the Nema Repository Service. "
 		+ "Outputs 5 objects: \n"
 		+ "1) a NemaTask Object defining the task,\n"
 		+ "2) a NemaDataset Object defining the dataset,\n"
-		+ "3) List NemaData Objects encoding the list of tracks used in the experiment,\n"
-		+ "4) List NemaData Objects encoding the list of tracks used in the experiment (with ground-truth data),\n"
-		+ "5) A Map of training NemaTrackList Objects to a List NemaData Objects encoding the training set with ground-truth data,\n"
-		+ "6) A Map of test NemaTrackList Objects to a List NemaData Objects encoding the test set data", name = "RepositoryTrainTestTaskSelector", // resources={"RepositoryProperties.properties"},
+		+ "3) List NemaData Objects encoding the list of tracks used in the experiment (with ground-truth data),\n"
+		+ "4) A Map of test NemaTrackList Objects to a List NemaData Objects encoding the test set data", name = "MelodyTaskSelector", // resources={"RepositoryProperties.properties"},
 tags = "input, collection, train/test", firingPolicy = Component.FiringPolicy.all)
 public class MelodyTaskSelector extends NemaComponent {
 
