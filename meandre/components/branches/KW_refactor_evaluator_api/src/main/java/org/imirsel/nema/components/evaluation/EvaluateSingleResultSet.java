@@ -59,9 +59,9 @@ import org.imirsel.nema.model.NemaTrackList;
 
 	@ComponentInput(description = "List of NemaData Objects defining the ground-truth list.", name = "GroundTruthList")
 	public final static String DATA_INPUT_GROUNDTRUTH_LIST = "GroundTruthList";
-
-	@ComponentInput(description = "Map of NemaTrackList to List of NemaData Objects defining each training set (with annotated ground-truth).", name = "TrainSets")
-	public final static String DATA_INPUT_TRAIN_SETS = "TrainSets";
+//
+//	@ComponentInput(description = "Map of NemaTrackList to List of NemaData Objects defining each training set (with annotated ground-truth).", name = "TrainSets")
+//	public final static String DATA_INPUT_TRAIN_SETS = "TrainSets";
 
 	@ComponentInput(description = "Map of NemaTrackList to List of NemaData Objects defining each test set (with predictions from the algorithm).", name = "TestSets")
 	public final static String DATA_INPUT_TEST_SETS = "TestSets";
@@ -106,7 +106,7 @@ import org.imirsel.nema.model.NemaTrackList;
 		NemaTask task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
 		NemaDataset dataset = (NemaDataset)cc.getDataComponentFromInput(DATA_INPUT_DATASET);
 		List<NemaData> gtList = (List<NemaData>)cc.getDataComponentFromInput(DATA_INPUT_GROUNDTRUTH_LIST);
-		Map<NemaTrackList,List<NemaData>> trainSets = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TRAIN_SETS);
+//		Map<NemaTrackList,List<NemaData>> trainSets = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TRAIN_SETS);
 		Map<NemaTrackList,List<NemaData>> testSets = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TEST_SETS);
 		String systemName =  (String)cc.getDataComponentFromInput(DATA_INPUT_SYSTEM_NAME);
 		//systemDesc =  (String)cc.getDataComponentFromInput(DATA_INPUT_SYSTEM_DESC);
@@ -136,10 +136,10 @@ import org.imirsel.nema.model.NemaTrackList;
 			    		return a.getFoldNumber() - b.getFoldNumber();
 			    	}
 				};
-			    if(trainSets != null){
-			    	trainSetList = new ArrayList<NemaTrackList>(trainSets.keySet());
-			    	Collections.sort(trainSetList,trackListComp);
-			    }
+//			    if(trainSets != null){
+//			    	trainSetList = new ArrayList<NemaTrackList>(trainSets.keySet());
+//			    	Collections.sort(trainSetList,trackListComp);
+//			    }
 			    if (testSets == null){
 			    	throw new ComponentExecutionException("Received null list of test results to evaluate");
 			    }
