@@ -75,21 +75,21 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
 	public RepositoryUpdateClientImpl() throws SQLException {
 		super();
 		
-		insertTrack = dbCon.con.prepareStatement(INSERT_TRACK);
-        insertTrackCollectionLink = dbCon.con.prepareStatement(INSERT_TRACK_COLLECTION_LINK);
-        insertFile = dbCon.con.prepareStatement(INSERT_FILE, Statement.RETURN_GENERATED_KEYS);
-        insertFileMetaDef = dbCon.con.prepareStatement(INSERT_FILE_METADATA_DEFINITIONS);
-        insertFileMeta = dbCon.con.prepareStatement(INSERT_FILE_METADATA);
-        insertFileMetaLink = dbCon.con.prepareStatement(INSERT_FILE_METADATA_LINK);
-        insertTrackMetaDef = dbCon.con.prepareStatement(INSERT_TRACK_METADATA_DEFINITIONS);
-        insertTrackMeta = dbCon.con.prepareStatement(INSERT_TRACK_METADATA, Statement.RETURN_GENERATED_KEYS);
-        insertTrackMetaLink = dbCon.con.prepareStatement(INSERT_TRACK_METADATA_LINK);
-        insertDataset = dbCon.con.prepareStatement(INSERT_DATASET, Statement.RETURN_GENERATED_KEYS);
-        updateDatasetWithSubset = dbCon.con.prepareStatement(UPDATE_DATASET_WITH_SUBSET);
-        insertTracklist = dbCon.con.prepareStatement(INSERT_TRACKLIST, Statement.RETURN_GENERATED_KEYS);
-        insertTracklistTrackLink = dbCon.con.prepareStatement(INSERT_TRACKLIST_TRACK_LINK);
-        updateDatasetWithNumSplits = dbCon.con.prepareStatement(UPDATE_DATASET_WITH_NUM_SPLITS);
-        insertTask = dbCon.con.prepareStatement(INSERT_TASK, Statement.RETURN_GENERATED_KEYS);
+		insertTrack = getDbCon().con.prepareStatement(INSERT_TRACK);
+        insertTrackCollectionLink = getDbCon().con.prepareStatement(INSERT_TRACK_COLLECTION_LINK);
+        insertFile = getDbCon().con.prepareStatement(INSERT_FILE, Statement.RETURN_GENERATED_KEYS);
+        insertFileMetaDef = getDbCon().con.prepareStatement(INSERT_FILE_METADATA_DEFINITIONS);
+        insertFileMeta = getDbCon().con.prepareStatement(INSERT_FILE_METADATA);
+        insertFileMetaLink = getDbCon().con.prepareStatement(INSERT_FILE_METADATA_LINK);
+        insertTrackMetaDef = getDbCon().con.prepareStatement(INSERT_TRACK_METADATA_DEFINITIONS);
+        insertTrackMeta = getDbCon().con.prepareStatement(INSERT_TRACK_METADATA, Statement.RETURN_GENERATED_KEYS);
+        insertTrackMetaLink = getDbCon().con.prepareStatement(INSERT_TRACK_METADATA_LINK);
+        insertDataset = getDbCon().con.prepareStatement(INSERT_DATASET, Statement.RETURN_GENERATED_KEYS);
+        updateDatasetWithSubset = getDbCon().con.prepareStatement(UPDATE_DATASET_WITH_SUBSET);
+        insertTracklist = getDbCon().con.prepareStatement(INSERT_TRACKLIST, Statement.RETURN_GENERATED_KEYS);
+        insertTracklistTrackLink = getDbCon().con.prepareStatement(INSERT_TRACKLIST_TRACK_LINK);
+        updateDatasetWithNumSplits = getDbCon().con.prepareStatement(UPDATE_DATASET_WITH_NUM_SPLITS);
+        insertTask = getDbCon().con.prepareStatement(INSERT_TASK, Statement.RETURN_GENERATED_KEYS);
 	}
 
 
@@ -449,19 +449,19 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
 
     public void startTransation() throws SQLException{
     	logger.info(this.getClass().getName() + ": Starting transaction");
-    	dbCon.con.setAutoCommit(false);
+    	getDbCon().con.setAutoCommit(false);
 	}
     
     public void endTransation() throws SQLException{
     	logger.info(this.getClass().getName() + ": Commiting transaction");
-    	dbCon.con.commit();
-    	dbCon.con.setAutoCommit(true);
+    	getDbCon().con.commit();
+    	getDbCon().con.setAutoCommit(true);
 	}
         
     public void rollback() throws SQLException{
     	logger.info(this.getClass().getName() + ": Rolling-back transaction");
-    	dbCon.con.rollback();
-    	dbCon.con.setAutoCommit(true);
+    	getDbCon().con.rollback();
+    	getDbCon().con.setAutoCommit(true);
 	}
     
 }
