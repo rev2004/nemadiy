@@ -8,8 +8,8 @@
     <href>http://code.google.com/p/nemadiy</href>
   </bannerLeft>
   <bannerRight>
-    <name>NEMA DIY Webapp</name>
-    <src>images/diy-webapp.png</src>
+    <name>NEMA Probes</name>
+    <src>images/diy-probes.png</src>
     <href>index.html</href>
   </bannerRight>
 
@@ -19,7 +19,7 @@
     <breadcrumbs>
       <item name="NEMA Development" href="http://nema-dev.lis.illinois.edu/"/>
       <item name="DIY" href="http://nema-dev.lis.illinois.edu/development/diy/"/>
-      <item name="Webapp" href="http://nema-dev.lis.illinois.edu/development/diy/nema-webapp"/>
+      <item name="Probes" href="http://nema-dev.lis.illinois.edu/development/diy/probes"/>
     </breadcrumbs>
   <links>
       <item name="NEMA" href="http://nema.lis.illinois.edu/"/>
@@ -32,7 +32,7 @@
   	<item name="Index" href="index.html"/>
   	
   </menu>
-	<menu ref="reports" />
+  <menu ref="reports" />
   </body>
   
 </project>
