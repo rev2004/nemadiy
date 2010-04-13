@@ -39,6 +39,7 @@
    <item name="Roadmap" href="roadmap.html"/>
   </menu>
   <menu ref="reports" />
+  <menu ref="modules"/>
   </body>
   
 </project>

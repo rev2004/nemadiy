@@ -33,6 +33,7 @@
   	
   </menu>
 	<menu ref="reports" />
+	<menu ref="parent"/>
   </body>
   
 </project>
