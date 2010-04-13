@@ -24,7 +24,8 @@ import org.imirsel.nema.model.*;
 
 /**
  * 
- * @author kriswest
+ * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public class RepositoryClientImpl implements RepositoryClientInterface{
 
@@ -110,9 +111,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     private Map<String,Integer> fileMetadataTypeMapRev;
     private Map<String,Integer> trackListTypeMapRev;
 
-    
-
-    DatabaseConnector dbCon;
+    protected DatabaseConnector dbCon;
 
     private static final Logger logger = Logger.getLogger(RepositoryClientImpl.class.getName());
 	
@@ -654,6 +653,42 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return trackDataList;
     }
 
+    public Map<NemaTrackList,List<NemaData>> resolveTracksToFiles(Map<NemaTrackList,List<NemaData>> trackDataMap, Set<NemaMetadataEntry> constraint) throws SQLException, IllegalArgumentException{
+    	logger.info("Resolving files for " + trackDataMap.size() + " lists of tracks");
+        Map<String,NemaData> trackMap = new HashMap<String,NemaData>();
+        NemaData tmp;
+        for (Iterator<NemaTrackList> iterator = trackDataMap.keySet().iterator(); iterator
+				.hasNext();) {
+			NemaTrackList trackList = iterator.next();
+			List<NemaData> list = trackDataMap.get(trackList);
+			for (Iterator<NemaData> it = list.iterator(); it.hasNext();) {
+				tmp = it.next();
+	        	trackMap.put(tmp.getId(),tmp);
+			}
+		}
+        
+        int setSize = trackMap.size();
+        logger.info("tracks in set: " + setSize);
+        List<Map<String, String>> data = getFileData(constraint);
+        logger.info("Query returned data on " + data.size() + " files, filtering");
+        Map<String, String> map;
+        String trackID;
+        int done = 0;
+        for (Iterator<Map<String, String>> it = data.iterator(); it.hasNext() && done < setSize;){
+            map = it.next();
+            trackID = map.get("track_id");
+            tmp = trackMap.get(trackID);
+            if(tmp != null){
+            	tmp.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, map.get("path"));
+                done++;
+            }
+        }
+
+        logger.info("mapped " + done + " / " + setSize + " files to tracks");
+
+        return trackDataMap;
+    }
+    
 
     public List<List<NemaMetadataEntry>> getCollectionVersions(NemaCollection collection)
             throws SQLException{

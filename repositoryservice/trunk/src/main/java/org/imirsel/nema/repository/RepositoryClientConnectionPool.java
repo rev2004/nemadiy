@@ -15,7 +15,8 @@ import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 
 /**
  *
- * @author kriswest
+ * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public class RepositoryClientConnectionPool {
     private static final int DEFAULT_POOL_SIZE = 10;
