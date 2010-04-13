@@ -66,9 +66,9 @@ public class MelodyTaskSelector extends NemaComponent {
 
 	//TODO: where are we going with annotations - do I need a TaskRender for a menu containing 'tasks' from the repository (we get dataset from that)
 	@StringDataType(renderer = CollectionRenderer.class)
-	@ComponentProperty(defaultValue = "1", description = "The ID number of the Melody Nema task to be loaded.", name = "taskID")
+	@ComponentProperty(defaultValue = "0", description = "The ID number of the Melody Nema task to be loaded.", name = "taskID")
 	final static String DATA_PROPERTY_TASK_ID = "taskID";
-	private int taskID = 1;
+	private int taskID = 0;
 
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
