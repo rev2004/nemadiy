@@ -210,7 +210,7 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent {
 			throw new IllegalArgumentException("Invalid process");
 		}
 		getLogger().info("Aborting: " + process.getId());
-		boolean success=this.getExecutorService().abort(process);
+		boolean success=this.getExecutorService().abort(process, processMonitor);
 		getLogger().info("Abort success: " + success);
 		return success;
 	}
@@ -229,7 +229,7 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent {
 				try{
 					abortProcess(process);
 				}catch(Exception ex){
-					System.err.println("Error dispatching abort command to the process: " + process.getId());
+					System.err.println("Error dispatching abort command to the process: " + process.getId()+ " It might have already finished.");
 				}
 			}
 		}
