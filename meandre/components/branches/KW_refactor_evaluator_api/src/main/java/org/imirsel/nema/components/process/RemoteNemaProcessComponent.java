@@ -80,17 +80,19 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 		//NemaDataset dataset = null;
 		
 		try {
+			getLogger().info("Getting inputs...");
 			//get inputs
 			task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
 			//dataset = (NemaDataset)cc.getDataComponentFromInput(DATA_INPUT_DATASET);
 			Map<NemaTrackList,List<NemaData>> dataToProcess = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_DATA);
 			
-				
+			getLogger().info("Getting command formatting string...");
 			//get command formatting string and parse
 			ProcessTemplate pTemplate = this.getProcessTemplate();
 			CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
 			String commandlineFormat = cTemplate.getCommandLineFormatter();
 			
+			getLogger().info("Parsing command formatting string...");
 			//parse and extract I/O classes and parameters
 			CommandLineFormatParser formatModel = new CommandLineFormatParser(commandlineFormat);
 			
@@ -101,18 +103,27 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			
 			HashSet<NemaMetadataEntry> encodingConstraint = new HashSet<NemaMetadataEntry>();
 			String propsString = "";
-			for (Iterator<String> iterator = properties1.keySet().iterator(); iterator.hasNext();) {
-				String key = iterator.next();
-				String val = properties1.get(key);
-				if (!val.trim().equals("")) {
-					encodingConstraint.add(new NemaMetadataEntry(key, val));
+			if(properties1 != null) {
+				getLogger().info("Processing audio encoding properties...");
+				
+				for (Iterator<String> iterator = properties1.keySet().iterator(); iterator.hasNext();) {
+					String key = iterator.next();
+					String val = properties1.get(key);
+					if (!val.trim().equals("")) {
+						encodingConstraint.add(new NemaMetadataEntry(key, val));
+					}
+					propsString += key + "=" + val;
+					if (iterator.hasNext()) {
+						propsString += ",";
+					}
 				}
-				propsString += key + "=" + val;
-				if (iterator.hasNext()) {
-					propsString += ",";
-				}
+			}else {
+				getLogger().info("No audio encoding properties to process...");
+				
 			}
-	        
+			
+			getLogger().info("Resolving tracks to audio paths...");
+			
 			//resolve tracks using repository
 			RepositoryClientInterface client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			try {
@@ -123,9 +134,13 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 				RepositoryClientConnectionPool.getInstance().returnToPool(client);
 			}
 			
+			getLogger().info("Preparing process input files...");
+			
 			
 			//perform conversion of input data into required formats
 			inputFiles = FileConversionUtil.prepareProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, dataToProcess, inputType1);
+			
+			getLogger().info("Preparing process input file names...");
 			
 			//prepare output file names
 			//only dealing with one output as this is a one output component
