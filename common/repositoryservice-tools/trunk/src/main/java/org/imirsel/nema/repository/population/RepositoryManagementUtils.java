@@ -7,10 +7,13 @@ package org.imirsel.nema.repository.population;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,19 +22,33 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.m2k.evaluation.classification.ClassificationTextFile;
-import org.imirsel.m2k.evaluation.tagsClassification.TagClassificationBinaryFileReader;
-import org.imirsel.m2k.io.musicDB.RemapMusicDBFilenamesClass;
+import org.apache.commons.io.IOUtils;
+import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileType;
+import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
+import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
+import org.imirsel.nema.analytics.util.PathAndTagCleaner;
+import org.imirsel.nema.analytics.util.io.FileConversionUtil;
+import org.imirsel.nema.analytics.util.io.NemaFileType;
+import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaTask;
+import org.imirsel.nema.repository.DatabaseConnector;
 import org.imirsel.nema.repository.RepositoryClientImpl;
-import org.imirsel.nema.repository.migration.CbrowserClient;
+import org.imirsel.nema.repository.population.legacy.CbrowserClient;
 
 
 /**
  *
- * @author kriswest
+ * @author kris.west@gmail.com
+ * @since 0.2.0
  */
 public class RepositoryManagementUtils {
 
+	public static final DecimalFormat SIX_DIGIT_INTEGER = new DecimalFormat();
+	static {
+		SIX_DIGIT_INTEGER.setMaximumFractionDigits(0);
+		SIX_DIGIT_INTEGER.setMinimumIntegerDigits(6);
+	}
+	
     public static final String TRACK_TITLE = "Title";
     public static final String TRACK_ARTIST = "Artist";
     public static final String TRACK_ALBUM = "Album";
@@ -50,9 +67,11 @@ public class RepositoryManagementUtils {
         audio_extensions.add(".MP3");
     }
     
-    private static final Logger logger = Logger.getLogger(RepositoryManagementUtils.class.getName());
+    static final Logger logger = Logger.getLogger(RepositoryManagementUtils.class.getName());
 	
-    public static void insertDirOfAudioFiles(File root, List<String[]> fileMetadataTags, int collection_id) {
+    
+    
+	public static void insertDirOfAudioFiles(File root, List<String[]> fileMetadataTags, int collection_id) {
         try{
             logger.info("");
             logger.info("Collection id: " + collection_id);
@@ -66,7 +85,7 @@ public class RepositoryManagementUtils {
 
             RepositoryUpdateClientImpl client = new RepositoryUpdateClientImpl();
 
-            client.setAutocommit(false);
+            client.startTransation();
 
             //get list of all audio files path
             ArrayList<File> todo = new ArrayList<File>();
@@ -214,8 +233,7 @@ public class RepositoryManagementUtils {
             logger.info("Inserted " + numFilesInserted + ", failed " + numFilesFailed);
 
             logger.info("Commiting...");
-            client.commit();
-            client.setAutocommit(true);
+            client.endTransation();
 
         }catch (SQLException ex){
             logger.log(Level.SEVERE, null, ex);
@@ -226,16 +244,27 @@ public class RepositoryManagementUtils {
     public static final String USAGE = "Insert directory tree of audio files\n" +
             "-f /path/to/files/to/insert collection_id(int) metakey1 metaval1 ... metakeyN metavalN\n\n" +
             "Migrate metadata from cbrowser\n" +
-            "-m\n\n" +
+            "-m\n" +
+            "\n" +
             "Insert test/train dataset\n" +
-            "-dtt \"name\" \"description\" SubjectMetadata FilterMetadata(null if none) /path/subset/file /path/test/set/file/1 ... /path/test/set/file/N\n\n" +
+            "-dtt \"name\" \"description\" SubjectMetadata FilterMetadata(null if none) /path/subset/file /path/test/set/file/1 ... /path/test/set/file/N\n" +
+            "\n" +
             "Insert test only dataset\n" +
-            "-dt \"name\" \"description\" SubjectMetadata FilterMetadata(null if none) /path/subset/file\n\n" +
+            "-dt \"name\" \"description\" SubjectMetadata FilterMetadata(null if none) /path/subset/file\n" +
+            "\n" +
+            "Insert test only dataset from directory of files\n" +
+            "-sdt \"name\" \"description\" SubjectMetadata FilterMetadata(null if none) /path/dataset/directory\n" +
+            "\n" +
             "Insert track metadata from a tabbed list file\n" +
-            "-lf /path/to/list/file trackMetadataTypeName\n\n" +
+            "-lf /path/to/list/file trackMetadataTypeName\n" +
+            "\n" +
+            "Insert track metadata from a file or directory of files corresponding to a SingleTrackEvalFileType\n" +
+            "-sf /path/to/list/file trackMetadataTypeName readerClassName writerClassName\n" +
+            "\n" +
             "Insert tag metadata from a list file\n" +
-            "-tag /path/to/tag/list/file tagMetadataTypeName\n\n";
-    public static void main(String[] args){
+            "-tag /path/to/tag/list/file tagMetadataTypeName\n" +
+            "\n";
+    public static void main(String[] args) throws ClassNotFoundException{
         if (args[0].equals("-f")){
             String dir = args[1];
             int collection_id;
@@ -337,6 +366,8 @@ public class RepositoryManagementUtils {
                     filter_track_metadata_type_id = client.getTrackMetadataID(args[4]);
                 }
                 File dataset_subset_file = new File(args[5]);
+                
+                
                 if (!dataset_subset_file.exists()){
                     throw new RuntimeException("Data set subset file did not exist: " + dataset_subset_file.getAbsolutePath());
                 }
@@ -366,6 +397,55 @@ public class RepositoryManagementUtils {
                 logger.log(Level.SEVERE, null, ex);
             }
             
+        }else if (args[0].equals("-sdt")){
+            logger.info("Inserting single test set dataset from directory of SingleTrackEvalFileType files");
+
+            try{
+            	RepositoryUpdateClientImpl client = new RepositoryUpdateClientImpl();
+                if (args.length < 6){
+                    logger.info("Insufficent arguments!\n" + USAGE);
+                }
+
+                String name = args[1];
+                String description = args[2];
+                int subject_track_metadata_type_id = client.getTrackMetadataID(args[3]);
+                int filter_track_metadata_type_id = -1;
+                if (!args[4].equalsIgnoreCase("null")){
+                    filter_track_metadata_type_id = client.getTrackMetadataID(args[4]);
+                }
+                
+                
+                
+                File dataset_directory = new File(args[5]);
+                if (!dataset_directory.exists()){
+                    throw new RuntimeException("Data-set directory did not exist: " + dataset_directory.getAbsolutePath());
+                }
+                
+
+                logger.info("Name:                " + name);
+                logger.info("Description:\n" + description);
+                logger.info("Subject metadata:    " + args[3]);
+                logger.info("Subject metadata id: " + subject_track_metadata_type_id);
+                logger.info("Filter metadata:     " + args[4]);
+                logger.info("Filter metadata id:  " + filter_track_metadata_type_id);
+                logger.info("Dataset directory:   " + dataset_directory.getAbsolutePath());
+
+                int togo = 10;
+                while(togo > 0){
+                    logger.info("Commencing dataset insert in " + togo + " seconds");
+                    togo -= 5;
+                    try{
+                        Thread.sleep(5000);
+                    }catch (InterruptedException ex){
+                        logger.log(Level.SEVERE, null, ex);
+                    }
+                }
+                
+                client.insertTestOnlyDatasetFromDir(name, description, subject_track_metadata_type_id, filter_track_metadata_type_id, dataset_directory);
+            }catch (Exception ex){
+                logger.log(Level.SEVERE, null, ex);
+            }
+            
         }else if (args[0].equals("-lf")){
             logger.info("Inserting metadata from list file");
             try{
@@ -391,6 +471,41 @@ public class RepositoryManagementUtils {
 
 
             }catch (SQLException ex){
+                logger.log(Level.SEVERE, null, ex);
+            }
+
+        }else if (args[0].equals("-sf")){
+            logger.info("Inserting metadata from single files");
+            try{
+                RepositoryClientImpl client = new RepositoryClientImpl();
+                if (args.length < 5){
+                    throw new RuntimeException("Insufficent arguments!\n" + USAGE);
+
+                }
+
+                File fileOrDir = new File(args[1]);
+                if (!fileOrDir.exists()){
+                    throw new RuntimeException("The file or directory did not exist: " + fileOrDir.getAbsolutePath());
+                }
+                String metadata = args[2];
+                logger.info("List file path:      " + fileOrDir.getAbsolutePath());
+                logger.info("Subject metadata:    " + metadata);
+                int metadata_type_id = client.getTrackMetadataID(metadata);
+                logger.info("Subject metadata id: " + metadata_type_id);
+                client.close();
+                
+                String readerClassName = args[3];
+                logger.info("Reader class name:   " + readerClassName);
+                Class<? extends SingleTrackEvalFileType> readerFileType = 
+                	(Class<? extends SingleTrackEvalFileType>) RepositoryManagementUtils.class.getClassLoader().loadClass(readerClassName);
+                String writerClassName = args[4];
+                logger.info("Writer class name:   " + fileOrDir.getAbsolutePath());
+                Class<? extends SingleTrackEvalFileType> writerFileType = 
+                	(Class<? extends SingleTrackEvalFileType>) RepositoryManagementUtils.class.getClassLoader().loadClass(writerClassName);
+
+                insertMetadataFromSingleTrackEvalFileType(fileOrDir, new NemaTask(-1,"","",metadata_type_id,metadata,-1), readerFileType, writerFileType);
+
+            }catch (Exception ex){
                 logger.log(Level.SEVERE, null, ex);
             }
 
@@ -439,11 +554,11 @@ public class RepositoryManagementUtils {
 	        
 	        int metaId = client.getTrackMetadataID(metadatatype);
 	        if (metaId == -1){
-	            logger.info("Inserting metadata definition for: " + metadatatype);
+	            logger.info("Inserting metadata type definition for: " + metadatatype);
 	
 	            int togo = 10;
 	            while(togo > 0){
-	                logger.info("Commencing metadata definition in " + togo + " seconds");
+	                logger.info("Commencing metadata type definition in " + togo + " seconds");
 	                togo -= 5;
 	                try{
 	                    Thread.sleep(5000);
@@ -452,7 +567,8 @@ public class RepositoryManagementUtils {
 	            client.insertTrackMetaDef(metadatatype);
 	            metaId = client.getTrackMetadataID(metadatatype);
 	        }
-	        Map<String,String> map = ClassificationTextFile.readClassificationFile(listFile, true);
+	        ClassificationTextFile reader = new ClassificationTextFile(metadatatype);
+	        Map<String,String> map = reader.readClassificationFile(listFile);
 	        logger.info("got data for " + map.size() + " tracks");
 	
 	        int togo = 10;
@@ -482,6 +598,130 @@ public class RepositoryManagementUtils {
 			}
             throw new RuntimeException("SQLException occured!",ex);
         }
+    }
+    
+    /**
+     * Inserts metadata from a file or directory that contains files that
+     * are in the format represented by a SingleTrackEvalFileType implementation. 
+     * The files are read and the data inserted into the DB.
+     * 
+     * @param fileOrDir The file or directory of files to insert data from.
+     * @param exemplarTask A sample task with a metadata setting pointing to the 
+     * data to insert.
+     * @param readerFileType The class representing the SingleTrackEvalFileType 
+     * implementation to use to read the data
+     * @throws IOException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
+     * @throws FileNotFoundException 
+     * @throws IllegalArgumentException 
+     */
+    public static void insertMetadataFromSingleTrackEvalFileType(File fileOrDir, 
+    		NemaTask exemplarTask, 
+    		Class<? extends SingleTrackEvalFileType> readerFileType, 
+    		Class<? extends SingleTrackEvalFileType> writerFileType) 
+    		throws IllegalArgumentException, FileNotFoundException, 
+    		InstantiationException, IllegalAccessException, IOException {
+    	
+    	List<NemaData> data = FileConversionUtil.readData(fileOrDir, exemplarTask, readerFileType);
+        logger.info("got data for " + data.size() + " tracks");
+        insertMetadataFromSingleTrackEvalFileType(data, exemplarTask.getSubjectTrackMetadataName(), writerFileType);
+    }
+    		
+	/**
+     * Inserts metadata from a collection NemaData Objects. The metadata is
+     * encoded into Strings using a SingleTrackEvalFileType prior to insertion
+     * into the DB.
+     * 
+     * @param data The List of NemaData Objects to insert.
+     * @param metadataType Metadata type name that should be inserted.
+     * @param readerFileType The class representing the SingleTrackEvalFileType 
+     * implementation to use to read the data
+     */
+    public static void insertMetadataFromSingleTrackEvalFileType(Collection<NemaData> data, 
+    	    String metadataType, 
+    		Class<? extends SingleTrackEvalFileType> writerFileType) {
+    	RepositoryUpdateClientImpl client;
+        try{
+            client = new RepositoryUpdateClientImpl();
+        }catch (SQLException ex){
+            throw new RuntimeException("Failed to init conenctions to repository DB");
+        }
+        
+        try{
+	        client.startTransation();
+	        
+	        int metaId = client.getTrackMetadataID(metadataType);
+	        if (metaId == -1){
+	            logger.info("Inserting metadata type definition for: " + metadataType);
+	
+	            int togo = 10;
+	            while(togo > 0){
+	                logger.info("Commencing metadata type definition in " + togo + " seconds");
+	                togo -= 5;
+	                try{
+	                    Thread.sleep(5000);
+	                }catch (InterruptedException ex){}
+	            }
+	            client.insertTrackMetaDef(metadataType);
+	            metaId = client.getTrackMetadataID(metadataType);
+	        }
+	        
+	        
+	
+	        int togo = 10;
+	            while(togo > 0){
+	            logger.info("Commencing metadata insertion in " + togo + " seconds");
+	            togo -= 5;
+	            try{
+	                Thread.sleep(5000);
+	            }catch (InterruptedException ex){
+	                logger.log(Level.SEVERE, null, ex);
+	            }
+	        }
+	
+	        SingleTrackEvalFileType writer = writerFileType.newInstance();
+//	        if(writerFileType.equals(ClassificationTextFile.class)) {
+//	        	((ClassificationTextFile)writer).setMetadataType(metadataType);
+//	        }
+	        
+	        NemaData track;
+	        int valId;
+	        for (Iterator<NemaData> it = data.iterator(); it.hasNext();){
+	            track = it.next();
+	            String strEncData = stringEncodeSingleTrackEvalFileType(track, writer);
+	            
+	            valId = client.insertTrackMeta(metaId, strEncData);
+	            client.insertTrackMetaLink(track.getId(), valId);
+	        }
+	        client.endTransation();
+        }catch (Exception ex){
+        	try {
+				client.rollback();
+			} catch (SQLException e) {
+				throw new RuntimeException("SQLException occured whien rolling back transaction!",e);
+			}
+            throw new RuntimeException("SQLException occured!",ex);
+        }
+    }
+    
+    private static String stringEncodeSingleTrackEvalFileType(NemaData toEncode, SingleTrackEvalFileType writer) throws IllegalArgumentException, IOException {
+    	String strEncData = "";
+    	
+    	//write data to a temp file
+    	File temp = File.createTempFile(toEncode.getId(), ".txt");
+    	writer.writeFile(temp, toEncode);
+		
+    	//read it up again
+    	BufferedReader in = new BufferedReader(new FileReader(temp));
+    	String line = in.readLine();
+    	while(line != null) {
+    		strEncData += line + "\n";
+    		line = in.readLine();
+    	}
+    	
+    	//return it
+    	return strEncData;
     }
     
     public static void insertTagMetadata(File tag_file, String tag_meta_type_name){
@@ -533,7 +773,7 @@ public class RepositoryManagementUtils {
 	                    		val_id = client.insertTrackMeta(meta_id, tag);
 	                    		tagToId.put(tag, val_id);
 	                    	}
-	                    	client.insertTrackMetaLink(RemapMusicDBFilenamesClass.convertFileToMIREX_ID(new File(lineComps[0].trim())), val_id);
+	                    	client.insertTrackMetaLink(PathAndTagCleaner.convertFileToMIREX_ID(new File(lineComps[0].trim())), val_id);
 	                    }
 	                }else{
 	                    logger.info("empty line ignored, line: " + lineNum + ", file: " + tag_file.getAbsolutePath());
@@ -548,7 +788,7 @@ public class RepositoryManagementUtils {
 	            try {
 	                textBuffer.close();
 	            } catch (Exception ex) {
-	                Logger.getLogger(TagClassificationBinaryFileReader.class.getName()).log(Level.SEVERE, null, ex);
+	                Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, null, ex);
 	            }
 	            client.endTransation();
 	        }
@@ -556,10 +796,102 @@ public class RepositoryManagementUtils {
         	try {
 				client.rollback();
 			} catch (SQLException e1) {
-				Logger.getLogger(TagClassificationBinaryFileReader.class.getName()).log(Level.SEVERE, "Exception occured while rolling back transaction", e);
+				Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, "Exception occured while rolling back transaction", e);
 			}
         	throw new RuntimeException("SQLException occured while inserting data from file: " + tag_file.getAbsolutePath(), e);
         }
     }
 
+    public static void migrate_metadata() {
+    	RepositoryUpdateClientImpl client;
+        try{
+            client = new RepositoryUpdateClientImpl();
+        }catch (SQLException ex){
+            throw new RuntimeException("Failed to init conenctions to repository DB");
+        }
+
+        try{
+	        client.startTransation();
+	        
+	        //get tracks from new DB
+	        List<String> tracks = client.getAllTracks();
+	        
+	        logger.info("Inserting track metadata definitions");
+            client.insertTrackMetaDef(TRACK_ALBUM);
+            client.insertTrackMetaDef(TRACK_ARTIST);
+            client.insertTrackMetaDef(TRACK_GENRE);
+            client.insertTrackMetaDef(TRACK_TITLE);
+	        
+	        int albumMetaId = client.getTrackMetadataID(TRACK_ALBUM);
+	        int artistMetaId = client.getTrackMetadataID(TRACK_ARTIST);
+	        int genreMetaId = client.getTrackMetadataID(TRACK_GENRE);
+	        int titleMetaId = client.getTrackMetadataID(TRACK_TITLE);
+	
+	
+	        logger.info("Retrieving definitions");
+            //retrieve ids of definitions
+            client.initTypesMaps();
+	            
+	        int togo = 10;
+	        while(togo > 0){
+	            logger.info("Commencing metadata migration in " + togo + " seconds");
+	            togo -= 5;
+	            try{
+	                Thread.sleep(5000);
+	            }catch (InterruptedException ex){}
+	        }
+	
+	        logger.info("Migrating metadata for " + tracks.size() + " tracks");
+	
+	        CbrowserClient cb_client;
+	        try{
+	            cb_client = new CbrowserClient();
+	        }catch (SQLException ex){
+	            throw new RuntimeException("Failed to init conenctions to cbrowser DB");
+	        }
+	
+	        String track;
+	        Map<String,String> vals;
+	        int valId;
+	        int done = 0;
+	        for (Iterator<String> it = tracks.iterator(); it.hasNext();){
+	            track = it.next();
+	            
+	            vals = cb_client.getTrackMetadata(track);
+                if(vals != null){
+                    //insert metadata values, get ids and link to track
+                    String album = vals.get(CbrowserClient.ALBUM);
+                    valId = client.insertTrackMeta(albumMetaId, album);
+                    client.insertTrackMetaLink(track, valId);
+
+                    String artist = vals.get(CbrowserClient.ARTIST);
+                    valId = client.insertTrackMeta(artistMetaId, artist);
+                    client.insertTrackMetaLink(track, valId);
+
+                    String title = vals.get(CbrowserClient.TITLE);
+                    valId = client.insertTrackMeta(titleMetaId, title);
+                    client.insertTrackMetaLink(track, valId);
+
+                    String genre = vals.get(CbrowserClient.GENRE);
+                    valId = client.insertTrackMeta(genreMetaId, genre);
+                    client.insertTrackMetaLink(track, valId);
+                }
+	            
+	            done++;
+	            if (done % 100 == 0){
+	                logger.info("done " + done + " of " + tracks.size());
+	            }
+	        }
+	        client.endTransation();
+	        
+        }catch(SQLException e){
+        	try {
+				client.rollback();
+			} catch (SQLException e1) {
+				Logger.getLogger(RepositoryManagementUtils.class.getName()).log(Level.SEVERE, "Exception occured while rolling back transaction", e);
+			}
+        	throw new RuntimeException("SQLException occured while migrating data from cbrowser DB", e);
+        }
+
+    }
 }
