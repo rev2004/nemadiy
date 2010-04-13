@@ -8,6 +8,91 @@
 	<artifactId>nema-repositoryservice</artifactId>
 	<packaging>jar</packaging>
 	<name>NEMA Repository Service Implementation</name>
+	
+	
+	<mailingLists>
+		<mailingList>
+			<name>NEMA Developers Mailing List</name>
+			<post>nema-developers@googlegroups.com</post>
+			<archive>http://groups.google.com/group/nema-developers</archive>
+		</mailingList>
+	</mailingLists>
+
+
+	<prerequisites>
+		<maven>2.2.0</maven>
+	</prerequisites>
+	
+	
+	<organization>
+     <name>IMIRSEL -Graduate School of Library Information Science UIUC</name>
+     <url>http://www.imirsel.org/</url>
+    </organization>
+	
+
+
+	<inceptionYear>2010</inceptionYear>
+	<licenses>
+		<license>
+			<name>Apache License</name>
+			<url>LICENSE.txt</url>
+		</license>
+	</licenses>
+
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<sourceEncoding>UTF-8</sourceEncoding>
+					<quiet>true</quiet>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<targetJdk>1.5</targetJdk>
+					<sourceEncoding>UTF-8</sourceEncoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<inherited>false</inherited>
+					<link_template>%URL%/%ISSUE%</link_template>
+					<xmlPath>${basedir}/src/site/changes/changes.xml</xmlPath>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jdepend-maven-plugin</artifactId>
+				<version>2.0-beta-2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.4.3</version>
+			</plugin>
+		</plugins>
+	</reporting>
+	
 
 	<scm>
 		<connection>scm:svn:https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</connection>
@@ -15,11 +100,7 @@
 		<tag>HEAD</tag>
 		<url>https://svn.lis.uiuc.edu/NEMA/application/trunk/nema-temp-repository</url>
 	</scm>
-	<organization>
-		<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
-		<url>http://www.lis.illinois.edu</url>
-	</organization>
-
+	
 
 	<distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
@@ -36,6 +117,11 @@
 			<name>IMIRSEL Snapshots</name>
 			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-snapshots-local</url>
 		</snapshotRepository>
+		<site>
+     	  <id>nema-site</id>
+     	  <url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/repositoryservice</url>
+    	  </site>
+		
 
 		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
 	</distributionManagement>
