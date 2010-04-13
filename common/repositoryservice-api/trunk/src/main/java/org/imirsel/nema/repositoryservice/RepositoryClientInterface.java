@@ -406,6 +406,20 @@ public interface RepositoryClientInterface {
      */
     public List<NemaData> resolveTracksToFiles(List<NemaData> trackDataList, Set<NemaMetadataEntry> constraint) throws SQLException, IllegalArgumentException;
     
+    /**
+     * Uses a file encoding constraint set to resolve and add file paths to the
+     * resources whose IDs are given in the input Map of Lists of NemaData 
+     * Objects. The data in the input list is modified and returned.
+     * 
+     * @param trackDataMap
+     * @param constraint
+     * @return the updated Map of NemaData Object Lists.
+     * @throws SQLException Thrown if a problem occurs when querying the 
+     * database.
+     * @throws IllegalArgumentException Thrown if the IDs cannot be resolved to 
+     * files using the supplied constraint.
+     */
+    public Map<NemaTrackList,List<NemaData>> resolveTracksToFiles(Map<NemaTrackList,List<NemaData>> trackDataMap, Set<NemaMetadataEntry> constraint) throws SQLException, IllegalArgumentException;
     
     /**
      * Logs a result directory path or identifier and system name against a 
