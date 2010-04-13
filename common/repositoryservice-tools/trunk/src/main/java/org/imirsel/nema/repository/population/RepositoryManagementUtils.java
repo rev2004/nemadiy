@@ -47,6 +47,7 @@ public class RepositoryManagementUtils {
 	static {
 		SIX_DIGIT_INTEGER.setMaximumFractionDigits(0);
 		SIX_DIGIT_INTEGER.setMinimumIntegerDigits(6);
+		SIX_DIGIT_INTEGER.setGroupingUsed(false);
 	}
 	
     public static final String TRACK_TITLE = "Title";
