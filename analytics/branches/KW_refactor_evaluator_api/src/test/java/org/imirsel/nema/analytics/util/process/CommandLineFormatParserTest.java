@@ -3,7 +3,6 @@ package org.imirsel.nema.analytics.util.process;
 
 import java.util.Iterator;
 
-import org.imirsel.nema.analytics.util.process.CommandLineFormatParser.CommandArgument;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -37,10 +36,10 @@ public class CommandLineFormatParserTest {
 		
 		CommandLineFormatParser parser = new CommandLineFormatParser(configString1);
 		
-		assert(parser.arguments != null);
-		System.out.println("Number of command argument parts: " + parser.arguments.size());
+		assert(parser.getArguments() != null);
+		System.out.println("Number of command argument parts: " + parser.getArguments().size());
 		int count = 0;
-		for (Iterator<CommandArgument> iterator = parser.arguments.iterator(); iterator.hasNext();) {
+		for (Iterator<CommandArgument> iterator = parser.getArguments().iterator(); iterator.hasNext();) {
 			CommandArgument arg = iterator.next();
 			System.out.println("\t" + count++ + ": " + arg.toConfigString()); 
 		}
@@ -79,10 +78,10 @@ public class CommandLineFormatParserTest {
 		
 		CommandLineFormatParser parser = new CommandLineFormatParser(configString1);
 		
-		assert(parser.arguments != null);
-		System.out.println("Number of command argument parts: " + parser.arguments.size());
+		assert(parser.getArguments() != null);
+		System.out.println("Number of command argument parts: " + parser.getArguments().size());
 		int count = 0;
-		for (Iterator<CommandArgument> iterator = parser.arguments.iterator(); iterator.hasNext();) {
+		for (Iterator<CommandArgument> iterator = parser.getArguments().iterator(); iterator.hasNext();) {
 			CommandArgument arg = iterator.next();
 			System.out.println("\t" + count++ + ": " + arg.toConfigString()); 
 		}
