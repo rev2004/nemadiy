@@ -1,0 +1,20 @@
+													------------
+													Roadmap
+													------------
+													Amit Kumar
+													------------
+													2010-04-13
+													------------
+
+
+Roadmap 0.3.0
+
+
+* High Priority
+	
+	[[1]] Remove the custom client pool out of this code -there are plenty of connection pools
+		  available.
+	
+* Medium Priority
+	
+* Low Priority
