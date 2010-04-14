@@ -12,6 +12,7 @@ import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.analytics.util.io.FileConversionUtil;
 import org.imirsel.nema.analytics.util.io.NemaFileType;
+import org.imirsel.nema.analytics.util.process.CommandArgument;
 import org.imirsel.nema.analytics.util.process.CommandLineFormatParser;
 import org.imirsel.nema.components.RemoteProcessExecutorComponent;
 import org.imirsel.nema.model.CommandLineTemplate;
@@ -96,6 +97,13 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			//parse and extract I/O classes and parameters
 			CommandLineFormatParser formatModel = new CommandLineFormatParser(commandlineFormat);
 			getLogger().info("Format string parsed as: " + formatModel.toConfigString());
+			
+			String args = "Number of command argument parts: " + formatModel.getArguments().size();
+			int count = 0;
+			for (Iterator<CommandArgument> iterator = formatModel.getArguments().iterator(); iterator.hasNext();) {
+				CommandArgument arg = iterator.next();
+				args += "\t" + count++ + ": " + arg.toConfigString();  
+			}
 			
 			//Extract constraints from inputs
 			//only dealing with input 1 as this is a 1 input component
