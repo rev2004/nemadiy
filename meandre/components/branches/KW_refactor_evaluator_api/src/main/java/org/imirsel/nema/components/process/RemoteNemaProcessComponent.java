@@ -91,10 +91,11 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			ProcessTemplate pTemplate = this.getProcessTemplate();
 			CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
 			String commandlineFormat = cTemplate.getCommandLineFormatter();
+			getLogger().info("Parsing command formatting string: " + commandlineFormat);
 			
-			getLogger().info("Parsing command formatting string...");
 			//parse and extract I/O classes and parameters
 			CommandLineFormatParser formatModel = new CommandLineFormatParser(commandlineFormat);
+			getLogger().info("Format string parsed as: " + formatModel.toConfigString());
 			
 			//Extract constraints from inputs
 			//only dealing with input 1 as this is a 1 input component
@@ -200,7 +201,9 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 					
 					//set the formatted command arguments to run from formatModel
 					//TODO check this is the right place to setting this...
-					pep.setCommandLineFlags(formatModel.toFormattedString());
+					String formattedArgs = formatModel.toFormattedString();
+					getLogger().info("Setting formatted arguments: " + formattedArgs);
+					pep.setCommandLineFlags(formattedArgs);
 
 					getLogger().info("Executing process...");
 					@SuppressWarnings("unused")
