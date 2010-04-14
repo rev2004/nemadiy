@@ -176,6 +176,13 @@ public class CommandLineFormatParser {
 				idx++;
 			}
 		}
+		
+		//ending a string component
+		if (lastIdx != idx){
+			arguments.add(new StringCommandArgument(commandFormatString.substring(lastIdx, idx),true));
+			idx++;
+			lastIdx = idx;
+		}
 	}
 	
 	public List<CommandArgument> getArguments() {
