@@ -16,8 +16,8 @@
   
   
     <breadcrumbs>
-      <item name="NEMA Development" href="http://nema-dev.lis.illinois.edu/"/>
-      <item name="Analytics Library" href="http://nema-dev.lis.illinois.edu/development/analytics-kw-eval/"/>
+      <item name="NEMA Development" href="http://nema-dev.lis.illinois.edu/development"/>
+      <item name="Analytics Library" href="index.html"/>
     </breadcrumbs>
   <links>
       <item name="NEMA" href="http://nema.lis.illinois.edu/"/>
@@ -33,7 +33,6 @@
   <menu name="Reference">
    <item name="Architecture" href="architecture.html"/>
    <item name="Developer" href="developer.html"/>
-   <item name="Installation" href="install.html"/>
    <item name="Release Notes" href="release-notes.html"/>
    <item name="Roadmap" href="roadmap.html"/>
   </menu>
