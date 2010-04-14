@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.imirsel.nema.analytics.evaluation.util.resultpages.Table;
+import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;

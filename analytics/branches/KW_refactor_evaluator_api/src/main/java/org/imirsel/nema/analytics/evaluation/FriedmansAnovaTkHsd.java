@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.evaluation.util;
+package org.imirsel.nema.analytics.evaluation;
 
 import java.io.BufferedWriter;
 import java.io.File;
