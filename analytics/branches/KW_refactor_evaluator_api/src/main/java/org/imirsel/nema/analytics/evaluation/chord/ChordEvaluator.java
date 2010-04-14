@@ -15,6 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.*;
+import org.imirsel.nema.analytics.evaluation.resultpages.FileListItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.ImageItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.Page;
+import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.Table;
+import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
 import org.imirsel.nema.analytics.evaluation.util.*;
 import org.imirsel.nema.analytics.util.io.*;

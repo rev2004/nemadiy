@@ -11,6 +11,11 @@ import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
 import org.imirsel.nema.analytics.evaluation.WriteCsvResultFiles;
+import org.imirsel.nema.analytics.evaluation.resultpages.FileListItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.Page;
+import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.Table;
+import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
 import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
 import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;

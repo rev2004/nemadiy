@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.evaluation.util.resultpages;
+package org.imirsel.nema.analytics.evaluation.resultpages;
 
 /**
  * Abstract super class for items to display on a page.

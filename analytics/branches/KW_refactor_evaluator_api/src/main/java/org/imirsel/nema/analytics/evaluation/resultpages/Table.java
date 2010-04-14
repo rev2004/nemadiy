@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.evaluation.util.resultpages;
+package org.imirsel.nema.analytics.evaluation.resultpages;
 
 import java.util.List;
 
