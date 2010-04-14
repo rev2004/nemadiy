@@ -14,7 +14,8 @@ import org.imirsel.nema.analytics.util.io.NemaFileType;
  */
 public class CommandLineFormatParser {
 
-	List<CommandArgument> arguments = null;
+	private List<CommandArgument> arguments = null;
+	
 	private Map<Integer,FileCommandArgument> inputs = null;
 	private Map<Integer,FileCommandArgument> outputs = null;
 	
@@ -177,6 +178,15 @@ public class CommandLineFormatParser {
 		}
 	}
 	
+	public List<CommandArgument> getArguments() {
+		return arguments;
+	}
+
+	public void setArguments(List<CommandArgument> arguments) {
+		this.arguments = arguments;
+	}
+
+	
 	public static Map<String,String> parsePropertiesString(String propsString) throws IllegalArgumentException{
 		Map<String,String> map = new HashMap<String,String>();
 		if (propsString.trim().equals("")) {
@@ -194,20 +204,6 @@ public class CommandLineFormatParser {
 		return map;
 	}
 	
-	private static String producePropertiesString(Map<String,String> map) {
-		String out = "";
-		for (Iterator<String> iterator = map.keySet().iterator(); iterator
-				.hasNext();) {
-			String key = iterator.next();
-			String val = map.get(key);
-			out += key + "=" + val;
-			if(iterator.hasNext()) {
-				out += ",";
-			}
-		}
-		return out;
-	}
-
 	public String toConfigString() {
 		String out = "";
 		for (Iterator<CommandArgument> iterator = arguments.iterator(); iterator
@@ -337,141 +333,6 @@ public class CommandLineFormatParser {
 			return null;
 		}
 		return arg.getProperties();
-	}
-
-
-
-	interface CommandArgument{
-		public String toConfigString();
-		public String toFormattedString();
-		public boolean followedBySpace();
-	}
-	
-	class StringCommandArgument implements CommandArgument{
-		private String string;
-		boolean followedBySpace;
-		
-		public StringCommandArgument(String string, boolean followedBySpace) {
-			this.string = string;
-			this.followedBySpace = followedBySpace;
-		}
-		
-		public String getString() {
-			return string;
-		}
-
-		public void setString(String string) {
-			this.string = string;
-		}
-
-		public String toConfigString() {
-			return string;
-		}
-		
-		public String toFormattedString() {
-			return string;
-		}
-		
-		public boolean followedBySpace() {
-			return followedBySpace;
-		}
-	}
-
-	class FileCommandArgument implements CommandArgument{
-		private boolean isOutput;
-		private String preparedPath;
-		private Class<? extends NemaFileType> fileType;
-		private Map<String,String> properties;
-		boolean followedBySpace;
-		int ioIndex;
-		
-		public FileCommandArgument(boolean isOutput, 
-				Class<? extends NemaFileType> fileType,
-				Map<String,String> properties,
-				boolean followedBySpace,
-				int ioIndex) {
-			this.isOutput = isOutput;
-			this.fileType = fileType;
-			this.properties = properties;
-			this.followedBySpace = followedBySpace;
-			this.ioIndex = ioIndex;
-		}
-
-		public Map<String, String> getProperties() {
-			return properties;
-		}
-
-		public void setProperties(Map<String, String> properties) {
-			this.properties = properties;
-		}
-
-		public int getIoIndex() {
-			return ioIndex;
-		}
-
-		public void setIoIndex(int ioIndex) {
-			this.ioIndex = ioIndex;
-		}
-
-		public void setFollowedBySpace(boolean followedBySpace) {
-			this.followedBySpace = followedBySpace;
-		}
-
-		public Class<? extends NemaFileType> getFileType() {
-			return fileType;
-		}
-
-		public void setFileType(Class<? extends NemaFileType> fileType) {
-			this.fileType = fileType;
-		}
-
-		public String getPreparedPath() {
-			return preparedPath;
-		}
-
-		public void setPreparedPath(String path) {
-			preparedPath = path;
-		}
-		
-		public void clearPreparedPath() {
-			preparedPath = null;
-		}
-		
-		public boolean isOutput() {
-			return isOutput;
-		}
-
-		public void setOutput(boolean isOutput) {
-			this.isOutput = isOutput;
-		}
-
-		public String toConfigString() {
-			String out = "$";
-			if (isOutput) {
-				out += "o";
-			}else {
-				out += "i";
-			}
-			out += ioIndex + "{";
-			out += this.fileType.getName();
-			if (this.properties != null) {
-				out += "(" + producePropertiesString(this.properties) + ")";
-			}
-			out += "}";
-			
-			return out;
-		}
-		
-		public String toFormattedString() {
-			if(preparedPath == null) {
-				throw new IllegalArgumentException("No path prepared for InputFileComandComponent. A path must be set before the formatted String can be returned.");
-			}
-			return preparedPath;
-		}
-		
-		public boolean followedBySpace() {
-			return followedBySpace;
-		}
 	}
 	
 	
