@@ -119,6 +119,7 @@ public class CommandLineFormatParser {
 					throw new IllegalArgumentException("End of string reached while seeking type argument close } or properties opening ( in: " + commandFormatString);
 				}
 				String typeStr = commandFormatString.substring(lastIdx,idx);
+				lastIdx = idx;
 				Class<? extends NemaFileType> typeClass;
 				try {
 					typeClass = (Class<? extends NemaFileType>)Class.forName(typeStr);
@@ -154,6 +155,7 @@ public class CommandLineFormatParser {
 				boolean followedBySpace = false;
 				if (idx < commandFormatString.length() && commandFormatString.charAt(idx) == ' ') {
 					followedBySpace = true;
+					idx++;
 				}
 				
 				FileCommandArgument fileComp = new FileCommandArgument(isOutput, typeClass, props, followedBySpace, ioIndex);
@@ -167,6 +169,8 @@ public class CommandLineFormatParser {
 //					inputTypes.put(ioIndex,typeClass);
 //					inputProperties.put(ioIndex, props);
 				}
+				
+				lastIdx = idx;
 			}else {
 				idx++;
 			}

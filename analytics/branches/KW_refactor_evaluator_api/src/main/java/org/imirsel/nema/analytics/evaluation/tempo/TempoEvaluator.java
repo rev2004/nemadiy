@@ -35,6 +35,7 @@ public class TempoEvaluator extends EvaluatorImpl {
 		super();
 	}
 
+	@Override
 	protected void setupEvalMetrics() {
 		this.trackEvalMetrics.clear();
 		this.trackEvalMetrics.add(NemaDataConstants.TEMPO_EXTRACTION_P_SCORE);
@@ -108,6 +109,7 @@ public class TempoEvaluator extends EvaluatorImpl {
 		return results;
 	}
 
+	@Override
 	public void renderResults(NemaEvaluationResultSet results, File outputDir)
 	throws IOException {
 		int numJobs = results.getJobIds().size();
@@ -310,6 +312,7 @@ public class TempoEvaluator extends EvaluatorImpl {
 	 * @param theData	the results to evaluate for the jobId. Individual results for each file are added back to this List
 	 * @return 			a single NemaData object that contains the average/summary/overall evaluation	
 	 */
+	@Override
 	public NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData) {
 		//count the number of examples returned and search for any missing tracks in the results returned for the fold
 		int numExamples = checkFoldResultsAreComplete(jobID, testSet, theData);
@@ -372,7 +375,7 @@ public class TempoEvaluator extends EvaluatorImpl {
             	overallTwoTempoCorrect++;
             }
             
-            pScore = rawGtData[2] * (double)TT1 + (1 - rawGtData[2]) * (double)TT2;
+            pScore = rawGtData[2] * TT1 + (1 - rawGtData[2]) * TT2;
             overallP += pScore;
             
             
@@ -394,7 +397,7 @@ public class TempoEvaluator extends EvaluatorImpl {
 
 		outObj.setMetadata(NemaDataConstants.TEMPO_EXTRACTION_ONE_CORRECT, (double)overallOneTempoCorrect/(double)numTracks);
 		outObj.setMetadata(NemaDataConstants.TEMPO_EXTRACTION_TWO_CORRECT, (double)overallTwoTempoCorrect/(double)numTracks);
-		outObj.setMetadata(NemaDataConstants.TEMPO_EXTRACTION_P_SCORE, overallP/(double)numTracks);
+		outObj.setMetadata(NemaDataConstants.TEMPO_EXTRACTION_P_SCORE, overallP/numTracks);
 
 		return outObj;
 	}
