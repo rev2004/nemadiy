@@ -455,92 +455,92 @@ public class FileConversionUtil {
 		return out;
 	}
 	
-		
-	/**
-	 * Writes out a test file that encodes paths for more than one track per
-	 * fold of the experiment. 
-	 * 
-	 * @param testData A Map of NemaTrackList to a List of NemaData Objects 
-	 * encoding the data to write to each file or directory.
-	 * @param task The task that the data relates (only required for 
-	 * classification file types).
-	 * @param fileType The file type to use to write the list files.
-	 * @param outputDirectory The directory to write the data files to.
-	 * @return 
-	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * NemaFileType is received.
-	 * @throws InstantiationException Thrown if the file writer can't be 
-	 * instantiated (for example if there is no zero-arg constructor).
-	 * @throws IllegalAccessException Thrown if we do not have access to the 
-	 * definition of the specified file type class.
-	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
-	 * found or created.
-	 * @throws IOException Thrown if there is a problem writing the files to
-	 * disk.
-	 */
-	public static Map<NemaTrackList,File> writeTestListFiles(
-			Map<NemaTrackList,List<NemaData>> testData, 
-			NemaTask task, 
-			Class<? extends MultipleTrackEvalFileType> fileType, 
-			File outputDirectory
-			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
-		Map<NemaTrackList,File> out = new HashMap<NemaTrackList,File>();
-		
-		for (Iterator<NemaTrackList> iterator = testData.keySet().iterator(); iterator.hasNext();) {
-			NemaTrackList testSet = iterator.next();
-			List<NemaData> data = testData.get(testSet);
-			File written = writeTestListFile(testSet,data,task,fileType,outputDirectory);
-			out.put(testSet,written);
-		}
-	
-		return out;
-	}
-	
-	/**
-	 * 
-	 * @param testData a List of NemaData Objects 
-	 * encoding the data to write to the file or directory.
-	 * @param task The task that the data relates (only required for 
-	 * classification file types).
-	 * @param fileType The file type to use to write the list files.
-	 * @param outputDirectory The directory to write the data files to.
-	 * @return 
-	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
-	 * NemaFileType is received.
-	 * @throws InstantiationException Thrown if the file writer can't be 
-	 * instantiated (for example if there is no zero-arg constructor).
-	 * @throws IllegalAccessException Thrown if we do not have access to the 
-	 * definition of the specified file type class.
-	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
-	 * found or created.
-	 * @throws IOException Thrown if there is a problem writing the files to
-	 * disk.
-	 */
-	public static File writeTestListFile(
-			NemaTrackList testSet, 
-			List<NemaData> testData, 
-			NemaTask task, 
-			Class<? extends MultipleTrackEvalFileType> fileType, 
-			File outputDirectory
-			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
-		if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType)) {
-			MultipleTrackEvalFileType typeInstance = (MultipleTrackEvalFileType)fileType.newInstance();
-			//set type for classification evaluator
-			if (ClassificationTextFile.class.equals(fileType)) {
-				((ClassificationTextFile)typeInstance).setMetadataType(task.getSubjectTrackMetadataName());
-			}
-			
-			//mint some sort of unique file name
-			File toWriteTo = new File(outputDirectory.getAbsolutePath() + File.separator + "test-set-" + testSet.getId());
-			typeInstance.writeFile(toWriteTo, testData);
-			return toWriteTo;
-		}else {
-			throw new IllegalArgumentException("Unrecognized file type for test data files: " + fileType.getName());
-		}
-		
-	}
-
-		
+//		
+//	/**
+//	 * Writes out a list of test files (one per fold of the experiment) that 
+//	 * encodes paths for more than one track . 
+//	 * 
+//	 * @param testData A Map of NemaTrackList to a List of NemaData Objects 
+//	 * encoding the data to write to each file or directory.
+//	 * @param task The task that the data relates (only required for 
+//	 * classification file types).
+//	 * @param fileType The file type to use to write the list files.
+//	 * @param outputDirectory The directory to write the data files to.
+//	 * @return 
+//	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
+//	 * NemaFileType is received.
+//	 * @throws InstantiationException Thrown if the file writer can't be 
+//	 * instantiated (for example if there is no zero-arg constructor).
+//	 * @throws IllegalAccessException Thrown if we do not have access to the 
+//	 * definition of the specified file type class.
+//	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
+//	 * found or created.
+//	 * @throws IOException Thrown if there is a problem writing the files to
+//	 * disk.
+//	 */
+//	public static Map<NemaTrackList,File> writeTestListFiles(
+//			Map<NemaTrackList,List<NemaData>> testData, 
+//			NemaTask task, 
+//			Class<? extends MultipleTrackEvalFileType> fileType, 
+//			File outputDirectory
+//			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
+//		Map<NemaTrackList,File> out = new HashMap<NemaTrackList,File>();
+//		
+//		for (Iterator<NemaTrackList> iterator = testData.keySet().iterator(); iterator.hasNext();) {
+//			NemaTrackList testSet = iterator.next();
+//			List<NemaData> data = testData.get(testSet);
+//			File written = writeTestListFile(testSet,data,task,fileType,outputDirectory);
+//			out.put(testSet,written);
+//		}
+//	
+//		return out;
+//	}
+//	
+//	/**
+//	 * Writes out a single list
+//	 * @param testData a List of NemaData Objects 
+//	 * encoding the data to write to the file or directory.
+//	 * @param task The task that the data relates (only required for 
+//	 * classification file types).
+//	 * @param fileType The file type to use to write the list files.
+//	 * @param outputDirectory The directory to write the data files to.
+//	 * @return 
+//	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
+//	 * NemaFileType is received.
+//	 * @throws InstantiationException Thrown if the file writer can't be 
+//	 * instantiated (for example if there is no zero-arg constructor).
+//	 * @throws IllegalAccessException Thrown if we do not have access to the 
+//	 * definition of the specified file type class.
+//	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
+//	 * found or created.
+//	 * @throws IOException Thrown if there is a problem writing the files to
+//	 * disk.
+//	 */
+//	public static File writeTestListFile(
+//			NemaTrackList testSet, 
+//			List<NemaData> testData, 
+//			NemaTask task, 
+//			Class<? extends MultipleTrackEvalFileType> fileType, 
+//			File outputDirectory
+//			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
+//		if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+//			MultipleTrackEvalFileType typeInstance = (MultipleTrackEvalFileType)fileType.newInstance();
+//			//set type for classification evaluator
+//			if (ClassificationTextFile.class.equals(fileType)) {
+//				((ClassificationTextFile)typeInstance).setMetadataType(task.getSubjectTrackMetadataName());
+//			}
+//			
+//			//mint some sort of unique file name
+//			File toWriteTo = new File(outputDirectory.getAbsolutePath() + File.separator + "test-set-" + testSet.getId());
+//			typeInstance.writeFile(toWriteTo, testData);
+//			return toWriteTo;
+//		}else {
+//			throw new IllegalArgumentException("Unrecognized file type for test data files: " + fileType.getName());
+//		}
+//		
+//	}
+//
+//		
 	
 	
 }
