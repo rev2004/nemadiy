@@ -93,7 +93,10 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
 			String commandlineFormat = cTemplate.getCommandLineFormatter();
 			getLogger().info("Parsing command formatting string: " + commandlineFormat);
-			
+			if (commandlineFormat.contains("\n")){
+				commandlineFormat = commandlineFormat.replaceAll("\n", " ");
+				getLogger().warning("Comamnd format string contained new line characters. These were replaced with spaces");
+			}
 			//parse and extract I/O classes and parameters
 			CommandLineFormatParser formatModel = new CommandLineFormatParser(commandlineFormat);
 			getLogger().info("Format string parsed as: " + formatModel.toConfigString());
