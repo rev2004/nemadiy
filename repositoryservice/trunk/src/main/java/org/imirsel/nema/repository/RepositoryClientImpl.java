@@ -77,9 +77,17 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             "SELECT file_id from file,file_metadata,file_file_metadata_link WHERE file.track_id=? AND file.id=file_file_metadata_link.file_id \n";
 
     public static final String GET_CONSTRAINED_FILES =
-            "SELECT file.* from file WHERE file.id IN (\n" +
-            "SELECT file_id from file,file_metadata,file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id \n";
+        "SELECT file.* from file WHERE file.id IN (\n" +
+        "SELECT file_id from file,file_metadata,file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id \n";
 
+    public static final String GET_TRACKLIST_FILES =
+        "SELECT file.* from file WHERE file.track_id IN (SELECT track_id from trackList_track_link WHERE set_id=?)";
+    private PreparedStatement getTracklistFiles;
+    
+//    public static final String GET_CONSTRAINED_TRACKLIST_FILES =
+//        "SELECT file.* from file WHERE file.track_id IN (SELECT track_id from trackList_track_link WHERE set_id=?)";
+    
+    
     public static final String GET_FILE_METADATA = "SELECT * FROM file_metadata";
     private PreparedStatement getFileMeta;
 
@@ -148,7 +156,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         getAllTrackMetadata = dbCon.con.prepareStatement(GET_ALL_TRACK_METADATA_QUERY);
         getTrackMetadataSpecific = dbCon.con.prepareStatement(GET_TRACK_METADATA_SPECIFIC_QUERY);
         getAllTrackMetadataSpecific = dbCon.con.prepareStatement(GET_ALL_TRACK_METADATA_SPECIFIC_QUERY);
-
+        getTracklistFiles = dbCon.con.prepareStatement(GET_TRACKLIST_FILES);
+        
         getAllTracks = dbCon.con.prepareStatement(GET_ALL_TRACKS);
         getFileMeta = dbCon.con.prepareStatement(GET_FILE_METADATA);
         
@@ -514,16 +523,37 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return out;
     }
 
+    private List<Map<String, String>> getFileDataForTrackList(int trackListId, Set<NemaMetadataEntry> constraint) throws SQLException{
+        String query = GET_CONSTRAINED_FILES;
+        NemaMetadataEntry nemaMetadataEntry;
+        if(constraint != null){
+	        for (Iterator<NemaMetadataEntry> it = constraint.iterator(); it.hasNext();){
+	            nemaMetadataEntry = it.next();
+	            query += "AND EXISTS (SELECT file_id FROM file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id AND file_file_metadata_link.file_metadata_id=(SELECT id FROM file_metadata WHERE metadata_type_id=" + fileMetadataTypeMapRev.get(nemaMetadataEntry.getType()) + " AND value='" + nemaMetadataEntry.getValue() + "')) ";
+	            if (it.hasNext()){
+	                query += "\n";
+	            }
+	        }
+        }
+        query += ")";
+//        System.out.println("Executing constructed query: " + query);
+        PreparedStatement st = dbCon.con.prepareStatement(query);
+        List<Map<String, String>> results = executePreparedStatement(st);
+
+        return results;
+    }
 
     private List<Map<String, String>> getFileData(Set<NemaMetadataEntry> constraint) throws SQLException{
         String query = GET_CONSTRAINED_FILES;
         NemaMetadataEntry nemaMetadataEntry;
-        for (Iterator<NemaMetadataEntry> it = constraint.iterator(); it.hasNext();){
-            nemaMetadataEntry = it.next();
-            query += "AND EXISTS (SELECT file_id FROM file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id AND file_file_metadata_link.file_metadata_id=(SELECT id FROM file_metadata WHERE metadata_type_id=" + fileMetadataTypeMapRev.get(nemaMetadataEntry.getType()) + " AND value='" + nemaMetadataEntry.getValue() + "')) ";
-            if (it.hasNext()){
-                query += "\n";
-            }
+        if(constraint != null){
+	        for (Iterator<NemaMetadataEntry> it = constraint.iterator(); it.hasNext();){
+	            nemaMetadataEntry = it.next();
+	            query += "AND EXISTS (SELECT file_id FROM file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id AND file_file_metadata_link.file_metadata_id=(SELECT id FROM file_metadata WHERE metadata_type_id=" + fileMetadataTypeMapRev.get(nemaMetadataEntry.getType()) + " AND value='" + nemaMetadataEntry.getValue() + "')) ";
+	            if (it.hasNext()){
+	                query += "\n";
+	            }
+	        }
         }
         query += ")";
 //        System.out.println("Executing constructed query: " + query);
@@ -551,6 +581,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
         return results;
     }
+    
+    
     
     public NemaFile getFile(NemaTrack track,
                             Set<NemaMetadataEntry> constraint) throws SQLException{
@@ -588,6 +620,33 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return out;
     }
 
+    public List<NemaFile> getFiles(int trackListId) throws SQLException{
+    	getTracklistFiles.setInt(1, trackListId);
+    	List<Map<String,String>> results = executePreparedStatement(getTracklistFiles);
+    	return buildNEMAFile(results);
+    }
+    
+    public List<NemaFile> getFiles(int trackListId,
+            Set<NemaMetadataEntry> constraint) throws SQLException{
+    	String query = GET_TRACKLIST_FILES;
+        NemaMetadataEntry nemaMetadataEntry;
+        if(constraint != null){
+	        for (Iterator<NemaMetadataEntry> it = constraint.iterator(); it.hasNext();){
+	            nemaMetadataEntry = it.next();
+	            query += " AND EXISTS (SELECT * FROM file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id AND file_file_metadata_link.file_metadata_id=(SELECT id FROM file_metadata WHERE metadata_type_id=" + fileMetadataTypeMapRev.get(nemaMetadataEntry.getType()) + " AND value='" + nemaMetadataEntry.getValue() + "'))";
+	            if (it.hasNext()){
+	                query += "\n";
+	            }
+	        }
+        }
+        System.out.println("Executing constructed query: " + query);
+        PreparedStatement st = dbCon.con.prepareStatement(query);
+        st.setInt(1, trackListId);
+        List<Map<String, String>> results = executePreparedStatement(st);
+    	return buildNEMAFile(results);
+    }
+    
+    
 
     public List<NemaFile> getFiles(List<NemaTrack> trackList,
                                    Set<NemaMetadataEntry> constraint) throws SQLException{
@@ -633,7 +692,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public List<NemaData> resolveTracksToFiles(List<NemaData> trackDataList, Set<NemaMetadataEntry> constraint) throws SQLException, IllegalArgumentException{
     	logger.info("Resolving files for " + trackDataList.size() + " tracks");
-        Map<String,NemaData> trackMap = new HashMap<String,NemaData>(trackDataList.size());
+        
+    	Map<String,NemaData> trackMap = new HashMap<String,NemaData>(trackDataList.size());
         NemaData tmp;
         for (Iterator<NemaData> it = trackDataList.iterator(); it.hasNext();) {
 			tmp = it.next();
@@ -663,37 +723,68 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public Map<NemaTrackList,List<NemaData>> resolveTracksToFiles(Map<NemaTrackList,List<NemaData>> trackDataMap, Set<NemaMetadataEntry> constraint) throws SQLException, IllegalArgumentException{
     	logger.info("Resolving files for " + trackDataMap.size() + " lists of tracks");
-        Map<String,NemaData> trackMap = new HashMap<String,NemaData>();
-        NemaData tmp;
-        for (Iterator<NemaTrackList> iterator = trackDataMap.keySet().iterator(); iterator
-				.hasNext();) {
-			NemaTrackList trackList = iterator.next();
+//        Map<String,NemaData> trackMap = new HashMap<String,NemaData>();
+//        NemaData tmp;
+//        for (Iterator<NemaTrackList> trackListIt = trackDataMap.keySet().iterator(); trackListIt
+//				.hasNext();) {
+//			NemaTrackList trackList = trackListIt.next();
+//			List<NemaData> list = trackDataMap.get(trackList);
+//			logger.info("\ttrack list '" + trackList.getId() + "' has " + list.size() + " tracks");
+//			String trackStr = "";
+//			for (Iterator<NemaData> nemaDataIt = list.iterator(); nemaDataIt.hasNext();) {
+//				tmp = nemaDataIt.next();
+//				trackStr += "\t\t" + tmp.getId() + "\n";
+//	        	trackMap.put(tmp.getId(),tmp);
+//			}
+//			logger.info(trackStr);
+//		}
+//        
+//        int setSize = trackMap.size();
+//        logger.info("total num tracks in set: " + setSize);
+//        List<Map<String, String>> data = getFileData(constraint);
+//        logger.info("Query returned data on " + data.size() + " files, filtering");
+//        Map<String, String> map;
+//        String trackID;
+//        int done = 0;
+//        for (Iterator<Map<String, String>> fileDataIt = data.iterator(); fileDataIt.hasNext() && done < setSize;){
+//            map = fileDataIt.next();
+//            trackID = map.get("track_id");
+//            tmp = trackMap.get(trackID);
+//            if(tmp != null){
+//            	tmp.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, map.get("path"));
+//                done++;
+//            }
+//        }
+//
+//        logger.info("mapped " + done + " / " + setSize + " files to tracks");
+    	int resolved = 0;
+    	int failed = 0;
+    	for (Iterator<NemaTrackList> trackListIt = trackDataMap.keySet().iterator(); trackListIt.hasNext();) {
+			NemaTrackList trackList = trackListIt.next();
 			List<NemaData> list = trackDataMap.get(trackList);
-			for (Iterator<NemaData> it = list.iterator(); it.hasNext();) {
-				tmp = it.next();
-	        	trackMap.put(tmp.getId(),tmp);
+			logger.info("\ttrack list '" + trackList.getId() + "' has " + list.size() + " tracks");
+			List<NemaFile> files = getFiles(trackList.getId(),constraint);
+			Map<String, NemaFile> filesMap = new HashMap<String, NemaFile>(files.size());
+			for (Iterator<NemaFile> iterator = files.iterator(); iterator.hasNext();) {
+				NemaFile file = iterator.next();
+				filesMap.put(file.getTrackId(), file);
 			}
-		}
-        
-        int setSize = trackMap.size();
-        logger.info("tracks in set: " + setSize);
-        List<Map<String, String>> data = getFileData(constraint);
-        logger.info("Query returned data on " + data.size() + " files, filtering");
-        Map<String, String> map;
-        String trackID;
-        int done = 0;
-        for (Iterator<Map<String, String>> it = data.iterator(); it.hasNext() && done < setSize;){
-            map = it.next();
-            trackID = map.get("track_id");
-            tmp = trackMap.get(trackID);
-            if(tmp != null){
-            	tmp.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, map.get("path"));
-                done++;
-            }
-        }
-
-        logger.info("mapped " + done + " / " + setSize + " files to tracks");
-
+			for (Iterator<NemaData> iterator = list.iterator(); iterator.hasNext();) {
+				NemaData data = iterator.next();
+				NemaFile file = filesMap.get(data.getId());
+				if(file == null){
+					logger.warning("Failed to resolve track ID: " + data.getId() + " in the requested format");
+					failed++;
+				}else{
+					data.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, file.getPath());
+					resolved++;
+				}
+				
+			}
+    	}
+    	logger.info("Finished resolving files for " + trackDataMap.size() + 
+    			" lists of tracks, " + resolved + " tracks resolved, " + failed 
+    			+ " failed to resolve"); 
         return trackDataMap;
     }
     
@@ -857,7 +948,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     private NemaTrack buildNEMATrack(Map<String, String> map){
         return new NemaTrack(
-                map.get("id")
+                map.get("track_id")
             );
     }
     private List<NemaTrack> buildNEMATrack(List<Map<String, String>> maps){
