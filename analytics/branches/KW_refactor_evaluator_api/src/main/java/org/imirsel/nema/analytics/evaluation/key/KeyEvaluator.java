@@ -81,6 +81,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 		super();
 	}
 	
+	@Override
 	protected void setupEvalMetrics() {
 		this.trackEvalMetrics.clear();
 		this.trackEvalMetrics.add(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE);
@@ -160,6 +161,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 		return results;
 	}
 
+	@Override
 	public void renderResults(NemaEvaluationResultSet results, File outputDir)
 			throws IOException {
 		int numJobs = results.getJobIds().size();
@@ -356,6 +358,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 		return plotFile;
 	}
 
+	@Override
 	public NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData) {
 		//count the number of examples returned and search for any missing tracks in the results returned for the fold
     	int numExamples = checkFoldResultsAreComplete(jobID, testSet, theData);
@@ -526,11 +529,11 @@ public class KeyEvaluator extends EvaluatorImpl {
 		/* 
 		 * Calculate summary/overall evaluation results. Populate a summary NemaData object with 
 		 * the evaluations, and return it */		
-		overallPerf = CORRECT_SCORE*(double)overallCorrect 
-					+ FIFTH_SCORE*(double)overallPerfectFifths 
-					+ RELATIVE_SCORE*(double)overallRelative 
-					+ PARALLEL_SCORE*(double)overallParallel 
-					+ MISSED_SCORE*(double)overallErrors;
+		overallPerf = CORRECT_SCORE*overallCorrect 
+					+ FIFTH_SCORE*overallPerfectFifths 
+					+ RELATIVE_SCORE*overallRelative 
+					+ PARALLEL_SCORE*overallParallel 
+					+ MISSED_SCORE*overallErrors;
 
 		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE, overallPerf);
 		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_CORRECT, (double)overallCorrect/(double)numExamples);

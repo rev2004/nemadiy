@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Logger;
-import java.util.logging.Handler;
 
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 
@@ -106,7 +104,7 @@ public class ChordConversionUtil {
 	
 	public String convertNoteNumbersToShorthand(int[] notes){
 		String key = createKey(notes);
-		String out = NoteNumbersToIntervals.get(key);
+		String out = noteNumbersToShorthand.get(key);
 		if (out == null){
 			String msg = "Could not interpret notes: " + notes[0];
 			for (int i = 1; i < notes.length; i++) {

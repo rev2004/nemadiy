@@ -16,7 +16,6 @@ import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
-import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
 import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
@@ -49,6 +48,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		super();
 	}
 	
+	@Override
 	protected void setupEvalMetrics() {
 		this.trackEvalMetrics.clear();
 		this.trackEvalMetrics.add(NemaDataConstants.MELODY_OVERALL_ACCURACY);
@@ -130,6 +130,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		return results;
 	}
 
+	@Override
 	public void renderResults(NemaEvaluationResultSet results, File outputDir) throws IOException {
 		String jobId;
 		int numJobs = results.getJobIds().size();
@@ -343,6 +344,7 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		return plotFiles.toArray(new File[plotFiles.size()]);
 	}
 
+	@Override
 	public NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData) {
 		//count the number of examples returned and search for any missing tracks in the results returned for the fold
     	int numExamples = checkFoldResultsAreComplete(jobID, testSet, theData);
@@ -514,15 +516,15 @@ public class MelodyEvaluator extends EvaluatorImpl {
 			int gv = correct + incorrect + falseNegatives;
 			int gu = nomelcorrect + falsePositives;
 			double vxRecall = ((double) correct + (double) incorrect)
-					/ ((double) gv);
-			double vxFalseAlarm = (Math.max(0.001, (double) falsePositives))
-					/ (Math.max(0.001, (double) gu));
+					/ (gv);
+			double vxFalseAlarm = (Math.max(0.001, falsePositives))
+					/ (Math.max(0.001, gu));
 			double rawPitch = ((double) correct + (double) falseNegCorF0) 
-					/ ((double) gv); 
+					/ (gv); 
 			double rawChroma = ((double) octaveCorrect + (double) octaveFalseNegCorF0)
-					/ ((double) gv);
+					/ (gv);
 			double accuracy = ((double) correct + (double) nomelcorrect)
-					/ ((double) tot);
+					/ (tot);
 			
 			vxRecallOvarall += vxRecall;
 			vxFalseAlarmOverall += vxFalseAlarm;
@@ -543,11 +545,11 @@ public class MelodyEvaluator extends EvaluatorImpl {
 		 * Calculate summary/overall evaluation results. Populate a summary NemaData object with 
 		 * the evaluations, and return it */
 		
-		vxRecallOvarall = vxRecallOvarall / ((double) numExamples);
-		vxFalseAlarmOverall = vxFalseAlarmOverall / ((double) numExamples);
-		rawPitchOverall = rawPitchOverall / ((double) numExamples);
-		rawChromaOverall = rawChromaOverall / ((double) numExamples);
-		accuracyOverall = accuracyOverall / ((double) numExamples);
+		vxRecallOvarall = vxRecallOvarall / (numExamples);
+		vxFalseAlarmOverall = vxFalseAlarmOverall / (numExamples);
+		rawPitchOverall = rawPitchOverall / (numExamples);
+		rawChromaOverall = rawChromaOverall / (numExamples);
+		accuracyOverall = accuracyOverall / (numExamples);
 		
 		outObj.setMetadata(NemaDataConstants.MELODY_OVERALL_ACCURACY, accuracyOverall);
 		outObj.setMetadata(NemaDataConstants.MELODY_RAW_PITCH_ACCURACY, rawPitchOverall);

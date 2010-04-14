@@ -29,8 +29,6 @@ import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
-import org.imirsel.nema.analytics.evaluation.util.resultpages.*;
-import org.imirsel.nema.analytics.evaluation.util.*;
 import org.imirsel.nema.analytics.evaluation.vis.ConfusionMatrixPlot;
 import org.imirsel.nema.analytics.util.io.*;
 import org.imirsel.nema.model.*;
