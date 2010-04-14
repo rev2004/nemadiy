@@ -98,12 +98,13 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			CommandLineFormatParser formatModel = new CommandLineFormatParser(commandlineFormat);
 			getLogger().info("Format string parsed as: " + formatModel.toConfigString());
 			
-			String args = "Number of command argument parts: " + formatModel.getArguments().size();
+			String args = "Number of command argument parts: " + formatModel.getArguments().size() + "\n"; 
 			int count = 0;
 			for (Iterator<CommandArgument> iterator = formatModel.getArguments().iterator(); iterator.hasNext();) {
 				CommandArgument arg = iterator.next();
-				args += "\t" + count++ + ": " + arg.toConfigString();  
+				args += "\t" + count++ + ": " + arg.toConfigString() + "\n";  
 			}
+			getLogger().info(args);
 			
 			//Extract constraints from inputs
 			//only dealing with input 1 as this is a 1 input component
