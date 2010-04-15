@@ -71,7 +71,7 @@ public class CommandLineFormatParserTest {
 	@Test
 	public void testClassificationFormatParsing() throws Exception {
 		String configString1 = "-v -x 1234 $i1{org.imirsel.nema.analytics.util.io.TrackListTextFile(bitrate=96k,sample-rate=22050)} " +
-				"-laln -o=$o1{org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile}";
+				"-laln -o=$o1{org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile} asdioajds";
 		String path1 = "/dummy/path1";
 		String path2 = "/dummy/path2";
 		String formatString1 = "-v -x 1234 /dummy/path1 -laln -o=/dummy/path2";
