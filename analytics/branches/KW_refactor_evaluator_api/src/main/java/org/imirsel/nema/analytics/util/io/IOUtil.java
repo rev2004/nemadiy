@@ -186,8 +186,18 @@ public class IOUtil {
      * @return The relative path.
      */
     public static String makeRelative(File toModify, File base) {
-            String relative = base.toURI().relativize(toModify.toURI()).getPath();
-            return relative;
+    	String out = toModify.getAbsolutePath();
+    	String baseStr = base.getAbsolutePath();
+    	if (out.startsWith(baseStr)){
+    		out = out.substring(baseStr.length());
+    		if (out.startsWith("/") || out.startsWith("\\")){
+    			out = out.substring(1);
+    		}
+    	}
+    	return out;
+
+//            String relative = base.toURI().relativize(toModify.toURI()).getPath();
+//            return relative;
     }
     
     /**
