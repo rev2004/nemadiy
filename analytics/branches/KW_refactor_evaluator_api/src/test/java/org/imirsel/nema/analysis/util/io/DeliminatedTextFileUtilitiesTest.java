@@ -57,7 +57,7 @@ public class DeliminatedTextFileUtilitiesTest extends BaseManagerTestCase{
 		
 		for (int i = 0; i < out.length; i++) {
 			if (!out[i].equals(valsShouldBe[i])){
-				fail("Values produced by parser don't match true values.\nParsed: '" + out[i] + "'" + "\nActual: '" + valsShouldBe[i] + "'");
+				fail("Values produced by parser don't match true values.\nTest line: '" + testLine + "'\nParsed: '" + out[i] + "'" + "\nActual: '" + valsShouldBe[i] + "'");
 			}
 		}
 	}
