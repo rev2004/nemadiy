@@ -116,7 +116,7 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 		Evaluator evaluator = null;
 		
 		//evaluator = new MelodyEvaluator(task, dataset, outputDirectory, workingDirectory, testSets);
-		evaluator = EvaluatorFactory.getEvaluator(singleSetTask.getSubjectTrackMetadataName(), singleSetTask, singleSetDataset, outputDirectory, workingDirectory, null, singleTestSet, false, null);
+		evaluator = EvaluatorFactory.getEvaluator(twoSetTask.getSubjectTrackMetadataName(), twoSetTask, twoSetDataset, outputDirectory, workingDirectory, null, twoTestSets, false, null);
 		
 		SingleTrackEvalFileType reader = new MelodyTextFile();
 		
