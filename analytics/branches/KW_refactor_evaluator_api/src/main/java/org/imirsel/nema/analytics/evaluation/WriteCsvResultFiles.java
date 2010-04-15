@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.model.NemaData;
-import org.imirsel.nema.model.NemaDataConstants;
+
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
@@ -173,6 +173,7 @@ public class WriteCsvResultFiles {
         	if (foldTrackCount == firstResList.get(foldList).size()){
         		foldNum++;
         		foldList  = testSets.get(foldNum);
+        		foldTrackCount = 0;
         	}
         	
         	row = new String[numCols];
@@ -301,6 +302,7 @@ public class WriteCsvResultFiles {
         	if (foldTrackCount == trackEval.get(foldList).size()){
         		foldNum++;
         		foldList = testSets.get(foldNum);
+        		foldTrackCount = 0;
         	}
         	row = new String[numCols];
         	row[0] = "" + foldList.getFoldNumber();
