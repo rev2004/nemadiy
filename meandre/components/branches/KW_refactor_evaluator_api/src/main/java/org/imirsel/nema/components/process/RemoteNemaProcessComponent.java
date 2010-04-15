@@ -1,23 +1,25 @@
 package org.imirsel.nema.components.process;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.analytics.util.io.FileConversionUtil;
 import org.imirsel.nema.analytics.util.io.NemaFileType;
 import org.imirsel.nema.analytics.util.process.CommandArgument;
 import org.imirsel.nema.analytics.util.process.CommandLineFormatParser;
+import org.imirsel.nema.components.InvalidProcessMonitorException;
+import org.imirsel.nema.components.InvalidProcessTemplateException;
 import org.imirsel.nema.components.RemoteProcessExecutorComponent;
 import org.imirsel.nema.model.CommandLineTemplate;
 import org.imirsel.nema.model.NemaData;
-import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
@@ -80,7 +82,6 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 		NemaTask task = null;
 		//NemaDataset dataset = null;
 		
-		try {
 			getLogger().info("Getting inputs...");
 			//get inputs
 			task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
@@ -89,7 +90,16 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			
 			getLogger().info("Getting command formatting string...");
 			//get command formatting string and parse
-			ProcessTemplate pTemplate = this.getProcessTemplate();
+			ProcessTemplate pTemplate = null;
+			try {
+				pTemplate = this.getProcessTemplate();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InvalidProcessTemplateException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
 			String commandlineFormat = cTemplate.getCommandLineFormatter();
 			getLogger().info("Parsing command formatting string: " + commandlineFormat);
@@ -151,7 +161,24 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			
 			
 			//perform conversion of input data into required formats
-			inputFiles = FileConversionUtil.prepareProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, dataToProcess, inputType1);
+			try {
+				inputFiles = FileConversionUtil.prepareProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, dataToProcess, inputType1);
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			getLogger().info("Preparing process input file names...");
 			
@@ -159,7 +186,16 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			//only dealing with one output as this is a one output component
 			Class<? extends NemaFileType> outputType1 = formatModel.getOutputType(1);
 			Map<String,String> outputProperties1 = formatModel.getOutputProperties(1);
-			NemaFileType outputTypeInstance = outputType1.newInstance();
+			NemaFileType outputTypeInstance=null;
+			try {
+				outputTypeInstance = outputType1.newInstance();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if(outputType1.equals(ClassificationTextFile.class)) {
 				((ClassificationTextFile)outputTypeInstance).setMetadataType(task.getSubjectTrackMetadataName());
 			}
@@ -194,6 +230,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 					}else {
 						outputFile = outputs1ForFold.get(i);
 					}
+					this.getLogger().info("Running for the output file: " + outputFile);
 					formatModel.clearPreparedPaths();
 					formatModel.setPreparedPathForInput(1, inputFile.getAbsolutePath());
 					formatModel.setPreparedPathForOutput(1, outputFile.getAbsolutePath());
@@ -214,24 +251,57 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 					//set the formatted command arguments to run from formatModel
 					//TODO check this is the right place to setting this...
 					String formattedArgs = formatModel.toFormattedString();
-					getLogger().info("Setting formatted arguments: " + formattedArgs);
 					pep.setCommandLineFlags(formattedArgs);
-
-					getLogger().info("Executing process...");
-					@SuppressWarnings("unused")
-					final NemaProcess np=this.executeProcess(pep);
-					getLogger().info("Executed process. Waiting for the process to end...");
-					this.waitForProcess();
-					
+				
+					getLogger().info("Executing process... " + i + "\n");
+					NemaProcess nemaProcess=null;
+					try {
+						nemaProcess=this.executeProcess(pep);
+					} catch (RemoteException e) {
+						throw new ComponentExecutionException(e);
+					} catch (InvalidProcessMonitorException e) {
+						throw new ComponentExecutionException(e);
+					} catch (InvalidProcessTemplateException e) {
+						throw new ComponentExecutionException(e);
+					}
+					getLogger().info("Executed process. Waiting for the process to end..." + i + "\n");
+					try {
+						this.waitForProcess(nemaProcess);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					getLogger().info("Done Waiting..." +i +"\n");
 					//We do not need to do this as we already know the paths to outputTypes on shared storage
-					//List<ProcessArtifact> list = this.getResult();
+					List<ProcessArtifact> list = this.getResult(nemaProcess);
+					// cleanup the process
+					this.cleanProcess(nemaProcess);
+					
 				}	
 			}
 		
-			getLogger().info("Process ended. Processing results...");
+			getLogger().info("All Processes ended. Processing results...\n");
 			
 			//read and interpret results from all folds
-			Map<NemaTrackList,List<NemaData>> outputData = FileConversionUtil.readProcessOutput(outputFiles, task, outputType1);
+			Map<NemaTrackList, List<NemaData>> outputData = null;
+			try {
+				outputData = FileConversionUtil.readProcessOutput(outputFiles, task, outputType1);
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			if(outputData==null){
 				throw new ComponentExecutionException("Process result is null");
@@ -239,9 +309,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 				cc.pushDataComponentToOutput(DATA_OUTPUT, outputData);
 			}
 			
-		} catch(Exception e) {
-			throw new ComponentExecutionException("Exception occurred while attempting to execute a remote process",e);
-		}	
+	
 		
 	}
 
