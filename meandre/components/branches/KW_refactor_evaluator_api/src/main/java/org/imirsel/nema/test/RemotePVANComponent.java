@@ -87,15 +87,16 @@ public class RemotePVANComponent extends RemoteProcessExecutorComponent {
 				@SuppressWarnings("unused")
 				final NemaProcess np=this.executeProcess(pep);
 				System.out.println("After running process. Now waiting for the process to finish.");
-				this.waitForProcess();
+				this.waitForProcess(np);
 				System.out.println("Process finished -now getting result.");
 				
-				List<ProcessArtifact> list=this.getResult();
+				List<ProcessArtifact> list=this.getResult(np);
 				if(list==null){
 					throw new ComponentExecutionException("Process result is null");
 				}else{
 					componentContext.pushDataComponentToOutput(DATA_OUTPUT_1, list);
 				}
+				this.cleanProcess(np);
 				
 			} catch (RemoteException e) {
 				e.printStackTrace();
