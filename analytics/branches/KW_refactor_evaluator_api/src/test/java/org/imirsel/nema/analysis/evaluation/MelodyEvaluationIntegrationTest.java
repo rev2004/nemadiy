@@ -14,7 +14,6 @@ import java.util.List;
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
-import org.imirsel.nema.analytics.evaluation.melody.MelodyEvaluator;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
@@ -31,9 +30,12 @@ import org.junit.Test;
 
 public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 
-	private NemaTask task;
-	private NemaDataset dataset;
-	List<NemaTrackList> testSets;
+	private NemaTask singleSetTask;
+	private NemaTask twoSetTask;
+	private NemaDataset singleSetDataset;
+	private NemaDataset twoSetDataset;
+	private List<NemaTrackList> singleTestSet;
+	private List<NemaTrackList> twoTestSets;
 	private static File workingDirectory;
 	private static File outputDirectory;
 	
@@ -48,40 +50,107 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 	
 	@Before
 	public void setUp() throws Exception {
-		task = new NemaTask();
-        task.setId(-1);
-        task.setName("test name");
-        task.setDescription("test description");
-        task.setDatasetId(-1);
-        task.setSubjectTrackMetadataId(-1);
-        task.setSubjectTrackMetadataName(NemaDataConstants.MELODY_EXTRACTION_DATA);
+		singleSetTask = new NemaTask();
+        singleSetTask.setId(-1);
+        singleSetTask.setName("single fold task name");
+        singleSetTask.setDescription("single fold task description");
+        singleSetTask.setDatasetId(-1);
+        singleSetTask.setSubjectTrackMetadataId(-1);
+        singleSetTask.setSubjectTrackMetadataName(NemaDataConstants.MELODY_EXTRACTION_DATA);
         
-        dataset = new NemaDataset();
-        dataset.setId(task.getDatasetId());
-        dataset.setName("dataset name");
-        dataset.setDescription("some description");
+        twoSetTask = new NemaTask();
+        twoSetTask.setId(-1);
+        twoSetTask.setName("single fold task name");
+        twoSetTask.setDescription("single fold task description");
+        twoSetTask.setDatasetId(-1);
+        twoSetTask.setSubjectTrackMetadataId(-1);
+        twoSetTask.setSubjectTrackMetadataName(NemaDataConstants.MELODY_EXTRACTION_DATA);
         
-        ArrayList<NemaTrack> trackList = new ArrayList<NemaTrack>(4);
-        trackList.add(new NemaTrack("daisy1"));
-        trackList.add(new NemaTrack("daisy2"));
-        trackList.add(new NemaTrack("daisy3"));
-        trackList.add(new NemaTrack("daisy4"));
-        testSets = new ArrayList<NemaTrackList>(1);
-        int id = 0;
-        testSets.add(new NemaTrackList(id, task.getDatasetId(), 3, "test", id, trackList));
-        id++;
+        singleSetDataset = new NemaDataset();
+        singleSetDataset.setId(singleSetTask.getDatasetId());
+        singleSetDataset.setName("Single fold dataset name");
+        singleSetDataset.setDescription("Single fold dataset description");
+        
+        twoSetDataset = new NemaDataset();
+        twoSetDataset.setId(singleSetTask.getDatasetId());
+        twoSetDataset.setName("Two fold dataset name");
+        twoSetDataset.setDescription("Two fold dataset description");
+        
+        int idtrackListId = 0;
+        {
+	        ArrayList<NemaTrack> trackList = new ArrayList<NemaTrack>(4);
+	        trackList.add(new NemaTrack("daisy1"));
+	        trackList.add(new NemaTrack("daisy2"));
+	        trackList.add(new NemaTrack("daisy3"));
+	        trackList.add(new NemaTrack("daisy4"));
+	        singleTestSet = new ArrayList<NemaTrackList>(1);
+	        singleTestSet.add(new NemaTrackList(idtrackListId, singleSetTask.getDatasetId(), 3, "test", idtrackListId, trackList));
+	        idtrackListId++;
+        }
+        
+        {
+	        ArrayList<NemaTrack> trackList1 = new ArrayList<NemaTrack>(2);
+	        trackList1.add(new NemaTrack("daisy1"));
+	        trackList1.add(new NemaTrack("daisy2"));
+	        
+	        ArrayList<NemaTrack> trackList2 = new ArrayList<NemaTrack>(2);
+	        trackList2.add(new NemaTrack("daisy3"));
+	        trackList2.add(new NemaTrack("daisy4"));
+	        
+	        twoTestSets = new ArrayList<NemaTrackList>(1);
+	        int foldNum = 0;
+	        twoTestSets.add(new NemaTrackList(idtrackListId, twoSetTask.getDatasetId(), 3, "test", foldNum++, trackList1));
+	        idtrackListId++;
+	        twoTestSets.add(new NemaTrackList(idtrackListId, twoSetTask.getDatasetId(), 3, "test", foldNum++, trackList2));
+	        idtrackListId++;
+        }
     }
 	
 	
 	@Test
 	public void testEvaluateKD()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		File groundTruthDirectory = new File("src/test/resources/melody/groundtruth");
+		File resultsDirectory1 = new File("src/test/resources/melody/KD-2-fold/fold1");
+		File resultsDirectory2 = new File("src/test/resources/melody/KD-2-fold/fold2");
+		String	systemName = "KD-System";
+		Evaluator evaluator = null;
+		
+		//evaluator = new MelodyEvaluator(task, dataset, outputDirectory, workingDirectory, testSets);
+		evaluator = EvaluatorFactory.getEvaluator(singleSetTask.getSubjectTrackMetadataName(), singleSetTask, singleSetDataset, outputDirectory, workingDirectory, null, singleTestSet, false, null);
+		
+		SingleTrackEvalFileType reader = new MelodyTextFile();
+		
+		List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, ".txt");
+		evaluator.setGroundTruth(groundTruth);
+	
+		List<NemaData> results1 = reader.readDirectory(resultsDirectory1, null);
+		List<NemaData> results2 = reader.readDirectory(resultsDirectory2, null);
+		
+		//divide into the two folds
+		
+		evaluator.addResults(systemName, systemName, twoTestSets.get(0), results1);
+		evaluator.addResults(systemName, systemName, twoTestSets.get(1), results2);
+		
+		NemaEvaluationResultSet evalResults = evaluator.evaluate();
+		assertTrue(evalResults != null);
+		
+		
+	  //File resultFile = new File("src/test/resources/classification/evaluation/GT1/report.txt");
+	  //File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
+	 
+	  //assertThat(resultFile, fileContentEquals(outputFile));
+	
+	}
+	
+	@Test
+	public void testEvaluateKDTwoFolds()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
+		File groundTruthDirectory = new File("src/test/resources/melody/groundtruth");
 		File resultsDirectory = new File("src/test/resources/melody/KD");
 		String	systemName = "KD-System";
 		Evaluator evaluator = null;
 		
 		//evaluator = new MelodyEvaluator(task, dataset, outputDirectory, workingDirectory, testSets);
-		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
+		evaluator = EvaluatorFactory.getEvaluator(singleSetTask.getSubjectTrackMetadataName(), singleSetTask, singleSetDataset, outputDirectory, workingDirectory, null, singleTestSet, false, null);
 		
 		SingleTrackEvalFileType reader = new MelodyTextFile();
 		
@@ -89,7 +158,7 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 		evaluator.setGroundTruth(groundTruth);
 	
 		List<NemaData> resultsForAllTracks = reader.readDirectory(resultsDirectory, null);
-		evaluator.addResults(systemName, systemName, testSets.get(0), resultsForAllTracks);
+		evaluator.addResults(systemName, systemName, singleTestSet.get(0), resultsForAllTracks);
 	
 		NemaEvaluationResultSet results = evaluator.evaluate();
 		assertTrue(results != null);
