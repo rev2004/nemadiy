@@ -74,7 +74,7 @@ public class CommandLineFormatParserTest {
 				"-laln -o=$o1{org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile} asdioajds";
 		String path1 = "/dummy/path1";
 		String path2 = "/dummy/path2";
-		String formatString1 = "-v -x 1234 /dummy/path1 -laln -o=/dummy/path2";
+		String formatString1 = "-v -x 1234 /dummy/path1 -laln -o=/dummy/path2 asdioajds";
 		
 		CommandLineFormatParser parser = new CommandLineFormatParser(configString1);
 		
