@@ -46,6 +46,22 @@ public class DeliminatedTextFileUtilitiesTest extends BaseManagerTestCase{
 		}
 	}
 	
+	
+	@Test
+	public void testParseTabDelimTextLineWithSpaces() {
+		String delim = "\t";
+		String[] valsShouldBe = new String[]{"col_a","col_b","  col_c"};
+		String testLine = "   \"" + valsShouldBe[0] + "\"" + delim + valsShouldBe[1] + delim + valsShouldBe[2];
+		
+		String[] out = DeliminatedTextFileUtilities.parseDelimTextLine(testLine, delim);
+		
+		for (int i = 0; i < out.length; i++) {
+			if (!out[i].equals(valsShouldBe[i])){
+				fail("Values produced by parser don't match true values.\nParsed: '" + out[i] + "'" + "\nActual: '" + valsShouldBe[i] + "'");
+			}
+		}
+	}
+	
 
 	@Test
 	public void testParseTabDelimTextLine() {
