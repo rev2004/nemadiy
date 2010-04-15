@@ -16,12 +16,6 @@
 		</mailingList>
 	</mailingLists>
 
-
-	<prerequisites>
-		<maven>2.2.0</maven>
-	</prerequisites>
-	
-
 	<inceptionYear>2010</inceptionYear>
 	<licenses>
 		<license>
