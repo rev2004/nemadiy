@@ -60,8 +60,8 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
         
         twoSetTask = new NemaTask();
         twoSetTask.setId(-1);
-        twoSetTask.setName("single fold task name");
-        twoSetTask.setDescription("single fold task description");
+        twoSetTask.setName("two fold task name");
+        twoSetTask.setDescription("two fold task description");
         twoSetTask.setDatasetId(-1);
         twoSetTask.setSubjectTrackMetadataId(-1);
         twoSetTask.setSubjectTrackMetadataName(NemaDataConstants.MELODY_EXTRACTION_DATA);
@@ -108,7 +108,7 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 	
 	
 	@Test
-	public void testEvaluateKD()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
+	public void testEvaluateKDTwoFolds()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		File groundTruthDirectory = new File("src/test/resources/melody/groundtruth");
 		File resultsDirectory1 = new File("src/test/resources/melody/KD-2-fold/fold1");
 		File resultsDirectory2 = new File("src/test/resources/melody/KD-2-fold/fold2");
@@ -143,7 +143,7 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 	}
 	
 	@Test
-	public void testEvaluateKDTwoFolds()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
+	public void testEvaluateKD()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		File groundTruthDirectory = new File("src/test/resources/melody/groundtruth");
 		File resultsDirectory = new File("src/test/resources/melody/KD");
 		String	systemName = "KD-System";
