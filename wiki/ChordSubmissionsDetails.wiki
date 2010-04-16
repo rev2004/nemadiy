@@ -1,0 +1,33 @@
+#summary One-sentence summary of this page.
+
+= Details =
+
+All submissions are at
+
+/data/raid3/mirex2009/subs/chord
+
+In each submissions sub directory there will be a shell script to run it. For ex:
+/data/raid3/mirex2009/subs/chord/CH/mirex_entry_2009/runChordPre.sh
+
+The linux ones are CH, DE, MD, OGF1, OGF2, PP, RRHS, RUSUL, WEJ(this one is like 6 different versions, don't bother)
+Most people return number format except CH,MD,DE
+
+The input file list
+/data/raid3/collections/audiochord/data/chordIDlist09.txt
+
+
+or for train test test.1.txt test.2.txt test.3.txt in the same dir.
+
+The GT dir
+/data/raid3/collections/audiochord/data/GTallCH/
+All GT files are space separated text shorthand format.
+
+
+All wav files are 16 bit, mono 44100 Hz. 
+
+
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
