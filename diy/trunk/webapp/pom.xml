@@ -305,6 +305,24 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.webflow</groupId>
+			<artifactId>org.springframework.binding</artifactId>
+			<version>${spring.webflow.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.webflow</groupId>
+			<artifactId>org.springframework.js</artifactId>
+			<version>${spring.webflow.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.webflow</groupId>
+			<artifactId>org.springframework.webflow</artifactId>
+			<version>${spring.webflow.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.subethamail</groupId>
 			<artifactId>subethasmtp-wiser</artifactId>
 			<version>${wiser.version}</version>
@@ -459,11 +477,11 @@
 
 
 	</dependencies>
-	
 
-	
 
-		<profiles>
+
+
+	<profiles>
 		<profile>
 			<id>attach-docs-and-sources</id>
 			<activation>
@@ -606,4 +624,7 @@
 			</build>
 		</profile>
 	</profiles>
+	<properties>
+		<spring.webflow.version>2.0.9.RELEASE</spring.webflow.version>
+	</properties>
 </project>
