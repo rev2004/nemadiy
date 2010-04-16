@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+	<bean id="job1" name="job1" class="org.imirsel.nema.model.Job"
+		p:id="100L" p:name="job1" p:description="this is the first mock job"
+		p:statusCode="1" p:flow-ref="flow1" />
+
+
+	<bean id="job2" name="job2" class="org.imirsel.nema.model.Job">
+		<property name="id" value="5000L" />
+		<property name="name" value="job2" />
+		<property name="description" value="second mock job" />
+		<property name="statusCode" value="4" />
+		<property name="flow" ref="flow2" />
+	</bean>
+
+	<bean id="job3" name="job3" class="org.imirsel.nema.model.Job">
+		<property name="id" value="5001L" />
+		<property name="name" value="job3" />
+		<property name="description" value=" mock job #3" />
+		<property name="statusCode" value="3" />
+		<property name="results">
+			<set>
+				<ref bean="result1" />
+				<ref bean="result2" />
+			</set>
+		</property>
+		<property name="flow" ref="flow3" />
+
+	</bean>
+
+	<util:list id="jobList">
+		<ref bean="job1" />
+		<ref bean="job2" />
+		<ref bean="job3" />
+	</util:list>
+
+
+	<bean id="jobResult1" name="result1" class="org.imirsel.nema.model.JobResult"
+		p:url="http://mock.nema.lis.illinois.edu/result1" p:job-ref="job3"
+		p:id="1" />
+
+	<bean id="jobResult2" name="result2" class="org.imirsel.nema.model.JobResult"
+		p:url="http://mock.nema.lis.illinois.edu/result2" p:job-ref="job3"
+		p:id="2" />
+
+	<bean id="user" name="user" class="org.imirsel.nema.model.User"
+		p:id="100L" p:username="userA" />
+
+	<bean id="flow1" name="flow1" class="org.imirsel.nema.model.Flow"
+		p:uri="http://mock.nema.lis.illinois.edu/flow1" p:id="10" p:name="flow 1" />
+	<bean id="flow2" name="flow2" class="org.imirsel.nema.model.Flow"
+		p:uri="http://mock.nema.lis.illinois.edu/flow2" p:id="10" p:name="flow two" />
+	<bean id="flow3" name="flow3" class="org.imirsel.nema.model.Flow"
+		p:uri="http://mock.nema.lis.illinois.edu/flow3" p:id="10" p:name="flow THREE" />
+
+</beans>
