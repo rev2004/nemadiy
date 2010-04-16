@@ -115,6 +115,19 @@ public interface RepositoryClientInterface {
      * @throws SQLException
      */
     public List<NemaTask> getTasks() throws SQLException;
+    
+    /**
+     * Retrieves a List of NemaTask Objects describing the tasks that are
+     * available for the specified track metadata id. No guarantee is given 
+     * that the tasks described have complete audio file sets in any particular 
+     * file version.
+     *
+     * @return a List of NemaTask Objects describing the tasks that are
+     * available.
+     * @param id The track metadata id to retrieve tasks for.
+     * @throws SQLException
+     */
+    public List<NemaTask> getTasks(int id) throws SQLException;
 
     /**
      * Retrieves a NemaTask Object describing the requested task. No guarantee 
