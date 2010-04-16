@@ -1,0 +1,14 @@
+This project produces two artifacets:
+
+-A probe that monitors the lifecycle of a flow.
+-A plugin that exposes the database properties used by the probe.
+
+In order to run the probe and plugin in the meandre application, -Create a database
+flowservice on the database server with the username and password (-look at the
+nemaflowservice.properties file.)
+
+
+
+use the command below
+
+java -classpath dist/meandre-server-1.4.5.jar:. org.meandre.executables.RunInfrastructureCMD -d .

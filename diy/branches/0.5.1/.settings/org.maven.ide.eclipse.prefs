@@ -1,0 +1,9 @@
+#Fri Apr 09 13:55:10 CDT 2010
+activeProfiles=diy_development
+eclipse.preferences.version=1
+fullBuildGoals=process-test-resources
+includeModules=true
+resolveWorkspaceProjects=false
+resourceFilterGoals=process-resources resources\:testResources
+skipCompilerPlugin=true
+version=1
