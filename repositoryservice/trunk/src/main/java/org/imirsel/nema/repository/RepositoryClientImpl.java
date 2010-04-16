@@ -44,6 +44,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_TASKS_QUERY = "SELECT * FROM task";
     private PreparedStatement getTasks;
 
+    public static final String GET_TASKS_FOR_METADATA_QUERY = "SELECT * FROM task WHERE subject_track_metadata=?";
+    private PreparedStatement getTasksForMeta;
+
     public static final String GET_TASK_BY_ID_QUERY = "SELECT * FROM task WHERE id=?";
     private PreparedStatement getTaskByID;
 
@@ -147,6 +150,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         getDatasets = dbCon.con.prepareStatement(GET_DATA_SETS_QUERY);
         getDatasetByID = dbCon.con.prepareStatement(GET_DATA_SET_BY_ID_QUERY);
         getTasks = dbCon.con.prepareStatement(GET_TASKS_QUERY);
+        getTasksForMeta = dbCon.con.prepareStatement(GET_TASKS_FOR_METADATA_QUERY);
         getTaskByID = dbCon.con.prepareStatement(GET_TASK_BY_ID_QUERY);
         getSubsetTrackListForDataset = dbCon.con.prepareStatement(GET_SUBSET_TRACKLIST_FOR_DATASET_QUERY);
         getExpTrackListsForDataset = dbCon.con.prepareStatement(GET_EXPERIMENT_TRACKLISTS_FOR_DATASET_QUERY);
@@ -300,6 +304,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return buildNEMATask(results);
     }
 
+    public List<NemaTask> getTasks(int id) throws SQLException{
+    	List<Map<String, String>> results = executeStatement(getTasksForMeta,id);
+    	return buildNEMATask(results);
+    }
+    
     public NemaTask getTask(int task_id) throws SQLException{
     	List<Map<String, String>> results = executeStatement(getTaskByID, task_id);
         if(results.size() > 0){
