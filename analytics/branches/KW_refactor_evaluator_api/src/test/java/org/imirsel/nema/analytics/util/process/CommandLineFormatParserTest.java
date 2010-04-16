@@ -104,7 +104,7 @@ public class CommandLineFormatParserTest {
 		parser.setPreparedPathForInput(1, path1);
 		parser.setPreparedPathForOutput(1, path2);
 		System.out.println("Correct formatted string:  " + formatString1);
-		String formatString2 = parser.toFormattedString();
+		String formatString2 = parser.toFormattedString().trim();
 		System.out.println("Computed formatted string: " + formatString2);
 		assert(formatString1.equals(formatString2));	
 	}
