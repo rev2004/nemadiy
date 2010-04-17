@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 	<version>0.5.1-SNAPSHOT</version>
 	<name>Nema  Modular Application</name>
-	<url>http://www.imirsel.org</url>
+	<url>http://nema-dev.lis.illinois.edu/development/${pom.artifactId}</url>
 
 
 
@@ -222,6 +222,35 @@
 				<artifactId>maven-jetty-plugin</artifactId>
 				<version>6.1.10</version>
 			</plugin>
+			
+			
+			<plugin>
+				<groupId>com.structure101.java</groupId>
+				<artifactId>maven-structure101-plugin</artifactId>
+				<version>0.5</version>
+				<configuration>
+					<!-- put your configurations here -->
+					<project>
+						${project.name}
+					</project>
+					<breakOnError>false</breakOnError>
+					<classpath>${project.build.outputDirectory}</classpath>
+					<key></key>
+					<label>${project.version}</label>
+					<overwrite>true</overwrite>
+					<repository>http://nema-dev.lis.illinois.edu/s101j/data</repository>
+					<rpkey></rpkey>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>publish</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 
@@ -316,6 +345,12 @@
 			<artifactId>subethasmtp-wiser</artifactId>
 			<version>${wiser.version}</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		  	<groupId>com.structure101.java</groupId>
+		    <artifactId>maven-structure101-plugin</artifactId>
+    	   	<version>0.5</version>
 		</dependency>
 	</dependencies>
 
