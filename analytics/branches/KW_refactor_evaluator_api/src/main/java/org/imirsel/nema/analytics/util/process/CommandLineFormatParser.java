@@ -8,6 +8,11 @@ import java.util.Map;
 import org.imirsel.nema.analytics.util.io.NemaFileType;
 
 /**
+ * Parses and produces command line formatting strings, an examle of which is:
+ * {@code -v -x 1234 $i1\{org.imirsel.nema.analytics.util.io.TrackListTextFile(bitrate=96k,sample-rate=22050)\} -laln -o=$o1\{org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile\} asdioajds}
+ * 
+ * May also be used to format a command, which might take the form:
+ * {@code -v -x 1234 /path/to/input/1.txt -laln -o=/path/to/output/1.txt asdioajds}
  * 
  * @author kris.west@gmail.com
  * @since 0.2.0
@@ -18,50 +23,32 @@ public class CommandLineFormatParser {
 	
 	private Map<Integer,FileCommandArgument> inputs = null;
 	private Map<Integer,FileCommandArgument> outputs = null;
-	
-//	Map<Integer,Class<? extends NemaFileType>> inputTypes = null;
-//	Map<Integer,Class<? extends NemaFileType>> outputTypes = null;
-//	Map<Integer,Map<String,String>> inputProperties = null;
-//	Map<Integer,Map<String,String>> outputProperties = null;
-	
 
-	public CommandLineFormatParser(List<CommandArgument> components,
-			Map<Integer, Class<? extends NemaFileType>> inputTypes,
-			Map<Integer, Class<? extends NemaFileType>> outputTypes,
-			Map<Integer,Map<String,String>> inputProperties,
-			Map<Integer,Map<String,String>> outputProperties,
-			Map<Integer,Boolean> inputArgumentFollowedBySpace,
-			Map<Integer,Boolean> outputArgumentFollowedBySpace) {
-		this.arguments = components;
-		this.inputs = new HashMap<Integer,FileCommandArgument>();
-		this.outputs = new HashMap<Integer,FileCommandArgument>();
-		for (Iterator<Integer> iterator = inputTypes.keySet().iterator(); iterator.hasNext();) {
-			Integer ioIndex = iterator.next();
-			this.inputs.put(ioIndex, new FileCommandArgument(false, inputTypes.get(ioIndex), inputProperties.get(ioIndex), inputArgumentFollowedBySpace.get(ioIndex), ioIndex));
-		}
-		
-		for (Iterator<Integer> iterator = outputTypes.keySet().iterator(); iterator.hasNext();) {
-			Integer ioIndex = iterator.next();
-			this.outputs.put(ioIndex, new FileCommandArgument(true, outputTypes.get(ioIndex), outputProperties.get(ioIndex), outputArgumentFollowedBySpace.get(ioIndex), ioIndex));
-		}
-		
-//		this.inputTypes = inputs;
-//		this.outputTypes = outputs;
-//		this.inputProperties = inputProperties;
-//		this.outputProperties = outputProperties;
+	/**
+	 * Manual constructor accepting a list of {@code CommandArgument} Objects 
+	 * defining the command line format. This is used to setup the parser model 
+	 * which can then be used to generate the config string and sample formatted
+	 * strings. 
+	 * @param arguments a list of {@code CommandArgument} Objects.
+	 */
+	public CommandLineFormatParser(List<CommandArgument> arguments) {
+		setArguments(arguments);
 	}
 
+	/**
+	 * Parsing constructor that takes a config string of the form:
+	 * {@code -v -x 1234 $i1\{org.imirsel.nema.analytics.util.io.TrackListTextFile(bitrate=96k,sample-rate=22050)\} -laln -o=$o1\{org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile\} asdioajds}
+	 * parses it and constructs the parser model that can be used to format a
+	 * command or regenerate the config string.
+	 * @param commandFormatString The config string to parse.
+	 * @throws IllegalArgumentException Thrown if the format can't be parsed.
+	 */
 	public CommandLineFormatParser(String commandFormatString) throws
 			IllegalArgumentException{
 		this.arguments = new ArrayList<CommandArgument>();
 		
 		this.inputs = new HashMap<Integer,FileCommandArgument>();
 		this.outputs = new HashMap<Integer,FileCommandArgument>();
-		
-//		this.inputTypes = new HashMap<Integer,Class<? extends NemaFileType>>();
-//		this.outputTypes = new HashMap<Integer,Class<? extends NemaFileType>>();
-//		this.inputProperties = new HashMap<Integer,Map<String,String>>();
-//		this.outputProperties = new HashMap<Integer,Map<String,String>>();
 		
 		int idx = 0;
 		int lastIdx = 0;
@@ -163,12 +150,8 @@ public class CommandLineFormatParser {
 				arguments.add(fileComp);
 				if (isOutput) {
 					outputs.put(ioIndex,fileComp);
-//					outputTypes.put(ioIndex,typeClass);
-//					outputProperties.put(ioIndex, props);
 				}else {
 					inputs.put(ioIndex,fileComp);
-//					inputTypes.put(ioIndex,typeClass);
-//					inputProperties.put(ioIndex, props);
 				}
 				
 				lastIdx = idx;
@@ -185,15 +168,39 @@ public class CommandLineFormatParser {
 		}
 	}
 	
+	/**
+	 * Return the list of argument components.
+	 * @return the list of argument components.
+	 */
 	public List<CommandArgument> getArguments() {
 		return arguments;
 	}
 
+	/**
+	 * Set the list of argument components.
+	 * @param arguments the list of argument components to set.
+	 */
 	public void setArguments(List<CommandArgument> arguments) {
 		this.arguments = arguments;
+		for (Iterator iterator = arguments.iterator(); iterator.hasNext();) {
+			CommandArgument commandArgument = (CommandArgument) iterator.next();
+			if(commandArgument.getClass().equals(FileCommandArgument.class)){
+				FileCommandArgument fileArg = (FileCommandArgument)commandArgument;
+				if(fileArg.isOutput()){
+					this.outputs.put(fileArg.ioIndex,fileArg);
+				}else{
+					this.inputs.put(fileArg.ioIndex,fileArg);
+				}
+			}
+		}
 	}
 
-	
+	/**
+	 * Parse a properties string component of a file type definition.
+	 * @param propsString The string to parse
+	 * @return A list of key value pairs representing the properties.
+	 * @throws IllegalArgumentException Thrown if the string can't be parsed.
+	 */
 	public static Map<String,String> parsePropertiesString(String propsString) throws IllegalArgumentException{
 		Map<String,String> map = new HashMap<String,String>();
 		if (propsString.trim().equals("")) {
@@ -211,6 +218,10 @@ public class CommandLineFormatParser {
 		return map;
 	}
 	
+	/**
+	 * (Re)generate the config string.
+	 * @return the config string.
+	 */
 	public String toConfigString() {
 		String out = "";
 		for (Iterator<CommandArgument> iterator = arguments.iterator(); iterator
@@ -241,6 +252,16 @@ public class CommandLineFormatParser {
 		}
 	}
 	
+	/**
+	 * Generate a formatted string. Note that a file name for each input and 
+	 * output must have already been set with:
+	 * {@code setPreparedPathForInput(int, String)} or
+	 * {@code setPreparedPathForOutput(int,String)}.
+	 * 
+	 * @return The formatted string.
+	 * @throws IllegalArgumentException Thrown if a path hasn't been set fo one 
+	 * of the input or output files.
+	 */
 	public String toFormattedString() throws IllegalArgumentException{
 		String out = "";
 		for (Iterator<CommandArgument> iterator = arguments.iterator(); iterator
@@ -254,62 +275,32 @@ public class CommandLineFormatParser {
 		return out;
 	}
 		
-	
-	
-	
-//	public Map<Integer, Class<? extends NemaFileType>> getInputs() {
-//		return inputTypes;
-//	}
-//
-//	public void setInputs(Map<Integer, Class<? extends NemaFileType>> inputs) {
-//		this.inputTypes = inputs;
-//	}
-//
-//	public Map<Integer, Class<? extends NemaFileType>> getOutputs() {
-//		return outputTypes;
-//	}
-//
-//	public void setOutputs(Map<Integer, Class<? extends NemaFileType>> outputs) {
-//		this.outputTypes = outputs;
-//	}
-//
-//	public Map<Integer, Map<String, String>> getInputProperties() {
-//		return inputProperties;
-//	}
-//
-//	public void setInputProperties(Map<Integer, Map<String, String>> inputProperties) {
-//		this.inputProperties = inputProperties;
-//	}
-//
-//	public Map<Integer, Map<String, String>> getOutputProperties() {
-//		return outputProperties;
-//	}
-//
-//	public void setOutputProperties(
-//			Map<Integer, Map<String, String>> outputProperties) {
-//		this.outputProperties = outputProperties;
-//	}
-
-
-
-
-
+	/**
+	 * Return a map of the input index to the {@code FileCommandArgument} Object
+	 * representing it.
+	 * @return map of the input index to the {@code FileCommandArgument} Object
+	 * representing it.
+	 */
 	public Map<Integer, FileCommandArgument> getInputs() {
 		return inputs;
 	}
 
-	public void setInputs(Map<Integer, FileCommandArgument> inputs) {
-		this.inputs = inputs;
-	}
-
+	/**
+	 * Return a map of the output index to the {@code FileCommandArgument} Object
+	 * representing it.
+	 * @return map of the output index to the {@code FileCommandArgument} Object
+	 * representing it.
+	 */
 	public Map<Integer, FileCommandArgument> getOutputs() {
 		return outputs;
 	}
 
-	public void setOutputs(Map<Integer, FileCommandArgument> outputs) {
-		this.outputs = outputs;
-	}
-
+	/**
+	 * Returns the type of the specified input.
+	 * @param inputIdx The input index.
+	 * @return Class Object representing the {@code NemaFileType} that should
+	 * be used to write the input file.
+	 */
 	public Class<? extends NemaFileType> getInputType(int inputIdx){
 		FileCommandArgument arg = inputs.get(inputIdx);
 		if(arg == null) {
@@ -318,6 +309,12 @@ public class CommandLineFormatParser {
 		return arg.getFileType();
 	}
 
+	/**
+	 * Returns the type of the specified output.
+	 * @param outputIdx The output index.
+	 * @return Class Object representing the {@code NemaFileType} that should
+	 * be used to read the output file.
+	 */
 	public Class<? extends NemaFileType> getOutputType(int outputIdx){
 		FileCommandArgument arg = outputs.get(outputIdx);
 		if(arg == null) {
@@ -326,6 +323,14 @@ public class CommandLineFormatParser {
 		return arg.getFileType();
 	}
 	
+	/**
+	 * Returns any audio encoding properties of the input file. These are used 
+	 * to specify encoding constraints on teh input files (e.g. only use mp3 
+	 * files at sample rate 22050 Hz).
+	 * 
+	 * @param inputIdx The input index.
+	 * @return Map with key value pairs defining the properties.
+	 */
 	public Map<String,String> getInputProperties(int inputIdx){
 		FileCommandArgument arg = inputs.get(inputIdx);
 		if(arg == null) {
@@ -334,6 +339,14 @@ public class CommandLineFormatParser {
 		return arg.getProperties();
 	}
 
+	/**
+	 * Returns any file type properties of the output file. These are may be 
+	 * used to specify arguments to the file type, such notifying the 
+	 * classification file type that it is reading a particular metadata type.
+	 * 
+	 * @param outputIdx The output index.
+	 * @return Map with key value pairs defining the properties.
+	 */
 	public Map<String,String> getOutputProperties(int outputIdx){
 		FileCommandArgument arg = outputs.get(outputIdx);
 		if(arg == null) {
