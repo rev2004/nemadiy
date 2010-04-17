@@ -29,6 +29,11 @@
 				<name>IMIRSEL Snapshots</name>
 				<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-snapshots-local</url>
 			</snapshotRepository>
+			
+			<site>
+			<id>nema-site</id>
+			<url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/diy</url>
+		</site>
 		
 		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
 	</distributionManagement>
