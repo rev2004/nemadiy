@@ -19,7 +19,7 @@ import org.imirsel.nema.model.Property;
 
 /**This tag renders the component property
  *  -Added support for readonly and hidden
- * @author Amit Kumar
+ * @author kumaramit01
  *
  */
 public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAttributes{
