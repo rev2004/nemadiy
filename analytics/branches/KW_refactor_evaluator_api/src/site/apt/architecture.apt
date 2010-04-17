@@ -17,4 +17,4 @@ Code Structure
 
     The code structure is generated using Structure 101 for Java and is the report is available here.
     
-    Link to {{{http://nema-dev.lis.illinois.edu/s101j/tracker/Analytics%20KW/kw-io-model-0.1.0-SNAPSHOT/summary.html} Architecture Summary}}
+    Link to {{{http://nema-dev.lis.illinois.edu/s101j/tracker/${project.name}/${project.version}/arch.html} Code Structure}}
