@@ -16,7 +16,8 @@
 		</mailingList>
 	</mailingLists>
 
-	<inceptionYear>2010</inceptionYear>
+    <url>http://nema-dev.lis.illinois.edu/development/${pom.artifactId}</url>
+    <inceptionYear>2010</inceptionYear>
 	<licenses>
 		<license>
 			<name>Apache License</name>
@@ -77,24 +78,6 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	
-	  <pluginRepositories>
-            <pluginRepository>
-                <id>structure101plugin</id>
-                <layout>default</layout>
-                <url>http://repository.structure101.com</url>
-                <releases>
-                    <checksumPolicy>warn</checksumPolicy>
-                    <enabled>true</enabled>
-                    <updatePolicy>never</updatePolicy>
-                </releases>
-            </pluginRepository>
-       </pluginRepositories>
-
-
-	
-	
-	
 	
 	<scm>
 		<connection>scm:svn:https://nemadiy.googlecode.com/analytics/trunk</connection>
@@ -231,4 +214,85 @@
 		</dependency>
 		
 	</dependencies>
+	
+	
+	<profiles>
+	<profile>
+		<id>architecture-check</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+			<plugin>
+				<groupId>com.structure101.java</groupId>
+				<artifactId>maven-structure101-plugin</artifactId>
+				<version>0.5</version>
+				<configuration>
+					<!-- put your configurations here -->
+					<project>
+						${project.name}
+					</project>
+					<breakOnError>false</breakOnError>
+					<classpath>${project.build.outputDirectory}</classpath>
+					<key></key>
+					<label>${project.version}</label>
+					<overwrite>true</overwrite>
+					<repository>http://nema-dev.lis.illinois.edu/s101j/data</repository>
+					<rpkey></rpkey>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>publish</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			</plugins>
+			</build>
+		</profile>
+	
+		<profile>
+			<id>attach-docs-and-sources</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+
+
+
+				</plugins>
+			</build>
+
+		</profile>
+	</profiles>
+	
 </project>
