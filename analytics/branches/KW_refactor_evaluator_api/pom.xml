@@ -249,7 +249,6 @@
 							<goal>check-architecture</goal>
 							<goal>check-xs</goal>
 							<goal>report-summary</goal>
-							<goal>retropublish</goal>
 						</goals>
 					</execution>
 				</executions>
