@@ -21,19 +21,19 @@
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
 			<name>IMIRSEL Releases</name>
-			<id>nema.lis.uiuc.edu-releases</id>
-			<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-releases-local/</url>
+			<id>nema-releases</id>
+			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-releases-local/</url>
 			
 		</repository>
 		<!-- use the following if you ARE using a snapshot version. -->
 		
 			<snapshotRepository>
-				<id>nema.lis.uiuc.edu-snapshots</id>
+				<id>nema-snapshots</id>
 				<name>IMIRSEL Snapshots</name>
-				<url>dav:http://nema.lis.uiuc.edu/artifactory/libs-snapshots-local</url>
+				<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-snapshots-local</url>
 			</snapshotRepository>
 		
-		<downloadUrl>http://nema.lis.uiuc.edu/artifactory/</downloadUrl>
+		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
 	</distributionManagement>
 	
 	<build>
@@ -73,11 +73,11 @@
 	<repositories>
 		<repository>
 			<id>nema-artifactory-repo</id>
-			<url>http://nema.lis.uiuc.edu/artifactory/repo</url>
+			<url>http://nema-dev.lis.illinois.edu/artifactory/repo</url>
 		</repository>
 		<repository>
 			<id>nema-artifactory-remote</id>
-			<url>http://nema.lis.uiuc.edu/artifactory/remote-repos</url>
+			<url>http://nema-dev.lis.illinois.edu/artifactory/remote-repos</url>
 		</repository>
 	</repositories>
 

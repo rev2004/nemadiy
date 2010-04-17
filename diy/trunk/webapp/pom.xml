@@ -511,6 +511,7 @@
 						<phase>compile</phase>
 						<goals>
 							<goal>publish</goal>
+							<goal>check-architecture</goal>
 						</goals>
 					</execution>
 				</executions>
