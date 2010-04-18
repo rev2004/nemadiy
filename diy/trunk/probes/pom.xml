@@ -13,6 +13,9 @@
   	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
   	<url>http://www.lis.illinois.edu</url>
   </organization>
+  
+  <url>http://nema-dev.lis.illinois.edu/development/diy/probes</url>
+  
 
  <distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
@@ -32,7 +35,7 @@
 			
 			<site>
 			<id>nema-site</id>
-			<url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/diy</url>
+			<url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/diy/probes</url>
 		</site>
 		
 		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
@@ -304,7 +307,7 @@
    <dependency>
    <groupId>org.json</groupId>
    <artifactId>json</artifactId>
-   <version>20080701</version>
+   <version>20090211</version>
    <scope>test</scope>
    </dependency>
     
@@ -328,7 +331,7 @@
    <dependency>
   <groupId>mysql</groupId>
   <artifactId>mysql-connector-java</artifactId>
-  <version>5.1.6</version>
+  <version>${mysql.connector.version}</version>
   <scope>test</scope>
   </dependency>
   
@@ -395,7 +398,7 @@
         <dependency>
             <groupId>org.imirsel</groupId>
             <artifactId>imirsel-meandre-client</artifactId>
-            <version>0.5.0-SNAPSHOT</version>
+            <version>0.5.0</version>
             <scope>test</scope>
         </dependency>
        <!-- 
@@ -424,6 +427,7 @@
    <meandre-server.version>1.4.8</meandre-server.version> 
    <meandre-client.version>1.4.8</meandre-client.version> 
    <servlet.version>2.4</servlet.version>
+   <mysql.connector.version>5.1.6</mysql.connector.version>
 
   </properties>
   

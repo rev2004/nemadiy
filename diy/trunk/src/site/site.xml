@@ -29,8 +29,7 @@
   
   <menu name="Home">
   	<item name="Index" href="index.html"/>
-  	<item name="Architecture" href="architecture.html"/>
-  </menu>
+   </menu>
   <menu name="Reference">
    <item name="Developer" href="developer.html"/>
    <item name="Downloads" href="download.html"/>
@@ -39,7 +38,12 @@
    <item name="Roadmap" href="roadmap.html"/>
   </menu>
   <menu ref="reports" />
-  <menu ref="modules"/>
+  
+  <menu name="Modules">
+  <item name="Core" href="http://nema-dev.lis.illinois.edu/development/diy/nema-core"/>
+  <item name="Webapp" href="http://nema-dev.lis.illinois.edu/development/diy/nema-webapp"/>
+  <item name="Probes" href="http://nema-dev.lis.illinois.edu/development/diy/probes"/>
+  </menu>
   </body>
   
 </project>
