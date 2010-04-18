@@ -17,9 +17,7 @@
   
   
     <breadcrumbs>
-      <item name="NEMA Development" href="http://nema-dev.lis.illinois.edu/"/>
-      <item name="DIY" href="http://nema-dev.lis.illinois.edu/development/diy/"/>
-      <item name="Webapp" href="http://nema-dev.lis.illinois.edu/development/diy/nema-webapp"/>
+     <item name="Webapp" href="http://nema-dev.lis.illinois.edu/development/diy/nema-webapp"/>
     </breadcrumbs>
   <links>
       <item name="NEMA" href="http://nema.lis.illinois.edu/"/>
@@ -30,10 +28,14 @@
   
   <menu name="Home">
   	<item name="Index" href="index.html"/>
-  	
+  	<item name="Architecture" href="architecture.html"/>
   </menu>
-	<menu ref="reports" />
-	<menu ref="parent"/>
+  <menu ref="reports" />
+	
+	<menu name="Parent Project">
+	<item name="Nema Modular Application" href="http://nema-dev.lis.illinois.edu/development/diy/"/>
+	</menu>
+
   </body>
   
 </project>

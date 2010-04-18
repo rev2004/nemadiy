@@ -69,7 +69,6 @@
 			<id>nema-site</id>
 			<url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/diy</url>
 		</site>
-
 		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
 	</distributionManagement>
 
@@ -449,7 +448,7 @@
 		<hibernate.hbm2ddl.auto>${diy.hibernate.hbm2ddl.auto}</hibernate.hbm2ddl.auto>
 		<jdbc.groupId>mysql</jdbc.groupId>
 		<jdbc.artifactId>mysql-connector-java</jdbc.artifactId>
-		<jdbc.version>5.0.5</jdbc.version>
+		<jdbc.version>5.1.6</jdbc.version>
 		<jdbc.driverClassName>${diy.jdbc.driverClassName}</jdbc.driverClassName>
 		<jdbc.url>${diy.jdbc.url}</jdbc.url>
 		<jdbc.username>${diy.jdbc.username}</jdbc.username>

@@ -28,6 +28,33 @@
     	<url>http://www.lis.illinois.edu</url>
     </organization>
     
+    <url>http://nema-dev.lis.illinois.edu/development/diy/nema-core</url>
+    
+    	<distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<name>IMIRSEL Releases</name>
+			<id>nema-releases</id>
+			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-releases-local/</url>
+
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		<snapshotRepository>
+			<id>nema-snapshots</id>
+			<name>IMIRSEL Snapshots</name>
+			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-snapshots-local</url>
+		</snapshotRepository>
+
+		<site>
+			<id>nema-site</id>
+			<url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/diy/nema-core</url>
+		</site>
+
+		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
+	</distributionManagement>
+
+    
+    
     <build>
   	<extensions>
 			<extension>
