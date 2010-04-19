@@ -7,6 +7,8 @@
        http://www.springframework.org/schema/aop/spring-aop-2.0.xsd"
 	default-lazy-init="false">
 
+	<import resource="nema-webflow.xml" />
+	
 	<bean id="exceptionResolver"
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
@@ -235,12 +237,12 @@
 				/*.jsp=viewResolver
             </value>
 		</property>
-		<property name="order" value="0" />
+		<property name="order" value="1" />
 	</bean>
 
 	<bean
 		class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
-		<property name="order" value="1" />
+		<property name="order" value="2" />
 	</bean>
 
 
