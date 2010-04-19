@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+        
+	<var name="parameterMap" class="java.util.HashMap" />
+
+	<view-state id="taskSelection">
+		<on-render>
+			<evaluate expression="realFlowService.getFlowTemplates()"
+				result="flowScope.flowSet"></evaluate>
+		</on-render>
+		<transition on="done" to="parameterForm" />
+	</view-state>
+	<view-state id="parameterForm">
+		<transition on="componentList" to="componentList" />
+		<transition on="test" to="test" />
+		<transition on="cancel" to="taskSelection" />
+		<transition on="clear" to="parameterForm" />
+	</view-state>
+	<view-state id="test">
+		<transition on="run" to="testRun" />
+		<transition on="cancel" to="parameterForm" />
+	</view-state>
+	<view-state id="componentList">
+		<transition on="more" to="componentList" />
+		<transition on="save" to="parameterForm" />
+		<transition on="cancel" to="parameterForm" />
+	</view-state>
+	<action-state id="testRun">
+		<evaluate expression="tasksService.testRun()" />
+		<transition on="yes" to="joblist" />
+		<transition on="no" to="taskSelection" />
+	</action-state>
+
+	<end-state id="joblist"
+		view="externalRedirect:contextRelative:/get/JobManager.getUserJobs" />
+</flow>
