@@ -18,12 +18,13 @@ import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.util.io.FileConversionUtil;
 import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
+import org.imirsel.nema.analytics.util.io.TrackListTextFile;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 
-public class ImirselDatasetIngestor {
+public class ImirselTestTrainDatasetIngestor {
 
-	static final Logger logger = Logger.getLogger(ImirselDatasetIngestor.class.getName());
+	static final Logger logger = Logger.getLogger(ImirselTestTrainDatasetIngestor.class.getName());
 	
 	public static void main(String[] args) {
 		try {
@@ -43,24 +44,36 @@ public class ImirselDatasetIngestor {
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
+		File groundtruthFile = new File(args[10]); 
 		
 		boolean doingFileMeta = false;
-		boolean doingFoldDirs = false;
-		List<File> foldDirs = new ArrayList<File>();
+		boolean doingTestList = false;
+		boolean doingTrainList = false;
+		List<File> testDirs = new ArrayList<File>();
+		List<File> trainDirs = new ArrayList<File>();
 		List<String[]> fileMetadataTags = new ArrayList<String[]>();
-		for(int i = 10; i < args.length; i++) {
+		for(int i = 11; i < args.length; i++) {
 			if(args[i].equals("-m")) {
 				doingFileMeta = true;
-				doingFoldDirs = false;
+				doingTestList = false;
+				doingTrainList = false;
 				continue;
-			}else if(args[i].equals("-d")) {
+			}else if(args[i].equals("-test")) {
 				doingFileMeta = false;
-				doingFoldDirs = true;
+				doingTestList = true;
+				doingTrainList = false;
+				continue;
+			}else if(args[i].equals("-train")) {
+				doingFileMeta = false;
+				doingTestList = false;
+				doingTrainList = true;
 				continue;
 			}
 			
-			if(doingFoldDirs) {
-				foldDirs.add(new File(args[i]));
+			if(doingTestList) {
+				testDirs.add(new File(args[i]));
+			}else if(doingTrainList) {
+				trainDirs.add(new File(args[i]));
 			}else if (doingFileMeta) {
 				String[] comps = args[i].split("=");
 				if (comps.length != 2) {
@@ -72,7 +85,7 @@ public class ImirselDatasetIngestor {
 			}
 		}
 		
-		moveRenameAndInsertDataset(rootAudioDir, audioFileExtension, foldDirs, fileMetadataTags, collection_id, audioDirectory, seriesName, datasetName, datasetDescription, metadataType, readerFileType, writerFileType);
+		moveRenameAndInsertDataset(rootAudioDir, audioFileExtension, groundtruthFile, testDirs, trainDirs,fileMetadataTags, collection_id, audioDirectory, seriesName, datasetName, datasetDescription, metadataType, readerFileType, writerFileType);
 		}catch(Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -81,7 +94,9 @@ public class ImirselDatasetIngestor {
 	public static void moveRenameAndInsertDataset(
 			File rootAudioDir, 
 			String audioFileExtension,
-			List<File> foldDirs, 
+			File groundtruth,
+			List<File> testListFiles, 
+			List<File> trainListFiles, 
 			List<String[]> fileMetadataTags, 
 			int collection_id, 
 			File newAudioDirectory, 
@@ -106,11 +121,17 @@ public class ImirselDatasetIngestor {
 		System.out.println("metadataType:       " + metadataType);
 		System.out.println("readerFileType:     " + readerFileType.getName());
 		System.out.println("writerFileType:     " + writerFileType.getName()); 
-		System.out.println("Fold directories:   ");
-		for (Iterator<File> iterator = foldDirs.iterator(); iterator
+		System.out.println("groundtruth:        " + groundtruth.getAbsolutePath()); 
+		System.out.println("Test list files:    ");
+		for (Iterator<File> iterator = testListFiles.iterator(); iterator
 				.hasNext();) {
 			System.out.println("\t" + iterator.next());
 		} 
+		System.out.println("Train list files:   ");
+		for (Iterator<File> iterator = trainListFiles.iterator(); iterator
+				.hasNext();) {
+			System.out.println("\t" + iterator.next());
+		}
 		System.out.println("file metadata:      ");
 		for (Iterator<String[]> iterator = fileMetadataTags.iterator(); iterator
 				.hasNext();) {
@@ -142,45 +163,54 @@ public class ImirselDatasetIngestor {
 		}
 		System.out.println("got " + idToOldFile.size() + " files to insert");
 		
-		//read all track metadata
+		//read all groundtruth track metadata
 		Map<String, NemaData> idToMetadata = new HashMap<String, NemaData>();
-		List<List<NemaData>> foldLists = new ArrayList<List<NemaData>>(foldDirs.size());
-		for (Iterator<File> iterator = foldDirs.iterator(); iterator
-				.hasNext();) {
-			List<NemaData> aList = FileConversionUtil.readData(iterator.next(), null, readerFileType);
-			foldLists.add(aList);
-			for (Iterator<NemaData> iterator2 = aList.iterator(); iterator2
+		{
+			List<NemaData> aList = FileConversionUtil.readData(groundtruth, null, readerFileType);
+			for (Iterator<NemaData> it = aList.iterator(); it
 					.hasNext();) {
-				NemaData nemaData = iterator2.next();
+				NemaData nemaData = it.next();
 				idToMetadata.put(nemaData.getId(), nemaData);
 			}
 		}
-		System.out.println("got " + idToOldFile.size() + " files to insert from " + foldLists.size() + " folds");
 		
-		//confirm we have metadata for all tracks
-		if(!idToOldFile.keySet().containsAll(idToMetadata.keySet())) {
-			System.out.println("WARNING: the list of files did not contain all the tracks metadata was found for!");
-			System.out.println("Tracks with metadata but no files:");
-			Set<String> noFile = new HashSet<String>(idToMetadata.keySet());
-			noFile.removeAll(idToOldFile.keySet());
-			for (Iterator<String> iterator = noFile.iterator(); iterator
-					.hasNext();) {
-				System.out.println("\t" + iterator.next());
+		//read test and training lists
+		TrackListTextFile listFileReader = new TrackListTextFile();
+		
+		List<List<NemaData>> testLists = new ArrayList<List<NemaData>>(testListFiles.size());
+		for (Iterator<File> iterator = testListFiles.iterator(); iterator.hasNext();) {
+			File file = iterator.next();
+			List<NemaData> testList = listFileReader.readFile(file);
+			testLists.add(testList);
+			//confirm we have metadata for all tracks
+			for (Iterator iterator2 = testList.iterator(); iterator2.hasNext();) {
+				NemaData nemaData = (NemaData) iterator2.next();
+				if (!idToMetadata.containsKey(nemaData.getId())){
+					throw new IllegalArgumentException("Groundtruth did not contain metadata for trackID: " + nemaData.getId() + " from test list file: " + file.getAbsolutePath());
+				}
 			}
-			System.out.println("---");
+		}
+
+		List<List<NemaData>> trainLists = new ArrayList<List<NemaData>>(trainListFiles.size());
+		for (Iterator<File> it = trainListFiles.iterator(); it
+				.hasNext();) {
+			File file = it.next();
+			List<NemaData> trainList = FileConversionUtil.readData(file, null, readerFileType);
+			trainLists.add(trainList);
+			//confirm we have metadata for all tracks
+			for (Iterator iterator2 = trainList.iterator(); iterator2.hasNext();) {
+				NemaData nemaData = (NemaData) iterator2.next();
+				if (!idToMetadata.containsKey(nemaData.getId())){
+					throw new IllegalArgumentException("Groundtruth did not contain metadata for trackID: " + nemaData.getId() + " from train list file: " + file.getAbsolutePath());
+				}
+			}
 		}
 		
-		if(!idToOldFile.keySet().containsAll(idToMetadata.keySet())) {
-			System.out.println("WARNING: the list of metadata files did not contain all the tracks we found files for!");
-			System.out.println("Tracks with files but no metadata:");
-			Set<String> noMeta = new HashSet<String>(idToOldFile.keySet());
-			noMeta.removeAll(idToMetadata.keySet());
-			for (Iterator<String> iterator = noMeta.iterator(); iterator
-					.hasNext();) {
-				System.out.println("\t" + iterator.next());
-			}
-			System.out.println("---");
+		if(trainLists.size() != testListFiles.size()){
+			throw new IllegalArgumentException("Lists of test (" + testListFiles.size() + ") and training (" + trainListFiles.size() + ") files were different lengths");
 		}
+		
+		System.out.println("got " + idToOldFile.size() + " files to insert from " + testLists.size() + " folds");
 		
 		//pause so we can cancel if need be
 		togo = 10;
@@ -234,7 +264,6 @@ public class ImirselDatasetIngestor {
 			}
 			
 			System.out.println("---");
-			
 		}
 		
 		//insert renamed audio files and file metadata
@@ -244,17 +273,34 @@ public class ImirselDatasetIngestor {
 		RepositoryManagementUtils.insertMetadataFromSingleTrackEvalFileType(idToMetadata.values(), metadataType, writerFileType);
 		
 		//collect up new lists of ids for folds
-		List<String> subsetList = new ArrayList<String>(newIdToNewFile.keySet());
-		List<List<String>> newFoldTrackIdLists = new ArrayList<List<String>>(foldDirs.size());
-		for (Iterator<List<NemaData>> iterator = foldLists.iterator(); iterator
+		HashSet<String> subsetList = new HashSet<String>(newIdToNewFile.keySet());
+		//test
+		List<List<String>> newTestTrackIdLists = new ArrayList<List<String>>(testListFiles.size());
+		for (Iterator<List<NemaData>> iterator = testLists.iterator(); iterator
 				.hasNext();) {
 			List<NemaData> aFold = iterator.next();
 			List<String> foldList = new ArrayList<String>(aFold.size());
 			for (Iterator<NemaData> iterator2 = aFold.iterator(); iterator2
 					.hasNext();) {
-				foldList.add(iterator2.next().getId());
+				String id = iterator2.next().getId();
+				foldList.add(id);
+				subsetList.add(id);
 			}
-			newFoldTrackIdLists.add(foldList);
+			newTestTrackIdLists.add(foldList);
+		}
+		//train
+		List<List<String>> newTrainTrackIdLists = new ArrayList<List<String>>(trainListFiles.size());
+		for (Iterator<List<NemaData>> iterator = trainLists.iterator(); iterator
+				.hasNext();) {
+			List<NemaData> aFold = iterator.next();
+			List<String> foldList = new ArrayList<String>(aFold.size());
+			for (Iterator<NemaData> iterator2 = aFold.iterator(); iterator2
+					.hasNext();) {
+				String id = iterator2.next().getId();
+				foldList.add(id);
+				subsetList.add(id);
+			}
+			newTrainTrackIdLists.add(foldList);
 		}
 		
 		
@@ -272,7 +318,7 @@ public class ImirselDatasetIngestor {
 	        System.out.println("Filter metadata:     " + null);
 	        System.out.println("Filter metadata id:  " + filter_track_metadata_type_id);
 	        System.out.println("Tracks in subset:    " + subsetList.size());
-	        System.out.println("Number of folds:     " + newFoldTrackIdLists.size());
+	        System.out.println("Number of folds:     " + newTestTrackIdLists.size());
 	        
 	        togo = 10;
 	        while(togo > 0){
@@ -285,7 +331,8 @@ public class ImirselDatasetIngestor {
 	            }
 	        }
 	
-	        client.insertTestOnlyDataset(datasetName, datasetDescription, subject_track_metadata_type_id, filter_track_metadata_type_id, subsetList, newFoldTrackIdLists);
+	        //client.insertTestOnlyDataset(datasetName, datasetDescription, subject_track_metadata_type_id, filter_track_metadata_type_id, new ArrayList<String>(subsetList), newFoldTrackIdLists);
+	        client.insertTestTrainDataset(datasetName, datasetDescription, subject_track_metadata_type_id, filter_track_metadata_type_id, new ArrayList<String>(subsetList), newTestTrackIdLists);
 	        
 	    }finally {
 	    	client.close();
