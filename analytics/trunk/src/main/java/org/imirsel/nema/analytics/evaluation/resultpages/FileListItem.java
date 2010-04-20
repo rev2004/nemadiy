@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.evaluation.util.resultpages;
+package org.imirsel.nema.analytics.evaluation.resultpages;
 
 import java.util.Iterator;
 import java.util.List;

@@ -5,13 +5,12 @@
 
 package org.imirsel.nema.analytics.util.io;
 
-import java.io.BufferedReader;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +20,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -42,15 +40,97 @@ public class IOUtil {
     private static final DecimalFormat MEMORY_FORMAT = new DecimalFormat("###,###,###,###.#");
     private static final double MEGABYTE_DIVISOR = 1024 * 1024;
 
-    public static void writeStringToFile(File file, String content, String encoding) throws IOException{
-       FileUtils.writeStringToFile(file, content, encoding);
-   }
     
-    public static void main(String[] args){
-    	IOUtil util = new IOUtil();
-    	System.out.println(util.getClass().getName() + ": " + util);
+    /**
+     * Copies one file into another.
+     * 
+     * @param in File to copy.
+     * @param out Location to copy it to.
+     * @throws IOException
+     */
+	public static void copyFile(File in, File out) throws IOException {
+		FileChannel inChannel = new FileInputStream(in).getChannel();
+		FileChannel outChannel = new FileOutputStream(out).getChannel();
+		try {
+			inChannel.transferTo(0, inChannel.size(), outChannel);
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (inChannel != null)
+				inChannel.close();
+			if (outChannel != null)
+				outChannel.close();
+		}
+	}
+    
+    /** 
+     * Read bytes from a File into a byte[].
+     * 
+     * @param file The File to read.
+     * @return A byte[] containing the contents of the File.
+     * @throws IOException Thrown if the File is too long to read or couldn't be
+     * read fully.
+     */
+    public static byte[] readBytesFromFile(File file) throws IOException {
+    	InputStream is = new FileInputStream(file);
+    	
+	    // Get the size of the file
+	    long length = file.length();
+	
+	    // You cannot create an array using a long type.
+	    // It needs to be an int type.
+	    // Before converting to an int type, check
+	    // to ensure that file is not larger than Integer.MAX_VALUE.
+	    if (length > Integer.MAX_VALUE) {
+	    	throw new IOException("Could not completely read file " + file.getName() + " as it is too long (" + length + " bytes, max supported " + Integer.MAX_VALUE + ")");
+	    }
+	
+	    // Create the byte array to hold the data
+	    byte[] bytes = new byte[(int)length];
+	
+	    // Read in the bytes
+	    int offset = 0;
+	    int numRead = 0;
+	    while (offset < bytes.length && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+	        offset += numRead;
+	    }
+	
+	    // Ensure all the bytes have been read in
+	    if (offset < bytes.length) {
+	        throw new IOException("Could not completely read file " + file.getName());
+	    }
+	
+	    // Close the input stream and return bytes
+	    is.close();
+	    return bytes;
+	}
+    
+    /**
+     * Writes the specified byte[] to the specified File path.
+     * 
+     * @param theFile File Object representing the path to write to.
+     * @param bytes The byte[] of data to write to the File.
+     * @throws IOException Thrown if there is problem creating or writing the 
+     * File.
+     */
+    public static void writeBytesToFile(File theFile, byte[] bytes) throws IOException {
+    	BufferedOutputStream bos = null;
+    	
+		try {
+			FileOutputStream fos = new FileOutputStream(theFile);
+			bos = new BufferedOutputStream(fos); 
+			bos.write(bytes);
+		}finally {
+			if(bos != null) {
+				try	{
+					//flush and close the BufferedOutputStream
+					bos.flush();
+					bos.close();
+				} catch(Exception e){}
+			}
+		}
     }
-    
+	    
     private static long addTarEntry(File toTar, String name,
                                     TarArchiveOutputStream tarOut) throws IOException{
         TarArchiveEntry entry = new TarArchiveEntry(name);
@@ -106,8 +186,18 @@ public class IOUtil {
      * @return The relative path.
      */
     public static String makeRelative(File toModify, File base) {
-            String relative = base.toURI().relativize(toModify.toURI()).getPath();
-            return relative;
+    	String out = toModify.getAbsolutePath();
+    	String baseStr = base.getAbsolutePath();
+    	if (out.startsWith(baseStr)){
+    		out = out.substring(baseStr.length());
+    		if (out.startsWith("/") || out.startsWith("\\")){
+    			out = out.substring(1);
+    		}
+    	}
+    	return out;
+
+//            String relative = base.toURI().relativize(toModify.toURI()).getPath();
+//            return relative;
     }
     
     /**
@@ -389,39 +479,6 @@ public class IOUtil {
         }
         System.out.println("\treturning " + resultFiles.size());
         return resultFiles;
-    }
-
-    public static List<File> readFileList(File listFile){
-        BufferedReader in = null;
-        try{
-            in = new BufferedReader(new FileReader(listFile));
-            ArrayList<File> files = new ArrayList<File>();
-            String line = in.readLine();
-            while(line != null){
-                if (!line.trim().equals("")){
-                    files.add(new File(line));
-                }
-
-                line = in.readLine();
-            }
-            System.out.println("Read " + files.size() + " paths from file.");
-            return files;
-        }catch (FileNotFoundException ex){
-            Logger.getLogger(IOUtil.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }catch (IOException ex){
-            Logger.getLogger(IOUtil.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }finally{
-            if(in != null){
-                try{
-                    in.close();
-                }catch (IOException ex){
-                    Logger.getLogger(IOUtil.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-
     }
 
     public static void listFiles(File dir, File outputFile, String extension){

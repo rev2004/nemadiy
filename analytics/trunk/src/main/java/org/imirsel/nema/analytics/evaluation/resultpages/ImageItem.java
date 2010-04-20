@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.evaluation.util.resultpages;
+package org.imirsel.nema.analytics.evaluation.resultpages;
 
 /**
  * A page item implementation for image items.

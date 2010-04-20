@@ -7,16 +7,23 @@ import static org.imirsel.nema.test.matchers.NemaMatchers.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.imirsel.nema.analytics.evaluation.Evaluator;
+import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTask;
+import org.imirsel.nema.model.NemaTrack;
+import org.imirsel.nema.model.NemaTrackList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -33,6 +40,7 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 
 	private NemaTask task;
 	private NemaDataset dataset;
+	List<NemaTrackList> testSets;
 	private static File workingDirectory;
 	private static File outputDirectory;
 	
@@ -53,14 +61,30 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
         task.setDescription("test description");
         task.setDatasetId(10);
         task.setSubjectTrackMetadataId(1);
-        task.setSubjectTrackMetadataName("track name");
+        task.setSubjectTrackMetadataName(NemaDataConstants.CLASSIFICATION_GENRE);
         
         dataset = new NemaDataset();
         dataset.setId(task.getDatasetId());
         dataset.setName("dataset name");
         dataset.setDescription("some description");
-    }
-	
+        
+        File resultsDirectory = new File("src/test/resources/classification/HNOS1");
+        MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
+        List<List<NemaData>> aResultSet = reader.readDirectory(resultsDirectory,".txt");
+        
+        testSets = new ArrayList<NemaTrackList>(3);
+        int id = 0;
+        for (Iterator<List<NemaData>> iterator = aResultSet.iterator(); iterator.hasNext();) {
+        	ArrayList<NemaTrack> trackList = new ArrayList<NemaTrack>(1000);
+            List<NemaData> aList = iterator.next();
+        	for (Iterator<NemaData> iterator2 = aList.iterator(); iterator2.hasNext();) {
+        		trackList.add(new NemaTrack(iterator2.next().getId()));
+        	}
+        	testSets.add(new NemaTrackList(id, task.getDatasetId(), 3, "test", id, trackList));
+        	id++;
+		}
+        
+	}
 	
 	
 
@@ -69,97 +93,79 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 	}
 
 	@Test
-	public void testEvaluateGT1() { 
-	File groundTruthFile = new File("src/test/resources/classification/audiolatin.all.gt.txt");
-	File hierarchyFile = null;
-	File resultsDirectory = new File("src/test/resources/classification/GT1");
-	String	systemName = "GT1-System";
-	ClassificationEvaluator evaluator = null;
-	try {
-		evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, false, null, hierarchyFile);
-		MultipleTrackEvalFileType reader = new ClassificationTextFile("track name");
+	public void testEvaluateGT1() throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
+		File groundTruthFile = new File("src/test/resources/classification/audiolatin.all.gt.txt");
+		File hierarchyFile = null;
+		File resultsDirectory = new File("src/test/resources/classification/GT1");
+		String	systemName = "GT1-System";
+		Evaluator evaluator = null;
+
+		//evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
+		
+		MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
 		List<NemaData> groundTruth = reader.readFile(groundTruthFile);
 		evaluator.setGroundTruth(groundTruth);
 	
 		List<List<NemaData>> resultsForAllFolds = reader.readDirectory(resultsDirectory, null);
+		int count = 0;
 		for (Iterator<List<NemaData>> iterator = resultsForAllFolds.iterator(); iterator
 		.hasNext();) {	
 			List<NemaData> oneFoldResults = (List<NemaData>) iterator.next();
-			evaluator.addResults(systemName, systemName, oneFoldResults);
+			evaluator.addResults(systemName, systemName, testSets.get(count++), oneFoldResults);
 		}
-	} catch (FileNotFoundException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	} catch (IOException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	}
-	
-	
-	try {
-		Map<String,NemaData> jobIdToAggregateResults = evaluator.evaluate();
-		for(String key:jobIdToAggregateResults.keySet()){
-			assertTrue(key.equals(systemName));
-		}
-	} catch (IllegalArgumentException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	} catch (IOException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	}
 		
-	  File resultFile = new File("src/test/resources/classification/evaluation/GT1/report.txt");
-	  File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
-	 
-	 // assertThat(resultFile, fileContentEquals(outputFile));
-	
+		NemaEvaluationResultSet results = evaluator.evaluate();
+		assertTrue(results != null);
+		
+			
+		//File resultFile = new File("src/test/resources/classification/evaluation/GT1/report.txt");
+		//File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
+		// assertThat(resultFile, fileContentEquals(outputFile));
+		
 	}
 	
 	@Test
-	public void testEvaluateHNOS1() { 
-	File groundTruthFile = new File("src/test/resources/classification/audiolatin.all.gt.txt");
-	File hierarchyFile = null;
-	File resultsDirectory = new File("src/test/resources/classification/HNOS1");
-	String	systemName = "HNOS1-System";
-	ClassificationEvaluator evaluator = null;
-	try {
-		evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, false, null, hierarchyFile);
-		MultipleTrackEvalFileType reader = new ClassificationTextFile("track name");
+	public void testEvaluateGT1AndHNOS1()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
+		File groundTruthFile = new File("src/test/resources/classification/audiolatin.all.gt.txt");
+		File hierarchyFile = null;
+		File resultsDirectory1 = new File("src/test/resources/classification/GT1");
+		String	systemName1 = "GT1-System";
+		File resultsDirectory2 = new File("src/test/resources/classification/HNOS1");
+		String	systemName2 = "HNOS1-System";
+		Evaluator evaluator = null;
+		
+		//evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
+		
+		MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
 		List<NemaData> groundTruth = reader.readFile(groundTruthFile);
 		evaluator.setGroundTruth(groundTruth);
 	
-		List<List<NemaData>> resultsForAllFolds = reader.readDirectory(resultsDirectory, null);
+		List<List<NemaData>> resultsForAllFolds = reader.readDirectory(resultsDirectory1, null);
+		int count = 0;
 		for (Iterator<List<NemaData>> iterator = resultsForAllFolds.iterator(); iterator
 		.hasNext();) {	
 			List<NemaData> oneFoldResults = (List<NemaData>) iterator.next();
-			evaluator.addResults(systemName, systemName, oneFoldResults);
+			evaluator.addResults(systemName1, systemName1, testSets.get(count++), oneFoldResults);
 		}
-	} catch (FileNotFoundException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	} catch (IOException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	}
-	
-	
-	try {
-		Map<String,NemaData> jobIdToAggregateResults = evaluator.evaluate();
-		for(String key:jobIdToAggregateResults.keySet()){
-			assertTrue(key.equals(systemName));
+		
+		resultsForAllFolds = reader.readDirectory(resultsDirectory2, null);
+		count = 0;
+		for (Iterator<List<NemaData>> iterator = resultsForAllFolds.iterator(); iterator
+		.hasNext();) {	
+			List<NemaData> oneFoldResults = (List<NemaData>) iterator.next();
+			evaluator.addResults(systemName2, systemName2, testSets.get(count++), oneFoldResults);
 		}
-	} catch (IllegalArgumentException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	} catch (IOException e) {
-		e.printStackTrace();
-		fail(e.getMessage());
-	}
-	
-	 File resultFile = new File("src/test/resources/classification/evaluation/HNOS1/report.txt");
-	 File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
-	 //assertThat(resultFile, fileContentEquals(outputFile));
+		
+		
+		NemaEvaluationResultSet results = evaluator.evaluate();
+		assertTrue(results != null);
+		
+		
+		 //File resultFile = new File("src/test/resources/classification/evaluation/HNOS1/report.txt");
+		 //File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
+		 //assertThat(resultFile, fileContentEquals(outputFile));
 	}
 
 }

@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.evaluation.util.resultpages;
+package org.imirsel.nema.analytics.evaluation.resultpages;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+import org.apache.commons.io.FileUtils;
 import org.imirsel.nema.analytics.util.io.*;
 
 /**
@@ -101,7 +102,7 @@ public class Page {
             File pageFile = new File(directory.getAbsolutePath() + File.separator + filenames[idx]);
             String pageContent = createPageHTML(set_title, aPage, pages, filenames);
             try{
-                IOUtil.writeStringToFile(pageFile, pageContent, "utf-8");
+            	FileUtils.writeStringToFile(pageFile, pageContent, "utf-8");
             }catch (UnsupportedEncodingException ex){
                 Logger.getLogger(Page.class.getName()).log(Level.SEVERE, "UTF-8 encoding was not available!?!", ex);
             }catch (FileNotFoundException ex){

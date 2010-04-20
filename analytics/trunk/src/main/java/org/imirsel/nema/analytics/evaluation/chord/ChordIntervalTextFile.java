@@ -5,35 +5,38 @@
 
 package org.imirsel.nema.analytics.evaluation.chord;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 
 import org.imirsel.nema.model.*;
 import org.imirsel.nema.analytics.evaluation.*;
-import org.imirsel.nema.analytics.util.*;
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
+import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 
 
 /**
- *
+ * Chord file type where chords are specified in the interval format.
+ * 
+ * @author mert.bay@gmail.com
  * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public class ChordIntervalTextFile extends SingleTrackEvalFileTypeImpl {
 
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";	
+	public static final String TYPE_NAME = "Chord Interval text file";
+	
+	public ChordIntervalTextFile() {
+		super(TYPE_NAME);
+	}
 	
 	@Override
 	public NemaData readFile(File theFile)
