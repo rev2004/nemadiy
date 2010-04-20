@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
@@ -23,15 +22,15 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
-import org.meandre.core.ExecutableComponent;
+
 
 @Component(creator = "Mert Bay", description = "Reads an XML or CSV file from a local directory or an URL, with File location and  class " +
 		" metadata. Output is a 1D String array that holds the fileLocation  in the first column and its " +
 		"class metadata in the second column. If the fileLocation is a URL, it will be downloaded  to a local path. " +
 		"The inputListfiles should be  properly formed. If individual file field is not empty, the file list" +
-		" will be ignored.", name = "Phase Vocoder Input", tags = "input, file, URL,file download, CSV reader, XML reader",
+		" will be ignored.", name = "PhaseVocoderInput", tags = "input, file, URL,file download, CSV reader, XML reader",
 		 firingPolicy = Component.FiringPolicy.all)
-public class Input extends NemaComponent {
+public class PhaseVocoderInput extends NemaComponent {
 	
 	@ComponentOutput(description = "String[] that holds the fileLocations for the audio", name = "inputFiles")
 	public final static String DATA_OUTPUT = "inputFiles";
@@ -115,9 +114,7 @@ public class Input extends NemaComponent {
 				//	+ "\t\tClassName= " + "\t\t added to output");
 			
 			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
-		} 
-		
-		else if (!selectFile.contentEquals("")) {
+		}else if (!selectFile.contentEquals("")) {
 			String[] inputFiles = new String[1];
 			getLogger().info("selectFile file is selected");
 			if (selectFile.contains("http")
@@ -142,8 +139,7 @@ public class Input extends NemaComponent {
 			//		+ "\t\tClassName= " + "\t\t added to output");
 			
 			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);			
-		}
-		else if (!SingleFileURL.contentEquals("")) {
+		}else if (!SingleFileURL.contentEquals("")) {
 			String[] inputFiles = new String[1];
 			getLogger().info("Individual file is selected");
 			if (SingleFileURL.contains("http")
@@ -168,8 +164,7 @@ public class Input extends NemaComponent {
 			//		+ "\t\tClassName= " + "\t\t added to output");
 			
 			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);			
-		}
-		else {
+		}else {
 			BufferedReader textBuffer;
 			int noLines = 0;
 			try {
@@ -246,10 +241,9 @@ public class Input extends NemaComponent {
 					//	inputFiles[i][1] = classname;
 					}
 					ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
-				}
-				// If it is a XML file
-				else if (FileListURL.substring(FileListURL.length() - 3,
-						FileListURL.length()).equalsIgnoreCase("xml")) {
+				}else if (FileListURL.substring(FileListURL.length() - 3,
+					// If it is a XML file
+					FileListURL.length()).equalsIgnoreCase("xml")) {
 					// To be implemented
 					SegmentedClassification[] inputXML = SegmentedClassification
 							.parseClassificationsFile(localListFilePath);
