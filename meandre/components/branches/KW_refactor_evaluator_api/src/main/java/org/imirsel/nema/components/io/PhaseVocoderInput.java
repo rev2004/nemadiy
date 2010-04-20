@@ -114,9 +114,7 @@ public class PhaseVocoderInput extends NemaComponent {
 				//	+ "\t\tClassName= " + "\t\t added to output");
 			
 			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
-		} 
-		
-		else if (!selectFile.contentEquals("")) {
+		}else if (!selectFile.contentEquals("")) {
 			String[] inputFiles = new String[1];
 			getLogger().info("selectFile file is selected");
 			if (selectFile.contains("http")
@@ -141,8 +139,7 @@ public class PhaseVocoderInput extends NemaComponent {
 			//		+ "\t\tClassName= " + "\t\t added to output");
 			
 			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);			
-		}
-		else if (!SingleFileURL.contentEquals("")) {
+		}else if (!SingleFileURL.contentEquals("")) {
 			String[] inputFiles = new String[1];
 			getLogger().info("Individual file is selected");
 			if (SingleFileURL.contains("http")
@@ -167,8 +164,7 @@ public class PhaseVocoderInput extends NemaComponent {
 			//		+ "\t\tClassName= " + "\t\t added to output");
 			
 			ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);			
-		}
-		else {
+		}else {
 			BufferedReader textBuffer;
 			int noLines = 0;
 			try {
@@ -245,10 +241,9 @@ public class PhaseVocoderInput extends NemaComponent {
 					//	inputFiles[i][1] = classname;
 					}
 					ccp.pushDataComponentToOutput(DATA_OUTPUT, inputFiles);
-				}
-				// If it is a XML file
-				else if (FileListURL.substring(FileListURL.length() - 3,
-						FileListURL.length()).equalsIgnoreCase("xml")) {
+				}else if (FileListURL.substring(FileListURL.length() - 3,
+					// If it is a XML file
+					FileListURL.length()).equalsIgnoreCase("xml")) {
 					// To be implemented
 					SegmentedClassification[] inputXML = SegmentedClassification
 							.parseClassificationsFile(localListFilePath);
