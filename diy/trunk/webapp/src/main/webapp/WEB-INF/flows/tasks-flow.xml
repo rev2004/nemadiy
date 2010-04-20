@@ -7,9 +7,10 @@
 	<var name="parameterMap" class="java.util.HashMap" />
 
 	<view-state id="taskSelection">
+	
 		<on-render>
 			<evaluate expression="realFlowService.getFlowTemplates()"
-				result="flowScope.flowSet"></evaluate>
+				result="viewScope.flowSet"></evaluate>
 		</on-render>
 		<transition on="done" to="parameterForm" />
 	</view-state>
@@ -35,5 +36,5 @@
 	</action-state>
 
 	<end-state id="joblist"
-		view="externalRedirect:contextRelative:/get/JobManager.getUserJobs" />
+		view="externalRedirect:contextRelative:get/JobManager.getUserJobs" />
 </flow>
