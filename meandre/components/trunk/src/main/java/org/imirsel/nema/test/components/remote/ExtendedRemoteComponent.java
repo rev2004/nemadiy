@@ -14,6 +14,7 @@ import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.monitor.process.NemaProcess;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
+import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -33,6 +34,10 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 	private static final String DATA_OUTPUT_1="processResult";
 	
 	
+	@ComponentProperty(defaultValue = "/tmp/1.date", description = "cmdline for the shell script", name = "cmdLine")
+	private static final String DATA_PROPERTY_1 = "cmdLine";
+	
+	
 	public void initialize(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
@@ -49,6 +54,8 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 	@Override
 	public void execute(ComponentContext componentContext)
 			throws ComponentExecutionException, ComponentContextException {
+		
+				String cmdLine = componentContext.getProperty(DATA_PROPERTY_1);
 				ProcessArtifact pa = new ProcessArtifact("/tmp/0.date","file");
 				ProcessArtifact pa1 = new ProcessArtifact("/tmp/1.date","file");
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
@@ -70,8 +77,7 @@ public class ExtendedRemoteComponent extends RemoteProcessExecutorComponent {
 				
 				try {
 					String commandLineTemplate=this.getProcessTemplate().getCommandLineTemplate().getCommandLineFormatter();
-					String commandLineFlags ="CREATE THE COMMAND LINE ARGUMENTS HERE" ;
-					pep.setCommandLineFlags(commandLineFlags);
+					pep.setCommandLineFlags(cmdLine);
 				} catch (RemoteException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
