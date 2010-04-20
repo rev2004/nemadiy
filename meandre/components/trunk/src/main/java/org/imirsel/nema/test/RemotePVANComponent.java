@@ -41,7 +41,7 @@ public class RemotePVANComponent extends RemoteProcessExecutorComponent {
 	
 	public void dispose(ComponentContextProperties ccp)
 	throws ComponentContextException {
-		super.dispose(ccp);
+		//super.dispose(ccp);
 	}
 
 	
@@ -50,8 +50,17 @@ public class RemotePVANComponent extends RemoteProcessExecutorComponent {
 	@Override
 	public void execute(ComponentContext componentContext)
 			throws ComponentExecutionException, ComponentContextException {
+			
+		/*
+				FileList object = (FileList) component.getDataComponentFromInput("TEST");
+				ResourceLocator locator=this.getResourceLocator();
+				String fileName=locator.materialize(object);
+				String fname=locator.findByTrackId(id);
+		*/	
+				
+			
 				String inputFile[] = (String[])componentContext.getDataComponentFromInput(DATA_INPUT_1);
-				System.out.println("input is: " + inputFile[0]);
+				
 				ProcessArtifact pa = new ProcessArtifact(inputFile[0]+".pv.an","file");
 				ProcessArtifact pa1 = new ProcessArtifact(inputFile[0],"file");
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
@@ -66,21 +75,28 @@ public class RemotePVANComponent extends RemoteProcessExecutorComponent {
 				map.put("SNDANDIR","/share/apps/sndanweb/sndan");
 				pep.setEnvironmentVariables(map);
 				//pep.setCommandLineFlags(commandLineFlags);
+				
+				
+				
+				
+			
+		
 		
 		    try {
 		    	System.out.println("Running process now...");
 				@SuppressWarnings("unused")
 				final NemaProcess np=this.executeProcess(pep);
 				System.out.println("After running process. Now waiting for the process to finish.");
-				this.waitForProcess();
+				this.waitForProcess(np);
 				System.out.println("Process finished -now getting result.");
 				
-				List<ProcessArtifact> list=this.getResult();
+				List<ProcessArtifact> list=this.getResult(np);
 				if(list==null){
 					throw new ComponentExecutionException("Process result is null");
 				}else{
 					componentContext.pushDataComponentToOutput(DATA_OUTPUT_1, list);
 				}
+				this.cleanProcess(np);
 				
 			} catch (RemoteException e) {
 				e.printStackTrace();

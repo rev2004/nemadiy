@@ -7,10 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
 
 
 import net.jini.core.discovery.LookupLocator;
@@ -41,26 +41,28 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
  * @author kumaramit01
  * @since 0.2.0
  */
-public abstract class RemoteProcessExecutorComponent implements ExecutableComponent {
-	private Logger logger = Logger.getLogger(this.getClass().getName());
+public abstract class RemoteProcessExecutorComponent extends NemaComponent {
+	//private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@ComponentProperty(defaultValue = "nema.lis.uiuc.edu", description = "Service Discovery Host", name = "host")
 	private static final String PROPERTY_1 = "host";
 	
-
 	@ComponentProperty(defaultValue = "exampleRun", description = "Profile Name", name = "profileName")
 	private static final String PROPERTY_2 ="profileName";
+	
+	
+	private ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor> processMonitorMap = 
+		new ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor>();
 
-	private BlockingQueue<List<ProcessArtifact>> resultQueue = new LinkedBlockingQueue<List<ProcessArtifact>>();
-	private Queue<NemaProcess> processQueue = new ConcurrentLinkedQueue<NemaProcess>();
-	private CountDownLatch latch = new CountDownLatch(1);
+	private ComponentContextProperties componentContextProperties;
 	private ProcessExecutorService  executorService;
-	private RemoteProcessMonitor processMonitor;
 	private String profileName = null;
 
 	
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
+		super.initialize(ccp);
+		this.componentContextProperties=ccp;
 		String host = ccp.getProperty(PROPERTY_1);
 		profileName = ccp.getProperty(PROPERTY_2);
 		LookupLocator locator=null;
@@ -84,19 +86,12 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 		Class<ProcessExecutorService>[] classes = new Class[1]; 
 		classes[0] = ProcessExecutorService.class;
 		ServiceTemplate template = new ServiceTemplate(null,classes,attrList);
-	  
-	    RemoteOutputStream ros = new SimpleRemoteOutputStream(ccp.getOutputConsole());
-			RemoteProcessMonitor remoteProcessMonitor = null;
 			try {
 				executorService = ( ProcessExecutorService) registrar.lookup(template);
-				remoteProcessMonitor = new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue);
-				setProcessMonitor(remoteProcessMonitor);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			}catch (RemoteException e) {
+				throw new ComponentExecutionException(e.getMessage());
 			}
-			
-		logger.info("ExecutorService found");
+		getLogger().info("ExecutorService found");
 	}
 
 
@@ -112,8 +107,10 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	public void dispose(ComponentContextProperties ccp)
 			throws ComponentContextException {
 		// abort all the processes that are still running -we are disposing the flow.
-		logger.info("Aborting all the running processes.");
+		getLogger().info("Aborting all the running processes.");
 		abortAllProcesses();
+		this.processMonitorMap.clear();
+		super.dispose(ccp);
 	}
 
 	
@@ -126,20 +123,6 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	}
 
 
-	
-	private final void setProcessMonitor(RemoteProcessMonitor processMonitor) {
-		this.processMonitor = processMonitor;
-	}
-
-
-	/** Returns the process lifecycle monitor
-	 * 
-	 * @return processMonitor
-	 */
-	public RemoteProcessMonitor getProcessMonitor() {
-		return processMonitor;
-	}
-	
 	/** Returns Process Template
 	 * 
 	 * @return process template @{link ProcessTemplate"
@@ -160,10 +143,11 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	 * 
 	 * @throws InterruptedException
 	 */
-	public final void waitForProcess() throws InterruptedException{
-		System.out.println("WAITING ON THE LATCH...");
-		latch.await();
-		System.out.println("LATCH OPENED: ");
+	public final void waitForProcess(NemaProcess nemaProcess) throws InterruptedException{
+		getLogger().info("waiting on the latch\n");
+		RecordStreamProcessMonitor rpm=this.processMonitorMap.get(nemaProcess);
+		rpm.getLatch().await();
+		getLogger().info("latch unlatched -run another process now\n");
 	}
 	
 	
@@ -173,8 +157,14 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	 * 
 	 * @return the result produced by the process as a list of {@link ProcessArtifact}
  	 */
-	public final List<ProcessArtifact> getResult(){
-		return resultQueue.poll();
+	public final List<ProcessArtifact> getResult(NemaProcess nemaProcess){
+		RecordStreamProcessMonitor rpm =this.getProcessMonitor(nemaProcess);
+		if(rpm==null){
+			getLogger().severe("Calling getResults on a process that does not have the RemoteProcessMonitor " +
+					"\n Either the process finished, or was aborted.");
+			return null;
+		}
+		return rpm.getResultQueue().poll();
 	}
 	
 	
@@ -188,16 +178,26 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	 * @throws InvalidProcessTemplateException 
 	 */
 	public final NemaProcess executeProcess(ProcessExecutionProperties processExecutionProperties) throws RemoteException, InvalidProcessMonitorException, ComponentExecutionException, InvalidProcessTemplateException{
-		if(this.getProcessMonitor()==null){
-			throw new InvalidProcessMonitorException("Process Monitor is NULL");
-		}
 		if(processExecutionProperties.getId()==null){
 			throw new IllegalArgumentException("ProcessExecutionProperties -id is not set");
 		}
-		ProcessTemplate pt=this.getProcessTemplate();
-		processExecutionProperties.setProcessTemplate(pt);
-		NemaProcess np = this.getExecutorService().executeProcess(processExecutionProperties, this.getProcessMonitor());	
-		return np;
+		synchronized(this){
+			RecordStreamProcessMonitor rpm=createRemoteProcessMonitor();
+			ProcessTemplate pt=this.getProcessTemplate();
+			processExecutionProperties.setProcessTemplate(pt);
+			NemaProcess np = this.getExecutorService().executeProcess(processExecutionProperties, rpm);	
+			this.processMonitorMap.put(np, rpm);
+			return np;
+		}
+		
+	}
+	
+	/** Remove the process monitor from the hashmap
+	 * 
+	 * @param process
+	 */
+	public final void cleanProcess(NemaProcess process){
+		this.processMonitorMap.remove(process);
 	}
 	
 	/** Aborts the remote process.
@@ -205,18 +205,16 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	 * @param process
 	 * @return success or failure result
 	 * @throws RemoteException
-	 * @throws InvalidProcessMonitorException 
 	 */
-	public final boolean abortProcess(NemaProcess process) throws RemoteException, InvalidProcessMonitorException{
+	public final boolean abortProcess(NemaProcess process) throws RemoteException{
 		if(process == null){
 			throw new IllegalArgumentException("Invalid process");
 		}
-		if(this.getProcessMonitor()==null){
-			throw new InvalidProcessMonitorException("Process Monitor is NULL");
-		}
-		logger.info("Aborting: " + process.getId());
-		boolean success=this.getExecutorService().abort(process,this.getProcessMonitor());
-		logger.info("Abort success: " + success);
+		RemoteProcessMonitor processMonitor = this.getProcessMonitor(process);
+		getLogger().info("Aborting: " + process.getId());
+		boolean success=this.getExecutorService().abort(process, processMonitor);
+		this.processMonitorMap.remove(process);
+		getLogger().info("Abort success: " + success);
 		return success;
 	}
 	
@@ -226,27 +224,22 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 	 *  This method is called by the dispose method
 	 */
 	public final void abortAllProcesses(){
-		Iterator<NemaProcess> np = processQueue.iterator();
+		Iterator<NemaProcess> np = this.processMonitorMap.keySet().iterator();
 		while(np.hasNext()){
 			NemaProcess process = np.next();
 			if(np!=null){
-				logger.severe("Aborting: " + process.getId());
+				getLogger().severe("Aborting: " + process.getId());
 				try{
-					abortProcess(process);
+					RemoteProcessMonitor processMonitor = this.getProcessMonitor(process);
+					getLogger().info("Aborting: " + process.getId());
+					boolean success=this.getExecutorService().abort(process, processMonitor);
+					getLogger().info("Abort success: " + success);
 				}catch(Exception ex){
-					System.err.println("Error dispatching abort command to the process: " + process.getId());
+					System.err.println("Error dispatching abort command to the process: " + process.getId()+ " It might have already finished.");
 				}
 			}
 		}
-		
-	}
-	
-	/**Returns the Logger
-	 * 
-	 * @return Logger
-	 */
-	public Logger getLogger(){
-		return this.logger;
+		this.processMonitorMap.clear();
 	}
 	
 	/**Returns the name of the profile
@@ -256,5 +249,22 @@ public abstract class RemoteProcessExecutorComponent implements ExecutableCompon
 		return this.profileName;
 	}
 
+	
+	private RecordStreamProcessMonitor createRemoteProcessMonitor() throws RemoteException{
+		BlockingQueue<List<ProcessArtifact>> resultQueue = new LinkedBlockingQueue<List<ProcessArtifact>>();
+		Queue<NemaProcess> processQueue = new ConcurrentLinkedQueue<NemaProcess>();
+		CountDownLatch latch = new CountDownLatch(1);
+		RemoteOutputStream ros = new SimpleRemoteOutputStream(this.componentContextProperties.getOutputConsole());
+		RecordStreamProcessMonitor remoteProcessMonitor = null;
+		remoteProcessMonitor = new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue);
+		return remoteProcessMonitor;
+	}
+	
+	
+	private RecordStreamProcessMonitor getProcessMonitor(NemaProcess nemaProcess){
+		return this.processMonitorMap.get(nemaProcess);
+	}
+	
+	
 
 }

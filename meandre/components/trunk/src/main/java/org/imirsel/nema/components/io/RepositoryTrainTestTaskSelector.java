@@ -59,8 +59,8 @@ public class RepositoryTrainTestTaskSelector extends NemaComponent {
 	@ComponentOutput(description = "List of NemaData Objects defining the ground-truth list.", name = "GroundTruthList")
 	public final static String DATA_OUTPUT_GROUNDTRUTH_LIST = "GroundTruthList";
 
-	@ComponentOutput(description = "Map of NemaTrackList to List of NemaData Objects defining each training set (including ground-truth data).", name = "TrainingSest")
-	public final static String DATA_OUTPUT_TRAINING_SETS = "TrainingSest";
+	@ComponentOutput(description = "Map of NemaTrackList to List of NemaData Objects defining each training set (including ground-truth data).", name = "TrainingSet")
+	public final static String DATA_OUTPUT_TRAINING_SETS = "TrainingSet";
 
 	@ComponentOutput(description = "Map of NemaTrackList to List of NemaData Objects defining each test set (no ground-truth data).", name = "TestSets")
 	public final static String DATA_OUTPUT_TEST_SETS = "TestSets";
@@ -149,6 +149,8 @@ public class RepositoryTrainTestTaskSelector extends NemaComponent {
         NemaMetadataEntry metadata;
         List<NemaMetadataEntry> meta_list;
 
+        //TODO update this to process metadata from DB with type class if necessary
+        
         Map<String,List<NemaMetadataEntry>> trackToMeta = client.getTrackMetadataByID(tracks, metadata_id);
         for (Iterator<String> it = tracks.iterator(); it.hasNext();){
             id = it.next();
