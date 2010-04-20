@@ -1,5 +1,5 @@
 /*
- * EvalFileType.java
+ * NemaFileType.java
  *
  * Created on 23 October 2006, 22:21
  *
@@ -14,14 +14,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+import org.imirsel.nema.analytics.util.io.NemaFileType;
 import org.imirsel.nema.model.NemaData;
 
 /**
- * Interface defining the methods of classes to read and write evaluation/prediction data files.
+ * Interface defining the methods of classes to read and write 
+ * evaluation/prediction data files where the files contain information on
+ * multiple tracks per file.
  * 
  * @author kris.west@gmail.com
+ * @since 0.1.0
  */
-public interface MultipleTrackEvalFileType extends EvalFileType {
+public interface MultipleTrackEvalFileType extends NemaFileType {
     
     /**
      * Read data on one or more tracks from an evaluation file. Supports both list file

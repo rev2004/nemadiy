@@ -15,22 +15,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.imirsel.nema.analytics.evaluation.EvalFileTypeImpl;
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
-import org.imirsel.nema.analytics.util.PathAndTagCleaner;
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
+import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 
 
 /**
- *
+ * Chord file type where chords are specified in the number format.
+ * 
+ * @author mert.bay@gmail.com
  * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";	
+	public static final String TYPE_NAME = "Chord Number text file";
+	
+	public ChordNumberTextFile() {
+		super(TYPE_NAME);
+	}
 	
 	@Override
 	public NemaData readFile(File theFile)

@@ -5,56 +5,68 @@
 
 package org.imirsel.nema.analytics.evaluation.classification;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 
 import org.imirsel.nema.model.*;
 import org.imirsel.nema.analytics.evaluation.*;
-import org.imirsel.nema.analytics.util.*;
+import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
+import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 
 
 /**
- *
+ * Reads and writes Classification files giving class for multiple file paths
+ * per file.
+ * 
  * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
 
-	private String type;
-	public static final String DELIMITER = "\t";
+	public static final String READ_DELIMITER = "\\s+";
+	public static final String WRITE_DELIMITER = "\t";	
+	public static final String TYPE_NAME = "Classification text file";
+	private String metadataType;
 	
-	public ClassificationTextFile(String type) {
-		super();
-		this.type = type;
+	public ClassificationTextFile() {
+		super(TYPE_NAME);
+		this.setMetadataType(NemaDataConstants.CLASSIFICATION_DUMMY);
+	}
+	
+	public ClassificationTextFile(String metadataType) {
+		super(TYPE_NAME);
+		this.setMetadataType(metadataType);
 	}
 	
 	@Override
 	public List<NemaData> readFile(File theFile)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
 		
-		HashMap<String,String> data = readClassificationFile(theFile, true);
+		HashMap<String,String> data = readClassificationFile(theFile);
 		
 		List<NemaData> examples = new ArrayList<NemaData>(data.size());
         NemaData obj;
+        File path;
         String trackID;
         for (Iterator<String> it = data.keySet().iterator();it.hasNext();) {
-            trackID = it.next();
+            String pathStr = it.next();
+        	path = new File(pathStr);
+            trackID = PathAndTagCleaner.convertFileToMIREX_ID(path);
             obj = new NemaData(trackID);
-            obj.setMetadata(type, data.get(trackID));
+            obj.setMetadata(getMetadataType(), data.get(pathStr));
+            obj.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, path.getAbsolutePath());
             examples.add(obj);
         }
         
-        getLogger().info(examples.size() + " examples with " + type + " metadata read from file: " + theFile.getAbsolutePath());
+        getLogger().info(examples.size() + " examples with " + getMetadataType() + " metadata read from file: " + theFile.getAbsolutePath());
         
         return examples;
 	}
@@ -67,13 +79,25 @@ public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
 		try{
 			writer = new BufferedWriter(new FileWriter(theFile));
 			NemaData obj;
+			String identifier;
+			int noFileLocation = 0;
 			for (Iterator<NemaData> it = data.iterator(); it.hasNext();) {
 				obj = it.next();
-				writer.write(obj.getId() + DELIMITER + obj.getStringMetadata(type));
+				try {
+					identifier = obj.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION);
+				}catch(IllegalArgumentException e) {
+					identifier = obj.getId();
+					noFileLocation++;
+				}
+				writer.write(identifier + WRITE_DELIMITER + obj.getStringMetadata(getMetadataType()));
 				writer.newLine();
 			}
 			
-			getLogger().info(data.size() + " examples with " + type + " metadata written to file: " + theFile.getAbsolutePath());
+			if(noFileLocation == 0) {
+				getLogger().info(data.size() + " examples with " + getMetadataType() + " metadata written to file: " + theFile.getAbsolutePath());
+			}else {
+				getLogger().warning(noFileLocation + " of " + data.size() + " examples (with " + getMetadataType() + " metadata) did not have file locations, hence they will have be written out with the trackID only.\nFile written: " + theFile.getAbsolutePath());
+			}
 		} finally {
 			if (writer != null) {
 				try {
@@ -91,105 +115,74 @@ public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
 	 * Reads a classification file and encodes the data in a map.
 	 * 
 	 * @param toRead The file to read.
-	 * @param MIREXMode A flag that determines whether file paths are converted to just their 
-	 * names, minus the extension.
 	 * @return A map linking file path/track name component to its classification.
 	 * @throws IllegalArgumentException Thrown if the file is not in the expected format.
 	 * @throws FileNotFoundException Thrown if the specified file is not found.
 	 * @throws IOException Thrown if there is a problem reading the file unrelated to the format.
 	 */
-    public static HashMap<String,String> readClassificationFile(File toRead, boolean MIREXMode) throws IllegalArgumentException, FileNotFoundException, IOException{
+    public HashMap<String,String> readClassificationFile(File toRead) throws IllegalArgumentException, FileNotFoundException, IOException{
         HashMap<String,String> dataRead = new HashMap<String,String>();
+
+        String[][] classificationStringsData = DeliminatedTextFileUtilities.loadDelimTextData(toRead, READ_DELIMITER, -1);
+
+		int nrows = classificationStringsData.length;
         
-        BufferedReader br = new BufferedReader(new FileReader(toRead));
-
-        String str = br.readLine(); // one line one sample
-        if(MIREXMode){
-            while (str != null){
-                str = str.trim();
-                if (!str.equals("")) {
-                    String[] splitted = str.split("\\s+");
-                    File aPath = new File(splitted[0]);
-                    String key = PathAndTagCleaner.convertFileToMIREX_ID(aPath);
-                    if(key.equals("")){
-                        throw new IllegalArgumentException("Error: an empty track name was read from file: " + toRead.getAbsolutePath());
-                    }
-                    String className = PathAndTagCleaner.cleanTag(splitted[1]);
-                    if(className.equals("")){
-                        throw new IllegalArgumentException("Error: an empty class name was read from file: " + toRead.getAbsolutePath());
-                    }
-                    dataRead.put(key, className);
-                }
-                str = br.readLine();
+        for(int r = 0; r < nrows; r++) {
+            File aPath = new File(classificationStringsData[r][0].trim());
+            if(aPath.getPath().equals("")){
+                throw new IllegalArgumentException("Error: an empty track name was read from file: " + toRead.getAbsolutePath());
             }
-        }else{
-            while (str != null){
-                str = str.trim();
-                if (!str.equals("")) {
-                    String[] splitted = new String[2];
-                    splitted = str.split("\t");
-                    dataRead.put(splitted[0].trim(), splitted[1].trim());
-                }
-                str = br.readLine();
+            String className = PathAndTagCleaner.cleanTag(classificationStringsData[r][1].trim());
+            if(className.equals("")){
+                throw new IllegalArgumentException("Error: an empty class name was read from file: " + toRead.getAbsolutePath());
             }
+            dataRead.put(aPath.getAbsolutePath(), className);
         }
-
-        br.close();
-     
+        getLogger().info("Read " + dataRead.size() + " paths and classifications from " + toRead.getAbsolutePath());
         return dataRead;
     }
 
-    /**
-     * Reads the file list data from a classification file. The class data is ignored.
-     * 
-     * @param toRead The file to read.
-     * @param MIREXMode A flag that determines whether file paths are converted to just their 
-	 * names, minus the extension.
-	 * @return A list of the file path/track name components
-	 * @throws IllegalArgumentException Thrown if the file is not in the expected format.
-	 * @throws FileNotFoundException Thrown if the specified file is not found.
-	 * @throws IOException Thrown if there is a problem reading the file unrelated to the format.
-     */
-    public List<String> readClassificationFileAsList(File toRead, boolean MIREXMode) throws IllegalArgumentException, FileNotFoundException, IOException{
-        List<String> dataRead = new ArrayList<String>();
+//    /**
+//     * Reads the file list data from a classification file. The class data is ignored.
+//     * 
+//     * @param toRead The file to read.
+//     * @param MIREXMode A flag that determines whether file paths are converted to just their 
+//	 * names, minus the extension.
+//	 * @return A list of the file path/track name components
+//	 * @throws IllegalArgumentException Thrown if the file is not in the expected format.
+//	 * @throws FileNotFoundException Thrown if the specified file is not found.
+//	 * @throws IOException Thrown if there is a problem reading the file unrelated to the format.
+//     */
+//    public List<String> readClassificationFileAsList(File toRead) throws IllegalArgumentException, FileNotFoundException, IOException{
+//        List<String> dataRead = new ArrayList<String>();
+//
+//        String[][] classificationStringsData = DeliminatedTextFileUtilities.loadDelimTextData(toRead, READ_DELIMITER, -1);
+//
+//		int nrows = classificationStringsData.length;
+//        
+//        for(int r = 0; r < nrows; r++) {
+//            File aPath = new File(classificationStringsData[r][0].trim());
+//            String key = PathAndTagCleaner.convertFileToMIREX_ID(aPath);
+//            if(key.equals("")){
+//                throw new IllegalArgumentException("Error: an empty track name was read from file: " + toRead.getAbsolutePath());
+//            }
+//            dataRead.add(key);
+//        }
+//
+//        getLogger().info("Read " + dataRead.size() + " paths from " + toRead.getAbsolutePath());
+//        return dataRead;
+//    }
 
-        BufferedReader br = new BufferedReader(new FileReader(toRead));
+	public void setMetadataType(String metadataType) {
+		this.metadataType = metadataType;
+	}
 
-        String str = br.readLine(); // one line one sample
-        if(MIREXMode){
-            while (str != null){
-                str = str.trim();
-                if (!str.equals("")) {
-                    String[] splitted = str.split("\\s+");
-                    File aPath = new File(splitted[0]);
-                    String key = PathAndTagCleaner.convertFileToMIREX_ID(aPath);
-                    if(key.equals("")){
-                        throw new IllegalArgumentException("Error: an empty track name was read from file: " + toRead.getAbsolutePath());
-                    }
+	/** Returns the classification metadata type that this instance is 
+	 * configured for.
+	 * @return Metadata type key.
+	 */
+	public String getMetadataType() {
+		return metadataType;
+	}
 
-                    dataRead.add(key);
-                }
-                str = br.readLine();
-            }
-        }else{
-            while (str != null){
-                str = str.trim();
-                if (!str.equals("")) {
-                    String[] splitted = new String[2];
-                    splitted = str.split("\t");
-                    dataRead.add(splitted[0].trim());
-                }
-                str = br.readLine();
-            }
-        }
-
-        br.close();
-
-        getLogger().info("Read " + dataRead.size() + " paths from " + toRead.getAbsolutePath());
-        return dataRead;
-    }
-
-
-    
-    
 }

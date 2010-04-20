@@ -498,7 +498,7 @@ public class DeliminatedTextFileUtilities {
         
         //add boundary requirement to delimiter
         Pattern delimPattern = Pattern.compile("^" + delimiter);
-        Matcher matcher = delimPattern.matcher(line);
+        Matcher matcher = delimPattern.matcher(tmp);
         //set use Anchoring bounds 
         matcher.useAnchoringBounds(true);
         
@@ -509,13 +509,13 @@ public class DeliminatedTextFileUtilities {
         int i = 0;
         try{
 //        	System.out.println("'" + line + "'");
-        	if (line.contains("\"")){
+        	if (tmp.contains("\"")){
         		boolean encounteredSpeechMarks = false;
                 boolean insideSpeechMarks = false;
         	
 	            for (; i < end; i++){
 	            	//System.out.println("char: " + line.charAt(i));
-	            	if(line.charAt(i) == '\"'){
+	            	if(tmp.charAt(i) == '\"'){
 	            		encounteredSpeechMarks = true;
 	                    insideSpeechMarks = !insideSpeechMarks;
 	                    //System.out.println("encountered speechmark, insideSpeechMarks=" + insideSpeechMarks);

@@ -5,21 +5,30 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
-import org.imirsel.nema.analytics.util.PathAndTagCleaner;
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
+import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 
+/**
+ * Key text file type.
+ * 
+ * @author afe405@gmail.com
+ * @author kris.west@gmail.com
+ * @since 0.1.0
+ *
+ */
 public class KeyTextFile extends SingleTrackEvalFileTypeImpl {
 	
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";
+	public static final String TYPE_NAME = "Key text file";
 	
 	/**
 	 * Constructor
 	 */
 	public KeyTextFile() {
-		super();
+		super(TYPE_NAME);
 	}
 
 	/**

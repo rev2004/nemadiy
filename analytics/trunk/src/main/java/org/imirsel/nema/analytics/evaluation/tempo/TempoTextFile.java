@@ -6,27 +6,33 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
-import org.imirsel.nema.analytics.util.PathAndTagCleaner;
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
+import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 
+/**
+ * Tempo estimation text file type.
+ * 
+ * @author afe405@gmail.com
+ * @author kris.west@gmail.com
+ * @since 0.1.0
+ */
 public class TempoTextFile extends SingleTrackEvalFileTypeImpl {
 	
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";
 	public static final DecimalFormat TEMPO_DEC = new DecimalFormat("0.000");
 	
+	public static final String TYPE_NAME = "Tempo estimation text file";
+	
 	/**
 	 * Constructor
 	 */
 	public TempoTextFile() {
-		super();
+		super(TYPE_NAME);
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
+	
 	@Override
 	public NemaData readFile(File theFile) throws IllegalArgumentException,
 			FileNotFoundException, IOException {

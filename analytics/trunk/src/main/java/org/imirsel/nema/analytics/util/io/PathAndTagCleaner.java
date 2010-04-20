@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.util;
+package org.imirsel.nema.analytics.util.io;
 
 import java.io.File;
 
