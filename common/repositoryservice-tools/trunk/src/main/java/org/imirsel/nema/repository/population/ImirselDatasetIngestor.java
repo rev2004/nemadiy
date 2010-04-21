@@ -25,6 +25,14 @@ public class ImirselDatasetIngestor {
 
 	static final Logger logger = Logger.getLogger(ImirselDatasetIngestor.class.getName());
 	
+	//root audio directory
+	// audio file extension
+	// collection id
+	// copy the files here /data/raid3/audio/format/??/??
+	// series name - All audio starts with that name a,b,c,...
+	// dataSetname -name for the dataset
+	// dataSet Description
+	// metadataType
 	public static void main(String[] args) {
 		try {
 		File rootAudioDir = new File(args[0]); 
