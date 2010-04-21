@@ -31,7 +31,7 @@ public class EvaluatorFactory {
 		EVALUATOR_REGISTRY.put(NemaDataConstants.MELODY_EXTRACTION_DATA, MelodyEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, KeyEvaluator.class);
 		
-			//classification tasks
+		//classification tasks
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, ClassificationEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ARTIST, ClassificationEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, ClassificationEvaluator.class);

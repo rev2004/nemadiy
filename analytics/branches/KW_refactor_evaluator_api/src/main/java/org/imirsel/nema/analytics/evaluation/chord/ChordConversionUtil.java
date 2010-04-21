@@ -28,9 +28,9 @@ public class ChordConversionUtil {
 	private Map<String,int[]> chordNumberToNoteNumbers;
 	private Map<String,String> NoteNumbersToChordNumbers;
 	
-	public final String INTERVAL_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/IntervalDictionary.txt";
-	public final String SHORTHAND_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/ShorthandDictionary.txt";
-	public final String CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/NoteNumbersDictionary.txt";
+	public final String INTERVAL_DICTIONARY_CLASSPATH = "/home/mertbay/Documents/workspace-sts-2.3.2.RELEASE/nema-analytics/src/main/resources/org/imirsel/nema/analytics/evaluation/chord/IntervalDictionary.txt";
+	public final String SHORTHAND_DICTIONARY_CLASSPATH = "src/main/resources/org/imirsel/nema/analytics/evaluation/chord/ShorthandDictionary.txt";
+	public final String CHORDNUMBERS_DICTIONARY_CLASSPATH = "src/main/resources/org/imirsel/nema/analytics/evaluation/chord/NoteNumbersDictionary.txt";
 
 	public static ChordConversionUtil getInstance(){
 		if (instance == null){
@@ -46,6 +46,13 @@ public class ChordConversionUtil {
 			intervalsToNoteNumbers = readChordDictionary(INTERVAL_DICTIONARY_CLASSPATH);
 			NoteNumbersToIntervals = reverseMap(intervalsToNoteNumbers);
 		} catch (Exception e) {
+			File newFile = new File(INTERVAL_DICTIONARY_CLASSPATH);
+			if (newFile.isFile()){
+				System.out.println("File Exists " + INTERVAL_DICTIONARY_CLASSPATH);
+			}
+			else{
+				System.out.println("File DOES NOT Exists " + INTERVAL_DICTIONARY_CLASSPATH);
+			}
 			throw new IllegalArgumentException(
 					"Failed to read chord dictionary from classpath: "
 							+ INTERVAL_DICTIONARY_CLASSPATH, e);
