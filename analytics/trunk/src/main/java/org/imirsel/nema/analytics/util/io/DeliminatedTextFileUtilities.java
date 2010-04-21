@@ -427,7 +427,6 @@ public class DeliminatedTextFileUtilities {
         BufferedReader textBuffer = null;
         ArrayList<String[]> rowData = new ArrayList<String[]>();
         int maxRowLength = 0;
-
         try{
             InputStream iStream = DeliminatedTextFileUtilities.class.getResourceAsStream(classPath);
             textBuffer = new BufferedReader(new InputStreamReader(iStream));
