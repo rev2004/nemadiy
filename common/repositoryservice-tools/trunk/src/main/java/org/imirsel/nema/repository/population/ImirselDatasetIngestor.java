@@ -86,6 +86,29 @@ public class ImirselDatasetIngestor {
 		}
 	}
 	
+	/**Puts whole metadata file in the database. Melody,chord, a whole chunk of data
+	 * gets added
+	 * 
+	 * @param rootAudioDir Where the files are present
+	 * @param audioFileExtension the extension of the file
+	 * @param foldDirs  Fold directory 
+	 * @param fileMetadataTags corresponds to key=value pair; bitrate=96k etc...
+	 * @param collection_id id of a collection -new collection gets created.
+	 * @param newAudioDirectory store the files over -copy from rootAudioDir
+	 * @param seriesName the collection prefix -see the /data/raid3/audio/wavs/44s 
+	 * @param datasetName -new dataset is created.
+	 * @param datasetDescription description of the dataset
+	 * @param metadataType name of the track metadata definition table /chordfile file type- single track eval file
+	 * @param readerFileType for reading metadata for example chord shorthand format.
+	 * @param writerFileType write to new file -for example chord shorthandformat is converted to number 
+	 * format and then stored in the database
+	 * @throws IllegalArgumentException
+	 * @throws FileNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public static void moveRenameAndInsertDataset(
 			File rootAudioDir, 
 			String audioFileExtension,
