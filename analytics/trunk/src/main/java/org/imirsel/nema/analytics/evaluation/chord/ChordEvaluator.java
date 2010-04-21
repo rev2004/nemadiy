@@ -662,57 +662,60 @@ public class ChordEvaluator extends EvaluatorImpl{
         
         	// Create grid for the system
         	int lnSys = (int)(GRID_RESOLUTION*systemChords.get(systemChords.size()-1).getOffset());
+        	double overlap_score;
         	if (lnSys == 0 ){
-        		throw new IllegalArgumentException("Length of system results is 0!");
-        	}
+        		//they get nothing for this file!
+        		getLogger().warning("Length of system results is " +
+        				"0 for track: " + data.getId() + ", number of system " +
+        						"chords: " + systemChords.size() + ", last chord: "
+        						+ systemChords.get(systemChords.size()-1));
+        		overlap_score = 0;
+        	}else{
         	
 
-        	int[][] gridSys = new int[lnSys][];	
-//        	System.out.println("ln Sys " + lnSys + " last offset " + systemChords.get(systemChords.size()-1).getOffset());
-//        	System.out.println("System chords length " + systemChords.size());
-        	for (int i = 0; i < systemChords.size(); i++) {
-        		NemaChord currentChord = systemChords.get(i);
-        		int onset_index = (int)(currentChord.getOnset()*GRID_RESOLUTION);
-        		int offset_index = (int)(currentChord.getOffset()*GRID_RESOLUTION);
-        	//	System.out.println("Chord no " + i + " onset="+onset_index + "offset=" + offset_index);
-        		for (int j = onset_index; j < offset_index; j++){
-        			gridSys[j]=currentChord.getNotes();
-        			if (gridSys[j] == null){
-        				getLogger().warning("Returned null notes for track: " + data.getId() + ", chord " + i + ", onset index: " + onset_index + ", offset index: " + offset_index);
-        			}
-        				
-        		}
-			}
-        	
-        	
-        	int lnOverlap = Math.min(lnGT, lnSys);
-        	//int[] overlaps = new int[lnOverlap]; 
-        	int  overlap_total = 0;
-        	//Calculate the overlap score 
-        	for (int i = 0; i < lnOverlap; i++ ){
-        		int[] gtFrame = gridGT[i]; 
-//        		if(gtFrame == null){
-//        			getLogger().warning("GT chord Null at " +i + "-ith frame");
-//        		}
-        		
-        		int[] sysFrame = gridSys[i];
-        		//disabled check as some systems do not mark data until first chord 
-//        		if(sysFrame == null){
-//        			getLogger().warning("System chord Null at " +i + "-ith frame");
-//        		}
-        		overlap_total +=  calcOverlap(gtFrame,sysFrame);        	
-        		
+	        		int[][] gridSys = new int[lnSys][];	
+	//        	System.out.println("ln Sys " + lnSys + " last offset " + systemChords.get(systemChords.size()-1).getOffset());
+	//        	System.out.println("System chords length " + systemChords.size());
+	        	for (int i = 0; i < systemChords.size(); i++) {
+	        		NemaChord currentChord = systemChords.get(i);
+	        		int onset_index = (int)(currentChord.getOnset()*GRID_RESOLUTION);
+	        		int offset_index = (int)(currentChord.getOffset()*GRID_RESOLUTION);
+	        	//	System.out.println("Chord no " + i + " onset="+onset_index + "offset=" + offset_index);
+	        		for (int j = onset_index; j < offset_index; j++){
+	        			gridSys[j]=currentChord.getNotes();
+	        			if (gridSys[j] == null){
+	        				getLogger().warning("Returned null notes for track: " + data.getId() + ", chord " + i + ", onset index: " + onset_index + ", offset index: " + offset_index);
+	        			}
+	        				
+	        		}
+				}
+	        	
+	        	
+	        	int lnOverlap = Math.min(lnGT, lnSys);
+	        	//int[] overlaps = new int[lnOverlap]; 
+	        	int  overlap_total = 0;
+	        	//Calculate the overlap score 
+	        	for (int i = 0; i < lnOverlap; i++ ){
+	        		int[] gtFrame = gridGT[i]; 
+	//        		if(gtFrame == null){
+	//        			getLogger().warning("GT chord Null at " +i + "-ith frame");
+	//        		}
+	        		
+	        		int[] sysFrame = gridSys[i];
+	        		//disabled check as some systems do not mark data until first chord 
+	//        		if(sysFrame == null){
+	//        			getLogger().warning("System chord Null at " +i + "-ith frame");
+	//        		}
+	        		overlap_total +=  calcOverlap(gtFrame,sysFrame);        	
+	        		
+	        	}
+	        	
+	        	//set eval metrics on input obj for track
+	        	overlap_score = (double)overlap_total / (double)lnGT;
         	}
-        	
-        	//set eval metrics on input obj for track
-        	double overlap_score = (double)overlap_total / (double)lnGT;
-        	
-        	weightedAverageOverlapAccum += overlap_score*lnGT;
-        	
+        	weightedAverageOverlapAccum += overlap_score*lnGT;	
         	overlapAccum += overlap_score;
-        	
         	getLogger().info("jobID: " + jobID + ", track: " + data.getId() + ", overlap score: " + overlap_score);
-        	
         	data.setMetadata(NemaDataConstants.CHORD_OVERLAP_RATIO, overlap_score);
         }
         

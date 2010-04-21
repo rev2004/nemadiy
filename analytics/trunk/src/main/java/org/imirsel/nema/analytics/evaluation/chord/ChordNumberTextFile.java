@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
@@ -55,7 +56,12 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 		for(int r = 0; r < nrows-1; r++) {
 			onset = Double.parseDouble(chordStringsData[r][0]);
 			offset = Double.parseDouble(chordStringsData[r+1][0]);
-			notes = ChordConversionUtil.getInstance().convertChordNumbersToNoteNumbers(chordStringsData[r][1]);
+			try{
+				notes = ChordConversionUtil.getInstance().convertChordNumbersToNoteNumbers(chordStringsData[r][1]);
+			}catch(IllegalArgumentException e){
+				Logger.getLogger(ChordShortHandTextFile.class.getName()).log(Level.SEVERE, "Failed to convert chord format in file: " + theFile.getAbsolutePath(), e);
+				throw e;
+			}
 			chords.add(new NemaChord(onset, offset, notes));
 		}
 		
