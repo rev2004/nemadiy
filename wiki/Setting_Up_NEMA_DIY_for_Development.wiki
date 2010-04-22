@@ -1,0 +1,13 @@
+#summary How to set up a local instance of the NEMA DIY webapp.
+
+= Introduction =
+
+This tutorial gives step-by-step instructions for setting up a local NEMA DIY webapp instance for the purposes of developing the web app itself.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
