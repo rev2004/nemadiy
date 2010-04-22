@@ -3,16 +3,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-        
-	<var name="parameterMap" class="java.util.HashMap" />
 
-	<view-state id="taskSelection">
-	
+	<var name="parameterMap" class="java.util.HashMap" />
+	<var name="taskSelection" class="org.imirsel.nema.webapp.model.TaskSelection" />
+	<view-state id="taskSelection" model="taskSelection">
+
 		<on-render>
-			<evaluate expression="realFlowService.getFlowTemplates()"
+			<evaluate expression="flowService.getFlowTemplates()"
 				result="viewScope.flowSet"></evaluate>
 		</on-render>
-		<transition on="done" to="parameterForm" />
+		<transition on="show" to="parameterForm" />
 	</view-state>
 	<view-state id="parameterForm">
 		<transition on="componentList" to="componentList" />

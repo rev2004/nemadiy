@@ -7,9 +7,9 @@
 
 <body id="jobstype"/>
 
-<form:form>
+<form:form commandName="taskSelection">
 <form:select path="id" items="${flowSet}" itemLabel="name" itemValue="id" ></form:select>
-<input type="submit" name="go1" value="GO"/>
+<input type="submit" name="_eventId_show" value="GO"/>
 </form:form>
 
                 
