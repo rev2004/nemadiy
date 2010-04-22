@@ -17,6 +17,7 @@
 		<config>webapp/src/main/webapp/WEB-INF/security.xml</config>
 		<config>webapp/src/main/webapp/WEB-INF/views.xml</config>
 		<config>webapp/src/test/resources/test-bean.xml</config>
+		<config>webapp/src/main/webapp/WEB-INF/nema-webflow.xml</config>
 	</configs>
 	<configSets>
 	</configSets>
