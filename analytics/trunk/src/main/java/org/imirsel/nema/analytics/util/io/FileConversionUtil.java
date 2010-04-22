@@ -44,18 +44,22 @@ public class FileConversionUtil {
 	static {
 		//register known list file types for known metadata keys
 		{
+			//setup raw audio file input type
 			List<Class<? extends NemaFileType>> rawAudioTypeList = new ArrayList<Class<? extends NemaFileType>>(4);
 			rawAudioTypeList.add(RawAudioFile.class);
+			//setup track list file input type
+			List<Class<? extends NemaFileType>> trackListTypeList = new ArrayList<Class<? extends NemaFileType>>(5);
+			trackListTypeList.add(TrackListTextFile.class);
+			
 			//these are tasks where individual audio files are used as input... i.e. there is no list file
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, rawAudioTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.MELODY_EXTRACTION_DATA, rawAudioTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, rawAudioTypeList);
 			
-				//classification tasks
-			List<Class<? extends NemaFileType>> trackListTypeList = new ArrayList<Class<? extends NemaFileType>>(5);
-			trackListTypeList.add(TrackListTextFile.class);
+			//chord can also use a list file
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, trackListTypeList);
-
+			
+			//classification tasks
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, trackListTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ARTIST, trackListTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, trackListTypeList);
@@ -70,6 +74,7 @@ public class FileConversionUtil {
 		
 		//register known GT and prediction file types for known metadata keys
 		{
+			//whether chord systemms return a file at a time or directory of files (which is auto detected) we need to know format
 			List<Class<? extends NemaFileType>> gtTypeList = new ArrayList<Class<? extends NemaFileType>>(3);
 			gtTypeList.add(ChordIntervalTextFile.class);
 			gtTypeList.add(ChordNumberTextFile.class);
