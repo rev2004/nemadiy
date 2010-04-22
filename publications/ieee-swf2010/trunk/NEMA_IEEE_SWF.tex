@@ -336,148 +336,92 @@ The NEMA project aims to provide the MIR field with a high-quality, secure and e
 
 
 
-\section{Motivation}
-%	Can't share music data easily
+\section{Introduction}
 Unlike many other fields of multimedia research, Music Information Retrieval (MIR) suffers from extreme issues of data sharing and comparative evaluation. Owing to the current climate in the music industry, datasets cannot be freely shared between researchers (for example, those drawn from the set of western commercial music). Further, the purchase of licenses to the constituent tracks and reconstruction of a dataset is often prohibitively expensive. 
 
-%	Creative commons collections often are often small, may not well represent commercial music or particular musical niches
-One solution to this problem is the use of creative commons collections, particularly those with research friendly licensing, such as the Magnatune collection \cite{magnatune}. However, such collections are often relatively small scale and they rapidly become well known to the research community (risking the over-fitting of multiple techniques and models to those collections). Further, multiple authors \cite{albumeffect,pampalk:thesis} have reported significant experimental errors introduced by poorly chosen experiment criteria, such as allowing an \emph{artist} to appear in both testing and training sets for \emph{genre} classification experiments (as it may be easier to fit characteristics of artists rather than genres of music). Hence, experiments must be both carefully constructed and exactly repeatable to facilitate valid statisitcal comparisons between techniques.
+One solution to this problem is the use of creative commons collections, particularly those with research friendly licensing, such as the Magnatune collection \cite{magnatune}. However, such collections are often relatively small scale and they rapidly become well known to the research community (risking the over-fitting of multiple techniques and models to those collections). Further, multiple authors \cite{albumeffect,pampalk:thesis} have reported significant (and common within the field) experimental errors introduced by poorly chosen experiment criteria. Hence, experiments must be both carefully constructed and exactly repeatable to facilitate valid statistical comparisons between techniques.
 
 \subsection{The Music Information Retrieval Evaluation eXchange}
-%	This leads to MIREX
-These challenges led to establishment of an annual `Music Information Retrieval Evaluation eXchange'  or MIREX  \cite{downie2008mirex} hosted by the IMIRSEL lab at the University of Illinois at Urbana-Champaign. MIREX is based on the TREC approach \cite{taguesutcliffe1995sat}, where algorithms and applications are submitted by the MIR community to up to 26 separate, community defined tasks and evaluated using standardised queries, collections and evaluation measures. 
-%		Send code to data
-The large number of tasks and datasets involved necessitates the sending of the code for each submission to the data, rather than the reverse (as is the case in most if not all other fields). 
+These challenges led to establishment of an annual `Music Information Retrieval Evaluation eXchange'  or MIREX  \cite{downie2008mirex}. MIREX is based on the TREC approach \cite{taguesutcliffe1995sat}, where algorithms and applications are submitted by the MIR community to up to 26 separate, community defined tasks and evaluated using standardised queries, collections and evaluation measures. The large number of tasks and datasets involved necessitates the sending of the code for each submission to the data, rather than the reverse (as is the case in most if not all other fields). 
 
-%		Strong driver of research in the field and generates ad hoc collaborations on the definition of tasks and simple data formats
-Since the establishment of MIREX in 2005 (and its predecessor, the `Audio Description Contest' hosted by the Music Technology Group at Universitat Pompeu Fabra in 2004), the annual evaluation campaign has been a strong driver of research in MIR by encouraging the community to clearly define tasks and research goals, develop and gain consensus on standardised evaluation procedures and provide detailed and statistically valid comparisons of techniques for a given task. Finally, in order to run MIREX a series of extremely simple Unicode text file format standards have been developed to encode data for each highly specific task context, in order to keep the implementation cost for participating systems as low as possible.
+Since the establishment of MIREX in 2005 (and its predecessor, the `Audio Description Contest'), the annual evaluation campaign has been a strong driver of research in MIR by encouraging the community to clearly define tasks, datasets, research goals and standardised evaluation procedure that provide detailed and statistically valid comparisons of techniques. Further, in order to run MIREX a series of simple Unicode text file formats have been developed for each highly specific task context, in order to keep the implementation cost as low as possible.
 
-%	Huge challenge to run MIREX each year
-Given that MIREX submissions must be delivered to MIREX and executed by the IMIRSEL team on the task datasets, the running of a MIREX evaluation is no small job. In 2009 alone IMIRSEL received submissions from 138 individuals, in 26 tasks, generating a total of 289 runs.  Since 2005, nearly 800 formal evaluation runs have been conducted. The IMIRSEL lab also maintains over 4Tb of audio files relating to more than 300,000 distinct tracks that can be used in the various evaluation tasks.
+Given that MIREX submissions must be delivered to the MIREX team to execute, the running of a MIREX evaluation is no small job. In 2009 alone IMIRSEL received submissions from 138 individuals, in 26 tasks, generating a total of 289 runs.  Since 2005, nearly 800 formal evaluation runs have been conducted and over 4Tb of audio files maintained for use in the various evaluation tasks. 
 
-%		Lots of code that must be run in a glut (2 months of hell)
-The association of MIREX with the annual ISMIR conference, where the results are presented, can also be problematic as this means that most or all of the submissions will be received and must be executed within the same eight week period each year. 
-%		Often poor code quality 
-%			Untested/broken
-%			dependency issues
-%			IO Format issues
-%			Endless runs and/or poorly chosen parameters
-Further, the research-grade code received is often problematic owing to missing dependencies or platforms, variance from the defined IO file formats, poor error handling/reporting, lack of runtime feedback (is it working?) and extraordinary runtimes. 
-%		Reporting challenges (wikis take a long time to populate with data)
-Finally, the reporting and dissemination of results is also a challenge as detailed statistical analyses must be rapidly conducted and then presented for each of the hosted tasks in time for the ISMIR conference. This presently takes the form of a report encoded in a page on that year's MIREX wiki\footnote{e.g. the MIREX 2009 wiki is at \url{http://www.music-ir.org/mirex/2009}}.
+\subsection{Interoperability and Sharing}
+MIREX has so far failed to facilitate easy cross-pollination of research systems and code. Owing to the relative wealth of programming languages, software frameworks and toolkits used or developed for MIR research, such collaborations are often challenging as there exist few standards for encoding the wide range of music informatics data. Where standards do exist (such as the Music, Audio Feature and other ontologies developed by the OMRAS2 project for encoding MIR data in RDF \cite{raimond2007music}) uptake is as yet relatively low.  
+Further, although MIREX provides a snapshot of the state-of-the-art in each MIREX task, it does not facilitate access to a wide range of published MIR techniques for less technical members of the MIR community such as Musicologists and LIS researchers (the natural consumers of many MIR techniques). Hence, the NEMA project was established to address many, perhaps all, of these issues.
 
-%		Has brought about standardised evaluation procedures, but not standardised software
-MIREX has brought about standardised evaluation procedures and some limited, but standardised file formats.
-%			Very low reuse/cross-pollination of work/software (if it happens at all we don't know as the software is often wrapped)
-However, MIREX has so far failed to facilitate easy cross-pollination of research systems and code. Owing to the relative wealth of programming languages, software frameworks and toolkits used or developed for MIR research, such collaborations are often challenging as there exist few standards for encoding the wide range of music and music informatics data. Where standards or ontologies do exist (such as the Music, Audio Feature and other ontologies developed by the OMRAS2 project for encoding MIR data in RDF \cite{raimond2007music}) uptake is as yet relatively low.  
-%	Is no help for Musicologists and LIS researchers
-Further, although MIREX provides a snapshot of the state-of-the-art in each MIREX task, it does not facilitate access to a wide range of published MIR techniques for less technical members of the MIR community such as Musicologists and LIS researchers (the natural consumers of many MIR techniques). Hence, the NEMA project was established to address many perhaps all of these issues.
+\subsection{Goals}
+The stated goals of the NEMA project include the establishment of a computational infrastructure to facilitate submission of MIR compute tasks against content and metadata collections, interoperability between arbitrary systems for well defined MIR tasks, standardised and automated experimentation/evaluation and the exposure of metadata and results in a standardised form suitable for integration with a full linked data architecture for MIR. Further, NEMA needs to be able to support the distributed execution of tasks against meta-collections of tracks drawn from multiple sites, without moving the content from those sites.
+
+Though the NEMA project is not intended to replace MIREX, implementing support for the hosting of MIREX offers an excellent starting point for a field-wide computational infrastructure and interoperability project as MIREX defines standardised tasks, collections and low-level file formats that are already supported by many softwares from the research community. 
 
 \section{Solution}
-\subsection{Goals}
-%	MIREX -  Build computational infrastructure allowing participants to upload and execute their own submissions
-The stated goals of the NEMA project include the establishment of a computational infrastructure to facilitate submission of MIR compute tasks against remotely held content and metadata collections, interoperability between arbitrary systems for well defined MIR tasks, standardised and automated experimentation/evaluation and the exposure of metadata and results in a standardised form suitable for integration with a full linked data architecture for MIR. 
-%		MIREX is excellent model for field wide computational infrastructure and interoperability project
-Though the NEMA project is not intended to replace MIREX, MIREX offers an excellent starting point for a field-wide computational infrastructure and interoperability project as it defines standardised tasks, experiment formats, collections and low-level file formats that are already supported by a very large number of implementations across the research community. 
+By using a workflow approach to the definition of tasks that can be performed on the NEMA service, those tasks are broken down into discrete units or components which may be independently scheduled and distributed to satisfy collection access restrictions or software/architecture dependencies. For example in the current implementation, a user of the NEMA service would be able to conduct an experiment in which:
+\begin{itemize}
+\item a collection of tracks held at a remote site, is analysed by Matlab code sent to the site, 
+\item the resulting descriptors are imported into a NEMA data model and transmitted to the home site, 
+\item one or more machine learning framework is launched, on a specified Virtual Machine infrastructure, to predict a metadata field or transcription for each track, 
+\item the predictions are also imported into the NEMA data model,
+\item the results of the experiment are evaluated be MIR evaluation components provided by the NEMA project,
+\item finally the predictions and evaluation data are exposed by the NEMA service.
+\end{itemize}
 
+%Add diagram here showing this workflow, with annotations showing where format conversion occur (at front and back of process component) and execution occurs remotely.
 
 \subsection{The NEMA Data Model}
-The NEMA infrastructure includes the definition of an extensible data model and data structures that can encode data relating to all aspects of music and, music metadata, music informatics and MIR evaluation that have been encountered at MIREX, in the jMIR framework \cite{mckay2009jmir} or in the MIR related ontologies developed by the OMRAS2 project \cite{raimond2007music}. In order to facilitate interoperability between diverse components forming part of or submitted to NEMA by third parties, this data model is exclusively used to communicate between components of the system. 
-%maybe break this sentence up
-Each third party component application used with the NEMA service is wrapped in a component harness that uses contextual information about both the experiment and third party component code to raise or lower the data model to or from a suitable file format in order to supply data to and harvest results from the application, construct valid calls to the application to achieve the desired result and satisfy resource and dependency requirements in order to run the application.  
-%FIGURE service layer or ER diagam? representing the infrastructure for running external binary/matlab/java/VAMP components - include on it file formats conversions, implementation specific component harnesses, VMs and resource allocation
+The NEMA infrastructure includes the definition of an extensible data model and data structures that encode data relating to all aspects of music, music informatics and MIR evaluation that have been encountered at MIREX, in the jMIR framework \cite{mckay2009jmir} or in the MIR related ontologies developed by the OMRAS2 project \cite{raimond2007music}. This data model and associated infrastructure facilitate interoperability between diverse components forming part of or used on the NEMA service by third parties. Third party component applications used with the NEMA service are wrapped in component harnesses that use contextual information about both the experiment and component code to move data between the NEMA data model and suitable file formats allowing the service to supply data to and harvest results from the application.  %as shown in previous figure?
 
-\subsection{Workflow and Dependency infrastructure}
+The NEMA infrastructure currently supports components that execute Java, Matlab and arbitrary binary executables and is intended to support VAMP API plugins \cite{cannam2006sonic} for music analysis in the Future. This provides an immediate path to the integration of many MIR softwares and provides a model for building hosts for further plugin environments. A diagrammatic overview of the NEMA service layers are given in figure \ref{fig_infrastructure}.
+
+\subsection{Infrastructure and Workflow Implementation}
+NEMA uses Meandre\footnote{\url{http://seasr.org/meandre/}} to implement its worklow processes. Meandre is a semantic-web-driven data-intensive flow execution environment. Meandre provides basic infrastructure for data-intensive computation. It provides a high-level language to describe flows and both a multicore and distributed execution environment based on a service-oriented paradigm. The Meandre Infrastructure provides a plugin model similar to the servlets in a Java Enterprise Enviornment where custom functionality is implemented, NEMA uses plugins to make data sources available as a JNDI \cite{lee2000jndi} resource to all the tasks.
+
 \begin{figure}[!t]
 \centering
 \includegraphics[width=2.8in]{infrastructure}
   \caption{An overview of the NEMA service infrastructure}
 \label{fig_infrastructure}
 \end{figure}
-The NEMA infrastructure currently supports component harnesses to execute Java, Matlab, VAMP API plugins \cite{cannam2006sonic} and arbitrary binary executables or shell scripts (that launch processes compatible with the host operating system and architecture). This provides an immediate path to integration of most, if not all software types and offers a model and examples for building more convenient hosts for particular languages or plugin environments. A diagrammatic overview of the NEMA service infrastructure and its workflow implementation in the Meandre framework is given in figure \ref{fig_infrastructure}.
 
-% Workflow facilitates use of differing sites, dependencies and IO formats
-By using a workflow approach to defining experiment tasks, those tasks are naturally broken down into discrete units or components which may be independently scheduled and distributed to satisfy collection access restrictions, software/architecture dependencies or IO file format requirements. For example a user of the NEMA service would be able to conduct an experiment in which:
-\begin{itemize}
-\item a collection of tracks held at a remote site, which cannot be distributed, is analysed by Matlab code outputting into Weka's ARFF file format \cite{witten1999wpm}, 
-\item the resulting audio analysis based features are raised into the data model and transmitted to another NEMA site with greater compute infrastructure, 
-\item one or more machine learning frameworks or procedures are launched using automatically constructed shell commands, on specified Virtual Machine infrastructures, to predict a metadata field or transcription for each track, which is then serialized in a MIREX file format,
-\item the MIREX format file is read and interpreted in the context of the experiment into the NEMA data model,
-\item the results of the experiment are evaluated using Java-based MIR evaluation components provided by the NEMA project,
-\item and finally both the prediction and evaluation data is exposed by the NEMA service in the standardised data model and eventually will be integrated into a linked data repository.
-\end{itemize}
+The NEMA service also embraces a Virtual Machine Infrastructure for the distributed execution of component code, inside a Meandre component. Hence, workflows maybe constructed that execute parts of a particular task at different sites and under differing architectures.
 
-
-
-\subsection{Experiment and Workflow Sharing}
-%	Break up tasks into smaller units (multi-part feature extraction, classification, meta-classification)
-The workflow sharing approach designed for NEMA has been modelled after the myExperiment Virtual Research Environment \cite{de2007designing} and directly addresses many of the same issues. It is expected that the NEMA service will fully integrate with myExperiment at some stage in the future.  This approach facilitates the easy sharing and reuse of experiment setups and partially or fully-specified implementations of those experiments. For example, a MIREX task may be defined in terms of a component to provide an input dataset and task description (e.g. classify music by genre), and number of required but unspecified process components (e.g. perform feature extraction, train classifier, apply classifier to test dataset) and an evaluation component. A participating lab would then configure components to perform each of the specified processes and execute the configured workflow to perform the task and receive evaluation results.  Similarly a researcher might publish an experiment definition (a fully defined task) and fully configured workflows or simply computed results representing experiments in published paper or thesis, allowing other researchers to accurately compare their work or build on the results.
-
-%		drive cross-pollination - publication/sharing of working components
-%				allows researchers to focus on their specific problem 
-%					rather than having to re-implement standard procedures for comparison or reuse
-%					lowers the bar to entry in to the field
-%					(ref. myExperiment paper, issues section)
-Further, if users choose to publish their components for re-use by other researchers, NEMA can drive the cross-pollination of research mitigating the need to re-implement techniques or learn additional languages/frameworks/applications. This lowers the bar of entry in to specific areas of research, allowing researchers to focus on their particular area of research rather than supporting technologies, provides recommendations and know-how on ways to address particular problems and facilitates higher-level Musicological research in lower time-scales, skill-sets and levels of effort than was previosuly possible.   
-%				e.g. leverage chord transcription in score following or genere classification/tagging
-%				combine onset detectors with F0 or multiple F0 estimators to produce full transcriptions
-For example, a researcher might be able to leverage existing chord transcription systems in implementations of techniques for tasks such as score following, music description or search. Similarly, existing audio event-onset detection procedures might be combined with dominant F0 (melody) estimators and machine learning/IR frameworks to produce an index of melodies. 
-%					Teaching tool?
-Hence, the NEMA service may eventually form a ideal teaching tool for use in many fields including Musicology, Machine-learning, Library Information Science and MIR.
-
-%	Automated evaluation/leaderboards
-%		Automated result publication/dissemination
-Finally, the provision of automated and standardised evaluation tools and result collections should facilitate (as MIREX has done in the past) better analysis, reporting and dissemination of results in the field of MIR than would otherwise be possible.
-%		Based on new standardised, high-quality evaluation toolkit developed as part of project
-The evaluation tools and IO/Interoperability framework developed to implement the NEMA service is also made available as an open-source toolkit for MIR experimentation and software building and, it is hoped, will be a significant resource to the community in of itself\footnote{source code and documentation for the NEMA project infrastructure is available from google code: \url{http://code.google.com/p/nemadiy}}. 
-%immediately provides connects between AudioDB, jMIR, SOnic annotator and the Vamp API and the ACE/Weka machine learning frameworks
-Out of the box, the toolkit enables the interoperability of AudioDB \cite{casey2008audiodb}, jMIR \cite{mckay2009jmir}, Sonic Annotator and the VAMP API \cite{cannam2006sonic}, ACE \cite{mckay2005ace} and the Weka Machine-Learning toolkit \cite{witten1999wpm}.  
-
-
-\subsection{Resource Resolution, Security and Attribution}
-%security
-Given that security is a prime concern for any NEMA-hosted collections, it is vital that the analysis code is sent to the data and that result data is only returned in a controlled model in which the transmission of the original audio content (or a reconstructable form thereof) may be prevented.
-%	OMEN - extract feats at remote sites running infrastructure
-The model for the extraction of MIR information on remote collections used in NEMA, which protects the NEMA-hosted music collections, is based on the On-demand Metadata Extraction Network (OMEN) \cite{mcennis2006overview} developed at the Schulich School of Music, McGill University.
-
-% Resource resolution (varied encodings/sources)
-% Access to resources
-Format dependencies may also mean that multiple different encodings of the content may need to be maintained or conversion facilities provided. The ability to represent multiple sources for the content also facilitates better access to the resource as, for example, NEMA might not be able to provide streaming access to the controlled content for auditioning but could refer to a publicly or commercially accessible version of the content. 
-
-% security for data/code and publication/attribution
-The security of code submitted to the NEMA service is also prime concern, as these components may or may not be under IP restriction or may not be ready for wide-spread distribution. Hence, the NEMA service allows users contributing component code to control the level of access of other users to their components (implementing a `some rights reserved' sharing model that may help promote academic work and experimentation that would otherwise be difficult or impossible), limited only by the fact that NEMA does not permit the download of component code to non-NEMA managed servers.
-  %	Collection of author data/attribution/citation data?
-Additionally, full author attribution information and citation information is captured with each component profile in order to facilitate correct attribution in cases of reuse and the viewing of the components themselves as collections of documents and metadata. 
-%		Treat code and its metadata as data?
-
-\subsection{Implementation}
-\subsubsection{Using and re-using the NEMA service}
-%	Users can try to solve their own problems
-The existing approach to the running of MIREX evaluations involves the hand execution of extremely diverse pieces of code by around a half dozen research students over short period of time and may therefore be considered expensive in terms of human resources.  One of the key advantages of the NEMA `self-service' infrastructure is that it exposes, in a controlled manner, the configuration of component execution to the user. This enables the user to solve their own issues, in such a way that, they can rapidly make corrections/alterations to their own codebase or configuration to produce a successful run, avoiding the often drawn out testing, email communication, bug report and update cycles that incurred each year at MIREX.
- %	MIREX - Testing datasets (can't even share those at times!)
-Further, this issue is often exacerbated by the difficulty of providing test datasets for tasks, as even these are often impossible to share due to copyright issues or the impact it would have on already limited dataset sizes. However, NEMA is of course able to provide test datasets within the NEMA service to facilitate rapid testing of component code before long runs are executed. 
-
-%	Potential for VM use to support other architectures/languages/dependencies
-Finally, the NEMA service embraces a Virtual Machine Infrastructure for the execution of component code, where necessary. Throughout the hosting of five years of MIREX evaluations the IMIRSEL team has encountered a wide variety of dependency requirements and has developed/maintains a linux based compute cluster node image satisfying as many of these dependencies as possible within a single image. However, there are always special cases, particularly including platform dependencies on Windows operating systems and non-standard libraries. Hence, a range of VM images is maintained for use by third party components.
-%		VM customisation??
+Throughout the hosting of five years of MIREX evaluations a wide variety of dependency requirements have been encountered. Many of these dependencies are satisfied in the NEMA cluster node Linux image. However, there are always special cases, including platform dependencies on Windows operating systems and non-standard libraries. Hence, a range of VM images is maintained for use by third party components.
 Eventually, it is hoped, a user customisable VM container system will be exposed (allowing a user to login to an existing image, modify it for their use in a limited fashion and save it for later reuse).
-%		Sandboxing
-Obviously, such modified VMs or indeed any VM running potentially unknown code must be suitably sand-boxed and: is permitted read access only to its component code and data required for a particular experiment or task; is permitted write access only to specified scratch and output locations; is required to return its output in a range of specified formats, such that it may be appropriately inspected or interpreted; and is permitted no access to the outside world.
+Obviously, such modified VMs running potentially unknown code must be suitably sand-boxed and are: permitted read access only to the component code and data required for a particular task; permitted write access only to specified scratch and output locations; and are permitted no access to the outside world.
 
 \subsubsection{Exposing Metadata, Predictions, Results and Provenance}
-%unique ids, persistent storage
-The NEMA service infrastructure provides each task execution with a unique identifier and persistent storage of logs, execution information / provenance, predictions and evaluation results. This data may be published by a user within NEMA so that it maybe accessed by the community through either a provided digital library framework (Greenstone \cite{witten2000greenstone}) or linked data repository/SPARQL endpoint. 
-%Predict/extract data that is not available\\
+The NEMA service infrastructure provides each workflow execution with a unique identifier and persistent storage of logs, execution information / provenance, predictions and evaluation results. This data may be published by a user within NEMA so that it maybe accessed by the community through either a provided digital library framework (Greenstone \cite{witten2000greenstone}) or linked data repository/SPARQL endpoint, both of which have yet to be deployed.
+
 The design of the linked data system or \emph{repository} for the NEMA project is beyond the scope of this paper. However, it is hoped that the NEMA service infrastructure will one day be used to provide on-demand processing required to satisfy queries submitted via the repository endpoint (i.e. extracting and/or predicting metadata for content that is not already known).
 
-\subsubsection{Workflow Implementation}
-NEMA uses Meandre\footnote{\url{http://seasr.org/meandre/}} to implement its worklow processes. Meandre is a semantic-web-driven data-intensive flow execution environment. Meandre provides basic infrastructure for data-intensive computation. It provides a high-level language to describe flows and both a multicore and distributed execution environment based on a service-oriented paradigm. The Meandre Infrastructure provides a plugin model similar to the servlets in a Java Enterprise Enviornment where custom functionality is implemented, NEMA uses plugins to make data sources available as a JNDI \cite{lee2000jndi} resource to all the tasks.
-%
-%The Meandre Infrastructure allows NEMA to Monitor the lifecycle of a task.  The task is submitted to the NEMA Flow Service, that schedules the experiment to run on one of the Meandre Servers. The Meandre Servers assembles the experiment by downloading the work flow definitions and code from possibly distributed locations and starts the execution. 
-%
-%The flow execution can depend upon a Virtual machine with a preset execution environment, such as a particular version of python, JVM or other libraries The NEMA Executor Service runs on each virtual machine and handles the process execution and the lifecycle of the process. It  reports back to the flow asynchronously the success or failure of the process. The artifacts produced by the process are serialized and moved to the flow server as input to the next the component. We are currently working on an implementation that would store the results in a central NEMA Repository service based on  Flexible and Extensible Digital Object and Repository Architecture (Fedora) \cite{payette-flexible} with a client interface that would allow tasks to retrieve the artifacts.
-%
-% conference papers do not normally have an appendix
+\subsection{Resource Resolution, Security and Attribution}
+Given that security is a prime concern for any NEMA-hosted collections, it is vital that the analysis code is sent to the data and that result data is only returned in a controlled model in which the transmission of the original audio content (or a reconstructable form thereof) may be prevented.
+The model for the extraction of MIR information on remote collections used in NEMA, which protects the NEMA-hosted music collections, is inspired by the On-demand Metadata Extraction Network (OMEN) \cite{mcennis2006overview} developed at the Schulich School of Music, McGill University.
+
+Format dependencies may also mean that multiple different encodings of the content may need to be maintained or conversion facilities provided. The ability to represent multiple sources for the content also facilitates better access to the resource as, for example, NEMA might not be able to provide streaming access to the controlled content for auditioning but could refer to a publicly or commercially accessible version of the content. 
+
+The security of code submitted to the NEMA service is also prime concern, as these components may or may not be under IP restriction or may not be ready for wide-spread distribution. Hence, the NEMA service allows users contributing component code to control the level of access of other users to their components (implementing a `some rights reserved' sharing model that may help promote academic work and experimentation that would otherwise be difficult or impossible). This sharing is limited only by the fact that NEMA does not permit the download of component code to non-NEMA managed servers.
+Additionally, full author attribution information and citation information is captured with each component profile in order to facilitate correct attribution in cases of reuse.
+% and the viewing of the components themselves as collections of documents and metadata. 
+
+\section{The NEMA service and Workflow Sharing}
+The existing approach to the running of MIREX evaluations involves the hand execution of diverse pieces of code by a half dozen research students over a two month period and is therefore considered expensive in terms of human resources. By hosting and exposing the MIREX evaluations as workflow templates through the NEMA's `self-service' infrastructure, the configuration, execution and logging of the task workflow is exposed to the user. This enables the user to solve any issues they encounter in order to produce a successful run, including corrections/alterations to their uploaded codebase or configuration. Hence, this may be considered a significant advance on the current manual process.  Further, experimentation need not be confined to an annual evaluation and will eventually be exposed year-round to the MIR research community.
+
+The workflow sharing approach designed for NEMA has been modelled after the myExperiment Virtual Research Environment \cite{de2007designing} and directly addresses many of the same issues. It is expected that the NEMA service will integrate with myExperiment at some stage in the future.  This approach facilitates the sharing and reuse of experiment setups and partially or fully-specified implementations of those experiments. For example, many MIR tasks may be defined in terms of a workflow template with a component that provides an input dataset and task description (e.g. classify music by genre), a number of required but unspecified process components (e.g. perform feature extraction, train classifier, apply classifier to test dataset) and an evaluation component. A user can configure components to perform each of the processes specified in the workflow template and execute the configured workflow to perform the task and receive evaluation results.  Hence, a researcher will be able to publish an experiment definition (a workflow template) and either fully configured workflows or simply computed results representing experiments in published paper or theses, allowing other researchers to accurately compare their work to or build upon the results.
+
+Further, if users choose to publish their components, NEMA can drive the cross-pollination of research mitigating the need to re-implement techniques or learn additional languages/frameworks/applications. This lowers the bar of entry into field, allowing researchers to focus on their particular area of research, rather than supporting technologies. It is hoped that NEMA will also facilitate both Musicological research in lower time-scales, skill-sets and levels of effort than was previously possible and form a ideal teaching tool for use in many fields including Musicology, Machine-learning, Library Information Science and MIR.  
+
+Finally, the provision of automated evaluation tools and access to large-scale analysis collections should facilitate (as MIREX has done in the past) better analysis, reporting and dissemination of results in the field of MIR than would otherwise be possible.
+
+The evaluation tools and IO/Interoperability framework developed to implement the NEMA service is available as an open-source toolkit for MIR experimentation and software building. It is hoped that this will be a significant resource to the community in of itself\footnote{source code and documentation for the NEMA project infrastructure is available from google code: \url{http://code.google.com/p/nemadiy}}. 
+%immediately provides connects between AudioDB, jMIR, SOnic annotator and the Vamp API and the ACE/Weka machine learning frameworks
+%Out of the box, the toolkit enables the interoperability of AudioDB \cite{casey2008audiodb}, jMIR \cite{mckay2009jmir}, Sonic Annotator and the VAMP API \cite{cannam2006sonic}, ACE \cite{mckay2005ace} and the Weka Machine-Learning toolkit \cite{witten1999wpm}.  
+
+
+\section{Conclusion}
+say something nice about workflow here and how it will revolutionize MIR? Perhaps this is what we are already saying in \emph{The NEMA service and Workflow Sharing}.
 
 % use section* for acknowledgement
 \section*{Acknowledgment}
@@ -512,10 +456,6 @@ The NEMA project is funded by the Andrew W. Mellon foundation. The authors would
 \bibliographystyle{IEEEtran} 
 \bibliography{IEEEabrv,references}
 
-
-
-
-% that's all folks
 \end{document}
 
 
