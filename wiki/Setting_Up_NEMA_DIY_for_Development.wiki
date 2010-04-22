@@ -16,8 +16,8 @@ This tutorial gives step-by-step instructions for setting up a local NEMA DIY we
     * `grant all privileges on diy051.* to 'nema_user'@'localhost' identified by '********';`
     * Ask one of the other developers for the database password
   # Now flush the privileges:
-    * flush privileges;
+    * `flush privileges;`
   # From the command line, navigate to the root of the DIY source code project
   # Run the following Maven command, which creates the database schema and runs the tests
-    * mvn clean test -Denv=development
+    * `mvn clean test -Denv=development`
     * You should see log messages on the command line that indicate database tables are being successfully created.
