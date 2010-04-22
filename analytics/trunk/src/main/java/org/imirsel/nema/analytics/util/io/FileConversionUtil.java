@@ -54,6 +54,8 @@ public class FileConversionUtil {
 				//classification tasks
 			List<Class<? extends NemaFileType>> trackListTypeList = new ArrayList<Class<? extends NemaFileType>>(5);
 			trackListTypeList.add(TrackListTextFile.class);
+			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, trackListTypeList);
+
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, trackListTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ARTIST, trackListTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, trackListTypeList);
@@ -201,7 +203,8 @@ public class FileConversionUtil {
 	/**
 	 * Based on a set of inputs that will be used to execute a process, a chosen
 	 * output file format, an output directory and a file name extension to use,
-	 * this method constructs output file names to use to execute the process.
+	 * this method constructs output file or directory names to use to execute 
+	 * the process.
 	 * 
 	 * The data-structure returned is the same as that used by the 
 	 * <code>readProcessOutput</code> method and hence after being used to 
@@ -210,7 +213,8 @@ public class FileConversionUtil {
 	 * 
 	 * @param executionData The inputs that will be sent to the process (e.g.
 	 * audio files to process, IDs of the test sets etc.).
-	 * @param fileType The file type to use to read the files or directories.
+	 * @param outputFileTypeInstance The file type to use to read the files or 
+	 * directories.
 	 * @param outputFileExt The extension to append to filenames created.
 	 * @param outputDirectory The directory to create the output files in.
 	 * @return Map of NemaTrackList to a list of File Objects representing the 
@@ -218,7 +222,8 @@ public class FileConversionUtil {
 	 */
 	public static Map<NemaTrackList,List<File>> createOutputFileNames(
 			Map<NemaTrackList,List<NemaData>> executionData, 
-			NemaFileType fileType,
+			Class<? extends NemaFileType> inputType,
+			NemaFileType outputFileTypeInstance,
 			String outputFileExt,
 			File outputDirectory
 			) {
@@ -226,29 +231,48 @@ public class FileConversionUtil {
 		Map<NemaTrackList,List<File>> out = new HashMap<NemaTrackList,List<File>>(executionData.size());
 		
 		for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator.hasNext();) {
-			NemaTrackList testSet = iterator.next();
-			List<NemaData> data = executionData.get(testSet);
-			List<File> list = null;
 			
-			if (SingleTrackEvalFileType.class.isAssignableFrom(fileType.getClass())) {
-				//create directory of metadata or new raw audio files
+			List<File> list = null;
+			NemaTrackList testSet = iterator.next();
+			
+			/*If the input has data on multiple tracks per file and the output 
+			 * output file type contains data on a single track per file, we are 
+			 * probably going to receive a directory of output files with 
+			 * unspecified names, otherwise its one in one out).
+			*/
+			if(!MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) && 
+					MultipleTrackEvalFileType.class.isAssignableFrom(inputType)){
+				//directory
 				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
 				foldDir.mkdirs();
+				list.add(foldDir);
 				
-				list = new ArrayList<File>(data.size());
-				for (Iterator<NemaData> nemaDataIt = data.iterator(); nemaDataIt
-						.hasNext();) {
-					File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
-					String name = fileLoc.getName();
-					File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileExt + fileType.getFilenameExtension());
+			}else{
+				//files
+				List<NemaData> data = executionData.get(testSet);
+				
+				if (SingleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
+					//create directory of metadata or new raw audio files
+					File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
+					foldDir.mkdirs();
+					
+					list = new ArrayList<File>(data.size());
+					for (Iterator<NemaData> nemaDataIt = data.iterator(); nemaDataIt
+							.hasNext();) {
+						File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
+						String name = fileLoc.getName();
+						File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+						list.add(newPath);
+					}
+				}else if(MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
+					//create one output file per fold
+					list = new ArrayList<File>(1);
+					File newPath = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + outputFileExt + outputFileTypeInstance.getFilenameExtension());
 					list.add(newPath);
 				}
-			}else if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType.getClass())) {
-				//create one output file per fold
-				list = new ArrayList<File>(1);
-				File newPath = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + outputFileExt + fileType.getFilenameExtension());
-				list.add(newPath);
 			}
+			
+			
 			
 			out.put(testSet, list);
 		}
@@ -259,12 +283,13 @@ public class FileConversionUtil {
 	/**
 	 * Reads the files output by a process using the specified file type. The
 	 * first parameter is a Map of NemaTrackList (each representing
-	 * a fold of the experiment) to a list of File Objects representing files on
-	 * disk in the specified file format, which encode data about a track or 
-	 * tracks (according to the file type). This is the same data-structure as 
-	 * that returned by the <code>createOutputFileNames</code> method and hence
-	 * this may be passed unmodified to read back in the data after a process 
-	 * has been run to generate data files at the specified paths.
+	 * a fold of the experiment) to a list of File Objects representing files or 
+	 * directories on disk in the specified file format, which encode data about 
+	 * a track or tracks (according to the file type). This is the same 
+	 * data-structure as that returned by the <code>createOutputFileNames</code> 
+	 * method and hence this may be passed unmodified to read back in the data 
+	 * after a process has been run to generate data files at the specified 
+	 * paths.
 	 * 
 	 * @param filesOrDirectoriesToRead Map of NemaTrackList to a list of File 
 	 * Objects representing the files to be read in.
@@ -283,7 +308,12 @@ public class FileConversionUtil {
 	 * found.
 	 * @throws IOException Thrown if there is a problem reading a file.
 	 */
-	public static Map<NemaTrackList,List<NemaData>> readProcessOutput(Map<NemaTrackList,List<File>> filesOrDirectoriesToRead, NemaTask task, Class<? extends NemaFileType> fileType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, FileNotFoundException, IOException{
+	public static Map<NemaTrackList,List<NemaData>> readProcessOutput(
+			Map<NemaTrackList,List<File>> filesOrDirectoriesToRead, 
+			NemaTask task, 
+			Class<? extends NemaFileType> fileType) 
+			throws IllegalArgumentException, InstantiationException, 
+				IllegalAccessException, FileNotFoundException, IOException{
 		Map<NemaTrackList,List<NemaData>> out = new HashMap<NemaTrackList,List<NemaData>>(filesOrDirectoriesToRead.size());
 		for (Iterator<NemaTrackList> iterator = filesOrDirectoriesToRead.keySet().iterator(); iterator.hasNext();) {
 			NemaTrackList testSet = iterator.next();
