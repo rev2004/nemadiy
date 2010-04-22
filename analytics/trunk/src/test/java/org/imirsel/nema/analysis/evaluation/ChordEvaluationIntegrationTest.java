@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
+import org.imirsel.nema.analytics.evaluation.chord.ChordIntervalTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordNumberTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordShortHandTextFile;
 import org.imirsel.nema.model.NemaData;
@@ -78,10 +79,23 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
         testSets.add(new NemaTrackList(id, task.getDatasetId(), 3, "test", id, trackList));
         id++;
     }
-	
+
 	@Test
 	public void testConvertGtToNumberFormat() throws Exception{
 		ChordNumberTextFile writer = new ChordNumberTextFile();
+		for (Iterator<NemaData> iterator = groundTruth.iterator(); iterator.hasNext();) {
+			NemaData data = iterator.next();
+			
+			File tmp = File.createTempFile(data.getId(), ".chordNumber.txt");
+			writer.writeFile(tmp, data);
+			tmp.deleteOnExit();
+		}
+	}
+	
+
+	@Test
+	public void testConvertGtToIntervalFormat() throws Exception{
+		ChordIntervalTextFile writer = new ChordIntervalTextFile();
 		for (Iterator<NemaData> iterator = groundTruth.iterator(); iterator.hasNext();) {
 			NemaData data = iterator.next();
 			

@@ -135,7 +135,7 @@ public class ChordConversionUtil {
 			for (int i = 1; i < notes.length; i++) {
 				msg+= "," + notes[i];
 			}
-			msg += " as an interval!";
+			msg += " as a chord number!";
 			throw new IllegalArgumentException(msg);
 		}	
 		return out;		
