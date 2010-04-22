@@ -28,3 +28,4 @@ Now, follow these steps:
     * Currently, the tests will fail. This is expected behavior.
   # Now run the following Maven command, which starts the Jetty application server as well as the NEMA DIY web app:
     * `mvn jetty:run -P diy-development,repository-development,flowservice-development -Dmaven.test.skip=true`
+    * The -P switch along with the diy-development, etc. parameters specify which Maven profiles should be used to generate the executable web app code. Depending on the profile IDs that are specified, the DIY application configuration files will be populated with different property values. For example, specifying flowservice-development ensures the DIY webapp will connect to the Flow Service instance that is for development, rather than the production version.
