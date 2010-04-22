@@ -7,11 +7,17 @@ This tutorial gives step-by-step instructions for setting up a local NEMA DIY we
 
 = Details =
 
-  # Check out the DIY project from SVN
-  # Install MySQL if you have not already done so
+  # Check out the DIY source code project from SVN
+  # Install MySQL 5.X if you have not already done so
   # Start MySQL
-  # Log into the MySQL monitor and create a new database named 'diy051'
+  # Log into the MySQL monitor and create a new database named 'diy051':
     * create database diy051
-  # Create a user with privileges to modify the database
+  # Create a user with privileges to modify the database:
     * grant all privileges on diy051.* to 'nema_user'@'localhost' identified by '********';
-  # Next enter: 
+    * Ask one of the other developers for the database password
+  # Now flush the privileges:
+    * flush privileges;
+  # From the command line, navigate to the root of the DIY source code project
+  # Run the following Maven command, which creates the database schema and runs the tests
+    * mvn clean test -Denv=development
+    * You should see log messages on the command line that indicate database tables are being successfully created.
