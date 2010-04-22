@@ -21,3 +21,6 @@ This tutorial gives step-by-step instructions for setting up a local NEMA DIY we
   # Run the following Maven command, which creates the database schema and runs the tests
     * `mvn clean test -Denv=development`
     * You should see log messages on the command line that indicate database tables are being successfully created.
+    * Currently, the tests will fail. This is expected behavior.
+  # Now run the following Maven command, which starts the Jetty application server as well as the NEMA DIY web app:
+    * `mvn jetty:run -P diy-development,repository-development,flowservice-development -Dmaven.test.skip=true`
