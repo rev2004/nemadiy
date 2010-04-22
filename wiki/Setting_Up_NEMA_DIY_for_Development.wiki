@@ -11,9 +11,9 @@ This tutorial gives step-by-step instructions for setting up a local NEMA DIY we
   # Install MySQL 5.X if you have not already done so
   # Start MySQL
   # Log into the MySQL monitor and create a new database named 'diy051':
-    * create database diy051
+    * `create database diy051`
   # Create a user with privileges to modify the database:
-    * grant all privileges on diy051.* to 'nema_user'@'localhost' identified by '********';
+    * `grant all privileges on diy051.* to 'nema_user'@'localhost' identified by '********';`
     * Ask one of the other developers for the database password
   # Now flush the privileges:
     * flush privileges;
