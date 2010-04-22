@@ -1,10 +1,10 @@
-# Sequel Pro dump
+﻿# Sequel Pro dump
 # Version 1630
 # http://code.google.com/p/sequel-pro
 #
 # Host: nema-dev.lis.illinois.edu (MySQL 5.0.77)
 # Database: nemadatarepository020
-# Generation Time: 2010-04-12 16:34:01 +0100
+# Generation Time: 2010-04-23 00:07:13 +0100
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -28,7 +28,7 @@ CREATE TABLE `collection` (
   `description` text NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 
 
@@ -43,7 +43,7 @@ CREATE TABLE `collection_track_link` (
   UNIQUE KEY `collection_id` (`collection_id`,`track_id`),
   KEY `track_id` (`track_id`),
   CONSTRAINT `collection_id_track_link` FOREIGN KEY (`collection_id`) REFERENCES `collection` (`id`),
-  CONSTRAINT `track_id` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`)
+  CONSTRAINT `collection_track_link_ibfk_1` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -73,7 +73,7 @@ CREATE TABLE `dataset` (
   CONSTRAINT `dataset_ibfk_1` FOREIGN KEY (`subject_track_metadata_type_id`) REFERENCES `track_metadata_definitions` (`id`),
   CONSTRAINT `dataset_ibfk_2` FOREIGN KEY (`collection_id`) REFERENCES `collection` (`id`),
   CONSTRAINT `dataset_ibfk_3` FOREIGN KEY (`subset_set_id`) REFERENCES `trackList` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
 
 
@@ -89,8 +89,8 @@ CREATE TABLE `file` (
   PRIMARY KEY  (`id`),
   KEY `track_id` (`track_id`),
   KEY `path` (`path`(255)),
-  CONSTRAINT `file_track_id` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=209608 DEFAULT CHARSET=utf8;
+  CONSTRAINT `file_ibfk_1` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=210334 DEFAULT CHARSET=utf8;
 
 
 
@@ -106,9 +106,9 @@ CREATE TABLE `file_file_metadata_link` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `file_id` (`file_id`,`file_metadata_id`),
   UNIQUE KEY `file_metadata_id` (`file_metadata_id`,`file_id`),
-  CONSTRAINT `file_id` FOREIGN KEY (`file_id`) REFERENCES `file` (`id`),
+  CONSTRAINT `file_file_metadata_link_ibfk_1` FOREIGN KEY (`file_id`) REFERENCES `file` (`id`) ON DELETE CASCADE,
   CONSTRAINT `file_metadata_id` FOREIGN KEY (`file_metadata_id`) REFERENCES `file_metadata` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=874221 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=877125 DEFAULT CHARSET=utf8;
 
 
 
@@ -168,7 +168,7 @@ CREATE TABLE `published_results` (
 DROP TABLE IF EXISTS `task`;
 
 CREATE TABLE `task` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL auto_increment,
   `name` varchar(128) NOT NULL,
   `description` text NOT NULL,
   `subject_track_metadata` int(11) NOT NULL,
@@ -178,7 +178,7 @@ CREATE TABLE `task` (
   KEY `dataset_id` (`dataset_id`),
   CONSTRAINT `task_ibfk_1` FOREIGN KEY (`dataset_id`) REFERENCES `dataset` (`id`),
   CONSTRAINT `task_ibfk_2` FOREIGN KEY (`subject_track_metadata`) REFERENCES `track_metadata_definitions` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 
@@ -205,7 +205,7 @@ CREATE TABLE `track_metadata` (
   `value` mediumtext NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `metadata_type_id` (`metadata_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33503 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=33962 DEFAULT CHARSET=utf8;
 
 
 
@@ -219,7 +219,7 @@ CREATE TABLE `track_metadata_definitions` (
   `name` varchar(128) NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 
 
 
@@ -237,7 +237,7 @@ CREATE TABLE `track_track_metadata_link` (
   KEY `track_metadata_id` (`track_metadata_id`),
   CONSTRAINT `track_track_metadata_link_track_id` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`),
   CONSTRAINT `track_track_metadata_link_track_metadata_id` FOREIGN KEY (`track_metadata_id`) REFERENCES `track_metadata` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=225447 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=225906 DEFAULT CHARSET=utf8;
 
 
 
@@ -256,7 +256,7 @@ CREATE TABLE `trackList` (
   KEY `dataset_id` (`dataset_id`),
   CONSTRAINT `dataset_id` FOREIGN KEY (`dataset_id`) REFERENCES `dataset` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `set_type_id` FOREIGN KEY (`set_type_id`) REFERENCES `trackList_type_definitions` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8;
 
 
 
@@ -272,7 +272,7 @@ CREATE TABLE `trackList_track_link` (
   KEY `set_track_link_track_id` (`track_id`),
   CONSTRAINT `set_id` FOREIGN KEY (`set_id`) REFERENCES `trackList` (`id`),
   CONSTRAINT `set_track_link_track_id` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='InnoDB free: 7168 kB; (`set_id`) REFER `nemadatarepository02';
 
 
 
