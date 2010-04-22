@@ -7,6 +7,10 @@ This tutorial gives step-by-step instructions for setting up a local NEMA DIY we
 
 = Details =
 
+Before you begin, make sure you have the NEMA settings.xml file, which should be located in your .m2 directory in your home directory. If it is not present, ask another developer to give you theirs.
+
+Now, follow these steps:
+
   # Check out the DIY source code project from SVN
   # Install MySQL 5.X if you have not already done so
   # Start MySQL
