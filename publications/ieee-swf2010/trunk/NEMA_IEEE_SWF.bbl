@@ -51,6 +51,11 @@ Y.~Raimond, S.~Abdallah, M.~Sandler, and F.~Giasson, ``{The music ontology},''
   in \emph{Proceedings of the International Conference on Music Information
   Retrieval}, 2007, pp. 417--422.
 
+\bibitem{lee2000jndi}
+R.~Lee and S.~Seligman, \emph{{The JNDI API tutorial and reference: building
+  directory-enabled Java applications}}.\hskip 1em plus 0.5em minus 0.4em\relax
+  Addison-Wesley Longman Publishing Co., Inc. Boston, MA, USA, 2000.
+
 \bibitem{mckay2009jmir}
 C.~McKay and I.~Fujinaga, ``{jMIR: Tools for automatic music classification},''
   in \emph{Proceedings of the International Computer Music Conference}, 2009.
@@ -62,10 +67,16 @@ C.~Cannam, C.~Landone, M.~Sandler, and J.~Bello, ``{The sonic visualiser: A
   Retrieval}.\hskip 1em plus 0.5em minus 0.4em\relax Citeseer, 2006, pp.
   324--7.
 
-\bibitem{witten1999wpm}
-I.~Witten, E.~Frank, L.~Trigg, M.~Hall, G.~Holmes, and S.~Cunningham, ``{Weka:
-  Practical Machine Learning Tools and Techniques with Java Implementations},''
-  \emph{ICONIP/ANZIIS/ANNES}, pp. 192--196, 1999.
+\bibitem{witten2000greenstone}
+I.~Witten, S.~Boddie, D.~Bainbridge, and R.~McNab, ``{Greenstone: a
+  comprehensive open-source digital library software system},'' in
+  \emph{Proceedings of the fifth ACM conference on Digital libraries}.\hskip
+  1em plus 0.5em minus 0.4em\relax ACM New York, NY, USA, 2000, pp. 113--121.
+
+\bibitem{mcennis2006overview}
+D.~McEnnis, C.~McKay, and I.~Fujinaga, ``{Overview of OMEN},'' in
+  \emph{Proceedings of the International Conference on Music Information
+  Retrieval}.\hskip 1em plus 0.5em minus 0.4em\relax Citeseer, 2006, pp. 7--12.
 
 \bibitem{de2007designing}
 D.~De~Roure, C.~Goble, and R.~Stevens, ``{Designing the myexperiment virtual
@@ -73,32 +84,5 @@ D.~De~Roure, C.~Goble, and R.~Stevens, ``{Designing the myexperiment virtual
   \emph{Proceedings of the Third IEEE International Conference on e-Science and
   Grid Computing}.\hskip 1em plus 0.5em minus 0.4em\relax IEEE Computer Society
   Washington, DC, USA, 2007, pp. 603--610.
-
-\bibitem{casey2008audiodb}
-M.~Casey, ``{AudioDB: Scalable approximate nearest-neighbor search with
-  automatic radius-bounded indexing.}'' \emph{The Journal of the Acoustical
-  Society of America}, vol. 124, p. 2571, 2008.
-
-\bibitem{mckay2005ace}
-C.~McKay, R.~Fiebrink, D.~McEnnis, B.~Li, and I.~Fujinaga, ``{ACE: A framework
-  for optimizing music classification},'' in \emph{Proceedings of the
-  International Conference on Music Information Retrieval}.\hskip 1em plus
-  0.5em minus 0.4em\relax Citeseer, 2005, pp. 42--9.
-
-\bibitem{mcennis2006overview}
-D.~McEnnis, C.~McKay, and I.~Fujinaga, ``{Overview of OMEN},'' in
-  \emph{Proceedings of the International Conference on Music Information
-  Retrieval}.\hskip 1em plus 0.5em minus 0.4em\relax Citeseer, 2006, pp. 7--12.
-
-\bibitem{witten2000greenstone}
-I.~Witten, S.~Boddie, D.~Bainbridge, and R.~McNab, ``{Greenstone: a
-  comprehensive open-source digital library software system},'' in
-  \emph{Proceedings of the fifth ACM conference on Digital libraries}.\hskip
-  1em plus 0.5em minus 0.4em\relax ACM New York, NY, USA, 2000, pp. 113--121.
-
-\bibitem{lee2000jndi}
-R.~Lee and S.~Seligman, \emph{{The JNDI API tutorial and reference: building
-  directory-enabled Java applications}}.\hskip 1em plus 0.5em minus 0.4em\relax
-  Addison-Wesley Longman Publishing Co., Inc. Boston, MA, USA, 2000.
 
 \end{thebibliography}
