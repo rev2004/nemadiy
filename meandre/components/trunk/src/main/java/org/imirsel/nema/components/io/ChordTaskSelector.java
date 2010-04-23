@@ -2,36 +2,25 @@ package org.imirsel.nema.components.io;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.imirsel.nema.analytics.evaluation.chord.ChordNumberTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordShortHandTextFile;
-import org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile;
-import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.annotations.StringDataType;
-import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
-import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.renderers.CollectionRenderer;
-import org.imirsel.nema.repository.DatasetListFileGenerator;
 import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.meandre.annotations.Component;
@@ -41,14 +30,14 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
-import org.meandre.core.ExecutableComponent;
 
 @Component(creator = "Kris West", description = "Select a Chord task from the Nema Repository Service. "
 		+ "Outputs 5 objects: \n"
 		+ "1) a NemaTask Object defining the task,\n"
 		+ "2) a NemaDataset Object defining the dataset,\n"
 		+ "3) List NemaData Objects encoding the list of tracks used in the experiment (with ground-truth data),\n"
-		+ "4) A Map of test NemaTrackList Objects to a List NemaData Objects encoding the test set data", name = "ChordTaskSelector", // resources={"RepositoryProperties.properties"},
+		+ "4) A Map of test NemaTrackList Objects to a List NemaData Objects encoding the test set data", name = "ChordTaskSelector", 
+		resources={"../../../../../RepositoryProperties.properties"},
 tags = "input, collection, train/test", firingPolicy = Component.FiringPolicy.all)
 public class ChordTaskSelector extends NemaComponent {
 
@@ -72,10 +61,11 @@ public class ChordTaskSelector extends NemaComponent {
 
 	//TODO: where are we going with annotations - do I need a TaskRender for a menu containing 'tasks' from the repository (we get dataset from that)
 	@StringDataType(renderer = CollectionRenderer.class)
-	@ComponentProperty(defaultValue = "0", description = "The ID number of the Chord Nema task to be loaded.", name = "taskID")
+	@ComponentProperty(defaultValue = "2", description = "The ID number of the Chord Nema task to be loaded.", name = "taskID")
 	final static String DATA_PROPERTY_TASK_ID = "taskID";
 	private int taskID = 2;
 
+	@Override
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
@@ -84,6 +74,7 @@ public class ChordTaskSelector extends NemaComponent {
 		getLogger().info("Task ID " + taskID + " is selected.");
 	}
 
+	@Override
 	public void dispose(ComponentContextProperties ccp)
 			throws ComponentContextException {
 		super.dispose(ccp);
@@ -149,6 +140,7 @@ public class ChordTaskSelector extends NemaComponent {
     }
 
 
+	@Override
 	public void execute(ComponentContext ccp)
 			throws ComponentExecutionException, ComponentContextException {
 
