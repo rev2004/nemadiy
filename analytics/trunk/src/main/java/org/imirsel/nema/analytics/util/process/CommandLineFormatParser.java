@@ -78,10 +78,14 @@ public class CommandLineFormatParser {
 //				}else 
 				if(commandFormatString.charAt(idx) == 'o') {
 					isOutput = true;
+				}else if(commandFormatString.charAt(idx) == 'i') {
+					isOutput = false;
 				}else if(commandFormatString.charAt(idx) == 's') {
 					isScratch = true;
 				}else {
-					throw new IllegalArgumentException("Unable to determine whether File argument is input or output at position " + idx + " in: " + commandFormatString);
+					throw new IllegalArgumentException("Unable to determine whether File argument (" 
+							+ commandFormatString.charAt(idx) + ") is input or output at position " 
+							+ idx + " in: " + commandFormatString);
 				}
 				idx++;
 				lastIdx = idx;
