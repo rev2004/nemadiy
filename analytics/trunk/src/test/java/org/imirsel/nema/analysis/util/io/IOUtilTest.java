@@ -77,12 +77,11 @@ public class IOUtilTest {
 //	}
 
 	@Test
-	public void testListFiles() {
-		String tmpFolder = System.getProperty("java.io.tmpdir")+ System.getProperty("java.file.pathseparator")+ System.currentTimeMillis();
-		File tmpLoc = new File(tmpFolder);
-		tmpLoc.mkdirs();
-		File f1 = new File(tmpFolder,"1.dd");
-		File f2 = new File(tmpFolder,"2.dd");
+	public void testListFiles() throws Exception{
+		File tmpDir = File.createTempFile("testIOUtil", "tmp");
+		tmpDir.mkdirs();
+		File f1 = new File(tmpDir,"1.dd");
+		File f2 = new File(tmpDir,"2.dd");
 		try {
 			f1.createNewFile();
 			f2.createNewFile();
@@ -93,9 +92,9 @@ public class IOUtilTest {
 		StringWriter swriter = new StringWriter();
 		swriter.append(f1.getAbsolutePath()+System.getProperty("line.separator"));
 		swriter.append(f2.getAbsolutePath()+System.getProperty("line.separator"));
-		File outFile = new File(tmpFolder,"delme");
+		File outFile = new File(tmpDir,"delme");
 		String extension = "dd";
-		IOUtil.listFiles(new File(tmpFolder), outFile, extension);
+		IOUtil.listFiles(tmpDir, outFile, extension);
 		//assertThat(outFile,fileLineCountEquals(2));
 		
 	}
