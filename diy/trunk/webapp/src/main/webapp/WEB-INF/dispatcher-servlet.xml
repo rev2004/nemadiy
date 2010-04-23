@@ -8,7 +8,7 @@
 	default-lazy-init="false">
 
 	<import resource="nema-webflow.xml" />
-	
+
 	<bean id="exceptionResolver"
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
@@ -237,12 +237,18 @@
 				/*.jsp=viewResolver
             </value>
 		</property>
-		<property name="order" value="1" />
+		<property name="order" value="0" />
 	</bean>
+	<!--
+		Dispatches requests mapped to
+		org.springframework.web.servlet.mvc.Controller implementations
+	-->
 
 	<bean
+		class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+	<bean
 		class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
-		<property name="order" value="2" />
+		<property name="order" value="1" />
 	</bean>
 
 
@@ -255,7 +261,7 @@
 
 	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping">
 		<property name="flowRegistry" ref="flowRegistry" />
-		<property name="order" value="0" />
+		<property name="order" value="2" />
 	</bean>
 
 

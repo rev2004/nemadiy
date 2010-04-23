@@ -5,8 +5,8 @@
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
 	<var name="parameterMap" class="java.util.HashMap" />
-	<var name="taskSelection" class="org.imirsel.nema.webapp.model.TaskSelection" />
-	<view-state id="taskSelection" model="taskSelection">
+	<var name="flow" class="org.imirsel.nema.model.Flow" />
+	<view-state id="taskSelection" model="flow">
 
 		<on-render>
 			<evaluate expression="flowService.getFlowTemplates()"
@@ -14,25 +14,34 @@
 		</on-render>
 		<transition on="show" to="parameterForm" />
 	</view-state>
-	<view-state id="parameterForm">
-		<transition on="componentList" to="componentList" />
+	<view-state id="parameterForm" model="flow">
+		<on-render>
+			<evaluate expression="flowService.getFlow(flow.id)" result="flow" />
+		</on-render>
+		<transition on="edit" to="editor" />
 		<transition on="test" to="test" />
 		<transition on="cancel" to="taskSelection" />
 		<transition on="clear" to="parameterForm" />
 	</view-state>
 	<view-state id="test">
-		<transition on="run" to="testRun" />
+
+		<transition on="test" to="runTest" />
+		<transition on="run" to="run" />
 		<transition on="cancel" to="parameterForm" />
 	</view-state>
-	<view-state id="componentList">
-		<transition on="more" to="componentList" />
+	<view-state id="editor">
 		<transition on="save" to="parameterForm" />
 		<transition on="cancel" to="parameterForm" />
 	</view-state>
-	<action-state id="testRun">
-		<evaluate expression="tasksService.testRun()" />
+	<action-state id="runTest">
+		<evaluate expression="taskService.testRun(flow)" />
+		<transition on="yes" to="test" />
+		<transition on="no" to="test" />
+	</action-state>
+	<action-state id="run">
+		<evaluate expression="taskService.run(flow)" />
 		<transition on="yes" to="joblist" />
-		<transition on="no" to="taskSelection" />
+		<transition on="no" to="fail" />
 	</action-state>
 
 	<end-state id="joblist"

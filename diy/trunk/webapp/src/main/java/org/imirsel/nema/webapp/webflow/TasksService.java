@@ -1,6 +1,10 @@
 package org.imirsel.nema.webapp.webflow;
 
+import org.imirsel.nema.model.Flow;
+
 public interface TasksService {
  
-	boolean testRun();
+	boolean testRun(Flow flow);
+	boolean fillFlow();
+	boolean run(Flow flow);
 }
