@@ -237,7 +237,7 @@ public class FileConversionUtil {
 		
 		for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator.hasNext();) {
 			
-			List<File> list = null;
+			List<File> list = new ArrayList<File>();
 			NemaTrackList testSet = iterator.next();
 			
 			/*If the input has data on multiple tracks per file and the output 
@@ -261,7 +261,7 @@ public class FileConversionUtil {
 					File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
 					foldDir.mkdirs();
 					
-					list = new ArrayList<File>(data.size());
+					
 					for (Iterator<NemaData> nemaDataIt = data.iterator(); nemaDataIt
 							.hasNext();) {
 						File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
