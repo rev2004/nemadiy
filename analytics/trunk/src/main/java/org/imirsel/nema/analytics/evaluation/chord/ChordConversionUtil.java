@@ -26,11 +26,12 @@ public class ChordConversionUtil {
 	private Map<String,String> NoteNumbersToIntervals;
 	
 	private Map<String,int[]> chordNumberToNoteNumbers;
-	private Map<String,String> NoteNumbersToChordNumbers;
+	private Map<String, int[]> NoteNumbersToChordNumbers;
 	
 	public final String INTERVAL_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/IntervalDictionary.txt";
 	public final String SHORTHAND_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/ShorthandDictionary.txt";
 	public final String CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/NoteNumbersDictionary.txt";
+	public final String SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/Shorthand2NoteNumberDictionary.txt";
 
 	public static ChordConversionUtil getInstance(){
 		if (instance == null){
@@ -61,7 +62,7 @@ public class ChordConversionUtil {
 		
 		try {
 			chordNumberToNoteNumbers = readChordDictionary(CHORDNUMBERS_DICTIONARY_CLASSPATH);
-			NoteNumbersToChordNumbers = reverseMap(chordNumberToNoteNumbers);
+			NoteNumbersToChordNumbers = readChordDictionary(SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH); //reverseMap(chordNumberToNoteNumbers);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
 					"Failed to read chord dictionary from classpath: "
@@ -126,10 +127,10 @@ public class ChordConversionUtil {
 		}		
 		return out; 		
 	}
-	public String convertNotenumbersToChordnumbers(int[] notes){
+	public int[] convertNotenumbersToChordnumbers(int[] notes){
 		
 		String key = createKey(notes);
-		String out = NoteNumbersToChordNumbers.get(key);
+		int[] out = NoteNumbersToChordNumbers.get(key);
 		if (out == null){
 			String msg = "Could not interpret notes: " + notes[0];
 			for (int i = 1; i < notes.length; i++) {
