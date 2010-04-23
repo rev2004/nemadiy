@@ -19,7 +19,7 @@ import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
  * @since 0.1.0
  */
 public class RepositoryClientConnectionPool {
-    private static final int DEFAULT_POOL_SIZE = 10;
+    private static final int DEFAULT_POOL_SIZE = 2;
     private static final String LOG_CLASS_NAME = RepositoryClientConnectionPool.class.getName();
     private int poolSize = DEFAULT_POOL_SIZE;
     private LinkedBlockingQueue<RepositoryClientInterface> pool;
