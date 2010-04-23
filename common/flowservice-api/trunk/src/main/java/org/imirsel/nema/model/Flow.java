@@ -147,7 +147,7 @@ public class Flow implements Serializable {
     	this.typeName = flowType.getName();
     }
     
-	@Column(name = "uri", nullable = false)
+	@Column(name = "uri", nullable = false,length=20000000)
 	public String getUri() {
 		return uri;
 	}

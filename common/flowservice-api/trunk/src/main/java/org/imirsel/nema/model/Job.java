@@ -271,7 +271,7 @@ public class Job implements Serializable, Cloneable {
 	      return JobStatus.toJobStatus(statusCode);
 	}
 	public void setJobStatus(JobStatus status) {
-		this.statusCode = status.getCode();
+	   setStatusCode(status.getCode());
 	}
 	@JoinColumn(name="jobId")
 	@OneToMany(mappedBy="job", fetch=FetchType.EAGER)
