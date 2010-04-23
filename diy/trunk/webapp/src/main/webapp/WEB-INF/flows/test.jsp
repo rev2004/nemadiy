@@ -7,6 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+<form><input type="submit" name="_eventId_run" value="run" /><input
+	type="submit" name="_eventId_cancel" value="cancel" /></form>
 </body>
 </html>
