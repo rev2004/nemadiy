@@ -348,6 +348,13 @@ Since the establishment of MIREX in 2005 (and its predecessor, the `Audio Descri
 
 Given that MIREX submissions must be delivered to the MIREX team to execute, the running of a MIREX evaluation is no small job. In 2009 alone IMIRSEL received submissions from 138 individuals, in 26 tasks, generating a total of 289 runs.  Since 2005, nearly 800 formal evaluation runs have been conducted and over 4Tb of audio files maintained for use in the various evaluation tasks. 
 
+\begin{figure*}[t]
+\centering
+\includegraphics[height=4in]{flow_example}
+  \caption{An example of a NEMA implementation of an experiment workflow}
+\label{fig_flow}
+\end{figure*}
+
 \subsection{Interoperability and Sharing}
 MIREX has so far failed to facilitate easy cross-pollination of research systems and code. Owing to the relative wealth of programming languages, software frameworks and toolkits used or developed for MIR research, such collaborations are often challenging as there exist few standards for encoding the wide range of music informatics data. Where standards do exist (such as the Music, Audio Feature and other ontologies developed by the OMRAS2 project for encoding MIR data in RDF \cite{raimond2007music}) uptake is as yet relatively low.  
 Further, although MIREX provides a snapshot of the state-of-the-art in each MIREX task, it does not facilitate access to a wide range of published MIR techniques for less technical members of the MIR community such as Musicologists and LIS researchers (the natural consumers of many MIR techniques). Hence, the NEMA project was established to address many, perhaps all, of these issues.
@@ -360,36 +367,38 @@ Though the NEMA project is not intended to replace MIREX, implementing support f
 \section{Solution}
 By using a workflow approach to the definition of tasks that can be performed on the NEMA service, those tasks are broken down into discrete units or components which may be independently scheduled and distributed to satisfy collection access restrictions or software/architecture dependencies. For example in the current implementation, a user of the NEMA service would be able to conduct an experiment in which:
 \begin{itemize}
-\item a collection of tracks held at a remote site, is analysed by Matlab code sent to the site, 
-\item the resulting descriptors are imported into a NEMA data model and transmitted to the home site, 
-\item one or more machine learning framework is launched, on a specified Virtual Machine infrastructure, to predict a metadata field or transcription for each track, 
-\item the predictions are also imported into the NEMA data model,
-\item the results of the experiment are evaluated be MIR evaluation components provided by the NEMA project,
+\item a task and dataset is imported, drawn from of a collection of tracks held at a remote site,
+\item the dataset is analysed by Matlab code sent to the site and the resulting descriptors are imported into a NEMA data model and transmitted to the home site, 
+\item one or more machine learning framework is launched, on a specified Virtual Machine infrastructure, to train a model
+\item the model is used to predict a metadata field or transcription for each track and the predictions are also imported into the NEMA data model,
+\item the results of the experiment are evaluated by MIR evaluation components provided by the NEMA project,
 \item finally the predictions and evaluation data are exposed by the NEMA service.
 \end{itemize}
+A diagrammatic overview of the workflow for this experiment is given in figure \ref{fig_flow}.
+
 
 %Add diagram here showing this workflow, with annotations showing where format conversion occur (at front and back of process component) and execution occurs remotely.
 
 \subsection{The NEMA Data Model}
 The NEMA infrastructure includes the definition of an extensible data model and data structures that encode data relating to all aspects of music, music informatics and MIR evaluation that have been encountered at MIREX, in the jMIR framework \cite{mckay2009jmir} or in the MIR related ontologies developed by the OMRAS2 project \cite{raimond2007music}. This data model and associated infrastructure facilitate interoperability between diverse components forming part of or used on the NEMA service by third parties. Third party component applications used with the NEMA service are wrapped in component harnesses that use contextual information about both the experiment and component code to move data between the NEMA data model and suitable file formats allowing the service to supply data to and harvest results from the application.  %as shown in previous figure?
 
-The NEMA infrastructure currently supports components that execute Java, Matlab and arbitrary binary executables and is intended to support VAMP API plugins \cite{cannam2006sonic} for music analysis in the Future. This provides an immediate path to the integration of many MIR softwares and provides a model for building hosts for further plugin environments. A diagrammatic overview of the NEMA service layers are given in figure \ref{fig_infrastructure}.
-
 \subsection{Infrastructure and Workflow Implementation}
 NEMA uses Meandre\footnote{\url{http://seasr.org/meandre/}} to implement its worklow processes. Meandre is a semantic-web-driven data-intensive flow execution environment. Meandre provides basic infrastructure for data-intensive computation. It provides a high-level language to describe flows and both a multicore and distributed execution environment based on a service-oriented paradigm. The Meandre Infrastructure provides a plugin model similar to the servlets in a Java Enterprise Enviornment where custom functionality is implemented, NEMA uses plugins to make data sources available as a JNDI \cite{lee2000jndi} resource to all the tasks.
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=2.8in]{infrastructure}
-  \caption{An overview of the NEMA service infrastructure}
-\label{fig_infrastructure}
-\end{figure}
 
 The NEMA service also embraces a Virtual Machine Infrastructure for the distributed execution of component code, inside a Meandre component. Hence, workflows maybe constructed that execute parts of a particular task at different sites and under differing architectures.
 
 Throughout the hosting of five years of MIREX evaluations a wide variety of dependency requirements have been encountered. Many of these dependencies are satisfied in the NEMA cluster node Linux image. However, there are always special cases, including platform dependencies on Windows operating systems and non-standard libraries. Hence, a range of VM images is maintained for use by third party components.
 Eventually, it is hoped, a user customisable VM container system will be exposed (allowing a user to login to an existing image, modify it for their use in a limited fashion and save it for later reuse).
 Obviously, such modified VMs running potentially unknown code must be suitably sand-boxed and are: permitted read access only to the component code and data required for a particular task; permitted write access only to specified scratch and output locations; and are permitted no access to the outside world.
+
+The NEMA infrastructure currently supports third party application components that execute Java, Matlab and arbitrary binary executables and is intended to support VAMP API plugins \cite{cannam2006sonic} for music analysis in the Future. This provides an immediate path to the integration of many MIR softwares and provides a model for building hosts for further plugin environments. A diagrammatic overview of the NEMA service layers is given in figure \ref{fig_infrastructure}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=2.8in]{infrastructure}
+  \caption{An overview of the NEMA service infrastructure}
+\label{fig_infrastructure}
+\end{figure}
 
 \subsubsection{Exposing Metadata, Predictions, Results and Provenance}
 The NEMA service infrastructure provides each workflow execution with a unique identifier and persistent storage of logs, execution information / provenance, predictions and evaluation results. This data may be published by a user within NEMA so that it maybe accessed by the community through either a provided digital library framework (Greenstone \cite{witten2000greenstone}) or linked data repository/SPARQL endpoint, both of which have yet to be deployed.
