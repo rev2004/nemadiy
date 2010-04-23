@@ -273,7 +273,7 @@ public class CommandLineFormatParser {
 		outputs.get(ioIndex).setPreparedPath(path);
 	}
 	
-	public void setScratchDir(String path){
+	public void setPreparedPathForScratchDir(String path){
 		if (scratchDir != null){
 			scratchDir.setPreparedPath(path);
 		}
