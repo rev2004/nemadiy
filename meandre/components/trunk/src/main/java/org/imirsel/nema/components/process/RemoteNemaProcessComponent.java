@@ -236,7 +236,13 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 					formatModel.setPreparedPathForOutput(1, outputFile.getAbsolutePath());
 					
 					//TODO: set unique scratch for each execution rather than fold scratch
-					formatModel.setPreparedPathForScratchDir(this.getAbsoluteProcessWorkingDirectory());
+					//mint scratch dir
+					String scratch = this.getAbsoluteProcessWorkingDirectory() + File.separator + "testSet" + testSet.getId() + "_" + inputFile.getName();
+					if(!new File(scratch).mkdirs()){
+						throw new ComponentExecutionException("Failed to create scratch dir for a process execution at: " + scratch);
+ 					}
+					formatModel.setPreparedPathForScratchDir(scratch);
+					
 					
 					//TODO: handle site dependencies?
 					
