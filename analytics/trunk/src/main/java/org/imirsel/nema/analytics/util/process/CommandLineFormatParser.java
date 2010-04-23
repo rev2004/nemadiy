@@ -1,5 +1,6 @@
 package org.imirsel.nema.analytics.util.process;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +24,8 @@ public class CommandLineFormatParser {
 	
 	private Map<Integer,FileCommandArgument> inputs = null;
 	private Map<Integer,FileCommandArgument> outputs = null;
-
+	private ScratchDirCommandArgument scratchDir = null;
+	
 	/**
 	 * Manual constructor accepting a list of {@code CommandArgument} Objects 
 	 * defining the command line format. This is used to setup the parser model 
@@ -49,6 +51,7 @@ public class CommandLineFormatParser {
 		
 		this.inputs = new HashMap<Integer,FileCommandArgument>();
 		this.outputs = new HashMap<Integer,FileCommandArgument>();
+		scratchDir = null;
 		
 		int idx = 0;
 		int lastIdx = 0;
@@ -68,93 +71,114 @@ public class CommandLineFormatParser {
 				idx++;
 				
 				//input or output?
-				boolean isOutput;
-				if(commandFormatString.charAt(idx) == 'i') {
-					isOutput = false;
-				}else if(commandFormatString.charAt(idx) == 'o') {
+				boolean isOutput = false;
+				boolean isScratch = false;
+//				if(commandFormatString.charAt(idx) == 'i') {
+//					isOutput = false;
+//				}else 
+				if(commandFormatString.charAt(idx) == 'o') {
 					isOutput = true;
+				}else if(commandFormatString.charAt(idx) == 's') {
+					isScratch = true;
 				}else {
 					throw new IllegalArgumentException("Unable to determine whether File argument is input or output at position " + idx + " in: " + commandFormatString);
 				}
 				idx++;
 				lastIdx = idx;
 				
-				//get index (search forward for { then parse)
-				try {
-					while(commandFormatString.charAt(idx) != '{'){
+				if(isScratch){
+					//check for trailing space
+					boolean followedBySpace = false;
+					if (idx < commandFormatString.length() && commandFormatString.charAt(idx) == ' ') {
+						followedBySpace = true;
 						idx++;
 					}
-				}catch(IndexOutOfBoundsException e) {
-					throw new IllegalArgumentException("End of string reached while seeking type argument opening { in: " + commandFormatString);
-				}
-				
-				int ioIndex;
-				try {
-					ioIndex = Integer.parseInt(commandFormatString.substring(lastIdx,idx));
-				}catch (NumberFormatException e) {
-					throw new IllegalArgumentException("Failed to parse IO index (" + commandFormatString.substring(lastIdx,idx) + ") in: " + commandFormatString,e);
-				}
-				idx++;
-				lastIdx = idx;
-				
-				//get file format
-				//search forward for close } or arguments (
-				try {
-					while(commandFormatString.charAt(idx) != '}' && commandFormatString.charAt(idx) != '('){
-						idx++;
-					}
-				}catch(IndexOutOfBoundsException e) {
-					throw new IllegalArgumentException("End of string reached while seeking type argument close } or properties opening ( in: " + commandFormatString);
-				}
-				String typeStr = commandFormatString.substring(lastIdx,idx);
-				lastIdx = idx;
-				Class<? extends NemaFileType> typeClass;
-				try {
-					typeClass = (Class<? extends NemaFileType>)Class.forName(typeStr);
-				}catch(Exception e) {
-					throw new IllegalArgumentException("Failed to interpret valid file type from '" + typeStr + "' in: " + commandFormatString,e);
-				}
-				
-				//grab any properties
-				Map<String,String> props = null;
-				if (commandFormatString.charAt(idx) == '(') {
-					idx++;
-					lastIdx = idx;
 					
+					ScratchDirCommandArgument scratchComp = new ScratchDirCommandArgument(followedBySpace);
+					arguments.add(scratchComp);
+					scratchDir = scratchComp;
+					
+					lastIdx = idx;
+				}else{
+					//get index (search forward for { then parse)
 					try {
-						while(commandFormatString.charAt(idx) != ')'){
+						while(commandFormatString.charAt(idx) != '{'){
 							idx++;
 						}
 					}catch(IndexOutOfBoundsException e) {
-						throw new IllegalArgumentException("End of string reached while seeking properties closing ) in: " + commandFormatString);
+						throw new IllegalArgumentException("End of string reached while seeking type argument opening { in: " + commandFormatString);
 					}
-					String propertiesStr = commandFormatString.substring(lastIdx,idx);
-					props = parsePropertiesString(propertiesStr);	
+					
+					int ioIndex;
+					try {
+						ioIndex = Integer.parseInt(commandFormatString.substring(lastIdx,idx));
+					}catch (NumberFormatException e) {
+						throw new IllegalArgumentException("Failed to parse IO index (" + commandFormatString.substring(lastIdx,idx) + ") in: " + commandFormatString,e);
+					}
 					idx++;
-				}
-				
-				//last char should be }
-				if (commandFormatString.charAt(idx) != '}') {
-					throw new IllegalArgumentException("Expected closing } at position " + idx + " in: " + commandFormatString);
-				}
-				idx++;
-				
-				//check for trailing space
-				boolean followedBySpace = false;
-				if (idx < commandFormatString.length() && commandFormatString.charAt(idx) == ' ') {
-					followedBySpace = true;
+					lastIdx = idx;
+					
+					//get file format
+					//search forward for close } or arguments (
+					try {
+						while(commandFormatString.charAt(idx) != '}' && commandFormatString.charAt(idx) != '('){
+							idx++;
+						}
+					}catch(IndexOutOfBoundsException e) {
+						throw new IllegalArgumentException("End of string reached while seeking type argument close } or properties opening ( in: " + commandFormatString);
+					}
+					String typeStr = commandFormatString.substring(lastIdx,idx);
+					lastIdx = idx;
+					Class<? extends NemaFileType> typeClass;
+					try {
+						typeClass = (Class<? extends NemaFileType>)Class.forName(typeStr);
+					}catch(Exception e) {
+						throw new IllegalArgumentException("Failed to interpret valid file type from '" + typeStr + "' in: " + commandFormatString,e);
+					}
+					
+					//grab any properties
+					Map<String,String> props = null;
+					if (commandFormatString.charAt(idx) == '(') {
+						idx++;
+						lastIdx = idx;
+						
+						try {
+							while(commandFormatString.charAt(idx) != ')'){
+								idx++;
+							}
+						}catch(IndexOutOfBoundsException e) {
+							throw new IllegalArgumentException("End of string reached while seeking properties closing ) in: " + commandFormatString);
+						}
+						String propertiesStr = commandFormatString.substring(lastIdx,idx);
+						props = parsePropertiesString(propertiesStr);	
+						idx++;
+					}
+					
+					//last char should be }
+					if (commandFormatString.charAt(idx) != '}') {
+						throw new IllegalArgumentException("Expected closing } at position " + idx + " in: " + commandFormatString);
+					}
 					idx++;
+					
+					//check for trailing space
+					boolean followedBySpace = false;
+					if (idx < commandFormatString.length() && commandFormatString.charAt(idx) == ' ') {
+						followedBySpace = true;
+						idx++;
+					}
+					
+					FileCommandArgument fileComp = new FileCommandArgument(isOutput, typeClass, props, followedBySpace, ioIndex);
+					arguments.add(fileComp);
+					if (isOutput) {
+						outputs.put(ioIndex,fileComp);
+					}else {
+						inputs.put(ioIndex,fileComp);
+					}
+					
+					lastIdx = idx;
 				}
 				
-				FileCommandArgument fileComp = new FileCommandArgument(isOutput, typeClass, props, followedBySpace, ioIndex);
-				arguments.add(fileComp);
-				if (isOutput) {
-					outputs.put(ioIndex,fileComp);
-				}else {
-					inputs.put(ioIndex,fileComp);
-				}
 				
-				lastIdx = idx;
 			}else {
 				idx++;
 			}
@@ -182,8 +206,8 @@ public class CommandLineFormatParser {
 	 */
 	public void setArguments(List<CommandArgument> arguments) {
 		this.arguments = arguments;
-		for (Iterator iterator = arguments.iterator(); iterator.hasNext();) {
-			CommandArgument commandArgument = (CommandArgument) iterator.next();
+		for (Iterator<CommandArgument> iterator = arguments.iterator(); iterator.hasNext();) {
+			CommandArgument commandArgument = iterator.next();
 			if(commandArgument.getClass().equals(FileCommandArgument.class)){
 				FileCommandArgument fileArg = (FileCommandArgument)commandArgument;
 				if(fileArg.isOutput()){
@@ -191,6 +215,8 @@ public class CommandLineFormatParser {
 				}else{
 					this.inputs.put(fileArg.ioIndex,fileArg);
 				}
+			}else if(commandArgument.getClass().equals((ScratchDirCommandArgument.class))){
+				this.scratchDir = (ScratchDirCommandArgument)commandArgument;
 			}
 		}
 	}
@@ -243,12 +269,21 @@ public class CommandLineFormatParser {
 		outputs.get(ioIndex).setPreparedPath(path);
 	}
 	
+	public void setScratchDir(String path){
+		if (scratchDir != null){
+			scratchDir.setPreparedPath(path);
+		}
+	}
+	
 	public void clearPreparedPaths() {
 		for (Iterator<FileCommandArgument> iterator = inputs.values().iterator(); iterator.hasNext();) {
 			iterator.next().clearPreparedPath();
 		}
 		for (Iterator<FileCommandArgument> iterator = outputs.values().iterator(); iterator.hasNext();) {
 			iterator.next().clearPreparedPath();
+		}
+		if (scratchDir != null){
+			scratchDir.clearPreparedPath();
 		}
 	}
 	
@@ -355,5 +390,7 @@ public class CommandLineFormatParser {
 		return arg.getProperties();
 	}
 	
-	
+	public ScratchDirCommandArgument getScratchDirArgument(){
+		return scratchDir;
+	}
 }
