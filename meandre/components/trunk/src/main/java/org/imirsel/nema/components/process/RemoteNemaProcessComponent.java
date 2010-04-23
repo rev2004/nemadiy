@@ -87,7 +87,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
 			//dataset = (NemaDataset)cc.getDataComponentFromInput(DATA_INPUT_DATASET);
 			Map<NemaTrackList,List<NemaData>> dataToProcess = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_DATA);
-			
+
 			getLogger().info("Getting command formatting string...");
 			//get command formatting string and parse
 			ProcessTemplate pTemplate = null;
@@ -180,7 +180,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 				e.printStackTrace();
 			}
 			
-			getLogger().info("Preparing process input file names...");
+			getLogger().info("Preparing process output file names...");
 			
 			//prepare output file names
 			//only dealing with one output as this is a one output component
@@ -200,7 +200,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 				((ClassificationTextFile)outputTypeInstance).setMetadataType(task.getSubjectTrackMetadataName());
 			}
 			//TODO do something with output properties - could be file name extensions (e.g. if producing an opaque model file)
-			outputFiles = FileConversionUtil.createOutputFileNames(dataToProcess, outputTypeInstance, ".out", new File(getAbsoluteResultLocationForJob()));
+			outputFiles = FileConversionUtil.createOutputFileNames(dataToProcess, inputType1, outputTypeInstance, ".out", new File(getAbsoluteResultLocationForJob()));
 
 			
 			//setup remote execution
@@ -235,6 +235,11 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 					formatModel.setPreparedPathForInput(1, inputFile.getAbsolutePath());
 					formatModel.setPreparedPathForOutput(1, outputFile.getAbsolutePath());
 					
+					//TODO: set unique scratch for each execution rather than fold scratch
+					formatModel.setPreparedPathForScratchDir(this.getAbsoluteProcessWorkingDirectory());
+					
+					//TODO: handle site dependencies?
+					
 					ProcessArtifact paInputs = new ProcessArtifact(inputFile.getAbsolutePath(),"File");
 					List<ProcessArtifact> inputs = new ArrayList<ProcessArtifact>();
 					inputs.add(paInputs);
@@ -249,7 +254,6 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 					pep.setInputs(inputs);
 					
 					//set the formatted command arguments to run from formatModel
-					//TODO check this is the right place to setting this...
 					String formattedArgs = formatModel.toFormattedString();
 					pep.setCommandLineFlags(formattedArgs);
 				
