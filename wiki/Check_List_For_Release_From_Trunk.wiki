@@ -28,25 +28,18 @@ matlab should be in the path /share/apps/matlab/bin
 
 	#1 classification_ehmann	
 	http://imirsel.org/classification/classification_ehmann/classification_ehmann/
-	
 	#2 classification_marsyas	
 	http://imirsel.org/classification/classification_marsyas/classification_marsyas/
-	
 	#3 classification_seyerlehner	
 	http://imirsel.org/classification/classification_seyerlehner/classification_seyerlehner/
-	
 	#4 jaudio_feature_extractor
 	http://imirsel.org/feature_extraction/jaudio_feature_extractor/jaudio_feature_extractor/
-	
 	#5 melody_dressler	
 	http://imirsel.org/analysis/melody/melody_dressler/melody_dressler/
-	
 	#6 phase_vocoder
 	http://imirsel.org/analysis/phase_vocoder/phase_vocoder/phase_vocoder/
-	
 	#7 structure_mauch
 	http://imirsel.org/analysis/structure/structure_mauch/structure_mauch/
-	
 	#8 mirex_evaluation
 	http://imirsel.org/evaluation/mirex_evaluation/mirex_evaluation/
 	
