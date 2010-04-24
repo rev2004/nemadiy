@@ -7,7 +7,7 @@ In order to add third party dependencies to the POM, we will be using artifactor
 
 == Instructions ==
 
- # Go to http://nema.lis.uiuc.edu/artifactory/ and use the search box in the top right hand corner of the page to search for the dependency you want to include in the POM file (e.g. enter mysql when searching for a mysqlconnector jar file). <br><br>
+ # Go to http://nema-dev.lis.illinois.edu/artifactory/ and use the search box in the top right hand corner of the page to search for the dependency you want to include in the POM file (e.g. enter mysql when searching for a mysqlconnector jar file). <br><br>
  # Select the POM file for the dependency you want to include in the results (if it is not listed contact Amit and/or Andrew Shirk).  <br><br>
  # From the contextual menu that will pop up, select _Show In Tree_.  <br><br>
  # Click on the *POM view* tab (Note that this ma  not be visible initially, depending on your window size, so use the white triangle to get the next set of tab) and copy the 
