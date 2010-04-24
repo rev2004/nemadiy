@@ -1,9 +1,144 @@
-#Release Checklist
+===Meandre Server Setup:===
 
-==Middleware==
+The user account where the meandre server will run should use bash.
+matlab should be in the path /share/apps/matlab/bin
 
-==Flowservice==
 
-==Meandre Servers==
 
-==Nema Repository==
+
+===Testing===
+
+	Test individual flow
+		These flows should run with the default component properties.
+		Ask Mert/Andy and Kris to confirm that the flows run correctly.
+		Ask Mert/Andy and Kris to check the component tags are correct.
+
+
+===Database Dependencies===
+
+	username: nema_user
+	password: xxxxx
+	
+	#1 meandrestore050
+	#2 nema plugin: flowservice
+	
+===Flow List===
+      
+        The List of flows should match the list below
+
+	#1 classification_ehmann	
+	http://imirsel.org/classification/classification_ehmann/classification_ehmann/
+	
+	#2 classification_marsyas	
+	http://imirsel.org/classification/classification_marsyas/classification_marsyas/
+	
+	#3 classification_seyerlehner	
+	http://imirsel.org/classification/classification_seyerlehner/classification_seyerlehner/
+	
+	#4 jaudio_feature_extractor
+	http://imirsel.org/feature_extraction/jaudio_feature_extractor/jaudio_feature_extractor/
+	
+	#5 melody_dressler	
+	http://imirsel.org/analysis/melody/melody_dressler/melody_dressler/
+	
+	#6 phase_vocoder
+	http://imirsel.org/analysis/phase_vocoder/phase_vocoder/phase_vocoder/
+	
+	#7 structure_mauch
+	http://imirsel.org/analysis/structure/structure_mauch/structure_mauch/
+	
+	#8 mirex_evaluation
+	http://imirsel.org/evaluation/mirex_evaluation/mirex_evaluation/
+	
+
+
+===Database Dependencies===
+
+		#1 nemadatarepository_dev
+	
+	
+	
+	
+
+===New Release===
+
+-Backup the development release
+    cd $MEANDRE_HOME
+    -Cleanup the log
+    rm -rf MeandreInfrastructure-shutdown-security-key.txt
+    rm -rf log/*
+    -Cleanup the published jobs
+	rm -rf published_results/nema/*
+	mysql -u -p meandrestore$release;
+	truncate meandre_job_console;
+	truncate meandre_job_log;
+	truncate meandre_job_status;
+	truncate meandre_server_status;
+	truncate meandre_server_info;
+	truncate meandre_server_properties;
+	truncate meandre_server_log
+	
+	
+	mkdir db-backup
+	mysqldump -u nema_user -preduxer101 --database meandrestore050 > meandrestore050.sql
+	gzip meandrestore050.sql
+	mysqldump -u nema_user -preduxer101 --database nemadatarepository_dev > nemadatarepository_dev.sql
+	gzip nemadatarepository_dev.sql
+	mv meandrestore050.sql.gz  nemadatarepository_dev.sql.gz  db-backup 
+	cd ..
+	
+	#tar gzip the meandre server and the external modules directory
+	tar -cvzf $MEANDRE_HOME-$release.tar.gz $MEANDRE_HOME
+	tar -cvzf ext_modules-$release.tar.gz ext_modules
+	
+
+Copy the zip files to the production server
+
+Deployment on production server
+
+$version = 050
+create database IF NOT EXISTS meandrestore$version;
+create database IF NOT EXISTS flowservice$version; 
+create database IF NOT EXISTS nemadatarepository_dev;
+create database IF NOT EXISTS nema_flowresults$version;
+create database diy$version;
+
+
+create user 'nema_user'@'localhost' identified by 'xxxxx';
+
+grant all privileges on  meandrestore060.* to 'nema_user'@'%' identified by 'xxxx';
+grant all privileges on  meandrestore060.* to 'nema_user'@'localhost' identified by 'xxxx';
+grant all privileges on  flowservice060.* to 'nema_user'@'%' identified by 'xxxx;
+grant all privileges on  flowservice060.* to 'nema_user'@'localhost' identified by 'xxxx;
+grant all privileges on  nemadatarepository_dev.* to 'nema_user'@'localhost' identified by 'xxxx';
+grant all privileges on  nemadatarepository_dev.* to 'nema_user'@'%' identified by 'xxxx';
+grant all privileges on  nema_flowresults$version.* to 'nema_user'@'localhost' identified by 'xxxx';
+grant all privileges on  nema_flowresults$version.* to 'nema_user'@'%' identified by 'xxxx';
+
+grant all privileges on  diy$version.* to 'nema_user'@'localhost' identified by 'xxxx';
+grant all privileges on  diy$version.* to 'nema_user'@'%' identified by 'xxxx';
+
+
+mysql -u nema_user -pxxxx < nemadatarepository_dev.sql
+mysql -u nema_user -pxxxx < meandrestore$version.sql
+
+Edit flowresults.properties  to point to correct database -correct the jdbc url
+Edit nemaflowservice.properties  to point to correct database -correct the jdbc properties
+
+
+
+
+- create new database meandrestore060
+- create new database flowservice060
+
+- update meandre-config-store.xml server DB_URL to point to the release database
+
+
+
+
+
+
+
+
+	
+	
