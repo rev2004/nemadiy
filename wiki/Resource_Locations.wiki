@@ -1,5 +1,0 @@
-#summary Documents the location of various NEMA development resources.
-
-  * NEMA DIY Demo: http://nema.lis.uiuc.edu/diy/
-  * Central Maven Artifact Repository: http://nema.lis.uiuc.edu/artifactory/webapp/home.html
-  * Hudson Continuous Integration Server: http://nema.lis.uiuc.edu/hudson/
