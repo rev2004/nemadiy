@@ -2,12 +2,8 @@
 
 == Introduction ==
 
-In order to add third party dependencies to the POM, we will be using artifactory http://nema.lis.uiuc.edu/artifactory/ to search for the dependency and modify the project's POM to include the dependency. If your changes should remain with the project then check in the pom.xml file after modifying and testing it.
+In order to add third party dependencies to the POM, we will be using artifactory http://nema-dev.lis.illinois.edu/artifactory/ to search for the dependency and modify the project's POM to include the dependency. If your changes should remain with the project then check in the pom.xml file after modifying and testing it.
 
-== How-to screencast ==
-This screencast demonstrates how to get the data to add to your project pom.xml file. Once you have done this follow instructions 5 and 6 below.
-
-[http://nema.lis.uiuc.edu/help/documentation/artifactory-dependency.mov How-To screencast]
 
 == Instructions ==
 
