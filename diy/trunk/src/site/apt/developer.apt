@@ -9,14 +9,70 @@
 Developer Documentation
 
 
-NEMA DIY Code Structure
+Introduction
 
 
-[images/code-structure.jpeg]
+   This tutorial gives step-by-step instructions for setting up a local NEMA DIY webapp instance for the purposes of developing 
+   the web app itself.
 
+
+Details
+
+
+   Before you begin, make sure you have the NEMA settings.xml file, which should be located in your .m2 directory in your home directory.
+   If it is not present, ask another developer to give you theirs.
+
+
+   Now, follow these steps:
+
+
+   [[1]] Check out the DIY source code project from SVN
+   
+   [[2]] Install MySQL 5.X if you have not already done so
+   
+   [[3]] Start MySQL
+   
+   [[4]] Log into the MySQL monitor and create a new database named 'diy051':
+   
+    * `create database diy051`
+   
+   [[5]] Create a user with privileges to modify the database:
+   
+    * `grant all privileges on diy051.* to 'nema_user'@'localhost' identified by '********';`
+   
+    * Ask one of the other developers for the database password
+   
+   [[6]] Now flush the privileges:
+   
+    * `flush privileges;`
+   
+   [[7]] From the command line, navigate to the root of the DIY source code project
+   
+   [[8]] Run the following Maven command, which creates the database schema and runs the tests
+   
+    * `mvn clean test -Denv=development`
+   
+    * You should see log messages on the command line that indicate database tables are being successfully created.
+   
+    * Currently, the tests will fail. This is expected behavior.
+   
+   [[9]] Now navigate to webapp directory, just inside the root directory of the DIY source code.
+   
+   [[10]] Run the following Maven command, which starts the Jetty application server as well as the NEMA DIY web app:
+   
+    * `mvn jetty:run -P diy-development,repository-development,flowservice-development -Dmaven.test.skip=true`
+   
+    * The -P switch along with the diy-development, etc. parameters specify which Maven profiles should be used to generate the executable web app code. Depending on the profile IDs that are specified, the DIY application configuration files will be populated with different property values. For example, specifying flowservice-development ensures the DIY webapp will connect to the Flow Service instance that is for development, rather than the production version.
 
 
 Deployment
+
+	DIY project has three modules <<<nema-core>>>, <<<nema-webapp>>> and <<<probes>>>. <<<nema-core>>> module has the models and hibernate DAO layer, the
+	webapp module has various services, that talk using RMI with the flowservice. The user, flow and job information is stored in 
+	a mysql database. The Flow Service is configured to schedule and run flows on the Meandre Servers. The Flow Service monitors the 
+	flow lifecycle using probes. The Flows running on the Meandre Server may require a remote execution service, that allows execution
+	of Marsyas, Matlab and other external binary code submitted by the MIREX participants.
 	
 	
-[images/deployment.jpg]                                  
+[images/nema-deployment.jpg]   
+                               
