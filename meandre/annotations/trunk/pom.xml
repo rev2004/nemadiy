@@ -138,6 +138,7 @@
             <groupId>org.meandre</groupId>
             <artifactId>meandre-core</artifactId>
             <version>${meandre-server.version}</version>
+            <scope>test</scope>
         </dependency>   
   
     
