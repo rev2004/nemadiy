@@ -5,7 +5,7 @@ import java.util.HashMap;
 import javax.jcr.Credentials;
 
 /**This class stores the username and password hash which
- * is provided by the DIY webapplication and used for authentication
+ * is provided by the DIY web application and used for authentication
  * by the content repository service
  * 
  * @author kumaramit01

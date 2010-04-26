@@ -4,11 +4,19 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import javax.jcr.LoginException;
+import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidItemStateException;
+import javax.jcr.ItemExistsException;
+
+import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.version.VersionException;
+import javax.jcr.LoginException;
 
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.model.ExecutableMetadata;
@@ -31,41 +39,156 @@ public class ContentRepositoryService implements ArtifactService {
 	}
 
 	public ResourcePath saveExecutableBundle(NemaCredentials credentials, String instanceId,
-			ExecutableBundle bundle) {
-		// TODO Auto-generated method stub
+			ExecutableBundle bundle) throws ContentRepositoryServiceException {
+		try {
+			Session session = null;
+			session = repository.login(credentials);
+			session.save();
+			session.logout();
+		}catch (LoginException e){
+			throw new ContentRepositoryServiceException(e);
+		} catch (AccessDeniedException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ItemExistsException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ReferentialIntegrityException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ConstraintViolationException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (InvalidItemStateException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (VersionException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (LockException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (NoSuchNodeTypeException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}
 		return null;
 	}
 
 	public ResourcePath saveFlow(NemaCredentials credentials, Flow flow,
-			String flowInstanceId, byte[] flowContent) throws LoginException, RepositoryException {
-		  Session session = repository.login(credentials);
-		  session.save();
-		  session.logout();
+			String flowInstanceId, byte[] flowContent) throws ContentRepositoryServiceException {
+		try {
+			Session session = null;
+			session = repository.login(credentials);
+			session.save();
+			session.logout();
+		} catch (AccessDeniedException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ItemExistsException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ReferentialIntegrityException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ConstraintViolationException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (InvalidItemStateException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (VersionException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (LockException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (NoSuchNodeTypeException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}
+		 
 		  return null;
 	}
 
-	public ExecutableMetadata getBundleMetadata(NemaCredentials credentials, String path) throws LoginException, RepositoryException {
-		  Session session = repository.login(credentials);
-		  session.save();
-		  session.logout();
+	public ExecutableMetadata getBundleMetadata(NemaCredentials credentials, 
+			String path) throws ContentRepositoryServiceException {
+	
+		try {
+			Session session = null;
+			session = repository.login(credentials);
+			session.save();
+			session.logout();
+		} catch (AccessDeniedException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ItemExistsException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ReferentialIntegrityException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ConstraintViolationException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (InvalidItemStateException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (VersionException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (LockException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (NoSuchNodeTypeException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}
+		 
 	
 		return null;
 	}
 
 	public ExecutableBundle getExecutableBundle(NemaCredentials credentials,
-			ResourcePath path) throws LoginException, RepositoryException {
-		  Session session = repository.login(credentials);
-		  session.save();
-		  session.logout();
+			ResourcePath path) throws ContentRepositoryServiceException {
+		try {
+			Session session = null;
+			session = repository.login(credentials);
+			session.save();
+			session.logout();
+		} catch (AccessDeniedException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ItemExistsException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ReferentialIntegrityException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ConstraintViolationException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (InvalidItemStateException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (VersionException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (LockException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (NoSuchNodeTypeException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}
+		 
 	
 		return null;
 	}
 
 	public ExecutableMetadata getBundleMetadata(NemaCredentials credentials,
-			ResourcePath path) throws LoginException, RepositoryException {
-		  Session session = repository.login(credentials);
-		  session.save();
-		  session.logout();
+			ResourcePath path) throws ContentRepositoryServiceException{
+		try {
+			Session session = null;
+			session = repository.login(credentials);
+			session.save();
+			session.logout();
+		} catch (AccessDeniedException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ItemExistsException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ReferentialIntegrityException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (ConstraintViolationException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (InvalidItemStateException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (VersionException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (LockException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (NoSuchNodeTypeException e) {
+			throw new ContentRepositoryServiceException(e);
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}
+		 
 		  return null;
 	
 	}

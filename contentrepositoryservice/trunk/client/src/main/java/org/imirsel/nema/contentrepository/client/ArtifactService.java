@@ -23,9 +23,11 @@ public interface ArtifactService {
 	 * @param instanceId The instanceId
 	 * @param bundle The execution bundle
 	 * @return The path location of the bundle
+	 * @throws RepositoryException 
+	 * @throws LoginException 
 	 */
 	public ResourcePath saveExecutableBundle(final NemaCredentials credentials,
-			final String instanceId, final ExecutableBundle bundle);
+			final String instanceId, final ExecutableBundle bundle) throws ContentRepositoryServiceException;
 	
 	/**Saves the flow -the flowContent and relevant metadata
 	 * 
@@ -38,7 +40,7 @@ public interface ArtifactService {
 	 * @throws LoginException 
 	 */
 	public ResourcePath saveFlow(final NemaCredentials credentials, final Flow flow, 
-			final String flowInstanceId, byte[] flowContent) throws LoginException, RepositoryException;
+			final String flowInstanceId, byte[] flowContent) throws ContentRepositoryServiceException;
 	
 	/** Returns the executable bundle -the byte array contains the the content.
 	 * 
@@ -48,7 +50,8 @@ public interface ArtifactService {
 	 * @throws RepositoryException 
 	 * @throws LoginException 
 	 */
-	public ExecutableBundle getExecutableBundle(final NemaCredentials credentials, final ResourcePath path) throws LoginException, RepositoryException;
+	public ExecutableBundle getExecutableBundle(final NemaCredentials credentials, 
+			final ResourcePath path) throws ContentRepositoryServiceException;
 	
 	
 	/**Returns the metadata associated with a ExecutableBundle.
@@ -59,7 +62,8 @@ public interface ArtifactService {
 	 * @throws RepositoryException 
 	 * @throws LoginException 
 	 */
-	public ExecutableMetadata getBundleMetadata(final NemaCredentials credentials, final ResourcePath path) throws LoginException, RepositoryException;
+	public ExecutableMetadata getBundleMetadata(final NemaCredentials credentials, 
+			final ResourcePath path) throws ContentRepositoryServiceException;
 	
 	
 	
