@@ -4,10 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>nema-contentrepository-service</artifactId>
-    <groupId>org.imirsel.nema</groupId>
+    <groupId>org.imirsel</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>org.imirsel.nema</groupId>
+  <groupId>org.imirsel</groupId>
   <artifactId>nema-contentrepository-service-client</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>nema-contentrepository-service-client</name>
