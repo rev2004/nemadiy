@@ -1,5 +1,8 @@
 package org.imirsel.nema.contentrepository.client;
 
+import javax.jcr.LoginException;
+import javax.jcr.RepositoryException;
+
 import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.NemaCredentials;
 import org.imirsel.nema.model.ExecutableBundle;
@@ -31,17 +34,21 @@ public interface ArtifactService {
 	 * @param flowInstanceId
 	 * @param flowContent
 	 * @return the path location of the flow
+	 * @throws RepositoryException 
+	 * @throws LoginException 
 	 */
 	public ResourcePath saveFlow(final NemaCredentials credentials, final Flow flow, 
-			final String flowInstanceId, byte[] flowContent);
+			final String flowInstanceId, byte[] flowContent) throws LoginException, RepositoryException;
 	
 	/** Returns the executable bundle -the byte array contains the the content.
 	 * 
 	 * @param credentials The credentials to access the bundle
 	 * @param url The url of the bundle
 	 * @return the executable bundle
+	 * @throws RepositoryException 
+	 * @throws LoginException 
 	 */
-	public ExecutableBundle getExecutableBundle(final NemaCredentials credentials, final ResourcePath path);
+	public ExecutableBundle getExecutableBundle(final NemaCredentials credentials, final ResourcePath path) throws LoginException, RepositoryException;
 	
 	
 	/**Returns the metadata associated with a ExecutableBundle.
@@ -49,8 +56,10 @@ public interface ArtifactService {
 	 * @param credentials
 	 * @param path
 	 * @return
+	 * @throws RepositoryException 
+	 * @throws LoginException 
 	 */
-	public ExecutableMetadata getBundleMetadata(final NemaCredentials credentials, final ResourcePath path);
+	public ExecutableMetadata getBundleMetadata(final NemaCredentials credentials, final ResourcePath path) throws LoginException, RepositoryException;
 	
 	
 	
