@@ -28,33 +28,17 @@ description and the parameters to run the flow.</p>
 
 
 
-	<c:forEach items="${componentPropertyMap}" var="entry">
-
-		<c:if test="${entry.key.hidden==false}">
-
-			<h3>${entry.key.name}</h3>
-			<br />
-
-			<c:forEach items="${entry.value}" var="value_entry">
-
-				<fieldset id="pt1"><label for="jobname">
-				${value_entry.key} </label> <render:componentproperty roles="${userRoles}"
-					component="${entry.key.instanceUri}" value="${value_entry.value}"
-					class="cssClass" /> <font color="green">${value_entry.value.description}</font>
-
-
-				</fieldset>
-			</c:forEach>
-
-			<input type="hidden" name="modifiedComponents"
-				value="${entry.key.instanceUri}" />
-		</c:if>
-
+	<c:forEach items="${componentList}" var="component">
+		<fieldset
+			id="${compoent.name}">
+			<c:out value="${compoent.description}"/>
+			<input type="submit" name="_eventId_edit" value="{component.index}" title="edit"/>
+		</fieldset>
 	</c:forEach>
 	<input type="hidden" name="flowTemplateId" value="${flow.id}" />
 	<input type="hidden" name="flowTemplateUri" value="${flow.uri}" />
 	<fieldset id="button"><input type="submit"
-		name="_eventId_test" value="test" /><input type="submit"
+		name="_eventId_test" value="review" /><input type="submit"
 		name="_eventId_cancel" value="cancel" /><input type="submit"
-		name="_eventId_clear" value="clear" /></fieldset></div>
-</form:form></div>
+		name="_eventId_clear" value="clear" /></fieldset>
+</form:form></div></div>
