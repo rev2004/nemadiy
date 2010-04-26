@@ -16,24 +16,24 @@ description and the parameters to run the flow.</p>
 <br />
 
 <div id="formcontainer_job">
-<div class="form_job"><form:form commandName="taskSelection">
+<div class="form_job"><form:form commandName="flow">
 
-	<fieldset id="pt1"><label>Please enter Task Name:</label> <input
-		name="name" type="text" value="${flow.name}" /></fieldset>
+	<fieldset id="pt1"><label>Please enter Task Name:</label> <form:input
+		path="name" /></fieldset>
 
 
 	<fieldset id="pt1"><label>Please enter Task
-	Description:</label> <textarea name="description" rows="5" cols="50">${flow.description}</textarea></fieldset>
+	Description:</label> <form:textarea path="description" rows="5" cols="50" /></fieldset>
 
 
+	<c:forEach items="${componentList}" var="component" varStatus="status">
+		<c:if test="${!component.hidden}">
+			<fieldset id="${component.name}"><c:out
+				value="${component.name}" /><br/> <label>${component.description}</label> 
 
-
-	<c:forEach items="${componentList}" var="component">
-		<fieldset
-			id="${compoent.name}">
-			<c:out value="${compoent.description}"/>
-			<input type="submit" name="_eventId_edit" value="{component.index}" title="edit"/>
-		</fieldset>
+			<a href="${flowExecutionUrl}&idx=${status.index}&_eventId=edit">edit</a>
+			</fieldset>
+		</c:if>
 	</c:forEach>
 	<input type="hidden" name="flowTemplateId" value="${flow.id}" />
 	<input type="hidden" name="flowTemplateUri" value="${flow.uri}" />
@@ -41,4 +41,6 @@ description and the parameters to run the flow.</p>
 		name="_eventId_test" value="review" /><input type="submit"
 		name="_eventId_cancel" value="cancel" /><input type="submit"
 		name="_eventId_clear" value="clear" /></fieldset>
-</form:form></div></div>
+</form:form></div>
+
+</div>

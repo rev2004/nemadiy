@@ -4,9 +4,9 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-	<var name="parameterMap" class="java.util.HashMap" />
+	
 	<var name="flow" class="org.imirsel.nema.model.Flow" />
-	<var name="componentList" class="java.util.HashMap"/>
+	<var name="componentList" class="java.util.ArrayList" />
 	<view-state id="taskSelection" model="flow">
 
 		<on-render>
@@ -17,11 +17,16 @@
 	</view-state>
 	<view-state id="parameterForm" model="flow">
 		<on-render>
+
 			<evaluate expression="flowService.getFlow(flow.id)" result="flow" />
-			<evaluate expression="flowService.getComponents(flow.getUri())" result="componentList"/>
+			<evaluate expression="flowService.getComponents(flow.getUri())"
+				result="componentList" />
+				
+			<evaluate expression="tasksService.fillDefaultParameters(flow)" result="flowScope.paramterMap"/>
+			<!-- evaluate expression="java.util.Collections.sort(componentList)"/-->
 		</on-render>
 		<transition on="edit" to="editor" />
-		<transition on="test" to="test" />
+		<transition on="test" to="test"/>
 		<transition on="cancel" to="taskSelection" />
 		<transition on="clear" to="parameterForm" />
 	</view-state>
@@ -31,6 +36,15 @@
 		<transition on="cancel" to="parameterForm" />
 	</view-state>
 	<view-state id="editor">
+		<on-render>
+			<evaluate expression="tasksService.getRoles()" result="viewScope.userRoles" />
+			<evaluate expression="componentList.get(requestParameters.idx)"
+				result="viewScope.component" />
+			<evaluate expression="tasksService.test(requestParameters.idx)" />
+			<evaluate
+				expression="flowService.getComponentPropertyDataType(viewScope.component, flow.getUri())"
+				result="viewScope.datatypeMap" />
+		</on-render>
 		<transition on="save" to="parameterForm" />
 		<transition on="cancel" to="parameterForm" />
 	</view-state>
