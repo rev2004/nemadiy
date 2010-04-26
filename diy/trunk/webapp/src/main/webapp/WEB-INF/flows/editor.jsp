@@ -1,13 +1,28 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+
+<%@ include file="/common/taglibs.jsp"%>
+
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>component property editor</title>
 </head>
 <body>
-<form><input type="submit" name="_eventId_save" value="save" /><input
-	type="submit" name="_eventId_cancel" value="cancel" /></form>
+Flow:
+<c:out value="${flow.name}" />
+<br />
+Component:
+<c:out value="${component.name}" />
+<br />
+<label>--${component.description}</label>
+<form:form>
+	<c:forEach items="${datatypeMap}" var="property">
+
+		<fieldset id="pt1"><label for="jobname">
+		${property.key} </label> <render:componentproperty roles="${userRoles}"
+			component="${component.instanceUri}" value="${property.value}"
+			class="cssClass" /> <font color="green">${property.value.description}</font>
+		</fieldset>
+	</c:forEach>
+	<input type="submit" name="_eventId_save" value="save" />
+	<input type="submit" name="_eventId_cancel" value="cancel" />
+</form:form>
 </body>
-</html>
