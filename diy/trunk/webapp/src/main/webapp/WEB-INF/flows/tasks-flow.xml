@@ -6,6 +6,7 @@
 
 	<var name="parameterMap" class="java.util.HashMap" />
 	<var name="flow" class="org.imirsel.nema.model.Flow" />
+	<var name="componentList" class="java.util.HashMap"/>
 	<view-state id="taskSelection" model="flow">
 
 		<on-render>
@@ -17,6 +18,7 @@
 	<view-state id="parameterForm" model="flow">
 		<on-render>
 			<evaluate expression="flowService.getFlow(flow.id)" result="flow" />
+			<evaluate expression="flowService.getComponents(flow.getUri())" result="componentList"/>
 		</on-render>
 		<transition on="edit" to="editor" />
 		<transition on="test" to="test" />
@@ -24,7 +26,6 @@
 		<transition on="clear" to="parameterForm" />
 	</view-state>
 	<view-state id="test">
-
 		<transition on="test" to="runTest" />
 		<transition on="run" to="run" />
 		<transition on="cancel" to="parameterForm" />
