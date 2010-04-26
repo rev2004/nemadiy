@@ -3,7 +3,7 @@ package org.imirsel.nema.model;
 import java.io.Serializable;
 import java.util.Map;
 
-public class ExecutableBundle implements Serializable {
+public class ExecutableBundle implements Serializable, ExecutableMetadata {
 	/**
 	 * 
 	 */
