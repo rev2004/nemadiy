@@ -43,6 +43,7 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
 	}
 
 	private String id;
+	private String fileName;
 	private String typeName;
 	private String mainClass;
 	private String executableName;
@@ -93,6 +94,13 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
 	}
 	public void setBundleContent(byte[] bundleContent) {
 		this.bundleContent = bundleContent;
+	}
+	public String getFileName() {
+		return fileName;
+	}
+	
+	public void setFileName(String fileName){
+		this.fileName=fileName;
 	}
 
 }
