@@ -48,7 +48,6 @@ import sun.net.www.MimeTable;
 public class ContentRepositoryService implements ArtifactService {
 
 	private Logger logger = Logger.getLogger(ContentRepositoryService.class.getName());
-
 	private Repository repository;
 	private String USERS_DIR ="users";
 	private String FLOWS_DIR ="flows";
@@ -110,8 +109,6 @@ public class ContentRepositoryService implements ArtifactService {
 		}
 		return exists;
 	}
-	
-
 	/**Checks if a resource node exists. 
 	 * 
 	 *  @param credentials
@@ -318,7 +315,6 @@ public class ContentRepositoryService implements ArtifactService {
 		}
 		return new RepositoryResourcePath(resourcePath);
 	}
-
 	/**Save the flow to a content repository
 	 * 
 	 * @param credentials
@@ -435,7 +431,6 @@ public class ContentRepositoryService implements ArtifactService {
 				session.logout();
 		}
 	}
-
 	/**Returns the executable bundle
 	 * 
 	 * 
@@ -615,7 +610,7 @@ public class ContentRepositoryService implements ArtifactService {
 		String commandLineFlags = commandLineFlagsProperty.getString();
 		String mainClass = mainClassProperty.getString();
 		Value[] values = envProperty.getValues();
-		Map env = getMapfromKeyValuePairs(values);
+		Map<String,String> env = getMapfromKeyValuePairs(values);
 		
 		bundle.setTypeName(ExecutableType.valueOf(typeName));
 		bundle.setId(execId);
@@ -625,17 +620,10 @@ public class ContentRepositoryService implements ArtifactService {
 		bundle.setExecutableName(executableName);
 		
 		
-		Node resNode = fileNode.getNode ("jcr:content");
-		Property mimeTypeProperty = resNode.getProperty("jcr:mimeType");
-		Property encodingProperty = resNode.getProperty("jcr:encoding");
 		String fileName = fileNode.getName();
-
-		String mimeType=mimeTypeProperty.getString();
-		String encodingType = encodingProperty.getString();
 		bundle.setFileName(fileName);
 		bundle.setTypeName(ExecutableBundle.ExecutableType.C);
 		bundle.setId(fileNode.getIdentifier());
-
 		return bundle;
 	}
 
@@ -675,7 +663,6 @@ public class ContentRepositoryService implements ArtifactService {
 
 
 
-	
 	private String[] getKeyValuePairs(Map<String, String> environmentVariables) {
 		String[] values = new String[environmentVariables.size()];
 		int count=0;
