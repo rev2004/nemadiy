@@ -7,8 +7,10 @@ package org.imirsel.nema.contentrepository.auth.spi;
  */
 public class PlainTextPasswordEncoder implements PasswordEncoder{
 
-	/**
+	/**encodes the password 
 	 * 
+	 * @param rawpassword
+	 * @return encoded password 
 	 */
 	public String encodePassword(String rawpassword) {
 		return rawpassword;

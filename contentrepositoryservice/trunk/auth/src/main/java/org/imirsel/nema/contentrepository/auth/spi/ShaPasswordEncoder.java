@@ -15,7 +15,8 @@ public class ShaPasswordEncoder implements PasswordEncoder {
 	private static MessageDigest digest;
 	
 
-	public String encodePassword(String rawpassword, boolean hex) {
+	
+	private String encodePassword(String rawpassword, boolean hex) {
         if (digest == null) {
             try {
                 digest = MessageDigest.getInstance("SHA-1");
@@ -39,6 +40,11 @@ public class ShaPasswordEncoder implements PasswordEncoder {
 		System.out.println(spe.encodePassword("admin"));
 	}
 
+	/**returns encoded password as hex string
+	 * 
+	 * @param raw password
+	 * @return encodePassword
+	 */
 	public String encodePassword(String rawpassword) {
 		return encodePassword(rawpassword,true);
 	}
