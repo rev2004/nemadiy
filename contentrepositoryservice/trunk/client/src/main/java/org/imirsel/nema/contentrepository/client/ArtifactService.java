@@ -8,6 +8,7 @@ import javax.jcr.SimpleCredentials;
 import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
+import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 
 /**Allows users to persist the binary code -jar file/executable zip
@@ -66,6 +67,30 @@ public interface ArtifactService {
 	public ExecutableMetadata getBundleMetadata(final SimpleCredentials credentials, 
 			final ResourcePath path) throws ContentRepositoryServiceException;
 	
+	
+	/** Removes an executable bundle
+	 * 
+	 * @param credentials
+	 * @param resourcePath
+	 * @return
+	 * @throws ContentRepositoryServiceException
+	 * @throws LoginException
+	 * @throws RepositoryException
+	 */
+	public boolean removeExecutableBundle(SimpleCredentials credentials,
+			RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException;
+	
+	
+	/**Checks if a resource path exists or not.
+	 * 
+	 * @param credentials
+	 * @param resourcePath
+	 * @return true or false
+	 * @throws ContentRepositoryServiceException
+	 */
+	public boolean exists(SimpleCredentials credentials, 
+			RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException;
+			
 	
 	
 	

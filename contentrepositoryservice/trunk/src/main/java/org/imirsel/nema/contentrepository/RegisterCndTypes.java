@@ -54,12 +54,17 @@ public class RegisterCndTypes {
 	    }
 	    
 	    // create imirsel file
-	    if(!manager.hasNodeType("imirsel:file")){
+	    if(!manager.hasNodeType("exec:file")){
 	   	   if (!manager.hasNodeType("ns:file")){
-	        String cnd = "<imirsel = 'http://www.imirsel.org/jcr'>\n";
-	        cnd += "[imirsel:file] > nt:file\n";
-	        cnd += "- locked (BOOLEAN) mandatory ignore\n";
-	        cnd += "- layout (STRING) mandatory";
+	        String cnd = "<exec = 'http://www.imirsel.org/jcr/exec'>\n";
+	        cnd += "[exec:file] > nt:file\n";
+	        cnd += "- execId (STRING) mandatory\n";
+	        cnd += "- typeName (STRING) mandatory\n";
+	        cnd += "- mainClass (STRING) mandatory ignore\n";
+	        cnd += "- executableName (STRING) mandatory ignore\n";
+	        cnd += "- commandLineFlags (STRING) mandatory\n";
+	    
+	        
 	        byte cndArray[] = cnd.getBytes();
 	        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(cndArray);
 	        manager.registerNodeTypes(byteArrayInputStream,JackrabbitNodeTypeManager.TEXT_X_JCR_CND); 

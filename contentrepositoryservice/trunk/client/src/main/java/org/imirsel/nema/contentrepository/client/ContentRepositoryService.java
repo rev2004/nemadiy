@@ -1,5 +1,6 @@
 package org.imirsel.nema.contentrepository.client;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
@@ -16,12 +17,19 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.version.VersionException;
 import javax.jcr.LoginException;
 
+import org.apache.jackrabbit.api.JackrabbitNodeTypeManager;
+import org.apache.jackrabbit.commons.NamespaceHelper;
+import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.apache.jackrabbit.value.BinaryValue;
 import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.ExecutableBundle;
@@ -38,15 +46,119 @@ import sun.net.www.MimeTable;
  * 
  */
 public class ContentRepositoryService implements ArtifactService {
-	
+
 	private Logger logger = Logger.getLogger(ContentRepositoryService.class.getName());
-	
+
 	private Repository repository;
 	private String USERS_DIR ="users";
 	private String FLOWS_DIR ="flows";
 	private String EXECUTOR_BUNDLE_DIR ="executables";
-
 	
+	
+	
+	public boolean validateNodeTypes(SimpleCredentials credentials) throws ContentRepositoryServiceException {
+		if(repository==null){
+			throw new ContentRepositoryServiceException("Repository not set");
+		}
+		Session session = null;
+		logger.info("Logging in with credentials ");
+		boolean exists=false;
+		try{
+			session = repository.login(credentials);
+			NodeTypeManager nodeTypeManager=session.getWorkspace().getNodeTypeManager();
+			NodeType nodeType=nodeTypeManager.getNodeType("exec:file");
+			if(nodeType==null){
+				exists=false;
+			}else{
+				exists=true;
+			}
+		}catch (LoginException e){
+			throw new ContentRepositoryServiceException(e);
+		}catch(NoSuchNodeTypeException nsn){
+			exists=false;
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			if(session!=null){
+				session.logout();
+			}
+		}
+		return exists;
+	}
+	
+
+	/**Checks if a resource node exists. 
+	 * 
+	 *  @param credentials
+	 *  @param resourcePath
+	 *  @return returns boolean true/false
+	 *  @throws ContentRepositoryServiceException
+	 */
+	public boolean exists(SimpleCredentials credentials,RepositoryResourcePath resourcePath)
+			throws ContentRepositoryServiceException {
+		if(repository==null){
+			throw new ContentRepositoryServiceException("Repository not set");
+		}
+		Session session = null;
+		logger.info("Logging in with credentials ");
+		try{
+			session = repository.login(credentials);
+			logger.info("Success Logging in");
+			boolean exists=session.itemExists(resourcePath.getPath());
+			return exists;
+		}catch (LoginException e){
+			throw new ContentRepositoryServiceException(e);
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}finally{
+			if(session!=null){
+				session.logout();
+			}
+		}
+		
+	}
+
+
+
+
+
+	/** Removes an executable bundle
+	 * 
+	 * @param credentials
+	 * @param resourcePath
+	 * @return
+	 * @throws ContentRepositoryServiceException
+	 */
+	public boolean removeExecutableBundle(SimpleCredentials credentials,
+			RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException{
+		if(repository==null){
+			throw new ContentRepositoryServiceException("Repository not set");
+		}
+		Session session = null;
+		logger.info("Logging in with credentials ");
+		try{
+			session = repository.login(credentials);
+			logger.info("Success Logging in");
+			boolean exists=session.itemExists(resourcePath.getPath());
+		if(!exists){
+			throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
+		}
+		session.removeItem(resourcePath.getPath());
+		session.save();
+		}catch (LoginException e){
+			throw new ContentRepositoryServiceException(e);
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}finally{
+			if(session!=null){
+				session.logout();
+			}
+		}
+		return true;
+	}
+
+
 	/** 
 	 * Saves the executable bundle into the content repository and returns a
 	 * a ResourcePath
@@ -54,17 +166,18 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @param credentials
 	 * @param flowInstanceId
 	 * @param bundle 
+	 * @throws ContentRepositoryServiceException
 	 */
 	public ResourcePath saveExecutableBundle(SimpleCredentials credentials, String flowInstanceId,
 			ExecutableBundle bundle) throws ContentRepositoryServiceException {
-		
+
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
-			String resourcePath = null;
-			Session session = null;
+		String resourcePath = null;
+		Session session = null;
 		try {
-			
+
 			logger.info("Logging in with credentials ");
 			session = repository.login(credentials);
 			logger.info("Success Logging in");
@@ -77,17 +190,17 @@ public class ContentRepositoryService implements ArtifactService {
 			String flowDirPath = userDirPath +"/"+FLOWS_DIR;
 			String executableDirPath=flowDirPath+"/"+flowInstanceId+"/"+EXECUTOR_BUNDLE_DIR;
 			String flowInstanceDirPath = executableDirPath +"/"+ flowInstanceId;
-			
+
 			logger.info("checking if the executableDirPath exists: " + executableDirPath);
 			boolean exists=session.itemExists(executableDirPath);
 			if(!session.itemExists("/"+USERS_DIR)){
 				root.addNode(USERS_DIR,"nt:folder");
 				session.save();
 			}
-			
+
 			if(!exists){
 				logger.info("dir path does not exist -creating the directory path " + executableDirPath);
-					
+
 				if(session.itemExists(userDirPath)==false){
 					Node usersNode=root.getNode(USERS_DIR);
 					userNode=usersNode.addNode(credentials.getUserID(), "nt:folder");
@@ -98,7 +211,7 @@ public class ContentRepositoryService implements ArtifactService {
 					session.save();
 					flowInstanceDirNode=executableDirNode.addNode(flowInstanceId, "nt:folder");
 					session.save();
-					
+
 				}else if(session.itemExists(flowDirPath)==false){
 					userNode= session.getNode(userDirPath);
 					flowNode=userNode.addNode(FLOWS_DIR,"nt:folder");
@@ -114,7 +227,7 @@ public class ContentRepositoryService implements ArtifactService {
 					flowInstanceDirNode=executableDirNode.addNode(flowInstanceId, "nt:folder");
 					session.save();
 				}
-				
+
 			}else{
 				logger.info("dir path exists using the existing directory");
 				executableDirNode=root.getNode(executableDirPath);
@@ -126,24 +239,24 @@ public class ContentRepositoryService implements ArtifactService {
 			}
 			MimeTable mt = MimeTable.getDefaultTable();
 			String mimeType = mt.getContentTypeFor(bundle.getFileName());
-		
+
 			if (mimeType == null) {
 				mimeType = "application/octet-stream";
 			}
 
 			logger.info("mimetype of the bundle: " + mimeType);
-			
-			
+
+
 			Node fileNode = flowInstanceDirNode.addNode (bundle.getFileName(), "nt:file");
 			logger.info("creating new bundle node: " + bundle.getFileName() );
 			Node resNode = fileNode.addNode ("jcr:content", "nt:resource");
 			resNode.setProperty ("jcr:mimeType", mimeType);
-		    resNode.setProperty ("jcr:encoding", "");
-		    resNode.setProperty ("jcr:data", new BinaryValue(bundle.getBundleContent()));
-		    resNode.setProperty ("jcr:lastModified", System.currentTimeMillis());
-		    resourcePath = fileNode.getPath();
-		    
-		    logger.info("saving session: " + resNode.getPath());
+			resNode.setProperty ("jcr:encoding", "");
+			resNode.setProperty ("jcr:data", new BinaryValue(bundle.getBundleContent()));
+			resNode.setProperty ("jcr:lastModified", System.currentTimeMillis());
+			resourcePath = fileNode.getPath();
+
+			logger.info("saving session: " + resNode.getPath());
 			session.save();
 		}catch (LoginException e){
 			throw new ContentRepositoryServiceException(e);
@@ -206,8 +319,8 @@ public class ContentRepositoryService implements ArtifactService {
 			if(session!=null)
 				session.logout();
 		}
-		 
-		  return null;
+
+		return null;
 	}
 
 	public ExecutableMetadata getBundleMetadata(SimpleCredentials credentials, 
@@ -242,18 +355,26 @@ public class ContentRepositoryService implements ArtifactService {
 			if(session!=null)
 				session.logout();
 		}
-		 
-	
+
+
 		return null;
 	}
 
+	/**Returns the executable bundle
+	 * 
+	 * 
+	 * @param credentials
+	 * @param resourcePath
+	 * @return ExecutableBundle
+	 * @throws ContentRepositoryServiceException
+	 */
 	public ExecutableBundle getExecutableBundle(SimpleCredentials credentials,
 			ResourcePath resourcePath) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
 		Session session = null;
-		
+
 		try {
 			session = repository.login(credentials);
 			boolean exists=session.itemExists(resourcePath.getPath());
@@ -285,9 +406,9 @@ public class ContentRepositoryService implements ArtifactService {
 			if(session!=null)
 				session.logout();
 		}
-		 
-	
-		
+
+
+
 	}
 
 
@@ -300,7 +421,7 @@ public class ContentRepositoryService implements ArtifactService {
 		try {
 			session = repository.login(credentials);
 			session.save();
-			
+
 		} catch (AccessDeniedException e) {
 			throw new ContentRepositoryServiceException(e);
 		} catch (ItemExistsException e) {
@@ -321,9 +442,9 @@ public class ContentRepositoryService implements ArtifactService {
 			throw new ContentRepositoryServiceException(e);
 		}finally{
 			if(session!=null)
-			session.logout();
+				session.logout();
 		}
-		  return null;
+		return null;
 	}
 
 	public Repository getRepository() {
@@ -342,7 +463,7 @@ public class ContentRepositoryService implements ArtifactService {
 		Property encodingProperty = resNode.getProperty("jcr:encoding");
 		Property dataProperty = resNode.getProperty("jcr:data");
 		String fileName = fileNode.getName();
-		
+
 		String mimeType=mimeTypeProperty.getString();
 		String encodingType = encodingProperty.getString();
 		InputStream is = dataProperty.getBinary().getStream();
@@ -353,15 +474,15 @@ public class ContentRepositoryService implements ArtifactService {
 		} catch (IOException e) {
 			throw new ContentRepositoryServiceException(e);
 		}
-		
+
 		ExecutableBundle bundle = new ExecutableBundle();
 		bundle.setBundleContent(data);
 		bundle.setFileName(fileName);
 		bundle.setTypeName(ExecutableBundle.ExecutableType.C);
 		bundle.setId(fileNode.getIdentifier());
-		
-		
-		
+
+
+
 		return bundle;
 	}
 
@@ -383,6 +504,12 @@ public class ContentRepositoryService implements ArtifactService {
 		is.close();
 		return bytes;
 	}
+
+
+
+
+
+	
 
 
 }
