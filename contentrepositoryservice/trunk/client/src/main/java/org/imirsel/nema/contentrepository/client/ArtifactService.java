@@ -2,9 +2,10 @@ package org.imirsel.nema.contentrepository.client;
 
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
+
 
 import org.imirsel.nema.model.ExecutableMetadata;
-import org.imirsel.nema.model.NemaCredentials;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.ResourcePath;
@@ -26,7 +27,7 @@ public interface ArtifactService {
 	 * @throws RepositoryException 
 	 * @throws LoginException 
 	 */
-	public ResourcePath saveExecutableBundle(final NemaCredentials credentials,
+	public ResourcePath saveExecutableBundle(final SimpleCredentials credentials,
 			final String instanceId, final ExecutableBundle bundle) throws ContentRepositoryServiceException;
 	
 	/**Saves the flow -the flowContent and relevant metadata
@@ -39,7 +40,7 @@ public interface ArtifactService {
 	 * @throws RepositoryException 
 	 * @throws LoginException 
 	 */
-	public ResourcePath saveFlow(final NemaCredentials credentials, final Flow flow, 
+	public ResourcePath saveFlow(final SimpleCredentials credentials, final Flow flow, 
 			final String flowInstanceId, byte[] flowContent) throws ContentRepositoryServiceException;
 	
 	/** Returns the executable bundle -the byte array contains the the content.
@@ -50,7 +51,7 @@ public interface ArtifactService {
 	 * @throws RepositoryException 
 	 * @throws LoginException 
 	 */
-	public ExecutableBundle getExecutableBundle(final NemaCredentials credentials, 
+	public ExecutableBundle getExecutableBundle(final SimpleCredentials credentials, 
 			final ResourcePath path) throws ContentRepositoryServiceException;
 	
 	
@@ -62,7 +63,7 @@ public interface ArtifactService {
 	 * @throws RepositoryException 
 	 * @throws LoginException 
 	 */
-	public ExecutableMetadata getBundleMetadata(final NemaCredentials credentials, 
+	public ExecutableMetadata getBundleMetadata(final SimpleCredentials credentials, 
 			final ResourcePath path) throws ContentRepositoryServiceException;
 	
 	

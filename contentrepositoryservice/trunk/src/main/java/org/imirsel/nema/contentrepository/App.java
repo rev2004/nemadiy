@@ -18,6 +18,7 @@ import javax.jcr.SimpleCredentials;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
+import org.apache.jackrabbit.core.jndi.RegistryHelper;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 
 
@@ -38,6 +39,9 @@ public class App {
 	    }
 	     Node root = session.getRootNode();
 	     boolean nameExists=session.itemExists("/users/"+username);
+	     
+	     Node users = root.addNode("users","nt:folder");
+	     session.save();
 	    	// Store content
            /* Node hello = root.addNode("hello");
             Node world = hello.addNode("world");
@@ -82,7 +86,7 @@ public class App {
      * @return repository instance
      * @throws Exception on errors
      */
- /*   private static Repository getRepository() throws Exception {
+   private static Repository getRepository() throws Exception {
         String configFile = "/Users/amitku/projects/contentrepository/data/repository.xml";
         String repHomeDir = "/Users/amitku/projects/contentrepository/data";
 
@@ -95,7 +99,7 @@ public class App {
         RegistryHelper.registerRepository(ctx, "repo", configFile, repHomeDir, true);
         return (Repository) ctx.lookup("repo");
     }
-*/
+
 
 
 		
