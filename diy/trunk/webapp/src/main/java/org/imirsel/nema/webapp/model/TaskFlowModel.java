@@ -2,7 +2,7 @@ package org.imirsel.nema.webapp.model;
 
 import java.io.Serializable;
 
-public class TaskSelection implements Serializable{
+public class TaskFlowModel implements Serializable{
   /**
 	 * 
 	 */
