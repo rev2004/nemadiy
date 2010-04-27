@@ -8,56 +8,60 @@
 	<var name="taskFlowModel" class="org.imirsel.nema.webapp.model.TaskFlowModel" />
 	<var name="flow" class="org.imirsel.nema.model.Flow" />
 	<var name="componentList" class="java.util.ArrayList" />
-	<view-state id="taskSelection" model="taskFlowModel">
-
-		<on-render>
+	
+	<view-state id="selectTask" model="taskFlowModel">
+		<on-entry>
 			<evaluate expression="flowService.getFlowTemplates()"
-				result="viewScope.flowSet"></evaluate>
-		</on-render>
-		<transition on="show" to="parameterForm">
+				result="flowScope.flowSet"></evaluate>
+		</on-entry>
+		<transition on="show" to="displayFlowComponents">
 			<evaluate expression="flowService.getFlow(taskFlowModel.id)"
 				result="flow" />
 			<evaluate expression="tasksService.fillDefaultParameter(flow)"
-				result="flowScope.paramterMap" />
+				result="flowScope.parameterMap" />
 			<evaluate expression="flowService.getComponents(flow.getUri())"
 				result="componentList" />
 		</transition>
 	</view-state>
-	<view-state id="parameterForm" model="taskFlowModel">
+	
+	<view-state id="displayFlowComponents" model="taskFlowModel">
 		<on-render>
 			<set name="taskFlowModel.name" value="flow.name" />
 			<set name="taskFlowModel.description" value="flow.description" />
 		</on-render>
-		<transition on="edit" to="editor" />
+		<transition on="edit" to="editComponentProperties"/>
 		<transition on="test" to="test" />
-		<transition on="cancel" to="taskSelection" />
-		<transition on="clear" to="parameterForm" />
+		<transition on="cancel" to="selectTask" />
+		<transition on="clear" to="displayFlowComponents" />
 	</view-state>
+	
 	<view-state id="test">
 		<transition on="test" to="runTest" />
 		<transition on="run" to="run" />
-		<transition on="cancel" to="parameterForm" />
+		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
-	<view-state id="editor">
-		<on-render>
+	
+	<view-state id="editComponentProperties">
+		<on-entry>
 			<evaluate expression="tasksService.getRoles()" result="viewScope.userRoles" />
 			<evaluate expression="componentList.get(requestParameters.idx)"
 				result="viewScope.component" />
-			<evaluate expression="tasksService.test(requestParameters.idx)" />
 			<evaluate
 				expression="flowService.getComponentPropertyDataType(viewScope.component, flow.getUri())"
 				result="viewScope.datatypeMap" />
-		</on-render>
-		<transition on="save" to="parameterForm">
+		</on-entry>
+		<transition on="save" to="displayFlowComponents">
 			<evaluate expression="tasksService.saveParameter(flowRequestContext)"></evaluate>
 		</transition>
-		<transition on="cancel" to="parameterForm" />
+		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
+	
 	<action-state id="runTest">
 		<evaluate expression="taskService.testRun(flow)" />
 		<transition on="yes" to="test" />
 		<transition on="no" to="test" />
 	</action-state>
+	
 	<action-state id="run">
 		<evaluate expression="taskService.run(flow)" />
 		<transition on="yes" to="joblist" />
