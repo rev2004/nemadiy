@@ -7,7 +7,7 @@
 
 <body id="jobstype"/>
 
-<form:form commandName="flow">
+<form:form commandName="taskFlowModel">
 <h2>Select Task</h2>
 Please select a task to create your job for:
 <form:select path="id" items="${flowSet}" itemLabel="name" itemValue="id" ></form:select>

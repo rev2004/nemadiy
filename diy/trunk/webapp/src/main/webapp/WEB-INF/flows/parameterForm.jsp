@@ -16,7 +16,7 @@ description and the parameters to run the flow.</p>
 <br />
 
 <div id="formcontainer_job">
-<div class="form_job"><form:form commandName="flow">
+<div class="form_job"><form:form commandName="taskFlowModel">
 
 	<fieldset id="pt1"><label>Please enter Task Name:</label> <form:input
 		path="name" /></fieldset>

@@ -4,29 +4,32 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-	
+
+	<var name="taskFlowModel" class="org.imirsel.nema.webapp.model.TaskFlowModel" />
 	<var name="flow" class="org.imirsel.nema.model.Flow" />
 	<var name="componentList" class="java.util.ArrayList" />
-	<view-state id="taskSelection" model="flow">
+	<view-state id="taskSelection" model="taskFlowModel">
 
 		<on-render>
 			<evaluate expression="flowService.getFlowTemplates()"
 				result="viewScope.flowSet"></evaluate>
 		</on-render>
-		<transition on="show" to="parameterForm" />
-	</view-state>
-	<view-state id="parameterForm" model="flow">
-		<on-render>
-
-			<evaluate expression="flowService.getFlow(flow.id)" result="flow" />
+		<transition on="show" to="parameterForm">
+			<evaluate expression="flowService.getFlow(taskFlowModel.id)"
+				result="flow" />
+			<evaluate expression="tasksService.fillDefaultParameter(flow)"
+				result="flowScope.paramterMap" />
 			<evaluate expression="flowService.getComponents(flow.getUri())"
 				result="componentList" />
-				
-			<evaluate expression="tasksService.fillDefaultParameters(flow)" result="flowScope.paramterMap"/>
-			<!-- evaluate expression="java.util.Collections.sort(componentList)"/-->
+		</transition>
+	</view-state>
+	<view-state id="parameterForm" model="taskFlowModel">
+		<on-render>
+			<set name="taskFlowModel.name" value="flow.name" />
+			<set name="taskFlowModel.description" value="flow.description" />
 		</on-render>
 		<transition on="edit" to="editor" />
-		<transition on="test" to="test"/>
+		<transition on="test" to="test" />
 		<transition on="cancel" to="taskSelection" />
 		<transition on="clear" to="parameterForm" />
 	</view-state>
@@ -45,7 +48,9 @@
 				expression="flowService.getComponentPropertyDataType(viewScope.component, flow.getUri())"
 				result="viewScope.datatypeMap" />
 		</on-render>
-		<transition on="save" to="parameterForm" />
+		<transition on="save" to="parameterForm">
+			<evaluate expression="tasksService.saveParameter(flowRequestContext)"></evaluate>
+		</transition>
 		<transition on="cancel" to="parameterForm" />
 	</view-state>
 	<action-state id="runTest">
@@ -60,5 +65,5 @@
 	</action-state>
 
 	<end-state id="joblist"
-		view="externalRedirect:contextRelative:get/JobManager.getUserJobs" />
+		view="externalRedirect:contextRelative:get/JosbManager.getUserJobs" />
 </flow>
