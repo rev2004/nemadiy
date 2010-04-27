@@ -21,6 +21,7 @@ public class ContentRepositoryTestUtil {
 	static ExecutableBundle getExecutableBundle() {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("ENV1", "VALUE1");
+		map.put("ENV2", "VALUE2");
 
 		ExecutableBundle bundle = new ExecutableBundle();
 

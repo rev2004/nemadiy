@@ -1,8 +1,9 @@
 package org.imirsel.nema.contentrepository.client;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.jcr.AccessDeniedException;
@@ -17,25 +18,24 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.Workspace;
+import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.version.VersionException;
 import javax.jcr.LoginException;
 
-import org.apache.jackrabbit.api.JackrabbitNodeTypeManager;
 import org.apache.jackrabbit.commons.NamespaceHelper;
-import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.apache.jackrabbit.value.BinaryValue;
 import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
+import org.imirsel.nema.model.ExecutableBundle.ExecutableType;
 
 import sun.net.www.MimeTable;
 
@@ -65,6 +65,12 @@ public class ContentRepositoryService implements ArtifactService {
 		boolean exists=false;
 		try{
 			session = repository.login(credentials);
+			
+			NamespaceHelper namespaceHelper = new NamespaceHelper(session);
+			namespaceHelper.registerNamespace("imirsel","http://www.imirsel.org/jcr");
+			namespaceHelper.registerNamespace("exec","http://www.imirsel.org/jcr/exec");
+			
+			
 			NodeTypeManager nodeTypeManager=session.getWorkspace().getNodeTypeManager();
 			NodeType nodeType=nodeTypeManager.getNodeType("exec:file");
 			if(nodeType==null){
@@ -188,7 +194,7 @@ public class ContentRepositoryService implements ArtifactService {
 			Node flowInstanceDirNode=null;
 			String userDirPath ="/"+USERS_DIR+"/"+credentials.getUserID();
 			String flowDirPath = userDirPath +"/"+FLOWS_DIR;
-			String executableDirPath=flowDirPath+"/"+flowInstanceId+"/"+EXECUTOR_BUNDLE_DIR;
+			String executableDirPath=flowDirPath+"/"+EXECUTOR_BUNDLE_DIR;
 			String flowInstanceDirPath = executableDirPath +"/"+ flowInstanceId;
 
 			logger.info("checking if the executableDirPath exists: " + executableDirPath);
@@ -230,7 +236,7 @@ public class ContentRepositoryService implements ArtifactService {
 
 			}else{
 				logger.info("dir path exists using the existing directory");
-				executableDirNode=root.getNode(executableDirPath);
+				executableDirNode=session.getNode(executableDirPath);
 				if(session.itemExists(flowInstanceDirPath)){
 					flowInstanceDirNode=root.getNode(flowInstanceDirPath);
 				}else{
@@ -247,13 +253,26 @@ public class ContentRepositoryService implements ArtifactService {
 			logger.info("mimetype of the bundle: " + mimeType);
 
 
-			Node fileNode = flowInstanceDirNode.addNode (bundle.getFileName(), "nt:file");
+			Node fileNode = flowInstanceDirNode.addNode (bundle.getFileName(), "exec:file");
+			fileNode.setProperty("executableName", bundle.getExecutableName());
+			fileNode.setProperty("typeName", bundle.getTypeName());
+			fileNode.setProperty("execId", bundle.getId());
+			fileNode.setProperty("commandLineFlags", bundle.getCommandLineFlags());
+			fileNode.setProperty("mainClass", bundle.getMainClass());
+			
+			if(bundle.getEnvironmentVariables()!=null){
+				fileNode.setProperty("environmentVariables", getKeyValuePairs(bundle.getEnvironmentVariables()));
+			}
+			
+			
 			logger.info("creating new bundle node: " + bundle.getFileName() );
 			Node resNode = fileNode.addNode ("jcr:content", "nt:resource");
 			resNode.setProperty ("jcr:mimeType", mimeType);
 			resNode.setProperty ("jcr:encoding", "");
 			resNode.setProperty ("jcr:data", new BinaryValue(bundle.getBundleContent()));
 			resNode.setProperty ("jcr:lastModified", System.currentTimeMillis());
+			
+		
 			resourcePath = fileNode.getPath();
 
 			logger.info("saving session: " + resNode.getPath());
@@ -286,6 +305,16 @@ public class ContentRepositoryService implements ArtifactService {
 		}
 		return new RepositoryResourcePath(resourcePath);
 	}
+
+	private String[] getKeyValuePairs(Map<String, String> environmentVariables) {
+		String[] values = new String[environmentVariables.size()];
+		int count=0;
+		for(String key:environmentVariables.keySet()){
+			values[count] = key+"="+environmentVariables.get(key);
+		}
+		return values;
+	}
+
 
 	public ResourcePath saveFlow(SimpleCredentials credentials, Flow flow,
 			String flowInstanceId, byte[] flowContent) throws ContentRepositoryServiceException {
@@ -458,6 +487,32 @@ public class ContentRepositoryService implements ArtifactService {
 
 	private ExecutableBundle retrieveExecutableBundleFromNode(Node fileNode) 
 	throws PathNotFoundException, RepositoryException, ContentRepositoryServiceException {
+		
+		Property executableNameProperty=fileNode.getProperty("executableName");
+		Property typeNameProperty=fileNode.getProperty("typeName");
+		Property execIdProperty=fileNode.getProperty("execId");
+		Property commandLineFlagsProperty=fileNode.getProperty("commandLineFlags");
+		Property mainClassProperty=fileNode.getProperty("mainClass");
+		Property envProperty=fileNode.getProperty("environmentVariables");
+		
+		ExecutableBundle bundle = new ExecutableBundle();
+		
+		String  executableName = executableNameProperty.getString();
+		String typeName = typeNameProperty.getString();
+		String execId =  execIdProperty.getString();
+		String commandLineFlags = commandLineFlagsProperty.getString();
+		String mainClass = mainClassProperty.getString();
+		Value[] values = envProperty.getValues();
+		Map env = getMapfromKeyValuePairs(values);
+		
+		bundle.setTypeName(ExecutableType.valueOf(typeName));
+		bundle.setId(execId);
+		bundle.setCommandLineFlags(commandLineFlags);
+		bundle.setMainClass(mainClass);
+		bundle.setEnvironmentVariables(env);
+		bundle.setExecutableName(executableName);
+		
+		
 		Node resNode = fileNode.getNode ("jcr:content");
 		Property mimeTypeProperty = resNode.getProperty("jcr:mimeType");
 		Property encodingProperty = resNode.getProperty("jcr:encoding");
@@ -475,7 +530,7 @@ public class ContentRepositoryService implements ArtifactService {
 			throw new ContentRepositoryServiceException(e);
 		}
 
-		ExecutableBundle bundle = new ExecutableBundle();
+		
 		bundle.setBundleContent(data);
 		bundle.setFileName(fileName);
 		bundle.setTypeName(ExecutableBundle.ExecutableType.C);
@@ -485,6 +540,20 @@ public class ContentRepositoryService implements ArtifactService {
 
 		return bundle;
 	}
+
+	private Map getMapfromKeyValuePairs(Value[] values) 
+	throws ValueFormatException, IllegalStateException, RepositoryException {
+		Map hmap = new HashMap<String,String>();
+		for(Value value:values){
+			String keyValue = value.getString();
+			String[] kv=keyValue.split("=");
+			if(kv.length==2){
+				hmap.put(kv[0], kv[1]);
+			}
+		}
+		return hmap;
+	}
+
 
 	private byte[] readByteDataFromStream(InputStream is, long length) throws IOException {
 		// Create the byte array to hold the data
