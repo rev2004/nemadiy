@@ -44,6 +44,7 @@ public interface ArtifactService {
 	public ResourcePath saveFlow(final SimpleCredentials credentials, final Flow flow, 
 			final String flowInstanceId, byte[] flowContent) throws ContentRepositoryServiceException;
 	
+	
 	/** Returns the executable bundle -the byte array contains the the content.
 	 * 
 	 * @param credentials The credentials to access the bundle

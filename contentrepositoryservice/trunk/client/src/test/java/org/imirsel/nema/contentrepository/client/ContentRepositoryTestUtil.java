@@ -33,7 +33,7 @@ public class ContentRepositoryTestUtil {
 		byte[] fileContent = null;
 
 		try {
-			fileContent = readFileContent("client/src/resources/test.zip");
+			fileContent = readFileContent("client/src/test/resources/test.zip");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -44,6 +44,18 @@ public class ContentRepositoryTestUtil {
 		return bundle;
 
 	}
+	
+	public static byte[] getFlowContent() {
+		byte[] fileContent = null;
+		try {
+			fileContent = readFileContent("client/src/test/resources/test.nt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return fileContent;
+	}
+
 
 	private static byte[] readFileContent(String filename) throws IOException {
 		File file = new File(filename);
@@ -69,8 +81,7 @@ public class ContentRepositoryTestUtil {
 
 		// Ensure all the bytes have been read in
 		if (offset < bytes.length) {
-			throw new IOException("Could not completely read file "
-					+ file.getName());
+			throw new IOException("Could not completely read file "+ file.getName());
 		}
 
 		// Close the input stream and return bytes
@@ -99,6 +110,7 @@ public class ContentRepositoryTestUtil {
 				repositoryHome, true);
 		return (Repository) ctx.lookup("repo");
 	}
+
 
 
 }

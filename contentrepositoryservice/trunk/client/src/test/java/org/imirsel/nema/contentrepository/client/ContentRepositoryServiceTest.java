@@ -40,7 +40,8 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 			System.out.println("repository deleted: " + success);
 		}
 		file.mkdir();
-		String configFile = copyFile("client/src/resources/repository.xml",file.getAbsolutePath());
+		String configFile = copyFile("client/src/test/resources/repository.xml",
+				file.getAbsolutePath());
 		String repHomeDir = file.getAbsolutePath();
 		repository = ContentRepositoryTestUtil.getRepository(configFile, repHomeDir);
 		nemaCredentials = new SimpleCredentials("user", "user".toCharArray());
