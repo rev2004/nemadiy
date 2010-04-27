@@ -12,6 +12,7 @@ import javax.jcr.SimpleCredentials;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.RepositoryResourcePath;
+import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.test.BaseManagerTestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -46,6 +47,17 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		assertEquals(isValid,true);
 	}
 	
+	
+	@Test
+	public void testSaveExecutableBundle() throws ContentRepositoryServiceException {
+		ContentRepositoryService crs = new ContentRepositoryService();
+		crs.setRepository(repository);
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getExecutableBundle();
+		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlow", bundle);
+		System.out.println(rp.getPath());
+		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlow/test.zip");
+	}
+
 	
 	
 	public void testGetExecutableBundle() {
