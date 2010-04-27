@@ -9,7 +9,7 @@
 <body id="welcomeMenu"/>
 
 <div style="margin-left:30px">
-	<H3  align="left">NEMA Introduction</H3>
+	<H3  align="left">Music Analysis Made Simpler</H3>
 	<p align="left">
 	Phase I of the Networked Environment for Music Analysis (NEMA) framework project is a multinational, 
 	multidisciplinary cyberinfrastructure project for music information processing that builds upon and 
