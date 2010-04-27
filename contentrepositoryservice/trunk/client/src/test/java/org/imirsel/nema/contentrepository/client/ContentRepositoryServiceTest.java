@@ -2,9 +2,20 @@ package org.imirsel.nema.contentrepository.client;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+
+import javax.jcr.LoginException;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Workspace;
+import javax.jcr.nodetype.NodeTypeIterator;
+
+import org.apache.jackrabbit.api.JackrabbitNodeTypeManager;
+import org.apache.jackrabbit.commons.NamespaceHelper;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.ResourcePath;
@@ -59,27 +70,44 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 
 	}
 
-	@Test
-	public void testSaveFlow() {
-		fail("Not yet implemented");
+	
+	
+	public void registerNodes() throws LoginException, RepositoryException, IOException{
+		Session session = repository.login(nemaCredentials);
+	    NamespaceHelper namespaceHelper = new NamespaceHelper(session);
+	    namespaceHelper.registerNamespace("imirsel","http://www.imirsel.org/jcr");
+	
+	     JackrabbitNodeTypeManager manager =
+	    (JackrabbitNodeTypeManager) session.getWorkspace().getNodeTypeManager();
+	    
+	    NodeTypeIterator nti=manager.getAllNodeTypes();
+	    while(nti.hasNext()){
+	    	System.out.println(nti.nextNodeType().getName());
+	    }
+	    
+	    // create exec file
+	    if(!manager.hasNodeType("exec:file")){
+	   	   if (!manager.hasNodeType("ns:file")){
+	        String cnd = "<exec = 'http://www.imirsel.org/jcr/exec'>\n";
+	        cnd += "[exec:file] > nt:file\n";
+	        cnd += "- execId (STRING) mandatory\n";
+	        cnd += "- typeName (STRING) mandatory\n";
+	        cnd += "- mainClass (STRING) mandatory ignore\n";
+	        cnd += "- executableName (STRING) mandatory ignore\n";
+	        cnd += "- commandLineFlags (STRING) mandatory\n";
+	    
+	        
+	        byte cndArray[] = cnd.getBytes();
+	        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(cndArray);
+	        manager.registerNodeTypes(byteArrayInputStream,JackrabbitNodeTypeManager.TEXT_X_JCR_CND); 
+	        byteArrayInputStream.close();
+		  }
+	    }	  
+         session.save();
+         session.logout();
 	}
 
-	@Test
-	public void testGetBundleMetadataNemaCredentialsString() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetExecutableBundle() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetBundleMetadataNemaCredentialsResourcePath() {
-		fail("Not yet implemented");
-	}
-
-
+	
 
 	
 
