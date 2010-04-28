@@ -57,13 +57,13 @@
 	</view-state>
 	
 	<action-state id="runTest">
-		<evaluate expression="taskService.testRun(flow)" />
+		<evaluate expression="taskService.testRun(flow,parameterMap,taskFlowModel.name,taskFlowModel.description)" />
 		<transition on="yes" to="test" />
 		<transition on="no" to="test" />
 	</action-state>
 	
 	<action-state id="run">
-		<evaluate expression="taskService.run(flow)" />
+		<evaluate expression="taskService.run(flow,parameterMap,taskFlowModel.name,taskFlowModel.descriptions)" />
 		<transition on="yes" to="joblist" />
 		<transition on="no" to="fail" />
 	</action-state>

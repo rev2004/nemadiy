@@ -1,13 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<%@ include file="/common/taglibs.jsp"%>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
 </head>
 <body>
-<form><input type="submit" name="_eventId_run" value="run" /><input
-	type="submit" name="_eventId_cancel" value="cancel" /></form>
+<table>
+<thead><h4>Parameters:</h4></thead>
+<c:forEach var="property" items="${parameterMap}">
+<tr><td><c:out value="${property.key}"/></td><td><c:out value="${property.value}"/></td></tr>
+</c:forEach>
+</table>
+<form><input type="submit" name="_eventId_test" value="test" /><input
+	type="submit" name="_eventId_run" value="run" /><input type="submit"
+	name="_eventId_cancel" value="cancel" /></form>
 </body>
-</html>
