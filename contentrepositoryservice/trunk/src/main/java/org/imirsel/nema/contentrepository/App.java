@@ -25,10 +25,10 @@ import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 public class App {
 	
 	public static void main(String args[]) throws Exception{
-		String RMI_URL = "rmi://localhost:2099/jackrabbit.repository";
+		//String RMI_URL = "rmi://localhost:2099/jackrabbit.repository";
 		ClientRepositoryFactory factory = new ClientRepositoryFactory();
-		//Repository repository = getRepository();
-		Repository repository = factory.getRepository(RMI_URL);
+		Repository repository = getRepository();
+		//Repository repository = factory.getRepository(RMI_URL);
 		String username = "user";
 		String password = "user";
 	    Session session = repository.login(new SimpleCredentials(username,password.toCharArray()));
@@ -77,6 +77,10 @@ public class App {
          }
          session.save();
          session.logout();
+         
+         Object object = new Object();
+         object.wait();
+         
          
     }
 

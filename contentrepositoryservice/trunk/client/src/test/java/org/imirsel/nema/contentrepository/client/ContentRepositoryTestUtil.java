@@ -2,8 +2,10 @@ package org.imirsel.nema.contentrepository.client;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -110,7 +112,89 @@ public class ContentRepositoryTestUtil {
 				repositoryHome, true);
 		return (Repository) ctx.lookup("repo");
 	}
+	
+	
+	public static Repository getProductionRepository() throws Exception{
+		String configFile = "/Users/amitku/projects/contentrepository/data/repository.xml";
+		String repHomeDir="/Users/amitku/projects/contentrepository/data";
+		
+		if(!new File(configFile).exists()){
+			throw new IOException("File: " + configFile +"  does not exist");
+		}
+		if(!new File(repHomeDir).exists()){
+			throw new IOException("File: " + repHomeDir +"  does not exist");
+		}
+		return getRepository(configFile,repHomeDir);
+	}
 
+	/**
+	 * Returns repository object
+	 * 
+	 * @return a repository object that gets reset for each test
+	 * @throws Exception
+	 */
+	public static Repository getTempRepository() throws Exception {
+		String tmpFolder = System.getProperty("java.io.tmpdir");
+		File file = new File(tmpFolder, "data");
+		if (file.exists()) {
+			boolean success = deleteDirectory(file);
+			System.out.println("repository deleted: " + success);
+		}
+		file.mkdir();
+		String configFile = copyFile("client/src/test/resources/repository.xml",
+				file.getAbsolutePath());
+		String repHomeDir = file.getAbsolutePath();
+		
+		return getRepository(configFile,repHomeDir);
+	}
+
+	
+	/**Copies file
+	 * 
+	 * @param configFile
+	 * @param dirPath
+	 * @return file path
+	 * @throws IOException
+	 */
+	public static String copyFile(String configFile, String dirPath)
+			throws IOException {
+		File src = new File(configFile);
+		if (!src.exists()) {
+			throw new IOException("Source does not exist "
+					+ src.getAbsolutePath());
+		}
+		File dst = new File(dirPath, src.getName());
+		InputStream in = new FileInputStream(src);
+		OutputStream out = new FileOutputStream(dst); // Transfer bytes from in
+		// to out
+		byte[] buf = new byte[1024];
+		int len;
+		while ((len = in.read(buf)) > 0) {
+			out.write(buf, 0, len);
+		}
+		in.close();
+		out.close();
+		return dst.getAbsolutePath();
+	}
+
+	/**Deletes a directory
+	 * 
+	 * @param path
+	 * @return boolean true or false
+	 */
+	public static boolean deleteDirectory(File path) {
+		if (path.exists()) {
+			File[] files = path.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
+					deleteDirectory(files[i]);
+				} else {
+					files[i].delete();
+				}
+			}
+		}
+		return (path.delete());
+	}
 
 
 }

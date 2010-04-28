@@ -52,7 +52,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	}
 	
 	
-	@Test
+	
 	public void testSaveFlow() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
@@ -70,6 +70,20 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		flow.setUri("http://www.imirsel.org/test/testinstanceFlow");
 		ResourcePath rp=crs.saveFlow(nemaCredentials, flow, flowInstanceId, flowContent);
 		assertEquals(rp.getPath(),"/users/user/flows/flowInstance/flowInstance");
+	}
+	
+	@Test
+	public void testFileSystemPath() throws ContentRepositoryServiceException{
+		ContentRepositoryService crs = new ContentRepositoryService();
+		crs.setRepository(repository);
+		RepositoryResourcePath resourcePath = new RepositoryResourcePath("/users/user/flows/executables/testFlow/test.zip");
+		String fileSystemPath=crs.getExecutableBundleFSPath(nemaCredentials, resourcePath);
+		System.out.println("FS Path is: " + fileSystemPath);
+	}
+	
+	
+	public void testHttpUrlForResource(){
+		
 	}
 	
 	
