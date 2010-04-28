@@ -6,6 +6,7 @@
     <artifactId>nema-contentrepository-service</artifactId>
     <groupId>org.imirsel</groupId>
     <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.imirsel</groupId>
   <artifactId>nema-contentrepository-service-client</artifactId>

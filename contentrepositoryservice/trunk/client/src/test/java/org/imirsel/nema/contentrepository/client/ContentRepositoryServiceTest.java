@@ -3,7 +3,7 @@ package org.imirsel.nema.contentrepository.client;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
+
 import java.io.IOException;
 
 import javax.jcr.LoginException;
@@ -11,13 +11,13 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeTypeIterator;
 
 import org.apache.jackrabbit.api.JackrabbitNodeTypeManager;
 import org.apache.jackrabbit.commons.NamespaceHelper;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.model.ExecutableBundle;
+import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.test.BaseManagerTestCase;
 
@@ -27,23 +27,13 @@ import org.junit.Test;
 
 public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 
-	SimpleCredentials nemaCredentials;
-	Repository repository = null;
-	ClientRepositoryFactory factory = new ClientRepositoryFactory();
+	private SimpleCredentials nemaCredentials;
+	private Repository repository = null;
+	private ClientRepositoryFactory factory = new ClientRepositoryFactory();
 
 	@Before
 	public void setUp() throws Exception {
-		String tmpFolder = System.getProperty("java.io.tmpdir");
-		File file = new File(tmpFolder, "data");
-		if (file.exists()) {
-			boolean success = deleteDirectory(file);
-			System.out.println("repository deleted: " + success);
-		}
-		file.mkdir();
-		String configFile = copyFile("client/src/test/resources/repository.xml",
-				file.getAbsolutePath());
-		String repHomeDir = file.getAbsolutePath();
-		repository = ContentRepositoryTestUtil.getRepository(configFile, repHomeDir);
+		repository = ContentRepositoryTestUtil.getTempRepository();
 		nemaCredentials = new SimpleCredentials("user", "user".toCharArray());
 		if (repository == null) {
 			throw new Exception("Repository is null...");
@@ -56,11 +46,14 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 	}
 
 	@Test
-	public void testSaveExecutableBundle() {
+	public void testSaveExecutableBundle() throws ContentRepositoryServiceException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
+		crs.validateNodeTypes(nemaCredentials);
 		ExecutableBundle bundle = ContentRepositoryTestUtil.getExecutableBundle();
 		try {
+			crs.removeExecutableBundle(nemaCredentials,
+					new RepositoryResourcePath("/users/user/flows/executables/testFlow/test.zip"));
 			ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,
 					"testFlow", bundle);
 			System.out.println(rp.getPath());
