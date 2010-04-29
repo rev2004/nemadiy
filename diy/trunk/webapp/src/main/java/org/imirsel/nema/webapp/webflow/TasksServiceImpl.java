@@ -163,6 +163,8 @@ public class TasksServiceImpl implements TasksService {
 			throws MeandreServerException {
 		String token = System.currentTimeMillis() + "-token";
 
+		System.out.print("start saveParameter");
+		logger.debug("start to save parameter");
 		HttpServletRequest req = (HttpServletRequest) context
 				.getExternalContext().getNativeRequest();
 		ServletContext servletContext = (ServletContext) context
@@ -193,6 +195,7 @@ public class TasksServiceImpl implements TasksService {
 		try {
 			List<FileItem> items = upload.parseRequest(req);
 			Iterator<FileItem> iter = items.iterator();
+			logger.debug("start to save parameters #"+items.size());
 			while (iter.hasNext()) {
 				FileItem item = iter.next();
 				if (item.isFormField()) {

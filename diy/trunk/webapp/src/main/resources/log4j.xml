@@ -18,7 +18,9 @@
     <logger name="org.springframework.security">
         <level value="ERROR"/>
     </logger>
-
+    <logger name="org.springframework.webflow">
+        <level value="DEBUG"/>
+    </logger>
     <logger name="org.apache">
         <level value="WARN"/>
     </logger>
