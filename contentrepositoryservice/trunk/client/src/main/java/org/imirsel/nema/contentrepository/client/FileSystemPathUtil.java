@@ -132,7 +132,7 @@ public final class FileSystemPathUtil {
      * @param pathOrName the escaped path/name
      * @return the unescaped path/name
      */
-    public static String unescape(String pathOrName) {
+    public static String unescape(final String pathOrName) {
         ByteArrayOutputStream out = new ByteArrayOutputStream(pathOrName.length());
         for (int i = 0; i < pathOrName.length(); i++) {
             char c = pathOrName.charAt(i);
@@ -161,7 +161,7 @@ public final class FileSystemPathUtil {
 	 * @param index
 	 * @return
 	 */
-	static String getFSPathFromPropertyId(String id, String name, int index) {
+	static String getFSPathFromPropertyId(final String id,final String name,final int index) {
 	      // the blobId is an absolute file system path
         StringBuffer sb = new StringBuffer();
         sb.append("/");

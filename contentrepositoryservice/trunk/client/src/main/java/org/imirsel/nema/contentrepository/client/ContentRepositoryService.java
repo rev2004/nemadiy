@@ -51,7 +51,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return
 	 * @throws ContentRepositoryServiceException
 	 */
-	public boolean validateNodeTypes(SimpleCredentials credentials) throws ContentRepositoryServiceException {
+	public boolean validateNodeTypes(final SimpleCredentials credentials) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -104,7 +104,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 *  @return returns boolean true/false
 	 *  @throws ContentRepositoryServiceException
 	 */
-	public boolean exists(SimpleCredentials credentials,RepositoryResourcePath resourcePath)
+	public boolean exists(final SimpleCredentials credentials,final RepositoryResourcePath resourcePath)
 			throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
@@ -135,8 +135,8 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return
 	 * @throws ContentRepositoryServiceException
 	 */
-	public boolean removeExecutableBundle(SimpleCredentials credentials,
-			RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException{
+	public boolean removeExecutableBundle(final SimpleCredentials credentials,
+			final RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException{
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -173,8 +173,8 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @param bundle 
 	 * @throws ContentRepositoryServiceException
 	 */
-	public ResourcePath saveExecutableBundle(SimpleCredentials credentials, String flowInstanceId,
-			ExecutableBundle bundle) throws ContentRepositoryServiceException {
+	public ResourcePath saveExecutableBundle(final SimpleCredentials credentials, final String flowInstanceId,
+			final ExecutableBundle bundle) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -293,8 +293,8 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return resource path 
 	 * @throws ContentRepositoryServiceException
 	 */
-	public ResourcePath saveFlow(SimpleCredentials credentials, Flow flow,
-			String flowInstanceId, byte[] flowContent) throws ContentRepositoryServiceException {
+	public ResourcePath saveFlow(final SimpleCredentials credentials, final Flow flow,
+			final String flowInstanceId,final byte[] flowContent) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -391,8 +391,8 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return ExecutableBundle
 	 * @throws ContentRepositoryServiceException
 	 */
-	public ExecutableBundle getExecutableBundle(SimpleCredentials credentials,
-			ResourcePath resourcePath) throws ContentRepositoryServiceException {
+	public ExecutableBundle getExecutableBundle(final SimpleCredentials credentials,
+			final ResourcePath resourcePath) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -424,8 +424,8 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return metadata for the executable bundle
 	 * @throws ContentRepositoryServiceException
 	 */
-	public ExecutableMetadata getBundleMetadata(SimpleCredentials credentials,
-			ResourcePath resourcePath) throws ContentRepositoryServiceException{
+	public ExecutableMetadata getBundleMetadata(final SimpleCredentials credentials,
+			final ResourcePath resourcePath) throws ContentRepositoryServiceException{
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -448,7 +448,7 @@ public class ContentRepositoryService implements ArtifactService {
 	}
 
 	
-	public String getExecutableBundleFSPath(SimpleCredentials credentials,RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException {
+	public String getExecutableBundleFSPath(final SimpleCredentials credentials,final RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -484,7 +484,7 @@ public class ContentRepositoryService implements ArtifactService {
 		this.repository = repository;
 	}
 
-	private ExecutableBundle retrieveExecutableBundleFromNode(Node fileNode) 
+	private ExecutableBundle retrieveExecutableBundleFromNode(final Node fileNode) 
 	throws PathNotFoundException, RepositoryException, ContentRepositoryServiceException {
 		
 		Property executableNameProperty=fileNode.getProperty("executableName");
@@ -540,7 +540,7 @@ public class ContentRepositoryService implements ArtifactService {
 		return bundle;
 	}
 		
-	private ExecutableMetadata retrieveExecutableMetadataFromNode(Node fileNode) 
+	private ExecutableMetadata retrieveExecutableMetadataFromNode(final Node fileNode) 
 	throws PathNotFoundException, RepositoryException, ContentRepositoryServiceException {
 		
 		Property executableNameProperty=fileNode.getProperty("executableName");
@@ -575,7 +575,7 @@ public class ContentRepositoryService implements ArtifactService {
 		return bundle;
 	}
 
-	private Map<String,String> getMapfromKeyValuePairs(Value[] values) 
+	private Map<String,String> getMapfromKeyValuePairs(final Value[] values) 
 	throws ValueFormatException, IllegalStateException, RepositoryException {
 		Map<String,String> hmap = new HashMap<String,String>();
 		for(Value value:values){
@@ -588,7 +588,7 @@ public class ContentRepositoryService implements ArtifactService {
 		return hmap;
 	}
 
-	private byte[] readByteDataFromStream(InputStream is, long length) throws IOException {
+	private byte[] readByteDataFromStream(final InputStream is, final long length) throws IOException {
 		// Create the byte array to hold the data
 		byte[] bytes = new byte[(int) length];
 		// Read in the bytes
@@ -607,7 +607,7 @@ public class ContentRepositoryService implements ArtifactService {
 		return bytes;
 	}
 
-	private String[] getKeyValuePairs(Map<String, String> environmentVariables) {
+	private String[] getKeyValuePairs(final Map<String, String> environmentVariables) {
 		String[] values = new String[environmentVariables.size()];
 		int count=0;
 		for(String key:environmentVariables.keySet()){
