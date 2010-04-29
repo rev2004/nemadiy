@@ -152,6 +152,39 @@ public final class FileSystemPathUtil {
         return new String(out.toByteArray());
     }
 
- 
+
+	/**converts a the property id to a file system resource
+	 * -copied verbatim from the jackrabbit 2.1.0 implementation
+	 * 
+	 * @param id
+	 * @param name
+	 * @param index
+	 * @return
+	 */
+	static String getFSPathFromPropertyId(String id, String name, int index) {
+	      // the blobId is an absolute file system path
+        StringBuffer sb = new StringBuffer();
+        sb.append("/");
+        char[] chars = id.toString().toCharArray();
+        int cnt = 0;
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '-') {
+                continue;
+            }   
+            //if (cnt > 0 && cnt % 4 == 0) {
+            if (cnt == 2 || cnt == 4) {
+                sb.append("/");
+            }   
+            sb.append(chars[i]);
+            cnt++;
+        }   
+        sb.append("/");
+        sb.append(FileSystemPathUtil.escapeName(name));
+        sb.append('.');
+        sb.append(index);
+        sb.append(".bin");
+        return sb.toString();
+	}
+
 
 }
