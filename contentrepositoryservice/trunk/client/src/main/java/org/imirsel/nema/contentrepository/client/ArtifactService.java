@@ -93,6 +93,14 @@ public interface ArtifactService {
 			RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException;
 			
 	
+	/**Validates the node types that are required to be present in the content repository.
+	 * flow:file and exec:file nodes that extend the nt:file datatype
+	 * 
+	 * @param credentials
+	 * @return boolean true/false
+	 * @throws ContentRepositoryServiceException
+	 */
+	public boolean validateNodeTypes(SimpleCredentials credentials) throws ContentRepositoryServiceException;
 	
 	
 }
