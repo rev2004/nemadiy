@@ -78,8 +78,8 @@ public interface ArtifactService {
 	 * @throws LoginException
 	 * @throws RepositoryException
 	 */
-	public boolean removeExecutableBundle(SimpleCredentials credentials,
-			RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException;
+	public boolean removeExecutableBundle(final SimpleCredentials credentials,
+			final RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException;
 	
 	
 	/**Checks if a resource path exists or not.
@@ -89,8 +89,8 @@ public interface ArtifactService {
 	 * @return true or false
 	 * @throws ContentRepositoryServiceException
 	 */
-	public boolean exists(SimpleCredentials credentials, 
-			RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException;
+	public boolean exists(final SimpleCredentials credentials, 
+			final RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException;
 			
 	
 	/**Validates the node types that are required to be present in the content repository.
@@ -100,7 +100,7 @@ public interface ArtifactService {
 	 * @return boolean true/false
 	 * @throws ContentRepositoryServiceException
 	 */
-	public boolean validateNodeTypes(SimpleCredentials credentials) throws ContentRepositoryServiceException;
+	public boolean validateNodeTypes(final SimpleCredentials credentials) throws ContentRepositoryServiceException;
 	
 	
 }
