@@ -5,27 +5,18 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
-
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
-import javax.jcr.version.VersionException;
 import javax.jcr.LoginException;
 
 import org.apache.jackrabbit.commons.NamespaceHelper;
@@ -69,12 +60,10 @@ public class ContentRepositoryService implements ArtifactService {
 		boolean exists=false;
 		try{
 			session = repository.login(credentials);
-			
 			NamespaceHelper namespaceHelper = new NamespaceHelper(session);
 			namespaceHelper.registerNamespace("imirsel","http://www.imirsel.org/jcr");
 			namespaceHelper.registerNamespace("exec","http://www.imirsel.org/jcr/exec");
 			namespaceHelper.registerNamespace("flow","http://www.imirsel.org/jcr/flow");
-			
 			NodeTypeManager nodeTypeManager=session.getWorkspace().getNodeTypeManager();
 			NodeType nodeType=nodeTypeManager.getNodeType("exec:file");
 			if(nodeType==null){
@@ -83,7 +72,6 @@ public class ContentRepositoryService implements ArtifactService {
 			}else{
 				exists=true;
 			}
-			
 		if(exists){
 			nodeType = nodeTypeManager.getNodeType("flow:file");
 			if(nodeType==null){
@@ -287,24 +275,6 @@ public class ContentRepositoryService implements ArtifactService {
 
 			logger.info("saving session: " + resNode.getPath());
 			session.save();
-		}catch (LoginException e){
-			throw new ContentRepositoryServiceException(e);
-		} catch (AccessDeniedException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ItemExistsException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ReferentialIntegrityException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ConstraintViolationException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (InvalidItemStateException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (VersionException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (LockException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (NoSuchNodeTypeException e) {
-			throw new ContentRepositoryServiceException(e);
 		} catch (RepositoryException e) {
 			throw new ContentRepositoryServiceException(e);
 		}finally{
@@ -405,25 +375,7 @@ public class ContentRepositoryService implements ArtifactService {
 
 			logger.info("saving session: " + resNode.getPath());
 			session.save();
-			
-			
 			return new RepositoryResourcePath(resourcePath);
-		} catch (AccessDeniedException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ItemExistsException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ReferentialIntegrityException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ConstraintViolationException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (InvalidItemStateException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (VersionException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (LockException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (NoSuchNodeTypeException e) {
-			throw new ContentRepositoryServiceException(e);
 		} catch (RepositoryException e) {
 			throw new ContentRepositoryServiceException(e);
 		}finally{
@@ -455,22 +407,6 @@ public class ContentRepositoryService implements ArtifactService {
 			Node node=session.getNode(resourcePath.getPath());
 			ExecutableBundle bundle = retrieveExecutableBundleFromNode(node);
 			return bundle;
-		} catch (AccessDeniedException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ItemExistsException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ReferentialIntegrityException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ConstraintViolationException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (InvalidItemStateException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (VersionException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (LockException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (NoSuchNodeTypeException e) {
-			throw new ContentRepositoryServiceException(e);
 		} catch (RepositoryException e) {
 			throw new ContentRepositoryServiceException(e);
 		}finally{
@@ -503,23 +439,6 @@ public class ContentRepositoryService implements ArtifactService {
 			Node node=session.getNode(resourcePath.getPath());
 			ExecutableMetadata metadata = retrieveExecutableMetadataFromNode(node);
 			return metadata;
-
-		} catch (AccessDeniedException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ItemExistsException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ReferentialIntegrityException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ConstraintViolationException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (InvalidItemStateException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (VersionException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (LockException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (NoSuchNodeTypeException e) {
-			throw new ContentRepositoryServiceException(e);
 		} catch (RepositoryException e) {
 			throw new ContentRepositoryServiceException(e);
 		}finally{
@@ -528,10 +447,6 @@ public class ContentRepositoryService implements ArtifactService {
 		}
 	}
 
-	
-	
-	
-	
 	
 	public String getExecutableBundleFSPath(SimpleCredentials credentials,RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException {
 		if(repository==null){
@@ -549,24 +464,8 @@ public class ContentRepositoryService implements ArtifactService {
 			Node execFile=node.getNode("jcr:data");
 			
 			String id=execFile.getIdentifier();
-			String fsPath = getFSPathFromPropertyId(id, "http://www.jcp.org/jcr/1.0/"+execFile.getName(), 0);
+			String fsPath = FileSystemPathUtil.getFSPathFromPropertyId(id, "http://www.jcp.org/jcr/1.0/"+execFile.getName(), 0);
 			return fsPath;
-		} catch (AccessDeniedException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ItemExistsException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ReferentialIntegrityException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (ConstraintViolationException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (InvalidItemStateException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (VersionException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (LockException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (NoSuchNodeTypeException e) {
-			throw new ContentRepositoryServiceException(e);
 		} catch (RepositoryException e) {
 			throw new ContentRepositoryServiceException(e);
 		}finally{
@@ -676,8 +575,6 @@ public class ContentRepositoryService implements ArtifactService {
 		return bundle;
 	}
 
-	
-
 	private Map<String,String> getMapfromKeyValuePairs(Value[] values) 
 	throws ValueFormatException, IllegalStateException, RepositoryException {
 		Map<String,String> hmap = new HashMap<String,String>();
@@ -710,10 +607,6 @@ public class ContentRepositoryService implements ArtifactService {
 		return bytes;
 	}
 
-
-
-
-
 	private String[] getKeyValuePairs(Map<String, String> environmentVariables) {
 		String[] values = new String[environmentVariables.size()];
 		int count=0;
@@ -723,39 +616,6 @@ public class ContentRepositoryService implements ArtifactService {
 		return values;
 	}
 	
-
-	/**converts a the property id to a file system resource
-	 * -copied verbatim from the jackrabbit 2.1.0 implementation
-	 * 
-	 * @param id
-	 * @param name
-	 * @param index
-	 * @return
-	 */
-	private String getFSPathFromPropertyId(String id, String name, int index) {
-	      // the blobId is an absolute file system path
-        StringBuffer sb = new StringBuffer();
-        sb.append("/");
-        char[] chars = id.toString().toCharArray();
-        int cnt = 0;
-        for (int i = 0; i < chars.length; i++) {
-            if (chars[i] == '-') {
-                continue;
-            }   
-            //if (cnt > 0 && cnt % 4 == 0) {
-            if (cnt == 2 || cnt == 4) {
-                sb.append("/");
-            }   
-            sb.append(chars[i]);
-            cnt++;
-        }   
-        sb.append("/");
-        sb.append(FileSystemPathUtil.escapeName(name));
-        sb.append('.');
-        sb.append(index);
-        sb.append(".bin");
-        return sb.toString();
-	}
 
 
 }
