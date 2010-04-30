@@ -372,8 +372,6 @@ public class JobController extends MultiActionController {
 		this.getRepositoryClientConnectionPool().returnToPool(rci);
 		
 		}
-		
-	 
 		this.submissionManager.removeSubmission(submissionId);
 		return new ModelAndView(new RedirectView("JobManager.getSubmissions",true));
 	}
