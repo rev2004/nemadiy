@@ -43,6 +43,16 @@
 		<transition on="edit" to="displayFlowComponents" />
 	</view-state>
 
+	<view-state id="testResult">
+		<on-entry>
+			<evaluate expression="tasksService.getJobResult(job)"
+				result="flowScope.resultSet" />
+		</on-entry>
+		<transition on="run" to="run" />
+		<transition on="cancel" to="selectTask" />
+		<transition on="edit" to="displayFlowComponents" />
+	</view-state>
+
 	<view-state id="editComponentProperties">
 		<on-entry>
 			<evaluate expression="tasksService.getRoles()" result="viewScope.userRoles" />
@@ -61,18 +71,16 @@
 	</view-state>
 
 	<action-state id="runTest">
-		<evaluate expression='tasksService.test(" test save ")' />
 		<evaluate
 			expression="tasksService.testRun(flow,parameterMap,taskFlowModel.name,taskFlowModel.description)"
-			result="flowScope.jobId" />
-		<transition on="yes" to="test" />
-		<transition on="no" to="test" />
+			result="flowScope.job" />
+		<transition on="success" to="testResult" />
 	</action-state>
 
 	<action-state id="run">
 		<evaluate
 			expression="tasksService.testRun(flow,parameterMap,taskFlowModel.name,taskFlowModel.description)"
-			result="flowScope.jobId" />
+			result="flowScope.job" />
 		<transition on="success" to="checkRunResult" />
 	</action-state>
 
@@ -81,5 +89,5 @@
 	</decision-state>
 
 	<end-state id="jobdetail"
-		view="externalRedirect:contextRelative:get/JobManager.jobDetail?id=${jobId}" />
+		view="externalRedirect:contextRelative:get/JobManager.jobDetail?id=${job.id}" />
 </flow>

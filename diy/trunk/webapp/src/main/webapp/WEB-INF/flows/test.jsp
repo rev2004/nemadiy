@@ -17,7 +17,7 @@
 </table>
 <form:form>
 	<input type="submit" name="_eventId_test" value="test" />
-	<input type="submit" name="_eventId_run" value="run" />
+
 	<input type="submit" name="_eventId_edit" value="edit"/>
 	<input type="submit" name="_eventId_cancel" value="cancel" />
 	
