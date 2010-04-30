@@ -8,7 +8,8 @@
 	<var name="taskFlowModel" class="org.imirsel.nema.webapp.model.TaskFlowModel" />
 	<var name="flow" class="org.imirsel.nema.model.Flow" />
 	<var name="componentList" class="java.util.ArrayList" />
-	
+
+
 	<view-state id="selectTask" model="taskFlowModel">
 		<on-entry>
 			<evaluate expression="flowService.getFlowTemplates()"
@@ -17,30 +18,31 @@
 		<transition on="show" to="displayFlowComponents">
 			<evaluate expression="flowService.getFlow(taskFlowModel.id)"
 				result="flow" />
-			<evaluate expression="tasksService.fillDefaultParameter(flow)"
-				result="flowScope.parameterMap" />
 			<evaluate expression="flowService.getComponents(flow.getUri())"
 				result="componentList" />
+			<evaluate expression="tasksService.fillDefaultParameter(flow)"
+				result="flowScope.parameterMap" />
 		</transition>
 	</view-state>
-	
+
 	<view-state id="displayFlowComponents" model="taskFlowModel">
 		<on-render>
 			<set name="taskFlowModel.name" value="flow.name" />
 			<set name="taskFlowModel.description" value="flow.description" />
 		</on-render>
-		<transition on="edit" to="editComponentProperties"/>
+		<transition on="edit" to="editComponentProperties" />
 		<transition on="test" to="test" />
 		<transition on="cancel" to="selectTask" />
 		<transition on="clear" to="displayFlowComponents" />
 	</view-state>
-	
+
 	<view-state id="test">
 		<transition on="test" to="runTest" />
 		<transition on="run" to="run" />
-		<transition on="cancel" to="displayFlowComponents" />
+		<transition on="cancel" to="selectTask" />
+		<transition on="edit" to="displayFlowComponents" />
 	</view-state>
-	
+
 	<view-state id="editComponentProperties">
 		<on-entry>
 			<evaluate expression="tasksService.getRoles()" result="viewScope.userRoles" />
@@ -51,23 +53,33 @@
 				result="viewScope.datatypeMap" />
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
-			<evaluate expression="tasksService.saveParameter(flowRequestContext)"></evaluate>
+
+			<evaluate expression="tasksService.saveParameter(flowRequestContext)"
+				result="flowScope.parameterMap" />
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
-	
+
 	<action-state id="runTest">
-		<evaluate expression="taskService.testRun(flow,parameterMap,taskFlowModel.name,taskFlowModel.description)" />
+		<evaluate expression='tasksService.test(" test save ")' />
+		<evaluate
+			expression="tasksService.testRun(flow,parameterMap,taskFlowModel.name,taskFlowModel.description)"
+			result="flowScope.jobId" />
 		<transition on="yes" to="test" />
 		<transition on="no" to="test" />
 	</action-state>
-	
+
 	<action-state id="run">
-		<evaluate expression="taskService.run(flow,parameterMap,taskFlowModel.name,taskFlowModel.descriptions)" />
-		<transition on="yes" to="joblist" />
-		<transition on="no" to="fail" />
+		<evaluate
+			expression="tasksService.testRun(flow,parameterMap,taskFlowModel.name,taskFlowModel.description)"
+			result="flowScope.jobId" />
+		<transition on="success" to="checkRunResult" />
 	</action-state>
 
-	<end-state id="joblist"
-		view="externalRedirect:contextRelative:get/JosbManager.getUserJobs" />
+	<decision-state id="checkRunResult">
+		<if test="jobId==null" then="run" else="jobdetail" />
+	</decision-state>
+
+	<end-state id="jobdetail"
+		view="externalRedirect:contextRelative:get/JobManager.jobDetail?id=${jobId}" />
 </flow>

@@ -42,7 +42,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class TasksServiceImpl implements TasksService {
 
-	static private Log logger = LogFactory.getLog(JobController.class);
+	static private Log logger = LogFactory.getLog(TasksServiceImpl.class);
 	private FlowService flowService;
 	private UserManager userManager;
 	private String uploadDirectory;
@@ -62,17 +62,17 @@ public class TasksServiceImpl implements TasksService {
 
 
 
-	public boolean testRun(Flow flow, Map<String, String> parameters,
+	public Long testRun(Flow flow, Map<String, String> parameters,
 			String name, String description) throws MeandreServerException {
 		String token = System.currentTimeMillis() + "-token";
 		HashMap<String, String> paramMap = new HashMap<String, String>(
 				parameters);
-		String flowId = paramMap.get("flowTemplateId");
-		String flowUri = paramMap.get("flowTemplateUri");
+		String flowId = flow.getId().toString();
+		String flowUri =flow.getUri();
 
+		logger.debug("start to test run");
 		if (flowId == null || flowUri == null) {
-			logger
-					.error("flowId or flowUri is null -some severe error happened...");
+			logger.error("flowId or flowUri is null -some severe error happened...");
 			throw new MeandreServerException("flowId or flowUri is null");
 		}
 		User user = userManager.getCurrentUser();
@@ -101,7 +101,6 @@ public class TasksServiceImpl implements TasksService {
 						+ token;
 			}
 		}
-
 		long userId = user.getId();
 		Flow instance = new Flow();
 		instance.setCreatorId(userId);
@@ -119,7 +118,9 @@ public class TasksServiceImpl implements TasksService {
 		Job job = this.flowService.executeJob(token, name, description,
 				instanceId, user.getId(), user.getEmail());
 
-		return true;
+		if (job!=null) return job.getId();
+		else return null;
+		
 	}
 
 	public String[] getRoles() {
@@ -148,22 +149,65 @@ public class TasksServiceImpl implements TasksService {
 		Collections.sort(componentList);
 		logger.info("componentList: " + componentList.size());
 		for (int i = 0; i < componentList.size(); i++) {
+			Component component=componentList.get(i);
 			Map<String, Property> m = flowService.getComponentPropertyDataType(
-					componentList.get(i), flow.getUri());
+					component, flow.getUri());
 			for (Entry<String, Property> entry : m.entrySet()) {
-				parameters.put(entry.getKey(), entry.getValue()
+				parameters.put(getName(component.getInstanceUri(), entry.getKey()), entry.getValue()
 						.getDefaultValue().toString());
 			}
 		}
 		return parameters;
 	}
+	
+	
+	//TODO this method is the same as the one in ComponentPropertyTag, might need some 
+	//   	refaction to get rid of one
+	private String getName(String component,String propertyName){
+		if(component==null){
+			return propertyName;
+		}
+		int index = component.lastIndexOf("/");
+		if(index==-1){
+			return component+"_"+propertyName;
+		}
+		int second = component.substring(0, index).lastIndexOf("/");
+		String cname=component.substring(second+1,index);
+		String count = component.substring(index+1);
+		return cname+"_"+count+"_"+propertyName;
+	}
 
 	@SuppressWarnings("unchecked")
-	public void saveParameter(RequestContext context)
+	public Map<String,String> saveParameter(RequestContext context)
+			throws MeandreServerException {
+	
+		logger.debug("start to save parameter");
+		Map<String, String> paramMap = (Map<String, String>) context
+				.getFlowScope().get("parameterMap");
+		Map<String,String> map=context.getRequestParameters().asMap();
+
+		try {
+
+			logger.debug("start to save parameters #"+map.size());
+			for (String name:map.keySet()) {
+				if (paramMap.containsKey(name)){
+					logger.debug("replace parameter  ("+name+":"+map.get(name)+")");
+					paramMap.put(name, map.get(name));
+				}
+			}
+			return paramMap;
+		}  catch (Exception e) {
+			logger.error(e, e);
+			throw new MeandreServerException(e);
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public void saveParameterOld(RequestContext context)
 			throws MeandreServerException {
 		String token = System.currentTimeMillis() + "-token";
 
-		System.out.print("start saveParameter");
 		logger.debug("start to save parameter");
 		HttpServletRequest req = (HttpServletRequest) context
 				.getExternalContext().getNativeRequest();
@@ -234,7 +278,6 @@ public class TasksServiceImpl implements TasksService {
 		}
 
 	}
-
 	/**
 	 * Returns upload directory
 	 * 
@@ -253,7 +296,7 @@ public class TasksServiceImpl implements TasksService {
 		this.uploadDirectory = uploadDirectory;
 	}
 
-	public boolean run(Flow flow, Map<String, String> parameters, String name,
+	public Long run(Flow flow, Map<String, String> parameters, String name,
 			String description) throws MeandreServerException {
 		return this.testRun(flow,parameters,name,description);
 	}

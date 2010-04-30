@@ -12,11 +12,11 @@ import org.imirsel.nema.model.Flow;
  */
 public interface TasksService {
 
-	boolean testRun(Flow flow,Map<String,String> parameters,String name,String description) throws MeandreServerException;
+	Long testRun(Flow flow,Map<String,String> parameters,String name,String description) throws MeandreServerException;
 
 	boolean fillFlow();
 
-	boolean run(Flow flow,Map<String,String> parameters,String name,String description)throws MeandreServerException;
+	Long run(Flow flow,Map<String,String> parameters,String name,String description)throws MeandreServerException;
 
 	public String[] getRoles();
 
