@@ -1,9 +1,9 @@
    									------------------------------
                                           Developer Information
                                     ------------------------------
-                                          Amit Kumar
+                                          Andrew Shirk
                                     ------------------------------
-                                           2010-04-12
+                                           2010-04-24
                                     ------------------------------
                                     
 Developer Documentation
@@ -32,13 +32,13 @@ Details
    
    [[3]] Start MySQL
    
-   [[4]] Log into the MySQL monitor and create a new database named 'diy051':
+   [[4]] Log into the MySQL monitor and create a new database named 'diy$VERSION':
    
-    * `create database diy051`
+    * `create database diy$VERSION`
    
    [[5]] Create a user with privileges to modify the database:
    
-    * `grant all privileges on diy051.* to 'nema_user'@'localhost' identified by '********';`
+    * `grant all privileges on diy$VERSION.* to 'nema_user'@'localhost' identified by '********';`
    
     * Ask one of the other developers for the database password
    
@@ -62,7 +62,11 @@ Details
    
     * `mvn jetty:run -P diy-development,repository-development,flowservice-development -Dmaven.test.skip=true`
    
-    * The -P switch along with the diy-development, etc. parameters specify which Maven profiles should be used to generate the executable web app code. Depending on the profile IDs that are specified, the DIY application configuration files will be populated with different property values. For example, specifying flowservice-development ensures the DIY webapp will connect to the Flow Service instance that is for development, rather than the production version.
+    * The -P switch along with the diy-development, etc. parameters specify which Maven profiles should be used to 
+      generate the executable web app code. Depending on the profile IDs that are specified, the DIY application 
+      configuration files will be populated with different property values. For example, specifying 
+      flowservice-development ensures the DIY webapp will connect to the Flow Service instance that is for 
+      development, rather than the production version.
 
 
 Deployment
