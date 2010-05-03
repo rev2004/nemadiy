@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.util.process;
+package org.imirsel.nema.analytics.process;
 
 import java.io.BufferedReader;
 import java.io.IOException;

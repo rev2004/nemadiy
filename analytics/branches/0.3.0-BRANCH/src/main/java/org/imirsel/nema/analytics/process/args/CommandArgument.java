@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.imirsel.nema.analytics.util.process;
+package org.imirsel.nema.analytics.process.args;
 
 public interface CommandArgument{
 	public String toConfigString();

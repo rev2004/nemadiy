@@ -3,6 +3,8 @@ package org.imirsel.nema.analytics.util.process;
 
 import java.util.Iterator;
 
+import org.imirsel.nema.analytics.process.args.CommandArgument;
+import org.imirsel.nema.analytics.process.args.CommandLineFormatParser;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

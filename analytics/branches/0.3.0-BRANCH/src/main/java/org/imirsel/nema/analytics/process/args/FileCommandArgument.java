@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.imirsel.nema.analytics.util.process;
+package org.imirsel.nema.analytics.process.args;
 
 import java.util.Iterator;
 import java.util.Map;
