@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.util.io;
+package org.imirsel.nema.analytics.evaluation.resultpages;
 
 import java.io.File;
 import java.io.FileOutputStream;

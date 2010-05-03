@@ -10,8 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.imirsel.nema.model.*;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.*;
+import org.imisel.nema.analytics.file.NemaFileTypeImpl;
+import org.imisel.nema.analytics.file.SingleTrackEvalFileTypeImpl;
 
 /**
  * Reads and writes Raw data files. When reading data is read into a byte[] and

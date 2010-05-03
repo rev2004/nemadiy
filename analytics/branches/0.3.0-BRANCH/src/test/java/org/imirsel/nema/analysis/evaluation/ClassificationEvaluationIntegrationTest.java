@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
-import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.model.NemaData;
@@ -29,6 +28,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.imirsel.nema.test.BaseManagerTestCase;
+import org.imisel.nema.analytics.file.MultipleTrackEvalFileType;
 
 
 /**

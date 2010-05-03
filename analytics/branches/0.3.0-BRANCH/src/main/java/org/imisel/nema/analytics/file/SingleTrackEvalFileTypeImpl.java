@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.evaluation;
+package org.imisel.nema.analytics.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,7 +11,6 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 
-import org.imirsel.nema.analytics.util.io.NemaFileTypeImpl;
 import org.imirsel.nema.model.NemaData;
 
 /**

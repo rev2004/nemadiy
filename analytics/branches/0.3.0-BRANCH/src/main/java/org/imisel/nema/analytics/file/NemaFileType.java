@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.util.io;
+package org.imisel.nema.analytics.file;
 
 import java.io.PrintStream;
 import java.util.logging.Handler;

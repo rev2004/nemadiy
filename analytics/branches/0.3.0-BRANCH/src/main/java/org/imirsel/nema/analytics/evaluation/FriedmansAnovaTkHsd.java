@@ -6,7 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.imirsel.nema.analytics.util.io.CopyFileFromClassPathToDisk;
+
+import org.imirsel.nema.analytics.evaluation.resultpages.CopyFileFromClassPathToDisk;
 import org.imirsel.nema.analytics.util.process.MatlabExecutorImpl;
 
 /**
