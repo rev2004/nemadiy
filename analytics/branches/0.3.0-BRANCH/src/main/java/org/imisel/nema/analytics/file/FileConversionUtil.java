@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.util.io;
+package org.imisel.nema.analytics.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,15 +16,11 @@ import org.imirsel.nema.analytics.evaluation.chord.ChordShortHandTextFile;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.analytics.evaluation.key.KeyTextFile;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile;
+import org.imirsel.nema.analytics.util.io.OpaqueFileFormat;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
-import org.imisel.nema.analytics.file.MultipleTrackEvalFileType;
-import org.imisel.nema.analytics.file.NemaFileType;
-import org.imisel.nema.analytics.file.RawAudioFile;
-import org.imisel.nema.analytics.file.SingleTrackEvalFileType;
-import org.imisel.nema.analytics.file.TrackListTextFile;
 
 /**
  * File type conversion utility. Can be used to list the available (registered)
