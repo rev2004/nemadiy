@@ -2,37 +2,41 @@ package org.imirsel.nema.webapp.model;
 
 import java.io.Serializable;
 
-public class TaskFlowModel implements Serializable{
-  /**
+public class TaskFlowModel implements Serializable {
+	/**
+	 * Model object for the webflow for template task
+	 * 
+	 * @author gzhu1
+	 * @since 0.5
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-private String id;
-private String name;
-private String description;
+	private String id;
+	private String name;
+	private String description;
 
-public String getId() {
-	return id;
-}
+	public String getId() {
+		return id;
+	}
 
-public void setId(String id) {
-	this.id = id;
-}
+	public void setId(String id) {
+		this.id = id;
+	}
 
-public void setDescription(String description) {
-	this.description = description;
-}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-public String getDescription() {
-	return description;
-}
+	public String getDescription() {
+		return description;
+	}
 
-public void setName(String name) {
-	this.name = name;
-}
+	public void setName(String name) {
+		this.name = name;
+	}
 
-public String getName() {
-	return name;
-}
-  
+	public String getName() {
+		return name;
+	}
+
 }
