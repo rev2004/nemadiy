@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
@@ -23,6 +22,7 @@ import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.test.BaseManagerTestCase;
+import org.imisel.nema.analytics.file.SingleTrackEvalFileType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

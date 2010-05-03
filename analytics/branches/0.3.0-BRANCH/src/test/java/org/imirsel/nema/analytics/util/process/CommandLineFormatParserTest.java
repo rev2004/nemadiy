@@ -45,7 +45,7 @@ public class CommandLineFormatParserTest {
 		}
 		
 		//check IO types
-		assert(parser.getInputType(1).equals(org.imirsel.nema.analytics.util.io.RawAudioFile.class));
+		assert(parser.getInputType(1).equals(org.imisel.nema.analytics.file.RawAudioFile.class));
 		assert(parser.getOutputType(1).equals(org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile.class));
 		
 		//check properties
@@ -87,7 +87,7 @@ public class CommandLineFormatParserTest {
 		}
 		
 		//check IO types
-		assert(parser.getInputType(1).equals(org.imirsel.nema.analytics.util.io.TrackListTextFile.class));
+		assert(parser.getInputType(1).equals(org.imisel.nema.analytics.file.TrackListTextFile.class));
 		assert(parser.getOutputType(1).equals(org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile.class));
 		
 		//check properties

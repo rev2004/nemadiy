@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileType;
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.chord.ChordIntervalTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordNumberTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordShortHandTextFile;
@@ -22,6 +20,11 @@ import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imisel.nema.analytics.file.MultipleTrackEvalFileType;
+import org.imisel.nema.analytics.file.NemaFileType;
+import org.imisel.nema.analytics.file.RawAudioFile;
+import org.imisel.nema.analytics.file.SingleTrackEvalFileType;
+import org.imisel.nema.analytics.file.TrackListTextFile;
 
 /**
  * File type conversion utility. Can be used to list the available (registered)

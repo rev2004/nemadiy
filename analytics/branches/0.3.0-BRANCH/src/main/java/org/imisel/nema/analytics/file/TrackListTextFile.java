@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.util.io;
+package org.imisel.nema.analytics.file;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,8 +16,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.imirsel.nema.model.*;
-import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.*;
+import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
+import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 
 /**
  * Reads and writes list files giving multiple file paths per file.
