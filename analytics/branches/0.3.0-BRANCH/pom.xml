@@ -1,0 +1,301 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.imirsel</groupId>
+	<artifactId>nema-analytics</artifactId>
+	<name>Nema Analytics</name>
+	<version>0.2.0-SNAPSHOT</version>
+	<description>NEMA Analytic code library</description>
+	
+	
+    <mailingLists>
+		<mailingList>
+			<name>NEMA Developers Mailing List</name>
+			<post>nema-developers@googlegroups.com</post>
+			<archive>http://groups.google.com/group/nema-developers</archive>
+		</mailingList>
+	</mailingLists>
+
+    <url>http://nema-dev.lis.illinois.edu/development/${pom.artifactId}</url>
+    <inceptionYear>2010</inceptionYear>
+	<licenses>
+		<license>
+			<name>Apache License</name>
+			<url>LICENSE.txt</url>
+		</license>
+	</licenses>
+
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<sourceEncoding>UTF-8</sourceEncoding>
+					<quiet>true</quiet>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<targetJdk>1.5</targetJdk>
+					<sourceEncoding>UTF-8</sourceEncoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<inherited>false</inherited>
+					<link_template>%URL%/%ISSUE%</link_template>
+					<xmlPath>${basedir}/src/site/changes/changes.xml</xmlPath>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jdepend-maven-plugin</artifactId>
+				<version>2.0-beta-2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.4.3</version>
+			</plugin>
+		</plugins>
+	</reporting>
+	
+	<scm>
+		<connection>scm:svn:https://nemadiy.googlecode.com/analytics/trunk</connection>
+		<url>https://nemadiy.googlecode.com/analytics/trunk</url>
+	</scm>
+	<organization>
+		<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
+		<url>http://www.lis.illinois.edu</url>
+	</organization>
+	<distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<name>IMIRSEL Releases</name>
+			<id>nema-releases</id>
+			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-releases-local/</url>
+
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+
+		<snapshotRepository>
+			<id>nema-snapshots</id>
+			<name>IMIRSEL Snapshots</name>
+			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-snapshots-local</url>
+		</snapshotRepository>
+		
+		<site>
+     	  <id>nema-site</id>
+     	  <url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/nema-analytics-kw-io-model-0.2.0-SNAPSHOT</url>
+    	  </site>
+		
+
+		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
+	</distributionManagement>
+	
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav</artifactId>
+				<version>1.0-beta-2</version>
+			</extension>
+		</extensions>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<additionalProjectnatures>
+						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+					</additionalProjectnatures>
+					<additionalBuildcommands>
+						<buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+					</additionalBuildcommands>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+					<wtpversion>1.5</wtpversion>
+				</configuration>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+                                 <excludes>
+                                 <exclude>**/*.png</exclude>
+                                 <exclude>**/*.jpg</exclude>
+                                 <exclude>**/*.bmp</exclude>
+                                 <exclude>**/*.tiff</exclude>
+                                 </excludes>
+			</resource>
+		</resources>
+	</build>
+	
+	<repositories>
+		<repository>
+			<id>nema-artifactory-repo</id>
+			<url>http://nema-dev.lis.illinois.edu/artifactory/repo</url>
+		</repository>
+		<repository>
+			<id>nema-artifactory-remote</id>
+			<url>http://nema-dev.lis.illinois.edu/artifactory/remote-repos</url>
+		</repository>
+	</repositories>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.imirsel</groupId>
+			<artifactId>nema-repositoryservice-api</artifactId>
+			<version>0.2.0-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>1.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jcommon</artifactId>
+			<version>1.0.12</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.9</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.imirsel.nema.test</groupId>
+		    <artifactId>test-api</artifactId>
+		    <version>0.2.0-SNAPSHOT</version>
+		    <scope>test</scope>
+		</dependency>
+		
+	</dependencies>
+	
+	
+	<profiles>
+	<profile>
+		<id>architecture-check</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+			<plugin>
+				<groupId>com.structure101.java</groupId>
+				<artifactId>maven-structure101-plugin</artifactId>
+				<version>0.5</version>
+				<configuration>
+					<!-- put your configurations here -->
+					<project>
+						${project.name}
+					</project>
+					<breakOnError>false</breakOnError>
+					<classpath>${project.build.outputDirectory}</classpath>
+					<key></key>
+					<label>${project.version}</label>
+					<overwrite>true</overwrite>
+					<repository>http://nema-dev.lis.illinois.edu/s101j/data</repository>
+					<rpkey></rpkey>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>publish</goal>
+							<goal>check-architecture</goal>
+							<goal>check-xs</goal>
+							<goal>report-summary</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			</plugins>
+			</build>
+		</profile>
+	
+		<profile>
+			<id>attach-docs-and-sources</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+
+
+
+				</plugins>
+			</build>
+
+		</profile>
+	</profiles>
+	
+</project>
