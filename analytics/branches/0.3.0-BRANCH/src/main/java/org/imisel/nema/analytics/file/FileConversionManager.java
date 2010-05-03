@@ -36,7 +36,7 @@ import org.imirsel.nema.model.NemaTrackList;
  * @author kris.west@gmail.com
  * @since 0.2.0
  */
-public class FileConversionUtil {
+public class FileConversionManager {
 
 	public static final Map<String,List<Class<? extends NemaFileType>>> TEST_INPUT_FILE_TYPE_REGISTRY = new HashMap<String, List<Class<? extends NemaFileType>>>();
 	public static final Map<String,List<Class<? extends NemaFileType>>> GT_AND_PREDICTION_FILE_TYPE_REGISTRY = new HashMap<String, List<Class<? extends NemaFileType>>>();	
