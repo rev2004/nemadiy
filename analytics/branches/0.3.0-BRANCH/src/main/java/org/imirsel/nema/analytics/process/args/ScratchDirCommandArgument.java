@@ -1,7 +1,8 @@
 /**
  * 
  */
-package org.imirsel.nema.analytics.util.process;
+package org.imirsel.nema.analytics.process.args;
+
 
 /**
  * Class representing a scratch directory file component of a command line calling

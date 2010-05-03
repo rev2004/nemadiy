@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.imirsel.nema.analytics.evaluation.resultpages.CopyFileFromClassPathToDisk;
-import org.imirsel.nema.analytics.util.process.MatlabExecutorImpl;
+import org.imirsel.nema.analytics.process.MatlabExecutorImpl;
 
 /**
  * Utility class for computing Friedman's ANOVA with Tukey-Kramer Honestly-Significant-Difference multiple
