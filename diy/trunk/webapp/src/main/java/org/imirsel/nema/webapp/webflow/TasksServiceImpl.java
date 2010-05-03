@@ -38,8 +38,10 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
+ * Action class for the template flow generation web flow. 
  * 
  * @author gzhu1
+ * @since 0.5
  * 
  */
 public class TasksServiceImpl implements TasksService {
@@ -62,6 +64,9 @@ public class TasksServiceImpl implements TasksService {
 		return true;
 	}
 
+	/**
+	 * @return roles from the default user manager
+	 */
 	public String[] getRoles() {
 		Set<Role> roleList = this.userManager.getCurrentUser().getRoles();
 		int size = roleList.size();
@@ -80,6 +85,11 @@ public class TasksServiceImpl implements TasksService {
 		return 1;
 	}
 
+	/**
+	 * @param flow template flow
+	 * @return parameter map for the template flow
+	 * fill the paramater map from the template flow's default value. 
+	 */
 	public Map<String, String> fillDefaultParameter(Flow flow) {
 
 		Map<String, String> parameters = new HashMap<String, String>();
@@ -117,6 +127,13 @@ public class TasksServiceImpl implements TasksService {
 		return cname + "_" + count + "_" + propertyName;
 	}
 
+	/**
+	 * 
+	 * @param context request context from the web flow. All the request parameters are 
+	 * 	encoded in the http request parameters. 
+	 * @return parameter map 
+	 * @throws MeandreServerException
+	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, String> saveParameter(RequestContext context)
 			throws MeandreServerException {
@@ -125,9 +142,7 @@ public class TasksServiceImpl implements TasksService {
 		Map<String, String> paramMap = (Map<String, String>) context
 				.getFlowScope().get("parameterMap");
 		Map<String, String> map = context.getRequestParameters().asMap();
-
 		try {
-
 			logger.debug("start to save parameters #" + map.size());
 			for (String name : map.keySet()) {
 				if (paramMap.containsKey(name)) {
@@ -143,6 +158,11 @@ public class TasksServiceImpl implements TasksService {
 		}
 	}
 
+	/**
+	 * @deprecated No longer used. Problemetic. 
+	 * @param context
+	 * @throws MeandreServerException
+	 */
 	@SuppressWarnings("unchecked")
 	public void saveParameterOld(RequestContext context)
 			throws MeandreServerException {
@@ -237,6 +257,14 @@ public class TasksServiceImpl implements TasksService {
 		this.uploadDirectory = uploadDirectory;
 	}
 
+	/**
+	 * generate testing job from all the parameters
+	 * @param flow template flow
+	 * @param parameters all the parameters except the name/description
+	 * @param name new flow name
+	 * @param description new flow description
+	 * @return testing {@link Job}
+	 */
 	public Job testRun(Flow flow, Map<String, String> parameters, String name,
 			String description) throws MeandreServerException {
 		String token = System.currentTimeMillis() + "-token";
@@ -298,11 +326,24 @@ public class TasksServiceImpl implements TasksService {
 
 	}
 
+	/**
+	 * generate running job from all the parameters
+	 * @param flow template flow
+	 * @param parameters all the parameters except the name/description
+	 * @param name new flow name
+	 * @param description new flow description
+	 * @return testing {@link Job}
+	 */
 	public Job run(Flow flow, Map<String, String> parameters, String name,
 			String description) throws MeandreServerException {
 		return this.testRun(flow, parameters, name, description);
 	}
 
+	/**
+	 * 
+	 * @param job 
+	 * @return result set of job
+	 */
 	public DisplayResultSet getJobResult(Job job) {
 		Set<JobResult> results = job.getResults();
 		if (results == null)
