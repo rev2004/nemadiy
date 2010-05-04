@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.imisel.nema.analytics.file.NemaFileType;
+import org.imirsel.nema.analytics.file.NemaFileType;
 
 /**
  * Parses and produces command line formatting strings, an examle of which is:
