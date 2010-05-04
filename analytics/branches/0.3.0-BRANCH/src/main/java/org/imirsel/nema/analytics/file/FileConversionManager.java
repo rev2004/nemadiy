@@ -16,7 +16,6 @@ import org.imirsel.nema.analytics.evaluation.chord.ChordShortHandTextFile;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.analytics.evaluation.key.KeyTextFile;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile;
-import org.imirsel.nema.analytics.util.io.OpaqueFileFormat;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaTask;

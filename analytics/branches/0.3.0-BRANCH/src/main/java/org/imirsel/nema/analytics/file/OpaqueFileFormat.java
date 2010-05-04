@@ -3,16 +3,16 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.util.io;
+package org.imirsel.nema.analytics.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.imirsel.nema.model.*;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
-import org.imirsel.nema.analytics.file.NemaFileTypeImpl;
-import org.imirsel.nema.analytics.file.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.*;
+import org.imirsel.nema.analytics.util.io.IOUtil;
+import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 
 /**
  * Reads and writes Raw data files. When reading data is read into a byte[] and
