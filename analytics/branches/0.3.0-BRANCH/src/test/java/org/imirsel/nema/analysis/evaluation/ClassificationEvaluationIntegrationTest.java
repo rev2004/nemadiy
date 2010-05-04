@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.imirsel.nema.test.BaseManagerTestCase;
-import org.imisel.nema.analytics.file.MultipleTrackEvalFileType;
+import org.imirsel.nema.analytics.file.MultipleTrackEvalFileType;
 
 
 /**
