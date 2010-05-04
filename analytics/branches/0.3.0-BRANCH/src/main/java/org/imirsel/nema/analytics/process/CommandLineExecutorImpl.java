@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.process.args;
+package org.imirsel.nema.analytics.process;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.imirsel.nema.analytics.process.ProcessExecutorImpl;
-import org.imirsel.nema.analytics.process.ProcessOutputReceiver;
 
 public class CommandLineExecutorImpl extends ProcessExecutorImpl {
 
