@@ -44,7 +44,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 0.5
  * 
  */
-public class TasksServiceImpl implements TasksService {
+public class TasksServiceImpl {
 
 	static private Log logger = LogFactory.getLog(TasksServiceImpl.class);
 	private FlowService flowService;
@@ -59,10 +59,6 @@ public class TasksServiceImpl implements TasksService {
 		this.userManager = userManager;
 	}
 
-	public boolean fillFlow() {
-		// TODO Auto-generated method stub
-		return true;
-	}
 
 	/**
 	 * @return roles from the default user manager
@@ -108,6 +104,18 @@ public class TasksServiceImpl implements TasksService {
 			}
 		}
 		return parameters;
+	}
+	
+	
+/**
+ * 
+ * @param component
+ * @param parameters
+ * @param url
+ */
+	public void addExecutable(Component component, Map<String,String> parameters,String url){
+		parameters.put(getName(component.getInstanceUri(),"profileName"),url);
+		
 	}
 
 	// TODO this method is the same as the one in ComponentPropertyTag, might

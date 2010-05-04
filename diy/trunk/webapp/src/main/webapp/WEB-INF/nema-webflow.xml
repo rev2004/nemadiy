@@ -10,15 +10,17 @@
 
 
 	<webflow:flow-executor id="flowExecutor">
-		
+
 	</webflow:flow-executor>
 	<webflow:flow-registry id="flowRegistry">
 		<webflow:flow-location path="/WEB-INF/flows/tasks-flow.xml"
 			id="task" />
+		<webflow:flow-location path="/WEB-INF/flows/executable/executable-flow.xml"
+			id="task/executable" />
 	</webflow:flow-registry>
 
 	<bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
 		p:flowService-ref="flowService" p:userManager-ref="userManager"
 		p:uploadDirectory="resources" />
-	
+
 </beans>
