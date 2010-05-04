@@ -53,15 +53,8 @@
 		<transition on="edit" to="displayFlowComponents" />
 	</view-state>
 
-	<view-state id="editComponentProperties">
-		<on-entry>
-			<evaluate expression="tasksService.getRoles()" result="viewScope.userRoles" />
-			<evaluate expression="componentList.get(requestParameters.idx)"
-				result="viewScope.component" />
-			<evaluate
-				expression="flowService.getComponentPropertyDataType(viewScope.component, flow.getUri())"
-				result="viewScope.datatypeMap" />
-		</on-entry>
+	<view-state id="editNormalComponentProperties">
+
 		<transition on="save" to="displayFlowComponents">
 
 			<evaluate expression="tasksService.saveParameter(flowRequestContext)"
@@ -70,6 +63,35 @@
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
 
+	<view-state id="editRemoteServiceComponentProperties">
+
+		<transition on="next" to="generateExecutable">
+
+			<evaluate expression="tasksService.saveParameter(flowRequestContext)"
+				result="flowScope.parameterMap" />
+		</transition>
+		<transition on="cancel" to="displayFlowComponents" />
+	</view-state>
+	
+	<subflow-state id="executable" subflow="task/executable">
+	  <transition on="success" to="displayFlowComponent">
+	  <evaluate expression="tasksService.addExecutable(component,parameterMap,executableUrl)"/></transition>
+	</subflow-state>
+	<action-state id="editComponentProperties">
+		<evaluate expression="tasksService.getRoles()" result="conversationScope.userRoles" />
+		<evaluate expression="componentList.get(requestParameters.idx)"
+			result="conversationScope.component" />
+		<evaluate
+			expression="flowService.getComponentPropertyDataType(conversationScope.component, flow.getUri())"
+			result="conversationScope.datatypeMap">
+		</evaluate>
+		<evaluate expression='datatypeMap.ketSet.contains("_remoteComponent")'>
+			<attribute name="name" value="isRemoteService" />
+		</evaluate>
+		<transition on="isRemoteService.yes" to="editRemoteServiceComponentProperties"/>
+		<transition on="isRemoteService.no" to="editNormalComponentProperties"/>
+	</action-state>
+	
 	<action-state id="runTest">
 		<evaluate
 			expression="tasksService.testRun(flow,parameterMap,taskFlowModel.name,taskFlowModel.description)"

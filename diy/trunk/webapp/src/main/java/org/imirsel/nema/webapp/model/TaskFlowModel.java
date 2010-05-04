@@ -1,15 +1,15 @@
 package org.imirsel.nema.webapp.model;
 
 import java.io.Serializable;
-
+/**
+ * Model object for the webflow for template task
+ * 
+ * @author gzhu1
+ * @since 0.5
+ * 
+ */
 public class TaskFlowModel implements Serializable {
-	/**
-	 * Model object for the webflow for template task
-	 * 
-	 * @author gzhu1
-	 * @since 0.5
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	private String id;
 	private String name;

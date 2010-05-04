@@ -38,7 +38,7 @@ public class JobControllerTest {
 	Mockery context=new Mockery();
 	JobController jobController=new JobController();
 	final FlowService flowService=context.mock(FlowService.class);
-	static private Log logger=LogFactory.getLog(JobController.class);
+	static private Log logger=LogFactory.getLog(JobControllerTest.class);
 	
 	@Resource
 	Job job1;
