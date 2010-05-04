@@ -18,9 +18,9 @@ import java.util.logging.Logger;
 
 import org.imirsel.nema.model.*;
 import org.imirsel.nema.analytics.evaluation.*;
+import org.imirsel.nema.analytics.file.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
-import org.imisel.nema.analytics.file.SingleTrackEvalFileTypeImpl;
 
 
 /**

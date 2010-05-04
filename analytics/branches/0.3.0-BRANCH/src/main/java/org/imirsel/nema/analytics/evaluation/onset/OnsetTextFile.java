@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.imirsel.nema.analytics.file.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.model.NemaData;
-import org.imisel.nema.analytics.file.SingleTrackEvalFileTypeImpl;
 
 /**
  * Onset detection text file type.
