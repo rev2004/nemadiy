@@ -50,6 +50,9 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent {
 	@ComponentProperty(defaultValue = "exampleRun", description = "Profile Name", name = "profileName")
 	private static final String PROPERTY_2 ="profileName";
 	
+	@ComponentProperty(defaultValue = "true", description = "indicates to the UI that this is a remote component", name = "_remoteComponent")
+	private static final String PROPERTY_3 ="_remoteComponent";
+	
 	
 	private ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor> processMonitorMap = 
 		new ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor>();
