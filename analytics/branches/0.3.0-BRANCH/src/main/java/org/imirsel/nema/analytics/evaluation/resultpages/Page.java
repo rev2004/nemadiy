@@ -7,7 +7,10 @@ package org.imirsel.nema.analytics.evaluation.resultpages;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.List;
@@ -79,19 +82,19 @@ public class Page {
 
         //copy over resource files
         File rscFile = new File(directory.getAbsolutePath() + File.separator + "tableft.gif");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/tableft.gif", rscFile);
+        copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/tableft.gif", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "tabright.gif");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/tabright.gif", rscFile);
+        copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/tabright.gif", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "logo.png");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/logo.png", rscFile);
+        copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/logo.png", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "tableblue.css");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/tableblue.css", rscFile);
+        copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/tableblue.css", rscFile);
 
         rscFile = new File(directory.getAbsolutePath() + File.separator + "menu.css");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/menu.css", rscFile);
+        copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/menu.css", rscFile);
 
 
         it = pages.iterator();
@@ -320,5 +323,40 @@ public class Page {
         out += "</body>\n";
         out += "</html>\n";
         return out;
+    }
+    
+    public static void copy(String classPath, File fileLocation){
+        OutputStream out = null;
+        try {
+//            ClassLoader loader = ClassLoader.getSystemClassLoader();
+//            URL loc = loader.getResource(classPath);
+//            InputStream iStream = new FileInputStream(loc);
+//            //InputStream iStream = loader.getResourceAsStream(classPath);
+            InputStream iStream = Page.class.getResourceAsStream(classPath);
+            if (iStream == null){
+                 Logger.getLogger(Page.class.getName()).log(Level.SEVERE, "Resource not found! Classpath: " + classPath);
+            }
+
+            out = new FileOutputStream(fileLocation);
+
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = iStream.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            out.flush();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Page.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (out != null){
+                    out.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Page.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }

@@ -2,12 +2,14 @@ package org.imirsel.nema.analytics.evaluation;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.nema.analytics.evaluation.resultpages.CopyFileFromClassPathToDisk;
 import org.imirsel.nema.analytics.process.MatlabExecutorImpl;
 
 /**
@@ -52,7 +54,7 @@ public class FriedmansAnovaTkHsd {
 			throws IOException, IllegalArgumentException{
         //make sure readtext.m is in the working directory for Matlab
         File readtextMFile = new File(outputDir.getAbsolutePath() + File.separator + "readtext.m");
-        CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/util/resources/readtext.m", readtextMFile);
+        copy("/org/imirsel/nema/analytics/evaluation/util/resources/readtext.m", readtextMFile);
         
         //create an m-file to run the test
         String name = CSVResultFile.getName().replaceAll(".csv", "");
@@ -164,5 +166,41 @@ public class FriedmansAnovaTkHsd {
         matlabIntegrator.runCommand(null);
         
         return new File[]{new File(matlabPlotPath),new File(friedmanTablePath)};
+    }
+	
+	  
+    public static void copy(String classPath, File fileLocation){
+        OutputStream out = null;
+        try {
+//            ClassLoader loader = ClassLoader.getSystemClassLoader();
+//            URL loc = loader.getResource(classPath);
+//            InputStream iStream = new FileInputStream(loc);
+//            //InputStream iStream = loader.getResourceAsStream(classPath);
+            InputStream iStream = FriedmansAnovaTkHsd.class.getResourceAsStream(classPath);
+            if (iStream == null){
+                 Logger.getLogger(FriedmansAnovaTkHsd.class.getName()).log(Level.SEVERE, "Resource not found! Classpath: " + classPath);
+            }
+
+            out = new FileOutputStream(fileLocation);
+
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = iStream.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            out.flush();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(FriedmansAnovaTkHsd.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (out != null){
+                    out.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(FriedmansAnovaTkHsd.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }
