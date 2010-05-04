@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.imirsel.nema.analytics.file.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
-import org.imisel.nema.analytics.file.SingleTrackEvalFileTypeImpl;
 
 
 /**
