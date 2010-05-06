@@ -311,6 +311,14 @@
 			<version>${wiser.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+ <dependency>
+  	<groupId>javax.jcr</groupId>
+  	<artifactId>jcr</artifactId>
+     <version>2.0</version>
+     <scope>compile</scope>
+  </dependency>
+  
 		
 		<dependency>
 		  	<groupId>com.structure101.java</groupId>

@@ -16,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.jws.WebService;
 import javax.persistence.EntityExistsException;
+import javax.jcr.SimpleCredentials;
 import java.util.List;
 
 
@@ -128,6 +129,19 @@ public class UserManagerImpl extends UniversalManagerImpl implements UserManager
 	 */
 	public User getUserByUsername(String username) throws UsernameNotFoundException {
 		return (User) dao.loadUserByUsername(username);
+	}
+	
+	
+	/**
+	 * Returns the users credentials. 
+	 * @param username
+	 * @return
+	 */
+	public SimpleCredentials getCurrentUserCredentials(String username){
+		User user = getCurrentUser();
+		String name=user.getPassword();
+		String password=user.getUsername();
+		return new SimpleCredentials(name,password.toCharArray());
 	}
 
 	/**
