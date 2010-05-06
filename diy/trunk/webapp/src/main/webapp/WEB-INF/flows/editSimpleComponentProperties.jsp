@@ -10,7 +10,7 @@ Component: ${component.name}
 <br />
 <label>--${component.description}</label>
 <form:form>
-  <c:out value="${flowExecutionUrl}"/>
+  
   <c:forEach items="${datatypeMap}" var="property">
     <fieldset id="pt1">
     <label for="jobname"> ${property.key} </label>

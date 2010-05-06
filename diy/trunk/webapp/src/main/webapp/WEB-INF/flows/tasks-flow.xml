@@ -27,6 +27,7 @@
 
 	<view-state id="displayFlowComponents" model="taskFlowModel">
 		<on-render>
+			
 			<set name="taskFlowModel.name" value="flow.name" />
 			<set name="taskFlowModel.description" value="flow.description" />
 		</on-render>
@@ -53,7 +54,7 @@
 		<transition on="edit" to="displayFlowComponents" />
 	</view-state>
 
-	<view-state id="editNormalComponentProperties">
+	<view-state id="editSimpleComponentProperties">
 
 		<transition on="save" to="displayFlowComponents">
 
@@ -85,11 +86,11 @@
 			expression="flowService.getComponentPropertyDataType(conversationScope.component, flow.getUri())"
 			result="conversationScope.datatypeMap">
 		</evaluate>
-		<evaluate expression='datatypeMap.ketSet.contains("_remoteComponent")'>
+		<evaluate expression='tasksService.isRemoteServiceComponent(datatypeMap)'>
 			<attribute name="name" value="isRemoteService" />
 		</evaluate>
 		<transition on="isRemoteService.yes" to="editRemoteServiceComponentProperties"/>
-		<transition on="isRemoteService.no" to="editNormalComponentProperties"/>
+		<transition on="isRemoteService.no" to="editSimpleComponentProperties"/>
 	</action-state>
 	
 	<action-state id="runTest">
