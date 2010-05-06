@@ -2,6 +2,8 @@ package org.imirsel.nema.service;
 
 import java.util.List;
 
+import javax.jcr.SimpleCredentials;
+
 import org.imirsel.nema.dao.UserDao;
 import org.imirsel.nema.model.User;
 import org.springframework.security.userdetails.UsernameNotFoundException;
@@ -61,6 +63,20 @@ public interface UserManager extends UniversalManager {
      * @param userId the user's id
      */
     void removeUser(String userId);
+    
+    
+    /**
+     * Returns the SimpleCredentials for the user
+     * 
+     * @param username
+     * @return s SimpleCredentials for the user
+     */
+    public SimpleCredentials getCurrentUserCredentials(String username);
+    
 
+    /**
+     * Returns the current user
+     * @return
+     */
     User getCurrentUser();
 }
