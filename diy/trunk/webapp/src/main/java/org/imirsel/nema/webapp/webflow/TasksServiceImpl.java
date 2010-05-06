@@ -76,6 +76,11 @@ public class TasksServiceImpl {
 		return roles;
 	}
 
+	/**
+	 * Only for testing purpose
+	 * @param input
+	 * @return
+	 */
 	public int test(String input) {
 		logger.debug(input);
 		return 1;
@@ -103,6 +108,8 @@ public class TasksServiceImpl {
 						.toString());
 			}
 		}
+		logger.debug("done populating default parameters now.");
+
 		return parameters;
 	}
 	
@@ -133,6 +140,17 @@ public class TasksServiceImpl {
 		String cname = component.substring(second + 1, index);
 		String count = component.substring(index + 1);
 		return cname + "_" + count + "_" + propertyName;
+	}
+	
+	
+	/**
+	 * return Boolean (not boolean) value for webflow mapping. 
+	 * @param datatypeMap
+	 * @return
+	 */
+	public Boolean isRemoteServiceComponent(Map<String,Property> datatypeMap){
+		final String REMOTE_COMPONENT="_remoteComponet";
+		return datatypeMap.keySet().contains(REMOTE_COMPONENT)&&(datatypeMap.get(REMOTE_COMPONENT).getDefaultValue().toString().equalsIgnoreCase("true"));
 	}
 
 	/**

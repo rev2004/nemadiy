@@ -44,10 +44,10 @@
 		<level value="WARN" />
 	</logger>
 	<logger name="org.springframework.web.servlet.mvc">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>
 	<logger name="org.springframework.web.servlet.handler">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>
 	<logger name="org.springframework.webflow">
 		<level value="WARN" />
