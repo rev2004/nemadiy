@@ -71,7 +71,7 @@ public interface UserManager extends UniversalManager {
      * @param username
      * @return s SimpleCredentials for the user
      */
-    public SimpleCredentials getCurrentUserCredentials(String username);
+    public SimpleCredentials getCurrentUserCredentials();
     
 
     /**
