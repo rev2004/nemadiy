@@ -108,7 +108,7 @@ public class TasksServiceImpl {
 						.toString());
 			}
 		}
-		logger.debug("done populating default parameters now.");
+		logger.debug("done populating default parameters.");
 
 		return parameters;
 	}
