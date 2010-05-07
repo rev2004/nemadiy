@@ -28,7 +28,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	private SimpleCredentials nemaCredentials;
 	private Repository repository = null;
 	private ClientRepositoryFactory factory = new ClientRepositoryFactory();
-	private static String RMI_URL = "rmi://localhost:2099/jackrabbit.repository";
+	private static String RMI_URL = "rmi://nema-dev.lis.illinois.edu:2099/jackrabbit.repository";
 	
 	@Before
 	public void setUp() throws Exception {
@@ -98,6 +98,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 
 	
 	
+	@Test
 	public void testGetExecutableBundle() {
 		String resourcePath ="/users/user/flows/executables/test.zip";
 		RepositoryResourcePath rrp = new RepositoryResourcePath(resourcePath);

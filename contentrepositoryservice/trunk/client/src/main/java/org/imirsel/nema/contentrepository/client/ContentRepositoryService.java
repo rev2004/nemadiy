@@ -469,7 +469,7 @@ public class ContentRepositoryService implements ArtifactService {
 				throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
 			}
 			Node node=session.getNode(resourcePath.getPath());
-			Node execFile=node.getNode("jcr:data");
+			Node execFile=node.getNode("jcr:content");
 			
 			String id=execFile.getIdentifier();
 			String fsPath = FileSystemPathUtil.getFSPathFromPropertyId(id, "http://www.jcp.org/jcr/1.0/"+execFile.getName(), 0);
