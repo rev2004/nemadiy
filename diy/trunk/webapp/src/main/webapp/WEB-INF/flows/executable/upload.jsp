@@ -5,5 +5,16 @@
 </head>
 <body>
 upload the executable.
-<a href="${flowUflowExecutionUrl}?_eventId_save=Save"></a>
+<form:form modelAttribute="executable" enctype="multipart/form-data">
+	<fieldset id="pt1"><label>Please select file type:</label> <form:select
+		path="type" items="${typeSet}" itemLabel="label" itemValue="code" />
+	</fieldset>
+	<fieldset id="pt1"><label>Please select the file for
+	upload:</label> <input type="file" name="file" /></fieldset>
+	<fieldset id="button"><input type="submit"
+		name="_eventId_upload" value="upload" /> <input type="submit"
+		name="_eventId_cancel" value="cancel" /></fieldset>
+
+</form:form>
+
 </body>

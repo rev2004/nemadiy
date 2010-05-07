@@ -27,7 +27,7 @@
 
 	<view-state id="displayFlowComponents" model="taskFlowModel">
 		<on-render>
-			
+
 			<set name="taskFlowModel.name" value="flow.name" />
 			<set name="taskFlowModel.description" value="flow.description" />
 		</on-render>
@@ -65,7 +65,9 @@
 	</view-state>
 
 	<view-state id="editRemoteServiceComponentProperties">
-
+		<on-entry>
+			<evaluate expression="tasksService.hideExecutableProperties(datatypeMap)" />
+		</on-entry>
 		<transition on="next" to="generateExecutable">
 
 			<evaluate expression="tasksService.saveParameter(flowRequestContext)"
@@ -73,11 +75,15 @@
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
-	
-	<subflow-state id="executable" subflow="task/executable">
-	  <transition on="success" to="displayFlowComponent">
-	  <evaluate expression="tasksService.addExecutable(component,parameterMap,executableUrl)"/></transition>
+
+	<subflow-state id="generateExecutable" subflow="task/executable">
+		<output name="executableUrl" />
+		<transition on="success" to="displayFlowComponents">
+			<evaluate expression="tasksService.test(executableUrl)"></evaluate>
+			<evaluate expression="tasksService.addExecutable(component,parameterMap,executableUrl)"/>
+		</transition>
 	</subflow-state>
+
 	<action-state id="editComponentProperties">
 		<evaluate expression="tasksService.getRoles()" result="conversationScope.userRoles" />
 		<evaluate expression="componentList.get(requestParameters.idx)"
@@ -89,10 +95,10 @@
 		<evaluate expression='tasksService.isRemoteServiceComponent(datatypeMap)'>
 			<attribute name="name" value="isRemoteService" />
 		</evaluate>
-		<transition on="isRemoteService.yes" to="editRemoteServiceComponentProperties"/>
-		<transition on="isRemoteService.no" to="editSimpleComponentProperties"/>
+		<transition on="isRemoteService.yes" to="editRemoteServiceComponentProperties" />
+		<transition on="isRemoteService.no" to="editSimpleComponentProperties" />
 	</action-state>
-	
+
 	<action-state id="runTest">
 		<evaluate
 			expression="tasksService.testRun(flow,parameterMap,taskFlowModel.name,taskFlowModel.description)"
