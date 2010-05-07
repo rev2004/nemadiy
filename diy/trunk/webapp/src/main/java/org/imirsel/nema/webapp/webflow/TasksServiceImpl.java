@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action class for the template flow generation web flow. 
+ * Action class for the template flow generation web flow.
  * 
  * @author gzhu1
  * @since 0.5
@@ -59,7 +59,6 @@ public class TasksServiceImpl {
 		this.userManager = userManager;
 	}
 
-
 	/**
 	 * @return roles from the default user manager
 	 */
@@ -78,6 +77,7 @@ public class TasksServiceImpl {
 
 	/**
 	 * Only for testing purpose
+	 * 
 	 * @param input
 	 * @return
 	 */
@@ -87,9 +87,10 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * @param flow template flow
-	 * @return parameter map for the template flow
-	 * fill the paramater map from the template flow's default value. 
+	 * @param flow
+	 *            template flow
+	 * @return parameter map for the template flow fill the paramater map from
+	 *         the template flow's default value.
 	 */
 	public Map<String, String> fillDefaultParameter(Flow flow) {
 
@@ -108,21 +109,22 @@ public class TasksServiceImpl {
 						.toString());
 			}
 		}
-		logger.debug("done populating default parameters.");
+		logger.debug("done populating default parameters now.");
 
 		return parameters;
 	}
-	
-	
-/**
- * 
- * @param component
- * @param parameters
- * @param url
- */
-	public void addExecutable(Component component, Map<String,String> parameters,String url){
-		parameters.put(getName(component.getInstanceUri(),"profileName"),url);
-		
+
+	/**
+	 * Add the executable url into the parameter map
+	 * @param component
+	 * @param parameters
+	 * @param url
+	 */
+	public void addExecutable(final Component component,
+			final Map<String, String> parameters, final String url) {
+		logger.debug("add executable url into parameter");
+		parameters.put(getName(component.getInstanceUri(), EXECUTABLE_URL), url);
+
 	}
 
 	// TODO this method is the same as the one in ComponentPropertyTag, might
@@ -141,23 +143,45 @@ public class TasksServiceImpl {
 		String count = component.substring(index + 1);
 		return cname + "_" + count + "_" + propertyName;
 	}
-	
-	
+
 	/**
-	 * return Boolean (not boolean) value for webflow mapping. 
+	 * properties' name in the component datatype map
+	 */
+	final static String REMOTE_COMPONENT = "_remoteComponent";
+	final static String CREDENTIALS = "_credentials";
+	final static String EXECUTABLE_URL = "profileName";
+
+	/**
+	 * return Boolean (not boolean) value for webflow mapping.
+	 * 
 	 * @param datatypeMap
 	 * @return
 	 */
-	public Boolean isRemoteServiceComponent(Map<String,Property> datatypeMap){
-		final String REMOTE_COMPONENT="_remoteComponet";
-		return datatypeMap.keySet().contains(REMOTE_COMPONENT)&&(datatypeMap.get(REMOTE_COMPONENT).getDefaultValue().toString().equalsIgnoreCase("true"));
+	public Boolean isRemoteServiceComponent(Map<String, Property> datatypeMap) {
+
+		return datatypeMap.keySet().contains(REMOTE_COMPONENT)
+				&& (datatypeMap.get(REMOTE_COMPONENT).getDefaultValue()
+						.toString().equalsIgnoreCase("true"));
+	}
+
+	/**
+	 * hide some fields that needs special processing for remote service
+	 * component
+	 * 
+	 * @param datatypeMap
+	 */
+	public void hideExecutableProperties(Map<String, Property> datatypeMap) {
+		datatypeMap.remove(REMOTE_COMPONENT);
+		datatypeMap.remove(CREDENTIALS);
+		datatypeMap.remove(EXECUTABLE_URL);
 	}
 
 	/**
 	 * 
-	 * @param context request context from the web flow. All the request parameters are 
-	 * 	encoded in the http request parameters. 
-	 * @return parameter map 
+	 * @param context
+	 *            request context from the web flow. All the request parameters
+	 *            are encoded in the http request parameters.
+	 * @return parameter map
 	 * @throws MeandreServerException
 	 */
 	@SuppressWarnings("unchecked")
@@ -185,7 +209,7 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * @deprecated No longer used. Problemetic. 
+	 * @deprecated No longer used. Problemetic.
 	 * @param context
 	 * @throws MeandreServerException
 	 */
@@ -285,10 +309,15 @@ public class TasksServiceImpl {
 
 	/**
 	 * generate testing job from all the parameters
-	 * @param flow template flow
-	 * @param parameters all the parameters except the name/description
-	 * @param name new flow name
-	 * @param description new flow description
+	 * 
+	 * @param flow
+	 *            template flow
+	 * @param parameters
+	 *            all the parameters except the name/description
+	 * @param name
+	 *            new flow name
+	 * @param description
+	 *            new flow description
 	 * @return testing {@link Job}
 	 */
 	public Job testRun(Flow flow, Map<String, String> parameters, String name,
@@ -354,10 +383,15 @@ public class TasksServiceImpl {
 
 	/**
 	 * generate running job from all the parameters
-	 * @param flow template flow
-	 * @param parameters all the parameters except the name/description
-	 * @param name new flow name
-	 * @param description new flow description
+	 * 
+	 * @param flow
+	 *            template flow
+	 * @param parameters
+	 *            all the parameters except the name/description
+	 * @param name
+	 *            new flow name
+	 * @param description
+	 *            new flow description
 	 * @return testing {@link Job}
 	 */
 	public Job run(Flow flow, Map<String, String> parameters, String name,
@@ -367,7 +401,7 @@ public class TasksServiceImpl {
 
 	/**
 	 * 
-	 * @param job 
+	 * @param job
 	 * @return result set of job
 	 */
 	public DisplayResultSet getJobResult(Job job) {
