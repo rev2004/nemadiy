@@ -418,7 +418,8 @@ public class ContentRepositoryService implements ArtifactService {
 
 	}
 
-	/**Get bundle metadata
+	/**
+	 * Get bundle metadata
 	 * @param credentials
 	 * @param resourcePath
 	 * @return metadata for the executable bundle
@@ -447,7 +448,14 @@ public class ContentRepositoryService implements ArtifactService {
 		}
 	}
 
-	
+	/**
+	 * Returns the filesystem filepath
+	 * 
+	 * @param credentials
+	 * @param resourcePath
+	 * @return the filesystem filepath for a resource.
+	 * @throws ContentRepositoryServiceException
+	 */
 	public String getExecutableBundleFSPath(final SimpleCredentials credentials,final RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
@@ -476,10 +484,7 @@ public class ContentRepositoryService implements ArtifactService {
 
 	}
 
-	public Repository getRepository() {
-		return repository;
-	}
-
+	
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 	}

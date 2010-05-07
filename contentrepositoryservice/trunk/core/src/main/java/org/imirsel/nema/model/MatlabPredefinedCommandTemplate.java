@@ -10,16 +10,16 @@ import java.io.Serializable;
 public class MatlabPredefinedCommandTemplate extends VanillaPredefinedCommandTemplate implements
 		Serializable {
 	
-	/**
+	/**Version of this class
 	 * 
 	 */
 	private static final long serialVersionUID = -9056319373768134321L;
-	private boolean jvm;
-	private boolean timing;
-	private boolean splash;
-	private boolean display;
-	private boolean debug;
-	private boolean logfile;
+	private boolean jvm = false;
+	private boolean timing = false;
+	private boolean splash= false;
+	private boolean display=false;
+	private boolean debug=false;
+	private boolean logfile=false;
 	private String log;
 	
 	public boolean isJvm() {
