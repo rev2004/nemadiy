@@ -12,9 +12,8 @@ import org.imirsel.nema.DefaultPreferenceInitializer;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.RoleManager;
-import org.imirsel.nema.service.SubmissionManager;
 import org.imirsel.nema.service.UserExistsException;
-import org.imirsel.nema.service.UserManager;
+
 
 import org.imirsel.nema.webapp.util.RequestUtil;
 import org.springframework.validation.BindException;
