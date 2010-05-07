@@ -47,7 +47,7 @@ public class ResourceTypeServiceImpl implements ResourceTypeService {
 		return this.supportedOsList;
 	}
 	public List<GroupDataType> getSupportedGroups(){
-		return null;
+		return this.groupList;
 	}
 
 }
