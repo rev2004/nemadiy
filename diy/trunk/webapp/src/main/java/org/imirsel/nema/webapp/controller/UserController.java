@@ -10,7 +10,6 @@ import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
 
 
-import org.springframework.security.providers.encoding.PasswordEncoder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 

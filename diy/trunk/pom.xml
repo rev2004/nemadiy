@@ -312,12 +312,20 @@
 			<scope>test</scope>
 		</dependency>
 
- <dependency>
-  	<groupId>javax.jcr</groupId>
-  	<artifactId>jcr</artifactId>
-     <version>2.0</version>
-     <scope>compile</scope>
-  </dependency>
+ 	<dependency>
+  		<groupId>javax.jcr</groupId>
+  		<artifactId>jcr</artifactId>
+    	 <version>2.0</version>
+     	<scope>compile</scope>
+  	</dependency>
+  	
+  	 <dependency>
+  		<groupId>org.imirsel</groupId>
+  		<artifactId>nema-contentrepository-service-client</artifactId>
+    	 <version>0.0.1-SNAPSHOT</version>
+     	<scope>compile</scope>
+  	</dependency>
+  
   
 		
 		<dependency>
@@ -325,6 +333,9 @@
 		    <artifactId>maven-structure101-plugin</artifactId>
     	   	<version>0.5</version>
 		</dependency>
+		
+	
+		
 	</dependencies>
 
 	<modules>
