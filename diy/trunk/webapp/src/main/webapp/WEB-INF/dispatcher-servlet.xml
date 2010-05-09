@@ -40,6 +40,23 @@
 		class="org.imirsel.nema.repository.RepositoryClientConnectionPool">
 
 	</bean>
+	
+	
+	 <!-- content repository to store the executable bundle -->
+    <bean id="contentRepositoryClient" 
+    	class="org.imirsel.nema.contentrepository.client.ContentRepositoryService">
+    	<property name="repository" ref="remoteContentRepository"/>
+    </bean>
+    
+    <bean id="remoteContentRepository" factory-bean="clientRepositoryFactory" 
+     factory-method="getRepository">
+     	<constructor-arg value="${contentrepository.url}"/>
+     </bean>
+    
+    <bean id="clientRepositoryFactory" 
+    class="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory"/>
+    <!-- End of content repository beans -->
+    
 
 
 	<!--  Job Scheduler for checking the validity of MeandreProxy -->
@@ -97,6 +114,7 @@
 	<bean id="flowController"
 		class="org.imirsel.nema.webapp.controller.FlowServiceController">
 		<property name="flowService" ref="realFlowService" />
+		<property name="artifactService" ref="contentRepositoryClient"/>
 		<property name="methodNameResolver" ref="flowMethodResolver" />
 	</bean>
 
