@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.Credentials;
+
 import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
 import org.imirsel.nema.model.Component;
@@ -20,6 +22,7 @@ import org.imirsel.nema.model.Property;
  * @author shirk
  * @author kumaramit01
  * @since 0.4.0
+ * @version 0.7.0 -Added createNewFlow which takes credentials.
  */
 public interface FlowService {
 
@@ -180,13 +183,31 @@ public interface FlowService {
     * 
     * @param paramMap Map of flow parameter names to values. These parameters
     * will be applied to the template flow at the specified URI.
+    * @param credentials The Credentials of the Nema user.
     * @param flowUri The URI of the flow to use as the template.
     * @param userId The ID of the user who is creating this flow.
     * @return The URI of the new flow.
     * @since 0.5.0
+    * @since 0.7.0 -Modified incompatiable with previous versions.
+    */
+   public String createNewFlow(Credentials credentials,HashMap<String,String> paramMap, String flowUri, long userId);
+
+   /**
+    * Create a new flow using the flow at the specified URI as a template to
+    * which the supplied parameters will be applied.
+    * 
+    * @param paramMap Map of flow parameter names to values. These parameters
+    * will be applied to the template flow at the specified URI.
+    * @param flowUri The URI of the flow to use as the template.
+    * @param userId The ID of the user who is creating this flow.
+    * @return The URI of the new flow.
+    * @deprecated  Not for public use. This method will be removed in 0.7.0 release.
+    * @see createNewFlow(Credentials credentials,HashMap<String,String> paramMap, String flowUri, long userId)
+    * @since 0.5.0
     */
    public String createNewFlow(HashMap<String,String> paramMap, String flowUri, long userId);
 
+   
    /**
     * Return a map of component properties and their data types.
     * 
