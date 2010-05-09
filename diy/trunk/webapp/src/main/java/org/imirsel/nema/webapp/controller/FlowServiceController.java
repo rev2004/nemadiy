@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.imirsel.nema.Constants;
+import org.imirsel.nema.contentrepository.client.ArtifactService;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
@@ -34,6 +35,7 @@ public class FlowServiceController extends MultiActionController{
 
 	private final static Logger log = Logger.getLogger(FlowServiceController.class.getName());
 	private FlowService flowService = null;
+	private ArtifactService artifactService;
 
 	public FlowService getFlowService() {
 		return flowService;
@@ -226,6 +228,16 @@ public class FlowServiceController extends MultiActionController{
 		}
 		mav.addObject(Constants.FLOW_TYPE, type);
 		return mav;
+	}
+
+
+	public void setArtifactService(ArtifactService artifactService) {
+		this.artifactService = artifactService;
+	}
+
+
+	public ArtifactService getArtifactService() {
+		return artifactService;
 	} 
 	
 

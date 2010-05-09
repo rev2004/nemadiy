@@ -11,6 +11,7 @@
                 <value>classpath:jdbc.properties</value>
                 <value>classpath:mail.properties</value>
                 <value>classpath:flowservice.properties</value>
+                <value>classpath:contentrepositoryservice.properties</value>
             </list>
         </property>
     </bean>
@@ -30,13 +31,14 @@
     </bean>
     
        
-      <!--  real flow service -->
+      <!--  real flow service  -ALREADY Defined in the dispatcher servlet
     <bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
 		<property name="serviceUrl" value="${flowservice.location}"/>
 		<property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService"/>
 		<property name="refreshStubOnConnectFailure" value="true"/>
     </bean>
-    
+    -->
+   
     
     
 </beans>
