@@ -127,17 +127,18 @@
 					<dependentWarExcludes>
 						**/jdbc.properties,**/hibernate.cfg.xml,**/sql-map-config.xml,**/web.xml,WEB-INF/classes/META-INF/**
                     </dependentWarExcludes>
+                    <!--
 					<webResources>
 						<resource>
 							<directory>src/main/webapp/WEB-INF</directory>
 							<targetPath>WEB-INF</targetPath>
-							<!-- enable filtering -->
 							<filtering>true</filtering>
 							<includes>
 								<include>dispatcher-servlet.xml</include>
 							</includes>
 						</resource>
 					</webResources>
+                                        -->
 				</configuration>
 			</plugin>
 			<plugin>
