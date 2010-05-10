@@ -7,24 +7,36 @@ package org.imirsel.nema.webapp.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.imirsel.nema.contentrepository.client.CommandLineFormatter;
+import org.imirsel.nema.model.InvalidCommandLineFlagException;
+import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
 import org.imirsel.nema.model.Path;
 import org.imirsel.nema.model.SysProperty;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * @author gzhu1
  * 
  */
 public class JavaExecutableFile extends ExecutableFile {
+	static private Log logger = LogFactory.getLog(JavaExecutableFile.class);
 
-	final public static MemoryOption[] memoryOptions = {
-			new MemoryOption("max:1024m,min:512m", 0, "-Xmx1024m", "-Xms512m"),
-			new MemoryOption("max:512m,min:256m", 1, "-Xmx512m", "-Xms256m"),
-			new MemoryOption("max:256m,min:128m", 2, "-Xmx256m", "-Xms128m"),
-			new MemoryOption("max:128m,min:64m", 3, "-Xmx128m", "-Xms64m") };
+	 MemoryOption[] memoryOptions = {
+				new MemoryOption("max:1024m,min:512m", 0, "-Xmx1024m", "-Xms512m"),
+				new MemoryOption("max:512m,min:256m", 1, "-Xmx512m", "-Xms256m"),
+				new MemoryOption("max:256m,min:128m", 2, "-Xmx256m", "-Xms128m"),
+				new MemoryOption("max:128m,min:64m", 3, "-Xmx128m", "-Xms64m") };
 
-	public static MemoryOption[] getMemoryoptions() {
-		return memoryOptions;
+	@SuppressWarnings("unchecked")
+	public List<MemoryOption> getMemoryOptions() {
+		
+		logger.debug("getMemoryOptions");
+		return (List<MemoryOption>)Arrays.asList(memoryOptions);
 	}
+	
 
 	private static final long serialVersionUID = 1L;
 	private List<SysProperty> properties = new ArrayList<SysProperty>();
@@ -62,6 +74,7 @@ public class JavaExecutableFile extends ExecutableFile {
 	}
 
 	public boolean isVerboseExecutionGC() {
+		logger.debug("isVerboseE");
 		return verboseExecutionGC;
 	}
 
@@ -156,40 +169,32 @@ public class JavaExecutableFile extends ExecutableFile {
 	public int getMemoryOption() {
 		return memoryOption;
 	}
+	
+	@Override
+	public void generateCommandline(){
+		MemoryOption mo=getMemoryOptions().get(memoryOption);
+		minMemory=mo.min;
+		maxMemory=mo.max;
+		
+		JavaPredefinedCommandTemplate command=new JavaPredefinedCommandTemplate();
+		command.setDisableAssertionPackages(disableAssertionPackages);
+		command.setEnableAssertionPackages(enableAssertionPackages);
+		command.setEnableSystemAssertions(enableSystemAssertions);
+		command.setJarExecutable(jarExecutable);
+		command.setMainClass(mainClass);
+		command.setMaxMemory(maxMemory);
+		command.setMinMemory(minMemory);
+		command.setVerboseExecutionClass(verboseExecutionClass);
+		command.setVerboseExecutionGC(verboseExecutionGC);
+		command.setVerboseExecutionJNI(verboseExecutionJNI);
+		
+		CommandLineFormatter formatter=new CommandLineFormatter();
+		try {
+			setEnvironment(formatter.getCommandLineString(command, true));
+		} catch (InvalidCommandLineFlagException e) {
+			logger.error(e,e);
+		}
+	}
 
 }
 
-class MemoryOption {
-	public int getCode() {
-		return code;
-	}
-
-	public void setCode(int code) {
-		this.code = code;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public String getMax() {
-		return max;
-	}
-
-	public String getMin() {
-		return min;
-	}
-
-	public MemoryOption(String label, int code, String max, String min) {
-		super();
-		this.label = label;
-		this.code = code;
-		this.max = max;
-		this.min = min;
-	}
-
-	public String label;
-	public int code;
-	public String max;
-	public String min;
-}

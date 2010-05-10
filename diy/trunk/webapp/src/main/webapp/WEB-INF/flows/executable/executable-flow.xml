@@ -4,6 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile"/>
+		<var name="javaCommand" class="org.imirsel.nema.webapp.model.JavaExecutableFile" />
 
 	<view-state id="upload" model="executable">
 		<on-entry>
@@ -18,16 +19,21 @@
 		<transition on="review" to="review"/>
 	</view-state>
 	<view-state id="argumentsJava" model="javaCommand">
-	<var name="javaCommand" class="org.imirsel.nema.webapp.model.JavaExecutableFile"/>
+
 		<transition on="cancel" to="cancel"/>
 		<transition on="back" to="upload"/>
-		<transition on="review" to="review"/>
+		<transition on="review" to="review">
+		<evaluate expression="javaCommand.generateCommandLine()"/>
+		<set name="executableFile" value="javaCommand"/></transition>
 	</view-state>
 	<view-state id="argumentsMatlab" model="matlabCommend">
 	<var name="matlabCommand" class="org.imirsel.nema.webapp.model.MatlabExecutableFile"/>
 		<transition on="cancel" to="cancel"/>
 		<transition on="back" to="upload"/>
-		<transition on="review" to="review"/>
+		<transition on="review" to="review">
+		<evaluate expression="matlabCommand.generateCommandLine()"/>
+		<set name="executableFile" value="matlabCommand"/>
+		</transition>
 	</view-state>
 	<view-state id="review">
 		<transition on="cancel" to="cancel"/>
