@@ -126,7 +126,7 @@
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>2.1</version>
 				<configuration>
-				<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+					<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -224,7 +224,7 @@
 				<artifactId>maven-jetty-plugin</artifactId>
 				<version>6.1.10</version>
 			</plugin>
-	
+
 		</plugins>
 	</build>
 
@@ -237,7 +237,7 @@
 			<id>nema-artifactory-remote</id>
 			<url>http://nema-dev.lis.illinois.edu/artifactory/remote-repos</url>
 		</repository>
-		
+
 	</repositories>
 
 	<pluginRepositories>
@@ -312,30 +312,36 @@
 			<scope>test</scope>
 		</dependency>
 
- 	<dependency>
-  		<groupId>javax.jcr</groupId>
-  		<artifactId>jcr</artifactId>
-    	 <version>2.0</version>
-     	<scope>compile</scope>
-  	</dependency>
-  	
-  	 <dependency>
-  		<groupId>org.imirsel</groupId>
-  		<artifactId>nema-contentrepository-service-client</artifactId>
-    	 <version>0.0.1-SNAPSHOT</version>
-     	<scope>compile</scope>
-  	</dependency>
-  
-  
-		
 		<dependency>
-		  	<groupId>com.structure101.java</groupId>
-		    <artifactId>maven-structure101-plugin</artifactId>
-    	   	<version>0.5</version>
+			<groupId>javax.jcr</groupId>
+			<artifactId>jcr</artifactId>
+			<version>2.0</version>
+			<scope>compile</scope>
 		</dependency>
-		
-	
-		
+
+		<dependency>
+			<groupId>org.imirsel</groupId>
+			<artifactId>nema-contentrepository-service-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+			<exclusions>
+			<exclusion>
+				<groupId>org.imirsel</groupId>
+				<artifactId>nema-flowservice-api</artifactId>
+			</exclusion>
+			</exclusions>
+		</dependency>
+
+
+
+		<dependency>
+			<groupId>com.structure101.java</groupId>
+			<artifactId>maven-structure101-plugin</artifactId>
+			<version>0.5</version>
+		</dependency>
+
+
+
 	</dependencies>
 
 	<modules>

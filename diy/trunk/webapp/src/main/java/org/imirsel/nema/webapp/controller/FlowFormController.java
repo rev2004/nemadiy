@@ -181,7 +181,6 @@ public class FlowFormController extends MultiActionController{
 		}
 		
 		
-		String newFlowUri=flowService.createNewFlow(paramMap,flowUri,user.getId());
 		
 		Long longFlowId  =Long.parseLong(flowId);
 		Flow templateFlow = this.getFlowService().getFlow(longFlowId );
@@ -204,12 +203,16 @@ public class FlowFormController extends MultiActionController{
 		instance.setKeyWords(templateFlow.getKeyWords());
 		instance.setName(name);
 		instance.setTemplate(false);
-		instance.setUri(newFlowUri);
+		//instance.setUri(newFlowUri);
 		instance.setDescription(description);
 		instance.setType(templateFlow.getType());
 		instance.setTypeName(templateFlow.getTypeName());
 		
-		long instanceId=this.getFlowService().storeFlowInstance(instance);
+		//long instanceId=this.getFlowService().storeFlowInstance(instance);
+		
+		Flow flow=flowService.createNewFlow(userManager.getCurrentUserCredentials(),instance,paramMap,flowUri,user.getId());
+		long instanceId = flow.getId();
+		
 		Job job=this.getFlowService().executeJob(token, name,description, instanceId, user.getId(), user.getEmail());
 		ModelAndView mav= new ModelAndView(new RedirectView("JobManager.jobDetail",true));
 		//ModelAndView mav = new ModelAndView("job/job");

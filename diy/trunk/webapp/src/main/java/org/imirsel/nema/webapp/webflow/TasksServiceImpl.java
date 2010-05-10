@@ -341,9 +341,6 @@ public class TasksServiceImpl {
 			// user = userManager.getUserByUsername("admin");
 		}
 
-		String newFlowUri = this.flowService.createNewFlow(paramMap, flowUri,
-				user.getId());
-
 		Long longFlowId = Long.parseLong(flowId);
 		Flow templateFlow = this.flowService.getFlow(longFlowId);
 
@@ -368,12 +365,14 @@ public class TasksServiceImpl {
 		instance.setKeyWords(templateFlow.getKeyWords());
 		instance.setName(name);
 		instance.setTemplate(false);
-		instance.setUri(newFlowUri);
+		//instance.setUri(newFlowUri);
 		instance.setDescription(description);
 		instance.setType(templateFlow.getType());
 		instance.setTypeName(templateFlow.getTypeName());
 
-		long instanceId = this.flowService.storeFlowInstance(instance);
+		instance=this.flowService.createNewFlow(userManager.getCurrentUserCredentials(),instance,paramMap, flowUri,user.getId());
+		long instanceId = instance.getId();		
+		
 		Job job = this.flowService.executeJob(token, name, description,
 				instanceId, user.getId(), user.getEmail());
 
