@@ -452,14 +452,14 @@
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-flowservice-api</artifactId>
-			<version>0.6.0</version>
+			<version>${flowservice.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-flow-service</artifactId>
-			<version>0.6.0</version>
+			<version>${flowservice.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -718,5 +718,6 @@
 	</profiles>
 	<properties>
 		<spring.webflow.version>2.0.9.RELEASE</spring.webflow.version>
+		<flowservice.version>0.7.0-SNAPSHOT</flowservice.version>
 	</properties>
 </project>
