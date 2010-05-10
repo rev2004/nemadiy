@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,6 +20,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.derby.impl.sql.compile.GetCurrentConnectionNode;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
@@ -30,6 +32,7 @@ import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
+import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -119,7 +122,10 @@ public class TasksServiceImpl {
 			final Map<String, String> parameters, final String url) {
 		logger.debug("add executable url into parameter");
 		parameters.put(getName(component.getInstanceUri(), EXECUTABLE_URL), url);
-
+		SimpleCredentials credential=userManager.getCurrentUserCredentials();
+		String credentialString=credential.getUserID()+":"+new String(credential.getPassword());
+		parameters.put(getName(component.getInstanceUri(),CREDENTIALS),credentialString );
+		parameters.put(getName(component.getInstanceUri(),REMOTE_COMPONENT),"true" );
 	}
 
 	// TODO this method is the same as the one in ComponentPropertyTag, might
@@ -413,7 +419,38 @@ public class TasksServiceImpl {
 			return resultSet;
 		}
 	}
+	public Map<String,String> generateMap1(ParameterMap parameters){
+		Map<String,String> map=new HashMap<String,String>();
+		String[] keys=(String[])parameters.getArray("variable");
+		String[] values=(String[])parameters.getArray("value");
+		int length=keys.length;		
+		for (int i=0;i<length;i++){
+			if ((keys[i]!=null)&&(keys[i]!="")) map.put(keys[i],values[i]);
+		}
+		logger.debug("generate map of size "+length);
+		return map;
+	}
+	
+	
+	/**
+	 * generate a map from two string arrays (key[] and values[])
+	 * @param variables
+	 * @param values
+	 * @return
+	 */
+	public Map<String,String> generateMap(String[] keys,String[] values){
+		Map<String,String> map=new HashMap<String,String>();
+		int length=keys.length;		
+		for (int i=0;i<length;i++){
+			if ((keys[i]!=null)&&(keys[i]!="")) map.put(keys[i],values[i]);
+		}
+		logger.debug("generate map of size "+length);
+		return map;
+	}
+	
+	
 
+	
 	private String processUrl(String url) {
 		String identifier = "published_resources/nema";
 		int index = url.indexOf(identifier);

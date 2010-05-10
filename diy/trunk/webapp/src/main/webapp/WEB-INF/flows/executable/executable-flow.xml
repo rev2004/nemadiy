@@ -3,52 +3,63 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile"/>
-		<var name="javaCommand" class="org.imirsel.nema.webapp.model.JavaExecutableFile" />
+	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile" />
+	<on-start><set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()"/></on-start>
+	
+
 
 	<view-state id="upload" model="executable">
 		<on-entry>
-			<evaluate expression="executable.getTypeSet()" result="viewScope.typeSet"/>
+			<evaluate expression="executable.getTypeSet()" result="viewScope.typeSet" />
 		</on-entry>
-		<transition on="upload" to="arguments"/>
-		<transition on="cancel" to="cancel"/>
+		<transition on="upload" to="arguments" />
+		<transition on="cancel" to="cancel" />
 	</view-state>
 	<view-state id="argumentsPlain" model="executable">
-		<transition on="cancel" to="cancel"/>
-		<transition on="back" to="upload"/>
-		<transition on="review" to="review"/>
+		<transition on="cancel" to="cancel" />
+		<transition on="back" to="upload" />
+		<transition on="review" to="review">
+			<evaluate
+				expression="tasksService.generateMap(requestParameters.variable,requestParameters.value)"
+				result="envMap" />
+			<evaluate
+				expression="tasksService.generateMap(requestParameters.variable,requestParameters.value)"
+				result="envMap" />
+		</transition>
 	</view-state>
 	<view-state id="argumentsJava" model="javaCommand">
+		<var name="javaCommand" class="org.imirsel.nema.webapp.model.JavaExecutableFile" />
 
-		<transition on="cancel" to="cancel"/>
-		<transition on="back" to="upload"/>
+		<transition on="cancel" to="cancel" />
+		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-		<evaluate expression="javaCommand.generateCommandLine()"/>
-		<set name="executableFile" value="javaCommand"/></transition>
+			<evaluate expression="javaCommand.generateCommandLine()" />
+			<set name="executableFile" value="javaCommand" />
+		</transition>
 	</view-state>
 	<view-state id="argumentsMatlab" model="matlabCommend">
-	<var name="matlabCommand" class="org.imirsel.nema.webapp.model.MatlabExecutableFile"/>
-		<transition on="cancel" to="cancel"/>
-		<transition on="back" to="upload"/>
+		<var name="matlabCommand" class="org.imirsel.nema.webapp.model.MatlabExecutableFile" />
+		<transition on="cancel" to="cancel" />
+		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-		<evaluate expression="matlabCommand.generateCommandLine()"/>
-		<set name="executableFile" value="matlabCommand"/>
+			<evaluate expression="matlabCommand.generateCommandLine()" />
+			<set name="executableFile" value="matlabCommand" />
 		</transition>
 	</view-state>
 	<view-state id="review">
-		<transition on="cancel" to="cancel"/>
-		<transition on="back" to="arguments"/>
-		<transition on="save" to="success"/>
+		<transition on="cancel" to="cancel" />
+		<transition on="back" to="arguments" />
+		<transition on="save" to="success" />
 	</view-state>
 
 	<action-state id="arguments">
-		<evaluate expression="executable.fileType"/>
-		<transition on="JAR" to="argumentsJava"/>
-		<transition on="MATLAB" to="argumentsMatlab"/>
-		<transition on="PLAIN" to="argumentsPlain"/>
+		<evaluate expression="executable.fileType" />
+		<transition on="JAR" to="argumentsJava" />
+		<transition on="MATLAB" to="argumentsMatlab" />
+		<transition on="PLAIN" to="argumentsPlain" />
 	</action-state>
 	<end-state id="cancel"></end-state>
 	<end-state id="success">
-		<output name="executableUrl" value="'LiteralValue'" type="java.lang.String"/>
+		<output name="executableUrl" value="'LiteralValue'" type="java.lang.String" />
 	</end-state>
 </flow>
