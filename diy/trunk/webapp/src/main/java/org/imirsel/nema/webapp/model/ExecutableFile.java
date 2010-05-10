@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.imirsel.nema.model.PredefinedCommandTemplate;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,6 +63,7 @@ public class ExecutableFile implements Serializable {
 
 	private String environment;
 	
+	private PredefinedCommandTemplate template;
 
 	public String getArgs() {
 		return args;
@@ -111,6 +113,14 @@ public class ExecutableFile implements Serializable {
 
 	public FileType getFileType() {
 		return fileType;
+	}
+
+	public void setTemplate(PredefinedCommandTemplate template) {
+		this.template = template;
+	}
+
+	public PredefinedCommandTemplate getTemplate() {
+		return template;
 	}
 
 }
