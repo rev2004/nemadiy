@@ -6,6 +6,7 @@
 <body>
 upload the executable.
 <form:form modelAttribute="executable" enctype="multipart/form-data">
+	<fieldset id="pt1"><form:errors path="*"/></fieldset>
 	<fieldset id="pt1"><label>Please select file type:</label> <form:select
 		path="type" items="${typeSet}" itemLabel="label" itemValue="code" />
 	</fieldset>

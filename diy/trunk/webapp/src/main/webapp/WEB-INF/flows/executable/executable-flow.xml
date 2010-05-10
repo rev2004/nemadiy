@@ -3,26 +3,44 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile" />
+	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile"/>
 
-	<view-state id="upload" model="executable" >
-	<on-entry><evaluate expression="executable.getTypeSet()" result="viewScope.typeSet"/> </on-entry>
-		<transition on="upload" to="arguments" />
-		<transition on="cancel" to="cancel" />
+	<view-state id="upload" model="executable">
+		<on-entry>
+			<evaluate expression="executable.getTypeSet()" result="viewScope.typeSet"/>
+		</on-entry>
+		<transition on="upload" to="arguments"/>
+		<transition on="cancel" to="cancel"/>
 	</view-state>
-	<view-state id="arguments" model="executable">
-		<transition on="cancel" to="cancel" />
-		<transition on="back" to="upload" />
-		<transition on="review" to="review" />
+	<view-state id="argumentsPlain" model="executable">
+		<transition on="cancel" to="cancel"/>
+		<transition on="back" to="upload"/>
+		<transition on="review" to="review"/>
+	</view-state>
+	<view-state id="argumentsJava" model="executable">
+		<transition on="cancel" to="cancel"/>
+		<transition on="back" to="upload"/>
+		<transition on="review" to="review"/>
+	</view-state>
+	<view-state id="argumentsMatlab" model="executable">
+		<transition on="cancel" to="cancel"/>
+		<transition on="back" to="upload"/>
+		<transition on="review" to="review"/>
 	</view-state>
 	<view-state id="review">
-		<transition on="cancel" to="cancel" />
-		<transition on="back" to="arguments" />
-		<transition on="save" to="success" />
+		<transition on="cancel" to="cancel"/>
+		<transition on="back" to="arguments"/>
+		<transition on="save" to="success"/>
 	</view-state>
 
+	<action-state id="arguments">
+		<evaluate expression="executable.getFileType"/>
+		<transition on="JAR" to="argumentsJava"/>
+		<transition on="MATLAB" to="argumentsMATLAB"/>
+		<transition on="PLAIN" to="argumentsPLAIN"/>
+	</action-state>
 	<end-state id="cancel"></end-state>
 	<end-state id="success">
-		<output name="executableUrl" value="'LiteralValue'" type="java.lang.String" />
+		<output name="executableUrl" value="'LiteralValue'" type="java.lang.String"/>
 	</end-state>
 </flow>

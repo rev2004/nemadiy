@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
@@ -30,15 +29,11 @@ import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
-import org.imirsel.nema.webapp.controller.JobController;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
-import org.springframework.webflow.action.MultiAction;
-import org.springframework.webflow.core.collection.ParameterMap;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action class for the template flow generation web flow.
+ * Action class for the task template flow generation web flow.
  * 
  * @author gzhu1
  * @since 0.5.1

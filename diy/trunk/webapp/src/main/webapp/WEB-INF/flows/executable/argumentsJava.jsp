@@ -5,8 +5,8 @@
 </head>
 <body>
 <form:form commandName="executable">
-
-    <fieldset id="pt1"><label>${executable.fileType} File:</label> <c:out value="${executable.file.name}"/></fieldset>
+<fieldset id="pt1"><form:errors path="*"/></fieldset>
+    <fieldset id="pt1"><label>${executable.fileType} File:</label> <c:out value="${executable.file.originalFilename}"/></fieldset>
 	<fieldset id="pt1"><label>Environment String:</label>  <form:textarea path="environment" rows="5" cols="50" /></fieldset>
 	<fieldset id="pt1"><label>Arguments String:</label> <form:textarea path="args" rows="5" cols="50" /></fieldset>
 	<fieldset id="button"><input type="submit"
