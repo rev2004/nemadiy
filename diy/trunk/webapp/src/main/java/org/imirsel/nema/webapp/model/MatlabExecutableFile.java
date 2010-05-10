@@ -7,6 +7,12 @@ package org.imirsel.nema.webapp.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.imirsel.nema.contentrepository.client.CommandLineFormatter;
+import org.imirsel.nema.model.InvalidCommandLineFlagException;
+import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
+import org.imirsel.nema.model.MatlabPredefinedCommandTemplate;
 import org.imirsel.nema.model.Path;
 import org.imirsel.nema.model.SysProperty;
 
@@ -16,7 +22,7 @@ import org.imirsel.nema.model.SysProperty;
  */
 public class MatlabExecutableFile extends ExecutableFile {
 
-
+	static private Log logger = LogFactory.getLog(MatlabExecutableFile.class);
 
 	private static final long serialVersionUID = 1L;
 	private boolean jvm = false;
@@ -69,5 +75,24 @@ public class MatlabExecutableFile extends ExecutableFile {
 	public void setLog(String log) {
 		this.log = log;
 	}
+	@Override
+	public void generateCommandline(){
 	
+		
+		MatlabPredefinedCommandTemplate command=new MatlabPredefinedCommandTemplate();
+		command.setDebug(debug);
+		command.setDisplay(display);
+		command.setJvm(jvm);
+		command.setLog(log);
+		command.setLogfile(logfile);
+		command.setSplash(splash);
+		command.setTiming(timing);
+		
+		CommandLineFormatter formatter=new CommandLineFormatter();
+		try {
+			setEnvironment(formatter.getCommandLineString(command, true));
+		} catch (InvalidCommandLineFlagException e) {
+			logger.error(e,e);
+		}
+	}
 }

@@ -52,6 +52,7 @@ public class ExecutableFile implements Serializable {
 	}
 	
 	public static FileType[] getTypeSet(){
+		logger.debug("get typeset");
 		return new FileType[]{FileType.JAR,FileType.MATLAB,FileType.PLAIN};
 	}
 
@@ -123,4 +124,7 @@ public class ExecutableFile implements Serializable {
 		return template;
 	}
 
+	public void generateCommandline(){
+		
+	}
 }

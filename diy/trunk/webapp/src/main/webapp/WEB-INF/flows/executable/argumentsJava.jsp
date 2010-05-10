@@ -30,8 +30,9 @@
 	<fieldset id="pt1"><label>Disable Assertion
 	Packages:</label><form:input path="disableAssertionPackages" /></fieldset>
 	<fieldset id="pt1"><label>Memory:</label><form:select
-		path="memoryOption" items="${javaCommand.memoryOptions}" itemLabel="label" itemValue="code" /></fieldset>
-	
+		path="memoryOption" items="${memoryOptions}" itemLabel="label" itemValue="code" /></fieldset>
+		
+	<c:forEach items="${memoryOptions}" var="a">${a.label}aa</c:forEach>
 
 
 
