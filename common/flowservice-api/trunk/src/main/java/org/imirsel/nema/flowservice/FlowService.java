@@ -22,7 +22,8 @@ import org.imirsel.nema.model.Property;
  * @author shirk
  * @author kumaramit01
  * @since 0.4.0
- * @version 0.7.0 -Added createNewFlow which takes credentials.
+ * @version 0.7.0 -Added createNewFlow which takes credentials. 
+ *                 Removed storeFlowInstance
  */
 public interface FlowService {
 
@@ -110,8 +111,10 @@ public interface FlowService {
 	 * @param instance The {@link Flow} instance that should be stored.
 	 * @return The flow instance ID.
 	 * @since 0.4.0
+	 * @version 0.7.0 -removed It's private method now. createNewFlow calls
+	 * it after saving the flow to the content repository.
 	 */
-   public Long storeFlowInstance(Flow instance);
+   //public Long storeFlowInstance(Flow instance);
    
    /**
     * Return the {@link Flow} with the specified ID.
@@ -184,13 +187,14 @@ public interface FlowService {
     * @param paramMap Map of flow parameter names to values. These parameters
     * will be applied to the template flow at the specified URI.
     * @param credentials The Credentials of the Nema user.
+    * @param flow -The flow with the flow uri not set. The Flow uri will be set before calling storeFlowInstance
     * @param flowUri The URI of the flow to use as the template.
     * @param userId The ID of the user who is creating this flow.
-    * @return The URI of the new flow.
+    * @return The flow object with the id and uri set.
     * @since 0.5.0
-    * @since 0.7.0 -Modified incompatiable with previous versions.
+    * @since 0.7.0 -Modified incompatible with previous versions.
     */
-   public String createNewFlow(Credentials credentials,HashMap<String,String> paramMap, String flowUri, long userId);
+   public Flow createNewFlow(Credentials credentials, Flow flow, HashMap<String,String> paramMap, String flowUri, long userId);
 
    /**
     * Create a new flow using the flow at the specified URI as a template to
