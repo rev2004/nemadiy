@@ -17,12 +17,14 @@
 		<transition on="back" to="upload"/>
 		<transition on="review" to="review"/>
 	</view-state>
-	<view-state id="argumentsJava" model="executable">
+	<view-state id="argumentsJava" model="javaCommand">
+	<var name="javaCommand" class="org.imirsel.nema.webapp.model.JavaExecutableFile"/>
 		<transition on="cancel" to="cancel"/>
 		<transition on="back" to="upload"/>
 		<transition on="review" to="review"/>
 	</view-state>
-	<view-state id="argumentsMatlab" model="executable">
+	<view-state id="argumentsMatlab" model="matlabCommend">
+	<var name="matlabCommand" class="org.imirsel.nema.webapp.model.MatlabExecutableFile"/>
 		<transition on="cancel" to="cancel"/>
 		<transition on="back" to="upload"/>
 		<transition on="review" to="review"/>
@@ -34,10 +36,10 @@
 	</view-state>
 
 	<action-state id="arguments">
-		<evaluate expression="executable.getFileType"/>
+		<evaluate expression="executable.fileType"/>
 		<transition on="JAR" to="argumentsJava"/>
-		<transition on="MATLAB" to="argumentsMATLAB"/>
-		<transition on="PLAIN" to="argumentsPLAIN"/>
+		<transition on="MATLAB" to="argumentsMatlab"/>
+		<transition on="PLAIN" to="argumentsPlain"/>
 	</action-state>
 	<end-state id="cancel"></end-state>
 	<end-state id="success">
