@@ -1,6 +1,12 @@
 package org.imirsel.nema.model;
 
-public class OsDataType {
+import java.io.Serializable;
+
+public class OsDataType implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3914130238815939149L;
 	private String name;
 	private String value;
 

@@ -1,5 +1,6 @@
 package org.imirsel.nema.contentrepository.client;
 
+
 /**Exception class encapsulates the Login and Repository Access exceptions
  * 
  * @author kumaramit01

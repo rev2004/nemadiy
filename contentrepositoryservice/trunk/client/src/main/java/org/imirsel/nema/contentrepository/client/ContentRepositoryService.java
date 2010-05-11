@@ -2,7 +2,6 @@ package org.imirsel.nema.contentrepository.client;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.jcr.Node;
@@ -13,7 +12,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
@@ -43,6 +41,8 @@ public class ContentRepositoryService implements ArtifactService {
 	private String USERS_DIR ="users";
 	private String FLOWS_DIR ="flows";
 	private String EXECUTOR_BUNDLE_DIR ="executables";
+	private String DEFAULT_WORKSPACE="default";
+	private String DEFAULT_PROTOCOL ="jcr";
 	
 	
 	/**Validates the content repository -checks various content types are present
@@ -98,7 +98,7 @@ public class ContentRepositoryService implements ArtifactService {
 		return exists;
 	}
 	/**Checks if a resource node exists. 
-	 * 
+	 * TODO:// ignores workspace...
 	 *  @param credentials
 	 *  @param resourcePath
 	 *  @return returns boolean true/false
@@ -129,7 +129,7 @@ public class ContentRepositoryService implements ArtifactService {
 	}
 
 	/** Removes an executable bundle
-	 * 
+	 * TODO:// ignores workspace...
 	 * @param credentials
 	 * @param resourcePath
 	 * @return
@@ -150,6 +150,14 @@ public class ContentRepositoryService implements ArtifactService {
 			throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
 		}
 		session.removeItem(resourcePath.getPath());
+		
+		// now remove the properties file if it exists
+		String propertyFilePath = resourcePath.getPath()+".properties";
+		exists=session.itemExists(propertyFilePath);
+		if(exists){
+			session.removeItem(propertyFilePath);
+		}
+		
 		session.save();
 		}catch (LoginException e){
 			throw new ContentRepositoryServiceException(e);
@@ -167,7 +175,7 @@ public class ContentRepositoryService implements ArtifactService {
 	/** 
 	 * Saves the executable bundle into the content repository and returns a
 	 * a ResourcePath
-	 * 
+	 * TODO:// ignores workspace...
 	 * @param credentials
 	 * @param flowInstanceId
 	 * @param bundle 
@@ -177,6 +185,12 @@ public class ContentRepositoryService implements ArtifactService {
 			final ExecutableBundle bundle) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
+		}
+		// make sure that the bundle is good
+		BundleUtils.validateBundle(bundle);
+		
+		if(bundle.getFileName().contains(":")){
+			throw new ContentRepositoryServiceException("Illegal Character in the Filename ':' ");
 		}
 		String resourcePath = null;
 		Session session = null;
@@ -258,17 +272,28 @@ public class ContentRepositoryService implements ArtifactService {
 			fileNode.setProperty("commandLineFlags", bundle.getCommandLineFlags());
 			fileNode.setProperty("mainClass", bundle.getMainClass());
 			
+			
 			if(bundle.getEnvironmentVariables()!=null){
-				fileNode.setProperty("environmentVariables", getKeyValuePairs(bundle.getEnvironmentVariables()));
+				fileNode.setProperty("environmentVariables", BundleUtils.getKeyValuePairs(bundle.getEnvironmentVariables()));
 			}
 			
-			
+			long currentTime= System.currentTimeMillis();
 			logger.info("creating new bundle node: " + bundle.getFileName() );
 			Node resNode = fileNode.addNode ("jcr:content", "nt:resource");
 			resNode.setProperty ("jcr:mimeType", mimeType);
 			resNode.setProperty ("jcr:encoding", "");
 			resNode.setProperty ("jcr:data", new BinaryValue(bundle.getBundleContent()));
-			resNode.setProperty ("jcr:lastModified", System.currentTimeMillis());
+			resNode.setProperty ("jcr:lastModified", currentTime);
+			
+			Node executionPropertiesNode =  flowInstanceDirNode.addNode(bundle.getFileName()+".properties","nt:file");
+			mimeType = mt.getContentTypeFor(bundle.getFileName()+".properties");
+			Node eresNode = executionPropertiesNode.addNode ("jcr:content", "nt:resource");
+			eresNode.setProperty ("jcr:mimeType", mimeType);
+			eresNode.setProperty ("jcr:encoding", "");
+			eresNode.setProperty ("jcr:data", new BinaryValue(BundleUtils.getPropertyFileValue(bundle)));
+			eresNode.setProperty ("jcr:lastModified", currentTime);
+			
+			
 			
 		
 			resourcePath = fileNode.getPath();
@@ -283,10 +308,11 @@ public class ContentRepositoryService implements ArtifactService {
 				session.logout();
 			}
 		}
-		return new RepositoryResourcePath(resourcePath);
+		return new RepositoryResourcePath(DEFAULT_PROTOCOL,DEFAULT_WORKSPACE,resourcePath);
 	}
+
 	/**Save the flow to a content repository
-	 * 
+	 * TODO:// ignores workspace...
 	 * @param credentials
 	 * @param flow the Flow object
 	 * @param flowContent in bytes
@@ -361,7 +387,7 @@ public class ContentRepositoryService implements ArtifactService {
 			fileNode.setProperty("description",flow.getDescription());
 			fileNode.setProperty("keyWords", flow.getKeyWords());
 			fileNode.setProperty("template", flow.isTemplate());
-			
+		
 			
 			
 			
@@ -375,7 +401,7 @@ public class ContentRepositoryService implements ArtifactService {
 
 			logger.info("saving session: " + resNode.getPath());
 			session.save();
-			return new RepositoryResourcePath(resourcePath);
+			return new RepositoryResourcePath(DEFAULT_PROTOCOL,DEFAULT_WORKSPACE,resourcePath);
 		} catch (RepositoryException e) {
 			throw new ContentRepositoryServiceException(e);
 		}finally{
@@ -384,7 +410,7 @@ public class ContentRepositoryService implements ArtifactService {
 		}
 	}
 	/**Returns the executable bundle
-	 * 
+	 * TODO:// ignores workspace...
 	 * 
 	 * @param credentials
 	 * @param resourcePath
@@ -450,7 +476,7 @@ public class ContentRepositoryService implements ArtifactService {
 
 	/**
 	 * Returns the filesystem filepath
-	 * 
+	 * TODO:// ignores workspace...
 	 * @param credentials
 	 * @param resourcePath
 	 * @return the filesystem filepath for a resource.
@@ -507,7 +533,7 @@ public class ContentRepositoryService implements ArtifactService {
 		String commandLineFlags = commandLineFlagsProperty.getString();
 		String mainClass = mainClassProperty.getString();
 		Value[] values = envProperty.getValues();
-		Map env = getMapfromKeyValuePairs(values);
+		Map<String,String> env = BundleUtils.getMapfromKeyValuePairs(values);
 		
 		bundle.setTypeName(ExecutableType.valueOf(typeName));
 		bundle.setId(execId);
@@ -529,7 +555,7 @@ public class ContentRepositoryService implements ArtifactService {
 		long length =dataProperty.getBinary().getSize();
 		byte[] data;
 		try {
-			data = readByteDataFromStream(is,length);
+			data =BundleUtils.readByteDataFromStream(is,length);
 		} catch (IOException e) {
 			throw new ContentRepositoryServiceException(e);
 		}
@@ -563,7 +589,7 @@ public class ContentRepositoryService implements ArtifactService {
 		String commandLineFlags = commandLineFlagsProperty.getString();
 		String mainClass = mainClassProperty.getString();
 		Value[] values = envProperty.getValues();
-		Map<String,String> env = getMapfromKeyValuePairs(values);
+		Map<String,String> env = BundleUtils.getMapfromKeyValuePairs(values);
 		
 		bundle.setTypeName(ExecutableType.valueOf(typeName));
 		bundle.setId(execId);
@@ -580,47 +606,6 @@ public class ContentRepositoryService implements ArtifactService {
 		return bundle;
 	}
 
-	private Map<String,String> getMapfromKeyValuePairs(final Value[] values) 
-	throws ValueFormatException, IllegalStateException, RepositoryException {
-		Map<String,String> hmap = new HashMap<String,String>();
-		for(Value value:values){
-			String keyValue = value.getString();
-			String[] kv=keyValue.split("=");
-			if(kv.length==2){
-				hmap.put(kv[0], kv[1]);
-			}
-		}
-		return hmap;
-	}
 
-	private byte[] readByteDataFromStream(final InputStream is, final long length) throws IOException {
-		// Create the byte array to hold the data
-		byte[] bytes = new byte[(int) length];
-		// Read in the bytes
-		int offset = 0;
-		int numRead = 0;
-		while (offset < bytes.length
-				&& (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-			offset += numRead;
-		}
-		// Ensure all the bytes have been read in
-		if (offset < bytes.length) {
-			throw new IOException("Could not completely read the node data");
-		}
-		// Close the input stream and return bytes
-		is.close();
-		return bytes;
-	}
-
-	private String[] getKeyValuePairs(final Map<String, String> environmentVariables) {
-		String[] values = new String[environmentVariables.size()];
-		int count=0;
-		for(String key:environmentVariables.keySet()){
-			values[count] = key+"="+environmentVariables.get(key);
-		}
-		return values;
-	}
 	
-
-
 }
