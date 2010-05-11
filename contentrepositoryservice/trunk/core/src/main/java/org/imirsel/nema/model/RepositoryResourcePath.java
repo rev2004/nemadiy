@@ -7,14 +7,47 @@ package org.imirsel.nema.model;
  */
 public class RepositoryResourcePath implements ResourcePath{
 	private String path;
-
-	public RepositoryResourcePath(String path){
+	private String workspace;
+	private String protocol;
+	
+	public RepositoryResourcePath(String protocol, String workspace,String path){
 		this.path = path;
+		if(workspace==null){
+			throw new IllegalArgumentException("Workspace cannot be null");
+		}
+		if(protocol==null){
+			throw new IllegalArgumentException("Protocol cannot be null");
+		}
+		this.workspace = workspace;
+		this.protocol = protocol;
+		
 	}
+	
+	
 
 	public String getPath() {
 		return path;
 	}
+
+	public void setWorkspace(String workspace) {
+		this.workspace = workspace;
+	}
+
+	public String getWorkspace() {
+		return workspace;
+	}
+
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
+	}
+
+
+
+	public String getProtocol() {
+		return protocol;
+	}
+
+
 
 	public boolean equals(Object object){
 		if(!(object instanceof RepositoryResourcePath)){
@@ -28,17 +61,17 @@ public class RepositoryResourcePath implements ResourcePath{
 			return true;
 		}
 		if(other.path!=null){
-			return this.path.equals(other.path);
+			return this.path.equals(other.path) && this.workspace.equals(other.workspace);
 		}
 		if(this.path!=null){
-			return this.path.equals(other.path);
+			return this.path.equals(other.path) &&  this.workspace.equals(other.workspace);
 		}
 		return false;
 	}
 	
 	public int hashCode() { 
 	    int hash = 1;
-	    hash = hash * 31 + this.path.hashCode();
+	    hash = hash * 31 + this.path.hashCode() + this.workspace.hashCode();
 	    return hash;
 	 }
 

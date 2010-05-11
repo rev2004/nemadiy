@@ -1,6 +1,12 @@
 package org.imirsel.nema.model;
 
-public class FileDataType {
+import java.io.Serializable;
+
+public class FileDataType  implements Serializable{
+	/** Version of this class
+	 * 
+	 */
+	private static final long serialVersionUID = -4037324168549003152L;
 	private String name;
 	private String value;
 

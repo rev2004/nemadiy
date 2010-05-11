@@ -53,7 +53,7 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 		ExecutableBundle bundle = ContentRepositoryTestUtil.getExecutableBundle();
 		try {
 			crs.removeExecutableBundle(nemaCredentials,
-					new RepositoryResourcePath("/users/user/flows/executables/testFlow/test.zip"));
+					new RepositoryResourcePath("jcr","default","/users/user/flows/executables/testFlow/test.zip"));
 			ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,
 					"testFlow", bundle);
 			System.out.println(rp.getPath());

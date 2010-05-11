@@ -1,10 +1,16 @@
 package org.imirsel.nema.model;
 
-public class GroupDataType {
+import java.io.Serializable;
+
+public class GroupDataType  implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7883504198551206914L;
 	private String name;
 	private String value;
 
-	public GroupDataType(String string, String string2) {
+	public GroupDataType(String name, String value) {
 		this.name=name;
 		this.value=value;
 	}

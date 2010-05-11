@@ -1,5 +1,6 @@
 package org.imirsel.nema.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,13 @@ import java.util.Map;
  * @since 0.0.1
  */
 public class VanillaPredefinedCommandTemplate implements
-		PredefinedCommandTemplate {
+		PredefinedCommandTemplate, Serializable{
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3307989303515424283L;
 	Map<String,String> environmentMap = new HashMap<String,String>();
 	List<Param> execParams = new ArrayList<Param>();
 	

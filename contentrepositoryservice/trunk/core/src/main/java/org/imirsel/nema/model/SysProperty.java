@@ -1,12 +1,18 @@
 package org.imirsel.nema.model;
 
+import java.io.Serializable;
+
 
 /** System properties for java cmdline
  * 
  * @author kumaramit01
  * @since 0.0.1
  */
-public class SysProperty {
+public class SysProperty implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1085496238767009164L;
 	private String name;
 	private String value;
 	public SysProperty(String name,String value){

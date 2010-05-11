@@ -20,6 +20,7 @@ import org.imirsel.nema.model.Flow.FlowType;
 import org.imirsel.nema.test.BaseManagerTestCase;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
@@ -72,11 +73,12 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		assertEquals(rp.getPath(),"/users/user/flows/flowInstance/flowInstance");
 	}
 	
+	@Ignore
 	@Test
 	public void testFileSystemPath() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
-		RepositoryResourcePath resourcePath = new RepositoryResourcePath("/users/user/flows/executables/testFlow/test.zip");
+		RepositoryResourcePath resourcePath = new RepositoryResourcePath("jcr","default","/users/user/flows/executables/testFlow/test.zip");
 		String fileSystemPath=crs.getExecutableBundleFSPath(nemaCredentials, resourcePath);
 		System.out.println("FS Path is: " + fileSystemPath);
 	}
@@ -86,22 +88,22 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		
 	}
 	
-	
+	@Test
 	public void testSaveExecutableBundle() throws ContentRepositoryServiceException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		ExecutableBundle bundle = ContentRepositoryTestUtil.getExecutableBundle();
-		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlow", bundle);
+		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlow1", bundle);
 		System.out.println(rp.getPath());
-		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlow/test.zip");
+		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlow1/test.zip");
 	}
 
 	
-	
+	@Ignore
 	@Test
 	public void testGetExecutableBundle() {
 		String resourcePath ="/users/user/flows/executables/test.zip";
-		RepositoryResourcePath rrp = new RepositoryResourcePath(resourcePath);
+		RepositoryResourcePath rrp = new RepositoryResourcePath("jcr","default",resourcePath);
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		try {
@@ -115,7 +117,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	
 	public void testRemoveExecutableBundle(){
 		String resourcePath ="/users/user/flows/executables/test.zip";
-		RepositoryResourcePath rrp = new RepositoryResourcePath(resourcePath);
+		RepositoryResourcePath rrp = new RepositoryResourcePath("jcr","default",resourcePath);
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		try {

@@ -1,5 +1,7 @@
 package org.imirsel.nema.model;
 
+import java.io.Serializable;
+
 /**
  * This class encapsulates the input output and the other parameters that are
  * sent to the executable program. These parameters are different from any flags
@@ -28,7 +30,12 @@ package org.imirsel.nema.model;
  * @author kumaramit01
  * @since 0.0.1
  */
-public class Param {
+public class Param implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -303860357827666240L;
 
 	static public enum ParamType {
 		OTHER(-1), INPUT(0), OUTPUT(1);
