@@ -1,6 +1,7 @@
 package org.imirsel.nema.webapp.webflow;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,14 +25,21 @@ import org.apache.derby.impl.sql.compile.GetCurrentConnectionNode;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
+import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.JobResult;
+import org.imirsel.nema.model.Param;
+import org.imirsel.nema.model.ParamAlreadyExistsException;
+import org.imirsel.nema.model.PredefinedCommandTemplate;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
+import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
+import org.imirsel.nema.webapp.model.ExecutableFile;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -442,14 +450,63 @@ public class TasksServiceImpl {
 		Map<String,String> map=new HashMap<String,String>();
 		int length=keys.length;		
 		for (int i=0;i<length;i++){
-			if ((keys[i]!=null)&&(keys[i]!="")) map.put(keys[i],values[i]);
+			if ((keys[i]!=null)&&(keys[i].length()!=0)) map.put(keys[i],values[i]);
 		}
 		logger.debug("generate map of size "+length);
 		return map;
 	}
 	
-	
+	public ExecutableBundle generateExecutableBundle(PredefinedCommandTemplate template,ExecutableFile executable){
+		ExecutableBundle bundle=new ExecutableBundle();
+		//TODO bundle.setEnvironmentVariables(envMap);
+		MultipartFile file=executable.getFile();
+		bundle.setFileName(file.getOriginalFilename());
+		bundle.setExecutableName(file.getOriginalFilename());//TODO 
+		try {
+			bundle.setBundleContent(file.getBytes());
+		} catch (IOException e) {
+			logger.debug(e,e);
+		}
+		bundle.setId("321");//TODO
+		
+		return bundle;
+	}
 
+	/**
+	 * 
+	 * @param keys
+	 * @param values
+	 * @param inputs
+	 * @param outputs
+	 * @param others
+	 * @return
+	 */
+	public VanillaPredefinedCommandTemplate getTemplate(String[] keys,String[] values,String[] inputs,String[] outputs,String[] others){
+		VanillaPredefinedCommandTemplate template=new VanillaPredefinedCommandTemplate();
+		try{
+		int i=0;
+		for (String entry:inputs){
+			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,true,Param.ParamType.INPUT.getCode(),i++));
+		}
+		 i=0;
+		for (String entry:outputs){
+			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,true,Param.ParamType.OUTPUT.getCode(),i++));
+		}	
+		i=0;
+		for (String entry:inputs){
+			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,false,Param.ParamType.OTHER.getCode(),i++));
+		}
+		}catch (ParamAlreadyExistsException e) {
+			logger.error(e,e);
+		}
+		Map<String,String> map=new HashMap<String,String>();
+		int length=keys.length;		
+		for (int i=0;i<length;i++){
+			if ((keys[i]!=null)&&(keys[i].length()>0)) map.put(keys[i],values[i]);
+		}
+		logger.debug("generate map of size "+length);
+		return template;
+	}
 	
 	private String processUrl(String url) {
 		String identifier = "published_resources/nema";

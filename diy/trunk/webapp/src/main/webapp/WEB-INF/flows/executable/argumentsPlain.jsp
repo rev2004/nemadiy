@@ -1,38 +1,26 @@
 <%@ include file="/common/taglibs.jsp"%>
+
 <head>
+
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>fill the arguments</title>
-<script type="text/javascript">
-var count=1;
-function add(parentDiv,templateDiv){
-var clone = $(templateDiv.cloneNode(true));
-count++;
-clone.id="param"+count;
-$(clone).down("input").value="";
-$(templateDiv).insert({after: clone}); 
-}
-function removeNode(node,first){
-	var parent =  $(node).parentNode;
-	if($(parent).id==first){
-	alert("Cannot delete the element");
-	}else{
-		$(parent).remove();
-	}
-}
-</script>
+<script type="text/javascript" src="/scripts/add.js" ></script>
+
 </head>
-<body>
+<body >
 <form:form commandName="executable">
-	<fieldset id="pt1"><form:errors path="*" /></fieldset>
+
+		<fieldset id="pt1"><form:errors path="*" /></fieldset>
 	<fieldset id="pt1"><label>${executable.fileType}
 	File:</label> <c:out value="${executable.file.originalFilename}" /></fieldset>
 	<fieldset id="pt1"><label>Environment Variables:</label> <input
 		type="button" value="+" onclick="add($('envMain'),$('envParam1'))" /><br />
 	<div id='envMain'>
-	<div id='envParam1'><input name="variable" type="text" /> = <input
+	<div id='envParam1' ><input name="variable" type="text" /> = <input
 		name="value" type="text" /><input type="button" value="-"
 		onclick="removeNode(this,'envParam1')" /></div>
 	</div>
+	
 	</fieldset>
 	<fieldset id="pt1"><label>Input Files:</label> <input
 		type="button" value="+" onclick="add($('inputMain'),$('inputParam1'))" /><br />
@@ -45,7 +33,8 @@ function removeNode(node,first){
 	<fieldset id="pt1"><label>Output Files:</label> <input
 		type="button" value="+" onclick="add($('outputMain'),$('outputParam1'))" /><br />
 	<div id='outputMain'>
-	<div id='outputParam1'><input name="output" type="text" /><input type="button" value="-"
+	<div id='outputParam1'><select name="output">
+	<c:forEach items="${supportedFiles}"  var="file"><option value="${file.value}">${file.name}</option></c:forEach></select><input type="button" value="-"
 		onclick="removeNode(this,'outputParam1')" /></div>
 	</div>
 	</fieldset>

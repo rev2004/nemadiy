@@ -22,8 +22,8 @@ public class ExecutableFile implements Serializable {
 
 	
 	public enum FileType{
-		JAR("jar file or zip of jar files", 0), MATLAB("matlab programs", 1), PLAIN(
-				"plain c, c++ or shell", 2);
+		JAR("jar file or zip of jar files", 0), MATLAB("matlab programs", 1), C(
+				"plain c, c++", 2),SHELL("shell",3);
 		private String label;
 		private int code;
 
@@ -45,7 +45,8 @@ public class ExecutableFile implements Serializable {
 			switch (code){
 			case 0:return FileType.JAR; 
 			case 1:return FileType.MATLAB;
-			case 2:return FileType.PLAIN;
+			case 2:return FileType.C;
+			case 3:return FileType.SHELL;
 			default:throw new InvalidObjectException("can't deserialize FileType  for "+code );
 			}
 		}
@@ -53,12 +54,12 @@ public class ExecutableFile implements Serializable {
 	
 	public static FileType[] getTypeSet(){
 		logger.debug("get typeset");
-		return new FileType[]{FileType.JAR,FileType.MATLAB,FileType.PLAIN};
+		return new FileType[]{FileType.JAR,FileType.MATLAB,FileType.C,FileType.SHELL};
 	}
 
 	private  MultipartFile file;
 
-	private FileType fileType=FileType.PLAIN;
+	private FileType fileType=FileType.SHELL;
 
 	private String args;;
 
