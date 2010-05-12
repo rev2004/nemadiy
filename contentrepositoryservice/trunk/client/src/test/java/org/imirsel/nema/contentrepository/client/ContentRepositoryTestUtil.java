@@ -20,28 +20,83 @@ import org.imirsel.nema.model.ExecutableBundle.ExecutableType;
 
 public class ContentRepositoryTestUtil {
 	
-	static ExecutableBundle getExecutableBundle() {
+	static ExecutableBundle getC1ExecutableBundle() {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("ENV1", "VALUE1");
 		map.put("ENV2", "VALUE2");
 
 		ExecutableBundle bundle = new ExecutableBundle();
 
-		bundle.setExecutableName("Matlab");
+		bundle.setExecutableName("a.out");
 		bundle.setCommandLineFlags("-o -pp ${FileOne.class}");
-		bundle.setId("bundle-id");
-		bundle.setTypeName(ExecutableType.MATLAB);
+		bundle.setId("c1");
+		bundle.setTypeName(ExecutableType.C);
 		bundle.setEnvironmentVariables(map);
 		byte[] fileContent = null;
 
 		try {
-			fileContent = readFileContent("client/src/test/resources/test.zip");
+			fileContent = readFileContent("client/src/test/resources/c1.zip");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		bundle.setBundleContent(fileContent);
-		bundle.setFileName("test.zip");
+		bundle.setFileName("c1.zip");
+
+		return bundle;
+
+	}
+
+	
+	static ExecutableBundle getJavaExecutableBundle() {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("ENV1", "VALUE1");
+		map.put("ENV2", "VALUE2");
+
+		ExecutableBundle bundle = new ExecutableBundle();
+
+		bundle.setCommandLineFlags("-o -pp ${FileOne.class}");
+		bundle.setId("java1");
+		bundle.setMainClass("HelloWorld");
+		bundle.setTypeName(ExecutableType.JAVA);
+		bundle.setEnvironmentVariables(map);
+		byte[] fileContent = null;
+
+		try {
+			fileContent = readFileContent("client/src/test/resources/java1.zip");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		bundle.setBundleContent(fileContent);
+		bundle.setFileName("java1.zip");
+
+		return bundle;
+
+	}
+	
+	static ExecutableBundle getJarExecutableBundle() {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("ENV1", "VALUE1");
+		map.put("ENV2", "VALUE2");
+
+		ExecutableBundle bundle = new ExecutableBundle();
+
+		
+		bundle.setCommandLineFlags("-o -pp ${FileOne.class}");
+		bundle.setId("exejar");
+		bundle.setTypeName(ExecutableType.JAVA);
+		bundle.setEnvironmentVariables(map);
+		byte[] fileContent = null;
+
+		try {
+			fileContent = readFileContent("client/src/test/resources/exechello.jar");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		bundle.setBundleContent(fileContent);
+		bundle.setFileName("exechello.jar");
 
 		return bundle;
 

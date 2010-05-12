@@ -12,6 +12,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
 import org.imirsel.nema.model.ExecutableBundle;
+import org.imirsel.nema.model.InvalidBundleException;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
@@ -24,11 +25,28 @@ import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
  */
 public class BundleUtils {
 
-	protected static byte[] getPropertyFileValue(ExecutableBundle bundle) {
+	protected static byte[] getPropertyFileValue(ExecutableBundle bundle) throws InvalidBundleException {
 		Properties properties = new Properties();
-		properties.setProperty("executableName",  bundle.getExecutableName());
+		
+		if(bundle.getTypeName()==null){
+			throw new InvalidBundleException("Missing bundle type");
+		}
+		
+		if(bundle.getId()==null){
+			throw new InvalidBundleException("Missing id");
+		}
+		
+		
+		if(bundle.getExecutableName()!=null){
+			properties.setProperty("executableName",  bundle.getExecutableName());
+		}
+		
+		
 		properties.setProperty("typeName", bundle.getTypeName());
+		
 		properties.setProperty("execId", bundle.getId());
+		
+		
 		if(bundle.getCommandLineFlags()!=null)
 		properties.setProperty("commandLineFlags", bundle.getCommandLineFlags());
 		if(bundle.getMainClass()!=null)

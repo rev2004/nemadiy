@@ -53,7 +53,8 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	}
 	
 	
-	
+	@Ignore
+	@Test
 	public void testSaveFlow() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
@@ -88,27 +89,51 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		
 	}
 	
+	@Ignore
 	@Test
-	public void testSaveExecutableBundle() throws ContentRepositoryServiceException {
+	public void testCSaveExecutableBundle() throws ContentRepositoryServiceException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
-		ExecutableBundle bundle = ContentRepositoryTestUtil.getExecutableBundle();
-		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlow1", bundle);
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getC1ExecutableBundle();
+		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlowC", bundle);
 		System.out.println(rp.getPath());
-		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlow1/test.zip");
+		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlowC/c1.zip");
 	}
-
 	
 	@Ignore
 	@Test
+	public void testJavaSaveExecutableBundle() throws ContentRepositoryServiceException {
+		ContentRepositoryService crs = new ContentRepositoryService();
+		crs.setRepository(repository);
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getJavaExecutableBundle();
+		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlowJava", bundle);
+		System.out.println(rp.getPath());
+		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlowJava/java1.zip");
+	}
+	
+	@Ignore
+	@Test
+	public void testJarSaveExecutableBundle() throws ContentRepositoryServiceException {
+		ContentRepositoryService crs = new ContentRepositoryService();
+		crs.setRepository(repository);
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getJarExecutableBundle();
+		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlowJar", bundle);
+		System.out.println(rp.getPath());
+		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlowJar/exechello.jar");
+	}
+
+	
+	
+
+	@Test
 	public void testGetExecutableBundle() {
-		String resourcePath ="/users/user/flows/executables/test.zip";
+		String resourcePath ="/users/user/flows/executables/testFlowJava/java1.zip";
 		RepositoryResourcePath rrp = new RepositoryResourcePath("jcr","default",resourcePath);
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		try {
 			ExecutableBundle bundle=crs.getExecutableBundle(nemaCredentials, rrp);
-			assertEquals(bundle.getFileName(),"test.zip");
+			assertEquals(bundle.getFileName(),"java1.zip");
 		} catch (ContentRepositoryServiceException e) {
 			fail(e.getMessage());
 		}
