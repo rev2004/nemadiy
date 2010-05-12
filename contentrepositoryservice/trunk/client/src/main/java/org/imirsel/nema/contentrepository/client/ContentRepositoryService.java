@@ -22,6 +22,7 @@ import org.apache.jackrabbit.value.BinaryValue;
 import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
+import org.imirsel.nema.model.InvalidBundleException;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.ExecutableBundle.ExecutableType;
@@ -43,8 +44,8 @@ public class ContentRepositoryService implements ArtifactService {
 	private String EXECUTOR_BUNDLE_DIR ="executables";
 	private String DEFAULT_WORKSPACE="default";
 	private String DEFAULT_PROTOCOL ="jcr";
-	
-	
+
+
 	/**Validates the content repository -checks various content types are present
 	 * 
 	 * @param credentials
@@ -72,17 +73,17 @@ public class ContentRepositoryService implements ArtifactService {
 			}else{
 				exists=true;
 			}
-		if(exists){
-			nodeType = nodeTypeManager.getNodeType("flow:file");
-			if(nodeType==null){
-				logger.severe("flow:file node type is missing");
-				exists=false;
-			}else{
-				exists=true;
+			if(exists){
+				nodeType = nodeTypeManager.getNodeType("flow:file");
+				if(nodeType==null){
+					logger.severe("flow:file node type is missing");
+					exists=false;
+				}else{
+					exists=true;
+				}
 			}
-		}
-			
-			
+
+
 		}catch (LoginException e){
 			throw new ContentRepositoryServiceException(e);
 		}catch(NoSuchNodeTypeException nsn){
@@ -105,7 +106,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 *  @throws ContentRepositoryServiceException
 	 */
 	public boolean exists(final SimpleCredentials credentials,final RepositoryResourcePath resourcePath)
-			throws ContentRepositoryServiceException {
+	throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -125,7 +126,7 @@ public class ContentRepositoryService implements ArtifactService {
 				session.logout();
 			}
 		}
-		
+
 	}
 
 	/** Removes an executable bundle
@@ -146,19 +147,19 @@ public class ContentRepositoryService implements ArtifactService {
 			session = repository.login(credentials);
 			logger.info("Success Logging in");
 			boolean exists=session.itemExists(resourcePath.getPath());
-		if(!exists){
-			throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
-		}
-		session.removeItem(resourcePath.getPath());
-		
-		// now remove the properties file if it exists
-		String propertyFilePath = resourcePath.getPath()+".properties";
-		exists=session.itemExists(propertyFilePath);
-		if(exists){
-			session.removeItem(propertyFilePath);
-		}
-		
-		session.save();
+			if(!exists){
+				throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
+			}
+			session.removeItem(resourcePath.getPath());
+
+			// now remove the properties file if it exists
+			String propertyFilePath = resourcePath.getPath()+".properties";
+			exists=session.itemExists(propertyFilePath);
+			if(exists){
+				session.removeItem(propertyFilePath);
+			}
+
+			session.save();
 		}catch (LoginException e){
 			throw new ContentRepositoryServiceException(e);
 		} catch (RepositoryException e) {
@@ -188,7 +189,7 @@ public class ContentRepositoryService implements ArtifactService {
 		}
 		// make sure that the bundle is good
 		BundleUtils.validateBundle(bundle);
-		
+
 		if(bundle.getFileName().contains(":")){
 			throw new ContentRepositoryServiceException("Illegal Character in the Filename ':' ");
 		}
@@ -266,17 +267,24 @@ public class ContentRepositoryService implements ArtifactService {
 
 
 			Node fileNode = flowInstanceDirNode.addNode (bundle.getFileName(), "exec:file");
-			fileNode.setProperty("executableName", bundle.getExecutableName());
+			
+			if(bundle.getExecutableName()!=null){
+				fileNode.setProperty("executableName", bundle.getExecutableName());
+			}
 			fileNode.setProperty("typeName", bundle.getTypeName());
 			fileNode.setProperty("execId", bundle.getId());
-			fileNode.setProperty("commandLineFlags", bundle.getCommandLineFlags());
-			fileNode.setProperty("mainClass", bundle.getMainClass());
 			
-			
+			if(bundle.getCommandLineFlags()!=null){
+				fileNode.setProperty("commandLineFlags", bundle.getCommandLineFlags());
+			}
+			if(bundle.getMainClass()!=null){
+				fileNode.setProperty("mainClass", bundle.getMainClass());
+			}
+
 			if(bundle.getEnvironmentVariables()!=null){
 				fileNode.setProperty("environmentVariables", BundleUtils.getKeyValuePairs(bundle.getEnvironmentVariables()));
 			}
-			
+
 			long currentTime= System.currentTimeMillis();
 			logger.info("creating new bundle node: " + bundle.getFileName() );
 			Node resNode = fileNode.addNode ("jcr:content", "nt:resource");
@@ -284,18 +292,22 @@ public class ContentRepositoryService implements ArtifactService {
 			resNode.setProperty ("jcr:encoding", "");
 			resNode.setProperty ("jcr:data", new BinaryValue(bundle.getBundleContent()));
 			resNode.setProperty ("jcr:lastModified", currentTime);
-			
+
 			Node executionPropertiesNode =  flowInstanceDirNode.addNode(bundle.getFileName()+".properties","nt:file");
 			mimeType = mt.getContentTypeFor(bundle.getFileName()+".properties");
 			Node eresNode = executionPropertiesNode.addNode ("jcr:content", "nt:resource");
 			eresNode.setProperty ("jcr:mimeType", mimeType);
 			eresNode.setProperty ("jcr:encoding", "");
-			eresNode.setProperty ("jcr:data", new BinaryValue(BundleUtils.getPropertyFileValue(bundle)));
+			try {
+				eresNode.setProperty ("jcr:data", new BinaryValue(BundleUtils.getPropertyFileValue(bundle)));
+			} catch (InvalidBundleException e) {
+				throw new RepositoryException(e.getMessage());
+			}
 			eresNode.setProperty ("jcr:lastModified", currentTime);
-			
-			
-			
-		
+
+
+
+
 			resourcePath = fileNode.getPath();
 
 			logger.info("saving session: " + resNode.getPath());
@@ -378,25 +390,25 @@ public class ContentRepositoryService implements ArtifactService {
 				}
 				session.save();
 			}
-			
-		
-			
+
+
+
 			Node fileNode = flowInstanceDirNode.addNode (flowInstanceId, "flow:file");
 			fileNode.setProperty("flowName",flow.getName());
 			fileNode.setProperty("typeName",flow.getTypeName());
 			fileNode.setProperty("description",flow.getDescription());
 			fileNode.setProperty("keyWords", flow.getKeyWords());
 			fileNode.setProperty("template", flow.isTemplate());
-		
-			
-			
-			
+
+
+
+
 			logger.info("creating new flow node: " + flowInstanceId );
 			Node resNode = fileNode.addNode ("jcr:content", "nt:resource");
 			resNode.setProperty ("jcr:data", new BinaryValue(flowContent));
 			resNode.setProperty ("jcr:lastModified", System.currentTimeMillis());
-			
-		
+
+
 			resourcePath = fileNode.getPath();
 
 			logger.info("saving session: " + resNode.getPath());
@@ -426,12 +438,13 @@ public class ContentRepositoryService implements ArtifactService {
 
 		try {
 			session = repository.login(credentials);
+			System.out.println("HERE 1" + resourcePath.getPath());
 			boolean exists=session.itemExists(resourcePath.getPath());
 			if(!exists){
 				throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
 			}
 			Node node=session.getNode(resourcePath.getPath());
-			ExecutableBundle bundle = retrieveExecutableBundleFromNode(node);
+			ExecutableBundle bundle = retrieveExecutableBundleFromNode(node,true);
 			return bundle;
 		} catch (RepositoryException e) {
 			throw new ContentRepositoryServiceException(e);
@@ -464,7 +477,7 @@ public class ContentRepositoryService implements ArtifactService {
 				throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
 			}
 			Node node=session.getNode(resourcePath.getPath());
-			ExecutableMetadata metadata = retrieveExecutableMetadataFromNode(node);
+			ExecutableMetadata metadata = retrieveExecutableBundleFromNode(node,false);
 			return metadata;
 		} catch (RepositoryException e) {
 			throw new ContentRepositoryServiceException(e);
@@ -496,7 +509,7 @@ public class ContentRepositoryService implements ArtifactService {
 			}
 			Node node=session.getNode(resourcePath.getPath());
 			Node execFile=node.getNode("jcr:content");
-			
+
 			String id=execFile.getIdentifier();
 			String fsPath = FileSystemPathUtil.getFSPathFromPropertyId(id, "http://www.jcp.org/jcr/1.0/"+execFile.getName(), 0);
 			return fsPath;
@@ -510,39 +523,82 @@ public class ContentRepositoryService implements ArtifactService {
 
 	}
 
-	
+
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 	}
 
-	private ExecutableBundle retrieveExecutableBundleFromNode(final Node fileNode) 
+	private ExecutableBundle retrieveExecutableBundleFromNode(final Node fileNode, boolean copyContent) 
 	throws PathNotFoundException, RepositoryException, ContentRepositoryServiceException {
-		
-		Property executableNameProperty=fileNode.getProperty("executableName");
-		Property typeNameProperty=fileNode.getProperty("typeName");
-		Property execIdProperty=fileNode.getProperty("execId");
-		Property commandLineFlagsProperty=fileNode.getProperty("commandLineFlags");
-		Property mainClassProperty=fileNode.getProperty("mainClass");
-		Property envProperty=fileNode.getProperty("environmentVariables");
-		
+
 		ExecutableBundle bundle = new ExecutableBundle();
-		
-		String  executableName = executableNameProperty.getString();
-		String typeName = typeNameProperty.getString();
-		String execId =  execIdProperty.getString();
-		String commandLineFlags = commandLineFlagsProperty.getString();
-		String mainClass = mainClassProperty.getString();
-		Value[] values = envProperty.getValues();
-		Map<String,String> env = BundleUtils.getMapfromKeyValuePairs(values);
-		
-		bundle.setTypeName(ExecutableType.valueOf(typeName));
+		Property typeNameProperty=null;
+		Property execIdProperty=null;
+		Property commandLineFlagsProperty=null;
+		Property executableNameProperty=null;
+		Property mainClassProperty=null;
+		Property envProperty=null;
+		String  executableName =null;
+		String typeName =null;
+		String execId = null;
+		String commandLineFlags =null;
+		String mainClass=null;
+		Value[] values=null;
+		Map<String,String> env =null;
+
+		boolean propExists=fileNode.hasProperty("executableName");
+		if(propExists){
+			executableNameProperty=fileNode.getProperty("executableName");
+			executableName = executableNameProperty.getString();
+		}
+
+		propExists=fileNode.hasProperty("typeName");
+		System.out.println("filenode has the property typeName: " + propExists);
+		if(propExists){
+			typeNameProperty=fileNode.getProperty("typeName");
+			typeName = typeNameProperty.getString();
+			System.out.println("typeName is: " + typeName);
+		}
+
+		propExists=fileNode.hasProperty("execId");
+		if(propExists){
+			execIdProperty=fileNode.getProperty("execId");
+			execId =  execIdProperty.getString();
+		}
+
+
+		propExists=fileNode.hasProperty("commandLineFlags");
+		if(propExists){
+			commandLineFlagsProperty=fileNode.getProperty("commandLineFlags");
+			commandLineFlags = commandLineFlagsProperty.getString();
+		}
+
+
+		propExists=fileNode.hasProperty("mainClass");
+		if(propExists){
+			mainClassProperty=fileNode.getProperty("mainClass");
+			mainClass = mainClassProperty.getString();
+		}
+
+		propExists=fileNode.hasProperty("environmentVariables");
+		if(propExists){
+			envProperty=fileNode.getProperty("environmentVariables");
+			values = envProperty.getValues();
+			env = BundleUtils.getMapfromKeyValuePairs(values);
+		}
+
+
+
+
+		System.out.println("FOUND TYPENAME: " + typeName);
+		bundle.setTypeName(ExecutableType.toExecutableType(typeName));
 		bundle.setId(execId);
 		bundle.setCommandLineFlags(commandLineFlags);
 		bundle.setMainClass(mainClass);
 		bundle.setEnvironmentVariables(env);
 		bundle.setExecutableName(executableName);
-		
-		
+
+
 		Node resNode = fileNode.getNode ("jcr:content");
 		Property mimeTypeProperty = resNode.getProperty("jcr:mimeType");
 		Property encodingProperty = resNode.getProperty("jcr:encoding");
@@ -551,61 +607,30 @@ public class ContentRepositoryService implements ArtifactService {
 
 		String mimeType=mimeTypeProperty.getString();
 		String encodingType = encodingProperty.getString();
-		InputStream is = dataProperty.getBinary().getStream();
-		long length =dataProperty.getBinary().getSize();
-		byte[] data;
-		try {
-			data =BundleUtils.readByteDataFromStream(is,length);
-		} catch (IOException e) {
-			throw new ContentRepositoryServiceException(e);
+
+
+		if(copyContent){
+			InputStream is = dataProperty.getBinary().getStream();
+			long length =dataProperty.getBinary().getSize();
+			byte[] data;
+			try {
+				data =BundleUtils.readByteDataFromStream(is,length);
+			} catch (IOException e) {
+				throw new ContentRepositoryServiceException(e);
+			}
+			bundle.setBundleContent(data);
 		}
 
-		
-		bundle.setBundleContent(data);
+
 		bundle.setFileName(fileName);
-		bundle.setTypeName(ExecutableBundle.ExecutableType.C);
 		bundle.setId(fileNode.getIdentifier());
 
 
 
 		return bundle;
 	}
-		
-	private ExecutableMetadata retrieveExecutableMetadataFromNode(final Node fileNode) 
-	throws PathNotFoundException, RepositoryException, ContentRepositoryServiceException {
-		
-		Property executableNameProperty=fileNode.getProperty("executableName");
-		Property typeNameProperty=fileNode.getProperty("typeName");
-		Property execIdProperty=fileNode.getProperty("execId");
-		Property commandLineFlagsProperty=fileNode.getProperty("commandLineFlags");
-		Property mainClassProperty=fileNode.getProperty("mainClass");
-		Property envProperty=fileNode.getProperty("environmentVariables");
-		
-		ExecutableBundle bundle = new ExecutableBundle();
-		
-		String  executableName = executableNameProperty.getString();
-		String typeName = typeNameProperty.getString();
-		String execId =  execIdProperty.getString();
-		String commandLineFlags = commandLineFlagsProperty.getString();
-		String mainClass = mainClassProperty.getString();
-		Value[] values = envProperty.getValues();
-		Map<String,String> env = BundleUtils.getMapfromKeyValuePairs(values);
-		
-		bundle.setTypeName(ExecutableType.valueOf(typeName));
-		bundle.setId(execId);
-		bundle.setCommandLineFlags(commandLineFlags);
-		bundle.setMainClass(mainClass);
-		bundle.setEnvironmentVariables(env);
-		bundle.setExecutableName(executableName);
-		
-		
-		String fileName = fileNode.getName();
-		bundle.setFileName(fileName);
-		bundle.setTypeName(ExecutableBundle.ExecutableType.C);
-		bundle.setId(fileNode.getIdentifier());
-		return bundle;
-	}
 
 
-	
+
+
 }
