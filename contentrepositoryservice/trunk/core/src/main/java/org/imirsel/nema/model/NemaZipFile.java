@@ -183,7 +183,7 @@ public class NemaZipFile {
             closeJars(jarFiles);
          } catch (IOException e) {
             throw new RuntimeException("An error occured while searching for "
-                  + "class " + className + " in file " + getSourceZipName()
+                  + "class " + className + " in file " + getZipName()
                   + ".", e);
          }
       }
@@ -201,11 +201,12 @@ public class NemaZipFile {
    }
    
    /**
-    * Return the name of source ZIP file without path information.
+    * Return the name of the source ZIP file (the file used to construct this
+    * instance) without path information.
     * 
     * @return Name of the source ZIP file.
     */
-   public String getSourceZipName() {
+   public String getZipName() {
       validateOpened();
       return sourceZipName;
    }
@@ -217,7 +218,7 @@ public class NemaZipFile {
     * 
     * @return Location of the ZIP content directory.
     */
-   public String getSourceZipContentDir() {
+   public String getUnzipDir() {
       return sourceZipContentDir.getAbsolutePath();
    }
    
@@ -288,28 +289,24 @@ public class NemaZipFile {
    }
    
    /**
-    * Return jar file paths in this ZIP file that are JAR files.
-    * The file separator is always unix type, even if this
-    * is running on a windows machine.
+    * Return jar file paths in this ZIP file that are JAR files. The file 
+    * separator is always Unix type, even if this is running on a Windows
+    * machine.
     * 
-    * @return List of String.
+    * @return List of JAR paths in the Unix file separator format.
     */
-   public List<String> getSourceJarPaths() {
-      List<String> jarEntries = new ArrayList<String>();
-      Enumeration<? extends ZipEntry> fileEnumeration = sourceZip.entries();
-      while (fileEnumeration.hasMoreElements()) {
-         ZipEntry entry = fileEnumeration.nextElement();
-         if (entry.getName().endsWith(".jar") || 
-               entry.getName().endsWith(".JAR")) {
-        	 if(isUnixTypeOs()){
-        		 jarEntries.add(entry.getName());
-        	 }else{// this is a windows OS -but we store the paths in the unix format always
-        		 String modifiedEntryWithOsspecificFileSep =  entry.getName().replace('/', '\\');
-        		 jarEntries.add(modifiedEntryWithOsspecificFileSep);
-        	 }
+   public List<String> getUnixJarPaths() {
+      List<String> jarPaths = new ArrayList<String>();
+      List<ZipEntry> jarEntries = jarEntries();
+      for(ZipEntry entry:jarEntries) {
+         if(isUnixTypeOs()){
+            jarPaths.add(entry.getName());
+         }else{ // this is a windows OS -but we store the paths in the unix format always
+            String modifiedEntryWithOsSpecificFileSep =  entry.getName().replace('\\', '/');
+            jarPaths.add(modifiedEntryWithOsSpecificFileSep);
          }
       }
-      return jarEntries;
+      return jarPaths;
    }
 
    
@@ -425,8 +422,9 @@ public class NemaZipFile {
    }
    
    /**
-    * Helper method to know if the OS is unix type
-    * @return
+    * Helper method to test if the host platform is of the Unix type.
+    * 
+    * @return True if the platform is of a Unix type.
     */
    private boolean isUnixTypeOs(){
 	 if(File.pathSeparatorChar==':'){
