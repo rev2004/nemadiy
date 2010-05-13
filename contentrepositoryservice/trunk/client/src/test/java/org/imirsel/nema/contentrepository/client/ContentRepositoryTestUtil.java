@@ -77,7 +77,7 @@ public class ContentRepositoryTestUtil {
 		zipFile.open();
 		
 				
-		List<String> paths=zipFile.getSourceJarPaths();
+		List<String> paths=zipFile.getUnixJarPaths();
 		
 		for(String pathString:paths){
 			pct.addClasspath(new Path(pathString));
