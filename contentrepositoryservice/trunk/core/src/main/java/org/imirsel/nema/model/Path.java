@@ -18,8 +18,14 @@ public class Path implements Serializable{
 	
 	public Path(String element){this.element=element;}
 	
-	public String getElement() {
-		return element;
+	public String getElement(OsDataType targetOs) {
+		String modifiedElement = element;
+		if(targetOs.getValue().equals("Unix Like"))
+			return element;
+		else
+			modifiedElement = element.replace('/', '\\');
+	
+		return modifiedElement;
 	}
 	
 

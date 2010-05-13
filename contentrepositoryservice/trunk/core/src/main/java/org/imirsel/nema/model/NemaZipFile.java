@@ -289,6 +289,8 @@ public class NemaZipFile {
    
    /**
     * Return jar file paths in this ZIP file that are JAR files.
+    * The file separator is always unix type, even if this
+    * is running on a windows machine.
     * 
     * @return List of String.
     */
@@ -299,7 +301,12 @@ public class NemaZipFile {
          ZipEntry entry = fileEnumeration.nextElement();
          if (entry.getName().endsWith(".jar") || 
                entry.getName().endsWith(".JAR")) {
-            jarEntries.add(entry.getName());
+        	 if(isUnixTypeOs()){
+        		 jarEntries.add(entry.getName());
+        	 }else{// this is a windows OS -but we store the paths in the unix format always
+        		 String modifiedEntryWithOsspecificFileSep =  entry.getName().replace('/', '\\');
+        		 jarEntries.add(modifiedEntryWithOsspecificFileSep);
+        	 }
          }
       }
       return jarEntries;
@@ -415,6 +422,17 @@ public class NemaZipFile {
                unzipDir + " cannot be written to.");
       }
 
+   }
+   
+   /**
+    * Helper method to know if the OS is unix type
+    * @return
+    */
+   private boolean isUnixTypeOs(){
+	 if(File.pathSeparatorChar==':'){
+		 return true;
+	 }
+	 return false;
    }
    
 

@@ -8,7 +8,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import javax.jcr.Repository;
 import javax.naming.Context;
@@ -16,11 +19,20 @@ import javax.naming.InitialContext;
 
 import org.apache.jackrabbit.core.jndi.RegistryHelper;
 import org.imirsel.nema.model.ExecutableBundle;
+import org.imirsel.nema.model.InvalidCommandLineFlagException;
+import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
+import org.imirsel.nema.model.NemaZipFile;
+import org.imirsel.nema.model.OsDataType;
+import org.imirsel.nema.model.Path;
 import org.imirsel.nema.model.ExecutableBundle.ExecutableType;
 
 public class ContentRepositoryTestUtil {
 	
-	static ExecutableBundle getC1ExecutableBundle() {
+	public static OsDataType unixOs=new OsDataType("Unix","Unix Like");
+	public static OsDataType windowsOs=new OsDataType("Windows","Windows Like");
+	
+	
+	static ExecutableBundle getC1ExecutableBundle(OsDataType os) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("ENV1", "VALUE1");
 		map.put("ENV2", "VALUE2");
@@ -48,18 +60,40 @@ public class ContentRepositoryTestUtil {
 	}
 
 	
-	static ExecutableBundle getJavaExecutableBundle() {
+	static ExecutableBundle getJavaExecutableBundle(OsDataType os) throws InvalidCommandLineFlagException, ZipException, IOException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("ENV1", "VALUE1");
 		map.put("ENV2", "VALUE2");
-
+		CommandLineFormatter clf = new CommandLineFormatter();
+		JavaPredefinedCommandTemplate pct = new JavaPredefinedCommandTemplate();
+		pct.setMainClass("HelloWorld");
+		pct.setMaxMemory("-Xmx1024M");
+		pct.setMinMemory("-Xms512M");
+		pct.setVerboseExecutionClass(true);
+		pct.setVerboseExecutionGC(true);
+		pct.setVerboseExecutionJNI(true);
+		ZipFile zip = new ZipFile(new File("client/src/test/resources/java1.zip"));
+		NemaZipFile zipFile = new NemaZipFile(zip); 
+		zipFile.open();
+		
+				
+		List<String> paths=zipFile.getSourceJarPaths();
+		
+		for(String pathString:paths){
+			pct.addClasspath(new Path(pathString));
+		}
+		
 		ExecutableBundle bundle = new ExecutableBundle();
 
-		bundle.setCommandLineFlags("-o -pp ${FileOne.class}");
+		String lineFlags=clf.getCommandLineString(pct, os,true);
+		bundle.setCommandLineFlags(lineFlags);
 		bundle.setId("java1");
 		bundle.setMainClass("HelloWorld");
 		bundle.setTypeName(ExecutableType.JAVA);
 		bundle.setEnvironmentVariables(map);
+		
+		
+		
 		byte[] fileContent = null;
 
 		try {
@@ -75,7 +109,7 @@ public class ContentRepositoryTestUtil {
 
 	}
 	
-	static ExecutableBundle getJarExecutableBundle() {
+	static ExecutableBundle getJarExecutableBundle(OsDataType os) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("ENV1", "VALUE1");
 		map.put("ENV2", "VALUE2");

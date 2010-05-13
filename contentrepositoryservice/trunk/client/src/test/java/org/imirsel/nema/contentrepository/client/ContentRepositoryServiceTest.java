@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 
 import java.io.IOException;
+import java.util.zip.ZipException;
 
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
@@ -17,6 +18,7 @@ import org.apache.jackrabbit.api.JackrabbitNodeTypeManager;
 import org.apache.jackrabbit.commons.NamespaceHelper;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.model.ExecutableBundle;
+import org.imirsel.nema.model.InvalidCommandLineFlagException;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.test.BaseManagerTestCase;
@@ -31,10 +33,15 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 	private SimpleCredentials nemaCredentials;
 	private Repository repository = null;
 	private ClientRepositoryFactory factory = new ClientRepositoryFactory();
+	private static String RMI_URL = "rmi://nema-dev.lis.illinois.edu:2099/jackrabbit.repository";
+	
 
+
+	
 	@Before
 	public void setUp() throws Exception {
-		repository = ContentRepositoryTestUtil.getTempRepository();
+		//repository = ContentRepositoryTestUtil.getTempRepository();
+		repository = factory.getRepository(RMI_URL);
 		nemaCredentials = new SimpleCredentials("user", "user".toCharArray());
 		if (repository == null) {
 			throw new Exception("Repository is null...");
@@ -52,7 +59,7 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		crs.validateNodeTypes(nemaCredentials);
-		ExecutableBundle bundle = ContentRepositoryTestUtil.getC1ExecutableBundle();
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getC1ExecutableBundle(ContentRepositoryTestUtil.unixOs);
 		try {
 			crs.removeExecutableBundle(nemaCredentials,
 					new RepositoryResourcePath("jcr","default","/users/user/flows/executables/testFlowC/c1.zip"));
@@ -66,12 +73,13 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 
 	}
 	
+	@Ignore
 	@Test
-	public void testJavaSaveExecutableBundle() throws ContentRepositoryServiceException {
+	public void testJavaSaveExecutableBundle() throws ContentRepositoryServiceException, ZipException, InvalidCommandLineFlagException, IOException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		crs.validateNodeTypes(nemaCredentials);
-		ExecutableBundle bundle = ContentRepositoryTestUtil.getC1ExecutableBundle();
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getJavaExecutableBundle(ContentRepositoryTestUtil.unixOs);
 		try {
 			if(crs.exists(nemaCredentials, new RepositoryResourcePath("jcr", "default", "/users/user/flows/executables/testFlowJava/java1.zip"))){
 			crs.removeExecutableBundle(nemaCredentials,
@@ -87,12 +95,13 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 
 	}
 	
+	@Ignore
 	@Test
 	public void testJarExeSaveExecutableBundle() throws ContentRepositoryServiceException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		crs.validateNodeTypes(nemaCredentials);
-		ExecutableBundle bundle = ContentRepositoryTestUtil.getC1ExecutableBundle();
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getJarExecutableBundle(ContentRepositoryTestUtil.unixOs);
 		try {
 			crs.removeExecutableBundle(nemaCredentials,
 					new RepositoryResourcePath("jcr","default","/users/user/flows/executables/testFlowJar/exechello.jar"));
