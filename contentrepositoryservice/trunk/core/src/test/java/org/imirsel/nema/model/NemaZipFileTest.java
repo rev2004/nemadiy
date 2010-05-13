@@ -47,7 +47,7 @@ public class NemaZipFileTest extends BaseManagerTestCase {
       nemaJarFile = new NemaZipFile(jarFile);
       nemaJarFile.open();
       
-      System.out.println(nemaJarFile.getSourceZipContentDir());
+      System.out.println(nemaJarFile.getUnzipDir());
    }
 
    @After
@@ -92,12 +92,12 @@ public class NemaZipFileTest extends BaseManagerTestCase {
    
    @Test
    public void testGetSourceZipName() {
-      assertTrue(nemaZipFile.getSourceZipName().equals(zipFileName));
+      assertTrue(nemaZipFile.getZipName().equals(zipFileName));
    }
    
    @Test
-   public void testGetJarList(){
-	   List<String> jarList=nemaZipFile.getSourceJarPaths();
+   public void testGetUnixJarPaths(){
+	   List<String> jarList=nemaZipFile.getUnixJarPaths();
 	   assertTrue(jarList.size()==4);
    }
 }
