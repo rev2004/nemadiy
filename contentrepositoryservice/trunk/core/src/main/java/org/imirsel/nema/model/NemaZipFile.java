@@ -288,6 +288,25 @@ public class NemaZipFile {
    }
    
    /**
+    * Return jar file paths in this ZIP file that are JAR files.
+    * 
+    * @return List of String.
+    */
+   public List<String> getSourceJarPaths() {
+      List<String> jarEntries = new ArrayList<String>();
+      Enumeration<? extends ZipEntry> fileEnumeration = sourceZip.entries();
+      while (fileEnumeration.hasMoreElements()) {
+         ZipEntry entry = fileEnumeration.nextElement();
+         if (entry.getName().endsWith(".jar") || 
+               entry.getName().endsWith(".JAR")) {
+            jarEntries.add(entry.getName());
+         }
+      }
+      return jarEntries;
+   }
+
+   
+   /**
     * Expand the source ZIP file contents into the temp directory.
     * 
     * @throws IOException if a problem occurs while expanding the file.
@@ -397,5 +416,8 @@ public class NemaZipFile {
       }
 
    }
+   
+
+
    
 }
