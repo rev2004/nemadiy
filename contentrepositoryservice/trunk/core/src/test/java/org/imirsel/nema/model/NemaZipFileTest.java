@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
@@ -60,6 +61,7 @@ public class NemaZipFileTest extends BaseManagerTestCase {
       NemaZipFile testZipFile = new NemaZipFile(zipFile,"/a/path/that/does/not/exist");
    }
    
+  
    @Test
    public void testContainsFile() {
       assertFalse(nemaZipFile.containsFile("struts-console-3.4/aFakeFileName.txt"));
@@ -91,5 +93,11 @@ public class NemaZipFileTest extends BaseManagerTestCase {
    @Test
    public void testGetSourceZipName() {
       assertTrue(nemaZipFile.getSourceZipName().equals(zipFileName));
+   }
+   
+   @Test
+   public void testGetJarList(){
+	   List<String> jarList=nemaZipFile.getSourceJarPaths();
+	   assertTrue(jarList.size()==4);
    }
 }
