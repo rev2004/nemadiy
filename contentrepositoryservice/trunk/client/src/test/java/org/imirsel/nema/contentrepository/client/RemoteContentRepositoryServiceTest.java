@@ -5,7 +5,9 @@ package org.imirsel.nema.contentrepository.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.zip.ZipException;
 
 
 import javax.jcr.Repository;
@@ -14,6 +16,7 @@ import javax.jcr.SimpleCredentials;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
+import org.imirsel.nema.model.InvalidCommandLineFlagException;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.Flow.FlowType;
@@ -94,7 +97,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	public void testCSaveExecutableBundle() throws ContentRepositoryServiceException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
-		ExecutableBundle bundle = ContentRepositoryTestUtil.getC1ExecutableBundle();
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getC1ExecutableBundle(ContentRepositoryTestUtil.unixOs);
 		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlowC", bundle);
 		System.out.println(rp.getPath());
 		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlowC/c1.zip");
@@ -102,10 +105,10 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	
 	@Ignore
 	@Test
-	public void testJavaSaveExecutableBundle() throws ContentRepositoryServiceException {
+	public void testJavaSaveExecutableBundle() throws ContentRepositoryServiceException, ZipException, InvalidCommandLineFlagException, IOException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
-		ExecutableBundle bundle = ContentRepositoryTestUtil.getJavaExecutableBundle();
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getJavaExecutableBundle(ContentRepositoryTestUtil.unixOs);
 		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlowJava", bundle);
 		System.out.println(rp.getPath());
 		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlowJava/java1.zip");
@@ -116,7 +119,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	public void testJarSaveExecutableBundle() throws ContentRepositoryServiceException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
-		ExecutableBundle bundle = ContentRepositoryTestUtil.getJarExecutableBundle();
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getJarExecutableBundle( ContentRepositoryTestUtil.unixOs);
 		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlowJar", bundle);
 		System.out.println(rp.getPath());
 		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlowJar/exechello.jar");
@@ -125,6 +128,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	
 	
 
+	
 	@Test
 	public void testGetExecutableBundle() {
 		String resourcePath ="/users/user/flows/executables/testFlowJava/java1.zip";
@@ -133,6 +137,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		crs.setRepository(repository);
 		try {
 			ExecutableBundle bundle=crs.getExecutableBundle(nemaCredentials, rrp);
+			System.out.println(bundle.getCommandLineFlags());
 			assertEquals(bundle.getFileName(),"java1.zip");
 		} catch (ContentRepositoryServiceException e) {
 			fail(e.getMessage());
@@ -140,8 +145,10 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	}
 	
 	
+	@Ignore
+	@Test
 	public void testRemoveExecutableBundle(){
-		String resourcePath ="/users/user/flows/executables/test.zip";
+		String resourcePath ="/users/user/flows/executables/testFlowJava/java1.zip";
 		RepositoryResourcePath rrp = new RepositoryResourcePath("jcr","default",resourcePath);
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);

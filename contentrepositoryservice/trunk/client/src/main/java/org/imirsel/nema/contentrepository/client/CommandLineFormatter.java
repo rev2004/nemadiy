@@ -7,6 +7,7 @@ import java.util.List;
 import org.imirsel.nema.model.InvalidCommandLineFlagException;
 import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
 import org.imirsel.nema.model.MatlabPredefinedCommandTemplate;
+import org.imirsel.nema.model.OsDataType;
 import org.imirsel.nema.model.Path;
 import org.imirsel.nema.model.PredefinedCommandTemplate;
 import org.imirsel.nema.model.SysProperty;
@@ -38,22 +39,23 @@ public class CommandLineFormatter {
 	/** Returns a command line string
 	 * 
 	 * @param predefined command template
+	 * @param target operating system
 	 * @param filterInvalidOptions filter the invalid options or throw execeptions if one is encountered
 	 * @return a command line string
 	 * @throws InvalidCommandLineFlagException
 	 */
-	public String getCommandLineString(PredefinedCommandTemplate pct, boolean filterInvalidOptions) throws InvalidCommandLineFlagException {
+	public String getCommandLineString(PredefinedCommandTemplate pct, OsDataType targetOs,boolean filterInvalidOptions) throws InvalidCommandLineFlagException {
 		if(pct instanceof JavaPredefinedCommandTemplate){
-			return getJavaCommandLineFormatter((JavaPredefinedCommandTemplate)pct,filterInvalidOptions);
+			return getJavaCommandLineFormatter((JavaPredefinedCommandTemplate)pct,targetOs,filterInvalidOptions);
 		}else if(pct instanceof MatlabPredefinedCommandTemplate){
-			return getMatlabCommandLineFormatter((MatlabPredefinedCommandTemplate)pct,filterInvalidOptions);
+			return getMatlabCommandLineFormatter((MatlabPredefinedCommandTemplate)pct,targetOs,filterInvalidOptions);
 		}else{
 			throw new IllegalArgumentException("Error -invalid predefined component template");
 		}
 		
 	}
 
-	private String getMatlabCommandLineFormatter(MatlabPredefinedCommandTemplate pct, boolean filterInvalidOptions) throws InvalidCommandLineFlagException {
+	private String getMatlabCommandLineFormatter(MatlabPredefinedCommandTemplate pct, OsDataType targetOs, boolean filterInvalidOptions) throws InvalidCommandLineFlagException {
 		StringBuilder sbuilder = new StringBuilder();
 		if(!pct.isDisplay()){
 			sbuilder.append(" -nodisplay ");
@@ -88,8 +90,15 @@ public class CommandLineFormatter {
 	}
 
 	
-	private String getJavaCommandLineFormatter(JavaPredefinedCommandTemplate pct, boolean filterInvalidOptions) throws InvalidCommandLineFlagException{
+	private String getJavaCommandLineFormatter(JavaPredefinedCommandTemplate pct, OsDataType targetOs, boolean filterInvalidOptions) throws InvalidCommandLineFlagException{
 		StringBuilder sbuilder = new StringBuilder();
+		char classpathSep = ':';
+		if(targetOs.getValue().equals("Unix Like")){
+			classpathSep=':';
+		}else{
+			classpathSep=';';
+		}
+		
 		
 		boolean isJarExecutable = pct.isJarExecutable();
 		
@@ -103,11 +112,18 @@ public class CommandLineFormatter {
 		if(!isJarExecutable){
 		if(pct.getClasspath().size()!=0){
 			sbuilder.append(" -classpath ");
-			for(Path path: pct.getClasspath()){
-				sbuilder.append(path.getElement()+File.pathSeparatorChar);
-			}
 			// append the current directory
-			sbuilder.append(". ");
+			sbuilder.append("."+classpathSep);
+			int count=1;
+			int max=pct.getClasspath().size();
+			for(Path path: pct.getClasspath()){
+				if(count!=max)
+				sbuilder.append(path.getElement(targetOs)+classpathSep);
+				else
+				sbuilder.append(path.getElement(targetOs)+" ");
+				count++;
+			}
+			
 		}
 		}
 		
@@ -132,17 +148,19 @@ public class CommandLineFormatter {
 			}
 		}
 		
-		if(pct.getMinMemory()!=null){
-			if(pct.getMinMemory().startsWith("-Xms")){
-				sbuilder.append(pct.getMinMemory());
+		if(pct.getMaxMemory()!=null){
+			if(pct.getMaxMemory().startsWith("-Xmx")){
+				sbuilder.append(pct.getMaxMemory()+" ");
 			}
 		}
 		
-		if(pct.getMaxMemory()!=null){
-			if(pct.getMaxMemory().startsWith("-Xmx")){
-				sbuilder.append(" "+pct.getMinMemory()+" ");
+		
+		if(pct.getMinMemory()!=null){
+			if(pct.getMinMemory().startsWith("-Xms")){
+				sbuilder.append(pct.getMinMemory()+" ");
 			}
 		}
+		
 		
 		
 		if(pct.isVerboseExecutionGC()){
@@ -165,7 +183,15 @@ public class CommandLineFormatter {
 				sbuilder.append(pct.getMainClass()+" ");
 			}
 		}else{
-			sbuilder.append(" -jar "+ pct.getJarFile());
+			String jarFile = pct.getJarFile();
+			
+			if(targetOs.getValue().equals("Unix Like")){
+				jarFile = pct.getJarFile().replace('\\', '/');
+			}else{
+				jarFile = pct.getJarFile().replace('/', '\\');
+			}
+			sbuilder.append(" -jar "+ jarFile);
+			
 		}
 		
 		return sbuilder.toString();
@@ -177,7 +203,6 @@ public class CommandLineFormatter {
 			return false;
 		}
 		return true;
-		
 	}
 
 }

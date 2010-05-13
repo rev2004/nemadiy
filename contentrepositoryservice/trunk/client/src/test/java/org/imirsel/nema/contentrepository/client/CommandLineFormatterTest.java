@@ -40,40 +40,40 @@ public class CommandLineFormatterTest {
 		final JavaPredefinedCommandTemplate pct5 = getJavaPredefinedCommanTemplate5();
 		CommandLineFormatter clf = new CommandLineFormatter();
 		try {
-			String val=clf.getCommandLineString(pct1, filterInvalidOptions);
+			String val=clf.getCommandLineString(pct1, ContentRepositoryTestUtil.unixOs, filterInvalidOptions);
 			System.out.println(val);
-			assertEquals("-classpath one.jar:two.jar:. -Xms1024m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
+			assertEquals("-classpath .:one.jar:two.jar -Xmx2048m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
 		} catch (InvalidCommandLineFlagException e) {
 			fail(e.getMessage());
 		}
 		try {
-			String val=clf.getCommandLineString(pct2, filterInvalidOptions);
+			String val=clf.getCommandLineString(pct2,  ContentRepositoryTestUtil.unixOs,filterInvalidOptions);
 			System.out.println(val);
-			assertEquals("-Xms1024m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa  -jar test.jar",val);
-		} catch (InvalidCommandLineFlagException e) {
-			fail(e.getMessage());
-		}
-		
-		try {
-			String val=clf.getCommandLineString(pct3, filterInvalidOptions);
-			System.out.println(val);
-			assertEquals("-Xms1024m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
+			assertEquals("-Xmx2048m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa  -jar test.jar",val);
 		} catch (InvalidCommandLineFlagException e) {
 			fail(e.getMessage());
 		}
 		
 		try {
-			String val=clf.getCommandLineString(pct4, filterInvalidOptions);
+			String val=clf.getCommandLineString(pct3, ContentRepositoryTestUtil.unixOs, filterInvalidOptions);
 			System.out.println(val);
-			assertEquals("-classpath one.jar:two.jar:. -Xms1024m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
+			assertEquals("-Xmx2048m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
 		} catch (InvalidCommandLineFlagException e) {
 			fail(e.getMessage());
 		}
 		
 		try {
-			String val=clf.getCommandLineString(pct5, filterInvalidOptions);
+			String val=clf.getCommandLineString(pct4,  ContentRepositoryTestUtil.unixOs,filterInvalidOptions);
 			System.out.println(val);
-			assertEquals("-Xms1024m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa  -jar test.jar",val.trim());
+			assertEquals("-classpath .:one.jar:two.jar -Xmx2048m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
+		} catch (InvalidCommandLineFlagException e) {
+			fail(e.getMessage());
+		}
+		
+		try {
+			String val=clf.getCommandLineString(pct5, ContentRepositoryTestUtil.unixOs, filterInvalidOptions);
+			System.out.println(val);
+			assertEquals("-Xmx2048m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa  -jar test.jar",val.trim());
 		} catch (InvalidCommandLineFlagException e) {
 			fail(e.getMessage());
 		}
@@ -93,40 +93,40 @@ public class CommandLineFormatterTest {
 		
 		CommandLineFormatter clf = new CommandLineFormatter();
 		try {
-			String val=clf.getCommandLineString(pct1, filterInvalidOptions);
+			String val=clf.getCommandLineString(pct1, ContentRepositoryTestUtil.unixOs, filterInvalidOptions);
 			System.out.println(val);
-			assertEquals("-classpath one.jar:two.jar:. -Xms1024m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
+			assertEquals("-classpath .:one.jar:two.jar -Xmx2048m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
 		} catch (InvalidCommandLineFlagException e) {
 			fail(e.getMessage());
 		}
 		try {
-			String val=clf.getCommandLineString(pct2, filterInvalidOptions);
+			String val=clf.getCommandLineString(pct2,  ContentRepositoryTestUtil.unixOs,filterInvalidOptions);
 			System.out.println(val);
-			assertEquals("-Xms1024m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa  -jar test.jar",val);
-		} catch (InvalidCommandLineFlagException e) {
-			fail(e.getMessage());
-		}
-		
-		try {
-			String val=clf.getCommandLineString(pct3, filterInvalidOptions);
-			System.out.println(val);
-			assertEquals("-Xms1024m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
+			assertEquals("-Xmx2048m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa  -jar test.jar",val);
 		} catch (InvalidCommandLineFlagException e) {
 			fail(e.getMessage());
 		}
 		
 		try {
-			String val=clf.getCommandLineString(pct4, filterInvalidOptions);
+			String val=clf.getCommandLineString(pct3, ContentRepositoryTestUtil.unixOs, filterInvalidOptions);
 			System.out.println(val);
-			assertEquals("-classpath one.jar:two.jar:. -Xms1024m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
+			assertEquals("-Xmx2048m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
 		} catch (InvalidCommandLineFlagException e) {
 			fail(e.getMessage());
 		}
 		
 		try {
-			String val=clf.getCommandLineString(pct5, filterInvalidOptions);
+			String val=clf.getCommandLineString(pct4,  ContentRepositoryTestUtil.unixOs,filterInvalidOptions);
 			System.out.println(val);
-			assertEquals("-Xms1024m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa  -jar test.jar",val.trim());
+			assertEquals("-classpath .:one.jar:two.jar -Xmx2048m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa org.imirse.test.Main",val.trim());
+		} catch (InvalidCommandLineFlagException e) {
+			fail(e.getMessage());
+		}
+		
+		try {
+			String val=clf.getCommandLineString(pct5, ContentRepositoryTestUtil.unixOs, filterInvalidOptions);
+			System.out.println(val);
+			assertEquals("-Xmx2048m -Xms1024m  -verbose:gc  -verbose:jni  -verbose:class  -esa  -jar test.jar",val.trim());
 		} catch (InvalidCommandLineFlagException e) {
 			fail(e.getMessage());
 		}
@@ -140,7 +140,7 @@ public class CommandLineFormatterTest {
 		final JavaPredefinedCommandTemplate pct6 = getJavaPredefinedCommanTemplate6();
 		CommandLineFormatter clf = new CommandLineFormatter();
 		String val=null;
-		val = clf.getCommandLineString(pct6, false);
+		val = clf.getCommandLineString(pct6, ContentRepositoryTestUtil.unixOs, false);
 	}
 	
 	@Test
@@ -149,7 +149,7 @@ public class CommandLineFormatterTest {
 		CommandLineFormatter clf = new CommandLineFormatter();
 		String val=null;
 		try {
-			val = clf.getCommandLineString(pct7, false);
+			val = clf.getCommandLineString(pct7, ContentRepositoryTestUtil.unixOs, false);
 		} catch (InvalidCommandLineFlagException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -162,7 +162,7 @@ public class CommandLineFormatterTest {
 		CommandLineFormatter clf = new CommandLineFormatter();
 		String val=null;
 		try {
-			val = clf.getCommandLineString(pct7, true);
+			val = clf.getCommandLineString(pct7, ContentRepositoryTestUtil.unixOs, true);
 		} catch (InvalidCommandLineFlagException e) {
 			fail(e.getMessage());
 		}
