@@ -1,5 +1,6 @@
 package org.imirsel.nema.contentrepository.client;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.imirsel.nema.model.FileDataType;
@@ -11,7 +12,7 @@ import org.imirsel.nema.model.OsDataType;
  * @author kumaramit01
  * @since 0.3.0
  */
-public interface ResourceTypeService {
+public interface ResourceTypeService extends Serializable{
 	/**
 	 * 
 	 * @return list of FileDataTypes
@@ -27,4 +28,12 @@ public interface ResourceTypeService {
 	 * @return supported groups
 	 */
 	public List<GroupDataType> getSupportedGroups();
+	
+	
+	/**
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public OsDataType getOsDataType(String value);
 }
