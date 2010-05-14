@@ -22,6 +22,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.derby.impl.sql.compile.GetCurrentConnectionNode;
+import org.imirsel.nema.contentrepository.client.ResourceTypeService;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
@@ -29,6 +30,7 @@ import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.JobResult;
+import org.imirsel.nema.model.OsDataType;
 import org.imirsel.nema.model.Param;
 import org.imirsel.nema.model.ParamAlreadyExistsException;
 import org.imirsel.nema.model.PredefinedCommandTemplate;
@@ -57,6 +59,7 @@ public class TasksServiceImpl {
 	private UserManager userManager;
 	private String uploadDirectory;
 
+	
 	public void setFlowService(FlowService flowService) {
 		this.flowService = flowService;
 	}
@@ -127,13 +130,16 @@ public class TasksServiceImpl {
 	 * @param url
 	 */
 	public void addExecutable(final Component component,
-			final Map<String, String> parameters, final String url) {
+			final Map<String, String> parameters, final String url, final OsDataType os,final String group) {
 		logger.debug("add executable url into parameter");
 		parameters.put(getName(component.getInstanceUri(), EXECUTABLE_URL), url);
 		SimpleCredentials credential=userManager.getCurrentUserCredentials();
 		String credentialString=credential.getUserID()+":"+new String(credential.getPassword());
 		parameters.put(getName(component.getInstanceUri(),CREDENTIALS),credentialString );
 		parameters.put(getName(component.getInstanceUri(),REMOTE_COMPONENT),"true" );
+		parameters.put(getName(component.getInstanceUri(),OS),os.getValue());
+		parameters.put(getName(component.getInstanceUri(),GROUP),group );
+		
 	}
 
 	// TODO this method is the same as the one in ComponentPropertyTag, might
@@ -159,6 +165,8 @@ public class TasksServiceImpl {
 	final static String REMOTE_COMPONENT = "_remoteComponent";
 	final static String CREDENTIALS = "_credentials";
 	final static String EXECUTABLE_URL = "profileName";
+	final static String OS="_os";
+	final static String GROUP="_group";
 
 	/**
 	 * return Boolean (not boolean) value for webflow mapping.
@@ -183,6 +191,8 @@ public class TasksServiceImpl {
 		datatypeMap.remove(REMOTE_COMPONENT);
 		datatypeMap.remove(CREDENTIALS);
 		datatypeMap.remove(EXECUTABLE_URL);
+		datatypeMap.remove(GROUP);
+		datatypeMap.remove(OS);
 	}
 
 	/**
@@ -515,5 +525,6 @@ public class TasksServiceImpl {
 		return "http://nema.lis.uiuc.edu/nema_out" + resultFolder;
 
 	}
+
 
 }

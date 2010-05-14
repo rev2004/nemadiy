@@ -5,7 +5,9 @@
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile"/>
 	<on-start>
-		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()"/>
+		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
+		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()"/>
+		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />		
 	</on-start>
 
 
@@ -31,7 +33,6 @@
 	</view-state>
 	<view-state id="argumentsJava" model="javaCommand">
 		<var name="javaCommand" class="org.imirsel.nema.webapp.model.JavaExecutableFile"/>
-
 		<transition on="cancel" to="cancel"/>
 		<transition on="back" to="upload"/>
 		<transition on="review" to="review">
@@ -64,5 +65,7 @@
 	<end-state id="cancel"></end-state>
 	<end-state id="success">
 		<output name="executableUrl" value="'LiteralValue'" type="java.lang.String"/>
+		<output name="executableOs" value="resource.getOsDataType(executable.os)" type="org.imirsel.nema.model.OsDataType"/>
+		<output name="executableGroup" value="executable.group" type="java.lang.String"/>
 	</end-state>
 </flow>
