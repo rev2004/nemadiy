@@ -15,6 +15,10 @@ import org.imirsel.nema.model.OsDataType;
  */
 public class ResourceTypeServiceImpl implements ResourceTypeService {
 	
+	/**Version of this class
+	 * 
+	 */
+	private static final long serialVersionUID = 5186004401706711111L;
 	private List<FileDataType> fileDataTypeList  = new ArrayList<FileDataType>();
 	private List<OsDataType> supportedOsList  = new ArrayList<OsDataType>();
 	private List<GroupDataType> groupList = new ArrayList<GroupDataType>();
