@@ -39,5 +39,9 @@ public class VanillaPredefinedCommandTemplate implements
 		}
 		execParams.add(param);
 	}
+
+	public List<Param> getParams() {
+		return execParams;
+	}
 	
 }
