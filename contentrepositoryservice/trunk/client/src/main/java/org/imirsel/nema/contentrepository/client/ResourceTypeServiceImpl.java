@@ -15,9 +15,9 @@ import org.imirsel.nema.model.OsDataType;
  */
 public class ResourceTypeServiceImpl implements ResourceTypeService {
 	
-	List<FileDataType> fileDataTypeList  = new ArrayList<FileDataType>();
-	List<OsDataType> supportedOsList  = new ArrayList<OsDataType>();
-	List<GroupDataType> groupList = new ArrayList<GroupDataType>();
+	private List<FileDataType> fileDataTypeList  = new ArrayList<FileDataType>();
+	private List<OsDataType> supportedOsList  = new ArrayList<OsDataType>();
+	private List<GroupDataType> groupList = new ArrayList<GroupDataType>();
 	
 	public ResourceTypeServiceImpl(){
 		fileDataTypeList.add( new FileDataType("Chord Interval Text File",
@@ -52,6 +52,7 @@ public class ResourceTypeServiceImpl implements ResourceTypeService {
 	
 	
 	/**
+	 * Returns the OsDataType for a string value
 	 * 
 	 * @param value
 	 * @return OsDataType -returns the OsDataType
