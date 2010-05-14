@@ -71,6 +71,8 @@ public class ExecutableFile implements Serializable {
 	private String group;
 	protected String os;
 
+	private boolean zip;
+	private String executableInZip;
 	public String getGroup() {
 		return group;
 	}
@@ -147,6 +149,22 @@ public class ExecutableFile implements Serializable {
 
 	public void generateCommandline(){
 		
+	}
+
+	public void setExecutableInZip(String executableInZip) {
+		this.executableInZip = executableInZip;
+	}
+
+	public String getExecutableInZip() {
+		return executableInZip;
+	}
+
+	public void setZip(boolean zip) {
+		this.zip = zip;
+	}
+
+	public boolean isZip() {
+		return zip;
 	}
 
 }

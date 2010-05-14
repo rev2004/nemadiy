@@ -38,6 +38,7 @@ public class JavaExecutableFile extends ExecutableFile {
 	}
 	
 
+	private String zipJar;
 	private static final long serialVersionUID = 1L;
 	private List<SysProperty> properties = new ArrayList<SysProperty>();
 	private List<Path> classpath = new ArrayList<Path>();
@@ -194,6 +195,14 @@ public class JavaExecutableFile extends ExecutableFile {
 		} catch (InvalidCommandLineFlagException e) {
 			logger.error(e,e);
 		}
+	}
+
+	public void setZipJar(String zipJar) {
+		this.zipJar = zipJar;
+	}
+
+	public String getZipJar() {
+		return zipJar;
 	}
 
 }
