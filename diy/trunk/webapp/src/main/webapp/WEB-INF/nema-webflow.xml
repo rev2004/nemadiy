@@ -22,8 +22,9 @@
 	<bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
 		p:flowService-ref="flowService" 
 		p:userManager-ref="userManager"
-		p:uploadDirectory="resources" 
-	/>
-		<bean id="resource" class="org.imirsel.nema.contentrepository.client.ResourceTypeServiceImpl"/>
+		p:uploadDirectory="resources" />
+    
+    <bean id="resource" class="org.imirsel.nema.contentrepository.client.ResourceTypeServiceImpl"/>
 
+    <bean id="executableValidator" class="org.imirsel.nema.webapp.webflow.validator.ExecutableFileValidator"/>
 </beans>
