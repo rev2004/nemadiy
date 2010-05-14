@@ -3,14 +3,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
 	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile"/>
+	
 	<on-start>
 		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
 		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()"/>
 		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />		
 	</on-start>
-
-
 
 	<view-state id="upload" model="executable">
 		<on-entry>
@@ -19,6 +19,7 @@
 		<transition on="upload" to="arguments"/>
 		<transition on="cancel" to="cancel"/>
 	</view-state>
+
 	<view-state id="argumentsPlain" model="executable">
 		<transition on="cancel" to="cancel"/>
 		<transition on="back" to="upload"/>
@@ -31,6 +32,7 @@
 				result="flowScope.paramTemplate"/>
 		</transition>
 	</view-state>
+
 	<view-state id="argumentsJava" model="javaCommand">
 		<var name="javaCommand" class="org.imirsel.nema.webapp.model.JavaExecutableFile"/>
 		<transition on="cancel" to="cancel"/>
@@ -40,6 +42,7 @@
 			<set name="executableFile" value="javaCommand"/>
 		</transition>
 	</view-state>
+	
 	<view-state id="argumentsMatlab" model="matlabCommend">
 		<var name="matlabCommand" class="org.imirsel.nema.webapp.model.MatlabExecutableFile"/>
 		<transition on="cancel" to="cancel"/>
@@ -49,6 +52,7 @@
 			<set name="executableFile" value="matlabCommand"/>
 		</transition>
 	</view-state>
+	
 	<view-state id="review">
 		<transition on="cancel" to="cancel"/>
 		<transition on="back" to="arguments"/>
@@ -62,7 +66,9 @@
 		<transition on="C" to="argumentsPlain"/>
 		<transition on="SHELL" to="argumentsPlain"/>
 	</action-state>
+	
 	<end-state id="cancel"></end-state>
+	
 	<end-state id="success">
 		<output name="executableUrl" value="'LiteralValue'" type="java.lang.String"/>
 		<output name="executableOs" value="resource.getOsDataType(executable.os)" type="org.imirsel.nema.model.OsDataType"/>
