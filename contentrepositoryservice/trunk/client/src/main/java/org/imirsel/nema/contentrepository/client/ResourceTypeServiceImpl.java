@@ -49,5 +49,24 @@ public class ResourceTypeServiceImpl implements ResourceTypeService {
 	public List<GroupDataType> getSupportedGroups(){
 		return this.groupList;
 	}
+	
+	
+	/**
+	 * 
+	 * @param value
+	 * @return OsDataType -returns the OsDataType
+	 */
+	public OsDataType getOsDataType(String value){
+		if(value.equalsIgnoreCase("Unix Like")){
+			OsDataType os = new OsDataType("Unix","Unix Like");
+			return os;
+		}else if(value.equals("Windows Like")){
+			OsDataType os = new OsDataType("Unix","Unix Like");
+			return os;
+		}else{
+			throw new IllegalArgumentException("error invalid Os: " + value);
+		}
+		
+	}
 
 }
