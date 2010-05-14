@@ -17,7 +17,7 @@ upload the executable.
 		path="os" items="${supportedOs}" itemLabel="name" itemValue="value" />
 	</fieldset>
 	<fieldset id="pt1"><label>Please select group:</label> <form:select
-		path="group" items="${supportGroups}" itemLabel="name" itemValue="value" />
+		path="group" items="${supportedGroups}" itemLabel="name" itemValue="value" />
 	</fieldset>
 	<fieldset id="button"><input type="submit"
 		name="_eventId_upload" value="upload" /> <input type="submit"

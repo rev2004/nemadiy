@@ -8,6 +8,10 @@
 	<fieldset id="pt1"><form:errors path="*" /></fieldset>
 	<fieldset id="pt1"><label>${executable.fileType}
 	File:</label> <c:out value="${executable.file.originalFilename}" /></fieldset>
+	<fieldset id="pt1"><label>File type: </label> zip<form:radiobutton
+		path="zip" value="true" /> jar<form:radiobutton
+		path="zip" value="false" /></fieldset>
+
 	<fieldset id="pt1"><label>Main Class:</label><form:input
 		path="mainClass" /></fieldset>
 	

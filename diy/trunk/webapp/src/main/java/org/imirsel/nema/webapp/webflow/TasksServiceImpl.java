@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.jcr.SimpleCredentials;
@@ -22,12 +23,15 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.derby.impl.sql.compile.GetCurrentConnectionNode;
+import org.imirsel.nema.contentrepository.client.CommandLineFormatter;
 import org.imirsel.nema.contentrepository.client.ResourceTypeService;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
+import org.imirsel.nema.model.InvalidCommandLineFlagException;
+import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.JobResult;
 import org.imirsel.nema.model.OsDataType;
@@ -41,6 +45,7 @@ import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
 import org.imirsel.nema.webapp.model.ExecutableFile;
+import org.imirsel.nema.webapp.model.JavaExecutableFile;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
@@ -58,41 +63,35 @@ public class TasksServiceImpl {
 	private FlowService flowService;
 	private UserManager userManager;
 	private String uploadDirectory;
-
-	
-	public void setFlowService(FlowService flowService) {
-		this.flowService = flowService;
-	}
-
-	public void setUserManager(UserManager userManager) {
-		this.userManager = userManager;
-	}
+	private CommandLineFormatter commandLineFormatter;
+	private ResourceTypeService resourceServiceType;
 
 	/**
-	 * @return roles from the default user manager
+	 * properties' name in the component datatype map
 	 */
-	public String[] getRoles() {
-		Set<Role> roleList = this.userManager.getCurrentUser().getRoles();
-		int size = roleList.size();
-
-		String[] roles = new String[size];
-		int i = 0;
-		for (Role role : roleList) {
-			roles[i] = role.getName();
-			i++;
-		}
-		return roles;
-	}
+	final static String REMOTE_COMPONENT = "_remoteComponent";
+	final static String CREDENTIALS = "_credentials";
+	final static String EXECUTABLE_URL = "profileName";
+	final static String OS="_os";
+	final static String GROUP="_group";
 
 	/**
-	 * Only for testing purpose
-	 * 
-	 * @param input
-	 * @return
+	 * Add the executable url into the parameter map
+	 * @param component
+	 * @param parameters
+	 * @param url
 	 */
-	public int test(String input) {
-		logger.debug(input);
-		return 1;
+	public void addExecutable(final Component component,
+			final Map<String, String> parameters, final String url, final OsDataType os,final String group) {
+		logger.debug("add executable url into parameter");
+		parameters.put(getName(component.getInstanceUri(), EXECUTABLE_URL), url);
+		SimpleCredentials credential=userManager.getCurrentUserCredentials();
+		String credentialString=credential.getUserID()+":"+new String(credential.getPassword());
+		parameters.put(getName(component.getInstanceUri(),CREDENTIALS),credentialString );
+		parameters.put(getName(component.getInstanceUri(),REMOTE_COMPONENT),"true" );
+		parameters.put(getName(component.getInstanceUri(),OS),os.getValue());
+		parameters.put(getName(component.getInstanceUri(),GROUP),group );
+		
 	}
 
 	/**
@@ -123,50 +122,153 @@ public class TasksServiceImpl {
 		return parameters;
 	}
 
-	/**
-	 * Add the executable url into the parameter map
-	 * @param component
-	 * @param parameters
-	 * @param url
-	 */
-	public void addExecutable(final Component component,
-			final Map<String, String> parameters, final String url, final OsDataType os,final String group) {
-		logger.debug("add executable url into parameter");
-		parameters.put(getName(component.getInstanceUri(), EXECUTABLE_URL), url);
-		SimpleCredentials credential=userManager.getCurrentUserCredentials();
-		String credentialString=credential.getUserID()+":"+new String(credential.getPassword());
-		parameters.put(getName(component.getInstanceUri(),CREDENTIALS),credentialString );
-		parameters.put(getName(component.getInstanceUri(),REMOTE_COMPONENT),"true" );
-		parameters.put(getName(component.getInstanceUri(),OS),os.getValue());
-		parameters.put(getName(component.getInstanceUri(),GROUP),group );
+	public ExecutableBundle generateExecutableBundle(VanillaPredefinedCommandTemplate template,ExecutableFile executable){
+		ExecutableBundle bundle=new ExecutableBundle();
 		
+		MultipartFile file=executable.getFile();
+		bundle.setFileName(file.getOriginalFilename());
+		bundle.setExecutableName(executable.getExecutableInZip());
+		try {
+			bundle.setBundleContent(file.getBytes());
+		} catch (IOException e) {
+			logger.debug(e,e);
+		}
+		bundle.setId(UUID.randomUUID().toString());
+		try {
+			bundle.setCommandLineFlags(commandLineFormatter.getCommandLineString(template, resourceServiceType.getOsDataType(executable.getOs()), true));
+		} catch (InvalidCommandLineFlagException e) {
+			logger.error(e,e);
+		}
+		bundle.setEnvironmentVariables(template.getEnvironmentMap());
+		//bundle.setTypeName(executable.getFileType());
+		
+		return bundle;
 	}
 
-	// TODO this method is the same as the one in ComponentPropertyTag, might
-	// need some
-	// refaction to get rid of one
-	private String getName(String component, String propertyName) {
-		if (component == null) {
-			return propertyName;
+	public void setJavaParameters(JavaPredefinedCommandTemplate template,JavaExecutableFile executable){
+		template.addClasspath(null);//
+		template.addProperty(property);
+	}
+	
+	
+	/**
+	 * @deprecated
+	 * generate a map from two string arrays (key[] and values[])
+	 * @param variables
+	 * @param values
+	 * @return
+	 */
+	public Map<String,String> generateMap(String[] keys,String[] values){
+		Map<String,String> map=new HashMap<String,String>();
+		int length=keys.length;		
+		for (int i=0;i<length;i++){
+			if ((keys[i]!=null)&&(keys[i].length()!=0)) map.put(keys[i],values[i]);
 		}
-		int index = component.lastIndexOf("/");
-		if (index == -1) {
-			return component + "_" + propertyName;
-		}
-		int second = component.substring(0, index).lastIndexOf("/");
-		String cname = component.substring(second + 1, index);
-		String count = component.substring(index + 1);
-		return cname + "_" + count + "_" + propertyName;
+		logger.debug("generate map of size "+length);
+		return map;
+	}
+
+	
+
+	public CommandLineFormatter getCommandLineFormatter() {
+		return commandLineFormatter;
 	}
 
 	/**
-	 * properties' name in the component datatype map
+	 * 
+	 * @param job
+	 * @return result set of job
 	 */
-	final static String REMOTE_COMPONENT = "_remoteComponent";
-	final static String CREDENTIALS = "_credentials";
-	final static String EXECUTABLE_URL = "profileName";
-	final static String OS="_os";
-	final static String GROUP="_group";
+	public DisplayResultSet getJobResult(Job job) {
+		Set<JobResult> results = job.getResults();
+		if (results == null)
+			return null;
+		else {
+			for (JobResult result : results) {
+				logger.debug("RESULT: " + result.getUrl() + "  "
+						+ result.getId());
+				result.setUrl(processUrl(result.getUrl()));
+
+			}
+			DisplayResultSet resultSet = new DisplayResultSet(results);
+			return resultSet;
+		}
+	}
+	public ResourceTypeService getResourceServiceType() {
+		return resourceServiceType;
+	}
+	/**
+	 * @return roles from the default user manager
+	 */
+	public String[] getRoles() {
+		Set<Role> roleList = this.userManager.getCurrentUser().getRoles();
+		int size = roleList.size();
+
+		String[] roles = new String[size];
+		int i = 0;
+		for (Role role : roleList) {
+			roles[i] = role.getName();
+			i++;
+		}
+		return roles;
+	}
+	/**
+	 * 
+	 * @param keys
+	 * @param values
+	 * @param inputs
+	 * @param outputs
+	 * @param others
+	 * @return
+	 */
+	public VanillaPredefinedCommandTemplate getTemplate(String[] keys,String[] values,String[] inputs,String[] outputs,String[] others){
+		VanillaPredefinedCommandTemplate template=new VanillaPredefinedCommandTemplate();
+		try{
+		int i=0;
+		for (String entry:inputs){
+			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,true,Param.ParamType.INPUT.getCode(),i++));
+		}
+		 i=0;
+		for (String entry:outputs){
+			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,true,Param.ParamType.OUTPUT.getCode(),i++));
+		}	
+		i=0;
+		for (String entry:inputs){
+			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,false,Param.ParamType.OTHER.getCode(),i++));
+		}
+		}catch (ParamAlreadyExistsException e) {
+			logger.error(e,e);
+		}
+		Map<String,String> map=new HashMap<String,String>();
+		int length=keys.length;		
+		for (int i=0;i<length;i++){
+			if ((keys[i]!=null)&&(keys[i].length()>0)) map.put(keys[i],values[i]);
+		}
+		logger.debug("generate map of size "+length);
+		return template;
+	}
+	/**
+	 * Returns upload directory
+	 * 
+	 * @return upload directory
+	 */
+	public String getUploadDirectory() {
+		return uploadDirectory;
+	}
+
+	/**
+	 * hide some fields that needs special processing for remote service
+	 * component
+	 * 
+	 * @param datatypeMap
+	 */
+	public void hideExecutableProperties(Map<String, Property> datatypeMap) {
+		datatypeMap.remove(REMOTE_COMPONENT);
+		datatypeMap.remove(CREDENTIALS);
+		datatypeMap.remove(EXECUTABLE_URL);
+		datatypeMap.remove(GROUP);
+		datatypeMap.remove(OS);
+	}
 
 	/**
 	 * return Boolean (not boolean) value for webflow mapping.
@@ -182,17 +284,21 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * hide some fields that needs special processing for remote service
-	 * component
+	 * generate running job from all the parameters
 	 * 
-	 * @param datatypeMap
+	 * @param flow
+	 *            template flow
+	 * @param parameters
+	 *            all the parameters except the name/description
+	 * @param name
+	 *            new flow name
+	 * @param description
+	 *            new flow description
+	 * @return testing {@link Job}
 	 */
-	public void hideExecutableProperties(Map<String, Property> datatypeMap) {
-		datatypeMap.remove(REMOTE_COMPONENT);
-		datatypeMap.remove(CREDENTIALS);
-		datatypeMap.remove(EXECUTABLE_URL);
-		datatypeMap.remove(GROUP);
-		datatypeMap.remove(OS);
+	public Job run(Flow flow, Map<String, String> parameters, String name,
+			String description) throws MeandreServerException {
+		return this.testRun(flow, parameters, name, description);
 	}
 
 	/**
@@ -308,13 +414,16 @@ public class TasksServiceImpl {
 
 	}
 
-	/**
-	 * Returns upload directory
-	 * 
-	 * @return upload directory
-	 */
-	public String getUploadDirectory() {
-		return uploadDirectory;
+	public void setCommandLineFormatter(CommandLineFormatter commandLineFormatter) {
+		this.commandLineFormatter = commandLineFormatter;
+	}
+
+	public void setFlowService(FlowService flowService) {
+		this.flowService = flowService;
+	}
+
+	public void setResourceServiceType(ResourceTypeService resourceServiceType) {
+		this.resourceServiceType = resourceServiceType;
 	}
 
 	/**
@@ -325,7 +434,22 @@ public class TasksServiceImpl {
 	public void setUploadDirectory(String uploadDirectory) {
 		this.uploadDirectory = uploadDirectory;
 	}
-
+	public void setUserManager(UserManager userManager) {
+		this.userManager = userManager;
+	}
+	
+	
+	/**
+	 * Only for testing purpose
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public int test(String input) {
+		logger.debug(input);
+		return 1;
+	}
+	
 	/**
 	 * generate testing job from all the parameters
 	 * 
@@ -399,123 +523,21 @@ public class TasksServiceImpl {
 
 	}
 
-	/**
-	 * generate running job from all the parameters
-	 * 
-	 * @param flow
-	 *            template flow
-	 * @param parameters
-	 *            all the parameters except the name/description
-	 * @param name
-	 *            new flow name
-	 * @param description
-	 *            new flow description
-	 * @return testing {@link Job}
-	 */
-	public Job run(Flow flow, Map<String, String> parameters, String name,
-			String description) throws MeandreServerException {
-		return this.testRun(flow, parameters, name, description);
-	}
-
-	/**
-	 * 
-	 * @param job
-	 * @return result set of job
-	 */
-	public DisplayResultSet getJobResult(Job job) {
-		Set<JobResult> results = job.getResults();
-		if (results == null)
-			return null;
-		else {
-			for (JobResult result : results) {
-				logger.debug("RESULT: " + result.getUrl() + "  "
-						+ result.getId());
-				result.setUrl(processUrl(result.getUrl()));
-
-			}
-			DisplayResultSet resultSet = new DisplayResultSet(results);
-			return resultSet;
+	// TODO this method is the same as the one in ComponentPropertyTag, might
+	// need some
+	// refaction to get rid of one
+	private String getName(String component, String propertyName) {
+		if (component == null) {
+			return propertyName;
 		}
-	}
-	public Map<String,String> generateMap1(ParameterMap parameters){
-		Map<String,String> map=new HashMap<String,String>();
-		String[] keys=(String[])parameters.getArray("variable");
-		String[] values=(String[])parameters.getArray("value");
-		int length=keys.length;		
-		for (int i=0;i<length;i++){
-			if ((keys[i]!=null)&&(keys[i]!="")) map.put(keys[i],values[i]);
+		int index = component.lastIndexOf("/");
+		if (index == -1) {
+			return component + "_" + propertyName;
 		}
-		logger.debug("generate map of size "+length);
-		return map;
-	}
-	
-	
-	/**
-	 * generate a map from two string arrays (key[] and values[])
-	 * @param variables
-	 * @param values
-	 * @return
-	 */
-	public Map<String,String> generateMap(String[] keys,String[] values){
-		Map<String,String> map=new HashMap<String,String>();
-		int length=keys.length;		
-		for (int i=0;i<length;i++){
-			if ((keys[i]!=null)&&(keys[i].length()!=0)) map.put(keys[i],values[i]);
-		}
-		logger.debug("generate map of size "+length);
-		return map;
-	}
-	
-	public ExecutableBundle generateExecutableBundle(PredefinedCommandTemplate template,ExecutableFile executable){
-		ExecutableBundle bundle=new ExecutableBundle();
-		//TODO bundle.setEnvironmentVariables(envMap);
-		MultipartFile file=executable.getFile();
-		bundle.setFileName(file.getOriginalFilename());
-		bundle.setExecutableName(file.getOriginalFilename());//TODO 
-		try {
-			bundle.setBundleContent(file.getBytes());
-		} catch (IOException e) {
-			logger.debug(e,e);
-		}
-		bundle.setId("321");//TODO
-		
-		return bundle;
-	}
-
-	/**
-	 * 
-	 * @param keys
-	 * @param values
-	 * @param inputs
-	 * @param outputs
-	 * @param others
-	 * @return
-	 */
-	public VanillaPredefinedCommandTemplate getTemplate(String[] keys,String[] values,String[] inputs,String[] outputs,String[] others){
-		VanillaPredefinedCommandTemplate template=new VanillaPredefinedCommandTemplate();
-		try{
-		int i=0;
-		for (String entry:inputs){
-			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,true,Param.ParamType.INPUT.getCode(),i++));
-		}
-		 i=0;
-		for (String entry:outputs){
-			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,true,Param.ParamType.OUTPUT.getCode(),i++));
-		}	
-		i=0;
-		for (String entry:inputs){
-			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,false,Param.ParamType.OTHER.getCode(),i++));
-		}
-		}catch (ParamAlreadyExistsException e) {
-			logger.error(e,e);
-		}
-		Map<String,String> map=new HashMap<String,String>();
-		int length=keys.length;		
-		for (int i=0;i<length;i++){
-			if ((keys[i]!=null)&&(keys[i].length()>0)) map.put(keys[i],values[i]);
-		}
-		logger.debug("generate map of size "+length);
-		return template;
+		int second = component.substring(0, index).lastIndexOf("/");
+		String cname = component.substring(second + 1, index);
+		String count = component.substring(index + 1);
+		return cname + "_" + count + "_" + propertyName;
 	}
 	
 	private String processUrl(String url) {
