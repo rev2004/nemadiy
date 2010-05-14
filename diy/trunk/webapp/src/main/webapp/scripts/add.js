@@ -8,7 +8,9 @@ function add(parentDiv,templateDiv){
 var clone = $(templateDiv.cloneNode(true));
 count++;
 clone.id=templateDiv.id+count;
-//$(clone).down("input").value="";
+$(clone).down("input",1).value="";
+$(clone).down("input",2).value="";
+
 $(templateDiv).insert({after: clone}); 
 clone.show();
 }

@@ -10,8 +10,15 @@ upload the executable.
 	<fieldset id="pt1"><label>Please select file type:</label> <form:select
 		path="type" items="${typeSet}" itemLabel="label" itemValue="code" />
 	</fieldset>
+
 	<fieldset id="pt1"><label>Please select the file for
 	upload:</label> <input type="file" name="file" /></fieldset>
+		<fieldset id="pt1"><label>Please select os type:</label> <form:select
+		path="os" items="${supportedOs}" itemLabel="name" itemValue="value" />
+	</fieldset>
+	<fieldset id="pt1"><label>Please select group:</label> <form:select
+		path="group" items="${supportGroups}" itemLabel="name" itemValue="value" />
+	</fieldset>
 	<fieldset id="button"><input type="submit"
 		name="_eventId_upload" value="upload" /> <input type="submit"
 		name="_eventId_cancel" value="cancel" /></fieldset>

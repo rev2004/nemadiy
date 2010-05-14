@@ -90,7 +90,7 @@ public class MatlabExecutableFile extends ExecutableFile {
 		
 		CommandLineFormatter formatter=new CommandLineFormatter();
 		try {
-			setEnvironment(formatter.getCommandLineString(command, true));
+			setEnvironment(formatter.getCommandLineString(command, resourceTypeService.getOsDataType(os),true));
 		} catch (InvalidCommandLineFlagException e) {
 			logger.error(e,e);
 		}

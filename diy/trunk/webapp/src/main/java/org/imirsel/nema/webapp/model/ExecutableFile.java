@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.imirsel.nema.contentrepository.client.ResourceTypeService;
+import org.imirsel.nema.contentrepository.client.ResourceTypeServiceImpl;
 import org.imirsel.nema.model.PredefinedCommandTemplate;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +22,7 @@ public class ExecutableFile implements Serializable {
 	static private Log logger = LogFactory.getLog(ExecutableFile.class);
 	private static final long serialVersionUID = 1509804396923336290L;
 
-	
+	protected ResourceTypeService resourceTypeService=new ResourceTypeServiceImpl();
 	public enum FileType{
 		JAR("jar file or zip of jar files", 0), MATLAB("matlab programs", 1), C(
 				"plain c, c++", 2),SHELL("shell",3);
@@ -66,6 +68,24 @@ public class ExecutableFile implements Serializable {
 	private String environment;
 	
 	private PredefinedCommandTemplate template;
+	private String group;
+	protected String os;
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
+	public String getOs() {
+		return os;
+	}
+
+	public void setOs(String os) {
+		this.os = os;
+	}
 
 	public String getArgs() {
 		return args;
@@ -128,4 +148,5 @@ public class ExecutableFile implements Serializable {
 	public void generateCommandline(){
 		
 	}
+
 }

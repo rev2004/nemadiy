@@ -26,6 +26,7 @@
 		type="button" value="+" onclick="add($('inputMain'),$('inputParam1'))" /><br />
 	<div id='inputMain'>
 	<div id='inputParam1'><select name="input">
+	<option value="">Select</option>
 	<c:forEach items="${supportedFiles}"  var="file"><option value="${file.value}">${file.name}</option></c:forEach></select> <input type="button" value="-"
 		onclick="removeNode(this,'inputParam1')" /></div>
 	</div>
@@ -33,7 +34,7 @@
 	<fieldset id="pt1"><label>Output Files:</label> <input
 		type="button" value="+" onclick="add($('outputMain'),$('outputParam1'))" /><br />
 	<div id='outputMain'>
-	<div id='outputParam1'><select name="output">
+	<div id='outputParam1'><select name="output"><option value="">Select</option>
 	<c:forEach items="${supportedFiles}"  var="file"><option value="${file.value}">${file.name}</option></c:forEach></select><input type="button" value="-"
 		onclick="removeNode(this,'outputParam1')" /></div>
 	</div>
