@@ -97,7 +97,7 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 	
 	@Ignore
 	@Test
-	public void testJarExeSaveExecutableBundle() throws ContentRepositoryServiceException {
+	public void testJarExeSaveExecutableBundle() throws ContentRepositoryServiceException, InvalidCommandLineFlagException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		crs.validateNodeTypes(nemaCredentials);

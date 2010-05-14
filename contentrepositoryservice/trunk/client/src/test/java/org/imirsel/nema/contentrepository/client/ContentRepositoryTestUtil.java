@@ -31,6 +31,36 @@ public class ContentRepositoryTestUtil {
 	public static OsDataType unixOs=new OsDataType("Unix","Unix Like");
 	public static OsDataType windowsOs=new OsDataType("Windows","Windows Like");
 	
+
+	public static ExecutableBundle getPrintLargeDataExecutableBundle(
+			OsDataType unixOs) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("ENV1", "VALUE1");
+		map.put("ENV2", "VALUE2");
+
+		ExecutableBundle bundle = new ExecutableBundle();
+
+		bundle.setExecutableName("./printlarge/printlarge");
+		bundle.setCommandLineFlags("-o -pp");
+		bundle.setId("printlargedata");
+		bundle.setTypeName(ExecutableType.C);
+		bundle.setEnvironmentVariables(map);
+		byte[] fileContent = null;
+
+		try {
+			fileContent = readFileContent("client/src/test/resources/printlarge.zip");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		bundle.setBundleContent(fileContent);
+		bundle.setFileName("printlarge.zip");
+
+		return bundle;
+
+	}
+
+	
 	
 	static ExecutableBundle getC1ExecutableBundle(OsDataType os) {
 		Map<String, String> map = new HashMap<String, String>();
@@ -39,8 +69,8 @@ public class ContentRepositoryTestUtil {
 
 		ExecutableBundle bundle = new ExecutableBundle();
 
-		bundle.setExecutableName("a.out");
-		bundle.setCommandLineFlags("-o -pp ${FileOne.class}");
+		bundle.setExecutableName("./c1/a.out");
+		bundle.setCommandLineFlags("-o -pp");
 		bundle.setId("c1");
 		bundle.setTypeName(ExecutableType.C);
 		bundle.setEnvironmentVariables(map);
@@ -109,18 +139,33 @@ public class ContentRepositoryTestUtil {
 
 	}
 	
-	static ExecutableBundle getJarExecutableBundle(OsDataType os) {
+	static ExecutableBundle getJarExecutableBundle(OsDataType os) throws InvalidCommandLineFlagException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("ENV1", "VALUE1");
 		map.put("ENV2", "VALUE2");
 
+		
+		
+		CommandLineFormatter clf = new CommandLineFormatter();
+		JavaPredefinedCommandTemplate pct = new JavaPredefinedCommandTemplate();
+		pct.setMaxMemory("-Xmx1024M");
+		pct.setMinMemory("-Xms512M");
+		pct.setVerboseExecutionClass(true);
+		pct.setVerboseExecutionGC(true);
+		pct.setVerboseExecutionJNI(true);
+		pct.setJarFile("exechello.jar");
+		pct.setJarExecutable(true);
+		
+		
 		ExecutableBundle bundle = new ExecutableBundle();
 
-		
-		bundle.setCommandLineFlags("-o -pp ${FileOne.class}");
+		String lineFlags=clf.getCommandLineString(pct, os,true);
+		bundle.setCommandLineFlags(lineFlags);
 		bundle.setId("exejar");
 		bundle.setTypeName(ExecutableType.JAVA);
 		bundle.setEnvironmentVariables(map);
+		
+		
 		byte[] fileContent = null;
 
 		try {
@@ -284,6 +329,7 @@ public class ContentRepositoryTestUtil {
 		}
 		return (path.delete());
 	}
+
 
 
 }

@@ -94,6 +94,17 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	
 	@Ignore
 	@Test
+	public void testPrintLargeDataSaveExecutableBundle() throws ContentRepositoryServiceException {
+		ContentRepositoryService crs = new ContentRepositoryService();
+		crs.setRepository(repository);
+		ExecutableBundle bundle = ContentRepositoryTestUtil.getPrintLargeDataExecutableBundle(ContentRepositoryTestUtil.unixOs);
+		ResourcePath rp = crs.saveExecutableBundle(nemaCredentials,"testFlow", bundle);
+		System.out.println(rp.getPath());
+		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlow/printlarge.zip");
+	}
+	
+	@Ignore
+	@Test
 	public void testCSaveExecutableBundle() throws ContentRepositoryServiceException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
@@ -103,7 +114,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		assertEquals(rp.getPath(), "/users/user/flows/executables/testFlowC/c1.zip");
 	}
 	
-	@Ignore
+
 	@Test
 	public void testJavaSaveExecutableBundle() throws ContentRepositoryServiceException, ZipException, InvalidCommandLineFlagException, IOException {
 		ContentRepositoryService crs = new ContentRepositoryService();
@@ -116,7 +127,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	
 	@Ignore
 	@Test
-	public void testJarSaveExecutableBundle() throws ContentRepositoryServiceException {
+	public void testSaveJarExecutableBundle() throws ContentRepositoryServiceException, InvalidCommandLineFlagException {
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		ExecutableBundle bundle = ContentRepositoryTestUtil.getJarExecutableBundle( ContentRepositoryTestUtil.unixOs);
@@ -128,25 +139,25 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	
 	
 
-	
+    @Ignore
 	@Test
 	public void testGetExecutableBundle() {
-		String resourcePath ="/users/user/flows/executables/testFlowJava/java1.zip";
+		String resourcePath ="/users/user/flows/executables/testFlowJar/exechello.jar";
 		RepositoryResourcePath rrp = new RepositoryResourcePath("jcr","default",resourcePath);
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		try {
 			ExecutableBundle bundle=crs.getExecutableBundle(nemaCredentials, rrp);
 			System.out.println(bundle.getCommandLineFlags());
-			assertEquals(bundle.getFileName(),"java1.zip");
+			assertEquals(bundle.getFileName(),"exechello.jar");
 		} catch (ContentRepositoryServiceException e) {
 			fail(e.getMessage());
 		}
 	}
 	
 	
-	@Ignore
-	@Test
+  @Ignore
+   @Test
 	public void testRemoveExecutableBundle(){
 		String resourcePath ="/users/user/flows/executables/testFlowJava/java1.zip";
 		RepositoryResourcePath rrp = new RepositoryResourcePath("jcr","default",resourcePath);
