@@ -1,6 +1,5 @@
 package org.imirsel.nema.contentrepository.client;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,9 +7,12 @@ import org.imirsel.nema.model.InvalidCommandLineFlagException;
 import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
 import org.imirsel.nema.model.MatlabPredefinedCommandTemplate;
 import org.imirsel.nema.model.OsDataType;
+import org.imirsel.nema.model.Param;
 import org.imirsel.nema.model.Path;
 import org.imirsel.nema.model.PredefinedCommandTemplate;
 import org.imirsel.nema.model.SysProperty;
+import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
+
 
 /**Returns a command line string based on the PredefinedCommandTemplate
  * 
@@ -49,12 +51,43 @@ public class CommandLineFormatter {
 			return getJavaCommandLineFormatter((JavaPredefinedCommandTemplate)pct,targetOs,filterInvalidOptions);
 		}else if(pct instanceof MatlabPredefinedCommandTemplate){
 			return getMatlabCommandLineFormatter((MatlabPredefinedCommandTemplate)pct,targetOs,filterInvalidOptions);
+		}else if(pct instanceof VanillaPredefinedCommandTemplate){
+			return getVanillaCommandLineFormatter((VanillaPredefinedCommandTemplate) pct,targetOs,filterInvalidOptions);
+		
 		}else{
 			throw new IllegalArgumentException("Error -invalid predefined component template");
 		}
 		
 	}
 
+	private String getVanillaCommandLineFormatter(
+			VanillaPredefinedCommandTemplate pct, OsDataType targetOs,
+			boolean filterInvalidOptions) {
+		StringBuilder sbuilder = new StringBuilder();
+		String paramString= getParametersAsString(pct);
+		if(paramString!=null){
+			sbuilder.append(" "+paramString);
+		}
+		return sbuilder.toString();
+	}
+
+	private String getParametersAsString(VanillaPredefinedCommandTemplate pct) {
+		List<Param> allParams=pct.getParams();
+		StringBuilder sbuilder = new StringBuilder();
+		for(Param p:allParams){
+			sbuilder.append(p.toString()+" ");
+		}
+		return sbuilder.toString();
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
 	private String getMatlabCommandLineFormatter(MatlabPredefinedCommandTemplate pct, OsDataType targetOs, boolean filterInvalidOptions) throws InvalidCommandLineFlagException {
 		StringBuilder sbuilder = new StringBuilder();
 		if(!pct.isDisplay()){
@@ -84,7 +117,10 @@ public class CommandLineFormatter {
 		if(pct.isTiming()){
 			sbuilder.append(" -timing ");
 		}
-		
+		String paramString= getParametersAsString(pct);
+		if(paramString!=null){
+			sbuilder.append(" "+paramString);
+		}
 		
 		return sbuilder.toString();
 	}
@@ -192,6 +228,11 @@ public class CommandLineFormatter {
 			}
 			sbuilder.append(" -jar "+ jarFile);
 			
+		}
+		
+		String paramString= getParametersAsString(pct);
+		if(paramString!=null){
+			sbuilder.append(" "+paramString);
 		}
 		
 		return sbuilder.toString();
