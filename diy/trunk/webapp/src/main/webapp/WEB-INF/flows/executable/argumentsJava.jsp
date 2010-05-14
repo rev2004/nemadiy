@@ -31,8 +31,6 @@
 	Packages:</label><form:input path="disableAssertionPackages" /></fieldset>
 	<fieldset id="pt1"><label>Memory:</label><form:select
 		path="memoryOption" items="${javaCommand.memoryOptions}" itemLabel="label" itemValue="code" /></fieldset>
-		
-	<c:forEach items="${javaCommand.memoryOptions}" var="a">${a.label}</c:forEach>
 
 	<fieldset id="button"><input type="submit"
 		name="_eventId_review" value="review" /> <input type="submit"
