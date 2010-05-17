@@ -34,6 +34,7 @@ import org.imirsel.nema.model.InvalidCommandLineFlagException;
 import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.JobResult;
+import org.imirsel.nema.model.MatlabPredefinedCommandTemplate;
 import org.imirsel.nema.model.OsDataType;
 import org.imirsel.nema.model.Param;
 import org.imirsel.nema.model.ParamAlreadyExistsException;
@@ -46,6 +47,7 @@ import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
 import org.imirsel.nema.webapp.model.ExecutableFile;
 import org.imirsel.nema.webapp.model.JavaExecutableFile;
+import org.imirsel.nema.webapp.model.MatlabExecutableFile;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
@@ -146,10 +148,26 @@ public class TasksServiceImpl {
 	}
 
 	public void setJavaParameters(JavaPredefinedCommandTemplate template,JavaExecutableFile executable){
-		template.addClasspath(null);//
-		template.addProperty(property);
+		template.addClasspath(null);//TODO
+		template.addProperty(null);//TODO
+		template.setDisableAssertionPackages(executable.getDisableAssertionPackages());
+		template.setEnableAssertionPackages(executable.getEnableAssertionPackages());
+		template.setEnableSystemAssertions(executable.isEnableSystemAssertions());
+		template.setJarExecutable(executable.isJarExecutable());
+		template.setJarFile(executable.getJarFile());
+		template.setMainClass(executable.getMainClass());
+		template.setMaxMemory(executable.getMaxMemory());
+		template.setMinMemory(executable.getMinMemory());
+		template.setVerboseExecutionClass(executable.isVerboseExecutionClass());
+		template.setVerboseExecutionGC(executable.isVerboseExecutionGC());
+		template.setVerboseExecutionJNI(executable.isVerboseExecutionJNI());
 	}
 	
+	
+	public void setJavaParameters(MatlabPredefinedCommandTemplate template,MatlabExecutableFile executable){
+		template.setDebug(executable.isDebug());
+		
+	}
 	
 	/**
 	 * @deprecated
