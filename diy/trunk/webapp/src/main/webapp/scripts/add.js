@@ -8,16 +8,16 @@ function add(parentDiv,templateDiv){
 var clone = $(templateDiv.cloneNode(true));
 count++;
 clone.id=templateDiv.id+count;
-$(clone).down("input",1).value="";
-$(clone).down("input",2).value="";
-
+//$(clone).down("input",1).value="";
+$(clone).down("input",0).value="";
 $(templateDiv).insert({after: clone}); 
 clone.show();
 }
 function removeNode(node,first){
 	var parent =  $(node).parentNode;
 	if($(parent).id==first){
-	//parent.hide();//alert("Cannot delete the element");
+	//parent.hide();
+		alert("Cannot delete the element");
 	}else{
 		$(parent).remove();
 	}

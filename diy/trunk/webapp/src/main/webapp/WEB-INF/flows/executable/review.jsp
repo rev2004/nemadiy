@@ -4,14 +4,13 @@
 <title>Review the executable setting</title>
 </head>
 <body>
-<form:form commandName="executable">
+<form:form>
 	<fieldset id="pt1"><form:errors path="*"/></fieldset>
-	<fieldset id="pt1"><label>${executable.fileType}
-	File:</label> <c:out value="${executable.file.name}" /></fieldset>
-	<fieldset id="pt1"><label>environment:</label><code><c:out
-		value="${executable.environment}" /></code></fieldset>
+	<fieldset id="pt1"><label>
+	File:</label> ${bundle.fileName} ${bundle.typeName} /></fieldset>
+	<fieldset id="pt1"><label>environment:</label><code><c:forEach items="${bundle.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach> </code></fieldset>
 	<fieldset id="pt1"><label>arguments:</label><code><c:out
-		value="${executable.args}" /></code></fieldset>
+		value="${bundle.commandLineFlags}" /></code></fieldset>
 
 	<fieldset id="button"><input type="submit"
 		name="_eventId_save" value="save" /> <input type="submit"

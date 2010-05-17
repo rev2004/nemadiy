@@ -3,12 +3,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile"/>
-	
+	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile" />
+
 	<on-start>
 		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
-		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()"/>
-		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />		
+		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
+		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
 		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
 		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
 	</on-start>
@@ -24,13 +24,14 @@
 	<view-state id="argumentsPlain" model="executable">
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
-		<transition on="review" to="success">
+		<transition on="review" to="review">
+		<evaluate expression="tasksService.generateMap(requestParameters)"></evaluate>
 			<evaluate
-				expression="tasksService.getTemplate(requestParameters.variable,requestParameters.value,requestParameters.input,requestParameters.output,requestParameters.other,executable)"
+				expression="tasksService.getTemplate(requestParameters)"
 				result="flowScope.paramTemplate" />
 			<evaluate
 				expression="tasksService.generateExecutableBundle(paramTemplate,executable)"
-				result="flowScope.ExecutableBundle" />
+				result="flowScope.bundle" />
 		</transition>
 	</view-state>
 
@@ -38,11 +39,9 @@
 		<var name="javaCommand" class="org.imirsel.nema.webapp.model.JavaExecutableFile" />
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
-		<transition on="review" to="success">
-
-
+		<transition on="review" to="review">
 			<evaluate
-				expression="tasksService.getTemplate(requestParameters.variable,requestParameters.value,requestParameters.input,requestParameters.output,requestParameters.other,executable)"
+				expression="tasksService.getTemplate(requestParameters)"
 				result="flowScope.paramTemplate" result-type="org.imirsel.nema.model.JavaPredefinedCommandTemplate" />
 			<evaluate expression="tasksService.setJavaParameters(paramTemplate,javaCommand)" />
 
@@ -52,24 +51,24 @@
 
 		</transition>
 	</view-state>
-	
+
 	<view-state id="argumentsMatlab" model="matlabCommend">
 		<var name="matlabCommand" class="org.imirsel.nema.webapp.model.MatlabExecutableFile" />
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
 			<evaluate
-				expression="tasksService.getTemplate(requestParameters.variable,requestParameters.value,requestParameters.input,requestParameters.output,requestParameters.other,executable)"
+				expression="tasksService.getTemplate(requestParameters.variable,requestParameters.value,requestParameters.input,requestParameters.output,requestParameters.other)"
 				result="flowScope.paramTemplate" result-type="org.imirsel.nema.model.MatlabPredefinedCommandTemplate" />
 			<evaluate
-				expression="tasksService.setJavaParameters(paramTemplate,matlabCommand)" />
+				expression="tasksService.setMatlabParameters(paramTemplate,matlabCommand)" />
 
 			<evaluate
 				expression="tasksService.generateExecutableBundle(paramTemplate,matlabCommand)"
 				result="flowScope.bundle" />
 		</transition>
 	</view-state>
-	
+
 	<view-state id="review">
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="arguments" />
@@ -86,13 +85,14 @@
 		<transition on="C" to="argumentsPlain" />
 		<transition on="SHELL" to="argumentsPlain" />
 	</action-state>
-	
+
 	<end-state id="cancel"></end-state>
-	
+
 	<end-state id="success">
-		<output name="executableUrl" value="'LiteralValue'" type="java.lang.String"/>
-		<output name="executableOs" value="resource.getOsDataType(executable.os)" type="org.imirsel.nema.model.OsDataType"/>
-		<output name="executableGroup" value="executable.group" type="java.lang.String"/>
+		<output name="executableUrl" value="'LiteralValue'" type="java.lang.String" />
+		<output name="executableOs" value="resource.getOsDataType(executable.os)"
+			type="org.imirsel.nema.model.OsDataType" />
+		<output name="executableGroup" value="executable.group" type="java.lang.String" />
 		<output name="executableBundle" value="bundle"
 			type="org.imirsel.nema.model.ExecutableBundle" />
 
