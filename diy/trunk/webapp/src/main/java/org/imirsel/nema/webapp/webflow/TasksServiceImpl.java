@@ -23,7 +23,9 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.derby.impl.sql.compile.GetCurrentConnectionNode;
+import org.imirsel.nema.contentrepository.client.ArtifactService;
 import org.imirsel.nema.contentrepository.client.CommandLineFormatter;
+import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
 import org.imirsel.nema.contentrepository.client.ResourceTypeService;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
@@ -67,33 +69,43 @@ public class TasksServiceImpl {
 	private String uploadDirectory;
 	private CommandLineFormatter commandLineFormatter;
 	private ResourceTypeService resourceServiceType;
-
+	private ArtifactService artifactService;
 	/**
 	 * properties' name in the component datatype map
 	 */
 	final static String REMOTE_COMPONENT = "_remoteComponent";
 	final static String CREDENTIALS = "_credentials";
 	final static String EXECUTABLE_URL = "profileName";
-	final static String OS="_os";
-	final static String GROUP="_group";
+	final static String OS = "_os";
+	final static String GROUP = "_group";
 
 	/**
 	 * Add the executable url into the parameter map
+	 * 
 	 * @param component
 	 * @param parameters
 	 * @param url
 	 */
 	public void addExecutable(final Component component,
-			final Map<String, String> parameters, final String url, final OsDataType os,final String group) {
+			final Map<String, String> parameters, final String url,
+			final OsDataType os, final String group,
+			final ExecutableBundle bundle)
+			throws ContentRepositoryServiceException {
 		logger.debug("add executable url into parameter");
-		parameters.put(getName(component.getInstanceUri(), EXECUTABLE_URL), url);
-		SimpleCredentials credential=userManager.getCurrentUserCredentials();
-		String credentialString=credential.getUserID()+":"+new String(credential.getPassword());
-		parameters.put(getName(component.getInstanceUri(),CREDENTIALS),credentialString );
-		parameters.put(getName(component.getInstanceUri(),REMOTE_COMPONENT),"true" );
-		parameters.put(getName(component.getInstanceUri(),OS),os.getValue());
-		parameters.put(getName(component.getInstanceUri(),GROUP),group );
-		
+		parameters
+				.put(getName(component.getInstanceUri(), EXECUTABLE_URL), url);
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		String credentialString = credential.getUserID() + ":"
+				+ new String(credential.getPassword());
+		parameters.put(getName(component.getInstanceUri(), CREDENTIALS),
+				credentialString);
+		parameters.put(getName(component.getInstanceUri(), REMOTE_COMPONENT),
+				"true");
+		parameters.put(getName(component.getInstanceUri(), OS), os.getValue());
+		parameters.put(getName(component.getInstanceUri(), GROUP), group);
+		artifactService.saveExecutableBundle(credential, component
+				.getInstanceUri(), bundle);
+
 	}
 
 	/**
@@ -124,35 +136,45 @@ public class TasksServiceImpl {
 		return parameters;
 	}
 
-	public ExecutableBundle generateExecutableBundle(VanillaPredefinedCommandTemplate template,ExecutableFile executable){
-		ExecutableBundle bundle=new ExecutableBundle();
-		
-		MultipartFile file=executable.getFile();
+	public ExecutableBundle generateExecutableBundle(
+			VanillaPredefinedCommandTemplate template, ExecutableFile executable) {
+		ExecutableBundle bundle = new ExecutableBundle();
+
+		MultipartFile file = executable.getFile();
 		bundle.setFileName(file.getOriginalFilename());
 		bundle.setExecutableName(executable.getExecutableInZip());
 		try {
 			bundle.setBundleContent(file.getBytes());
 		} catch (IOException e) {
-			logger.debug(e,e);
+			logger.debug(e, e);
 		}
 		bundle.setId(UUID.randomUUID().toString());
 		try {
-			bundle.setCommandLineFlags(commandLineFormatter.getCommandLineString(template, resourceServiceType.getOsDataType(executable.getOs()), true));
+			String command = commandLineFormatter.getCommandLineString(
+					template, resourceServiceType.getOsDataType(executable
+							.getOs()), false);
+			bundle.setCommandLineFlags(command);
+			logger.debug("generated command flag:" + command);
 		} catch (InvalidCommandLineFlagException e) {
-			logger.error(e,e);
+			logger.error(e, e);
 		}
 		bundle.setEnvironmentVariables(template.getEnvironmentMap());
-		//bundle.setTypeName(executable.getFileType());
-		
+		logger.debug("set the environment variables (size:"
+				+ bundle.getEnvironmentVariables().size() + ")");
+		// bundle.setTypeName(executable.getFileType());
 		return bundle;
 	}
 
-	public void setJavaParameters(JavaPredefinedCommandTemplate template,JavaExecutableFile executable){
-		template.addClasspath(null);//TODO
-		template.addProperty(null);//TODO
-		template.setDisableAssertionPackages(executable.getDisableAssertionPackages());
-		template.setEnableAssertionPackages(executable.getEnableAssertionPackages());
-		template.setEnableSystemAssertions(executable.isEnableSystemAssertions());
+	public void setJavaParameters(JavaPredefinedCommandTemplate template,
+			JavaExecutableFile executable) {
+		template.addClasspath(null);// TODO
+		template.addProperty(null);// TODO
+		template.setDisableAssertionPackages(executable
+				.getDisableAssertionPackages());
+		template.setEnableAssertionPackages(executable
+				.getEnableAssertionPackages());
+		template.setEnableSystemAssertions(executable
+				.isEnableSystemAssertions());
 		template.setJarExecutable(executable.isJarExecutable());
 		template.setJarFile(executable.getJarFile());
 		template.setMainClass(executable.getMainClass());
@@ -162,32 +184,49 @@ public class TasksServiceImpl {
 		template.setVerboseExecutionGC(executable.isVerboseExecutionGC());
 		template.setVerboseExecutionJNI(executable.isVerboseExecutionJNI());
 	}
-	
-	
-	public void setJavaParameters(MatlabPredefinedCommandTemplate template,MatlabExecutableFile executable){
+
+	public void setMatlabParameters(MatlabPredefinedCommandTemplate template,
+			MatlabExecutableFile executable) {
 		template.setDebug(executable.isDebug());
-		
+		template.setDisplay(executable.isDisplay());
+		template.setJvm(executable.isJvm());
+		template.setLogfile(executable.isLogfile());
+		template.setLog(executable.getLog());
+		template.setSplash(executable.isSplash());
+		template.setTiming(executable.isTiming());
 	}
-	
+
 	/**
-	 * @deprecated
-	 * generate a map from two string arrays (key[] and values[])
+	 * @deprecated generate a map from two string arrays (key[] and values[])
 	 * @param variables
 	 * @param values
 	 * @return
 	 */
-	public Map<String,String> generateMap(String[] keys,String[] values){
-		Map<String,String> map=new HashMap<String,String>();
-		int length=keys.length;		
-		for (int i=0;i<length;i++){
-			if ((keys[i]!=null)&&(keys[i].length()!=0)) map.put(keys[i],values[i]);
+	public Map<String, String> generateMap(String[] keys, String[] values) {
+		Map<String, String> map = new HashMap<String, String>();
+		int length = keys.length;
+		for (int i = 0; i < length; i++) {
+			if ((keys[i] != null) && (keys[i].length() != 0))
+				map.put(keys[i], values[i]);
 		}
-		logger.debug("generate map of size "+length);
+		logger.debug("generate map of size " + length);
 		return map;
 	}
 
 	
-
+	public Map<String, String> generateMap(ParameterMap parameters ) {
+		String[] keys=parameters.getArray("variable");
+		String[] values=parameters.getArray("value");
+		Map<String, String> map = new HashMap<String, String>();
+		int length = keys.length;
+		for (int i = 0; i < length; i++) {
+			if ((keys[i] != null) && (keys[i].length() != 0))
+				map.put(keys[i], values[i]);
+		}
+		logger.debug("generate map of size " + length);
+		return map;
+	}
+	
 	public CommandLineFormatter getCommandLineFormatter() {
 		return commandLineFormatter;
 	}
@@ -212,9 +251,11 @@ public class TasksServiceImpl {
 			return resultSet;
 		}
 	}
+
 	public ResourceTypeService getResourceServiceType() {
 		return resourceServiceType;
 	}
+
 	/**
 	 * @return roles from the default user manager
 	 */
@@ -230,6 +271,10 @@ public class TasksServiceImpl {
 		}
 		return roles;
 	}
+
+	private String output(String[] array){
+		return ((array==null)?"null":String.valueOf(array.length));
+	}
 	/**
 	 * 
 	 * @param keys
@@ -239,31 +284,64 @@ public class TasksServiceImpl {
 	 * @param others
 	 * @return
 	 */
-	public VanillaPredefinedCommandTemplate getTemplate(String[] keys,String[] values,String[] inputs,String[] outputs,String[] others){
-		VanillaPredefinedCommandTemplate template=new VanillaPredefinedCommandTemplate();
-		try{
-		int i=0;
-		for (String entry:inputs){
-			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,true,Param.ParamType.INPUT.getCode(),i++));
+	private VanillaPredefinedCommandTemplate getTemplate(String[] keys,
+			String[] values, String[] inputs, String[] outputs, String[] others) {
+		VanillaPredefinedCommandTemplate template = new VanillaPredefinedCommandTemplate();
+		logger.debug("start to populate command template " + output(keys)
+				+ " variable, " + output(inputs) + " inputs, " + output(outputs)
+				+ " outputs, " + output(others) + " other");
+		try {
+			int i = 0;
+			for (String entry : inputs) {
+				if ((entry != null) && (entry.length() != 0))
+					template.addParam(new Param(entry, true,
+							Param.ParamType.INPUT.getCode(), i++));
+			}
+			i = 0;
+			for (String entry : outputs) {
+				if ((entry != null) && (entry.length() != 0))
+					template.addParam(new Param(entry, true,
+							Param.ParamType.OUTPUT.getCode(), i++));
+			}
+			i = 0;
+			for (String entry : inputs) {
+				if ((entry != null) && (entry.length() != 0))
+					template.addParam(new Param(entry, false,
+							Param.ParamType.OTHER.getCode(), i++));
+			}
+		} catch (ParamAlreadyExistsException e) {
+			logger.error(e, e);
 		}
-		 i=0;
-		for (String entry:outputs){
-			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,true,Param.ParamType.OUTPUT.getCode(),i++));
-		}	
-		i=0;
-		for (String entry:inputs){
-			if ((entry!=null)&&(entry.length()!=0))template.addParam(new Param(entry,false,Param.ParamType.OTHER.getCode(),i++));
+		int length = keys.length;
+		for (int i = 0; i < length; i++) {
+			if ((keys[i] != null) && (keys[i].length() > 0))
+				template.addEnvironmentVariable(keys[i], values[i]);
 		}
-		}catch (ParamAlreadyExistsException e) {
-			logger.error(e,e);
-		}
-		Map<String,String> map=new HashMap<String,String>();
-		int length=keys.length;		
-		for (int i=0;i<length;i++){
-			if ((keys[i]!=null)&&(keys[i].length()>0)) map.put(keys[i],values[i]);
-		}
-		logger.debug("generate map of size "+length);
+		logger.debug("generate map of size " + length);
+
 		return template;
+	}
+
+	public VanillaPredefinedCommandTemplate getTemplate(ParameterMap httpParam){
+		String[] keys=getArray(httpParam,"variable");
+		String[] values=getArray(httpParam,"value");
+		String[] inputs=getArray(httpParam,"input");
+		String[] others=getArray(httpParam,"other");
+		String[] outputs=getArray(httpParam,"output");
+		return getTemplate(keys,values,inputs,outputs,others);
+		
+	}
+	private String[] getArray(ParameterMap httpParam,String key){
+		if (httpParam.contains(key)){
+			String[] values=httpParam.getArray(key);
+			logger.debug("parameter "+key+" map size "+values.length);
+			if (values.length==0){				
+			 values=new String[1];
+			 values[0]=httpParam.get(key);	
+			 logger.debug("find an 1 value parameter "+values[0]);
+			}
+			return values;
+		}else return new String[0];
 	}
 	/**
 	 * Returns upload directory
@@ -432,7 +510,8 @@ public class TasksServiceImpl {
 
 	}
 
-	public void setCommandLineFormatter(CommandLineFormatter commandLineFormatter) {
+	public void setCommandLineFormatter(
+			CommandLineFormatter commandLineFormatter) {
 		this.commandLineFormatter = commandLineFormatter;
 	}
 
@@ -452,11 +531,11 @@ public class TasksServiceImpl {
 	public void setUploadDirectory(String uploadDirectory) {
 		this.uploadDirectory = uploadDirectory;
 	}
+
 	public void setUserManager(UserManager userManager) {
 		this.userManager = userManager;
 	}
-	
-	
+
 	/**
 	 * Only for testing purpose
 	 * 
@@ -467,7 +546,7 @@ public class TasksServiceImpl {
 		logger.debug(input);
 		return 1;
 	}
-	
+
 	/**
 	 * generate testing job from all the parameters
 	 * 
@@ -526,14 +605,16 @@ public class TasksServiceImpl {
 		instance.setKeyWords(templateFlow.getKeyWords());
 		instance.setName(name);
 		instance.setTemplate(false);
-		//instance.setUri(newFlowUri);
+		// instance.setUri(newFlowUri);
 		instance.setDescription(description);
 		instance.setType(templateFlow.getType());
 		instance.setTypeName(templateFlow.getTypeName());
 
-		instance=this.flowService.createNewFlow(userManager.getCurrentUserCredentials(),instance,paramMap, flowUri,user.getId());
-		long instanceId = instance.getId();		
-		
+		instance = this.flowService.createNewFlow(userManager
+				.getCurrentUserCredentials(), instance, paramMap, flowUri, user
+				.getId());
+		long instanceId = instance.getId();
+
 		Job job = this.flowService.executeJob(token, name, description,
 				instanceId, user.getId(), user.getEmail());
 
@@ -557,7 +638,7 @@ public class TasksServiceImpl {
 		String count = component.substring(index + 1);
 		return cname + "_" + count + "_" + propertyName;
 	}
-	
+
 	private String processUrl(String url) {
 		String identifier = "published_resources/nema";
 		int index = url.indexOf(identifier);
@@ -566,5 +647,12 @@ public class TasksServiceImpl {
 
 	}
 
+	public void setArtifactService(ArtifactService artifactService) {
+		this.artifactService = artifactService;
+	}
+
+	public ArtifactService getArtifactService() {
+		return artifactService;
+	}
 
 }
