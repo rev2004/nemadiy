@@ -5,23 +5,29 @@ import java.util.Map;
 
 public class ExecutableBundle implements Serializable, ExecutableMetadata {
 	/**
-	 * 
+	 * Version of this class.
 	 */
 	private static final long serialVersionUID = -6672878925392305298L;
 
 	public enum ExecutableType {
-		JAVA("Java"), C("C"), SHELL("Shell"), MATLAB("MATLAB");
+		JAVA("Java",0), MATLAB("MATLAB",1), C("C",2), SHELL("Shell",3);
 
 		private String name;
-
-		private ExecutableType(String name) {
+      private int code;
+      
+		private ExecutableType(String name,int code) {
 			this.name = name;
+			this.code = code;
 		}
 
 		public String getName() {
 			return name;
 		}
 
+		public int getCode() {
+		   return code;
+		}
+		
 		@Override
 		public String toString() {
 			return name;
@@ -40,24 +46,47 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
 				return null;
 			}
 		}
+		
+      public static ExecutableType valueOf(int code)
+            throws IllegalArgumentException {
+         switch (code) {
+         case 0:
+            return ExecutableType.JAVA;
+         case 1:
+            return ExecutableType.MATLAB;
+         case 2:
+            return ExecutableType.C;
+         case 3:
+            return ExecutableType.SHELL;
+         default:
+            throw new IllegalArgumentException("Unknown ExecutableType code: "
+                  + code);
+         }
+      }
 	}
 
 	private String id;
 	private String fileName;
-	private String typeName;
+	private ExecutableType type;
 	private String mainClass;
 	private String executableName;
 	private String commandLineFlags;
+	private String preferredOs;
 	private Map<String, String> environmentVariables;
 	private byte[] bundleContent;
-	
 	
 	public String getId() {
 		return id;
 	}
 	public String getTypeName() {
-		return typeName;
+		return type.getName();
 	}
+   public int getTypeCode() {
+      return type.getCode();
+   }
+   public ExecutableType getType() {
+      return type;
+   }
 	public String getMainClass() {
 		return mainClass;
 	}
@@ -70,13 +99,18 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
 	public Map<String, String> getEnvironmentVariables() {
 		return environmentVariables;
 	}
-	
 	public void setId(String id) {
 		this.id = id;
 	}
-	public void setTypeName(ExecutableType etype) {
-		this.typeName = etype.getName();
+   public void setType(ExecutableType fileType) {
+      this.type = fileType;
+   }
+	public void setTypeName(String typeName) {
+		this.type = ExecutableType.toExecutableType(typeName);
 	}
+   public void setTypeCode(int typeCode)  {
+      this.type = ExecutableType.valueOf(typeCode);
+   }
 	public void setMainClass(String mainClass) {
 		this.mainClass = mainClass;
 	}
@@ -98,9 +132,14 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
 	public String getFileName() {
 		return fileName;
 	}
-	
 	public void setFileName(String fileName){
 		this.fileName=fileName;
 	}
+   public String getPreferredOs() {
+      return preferredOs;
+   }
+   public void setPreferredOs(String preferredOs) {
+      this.preferredOs = preferredOs;
+   }
 
 }
