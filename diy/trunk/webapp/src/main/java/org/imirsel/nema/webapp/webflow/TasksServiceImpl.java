@@ -42,6 +42,7 @@ import org.imirsel.nema.model.Param;
 import org.imirsel.nema.model.ParamAlreadyExistsException;
 import org.imirsel.nema.model.PredefinedCommandTemplate;
 import org.imirsel.nema.model.Property;
+import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
@@ -92,8 +93,6 @@ public class TasksServiceImpl {
 			final ExecutableBundle bundle)
 			throws ContentRepositoryServiceException {
 		logger.debug("add executable url into parameter");
-		parameters
-				.put(getName(component.getInstanceUri(), EXECUTABLE_URL), url);
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		String credentialString = credential.getUserID() + ":"
 				+ new String(credential.getPassword());
@@ -103,8 +102,11 @@ public class TasksServiceImpl {
 				"true");
 		parameters.put(getName(component.getInstanceUri(), OS), os.getValue());
 		parameters.put(getName(component.getInstanceUri(), GROUP), group);
-		artifactService.saveExecutableBundle(credential, component
+		ResourcePath path=artifactService.saveExecutableBundle(credential, component
 				.getInstanceUri(), bundle);
+		if (path!=null) parameters
+		.put(getName(component.getInstanceUri(), EXECUTABLE_URL), path.getPath());
+		else throw new ContentRepositoryServiceException("error in saving the executable bundle");
 
 	}
 
@@ -136,13 +138,25 @@ public class TasksServiceImpl {
 		return parameters;
 	}
 
+	
+	/**
+	 * return the PredefinedCommandTemplate according to the type String
+	 * @param type
+	 * @return
+	 */
+	public VanillaPredefinedCommandTemplate getEmptyTemplate(String type){
+		if (type.equalsIgnoreCase("plain")) return new VanillaPredefinedCommandTemplate();
+		else if (type.equalsIgnoreCase("java")) return new JavaPredefinedCommandTemplate();
+		else if (type.equalsIgnoreCase("matlab")) return new MatlabPredefinedCommandTemplate();
+		else return null;
+	}
 	public ExecutableBundle generateExecutableBundle(
 			VanillaPredefinedCommandTemplate template, ExecutableFile executable) {
 		ExecutableBundle bundle = new ExecutableBundle();
 
 		bundle.setFileName(executable.getFileName());
 	//TODO	bundle.setExecutableName(executable.getExecutableInZip());
-		bundle.setBundleContent(executable.getFileBytes());
+		//TODO bundle.setBundleContent(executable.getFileBytes());
 		bundle.setId(UUID.randomUUID().toString());
 		try {
 			String command = commandLineFormatter.getCommandLineString(
@@ -208,10 +222,9 @@ public class TasksServiceImpl {
 		return map;
 	}
 
-	
-	public Map<String, String> generateMap(ParameterMap parameters ) {
-		String[] keys=parameters.getArray("variable");
-		String[] values=parameters.getArray("value");
+	public Map<String, String> generateMap(ParameterMap parameters) {
+		String[] keys = parameters.getArray("variable");
+		String[] values = parameters.getArray("value");
 		Map<String, String> map = new HashMap<String, String>();
 		int length = keys.length;
 		for (int i = 0; i < length; i++) {
@@ -221,7 +234,7 @@ public class TasksServiceImpl {
 		logger.debug("generate map of size " + length);
 		return map;
 	}
-	
+
 	public CommandLineFormatter getCommandLineFormatter() {
 		return commandLineFormatter;
 	}
@@ -267,9 +280,10 @@ public class TasksServiceImpl {
 		return roles;
 	}
 
-	private String output(String[] array){
-		return ((array==null)?"null":String.valueOf(array.length));
+	private String output(String[] array) {
+		return ((array == null) ? "null" : String.valueOf(array.length));
 	}
+
 	/**
 	 * 
 	 * @param keys
@@ -279,65 +293,78 @@ public class TasksServiceImpl {
 	 * @param others
 	 * @return
 	 */
-	private VanillaPredefinedCommandTemplate getTemplate(String[] keys,
-			String[] values, String[] inputs, String[] outputs, String[] others) {
-		VanillaPredefinedCommandTemplate template = new VanillaPredefinedCommandTemplate();
+	public void getTemplate(String[] keys, String[] values, String[] inputs,
+			String[] outputs, String[] others,
+			VanillaPredefinedCommandTemplate template) {
+		if (template == null)
+			throw new NullPointerException("template variable cannot be null");
 		logger.debug("start to populate command template " + output(keys)
-				+ " variable, " + output(inputs) + " inputs, " + output(outputs)
-				+ " outputs, " + output(others) + " other");
+				+ " variable, " + output(inputs) + " inputs, "
+				+ output(outputs) + " outputs, " + output(others) + " other");
 		try {
 			int i = 0;
-			for (String entry : inputs) {
-				if ((entry != null) && (entry.length() != 0))
-					template.addParam(new Param(entry, true,
-							Param.ParamType.INPUT.getCode(), i++));
+			if (inputs != null)
+				for (String entry : inputs) {
+					if ((entry != null) && (entry.length() != 0))
+						template.addParam(new Param(entry, true,
+								Param.ParamType.INPUT.getCode(), i++));
+				}
+			if (outputs != null) {
+				i = 0;
+
+				for (String entry : outputs) {
+					if ((entry != null) && (entry.length() != 0))
+						template.addParam(new Param(entry, true,
+								Param.ParamType.OUTPUT.getCode(), i++));
+				}
 			}
-			i = 0;
-			for (String entry : outputs) {
-				if ((entry != null) && (entry.length() != 0))
-					template.addParam(new Param(entry, true,
-							Param.ParamType.OUTPUT.getCode(), i++));
-			}
-			i = 0;
-			for (String entry : inputs) {
-				if ((entry != null) && (entry.length() != 0))
-					template.addParam(new Param(entry, false,
-							Param.ParamType.OTHER.getCode(), i++));
+			if (others != null) {
+				i = 0;
+				for (String entry : inputs) {
+					if ((entry != null) && (entry.length() != 0))
+						template.addParam(new Param(entry, false,
+								Param.ParamType.OTHER.getCode(), i++));
+				}
 			}
 		} catch (ParamAlreadyExistsException e) {
 			logger.error(e, e);
 		}
-		int length = keys.length;
-		for (int i = 0; i < length; i++) {
-			if ((keys[i] != null) && (keys[i].length() > 0))
-				template.addEnvironmentVariable(keys[i], values[i]);
+		if ((keys != null) && (values != null)) {
+			int length = keys.length;
+			for (int i = 0; i < length; i++) {
+				if ((keys[i] != null) && (keys[i].length() > 0))
+					template.addEnvironmentVariable(keys[i], values[i]);
+			}
+			logger.debug("generate map of size " + length);
 		}
-		logger.debug("generate map of size " + length);
 
-		return template;
 	}
 
-	public VanillaPredefinedCommandTemplate getTemplate(ParameterMap httpParam){
-		String[] keys=getArray(httpParam,"variable");
-		String[] values=getArray(httpParam,"value");
-		String[] inputs=getArray(httpParam,"input");
-		String[] others=getArray(httpParam,"other");
-		String[] outputs=getArray(httpParam,"output");
-		return getTemplate(keys,values,inputs,outputs,others);
-		
+	public void getTemplate(ParameterMap httpParam,
+			VanillaPredefinedCommandTemplate template) {
+		String[] keys = getArray(httpParam, "variable");
+		String[] values = getArray(httpParam, "value");
+		String[] inputs = getArray(httpParam, "input");
+		String[] others = getArray(httpParam, "other");
+		String[] outputs = getArray(httpParam, "output");
+		getTemplate(keys, values, inputs, outputs, others, template);
+
 	}
-	private String[] getArray(ParameterMap httpParam,String key){
-		if (httpParam.contains(key)){
-			String[] values=httpParam.getArray(key);
-			logger.debug("parameter "+key+" map size "+values.length);
-			if (values.length==0){				
-			 values=new String[1];
-			 values[0]=httpParam.get(key);	
-			 logger.debug("find an 1 value parameter "+values[0]);
+
+	private String[] getArray(ParameterMap httpParam, String key) {
+		if (httpParam.contains(key)) {
+			String[] values = httpParam.getArray(key);
+			logger.debug("parameter " + key + " map size " + values.length);
+			if (values.length == 0) {
+				values = new String[1];
+				values[0] = httpParam.get(key);
+				logger.debug("find an 1 value parameter " + values[0]);
 			}
 			return values;
-		}else return new String[0];
+		} else
+			return new String[0];
 	}
+
 	/**
 	 * Returns upload directory
 	 * 
@@ -612,7 +639,6 @@ public class TasksServiceImpl {
 
 		Job job = this.flowService.executeJob(token, name, description,
 				instanceId, user.getId(), user.getEmail());
-
 		return job;
 
 	}
