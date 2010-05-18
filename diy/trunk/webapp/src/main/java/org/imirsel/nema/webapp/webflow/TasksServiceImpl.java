@@ -142,7 +142,7 @@ public class TasksServiceImpl {
 
 		MultipartFile file = executable.getFile();
 		bundle.setFileName(file.getOriginalFilename());
-		bundle.setExecutableName(executable.getExecutableInZip());
+	//TODO	bundle.setExecutableName(executable.getExecutableInZip());
 		try {
 			bundle.setBundleContent(file.getBytes());
 		} catch (IOException e) {

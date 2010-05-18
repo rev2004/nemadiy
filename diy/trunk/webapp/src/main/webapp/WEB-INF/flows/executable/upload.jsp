@@ -1,28 +1,35 @@
 <%@ include file="/common/taglibs.jsp"%>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>upload the executable</title>
+<title>Upload the Executable</title>
 </head>
 <body>
-upload the executable.
+
+<div style="margin-bottom:5px">Upload the executable</div>
+
 <form:form modelAttribute="executable" enctype="multipart/form-data">
-	<fieldset id="pt1"><form:errors path="*"/></fieldset>
-	<fieldset id="pt1"><label>Please select file type:</label> <form:select
-		path="type" items="${typeSet}" itemLabel="label" itemValue="code" />
+	<fieldset><form:errors path="*"/></fieldset>
+	<fieldset>
+	    <label>Specify the executable type:</label>
+	    <form:select path="typeCode" items="${executable.typeOptions}" itemLabel="label" itemValue="code" />
 	</fieldset>
-
-	<fieldset id="pt1"><label>Please select the file for
-	upload:</label> <input type="file" name="file" /></fieldset>
-		<fieldset id="pt1"><label>Please select os type:</label> <form:select
-		path="os" items="${supportedOs}" itemLabel="name" itemValue="value" />
+	<fieldset>
+	    <label>Archive containing the executable:</label>
+	    <input type="file" name="file" />
 	</fieldset>
-	<fieldset id="pt1"><label>Please select group:</label> <form:select
-		path="group" items="${supportedGroups}" itemLabel="name" itemValue="value" />
+    <fieldset>
+        <label>Operating system required to run the executable:</label>
+        <form:select path="os" items="${supportedOs}" itemLabel="name" itemValue="value" />
 	</fieldset>
-	<fieldset id="button"><input type="submit"
-		name="_eventId_upload" value="upload" /> <input type="submit"
-		name="_eventId_cancel" value="cancel" /></fieldset>
-
+	<fieldset>
+	    <label>Select the group:</label>
+	    <form:select path="group" items="${supportedGroups}" itemLabel="name" itemValue="value" />
+	</fieldset>
+	<fieldset id="button">
+	    <input type="submit" name="_eventId_upload" value="upload" />
+	    <input type="submit" name="_eventId_cancel" value="cancel" />
+	</fieldset>
+	
 </form:form>
 
 </body>

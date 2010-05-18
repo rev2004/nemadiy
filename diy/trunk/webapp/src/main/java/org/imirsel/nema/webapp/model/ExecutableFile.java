@@ -1,6 +1,5 @@
 package org.imirsel.nema.webapp.model;
 
-import java.io.InvalidObjectException;
 import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
@@ -19,17 +18,17 @@ import org.springframework.web.multipart.MultipartFile;
  * 
  */
 public class ExecutableFile implements Serializable {
-	static private Log logger = LogFactory.getLog(ExecutableFile.class);
+	private static final Log logger = LogFactory.getLog(ExecutableFile.class.getName());
 	private static final long serialVersionUID = 1509804396923336290L;
 
 	protected ResourceTypeService resourceTypeService=new ResourceTypeServiceImpl();
-	public enum FileType{
-		JAR("jar file or zip of jar files", 0), MATLAB("matlab programs", 1), C(
-				"plain c, c++", 2),SHELL("shell",3);
+	
+	public enum ExecutableType{
+		JAVA("Java", 0), MATLAB("MATLAB", 1), C("C/C++",2), SHELL("Shell",3);
 		private String label;
 		private int code;
 
-		FileType(final String label, int code) {
+		ExecutableType(final String label, int code) {
 			this.label = label;
 			this.code = code;
 		}
@@ -43,36 +42,31 @@ public class ExecutableFile implements Serializable {
 		public String toString(){
 			return label;			
 		}
-		public static FileType valueOf(int code) throws InvalidObjectException{
+		public static ExecutableType valueOf(int code) throws IllegalArgumentException{
 			switch (code){
-			case 0:return FileType.JAR; 
-			case 1:return FileType.MATLAB;
-			case 2:return FileType.C;
-			case 3:return FileType.SHELL;
-			default:throw new InvalidObjectException("can't deserialize FileType  for "+code );
+			case 0:return ExecutableType.JAVA; 
+			case 1:return ExecutableType.MATLAB;
+			case 2:return ExecutableType.C;
+			case 3:return ExecutableType.SHELL;
+			default:throw new IllegalArgumentException("Unknown ExecutableType code: " + code );
 			}
 		}
 	}
 	
-	public static FileType[] getTypeSet(){
-		logger.debug("get typeset");
-		return new FileType[]{FileType.JAR,FileType.MATLAB,FileType.C,FileType.SHELL};
+	public ExecutableType[] getTypeOptions(){
+		return new ExecutableType[]{ExecutableType.JAVA,ExecutableType.MATLAB,ExecutableType.C,ExecutableType.SHELL};
 	}
 
-	private  MultipartFile file;
+	private transient MultipartFile file;
 
-	private FileType fileType=FileType.SHELL;
-
-	private String args;;
-
-	private String environment;
-	
+	private String fileName;
+	private ExecutableType type = ExecutableType.JAVA;
+	private String args;
+	private String environment;	
 	private PredefinedCommandTemplate template;
 	private String group;
 	protected String os;
 
-	private boolean zip;
-	private String executableInZip;
 	public String getGroup() {
 		return group;
 	}
@@ -101,8 +95,8 @@ public class ExecutableFile implements Serializable {
 		return file;
 	}
 
-	public int getType() {
-		return fileType.getCode();
+	public int getTypeCode() {
+		return type.getCode();
 	}
 	
 
@@ -119,24 +113,24 @@ public class ExecutableFile implements Serializable {
 	}
 
 	public void setFile(MultipartFile file) {
-		this.file = file;
+	   this.file = file;
+	   this.fileName = file.getOriginalFilename();
 	}
 
-	public void setType(int typeCode)  {
-		
+	public void setTypeCode(int typeCode)  {
 		try {
-			this.fileType = FileType.valueOf(typeCode);
-		} catch (InvalidObjectException e) {
+			this.type = ExecutableType.valueOf(typeCode);
+		} catch (IllegalArgumentException e) {
 			logger.error(e,e);
 		}
 	}
 
-	public void setFileType(FileType fileType) {
-		this.fileType = fileType;
+	public void setType(ExecutableType fileType) {
+		this.type = fileType;
 	}
 
-	public FileType getFileType() {
-		return fileType;
+	public ExecutableType getType() {
+		return type;
 	}
 
 	public void setTemplate(PredefinedCommandTemplate template) {
@@ -151,20 +145,7 @@ public class ExecutableFile implements Serializable {
 		
 	}
 
-	public void setExecutableInZip(String executableInZip) {
-		this.executableInZip = executableInZip;
+	public String getFileName() {
+	   return fileName;
 	}
-
-	public String getExecutableInZip() {
-		return executableInZip;
-	}
-
-	public void setZip(boolean zip) {
-		this.zip = zip;
-	}
-
-	public boolean isZip() {
-		return zip;
-	}
-
 }

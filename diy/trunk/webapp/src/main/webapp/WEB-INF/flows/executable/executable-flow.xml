@@ -3,22 +3,18 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+        
 	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile" />
 
 	<on-start>
 		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
 		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
 		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
-		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
-		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
 	</on-start>
 
 	<view-state id="upload" model="executable">
-		<on-entry>
-			<evaluate expression="executable.getTypeSet()" result="viewScope.typeSet" />
-		</on-entry>
 		<transition on="upload" to="arguments" />
-		<transition on="cancel" to="cancel" />
+		<transition on="cancel" to="cancel" validate="false"/>
 	</view-state>
 
 	<view-state id="argumentsPlain" model="executable">
@@ -79,8 +75,8 @@
 	</view-state>
 
 	<action-state id="arguments">
-		<evaluate expression="executable.fileType" />
-		<transition on="JAR" to="argumentsJava" />
+		<evaluate expression="executable.type" />
+		<transition on="JAVA" to="argumentsJava" />
 		<transition on="MATLAB" to="argumentsMatlab" />
 		<transition on="C" to="argumentsPlain" />
 		<transition on="SHELL" to="argumentsPlain" />
