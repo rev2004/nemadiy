@@ -43,7 +43,7 @@ public class ContentRepositoryTestUtil {
 		bundle.setExecutableName("./printlarge/printlarge");
 		bundle.setCommandLineFlags("-o -pp");
 		bundle.setId("printlargedata");
-		bundle.setTypeName(ExecutableType.C);
+		bundle.setTypeName(ExecutableType.C.getName());
 		bundle.setEnvironmentVariables(map);
 		byte[] fileContent = null;
 
@@ -72,7 +72,7 @@ public class ContentRepositoryTestUtil {
 		bundle.setExecutableName("./c1/a.out");
 		bundle.setCommandLineFlags("-o -pp");
 		bundle.setId("c1");
-		bundle.setTypeName(ExecutableType.C);
+		bundle.setTypeName(ExecutableType.C.getName());
 		bundle.setEnvironmentVariables(map);
 		byte[] fileContent = null;
 
@@ -119,7 +119,7 @@ public class ContentRepositoryTestUtil {
 		bundle.setCommandLineFlags(lineFlags);
 		bundle.setId("java1");
 		bundle.setMainClass("HelloWorld");
-		bundle.setTypeName(ExecutableType.JAVA);
+		bundle.setTypeName(ExecutableType.JAVA.getName());
 		bundle.setEnvironmentVariables(map);
 		
 		
@@ -162,7 +162,7 @@ public class ContentRepositoryTestUtil {
 		String lineFlags=clf.getCommandLineString(pct, os,true);
 		bundle.setCommandLineFlags(lineFlags);
 		bundle.setId("exejar");
-		bundle.setTypeName(ExecutableType.JAVA);
+		bundle.setTypeName(ExecutableType.JAVA.getName());
 		bundle.setEnvironmentVariables(map);
 		
 		

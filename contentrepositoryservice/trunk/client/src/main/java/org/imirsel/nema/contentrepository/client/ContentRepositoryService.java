@@ -591,7 +591,7 @@ public class ContentRepositoryService implements ArtifactService {
 
 
 		System.out.println("FOUND TYPENAME: " + typeName);
-		bundle.setTypeName(ExecutableType.toExecutableType(typeName));
+		bundle.setTypeName(typeName);
 		bundle.setId(execId);
 		bundle.setCommandLineFlags(commandLineFlags);
 		bundle.setMainClass(mainClass);
