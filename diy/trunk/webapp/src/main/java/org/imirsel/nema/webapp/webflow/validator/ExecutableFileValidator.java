@@ -23,7 +23,7 @@ public class ExecutableFileValidator {
          ValidationContext context) {
       MessageContext messages = context.getMessageContext();
       
-      String fileName = executableFile.getFile().getOriginalFilename();
+      String fileName = executableFile.getFileName();
       String fileExtension = fileName.substring(fileName.length()-3);
       boolean isValid = true;
       

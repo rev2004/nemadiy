@@ -26,10 +26,9 @@
 	    <form:select path="group" items="${supportedGroups}" itemLabel="name" itemValue="value" />
 	</fieldset>
 	<fieldset id="button">
-	    <input type="submit" name="_eventId_upload" value="upload" />
-	    <input type="submit" name="_eventId_cancel" value="cancel" />
+	    <input type="submit" name="_eventId_upload" value="Upload" />
+	    <input type="submit" name="_eventId_cancel" value="Cancel" />
 	</fieldset>
-	
 </form:form>
 
 </body>

@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
         
-	<var name="executable" class="org.imirsel.nema.webapp.model.ExecutableFile" />
+	<var name="executable" class="org.imirsel.nema.webapp.model.DiyExecutableBundle" />
 
 	<on-start>
 		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
