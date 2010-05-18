@@ -140,14 +140,9 @@ public class TasksServiceImpl {
 			VanillaPredefinedCommandTemplate template, ExecutableFile executable) {
 		ExecutableBundle bundle = new ExecutableBundle();
 
-		MultipartFile file = executable.getFile();
-		bundle.setFileName(file.getOriginalFilename());
+		bundle.setFileName(executable.getFileName());
 	//TODO	bundle.setExecutableName(executable.getExecutableInZip());
-		try {
-			bundle.setBundleContent(file.getBytes());
-		} catch (IOException e) {
-			logger.debug(e, e);
-		}
+		bundle.setBundleContent(executable.getFileBytes());
 		bundle.setId(UUID.randomUUID().toString());
 		try {
 			String command = commandLineFormatter.getCommandLineString(

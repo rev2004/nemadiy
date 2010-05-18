@@ -60,6 +60,7 @@ public class ExecutableFile implements Serializable {
 	private transient MultipartFile file;
 
 	private String fileName;
+	private byte[] fileBytes;
 	private ExecutableType type = ExecutableType.JAVA;
 	private String args;
 	private String environment;	
@@ -113,8 +114,13 @@ public class ExecutableFile implements Serializable {
 	}
 
 	public void setFile(MultipartFile file) {
-	   this.file = file;
-	   this.fileName = file.getOriginalFilename();
+	   try {
+         this.fileName = file.getOriginalFilename();
+         this.fileBytes = file.getBytes();
+      } catch (Exception e) {
+         throw new RuntimeException("An error occured while retrieving the " +
+         		"bytes of the uploaded file.");
+      }
 	}
 
 	public void setTypeCode(int typeCode)  {
@@ -148,4 +154,13 @@ public class ExecutableFile implements Serializable {
 	public String getFileName() {
 	   return fileName;
 	}
+
+   public byte[] getFileBytes() {
+      return fileBytes;
+   }
+
+   public void setFileBytes(byte[] fileBytes) {
+      this.fileBytes = fileBytes;
+   }
+	
 }
