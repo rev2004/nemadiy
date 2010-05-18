@@ -6,8 +6,8 @@
 <body>
 <form:form commandName="matlabCommand">
 	<fieldset id="pt1"><form:errors path="*" /></fieldset>
-	<fieldset id="pt1"><label>${executable.fileType}
-	File:</label> <c:out value="${executable.file.originalFilename}" /></fieldset>
+	<fieldset id="pt1"><label>${executable.type}
+	File:</label> <c:out value="${executable.fileName}" /></fieldset>
 	<fieldset id="pt1"><label>jvm: </label> yes<form:radiobutton
 		path="jvm" value="true" title="yes" /> no<form:radiobutton path="jvm"
 		title="no" value="false" /></fieldset>

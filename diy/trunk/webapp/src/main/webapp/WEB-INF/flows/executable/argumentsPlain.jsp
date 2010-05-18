@@ -11,8 +11,8 @@
 <form:form commandName="executable">
 
 		<fieldset id="pt1"><form:errors path="*" /></fieldset>
-	<fieldset id="pt1"><label>${executable.fileType}
-	File:</label> <c:out value="${executable.file.originalFilename}" /></fieldset>
+	<fieldset id="pt1"><label>${executable.type}
+	File:</label> <c:out value="${executable.fileName}" /></fieldset>
 	<fieldset id="pt1"><label>Environment Variables:</label> <input
 		type="button" value="+" onclick="add($('envMain'),$('envParam1'))" /><br />
 	<div id='envMain'>

@@ -11,30 +11,39 @@ import org.springframework.binding.validation.ValidationContext;
 
 import org.imirsel.nema.model.NemaZipFile;
 import org.imirsel.nema.webapp.model.ExecutableFile;
-import org.imirsel.nema.webapp.model.ExecutableFile.FileType;
+import org.imirsel.nema.webapp.model.ExecutableFile.ExecutableType;
 
+/**
+ * 
+ * @author shirk
+ */
 public class ExecutableFileValidator {
 
-   public void validateUpload(ExecutableFile executableFile, ValidationContext context) {
+   public void validateUpload(ExecutableFile executableFile, 
+         ValidationContext context) {
       MessageContext messages = context.getMessageContext();
       
       String fileName = executableFile.getFile().getOriginalFilename();
       String fileExtension = fileName.substring(fileName.length()-3);
       boolean isValid = true;
       
-      if(executableFile.getFileType()==FileType.JAR) {
-         if(!fileExtension.equalsIgnoreCase("jar") && !fileExtension.equalsIgnoreCase("zip")) {
+      if(executableFile.getType()==ExecutableType.JAVA) {
+         if(!fileExtension.equalsIgnoreCase("jar") && 
+               !fileExtension.equalsIgnoreCase("zip")) {
               isValid = false;
               messages.addMessage(
                     new MessageBuilder().error().source("file")
-                         .defaultText("Invalid file type. For Java executables, only JAR or ZIP files are allowed.").build());
+                         .defaultText("Invalid file type. For Java " +
+                         		"executables, only JAVA or ZIP files are " +
+                         		"allowed.").build());
          }
       } else {
          if(!fileExtension.equalsIgnoreCase("zip")) {
              isValid = false;
              messages.addMessage(
                    new MessageBuilder().error().source("file")
-                        .defaultText("Invalid file type. Only ZIP files are allowed.").build());
+                        .defaultText("Invalid file type. Only ZIP files " +
+                        		"are allowed.").build());
          }
       }
 
@@ -42,21 +51,18 @@ public class ExecutableFileValidator {
       String fileSeparator = System.getProperty("file.separator");
       
       File tempExecutableFile = new File(tempDir + fileSeparator + 
-            executableFile.getFile().getOriginalFilename()+ "_" + UUID.randomUUID());
+            executableFile.getFile().getOriginalFilename()+ 
+            "_" + UUID.randomUUID());
       ZipFile zipFile = null;
       NemaZipFile nemaZipFile = null;
       try {
-         System.out.println("HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
          executableFile.getFile().transferTo(tempExecutableFile);
-         System.out.println("NOW HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
          zipFile = new ZipFile(tempExecutableFile);
          nemaZipFile = new NemaZipFile(zipFile);
          nemaZipFile.open();
       } catch (IllegalStateException e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       } catch (IOException e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       } finally {
          try {
@@ -64,13 +70,10 @@ public class ExecutableFileValidator {
             nemaZipFile.close();
             }
          } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
          }
          tempExecutableFile.delete();
       }
-      
-      
   }
   
   public boolean isNullOrEmpty(String str) {
