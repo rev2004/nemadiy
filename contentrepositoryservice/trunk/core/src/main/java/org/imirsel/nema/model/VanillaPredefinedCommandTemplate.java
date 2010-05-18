@@ -20,8 +20,9 @@ public class VanillaPredefinedCommandTemplate implements
 	 * 
 	 */
 	private static final long serialVersionUID = -3307989303515424283L;
-	Map<String,String> environmentMap = new HashMap<String,String>();
-	List<Param> execParams = new ArrayList<Param>();
+	private Map<String,String> environmentMap = new HashMap<String,String>();
+	private List<Param> execParams = new ArrayList<Param>();
+	private String executableName;
 	
 	
 	public void addEnvironmentVariable(String key, String value){
@@ -42,6 +43,14 @@ public class VanillaPredefinedCommandTemplate implements
 
 	public List<Param> getParams() {
 		return execParams;
+	}
+
+	public String getExecutableName() {
+		return executableName;
+	}
+
+	public void setExecutableName(String executableName) {
+		this.executableName = executableName;
 	}
 	
 }

@@ -167,6 +167,10 @@ public class Param implements Serializable{
 		return sbuilder.toString();
 	}
 	
+	public String toString(){
+		return getStringValue();
+	}
+	
 	
 	public boolean equals(Object object){
 		if(!(object instanceof Param)){
