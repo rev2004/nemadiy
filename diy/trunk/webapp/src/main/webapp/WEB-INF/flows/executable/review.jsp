@@ -9,8 +9,8 @@
 	<fieldset id="pt1"><label>
 	File:</label> ${bundle.fileName} ${bundle.typeName} /></fieldset>
 	<fieldset id="pt1"><label>environment:</label><code><c:forEach items="${bundle.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach> </code></fieldset>
-	<fieldset id="pt1"><label>arguments:</label><code><c:out
-		value="${bundle.commandLineFlags}" /></code></fieldset>
+	<fieldset id="pt1"><label>arguments:</label><c:out
+		value="${bundle.commandLineFlags}" /></fieldset>
 
 	<fieldset id="button"><input type="submit"
 		name="_eventId_save" value="save" /> <input type="submit"
