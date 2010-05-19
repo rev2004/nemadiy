@@ -18,6 +18,10 @@
 	    <input type="file" name="file" />
 	</fieldset>
     <fieldset>
+        <label>Path to the executable inside the archive:</label>
+        <form:input path="executableName" />
+    </fieldset>
+    <fieldset>
         <label>Operating system required to run the executable:</label>
         <form:select path="preferredOs" items="${supportedOs}" itemLabel="name" itemValue="value" />
 	</fieldset>

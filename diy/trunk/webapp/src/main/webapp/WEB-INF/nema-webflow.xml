@@ -28,6 +28,6 @@
 	<bean id="commandLineFormatter"
 		class="org.imirsel.nema.contentrepository.client.CommandLineFormatter" />
 	<bean id="executableValidator"
-		class="org.imirsel.nema.webapp.webflow.validator.ExecutableFileValidator" />
+		class="org.imirsel.nema.webapp.webflow.validator.UploadedExecutableBundleValidator" />
 
 </beans>
