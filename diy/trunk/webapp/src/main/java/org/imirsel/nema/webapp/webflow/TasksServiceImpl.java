@@ -49,6 +49,7 @@ import org.imirsel.nema.model.User;
 import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
+import org.imirsel.nema.webapp.model.DiyExecutableBundle;
 import org.imirsel.nema.webapp.model.ExecutableFile;
 import org.imirsel.nema.webapp.model.DiyJavaTemplate;
 import org.imirsel.nema.webapp.model.DiyMatlabTemplate;
@@ -89,12 +90,13 @@ public class TasksServiceImpl {
 	 * @param url
 	 */
 	public void addExecutable(final Component component,
-			final Map<String, String> parameters, final String url,
+			final Map<String, String> parameters, 
 			final OsDataType os, final String group,
-			final ExecutableBundle bundle)
+			final ExecutableBundle bundle, final UUID uuid)
 			throws ContentRepositoryServiceException {
-		logger.debug("add executable url into parameter");
+		logger.debug("add executable url into parameter for "+bundle.getFileName());
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		logger.debug("with credential "+ credential.getUserID() +  " string: " + new String (credential.getPassword()));
 		String credentialString = credential.getUserID() + ":"
 				+ new String(credential.getPassword());
 		parameters.put(getName(component.getInstanceUri(), CREDENTIALS),
@@ -103,8 +105,7 @@ public class TasksServiceImpl {
 				"true");
 		parameters.put(getName(component.getInstanceUri(), OS), os.getValue());
 		parameters.put(getName(component.getInstanceUri(), GROUP), group);
-		ResourcePath path=artifactService.saveExecutableBundle(credential, component
-				.getInstanceUri(), bundle);
+		ResourcePath path=artifactService.saveExecutableBundle(credential, uuid.toString(), bundle);
 		if (path!=null) parameters
 		.put(getName(component.getInstanceUri(), EXECUTABLE_URL), path.getPath());
 		else throw new ContentRepositoryServiceException("error in saving the executable bundle");
@@ -151,31 +152,31 @@ public class TasksServiceImpl {
 		else if (type.equalsIgnoreCase("matlab")) return new MatlabPredefinedCommandTemplate();
 		else return null;
 	}
-	public ExecutableBundle generateExecutableBundle(
-			VanillaPredefinedCommandTemplate template, ExecutableFile executable) {
-		ExecutableBundle bundle = new ExecutableBundle();
+	
+	
+	
+	public void generateExecutableBundle(
+			VanillaPredefinedCommandTemplate template, DiyExecutableBundle executable) {
+		
 
-		bundle.setFileName(executable.getFileName());
-	//TODO	bundle.setExecutableName(executable.getExecutableInZip());
-		//TODO bundle.setBundleContent(executable.getFileBytes());
-		bundle.setId(UUID.randomUUID().toString());
+
+		executable.setId(UUID.randomUUID().toString());
 		try {
 			String command = commandLineFormatter.getCommandLineString(
 					template, resourceServiceType.getOsDataType(executable
-							.getOs()), false);
-			bundle.setCommandLineFlags(command);
+							.getPreferredOs()), false);
+			executable.setCommandLineFlags(command);
 			logger.debug("generated command flag:" + command);
 		} catch (InvalidCommandLineFlagException e) {
 			logger.error(e, e);
 		}
-		bundle.setEnvironmentVariables(template.getEnvironmentMap());
+		executable.setEnvironmentVariables(template.getEnvironmentMap());
 		logger.debug("set the environment variables (size:"
-				+ bundle.getEnvironmentVariables().size() + ")");
-		// bundle.setTypeName(executable.getFileType());
-		return bundle;
+				+ executable.getEnvironmentVariables().size() + ")");
+
 	}
 
-	public void setJavaTemplate(ParameterMap httpParam,ExecutableFile executable, JavaPredefinedCommandTemplate template
+	public void setJavaTemplate(ParameterMap httpParam,DiyExecutableBundle executable, JavaPredefinedCommandTemplate template
 			) {
 		template.addClasspath(null);// TODO
 		String[] keys = getArray(httpParam, "sysVar");
@@ -308,7 +309,7 @@ public class TasksServiceImpl {
 			}
 			if (others != null) {
 				i = 0;
-				for (String entry : inputs) {
+				for (String entry : others) {
 					if ((entry != null) && (entry.length() != 0))
 						template.addParam(new Param(entry, false,
 								Param.ParamType.OTHER.getCode(), i++));

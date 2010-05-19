@@ -50,7 +50,7 @@
     
     <bean id="remoteContentRepository" factory-bean="clientRepositoryFactory" 
      factory-method="getRepository">
-     	<constructor-arg value="${contentrepository.url}"/>
+     	<constructor-arg value="rmi://nema-dev.lis.illinois.edu:2099/jackrabbit.repository"/>
      </bean>
     
     <bean id="clientRepositoryFactory" 
