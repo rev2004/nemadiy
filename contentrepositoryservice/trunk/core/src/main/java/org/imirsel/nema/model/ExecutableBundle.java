@@ -67,11 +67,11 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
 
 	private String id;
 	private String fileName;
-	private ExecutableType type;
+	private ExecutableType type = ExecutableType.JAVA;
 	private String mainClass;
 	private String executableName;
 	private String commandLineFlags;
-	private String preferredOs;
+	private String preferredOs = "Unix Like";
 	private Map<String, String> environmentVariables;
 	private byte[] bundleContent;
 	
