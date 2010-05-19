@@ -17,7 +17,7 @@
 		<transition on="cancel" to="cancel" validate="false"/>
 	</view-state>
 
-	<view-state id="argumentsPlain" model="executable">
+	<view-state id="argumentsPlain" >
 
 
 		<transition on="cancel" to="cancel" />
@@ -26,47 +26,40 @@
 			<evaluate expression="tasksService.generateMap(requestParameters)"></evaluate>
 			<evaluate expression="tasksService.getEmptyTemplate('plain')"
 				result="flowScope.paramTemplate" />
-			<evaluate expression="tasksService.getTemplate(requestParameters,paramTemplate)" />
+			<evaluate expression="tasksService.setCommonTemplate(requestParameters,paramTemplate)" />
 			<evaluate
 				expression="tasksService.generateExecutableBundle(paramTemplate,executable)"
 				result="flowScope.bundle" />
 		</transition>
 	</view-state>
 
-	<view-state id="argumentsJava" model="javaCommand">
-		<var name="javaCommand" class="org.imirsel.nema.webapp.model.JavaExecutableFile" />
+	<view-state id="argumentsJava" model="javaTemplate">
+		<var name="javaTemplate" class="org.imirsel.nema.webapp.model.DiyJavaTemplate" />
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-			<evaluate expression="tasksService.getEmptyTemplate('java')"
-				result="flowScope.paramTemplate" />
 
-			<evaluate expression="tasksService.getTemplate(requestParameters,paramTemplate)" />
-			<evaluate expression="tasksService.setJavaParameters(paramTemplate,javaCommand)" />
-
+			<evaluate expression="tasksService.setCommonTemplate(requestParameters,javaTemplate)" />
+			<evaluate expression="tasksService.setJavaTemplate(requestParameters,executable,javaTemplate)" />
 			<evaluate
-				expression="tasksService.generateExecutableBundle(paramTemplate,flowScope.executable)"
+				expression="tasksService.generateExecutableBundle(javaTemplateTemplate,flowScope.executable)"
 				result="flowScope.bundle" />
 
 		</transition>
 	</view-state>
 
-	<view-state id="argumentsMatlab" model="matlabCommend">
+	<view-state id="argumentsMatlab" model="matlabTemplate">
 
-		<var name="matlabCommand" class="org.imirsel.nema.webapp.model.MatlabExecutableFile" />
+		<var name="matlabTemplate" class="org.imirsel.nema.webapp.model.DiyMatlabTemplate" />
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-			<evaluate expression="tasksService.getEmptyTemplate('matlab')"
-				result="flowScope.paramTemplate" />
-
+	
 			<evaluate
-				expression="tasksService.getTemplate(requestParameters,paramTemplate)" />
+				expression="tasksService.setCommonTemplate(requestParameters,matlabTemplate)" />
+	
 			<evaluate
-				expression="tasksService.setMatlabParameters(paramTemplate,matlabCommand)" />
-
-			<evaluate
-				expression="tasksService.generateExecutableBundle(paramTemplate,flowScope.executable)"
+				expression="tasksService.generateExecutableBundle(matlabTemplate,flowScope.executable)"
 				result="flowScope.bundle" />
 		</transition>
 	</view-state>
@@ -95,7 +88,7 @@
 		<output name="executableOs" value="resource.getOsDataType(executable.os)"
 			type="org.imirsel.nema.model.OsDataType" />
 		<output name="executableGroup" value="executable.group" type="java.lang.String" />
-		<output name="executableBundle" value="bundle"
+		<output name="executableBundle" value="executable"
 			type="org.imirsel.nema.model.ExecutableBundle" />
 
 

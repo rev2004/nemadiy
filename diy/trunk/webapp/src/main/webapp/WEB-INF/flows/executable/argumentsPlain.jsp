@@ -8,7 +8,7 @@
 
 </head>
 <body >
-<form:form commandName="executable">
+<form:form >
 
 		<fieldset id="pt1"><form:errors path="*" /></fieldset>
 	<fieldset id="pt1"><label>${executable.type}
