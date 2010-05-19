@@ -44,13 +44,14 @@ import org.imirsel.nema.model.PredefinedCommandTemplate;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.Role;
+import org.imirsel.nema.model.SysProperty;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
 import org.imirsel.nema.webapp.model.ExecutableFile;
-import org.imirsel.nema.webapp.model.JavaExecutableFile;
-import org.imirsel.nema.webapp.model.MatlabExecutableFile;
+import org.imirsel.nema.webapp.model.DiyJavaTemplate;
+import org.imirsel.nema.webapp.model.DiyMatlabTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
@@ -174,36 +175,23 @@ public class TasksServiceImpl {
 		return bundle;
 	}
 
-	public void setJavaParameters(JavaPredefinedCommandTemplate template,
-			JavaExecutableFile executable) {
+	public void setJavaTemplate(ParameterMap httpParam,ExecutableFile executable, JavaPredefinedCommandTemplate template
+			) {
 		template.addClasspath(null);// TODO
-		template.addProperty(null);// TODO
-		template.setDisableAssertionPackages(executable
-				.getDisableAssertionPackages());
-		template.setEnableAssertionPackages(executable
-				.getEnableAssertionPackages());
-		template.setEnableSystemAssertions(executable
-				.isEnableSystemAssertions());
-		template.setJarExecutable(executable.isJarExecutable());
-		template.setJarFile(executable.getJarFile());
-		template.setMainClass(executable.getMainClass());
-		template.setMaxMemory(executable.getMaxMemory());
-		template.setMinMemory(executable.getMinMemory());
-		template.setVerboseExecutionClass(executable.isVerboseExecutionClass());
-		template.setVerboseExecutionGC(executable.isVerboseExecutionGC());
-		template.setVerboseExecutionJNI(executable.isVerboseExecutionJNI());
+		String[] keys = getArray(httpParam, "sysVar");
+		String[] values = getArray(httpParam, "sysValue");
+		if ((keys != null) && (values != null)) {
+			int length = keys.length;
+			for (int i = 0; i < length; i++) {
+				if ((keys[i] != null) && (keys[i].length() > 0))
+					template.addProperty(new SysProperty(keys[i], values[i]));
+			}
+			logger.debug("generate map of size " + length);
+		}
+		
 	}
 
-	public void setMatlabParameters(MatlabPredefinedCommandTemplate template,
-			MatlabExecutableFile executable) {
-		template.setDebug(executable.isDebug());
-		template.setDisplay(executable.isDisplay());
-		template.setJvm(executable.isJvm());
-		template.setLogfile(executable.isLogfile());
-		template.setLog(executable.getLog());
-		template.setSplash(executable.isSplash());
-		template.setTiming(executable.isTiming());
-	}
+
 
 	/**
 	 * @deprecated generate a map from two string arrays (key[] and values[])
@@ -293,7 +281,7 @@ public class TasksServiceImpl {
 	 * @param others
 	 * @return
 	 */
-	public void getTemplate(String[] keys, String[] values, String[] inputs,
+	public void setCommonTemplate(String[] keys, String[] values, String[] inputs,
 			String[] outputs, String[] others,
 			VanillaPredefinedCommandTemplate template) {
 		if (template == null)
@@ -335,19 +323,19 @@ public class TasksServiceImpl {
 				if ((keys[i] != null) && (keys[i].length() > 0))
 					template.addEnvironmentVariable(keys[i], values[i]);
 			}
-			logger.debug("generate map of size " + length);
+			logger.debug("generate map of environment variables size " + length);
 		}
 
 	}
 
-	public void getTemplate(ParameterMap httpParam,
+	public void setCommonTemplate(ParameterMap httpParam,
 			VanillaPredefinedCommandTemplate template) {
 		String[] keys = getArray(httpParam, "variable");
 		String[] values = getArray(httpParam, "value");
 		String[] inputs = getArray(httpParam, "input");
 		String[] others = getArray(httpParam, "other");
 		String[] outputs = getArray(httpParam, "output");
-		getTemplate(keys, values, inputs, outputs, others, template);
+		setCommonTemplate(keys, values, inputs, outputs, others, template);
 
 	}
 
@@ -362,7 +350,7 @@ public class TasksServiceImpl {
 			}
 			return values;
 		} else
-			return new String[0];
+			return null;
 	}
 
 	/**

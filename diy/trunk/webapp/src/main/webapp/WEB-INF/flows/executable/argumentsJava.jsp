@@ -38,8 +38,8 @@
 	<fieldset id="pt1"><label>System property:</label> <input
 		type="button" value="+" onclick="add($('sysMain'),$('sysParam1'),2)" /><br />
 	<div id='sysMain'>
-	<div id='sysParam1' ><input name="variable" type="text" /> = <input
-		name="value" type="text" /><input type="button" value="-"
+	<div id='sysParam1' ><input name="sysVar" type="text" /> = <input
+		name="sysValue" type="text" /><input type="button" value="-"
 		onclick="removeNode(this,'envParam1')" /></div>
 	</div>
 	
