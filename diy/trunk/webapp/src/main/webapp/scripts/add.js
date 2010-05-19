@@ -22,7 +22,6 @@ function addSelect(parentDiv,templateDiv){
 
 	$(clone).down("select").value="";
 	
-	$(clone).down("input",0).value="";
 	$(templateDiv).insert({after: clone}); 
 	clone.show();
 	}

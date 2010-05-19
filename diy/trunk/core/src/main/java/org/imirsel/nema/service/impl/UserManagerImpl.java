@@ -138,8 +138,9 @@ public class UserManagerImpl extends UniversalManagerImpl implements UserManager
 	 */
 	public SimpleCredentials getCurrentUserCredentials(){
 		User user = getCurrentUser();
-		String name=user.getPassword();
-		String password=user.getUsername();
+		String password=user.getPassword();
+		
+		String name=user.getUsername();
 		return new SimpleCredentials(name,password.toCharArray());
 	}
 

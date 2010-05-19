@@ -77,9 +77,7 @@
 	</view-state>
 
 	<subflow-state id="generateExecutable" subflow="task/executable">
-
-		<output name="executableUrl" />
-		<output name="executableBundle" 
+	<output name="executableBundle" 
 			type="org.imirsel.nema.model.ExecutableBundle" />
 		<output name="executableOs" 
 			type="org.imirsel.nema.model.OsDataType" />
@@ -89,9 +87,10 @@
 		<transition on="success" to="displayFlowComponents">
 			<evaluate expression="tasksService.test(executableUrl)"></evaluate>
 			<evaluate
-				expression="tasksService.addExecutable(component,parameterMap,executableUrl,executableOs,executableGroup,bundle)" />
+				expression="tasksService.addExecutable(component,parameterMap,executableOs,executableGroup,executableBundle,taskFlowModel.uuid)" />
 			
 		</transition>
+		<transition on="cancel" to="displayFlowComponents"/>
 	</subflow-state>
 
 	<action-state id="editComponentProperties">

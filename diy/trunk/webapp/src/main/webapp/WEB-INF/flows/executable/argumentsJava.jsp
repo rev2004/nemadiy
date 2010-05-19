@@ -7,7 +7,7 @@
 
 </head>
 <body>
-<form:form commandName="javaCommand">
+<form:form commandName="javaTemplate">
 	<fieldset id="pt1"><form:errors path="*" /></fieldset>
 	<fieldset id="pt1"><label>${executable.type}
 	File:</label> <c:out value="${executable.fileName}" /></fieldset>

@@ -42,7 +42,7 @@
 			<evaluate expression="tasksService.setCommonTemplate(requestParameters,javaTemplate)" />
 			<evaluate expression="tasksService.setJavaTemplate(requestParameters,executable,javaTemplate)" />
 			<evaluate
-				expression="tasksService.generateExecutableBundle(javaTemplateTemplate,flowScope.executable)"
+				expression="tasksService.generateExecutableBundle(javaTemplate,flowScope.executable)"
 				result="flowScope.bundle" />
 
 		</transition>
@@ -68,8 +68,6 @@
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="arguments" />
 		<transition on="save" to="success">
-			<evaluate
-				expression="tasksService.generateExecutableBundle(paramTemplate,executable)"></evaluate>
 		</transition>
 	</view-state>
 
@@ -85,7 +83,7 @@
 
 	<end-state id="success">
 		<output name="executableUrl" value="'LiteralValue'" type="java.lang.String" />
-		<output name="executableOs" value="resource.getOsDataType(executable.os)"
+		<output name="executableOs" value="resource.getOsDataType(executable.preferredOs)"
 			type="org.imirsel.nema.model.OsDataType" />
 		<output name="executableGroup" value="executable.group" type="java.lang.String" />
 		<output name="executableBundle" value="executable"
