@@ -11,6 +11,7 @@ public class DiyExecutableBundle extends ExecutableBundle {
    private static final long serialVersionUID = -8886083754671426825L;
    
    private MultipartFile file;
+   private String group;
    
    public MultipartFile getFile() {
       return file;
@@ -28,6 +29,14 @@ public class DiyExecutableBundle extends ExecutableBundle {
    
    public ExecutableType[] getTypeOptions(){
       return new ExecutableType[]{ExecutableType.JAVA,ExecutableType.MATLAB,ExecutableType.C,ExecutableType.SHELL};
+   }
+
+   public String getGroup() {
+      return group;
+   }
+
+   public void setGroup(String group) {
+      this.group = group;
    }
 
 }
