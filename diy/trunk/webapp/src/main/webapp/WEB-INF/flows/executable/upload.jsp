@@ -11,7 +11,7 @@
 	<fieldset><form:errors path="*"/></fieldset>
 	<fieldset>
 	    <label>Specify the executable type:</label>
-	    <form:select path="typeCode" items="${executable.typeOptions}" itemLabel="label" itemValue="code" />
+	    <form:select path="typeCode" items="${executable.typeOptions}" itemLabel="name" itemValue="code" />
 	</fieldset>
 	<fieldset>
 	    <label>Archive containing the executable:</label>
@@ -19,7 +19,7 @@
 	</fieldset>
     <fieldset>
         <label>Operating system required to run the executable:</label>
-        <form:select path="os" items="${supportedOs}" itemLabel="name" itemValue="value" />
+        <form:select path="preferredOs" items="${supportedOs}" itemLabel="name" itemValue="value" />
 	</fieldset>
 	<fieldset>
 	    <label>Select the group:</label>
