@@ -49,8 +49,6 @@ public class BundleUtils {
 		
 		if(bundle.getCommandLineFlags()!=null)
 		properties.setProperty("commandLineFlags", bundle.getCommandLineFlags());
-		if(bundle.getMainClass()!=null)
-		properties.setProperty("mainClass", bundle.getMainClass());
 		if(bundle.getEnvironmentVariables()!=null){
 			properties.setProperty("environmentVariables", getAsJSONString(bundle.getEnvironmentVariables()));
 		}

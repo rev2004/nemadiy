@@ -118,7 +118,6 @@ public class ContentRepositoryTestUtil {
 		String lineFlags=clf.getCommandLineString(pct, os,true);
 		bundle.setCommandLineFlags(lineFlags);
 		bundle.setId("java1");
-		bundle.setMainClass("HelloWorld");
 		bundle.setTypeName(ExecutableType.JAVA.getName());
 		bundle.setEnvironmentVariables(map);
 		
