@@ -3,64 +3,63 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-        
-	<input name="executable" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
+
+	<input name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 
 	<on-start>
 		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
 		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
 		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
+		<set name="flowScope.executable" value="tasksService.setExecutable(executableBundle)"/> 
 	</on-start>
 
-	<view-state id="upload" model="flowScope.executable">
-		<transition on="upload" to="arguments" />
-		<transition on="cancel" to="cancel" validate="false"/>
+	<view-state id="upload" model="executable">
+		<transition on="upload" to="arguments" >
+		<set name="flowScope.paramTemplate" value="tasksService.getEmptyTemplate(executable.type)" />
+		</transition>
+		<transition on="cancel" to="cancel" validate="false" />
 	</view-state>
 
-	<view-state id="argumentsPlain" >
+	<view-state id="argumentsPlain">
 
 
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-			<evaluate expression="tasksService.generateMap(requestParameters)"></evaluate>
-			<evaluate expression="tasksService.getEmptyTemplate('plain')"
-				result="flowScope.paramTemplate" />
-			<evaluate expression="tasksService.setCommonTemplate(requestParameters,paramTemplate)" />
 			<evaluate
-				expression="tasksService.generateExecutableBundle(paramTemplate,executable)"
-				result="flowScope.bundle" />
+				expression="tasksService.setCommonTemplate(requestParameters,flowScope.paramTemplate)" />
+			<evaluate
+				expression="tasksService.generateExecutableBundle(flowScope.paramTemplate,executable)"/>
 		</transition>
 	</view-state>
 
-	<view-state id="argumentsJava" model="javaTemplate">
-		<var name="javaTemplate" class="org.imirsel.nema.webapp.model.DiyJavaTemplate" />
+	<view-state id="argumentsJava" model="paramTemplate">
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
 
-			<evaluate expression="tasksService.setCommonTemplate(requestParameters,javaTemplate)" />
-			<evaluate expression="tasksService.setJavaTemplate(requestParameters,executable,javaTemplate)" />
 			<evaluate
-				expression="tasksService.generateExecutableBundle(javaTemplate,flowScope.executable)"
-				result="flowScope.bundle" />
+				expression="tasksService.setCommonTemplate(requestParameters,paramTemplate)" />
+			<evaluate
+				expression="tasksService.setparamTemplate(requestParameters,executable,paramTemplate)" />
+			<evaluate
+				expression="tasksService.generateExecutableBundle(paramTemplate,flowScope.executable)"/>
 
 		</transition>
 	</view-state>
 
-	<view-state id="argumentsMatlab" model="matlabTemplate">
+	<view-state id="argumentsMatlab" model="flowScope.paramTemplate">
 
-		<var name="matlabTemplate" class="org.imirsel.nema.webapp.model.DiyMatlabTemplate" />
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-	
+
 			<evaluate
-				expression="tasksService.setCommonTemplate(requestParameters,matlabTemplate)" />
-	
+				expression="tasksService.setCommonTemplate(requestParameters,paramTemplate)" />
+
 			<evaluate
-				expression="tasksService.generateExecutableBundle(matlabTemplate,flowScope.executable)"
-				result="flowScope.bundle" />
+				expression="tasksService.generateExecutableBundle(paramTemplate,flowScope.executable)"
+				 />
 		</transition>
 	</view-state>
 
@@ -73,10 +72,11 @@
 
 	<action-state id="arguments">
 		<evaluate expression="executable.type" />
-		<transition on="JAVA" to="argumentsJava" />
-		<transition on="MATLAB" to="argumentsMatlab" />
-		<transition on="C" to="argumentsPlain" />
-		<transition on="SHELL" to="argumentsPlain" />
+		<transition on="JAVA" to="argumentsJava"/>
+		<transition on="MATLAB" to="argumentsMatlab"/>
+		<transition on="SHELL" to="argumentsPlain"/>
+		<transition on="C" to="argumentsPlain"/>
+	
 	</action-state>
 
 	<end-state id="cancel"></end-state>

@@ -6,7 +6,7 @@
 
 </head>
 <body>
-<form:form commandName="matlabTemplate">
+<form:form commandName="paramTemplate">
 	<fieldset id="pt1"><form:errors path="*" /></fieldset>
 	<fieldset id="pt1"><label>${executable.type}
 	File:</label> <c:out value="${executable.fileName}" /></fieldset>
