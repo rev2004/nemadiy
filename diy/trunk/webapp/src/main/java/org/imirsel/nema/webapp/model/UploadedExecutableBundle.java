@@ -19,7 +19,7 @@ public class UploadedExecutableBundle extends ExecutableBundle {
    private static final long serialVersionUID = -8886083754671426825L;
    
    private File uploadedFile;
-   private MultipartFile file;
+   private transient MultipartFile file;
    private String group;
    
    public MultipartFile getFile() {
@@ -48,36 +48,14 @@ public class UploadedExecutableBundle extends ExecutableBundle {
    public void setGroup(String group) {
       this.group = group;
    }
-
-   @Override
-   public void setExecutableName(String executableName) {
-      if(getType()==ExecutableType.JAVA) {
-         setMainClass(executableName);
-      } else {
-         setExecutableName(executableName);
-      }
-   }
-   
-   @Override
-   public String getExecutableName() {
-      if(getType()==ExecutableType.JAVA) {
-         return super.getMainClass();
-      } else {
-         return super.getExecutableName();
-      }
-   }
    
    public boolean containsExecutable() throws IOException {
       ZipFile uploadedZipFile = new ZipFile(uploadedFile);
       NemaZipFile nemaZipFile = new NemaZipFile(uploadedZipFile);
       nemaZipFile.open();
       boolean containsExecutable = false;
-      if(getType()==ExecutableType.JAVA) {
-         System.out.println(getMainClass());
-         containsExecutable = nemaZipFile.containsClass(getMainClass());
-      } else {
-         containsExecutable = nemaZipFile.containsFile(getExecutableName());
-      }
+      System.out.println("Checking for executable ----------> " + getExecutableName());
+      containsExecutable = nemaZipFile.containsFile(getExecutableName());
       nemaZipFile.close();
       uploadedZipFile.close();
       return containsExecutable;

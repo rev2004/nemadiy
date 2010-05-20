@@ -44,7 +44,7 @@
     </fieldset>
 	<fieldset>
         <label>Memory:</label>
-        <form:select path="memoryOption" items="${javaCommand.memoryOptions}" itemLabel="label" itemValue="code" />
+        <form:select path="memoryOption" items="${javaTemplate.memoryOptions}" itemLabel="label" itemValue="code" />
     </fieldset>
 	<fieldset>
         <label>System property:</label>
@@ -107,9 +107,9 @@
        </div>
     </fieldset>
 	<fieldset id="button">
-	   <input type="submit" name="_eventId_review" value="review" />
-	   <input type="submit" name="_eventId_back" value="back" />
-	   <input type="submit" name="_eventId_cancel" value="cancel" />
+	   <input type="submit" name="_eventId_review" value="Review" />
+	   <input type="submit" name="_eventId_back" value="Back" />
+	   <input type="submit" name="_eventId_cancel" value="Cancel" />
 	</fieldset>
 
 </form:form>

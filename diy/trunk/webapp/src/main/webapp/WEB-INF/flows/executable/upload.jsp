@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<div style="margin-bottom:5px">Upload the executable</div>
+<div style="margin-bottom:5px">Upload the Executable</div>
 
 <form:form modelAttribute="executable" enctype="multipart/form-data">
 	<fieldset><form:errors path="*"/></fieldset>
