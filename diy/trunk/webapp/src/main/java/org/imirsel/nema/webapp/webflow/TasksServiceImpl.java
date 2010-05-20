@@ -228,6 +228,7 @@ public class TasksServiceImpl {
 	public void setJavaTemplate(ParameterMap httpParam,
 			UploadedExecutableBundle executable,
 			JavaPredefinedCommandTemplate template) {
+	 //  executable.
 		template.addClasspath(null);// TODO
 		String[] keys = getArray(httpParam, "sysVar");
 		String[] values = getArray(httpParam, "sysValue");

@@ -15,15 +15,15 @@ import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
  */
 public class UploadedExecutableBundleValidator {
 
-   public void validateUpload(UploadedExecutableBundle executableFile,
+   public void validateUpload(UploadedExecutableBundle uploadedExecutable,
          ValidationContext context) {
       MessageContext messages = context.getMessageContext();
 
-      String fileName = executableFile.getFileName();
+      String fileName = uploadedExecutable.getFileName();
       String fileExtension = fileName.substring(fileName.length() - 3);
       boolean failedValidation = false;
 
-      if (executableFile.getType() == ExecutableType.JAVA) {
+      if (uploadedExecutable.getType() == ExecutableType.JAVA) {
          if (!fileExtension.equalsIgnoreCase("jar")
                && !fileExtension.equalsIgnoreCase("zip")) {
             failedValidation = true;
@@ -44,19 +44,19 @@ public class UploadedExecutableBundleValidator {
       }
 
       if (!failedValidation) {
-         if (!executableFile.passesIntegrityCheck()) {
+         if (!uploadedExecutable.passesIntegrityCheck()) {
             failedValidation = true;
             messages.addMessage(new MessageBuilder().error().source("file")
-                  .defaultText("Uploaded file is corrupted or cannot be read.")
+                  .defaultText("Uploaded file is corrupt or cannot be read.")
                   .build());
          }
 
          if (!failedValidation) {
             try {
-               if (!executableFile.containsExecutable()) {
+               if (!uploadedExecutable.containsExecutable()) {
                   failedValidation = true;
                   String exeFileType;
-                  if(executableFile.getType()==ExecutableType.JAVA) {
+                  if(uploadedExecutable.getType()==ExecutableType.JAVA) {
                      exeFileType = "main class";
                   } else {
                      exeFileType = "executable file";
@@ -67,10 +67,12 @@ public class UploadedExecutableBundleValidator {
                         .build());
                }
             } catch (IOException e) {
-               // TODO: handle exception
+               e.printStackTrace();
             }
          }
       }
+      
+      System.out.println("-------------> Passed validation?   " + !failedValidation);
    }
 
    public boolean isNullOrEmpty(String str) {
