@@ -20,6 +20,12 @@ Component: ${component.name}
     <font color="green">${property.value.description}</font>
     </fieldset>
   </c:forEach>
+  <c:if test="${taskFlowModel.executableMap[component]!=null}">
+    <fieldset id="pt1">
+    <label for="jobname"> Profile: </label>
+    ${taskFlowModel.executableMap[component].path}
+ </fieldset>
+  </c:if>
   <input type="submit" name="_eventId_next" value="next" />
   <input type="submit" name="_eventId_cancel" value="cancel" />
 </form:form>

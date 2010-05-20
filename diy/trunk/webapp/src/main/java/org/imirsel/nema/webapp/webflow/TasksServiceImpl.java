@@ -49,10 +49,10 @@ import org.imirsel.nema.model.User;
 import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
-import org.imirsel.nema.webapp.model.DiyExecutableBundle;
 import org.imirsel.nema.webapp.model.ExecutableFile;
 import org.imirsel.nema.webapp.model.DiyJavaTemplate;
 import org.imirsel.nema.webapp.model.DiyMatlabTemplate;
+import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
@@ -92,7 +92,8 @@ public class TasksServiceImpl {
 	public void addExecutable(final Component component,
 			final Map<String, String> parameters, 
 			final OsDataType os, final String group,
-			final ExecutableBundle bundle, final UUID uuid)
+			final ExecutableBundle bundle, final UUID uuid,
+			Map<Component,ResourcePath> executableMap)
 			throws ContentRepositoryServiceException {
 		logger.debug("add executable url into parameter for "+bundle.getFileName());
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
@@ -106,12 +107,29 @@ public class TasksServiceImpl {
 		parameters.put(getName(component.getInstanceUri(), OS), os.getValue());
 		parameters.put(getName(component.getInstanceUri(), GROUP), group);
 		ResourcePath path=artifactService.saveExecutableBundle(credential, uuid.toString(), bundle);
+		//TODO if (executableMap.containsKey(component)){
+//		RasourcePath oldPath=executableMap.get(component);
+//		if artifactService.exists(credential, oldPath) artifactService.removeExecutableBundle(credential, oldPath);
+//	}
+		executableMap.put(component, path);
 		if (path!=null) parameters
 		.put(getName(component.getInstanceUri(), EXECUTABLE_URL), path.getPath());
 		else throw new ContentRepositoryServiceException("error in saving the executable bundle");
 
 	}
 
+	public UploadedExecutableBundle findBundle(ResourcePath path, Map<String, Property> datatypeMap){
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		UploadedExecutableBundle bundle=null;
+//TODO		if ((path!=null) && (artifactService.exists(credential, path))){
+//			ExecutableBundle oldBundle=artifactService.getExecutableBundle(credential, path);
+//			bundle=(UploadedExecutableBundle)oldBundle;
+//			if (bundle==null) bundle=new UploadedExecutableBundle();
+//			bundle.setPreferredOs(datatypeMap.get(CREDENTIALS).getValue());
+//			bundle.setGroup(datatypeMap.get(GROUP).getValue());
+//		}
+		return bundle;
+	}
 	/**
 	 * @param flow
 	 *            template flow
@@ -156,7 +174,7 @@ public class TasksServiceImpl {
 	
 	
 	public void generateExecutableBundle(
-			VanillaPredefinedCommandTemplate template, DiyExecutableBundle executable) {
+			VanillaPredefinedCommandTemplate template, UploadedExecutableBundle executable) {
 		
 
 
@@ -176,7 +194,7 @@ public class TasksServiceImpl {
 
 	}
 
-	public void setJavaTemplate(ParameterMap httpParam,DiyExecutableBundle executable, JavaPredefinedCommandTemplate template
+	public void setJavaTemplate(ParameterMap httpParam,UploadedExecutableBundle executable, JavaPredefinedCommandTemplate template
 			) {
 		template.addClasspath(null);// TODO
 		String[] keys = getArray(httpParam, "sysVar");
