@@ -81,9 +81,8 @@ public class UploadedExecutableBundle extends ExecutableBundle {
       String tempDir = System.getProperty("java.io.tmpdir");
       String fileSeparator = System.getProperty("file.separator");
       
-      uploadedFile = new File(tempDir + fileSeparator + 
-                                           getFileName() + 
-                                           "_" + UUID.randomUUID());
+      uploadedFile = new File(tempDir + fileSeparator + UUID.randomUUID() + "_" +
+                                           getFileName() );
       FileOutputStream fos = null;
       
       try {

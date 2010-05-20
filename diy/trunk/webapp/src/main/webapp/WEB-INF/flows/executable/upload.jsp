@@ -31,10 +31,10 @@ function updateLabels(typeCode){
 </head>
 <body>
 
-<div style="margin-bottom:5px">Upload the Executable</div>
+<div style="margin-bottom:5px;">Upload the Executable</div>
 
 <form:form modelAttribute="executable" enctype="multipart/form-data">
-	<fieldset><form:errors path="*"/></fieldset>
+	<fieldset><form:errors path="*" cssStyle="color:OrangeRed"/></fieldset>
 	<fieldset>
 	    <label id="executableTypeLabel">Specify the executable type:</label>
 	    <form:select path="typeCode" onChange="updateLabels(this);" items="${executable.typeOptions}" itemLabel="name" itemValue="code" />
