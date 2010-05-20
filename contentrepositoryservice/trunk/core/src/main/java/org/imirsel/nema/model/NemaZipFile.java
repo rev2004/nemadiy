@@ -137,6 +137,7 @@ public class NemaZipFile {
       if(state==FileState.CLOSED) {
          return;
       }
+      logger.info("Closing archive " + sourceZipName + ".");
       deleteDir(sourceZipContentDir);
       state=FileState.CLOSED;
    }
