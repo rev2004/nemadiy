@@ -1,11 +1,17 @@
 package org.imirsel.nema.model;
 
+import java.io.Serializable;
+
 /**Stores the resource location.
  * 
  * @author kumaramit01
  * @since 0.0.1 
  */
-public class RepositoryResourcePath implements ResourcePath{
+public class RepositoryResourcePath implements Serializable,ResourcePath{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8696944504877708390L;
 	private String path;
 	private String workspace;
 	private String protocol;
