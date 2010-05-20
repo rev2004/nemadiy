@@ -68,7 +68,6 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
 	private String id;
 	private String fileName;
 	private ExecutableType type = ExecutableType.JAVA;
-	private String mainClass;
 	private String executableName;
 	private String commandLineFlags;
 	private String preferredOs = "Unix Like";
@@ -87,9 +86,6 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
    public ExecutableType getType() {
       return type;
    }
-	public String getMainClass() {
-		return mainClass;
-	}
 	public String getExecutableName() {
 		return executableName;
 	}
@@ -111,9 +107,6 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
    public void setTypeCode(int typeCode)  {
       this.type = ExecutableType.valueOf(typeCode);
    }
-	public void setMainClass(String mainClass) {
-		this.mainClass = mainClass;
-	}
 	public void setExecutableName(String executableName) {
 		this.executableName = executableName;
 	}

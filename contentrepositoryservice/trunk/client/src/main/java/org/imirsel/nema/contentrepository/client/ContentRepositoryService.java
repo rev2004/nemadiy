@@ -277,9 +277,6 @@ public class ContentRepositoryService implements ArtifactService {
 			if(bundle.getCommandLineFlags()!=null){
 				fileNode.setProperty("commandLineFlags", bundle.getCommandLineFlags());
 			}
-			if(bundle.getMainClass()!=null){
-				fileNode.setProperty("mainClass", bundle.getMainClass());
-			}
 
 			if(bundle.getEnvironmentVariables()!=null){
 				fileNode.setProperty("environmentVariables", BundleUtils.getKeyValuePairs(bundle.getEnvironmentVariables()));
@@ -542,7 +539,6 @@ public class ContentRepositoryService implements ArtifactService {
 		String typeName =null;
 		String execId = null;
 		String commandLineFlags =null;
-		String mainClass=null;
 		Value[] values=null;
 		Map<String,String> env =null;
 
@@ -574,12 +570,6 @@ public class ContentRepositoryService implements ArtifactService {
 		}
 
 
-		propExists=fileNode.hasProperty("mainClass");
-		if(propExists){
-			mainClassProperty=fileNode.getProperty("mainClass");
-			mainClass = mainClassProperty.getString();
-		}
-
 		propExists=fileNode.hasProperty("environmentVariables");
 		if(propExists){
 			envProperty=fileNode.getProperty("environmentVariables");
@@ -594,7 +584,6 @@ public class ContentRepositoryService implements ArtifactService {
 		bundle.setTypeName(typeName);
 		bundle.setId(execId);
 		bundle.setCommandLineFlags(commandLineFlags);
-		bundle.setMainClass(mainClass);
 		bundle.setEnvironmentVariables(env);
 		bundle.setExecutableName(executableName);
 
