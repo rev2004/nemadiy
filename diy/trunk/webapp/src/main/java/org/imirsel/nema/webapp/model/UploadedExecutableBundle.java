@@ -61,9 +61,9 @@ public class UploadedExecutableBundle extends ExecutableBundle {
    @Override
    public String getExecutableName() {
       if(getType()==ExecutableType.JAVA) {
-         return getMainClass();
+         return super.getMainClass();
       } else {
-         return getExecutableName();
+         return super.getExecutableName();
       }
    }
    
