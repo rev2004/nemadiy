@@ -73,30 +73,6 @@ public class DiyJavaTemplate extends JavaPredefinedCommandTemplate {
 	}
 	
 
-//	public void generateCommandline(){
-//		MemoryOption mo=getMemoryOptions().get(memoryOption);
-//		minMemory=mo.min;
-//		maxMemory=mo.max;
-//		
-//		JavaPredefinedCommandTemplate command=new JavaPredefinedCommandTemplate();
-//		command.setDisableAssertionPackages(disableAssertionPackages);
-//		command.setEnableAssertionPackages(enableAssertionPackages);
-//		command.setEnableSystemAssertions(enableSystemAssertions);
-//		command.setJarExecutable(jarExecutable);
-//		command.setMainClass(mainClass);
-//		command.setMaxMemory(maxMemory);
-//		command.setMinMemory(minMemory);
-//		command.setVerboseExecutionClass(verboseExecutionClass);
-//		command.setVerboseExecutionGC(verboseExecutionGC);
-//		command.setVerboseExecutionJNI(verboseExecutionJNI);
-//		
-//		CommandLineFormatter formatter=new CommandLineFormatter();
-//		try {
-//			setEnvironment(formatter.getCommandLineString(command, resourceTypeService.getOsDataType(os), true));
-//		} catch (InvalidCommandLineFlagException e) {
-//			logger.error(e,e);
-//		}
-//	}
 
 	public void setZipJar(String zipJar) {
 		this.zipJar = zipJar;
