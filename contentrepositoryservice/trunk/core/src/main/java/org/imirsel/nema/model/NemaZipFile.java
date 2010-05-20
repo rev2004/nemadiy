@@ -219,6 +219,7 @@ public class NemaZipFile {
     * @return Location of the ZIP content directory.
     */
    public String getUnzipDir() {
+      validateOpened();
       return sourceZipContentDir.getAbsolutePath();
    }
    
@@ -296,6 +297,7 @@ public class NemaZipFile {
     * @return List of JAR paths in the Unix file separator format.
     */
    public List<String> getUnixJarPaths() {
+      validateOpened();
       List<String> jarPaths = new ArrayList<String>();
       List<ZipEntry> jarEntries = jarEntries();
       for(ZipEntry entry:jarEntries) {
