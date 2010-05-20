@@ -6,9 +6,10 @@
 </head>
 <body>
 
+
 <div style="margin-bottom:5px">Specify Arguments for the Executable</div>
 
-<form:form commandName="javaTemplate">
+<form:form commandName="paramTemplate">
 	<fieldset><form:errors path="*" /></fieldset>
 	<fieldset>
 	   <label>Uploaded Executable Archive:</label> ${executable.fileName}

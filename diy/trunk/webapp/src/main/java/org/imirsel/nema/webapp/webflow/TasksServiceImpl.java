@@ -2,6 +2,7 @@ package org.imirsel.nema.webapp.webflow;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -82,22 +83,16 @@ public class TasksServiceImpl {
 	final static String OS = "_os";
 	final static String GROUP = "_group";
 
-	/**
-	 * Add the executable url into the parameter map
-	 * 
-	 * @param component
-	 * @param parameters
-	 * @param url
-	 */
 	public void addExecutable(final Component component,
-			final Map<String, String> parameters, 
-			final OsDataType os, final String group,
-			final ExecutableBundle bundle, final UUID uuid,
-			Map<Component,ResourcePath> executableMap)
+			final Map<String, String> parameters, final OsDataType os,
+			final String group, final ExecutableBundle bundle, final UUID uuid,
+			Map<Component, ResourcePath> executableMap)
 			throws ContentRepositoryServiceException {
-		logger.debug("add executable url into parameter for "+bundle.getFileName());
+		logger.debug("add executable url into parameter for "
+				+ bundle.getFileName());
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-		logger.debug("with credential "+ credential.getUserID() +  " string: " + new String (credential.getPassword()));
+		logger.debug("with credential " + credential.getUserID() + " string: "
+				+ new String(credential.getPassword()));
 		String credentialString = credential.getUserID() + ":"
 				+ new String(credential.getPassword());
 		parameters.put(getName(component.getInstanceUri(), CREDENTIALS),
@@ -106,30 +101,42 @@ public class TasksServiceImpl {
 				"true");
 		parameters.put(getName(component.getInstanceUri(), OS), os.getValue());
 		parameters.put(getName(component.getInstanceUri(), GROUP), group);
-		ResourcePath path=artifactService.saveExecutableBundle(credential, uuid.toString(), bundle);
-		//TODO if (executableMap.containsKey(component)){
-//		RasourcePath oldPath=executableMap.get(component);
-//		if artifactService.exists(credential, oldPath) artifactService.removeExecutableBundle(credential, oldPath);
-//	}
+		ResourcePath path = artifactService.saveExecutableBundle(credential,
+				uuid.toString(), bundle);
+		if (executableMap.containsKey(component)) {
+			ResourcePath oldPath = executableMap.get(component);
+			if (artifactService.exists(credential, oldPath))
+				artifactService.removeExecutableBundle(credential, oldPath);
+		}
 		executableMap.put(component, path);
-		if (path!=null) parameters
-		.put(getName(component.getInstanceUri(), EXECUTABLE_URL), path.getPath());
-		else throw new ContentRepositoryServiceException("error in saving the executable bundle");
+		if (path != null)
+			parameters.put(getName(component.getInstanceUri(), EXECUTABLE_URL),
+					path.getPath());
+		else
+			throw new ContentRepositoryServiceException(
+					"error in saving the executable bundle");
 
 	}
 
-	public UploadedExecutableBundle findBundle(ResourcePath path, Map<String, Property> datatypeMap){
+	public UploadedExecutableBundle findBundle(ResourcePath path,
+			Map<String, Property> datatypeMap) {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-		UploadedExecutableBundle bundle=null;
-//TODO		if ((path!=null) && (artifactService.exists(credential, path))){
-//			ExecutableBundle oldBundle=artifactService.getExecutableBundle(credential, path);
-//			bundle=(UploadedExecutableBundle)oldBundle;
-//			if (bundle==null) bundle=new UploadedExecutableBundle();
-//			bundle.setPreferredOs(datatypeMap.get(CREDENTIALS).getValue());
-//			bundle.setGroup(datatypeMap.get(GROUP).getValue());
-//		}
+		UploadedExecutableBundle bundle = null;
+		 try {
+			if ((path!=null) && (artifactService.exists(credential, path))){
+			 ExecutableBundle
+			 oldBundle=artifactService.getExecutableBundle(credential, path);
+			 bundle=(UploadedExecutableBundle)oldBundle;
+			 if (bundle==null) bundle=new UploadedExecutableBundle();
+			 bundle.setPreferredOs(datatypeMap.get(CREDENTIALS).getValue());
+			 bundle.setGroup(datatypeMap.get(GROUP).getValue());
+			 }
+		} catch (ContentRepositoryServiceException e) {
+			logger.error(e,e);
+		}
 		return bundle;
 	}
+
 	/**
 	 * @param flow
 	 *            template flow
@@ -158,25 +165,49 @@ public class TasksServiceImpl {
 		return parameters;
 	}
 
-	
+	/**
+	 * @deprecated return the PredefinedCommandTemplate according to the type
+	 *             String
+	 * @param type
+	 * @return
+	 * 
+	 */
+	public VanillaPredefinedCommandTemplate getEmptyTemplate(String type) {
+		if (type.equalsIgnoreCase("plain"))
+			return new VanillaPredefinedCommandTemplate();
+		else if (type.equalsIgnoreCase("java"))
+			return new DiyJavaTemplate();
+		else if (type.equalsIgnoreCase("matlab"))
+			return new DiyMatlabTemplate();
+		else
+			return null;
+	}
+
 	/**
 	 * return the PredefinedCommandTemplate according to the type String
+	 * 
 	 * @param type
 	 * @return
 	 */
-	public VanillaPredefinedCommandTemplate getEmptyTemplate(String type){
-		if (type.equalsIgnoreCase("plain")) return new VanillaPredefinedCommandTemplate();
-		else if (type.equalsIgnoreCase("java")) return new JavaPredefinedCommandTemplate();
-		else if (type.equalsIgnoreCase("matlab")) return new MatlabPredefinedCommandTemplate();
-		else return null;
-	}
-	
-	
-	
-	public void generateExecutableBundle(
-			VanillaPredefinedCommandTemplate template, UploadedExecutableBundle executable) {
-		
+	public VanillaPredefinedCommandTemplate getEmptyTemplate(
+			ExecutableBundle.ExecutableType type) {
+		switch (type) {
+		case SHELL:
+		case C:
+			return new VanillaPredefinedCommandTemplate();
+		case JAVA:
+			return new DiyJavaTemplate();
+		case MATLAB:
+			return new DiyMatlabTemplate();
+		default:
+			return null;
+		}
 
+	}
+
+	public void generateExecutableBundle(
+			VanillaPredefinedCommandTemplate template,
+			UploadedExecutableBundle executable) {
 
 		executable.setId(UUID.randomUUID().toString());
 		try {
@@ -194,24 +225,29 @@ public class TasksServiceImpl {
 
 	}
 
-	public void setJavaTemplate(ParameterMap httpParam,UploadedExecutableBundle executable, JavaPredefinedCommandTemplate template
-			) {
+	public void setJavaTemplate(ParameterMap httpParam,
+			UploadedExecutableBundle executable,
+			JavaPredefinedCommandTemplate template) {
 		template.addClasspath(null);// TODO
 		String[] keys = getArray(httpParam, "sysVar");
 		String[] values = getArray(httpParam, "sysValue");
+		List<SysProperty> properties = new ArrayList<SysProperty>();
 		if ((keys != null) && (values != null)) {
 			int length = keys.length;
 			for (int i = 0; i < length; i++) {
 				if ((keys[i] != null) && (keys[i].length() > 0))
-					template.addProperty(new SysProperty(keys[i], values[i]));
+					properties.add(new SysProperty(keys[i], values[i]));
 			}
+			template.setProperties(properties);
 			logger.debug("generate map of size " + length);
 		}
-		
+
 	}
 
-
-
+	public UploadedExecutableBundle setExecutable(UploadedExecutableBundle a){
+		if (a==null) return new UploadedExecutableBundle();
+		else return a;
+	}
 	/**
 	 * @deprecated generate a map from two string arrays (key[] and values[])
 	 * @param variables
@@ -229,6 +265,12 @@ public class TasksServiceImpl {
 		return map;
 	}
 
+	/**
+	 * @deprecated
+	 * 
+	 * @param parameters
+	 * @return
+	 */
 	public Map<String, String> generateMap(ParameterMap parameters) {
 		String[] keys = parameters.getArray("variable");
 		String[] values = parameters.getArray("value");
@@ -300,50 +342,52 @@ public class TasksServiceImpl {
 	 * @param others
 	 * @return
 	 */
-	public void setCommonTemplate(String[] keys, String[] values, String[] inputs,
-			String[] outputs, String[] others,
+	public void setCommonTemplate(String[] keys, String[] values,
+			String[] inputs, String[] outputs, String[] others,
 			VanillaPredefinedCommandTemplate template) {
 		if (template == null)
 			throw new NullPointerException("template variable cannot be null");
 		logger.debug("start to populate command template " + output(keys)
 				+ " variable, " + output(inputs) + " inputs, "
 				+ output(outputs) + " outputs, " + output(others) + " other");
-		try {
-			int i = 0;
-			if (inputs != null)
-				for (String entry : inputs) {
-					if ((entry != null) && (entry.length() != 0))
-						template.addParam(new Param(entry, true,
-								Param.ParamType.INPUT.getCode(), i++));
-				}
-			if (outputs != null) {
-				i = 0;
+		List<Param> params = new ArrayList<Param>();
+		int i = 0;
+		if (inputs != null)
+			for (String entry : inputs) {
+				if ((entry != null) && (entry.length() != 0))
+					params.add(new Param(entry, true, Param.ParamType.INPUT
+							.getCode(), i++));
+			}
+		if (outputs != null) {
+			i = 0;
 
-				for (String entry : outputs) {
-					if ((entry != null) && (entry.length() != 0))
-						template.addParam(new Param(entry, true,
-								Param.ParamType.OUTPUT.getCode(), i++));
-				}
+			for (String entry : outputs) {
+				if ((entry != null) && (entry.length() != 0))
+					params.add(new Param(entry, true, Param.ParamType.OUTPUT
+							.getCode(), i++));
 			}
-			if (others != null) {
-				i = 0;
-				for (String entry : others) {
-					if ((entry != null) && (entry.length() != 0))
-						template.addParam(new Param(entry, false,
-								Param.ParamType.OTHER.getCode(), i++));
-				}
-			}
-		} catch (ParamAlreadyExistsException e) {
-			logger.error(e, e);
 		}
+		if (others != null) {
+			i = 0;
+			for (String entry : others) {
+				if ((entry != null) && (entry.length() != 0))
+					params.add(new Param(entry, false, Param.ParamType.OTHER
+							.getCode(), i++));
+			}
+		}
+		template.setParams(params);
+		Map<String, String> map = new HashMap<String, String>();
+
 		if ((keys != null) && (values != null)) {
 			int length = keys.length;
-			for (int i = 0; i < length; i++) {
+			for (i = 0; i < length; i++) {
 				if ((keys[i] != null) && (keys[i].length() > 0))
-					template.addEnvironmentVariable(keys[i], values[i]);
+					map.put(keys[i], values[i]);
 			}
-			logger.debug("generate map of environment variables size " + length);
+			logger.debug("generate map of environment variables size "
+					+ template.getEnvironmentMap().size());
 		}
+		template.setEnvironmentMap(map);
 
 	}
 
