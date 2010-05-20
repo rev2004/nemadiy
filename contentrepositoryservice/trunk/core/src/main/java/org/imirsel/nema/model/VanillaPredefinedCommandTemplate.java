@@ -61,7 +61,7 @@ public class VanillaPredefinedCommandTemplate implements
 		this.environmentMap = environmentMap;
 	}
 
-	public void setExecParams(List<Param> execParams) {
+	public void setParams(List<Param> execParams) {
 		this.execParams = execParams;
 	}
 	
