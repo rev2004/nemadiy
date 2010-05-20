@@ -10,6 +10,8 @@
 	<var name="componentList" class="java.util.ArrayList" />
 
 
+	
+
 	<view-state id="selectTask" model="taskFlowModel">
 		<on-entry>
 			<evaluate expression="flowService.getFlowTemplates()"
@@ -77,17 +79,19 @@
 	</view-state>
 
 	<subflow-state id="generateExecutable" subflow="task/executable">
+	<input name="executableBundle" value="tasksService.findBundle(taskFlowModel.executableMap[component],datatypeMap)"/>
 	<output name="executableBundle" 
 			type="org.imirsel.nema.model.ExecutableBundle" />
 		<output name="executableOs" 
 			type="org.imirsel.nema.model.OsDataType" />
 		<output name="executableGroup" type="java.lang.String" />
-
+	
 
 		<transition on="success" to="displayFlowComponents">
-			<evaluate expression="tasksService.test(executableUrl)"></evaluate>
+			
+			
 			<evaluate
-				expression="tasksService.addExecutable(component,parameterMap,executableOs,executableGroup,executableBundle,taskFlowModel.uuid)" />
+				expression="tasksService.addExecutable(component,parameterMap,executableOs,executableGroup,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap)" />
 			
 		</transition>
 		<transition on="cancel" to="displayFlowComponents"/>

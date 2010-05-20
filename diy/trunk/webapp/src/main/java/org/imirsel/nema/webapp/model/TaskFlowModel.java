@@ -1,11 +1,15 @@
 package org.imirsel.nema.webapp.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.imirsel.nema.webapp.webflow.TasksServiceImpl;
+import org.imirsel.nema.model.Component;
+import org.imirsel.nema.model.ResourcePath;
+
 /**
  * Model object for the webflow for template task
  * 
@@ -24,6 +28,7 @@ public class TaskFlowModel implements Serializable {
 
 	private UUID uuid;
 	
+	private Map<Component,ResourcePath> executableMap;
 	public UUID getUuid(){
 		return uuid;
 	}
@@ -32,6 +37,7 @@ public class TaskFlowModel implements Serializable {
 	public TaskFlowModel() {
 		uuid=UUID.randomUUID();
 		logger.debug("set a new id "+uuid.toString());
+		executableMap=new HashMap<Component,ResourcePath>();
 	}
 
 
@@ -57,6 +63,14 @@ public class TaskFlowModel implements Serializable {
 
 	public String getName() {
 		return name;
+	}
+
+
+
+
+
+	public Map<Component,ResourcePath> getExecutableMap() {
+		return executableMap;
 	}
 
 }
