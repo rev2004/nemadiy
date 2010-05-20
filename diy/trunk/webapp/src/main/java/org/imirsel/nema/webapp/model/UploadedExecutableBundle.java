@@ -49,19 +49,34 @@ public class UploadedExecutableBundle extends ExecutableBundle {
       this.group = group;
    }
    
+   /**
+    * Validate the uploaded file contains the specified executable.
+    * 
+    * @return True if the user-specified executable is present in the uploaded
+    * file.
+    * @throws IOException if an error occurs while searching for the executable
+    * in the uploaded file.
+    */
    public boolean containsExecutable() throws IOException {
       ZipFile uploadedZipFile = new ZipFile(uploadedFile);
       NemaZipFile nemaZipFile = new NemaZipFile(uploadedZipFile);
       nemaZipFile.open();
       boolean containsExecutable = false;
-      System.out.println("Checking for executable ----------> " + getExecutableName());
-      containsExecutable = nemaZipFile.containsFile(getExecutableName());
+      if(super.getType()==ExecutableType.JAVA) {
+         containsExecutable = nemaZipFile.containsClass(getExecutableName());
+      } else {
+         containsExecutable = nemaZipFile.containsFile(getExecutableName());
+      }
       nemaZipFile.close();
       uploadedZipFile.close();
       return containsExecutable;
    }
    
-   
+   /**
+    * Save the uploaded file to disk.
+    * 
+    * @throws IOException if an error occurs while saving the file.
+    */
    private void persistUploadedFile() throws IOException {
       String tempDir = System.getProperty("java.io.tmpdir");
       String fileSeparator = System.getProperty("file.separator");
@@ -88,7 +103,13 @@ public class UploadedExecutableBundle extends ExecutableBundle {
       }
    }
    
-   public boolean passesIntegrityCheck() {
+   /**
+    * Validate the uploaded file can be read in ZIP format.
+    * 
+    * @return True if the file is readable as a ZIP file.
+    * @throws IOException if a problem occurs while trying to read the file.
+    */
+   public boolean readableAsZip() throws IOException {
       boolean valid = false;
       try {
          // Exception will be thrown if file is not valid
