@@ -37,6 +37,7 @@
 		<intercept-url pattern="/get/FlowFormManager.**" access="ROLE_ADMIN,ROLE_USER" />
 
 		<intercept-url pattern="/get/task" access="ROLE_ADMIN,ROLE_USER" />
+		<intercept-url pattern="/get/task/executable" access="ROLE_ADMIN"/>
 
 
 		<form-login login-page="/login.jsp"
