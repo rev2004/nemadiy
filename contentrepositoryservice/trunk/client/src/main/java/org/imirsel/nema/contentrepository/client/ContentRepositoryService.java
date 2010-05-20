@@ -105,7 +105,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 *  @return returns boolean true/false
 	 *  @throws ContentRepositoryServiceException
 	 */
-	public boolean exists(final SimpleCredentials credentials,final RepositoryResourcePath resourcePath)
+	public boolean exists(final SimpleCredentials credentials,final ResourcePath resourcePath)
 	throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
@@ -137,7 +137,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @throws ContentRepositoryServiceException
 	 */
 	public boolean removeExecutableBundle(final SimpleCredentials credentials,
-			final RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException{
+			final ResourcePath resourcePath) throws ContentRepositoryServiceException{
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -495,7 +495,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return the filesystem filepath for a resource.
 	 * @throws ContentRepositoryServiceException
 	 */
-	public String getExecutableBundleFSPath(final SimpleCredentials credentials,final RepositoryResourcePath resourcePath) throws ContentRepositoryServiceException {
+	public String getExecutableBundleFSPath(final SimpleCredentials credentials,final ResourcePath resourcePath) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}

@@ -91,7 +91,7 @@ public interface ArtifactService {
 	 * @throws RepositoryException
 	 */
 	public boolean removeExecutableBundle(final SimpleCredentials credentials,
-			final RepositoryResourcePath resourcePath)
+			final ResourcePath resourcePath)
 			throws ContentRepositoryServiceException;
 
 	/**
@@ -103,7 +103,7 @@ public interface ArtifactService {
 	 * @throws ContentRepositoryServiceException
 	 */
 	public boolean exists(final SimpleCredentials credentials,
-			final RepositoryResourcePath resourcePath)
+			final ResourcePath resourcePath)
 			throws ContentRepositoryServiceException;
 
 	/**
@@ -128,7 +128,7 @@ public interface ArtifactService {
 	 */
 	public String getExecutableBundleFSPath(
 			final SimpleCredentials credentials,
-			final RepositoryResourcePath resourcePath)
+			final ResourcePath resourcePath)
 			throws ContentRepositoryServiceException;
 
 }
