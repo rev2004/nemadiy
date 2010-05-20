@@ -55,5 +55,28 @@ public class Component implements Comparable<Component>, Serializable{
 		}
 		return o.getInstanceUri().compareTo(this.getInstanceUri());
 	}
+	
+	public int hashCode(){
+		if(this.instanceUri!=null){
+			return this.instanceUri.hashCode();
+		}else{
+			return this.uri.hashCode();
+		}
+	}
+	
+	public boolean equals(Object object){
+		if(object==null){
+			return false;
+		}
+		if(!(object instanceof Component)){
+			return false;
+		}
+		Component component = (Component)object;
+		if(component.getInstanceUri()!=null && this.getInstanceUri()!=null ){
+			// instance uris are null -check the uri
+			return this.instanceUri.equals(component.instanceUri);
+		}
+		return this.uri.equals(component.instanceUri);
+	}
 
 }
