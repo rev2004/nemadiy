@@ -150,6 +150,10 @@ public class NemaZipFile {
     */
    public boolean containsFile(String fileName) {
       validateOpened();
+      if(null==fileName || "".equals(fileName)) {
+         throw new IllegalArgumentException(
+               "Argument 'fileName' must not be null or empty.");
+      }
       return null != sourceZip.getEntry(fileName);
    }
    
@@ -163,6 +167,10 @@ public class NemaZipFile {
     */
    public boolean containsClass(String className) {
       validateOpened();
+      if(null==className || "".equals(className)) {
+         throw new IllegalArgumentException(
+               "Argument 'className' must not be null or empty.");
+      }
       boolean containsClass = false;
       String classFilePath = className.replace('.', '/') + ".class";
       // If this is a JAR file, no need to look in nested JARs, so just use
