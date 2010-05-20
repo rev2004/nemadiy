@@ -50,7 +50,6 @@ import org.imirsel.nema.model.User;
 import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
-import org.imirsel.nema.webapp.model.ExecutableFile;
 import org.imirsel.nema.webapp.model.DiyJavaTemplate;
 import org.imirsel.nema.webapp.model.DiyMatlabTemplate;
 import org.imirsel.nema.webapp.model.NiceParams;

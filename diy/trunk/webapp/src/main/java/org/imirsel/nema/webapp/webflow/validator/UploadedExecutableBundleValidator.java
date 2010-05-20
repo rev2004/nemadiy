@@ -22,10 +22,19 @@ public class UploadedExecutableBundleValidator {
          ValidationContext context) {
       MessageContext messages = context.getMessageContext();
 
+      // Validate that an executable archive has been provided
+      if(null==uploadedExecutable.getFileName() || "".equals(uploadedExecutable.getFileName())) {
+         messages.addMessage(new MessageBuilder().error().source("file")
+               .defaultText(
+                     "Please select a JAR or ZIP file to upload that " +
+                     "contains your executable code.").build());
+         return;
+      }
+      
       String fileName = uploadedExecutable.getFileName();
       String fileExtension = fileName.substring(fileName.length() - 3);
 
-      // First make sure the uploaded file type matches what is allowed for
+      // Next make sure the uploaded file type matches what is allowed for
       // the selected executable type.
       if (uploadedExecutable.getType() == ExecutableType.JAVA) {
          if (!fileExtension.equalsIgnoreCase("jar")
@@ -48,7 +57,7 @@ public class UploadedExecutableBundleValidator {
          }
       }
 
-      // Next make sure the file is readable in ZIP format. Ensure not corrupt.
+      // Now make sure the file is readable in ZIP format. Ensure not corrupt.
       boolean isReadable = false;
       try {
          isReadable = uploadedExecutable.readableAsZip();
