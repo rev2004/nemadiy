@@ -112,6 +112,12 @@ public class JavaPredefinedCommandTemplate extends VanillaPredefinedCommandTempl
 	public String getJarFile() {
 		return jarFile;
 	}
+	public void setProperties(List<SysProperty> properties) {
+		this.properties = properties;
+	}
+	public void setClasspath(List<Path> classpath) {
+		this.classpath = classpath;
+	}
 
 
 }

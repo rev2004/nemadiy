@@ -52,5 +52,20 @@ public class VanillaPredefinedCommandTemplate implements
 	public void setExecutableName(String executableName) {
 		this.executableName = executableName;
 	}
+
+	public List<Param> getExecParams() {
+		return execParams;
+	}
+
+	public void setEnvironmentMap(Map<String, String> environmentMap) {
+		this.environmentMap = environmentMap;
+	}
+
+	public void setExecParams(List<Param> execParams) {
+		this.execParams = execParams;
+	}
+	
+	
+	
 	
 }
