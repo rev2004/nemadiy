@@ -53,6 +53,7 @@ import org.imirsel.nema.webapp.jobs.DisplayResultSet;
 import org.imirsel.nema.webapp.model.ExecutableFile;
 import org.imirsel.nema.webapp.model.DiyJavaTemplate;
 import org.imirsel.nema.webapp.model.DiyMatlabTemplate;
+import org.imirsel.nema.webapp.model.NiceParams;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
@@ -83,6 +84,18 @@ public class TasksServiceImpl {
 	final static String OS = "_os";
 	final static String GROUP = "_group";
 
+	/**
+	 * upload ExecutableBundle to content repository, remove the old executableBundle if there is one; 
+	 * replace/add the new ResourcePath of executablebundle into the executableMap; 
+	 * @param component
+	 * @param parameters  modified, the new path replace the old/is added
+	 * @param os
+	 * @param group
+	 * @param bundle
+	 * @param uuid
+	 * @param executableMap Note that this map is going to be modified, old path is replaced by new path. 
+	 * @throws ContentRepositoryServiceException
+	 */
 	public void addExecutable(final Component component,
 			final Map<String, String> parameters, final OsDataType os,
 			final String group, final ExecutableBundle bundle, final UUID uuid,
@@ -163,6 +176,10 @@ public class TasksServiceImpl {
 		logger.debug("done populating default parameters now.");
 
 		return parameters;
+	}
+	
+	public NiceParams getNiceParams(List<Param> params){
+		return new NiceParams(params);
 	}
 
 	/**
@@ -249,6 +266,9 @@ public class TasksServiceImpl {
 		if (a==null) return new UploadedExecutableBundle();
 		else return a;
 	}
+	
+	
+	
 	/**
 	 * @deprecated generate a map from two string arrays (key[] and values[])
 	 * @param variables

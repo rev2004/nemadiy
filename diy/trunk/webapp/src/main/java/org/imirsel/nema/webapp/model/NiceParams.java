@@ -46,7 +46,7 @@ public class NiceParams {
 		return getType(Param.ParamType.OTHER);
 	}
 
-	class ParamComparator implements Comparator<Param> {
+	static class ParamComparator implements Comparator<Param> {
 		public int compare(Param p1, Param p2) {
 			return Integer.signum(p1.getSequence() - p2.getSequence());
 		}
@@ -55,6 +55,6 @@ public class NiceParams {
 		}
 	}
 
-	static ParamComparator comparator;
+	static private ParamComparator comparator=new ParamComparator();
 
 }

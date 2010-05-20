@@ -71,6 +71,7 @@
 	</view-state>
 
 	<action-state id="arguments">
+	<set name="flashScope.niceParams" value="tasksService.getNiceParams(paramTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams"/>
 		<evaluate expression="executable.type" />
 		<transition on="JAVA" to="argumentsJava"/>
 		<transition on="MATLAB" to="argumentsMatlab"/>
