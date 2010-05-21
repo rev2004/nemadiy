@@ -3,12 +3,9 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-
 	<var name="taskFlowModel" class="org.imirsel.nema.webapp.model.TaskFlowModel" />
 	<var name="flow" class="org.imirsel.nema.model.Flow" />
 	<var name="componentList" class="java.util.ArrayList" />
-
-
 
 
 	<view-state id="selectTask" model="taskFlowModel">
@@ -18,7 +15,6 @@
 		<transition on="show" to="displayFlowComponents">
 			<evaluate expression="flowService.getFlow(taskFlowModel.id)" result="flow" />
 			<evaluate expression="flowService.getComponents(flow.getUri())" result="flowScope.componentList" />
-			<evaluate expression="tasksService.fillDefaultParameter(flow)" result="flowScope.parameterMap" />
 			<evaluate expression="tasksService.setDatatypeMaps(flow)" result="flowScope.datatypeMaps"></evaluate>
 		</transition>
 	</view-state>
@@ -52,8 +48,7 @@
 
 	<view-state id="editSimpleComponentProperties">
 		<transition on="save" to="displayFlowComponents">
-			<!-- <evaluate expression="tasksService.saveParameter(flowRequestContext)" result="flowScope.parameterMap" />-->
-			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
+				<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
@@ -62,30 +57,29 @@
 		<on-entry>
 			<evaluate expression="tasksService.shownMap(datatypeMap)" result="viewScope.shownMap" />
 		</on-entry>
-		
 		<transition on="next" to="generateExecutable">
-		    
-			<!-- <evaluate expression="tasksService.saveParameter(flowRequestContext)" result="flowScope.parameterMap" />-->
 			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
+	<action-state id="reportExecutable">
+				<evaluate
+				expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,messageContext)" />
+				<transition on="success" to="displayFlowComponent">
+				 <evaluate expression="meassageContext.add"></evaluate>
+				</transition>
+	 
+	</action-state>
 
 	<subflow-state id="generateExecutable" subflow="task/executable">
 		<input name="executableBundle" value="tasksService.findBundle(taskFlowModel.executableMap[component],datatypeMap)" />
-		<output name="executableBundle" type="org.imirsel.nema.model.ExecutableBundle" />
+		<output name="flowScope.executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<output name="executableOs" type="org.imirsel.nema.model.OsDataType" />
 		<output name="executableGroup" type="java.lang.String" />
 		<transition on="success" to="displayFlowComponents">
-			<!--
-				<evaluate
-				expression="tasksService.addExecutable(component,parameterMap,executableOs,executableGroup,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap)"
-				/>
-			-->
-			<evaluate
-				expression="tasksService.addExecutable(component,datatypeMap,executableOs,executableGroup,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap)" />
-
-		</transition>
+		<evaluate
+				expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,messageContext)" />
+				</transition>
 		<transition on="cancel" to="editRemoteServiceComponentProperties" />
 	</subflow-state>
 
@@ -101,13 +95,13 @@
 	</action-state>
 
 	<action-state id="runTest">
-		<evaluate expression="tasksService.testRun(flow,parameterMap,taskFlowModel.name,taskFlowModel.description)"
+		<evaluate expression="tasksService.testRun(flow,datatypeMaps,taskFlowModel.name,taskFlowModel.description)"
 			result="flowScope.job" />
 		<transition on="success" to="testResult" />
 	</action-state>
 
 	<action-state id="run">
-		<evaluate expression="tasksService.testRun(flow,parameterMap,taskFlowModel.name,taskFlowModel.description)"
+		<evaluate expression="tasksService.testRun(flow,datatypeMaps,taskFlowModel.name,taskFlowModel.description)"
 			result="flowScope.job" />
 		<transition on="success" to="checkRunResult" />
 	</action-state>
