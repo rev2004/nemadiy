@@ -41,6 +41,8 @@ import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
 
@@ -73,63 +75,8 @@ public class TasksServiceImpl {
 	final static String OS = "_os";
 	final static String GROUP = "_group";
 
-	// /** Depreciated for the datatypeMap as the back-up bean
-	// * upload ExecutableBundle to content repository, remove the old
-	// * executableBundle if there is one; replace/add the new ResourcePath of
-	// * executablebundle into the executableMap;
-	// *
-	// * @param component
-	// * @param parameters
-	// * modified, the new path replace the old/is added
-	// * @param os
-	// * @param group
-	// * @param bundle
-	// * @param uuid
-	// * @param executableMap
-	// * Note that this map is going to be modified, old path is
-	// * replaced by new path.
-	// * @throws ContentRepositoryServiceException
-	// */
-	// public void addExecutable(final Component component,
-	// final Map<String, String> parameters, final OsDataType os,
-	// final String group, final UploadedExecutableBundle bundle, final UUID
-	// uuid,
-	// Map<Component, ResourcePath> executableMap)
-	// throws ContentRepositoryServiceException {
-	// logger.debug("add executable url into parameter for "
-	// + bundle.getFileName());
-	// SimpleCredentials credential = userManager.getCurrentUserCredentials();
-	// logger.debug("with credential " + credential.getUserID() + " string: "
-	// + new String(credential.getPassword()));
-	// String credentialString = credential.getUserID() + ":"
-	// + new String(credential.getPassword());
-	// parameters.put(getName(component.getInstanceUri(), CREDENTIALS),
-	// credentialString);
-	// parameters.put(getName(component.getInstanceUri(), REMOTE_COMPONENT),
-	// "true");
-	// parameters.put(getName(component.getInstanceUri(), OS), os.getValue());
-	// parameters.put(getName(component.getInstanceUri(), GROUP), group);
-	//		
-	// ResourcePath path = artifactService.saveExecutableBundle(credential,
-	// uuid.toString(), bundle);
-	//		
-	// if (executableMap.containsKey(component)) {
-	// ResourcePath oldPath = executableMap.get(component);
-	// if (artifactService.exists(credential, oldPath))
-	// artifactService.removeExecutableBundle(credential, oldPath);
-	// }
-	// executableMap.put(component, path);
-	// if (path != null){ parameters.put(getName(component.getInstanceUri(),
-	// EXECUTABLE_URL),
-	// path.getPath());
-	// }else
-	// throw new ContentRepositoryServiceException(
-	// "error in saving the executable bundle");
-	//
-	// }
-	//
-	//	
-	/**
+
+	/**@deprecated
 	 * change after migrate to datamap back tag upload ExecutableBundle to
 	 * content repository, remove the old executableBundle if there is one;
 	 * replace/add the new ResourcePath of executablebundle into the
@@ -179,7 +126,62 @@ public class TasksServiceImpl {
 					"error in saving the executable bundle");
 
 	}
+	/**
+	 * change after migrate to datamap back tag upload ExecutableBundle to
+	 * content repository, remove the old executableBundle if there is one;
+	 * replace/add the new ResourcePath of executablebundle into the
+	 * executableMap;
+	 * 
+	 * @param component
+	 * @param parameters
+	 *            modified, the new path replace the old/is added
+	 * @param os
+	 * @param group
+	 * @param bundle
+	 * @param uuid
+	 * @param executableMap
+	 *            Note that this map is going to be modified, old path is
+	 *            replaced by new path.
+	 * @throws ContentRepositoryServiceException
+	 */
+	public void addExecutable(final Component component,
+			final Map<String, Property> datatypeMap, final UploadedExecutableBundle bundle, final UUID uuid,
+			Map<Component, ResourcePath> executableMap,final MessageContext messageContext)
+			throws ContentRepositoryServiceException {
+		logger.debug("add executable url into parameter for "
+				+ bundle.getFileName());
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		logger.debug("with credential " + credential.getUserID() + " string: "
+				+ new String(credential.getPassword()));
+		String credentialString = credential.getUserID() + ":"
+				+ new String(credential.getPassword());
+		datatypeMap.get(CREDENTIALS).setValue(credentialString);
+		datatypeMap.get(REMOTE_COMPONENT).setValue("true");
+		datatypeMap.get(OS).setValue(bundle.getPreferredOs());
+		datatypeMap.get(GROUP).setValue(bundle.getGroup());
 
+		ResourcePath path = artifactService.saveExecutableBundle(credential,
+				uuid.toString(), bundle);
+		if (executableMap.containsKey(component)) {
+			ResourcePath oldPath = executableMap.get(component);
+			if (artifactService.exists(credential, oldPath))
+				artifactService.removeExecutableBundle(credential, oldPath);
+		}
+		executableMap.put(component, path);
+		if (path != null){
+			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
+			messageContext.addMessage(new MessageBuilder().info()
+                  .defaultText(
+                        "success uploaed executable bundle"+bundle.getFileName()).build());
+		}
+		else
+			throw new ContentRepositoryServiceException(
+					"error in saving the executable bundle");
+
+	}
+	
+	
+	
 	public UploadedExecutableBundle findBundle(ResourcePath path,
 			Map<String, Property> datatypeMap) {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
@@ -510,99 +512,8 @@ public class TasksServiceImpl {
 		return 1;
 	}
 
-	/**
-	 * Depreciated to favor the datatypeMaps as back-up bean generate testing
-	 * job from all the parameters
-	 * 
-	 * @param flow
-	 *            template flow
-	 * @param parameters
-	 *            all the parameters except the name/description
-	 * @param name
-	 *            new flow name
-	 * @param description
-	 *            new flow description
-	 * @return testing {@link Job}
-	 */
-	// public Job testRun(Flow flow, Map<String, String> parameters, String
-	// name,
-	// String description) throws MeandreServerException {
-	// String token = System.currentTimeMillis() + "-token";
-	// HashMap<String, String> paramMap = new HashMap<String, String>(
-	// parameters);
-	// String flowId = flow.getId().toString();
-	// String flowUri = flow.getUri();
-	//
-	// logger.debug("start to test run");
-	// if (flowId == null || flowUri == null) {
-	// logger
-	// .error("flowId or flowUri is null -some severe error happened...");
-	// throw new MeandreServerException("flowId or flowUri is null");
-	// }
-	// User user = userManager.getCurrentUser();
-	// if (user == null) {
-	// logger.error("user is null");
-	// throw new MeandreServerException("Could not get the user");
-	// // user = userManager.getUserByUsername("admin");
-	// }
-	//
-	// Long longFlowId = Long.parseLong(flowId);
-	// Flow templateFlow = this.flowService.getFlow(longFlowId);
-	//
-	// if (name == null) {
-	// name = paramMap.get("name");
-	// if (name == null) {
-	// name = templateFlow.getName() + File.separator + token;
-	// }
-	// }
-	// if (description == null) {
-	// description = paramMap.get("description");
-	// if (description == null) {
-	// description = templateFlow.getDescription() + " for flow: "
-	// + token;
-	// }
-	// }
-	// long userId = user.getId();
-	// Flow instance = new Flow();
-	// instance.setCreatorId(userId);
-	// instance.setDateCreated(new Date());
-	// instance.setInstanceOf(templateFlow);
-	// instance.setKeyWords(templateFlow.getKeyWords());
-	// instance.setName(name);
-	// instance.setTemplate(false);
-	// // instance.setUri(newFlowUri);
-	// instance.setDescription(description);
-	// instance.setType(templateFlow.getType());
-	// instance.setTypeName(templateFlow.getTypeName());
-	//
-	// instance = this.flowService.createNewFlow(userManager
-	// .getCurrentUserCredentials(), instance, paramMap, flowUri, user
-	// .getId());
-	// long instanceId = instance.getId();
-	//
-	// Job job = this.flowService.executeJob(token, name, description,
-	// instanceId, user.getId(), user.getEmail());
-	// return job;
-	//
-	// }
 
-	/**
-	 * generate running job from all the parameters
-	 * 
-	 * @param flow
-	 *            template flow
-	 * @param parameters
-	 *            all the parameters except the name/description
-	 * @param name
-	 *            new flow name
-	 * @param description
-	 *            new flow description
-	 * @return testing {@link Job}
-	 */
-//	 public Job run(Flow flow, Map<String, String> parameters, String name,
-//	 String description) throws MeandreServerException {
-//	 return this.testRun(flow, parameters, name, description);
-//	 }
+
 
 	/**
 	 * change to this later after fix the taglib.

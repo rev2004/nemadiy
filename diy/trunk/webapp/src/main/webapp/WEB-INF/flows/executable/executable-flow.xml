@@ -21,8 +21,6 @@
 	</view-state>
 
 	<view-state id="argumentsPlain">
-
-
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
@@ -88,6 +86,6 @@
 			type="org.imirsel.nema.model.OsDataType" />
 		<output name="executableGroup" value="executable.group" type="java.lang.String" />
 		<output name="executableBundle" value="executable"
-			type="org.imirsel.nema.model.ExecutableBundle" />
+			type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 	</end-state>
 </flow>
