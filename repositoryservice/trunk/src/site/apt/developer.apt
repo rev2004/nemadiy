@@ -9,7 +9,7 @@
 Developer Documentation
 
 
-Deployment
-	-Explain about the RepositoryProperties.properties file in this current version
+	The repository service api provides API to query for collection, tracks and other analytical resources. These entities are modelled
+	as shown below
 	
-[images/deployment.jpg]                                  
+[images/dbschema.png]
