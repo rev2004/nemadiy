@@ -11,13 +11,13 @@ Component: ${component.name}
 <label>--${component.description}</label>
 <form:form>
   
-  <c:forEach items="${datatypeMap}" var="property">
+  <c:forEach items="${datatypeMap}" var="entry">
     <fieldset id="pt1">
-    <label for="jobname"> ${property.key} </label>
-    <render:componentproperty roles="${userRoles}"
-            component="${component.instanceUri}" value="${property.value}"
+    <label for="jobname"> ${entry.key} </label>
+    <render:property roles="${userRoles}"
+            component="${component.instanceUri}" value="${entry.value}"
             class="cssClass" />
-    <font color="green">${property.value.description}</font>
+    <font color="green">${entry.value.description}</font>
     </fieldset>
   </c:forEach>
   <input type="submit" name="_eventId_save" value="save" />

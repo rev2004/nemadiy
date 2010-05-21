@@ -22,7 +22,9 @@
 	<bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
 		p:flowService-ref="flowService" p:userManager-ref="userManager"
 		p:uploadDirectory="resources" p:artifactService-ref="contentRepositoryClient"
-		p:resourceServiceType-ref="resource" p:commandLineFormatter-ref="commandLineFormatter" />
+		 />
+		<bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
+		p:commandLineFormatter-ref="commandLineFormatter" p:resourceServiceType-ref="resource" />
 	<bean id="resource"
 		class="org.imirsel.nema.contentrepository.client.ResourceTypeServiceImpl" />
 	<bean id="commandLineFormatter"

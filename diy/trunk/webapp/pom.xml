@@ -55,9 +55,19 @@
 						<goals>
 
 							<goal>generate</goal>
+
 						</goals>
 					</execution>
+
 				</executions>
+				<configuration>
+					<dir
+						name="/home/gzhu1/tools/workspace/nema-diy/webapp/src/main/webapp/WEB-INF">
+						<include name="*.xml" />
+						<include name="**/*.xml" />
+						<include name="**/**/*.xml" />
+					</dir>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -104,6 +114,7 @@
 				<artifactId>maven-jetty-plugin</artifactId>
 				<version>6.1.9</version>
 				<configuration>
+
 					<contextPath>/</contextPath>
 					<scanIntervalSeconds>0</scanIntervalSeconds>
 					<scanTargetPatterns>
@@ -115,6 +126,8 @@
 							<includes>
 								<include>**/*.properties</include>
 								<include>**/*.xml</include>
+								<include>**/**/*.xml</include>
+								<include>**/**/**/*.xml</include>
 							</includes>
 						</scanTargetPattern>
 					</scanTargetPatterns>
@@ -127,18 +140,13 @@
 					<dependentWarExcludes>
 						**/jdbc.properties,**/hibernate.cfg.xml,**/sql-map-config.xml,**/web.xml,WEB-INF/classes/META-INF/**
                     </dependentWarExcludes>
-                    <!--
-					<webResources>
-						<resource>
-							<directory>src/main/webapp/WEB-INF</directory>
-							<targetPath>WEB-INF</targetPath>
-							<filtering>true</filtering>
-							<includes>
-								<include>dispatcher-servlet.xml</include>
-							</includes>
-						</resource>
-					</webResources>
-                                        -->
+					<!--
+						<webResources> <resource>
+						<directory>src/main/webapp/WEB-INF</directory>
+						<targetPath>WEB-INF</targetPath> <filtering>true</filtering>
+						<includes> <include>dispatcher-servlet.xml</include> </includes>
+						</resource> </webResources>
+					-->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -666,23 +674,23 @@
 						<configuration>
 							<tasks>
 								<taskdef resource="webtest_base_relaxed.taskdef">
-									<classpath refid="maven.test.classpath"/>
+									<classpath refid="maven.test.classpath" />
 								</taskdef>
-								<mkdir dir="target/webtest-data"/>
+								<mkdir dir="target/webtest-data" />
 								<!-- Delete old results file if it exists -->
-								<delete file="target/webtest-data/web-tests-result.xml"/>
+								<delete file="target/webtest-data/web-tests-result.xml" />
 								<!--
 									This is so the default will be used if no test case is
 									specified
 								-->
-								<property name="test" value="run-all-tests"/>
+								<property name="test" value="run-all-tests" />
 								<echo level="info">Testing '${project.build.finalName}' with
 									locale '${user.language}'</echo>
 								<ant antfile="src/test/resources/web-tests.xml" target="${test}">
-									<property name="user.language" value="${user.language}"/>
-									<property name="webapp.name" value="${project.build.finalName}"/>
-									<property name="host" value="${cargo.host}"/>
-									<property name="port" value="${cargo.port}"/>
+									<property name="user.language" value="${user.language}" />
+									<property name="webapp.name" value="${project.build.finalName}" />
+									<property name="host" value="${cargo.host}" />
+									<property name="port" value="${cargo.port}" />
 								</ant>
 							</tasks>
 						</configuration>

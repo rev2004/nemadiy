@@ -37,7 +37,7 @@
 
 		
 		<Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" />
-		<Menu name="MainMenu" title="mainMenu.title" page="/login.jsp" roles="ROLE_ANONYMOUS"/> 
+		<Menu name="MainMenu" title="mainMenu.title" page="/login.jsp" /> 
 		<Menu name="Logout" title="user.logout" page="/logout.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
     </Menus>
 </MenuConfig>
