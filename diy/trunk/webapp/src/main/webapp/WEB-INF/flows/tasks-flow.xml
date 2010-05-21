@@ -8,9 +8,11 @@
 	<var name="componentList" class="java.util.ArrayList" />
 
 
+	<input name="type" type="java.lang.String"/>
+	<input name="id" type="java.lang.Integer"/>
 	<view-state id="selectTask" model="taskFlowModel">
 		<on-entry>
-			<evaluate expression="flowService.getFlowTemplates()" result="flowScope.flowSet"></evaluate>
+			<evaluate expression="tasksService.getFlowTemplates(type)" result="flowScope.flowList"></evaluate>
 		</on-entry>
 		<transition on="show" to="displayFlowComponents">
 			<evaluate expression="flowService.getFlow(taskFlowModel.id)" result="flow" />

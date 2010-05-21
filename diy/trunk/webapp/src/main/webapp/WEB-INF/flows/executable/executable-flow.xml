@@ -4,18 +4,23 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
+ 	<var name="plainTemplate" class="org.imirsel.nema.model.VanillaPredefinedCommandTemplate"/>
+ 	<var name="javaTemplate" class="org.imirsel.nema.webapp.model.DiyJavaTemplate"/>
+ 	<var name="matlabTemplate" class="org.imirsel.nema.webapp.model.DiyMatlabTemplate"/>
+ 
 	<input name="executableBundleInput" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
-
+	
 	<on-start>
 		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
 		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
 		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
 		<set name="flowScope.executable" value="executableService.setExecutable(executableBundleInput)"/> 
 	</on-start>
+	
 
 	<view-state id="upload" model="executable">
 		<transition on="upload" to="arguments" >
-		<set name="flowScope.paramTemplate" value="executableService.getEmptyTemplate(executable.type)" />
+		
 		</transition>
 		<transition on="cancel" to="cancel" validate="false" />
 	</view-state>
@@ -25,38 +30,44 @@
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
 			<evaluate
-				expression="executableService.setCommonTemplate(requestParameters,flowScope.paramTemplate)" />
+				expression="executableService.setCommonTemplate(requestParameters,flowScope.plainTemplate)" />
 			<evaluate
-				expression="executableService.generateExecutableBundle(flowScope.paramTemplate,executable)"/>
+				expression="executableService.generateExecutableBundle(flowScope.plainTemplate,executable)"/>
 		</transition>
 	</view-state>
 
-	<view-state id="argumentsJava" model="paramTemplate">
+	<view-state id="argumentsJava" model="javaTemplate">
+		<on-entry>
+			<set name="flashScope.niceParams" value="executableService.getNiceParams(javaTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams"/>
+		</on-entry>
+	
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
 
 			<evaluate
-				expression="executableService.setCommonTemplate(requestParameters,paramTemplate)" />
+				expression="executableService.setCommonTemplate(requestParameters,javaTemplate)" />
 			<evaluate
-				expression="executableService.setJavaTemplate(requestParameters,executable,paramTemplate)" />
+				expression="executableService.setJavaTemplate(requestParameters,executable,javaTemplate)" />
 			<evaluate
-				expression="executableService.generateExecutableBundle(paramTemplate,flowScope.executable)"/>
+				expression="executableService.generateExecutableBundle(javaTemplate,flowScope.executable)"/>
 
 		</transition>
 	</view-state>
 
-	<view-state id="argumentsMatlab" model="flowScope.paramTemplate">
-
+	<view-state id="argumentsMatlab" model="matlabTemplate">
+		<on-entry>
+			<set name="flashScope.niceParams" value="executableService.getNiceParams(matlabTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams"/>
+		</on-entry>
 		<transition on="cancel" to="cancel" />
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
 
 			<evaluate
-				expression="executableService.setCommonTemplate(requestParameters,paramTemplate)" />
+				expression="executableService.setCommonTemplate(requestParameters,matlabTemplate)" />
 
 			<evaluate
-				expression="executableService.generateExecutableBundle(paramTemplate,flowScope.executable)"
+				expression="executableService.generateExecutableBundle(matlabTemplate,flowScope.executable)"
 				 />
 		</transition>
 	</view-state>
@@ -69,7 +80,6 @@
 	</view-state>
 
 	<action-state id="arguments">
-		<set name="flashScope.niceParams" value="executableService.getNiceParams(paramTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams"/>
 		<evaluate expression="executable.type" />
 		<transition on="JAVA" to="argumentsJava"/>
 		<transition on="MATLAB" to="argumentsMatlab"/>

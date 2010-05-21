@@ -22,7 +22,7 @@
 			<input type="button" value="+" onclick="add($('envMain'),$('envParam1'),2)" />
 			<br />
 			<div id='envMain'>
-				<c:forEach items="${paramTemplate.environmentMap}" var="item">
+				<c:forEach items="${plainTemplate.environmentMap}" var="item">
 					<div id='envParam0'>
 						<input name="variable" type="text" value="${item.key}" />
 						=
