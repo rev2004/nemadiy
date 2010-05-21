@@ -11,9 +11,16 @@ Roadmap 0.6.0
 
 
 * High Priority
+
+	[[1]] Support for saving the flow to the content repository.
+	
+	[[2]] Support for flows for the user uploaded binary/java/matlab code.
 	
 
 * Medium Priority
 	
+	[[1]] Break up the flow display into multiple pages.
+	
+	[[2]] Detailed user registration -it's currently being done externally by Cameron.
 	
 * Low Priority
