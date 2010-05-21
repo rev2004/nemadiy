@@ -24,7 +24,7 @@ public class UploadedExecutableBundleValidator {
 
       // Validate that an executable archive has been provided
       if(null==uploadedExecutable.getFileName() || "".equals(uploadedExecutable.getFileName())) {
-         messages.addMessage(new MessageBuilder().error().source("file")
+         messages.addMessage(new MessageBuilder().error().source("uploadedFile")
                .defaultText(
                      "Please select a JAR or ZIP file to upload that " +
                      "contains your executable code.").build());
@@ -58,12 +58,8 @@ public class UploadedExecutableBundleValidator {
       }
 
       // Now make sure the file is readable in ZIP format. Ensure not corrupt.
-      boolean isReadable = false;
-      try {
-         isReadable = uploadedExecutable.readableAsZip();
-      } catch (IOException e) {
-         logger.warning(e.getMessage());
-      }
+      boolean isReadable = uploadedExecutable.isReadableAsZip();
+
 
       if (!isReadable) {
          messages.addMessage(new MessageBuilder().error().source("file")
@@ -92,6 +88,7 @@ public class UploadedExecutableBundleValidator {
       } catch (IOException e) {
          logger.warning(e.getMessage());
       }
+      
    }
 
    public boolean isNullOrEmpty(String str) {

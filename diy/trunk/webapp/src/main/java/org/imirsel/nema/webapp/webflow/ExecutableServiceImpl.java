@@ -8,13 +8,13 @@ import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.imirsel.nema.contentrepository.client.ArtifactService;
 import org.imirsel.nema.contentrepository.client.CommandLineFormatter;
 import org.imirsel.nema.contentrepository.client.ResourceTypeService;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.InvalidCommandLineFlagException;
 import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
 import org.imirsel.nema.model.Param;
+import org.imirsel.nema.model.Path;
 import org.imirsel.nema.model.SysProperty;
 import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 import org.imirsel.nema.webapp.model.DiyJavaTemplate;
@@ -27,24 +27,7 @@ public class ExecutableServiceImpl {
 	static private Log logger = LogFactory.getLog(ExecutableServiceImpl.class);
 	private CommandLineFormatter commandLineFormatter;
 	private ResourceTypeService resourceServiceType;
-	
-	/**
-	 * @deprecated return the PredefinedCommandTemplate according to the type
-	 *             String
-	 * @param type
-	 * @return
-	 * 
-	 */
-	public VanillaPredefinedCommandTemplate getEmptyTemplate(String type) {
-		if (type.equalsIgnoreCase("plain"))
-			return new VanillaPredefinedCommandTemplate();
-		else if (type.equalsIgnoreCase("java"))
-			return new DiyJavaTemplate();
-		else if (type.equalsIgnoreCase("matlab"))
-			return new DiyMatlabTemplate();
-		else
-			return null;
-	}
+
 
 	/**
 	 * return the PredefinedCommandTemplate according to the type String
@@ -65,8 +48,8 @@ public class ExecutableServiceImpl {
 		default:
 			return null;
 		}
-
 	}
+
 	public NiceParams getNiceParams(List<Param> params){
 		return new NiceParams(params);
 	}
@@ -95,8 +78,11 @@ public class ExecutableServiceImpl {
 	public void setJavaTemplate(ParameterMap httpParam,
 			UploadedExecutableBundle executable,
 			JavaPredefinedCommandTemplate template) {
-	 //  executable.
-		template.addClasspath(null);// TODO
+
+	   List<Path> jarPaths = executable.getJarPaths();
+	   for(Path path:jarPaths) {
+	      template.addClasspath(path);
+	   }
 		String[] keys = getArray(httpParam, "sysVar");
 		String[] values = getArray(httpParam, "sysValue");
 		List<SysProperty> properties = new ArrayList<SysProperty>();
@@ -115,44 +101,6 @@ public class ExecutableServiceImpl {
 	public UploadedExecutableBundle setExecutable(UploadedExecutableBundle a){
 		if (a==null) return new UploadedExecutableBundle();
 		else return a;
-	}
-	
-	
-	
-	/**
-	 * @deprecated generate a map from two string arrays (key[] and values[])
-	 * @param variables
-	 * @param values
-	 * @return
-	 */
-	public Map<String, String> generateMap(String[] keys, String[] values) {
-		Map<String, String> map = new HashMap<String, String>();
-		int length = keys.length;
-		for (int i = 0; i < length; i++) {
-			if ((keys[i] != null) && (keys[i].length() != 0))
-				map.put(keys[i], values[i]);
-		}
-		logger.debug("generate map of size " + length);
-		return map;
-	}
-
-	/**
-	 * @deprecated
-	 * 
-	 * @param parameters
-	 * @return
-	 */
-	public Map<String, String> generateMap(ParameterMap parameters) {
-		String[] keys = parameters.getArray("variable");
-		String[] values = parameters.getArray("value");
-		Map<String, String> map = new HashMap<String, String>();
-		int length = keys.length;
-		for (int i = 0; i < length; i++) {
-			if ((keys[i] != null) && (keys[i].length() != 0))
-				map.put(keys[i], values[i]);
-		}
-		logger.debug("generate map of size " + length);
-		return map;
 	}
 	
 	/**
@@ -212,9 +160,11 @@ public class ExecutableServiceImpl {
 		template.setEnvironmentMap(map);
 
 	}
+	
 	private String output(String[] array) {
 		return ((array == null) ? "null" : String.valueOf(array.length));
 	}
+	
 	public void setCommonTemplate(ParameterMap httpParam,
 			VanillaPredefinedCommandTemplate template) {
 		String[] keys = getArray(httpParam, "variable");
@@ -223,7 +173,6 @@ public class ExecutableServiceImpl {
 		String[] others = getArray(httpParam, "other");
 		String[] outputs = getArray(httpParam, "output");
 		setCommonTemplate(keys, values, inputs, outputs, others, template);
-
 	}
 
 	private String[] getArray(ParameterMap httpParam, String key) {
@@ -236,14 +185,15 @@ public class ExecutableServiceImpl {
 				logger.debug("find an 1 value parameter " + values[0]);
 			}
 			return values;
-		} else
+		} else {
 			return null;
+		}
 	}
+	
 	public void setCommandLineFormatter(
 			CommandLineFormatter commandLineFormatter) {
 		this.commandLineFormatter = commandLineFormatter;
 	}
-
 	
 	public CommandLineFormatter getCommandLineFormatter() {
 		return commandLineFormatter;
