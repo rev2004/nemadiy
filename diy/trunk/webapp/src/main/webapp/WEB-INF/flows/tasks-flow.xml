@@ -17,8 +17,9 @@
 		</on-entry>
 		<transition on="show" to="displayFlowComponents">
 			<evaluate expression="flowService.getFlow(taskFlowModel.id)" result="flow" />
-			<evaluate expression="flowService.getComponents(flow.getUri())" result="componentList" />
+			<evaluate expression="flowService.getComponents(flow.getUri())" result="flowScope.componentList" />
 			<evaluate expression="tasksService.fillDefaultParameter(flow)" result="flowScope.parameterMap" />
+			<evaluate expression="tasksService.setDatatypeMaps(flow)" result="flowScope.datatypeMaps"></evaluate>
 		</transition>
 	</view-state>
 
@@ -81,9 +82,7 @@
 	<action-state id="editComponentProperties">
 		<evaluate expression="tasksService.getRoles()" result="conversationScope.userRoles" />
 		<evaluate expression="componentList.get(requestParameters.idx)" result="conversationScope.component" />
-		<evaluate expression="flowService.getComponentPropertyDataType(conversationScope.component, flow.getUri())"
-			result="conversationScope.datatypeMap">
-		</evaluate>
+		<set name="flowScope.datatypeMap" value="datatypeMaps[component]"/>
 		<evaluate expression='tasksService.isRemoteServiceComponent(datatypeMap)'>
 			<attribute name="name" value="isRemoteService" />
 		</evaluate>
