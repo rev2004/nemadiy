@@ -14,6 +14,14 @@ public class SysProperty implements Serializable{
 	 */
 	private static final long serialVersionUID = -1085496238767009164L;
 	private String name;
+	public String getName() {
+		return name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
 	private String value;
 	public SysProperty(String name,String value){
 		this.name =name;
