@@ -1,0 +1,13 @@
+                                    ------------------------------
+                                         Development documentation
+                                    ------------------------------
+                                         Amit Kumar
+                                    ------------------------------
+                                             2010-05-21
+                                    ------------------------------
+                                    
+                                    
+The core module of the DIY application has all the models and spring/hibernate specific services for persistence. Below is the enchanced
+entity relationship model of this application.
+
+[images/dbschema.png]

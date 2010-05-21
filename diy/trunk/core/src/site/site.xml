@@ -28,6 +28,7 @@
   
   <menu name="Home">
   	<item name="Index" href="index.html"/>
+  	<item name="Developer" href="developer.html"/>
   	<item name="Architecture" href="architecture.html"/>
   	
   </menu>
