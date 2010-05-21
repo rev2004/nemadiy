@@ -20,7 +20,7 @@ Component: ${component.name}
     <font color="green">${entry.value.description}</font>
     </fieldset>
   </c:forEach>
-  <input type="submit" name="_eventId_save" value="save" />
-  <input type="submit" name="_eventId_cancel" value="cancel" />
+  <input type="submit" name="_eventId_save" value="Save" />
+  <input type="submit" name="_eventId_cancel" value="Cancel" />
 </form:form>
 </body>

@@ -10,10 +10,7 @@
 </head>
 <body>
 	<form:form>
-
-		<fieldset id="pt1">
-			<form:errors path="*" />
-		</fieldset>
+		<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
 		<fieldset id="pt1">
 			<label>${executable.type} File:</label>
 			<c:out value="${executable.fileName}" />
@@ -128,9 +125,9 @@
 
 
 		<fieldset id="button">
-			<input type="submit" name="_eventId_review" value="review" />
-			<input type="submit" name="_eventId_back" value="back" />
-			<input type="submit" name="_eventId_cancel" value="cancel" />
+			<input type="submit" name="_eventId_review" value="Review" />
+			<input type="submit" name="_eventId_back" value="Back" />
+			<input type="submit" name="_eventId_cancel" value="Cancel" />
 		</fieldset>
 	</form:form>
 </body>

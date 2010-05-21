@@ -27,7 +27,7 @@ Component: ${component.name}
     ${taskFlowModel.executableMap[component].path}
  </fieldset>
   </c:if>
-  <input type="submit" name="_eventId_next" value="next" />
-  <input type="submit" name="_eventId_cancel" value="cancel" />
+  <input type="submit" name="_eventId_next" value="Next" />
+  <input type="submit" name="_eventId_cancel" value="Cancel" />
 </form:form>
 </body>

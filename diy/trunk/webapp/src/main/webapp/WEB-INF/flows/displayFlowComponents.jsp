@@ -7,13 +7,10 @@
 <p>${flow.description}</p>
 
 <div class="actionBox">
-  <p class="actionBox">Please enter the Task details, the name and
-    description and the parameters to run the flow.</p>
+  Please enter the Task details, the name and
+    description and the parameters to run the flow.
 </div>
-
-<br />
-<br />
-
+<br/>
 <div id="formcontainer_job">
   <div class="form_job">
     <form:form commandName="taskFlowModel">
@@ -38,9 +35,9 @@
       <input type="hidden" name="flowTemplateId" value="${flow.id}" />
       <input type="hidden" name="flowTemplateUri" value="${flow.uri}" />
       <fieldset id="button">
-      <input type="submit" name="_eventId_test" value="review" />
-      <input type="submit" name="_eventId_cancel" value="cancel" />
-      <input type="submit" name="_eventId_clear" value="clear" />
+      <input type="submit" name="_eventId_test" value="Review" />
+      <input type="submit" name="_eventId_cancel" value="Cancel" />
+      <input type="submit" name="_eventId_clear" value="Clear" />
       </fieldset>
     </form:form>
   </div>
