@@ -360,9 +360,9 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 
 
 	private String getName(String propertyName){
-		if(this.component==null){
+		/*if(this.component==null){ */
 			return propertyName;
-		}
+/*		}
 		int index = this.component.lastIndexOf("/");
 		if(index==-1){
 			return this.component+"_"+propertyName;
@@ -371,6 +371,7 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 		String cname=this.component.substring(second+1,index);
 		String count = this.component.substring(index+1);
 		return cname+"_"+count+"_"+propertyName;
+*/
 	}
 
 
