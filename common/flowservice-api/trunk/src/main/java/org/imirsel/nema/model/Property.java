@@ -61,6 +61,48 @@ public class Property implements Comparable<Property>, Serializable{
 		}
 		return o.getName().compareTo(this.getName());
 	}
+	
+	public boolean equals(Object object){
+		if(!(object instanceof Property)){
+			return false;
+		}
+		if(object == null){
+			return false;
+		}
+		Property property = (Property)object;
+		// name of the property cannot be null
+		if(property.name==null){
+			return false;
+		}
+		
+		 if(this.name!= null){
+			 if(this.value==null && property.value==null){
+				 return this.name.equals(property.name);
+			 }else if(this.value!=null && property.value !=null){ // none of the values are null
+				 if(property.name.equals(this.name) &&  
+							property.value.equals(this.value)){ // compare the name and the value
+						return true;
+					}
+					
+			 }else{ // one of them has a null value not both
+				 return false;
+			 }
+			}
+		 return false;
+	}
+	
+	public int hashCode(){
+		int hash=1;
+		hash = hash * 31 
+        + (this.name == null ? 0 : this.name.hashCode())
+        + (this.value == null ? 0 : this.value.hashCode())
+        +  (this.description == null ? 0 : this.description.hashCode())
+        +  (this.valueList == null ? 0 : this.valueList.hashCode())
+        +  (this.labelList == null ? 0 : this.labelList.hashCode())
+		+  (this.defaultValue == null ? 0 : this.defaultValue.hashCode());
+		return hash;
+	}
+	
 	public void setEnumeratedValueList(ArrayList<String> labelList) {
 		this.labelList=labelList;
 		
@@ -74,6 +116,16 @@ public class Property implements Comparable<Property>, Serializable{
 	}
 	public String[] getLabelList() {
 		return labelList.toArray(new String[0]);
+	}
+	
+	public static void main(String[] args){
+		Property p = new Property();
+		p.setName("name");
+		p.setValue("value");
+		Property p1 = new Property();
+		p1.setName("value");
+		p1.setValue("name");
+		System.out.println(p.hashCode() +"  " + p1.hashCode());
 	}
 
 }
