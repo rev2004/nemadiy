@@ -25,12 +25,12 @@
         <label>Please enter Task Description:</label>
         <form:textarea path="description" rows="5" cols="50" />
       </fieldset>
-      <c:forEach items="${componentList}" var="component" varStatus="status">
-        <c:if test="${!component.hidden}">
-          <fieldset id="${component.name}">
-          <c:out value="${component.name}" />
+      <c:forEach items="${datatypeMaps}" var="component" varStatus="status">
+        <c:if test="${!component.key.hidden}">
+          <fieldset id="${component.key.name}">
+          <c:out value="${component.key.name}" />
           <br/>
-          <label>${component.description}</label>
+          <label>${component.key.description}</label>
           <a href="${flowExecutionUrl}&idx=${status.index}&_eventId=edit">edit</a>
           </fieldset>
         </c:if>

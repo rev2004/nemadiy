@@ -20,8 +20,7 @@ Component: ${component.name}
     <font color="green">${property.value.description}</font>
     </fieldset>
   </c:forEach>
-  ${taskFlowModel.executableMap} ${component.name}  ${componentList[0].name }  ${conversationScope.component.name }
-  ${datatypeMap}
+  
   <c:if test="${taskFlowModel.executableMap[component]!=null}">
     <fieldset id="pt1">
     <label for="jobname"> Profile: </label>
