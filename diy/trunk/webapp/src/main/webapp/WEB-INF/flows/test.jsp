@@ -16,10 +16,10 @@
 	</c:forEach>
 </table>
 <form:form>
-	<input type="submit" name="_eventId_test" value="test" />
+	<input type="submit" name="_eventId_test" value="Test" />
 
-	<input type="submit" name="_eventId_edit" value="edit"/>
-	<input type="submit" name="_eventId_cancel" value="cancel" />
+	<input type="submit" name="_eventId_edit" value="Edit"/>
+	<input type="submit" name="_eventId_cancel" value="Cancel" />
 	
 </form:form>
 </body>

@@ -10,7 +10,7 @@
 <div style="margin-bottom:5px">Specify Arguments for the Executable</div>
 
 <form:form commandName="paramTemplate">
-	<fieldset><form:errors path="*" /></fieldset>
+	<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
 	<fieldset>
 	   <label>Uploaded Executable Archive:</label> ${executable.fileName}
 	</fieldset>

@@ -16,6 +16,7 @@
 		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/FlowManager.getFlowList">
 		    <Item name="MyJobs" title="My Tasks" page="/get/JobManager.getUserJobs" width="120"/>
             <Item name="MySubmissions" title="My Submissions" page="/get/JobManager.getSubmissions" width="120"/>
+            <Item name="flowTemplate" title="Create w/ Template" page="get/task" width="120"/>
             <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/FlowManager.getTemplateFlows?type=extraction" width="120"/>
             <Item name="JobTypeClassification" title="Classification" page="/get/FlowManager.getTemplateFlows?type=classification" width="120"/>
      	    <Item name="JobTypeEvaluation" title="Evaluation" page="/get/FlowManager.getTemplateFlows?type=evaluation" width="120"/>
