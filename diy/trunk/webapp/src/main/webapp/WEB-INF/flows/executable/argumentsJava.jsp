@@ -9,7 +9,7 @@
 
 <div style="margin-bottom:5px">Specify Arguments for the Executable</div>
 
-<form:form commandName="paramTemplate">
+<form:form   commandName="javaTemplate">
 	<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
 	<fieldset>
 	   <label>Uploaded Executable Archive:</label> ${executable.fileName}
@@ -44,16 +44,16 @@
     </fieldset>
 	<fieldset>
         <label>Memory:</label>
-        <form:select path="memoryOption" items="${paramTemplate.memoryOptions}" itemLabel="label" itemValue="code" />
+        <form:select path="memoryOption" items="${javaTemplate.memoryOptions}" itemLabel="label" itemValue="code"  />
     </fieldset>
 	<fieldset>
         <label>System property:</label>
         <input type="button" value="+" onclick="add($('sysMain'),$('sysParam1'),2)" /><br />
         <div id='sysMain'>
-        <c:forEach	items="${paramTemplate.properties}" var="item">
+        <c:forEach	items="${javaTemplate.properties}" var="item">
 		<div id='sysParam0'>
-			<input name="variable" type="text"	value="${item.key}" /> = 
-			<input name="value" type="text"	value="${item.value}" />
+			<input name="sysVar" type="text"	value="${item.name}" /> = 
+			<input name="sysValue" type="text"	value="${item.value}" />
 			<input type="button" value="-"	onclick="removeNode(this,'sysParam1')" />
 		</div>
 	</c:forEach>
@@ -68,7 +68,7 @@
 	<fieldset id="pt1"><label>Environment Variables:</label> <input
 		type="button" value="+" onclick="add($('envMain'),$('envParam1'),2)" /><br />
 	<div id='envMain'>
-	<c:forEach	items="${paramTemplate.environmentMap}" var="item">
+	<c:forEach	items="${javaTemplate.environmentMap}" var="item">
 		<div id='envParam0'>
 			<input name="variable" type="text"	value="${item.key}" /> = 
 			<input name="value" type="text"	value="${item.value}" />

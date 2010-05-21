@@ -17,10 +17,10 @@
 		    <Item name="MyJobs" title="My Tasks" page="/get/JobManager.getUserJobs" width="120"/>
             <Item name="MySubmissions" title="My Submissions" page="/get/JobManager.getSubmissions" width="120"/>
             <Item name="flowTemplate" title="Create w/ Template" page="get/task" width="120"/>
-            <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/FlowManager.getTemplateFlows?type=extraction" width="120"/>
-            <Item name="JobTypeClassification" title="Classification" page="/get/FlowManager.getTemplateFlows?type=classification" width="120"/>
-     	    <Item name="JobTypeEvaluation" title="Evaluation" page="/get/FlowManager.getTemplateFlows?type=evaluation" width="120"/>
-            <Item name="JobTypeAnalysis" title="Analysis" page="/get/FlowManager.getTemplateFlows?type=analysis" width="120"/>
+            <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/task?type=extraction" width="120"/>
+            <Item name="JobTypeClassification" title="Classification" page="/get/task?type=classification" width="120"/>
+     	    <Item name="JobTypeEvaluation" title="Evaluation" page="/get/task?type=evaluation" width="120"/>
+            <Item name="JobTypeAnalysis" title="Analysis" page="/get/task?type=analysis" width="120"/>
      	</Menu>
    
    

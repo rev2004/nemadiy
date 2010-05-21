@@ -94,8 +94,10 @@ public class TasksServiceImpl {
 	 * @throws ContentRepositoryServiceException
 	 */
 	public void addExecutable(final Component component,
-			final Map<String, Property> datatypeMap, final UploadedExecutableBundle bundle, final UUID uuid,
-			Map<Component, ResourcePath> executableMap,final MessageContext messageContext)
+			final Map<String, Property> datatypeMap,
+			final UploadedExecutableBundle bundle, final UUID uuid,
+			Map<Component, ResourcePath> executableMap,
+			final MessageContext messageContext)
 			throws ContentRepositoryServiceException {
 		logger.debug("add executable url into parameter for "
 				+ bundle.getFileName());
@@ -117,21 +119,42 @@ public class TasksServiceImpl {
 				artifactService.removeExecutableBundle(credential, oldPath);
 		}
 		executableMap.put(component, path);
-		if (path != null){
+		if (path != null) {
 			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
-			messageContext.addMessage(new MessageBuilder().error()
-                  .defaultText(
-                        "success uploaed executable bundle"+bundle.getFileName()).build());
-			logger.debug("resource path is "+path);
-		}
-		else
+			messageContext.addMessage(new MessageBuilder().error().defaultText(
+					"success uploaed executable bundle" + bundle.getFileName())
+					.build());
+			logger.debug("resource path is " + path);
+		} else
 			throw new ContentRepositoryServiceException(
 					"error in saving the executable bundle");
 
 	}
+
 	
-	
-	
+	/**
+	 * return the list of flow templates belong to type, all templates are returned if type is not valid.  
+	 * used a very lenient criteria, check both flowtype and keywords
+	 * @param type controlled by {@link Flow.FlowType}, first letter needs capitalize. 
+	 * @return
+	 */
+	public List<Flow> getFlowTemplates(String type) {
+		Flow.FlowType flowType = (type==null?null:Flow.FlowType.toFlowType(type));
+
+		Set<Flow> flowSet = this.flowService.getFlowTemplates();
+		List<Flow> list = new ArrayList<Flow>();
+		if (flowType != null) {
+			for (Flow flow : flowSet) {
+				if ((flow.getType().equals(flowType)))
+					list.add(flow);
+
+			}
+		} else {
+			list.addAll(flowSet);
+		}
+		return list;
+	}
+
 	public UploadedExecutableBundle findBundle(ResourcePath path,
 			Map<String, Property> datatypeMap) {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
@@ -140,7 +163,7 @@ public class TasksServiceImpl {
 			if ((path != null) && (artifactService.exists(credential, path))) {
 				ExecutableBundle oldBundle = artifactService
 						.getExecutableBundle(credential, path);
-				logger.debug("find bundle "+oldBundle.getFileName());
+				logger.debug("find bundle " + oldBundle.getFileName());
 				bundle = new UploadedExecutableBundle(oldBundle);
 				logger.debug("success convert it into a uploaded bundle");
 				if (bundle == null)
@@ -251,8 +274,9 @@ public class TasksServiceImpl {
 	 * 
 	 * @param datatypeMap
 	 */
-	public List<Property> hideExecutableProperties(Map<String, Property> datatypeMap) {
-		List<Property> hiddenProperties=new ArrayList<Property>();
+	public List<Property> hideExecutableProperties(
+			Map<String, Property> datatypeMap) {
+		List<Property> hiddenProperties = new ArrayList<Property>();
 		hiddenProperties.add(datatypeMap.remove(REMOTE_COMPONENT));
 		hiddenProperties.add(datatypeMap.remove(CREDENTIALS));
 		hiddenProperties.add(datatypeMap.remove(EXECUTABLE_URL));
@@ -260,8 +284,9 @@ public class TasksServiceImpl {
 		hiddenProperties.add(datatypeMap.remove(OS));
 		return hiddenProperties;
 	}
-	public Map<String,Property> shownMap(Map<String, Property> datatypeMap) {
-		Map<String,Property> shown=new HashMap<String,Property>();
+
+	public Map<String, Property> shownMap(Map<String, Property> datatypeMap) {
+		Map<String, Property> shown = new HashMap<String, Property>();
 		shown.putAll(datatypeMap);
 		shown.remove(REMOTE_COMPONENT);
 		shown.remove(CREDENTIALS);
@@ -270,6 +295,7 @@ public class TasksServiceImpl {
 		shown.remove(OS);
 		return shown;
 	}
+
 	/**
 	 * return Boolean (not boolean) value for webflow mapping.
 	 * 
@@ -296,7 +322,8 @@ public class TasksServiceImpl {
 		for (String key : dataMap.keySet()) {
 			Property property = dataMap.get(key);
 			List<DataTypeBean> ltb = property.getDataTypeBeanList();
-			if ((ltb != null)&&(!ltb.isEmpty())&&(ltb.get(0).getRenderer()!=null)			
+			if ((ltb != null) && (!ltb.isEmpty())
+					&& (ltb.get(0).getRenderer() != null)
 					&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
 				MultipartFile file = parameters.getMultipartFile(property
 						.getName());
@@ -464,9 +491,6 @@ public class TasksServiceImpl {
 		return 1;
 	}
 
-
-
-
 	/**
 	 * change to this later after fix the taglib.
 	 * 
@@ -478,7 +502,7 @@ public class TasksServiceImpl {
 	 * @throws MeandreServerException
 	 */
 	public Job testRun(Flow flow,
-			Map<Component,  Map<String,Property> > datatypeMaps, String name,
+			Map<Component, Map<String, Property>> datatypeMaps, String name,
 			String description) throws MeandreServerException {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 		for (Component component : datatypeMaps.keySet()) {
@@ -547,7 +571,8 @@ public class TasksServiceImpl {
 
 	}
 
-	public Job run(Flow flow, Map<Component, Map<String,Property>> datatypeMaps, String name,
+	public Job run(Flow flow,
+			Map<Component, Map<String, Property>> datatypeMaps, String name,
 			String description) throws MeandreServerException {
 		return this.testRun(flow, datatypeMaps, name, description);
 	}

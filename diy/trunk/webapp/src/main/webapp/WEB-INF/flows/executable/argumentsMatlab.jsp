@@ -7,7 +7,7 @@
 
 </head>
 <body>
-	<form:form commandName="paramTemplate">
+	<form:form commandName="matlabTemplate">
 		<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
 		<fieldset id="pt1">
 			<label>${executable.type}
@@ -69,7 +69,7 @@
 			<input type="button" value="+" onclick="add($('envMain'),$('envParam1'),2)" />
 			<br />
 			<div id='envMain'>
-				<c:forEach items="${paramTemplate.environmentMap}" var="item">
+				<c:forEach items="${matlabTemplate.environmentMap}" var="item">
 					<div id='envParam0'>
 						<input name="variable" type="text" value="${item.key}" />
 						=
