@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -22,6 +23,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
 import org.imirsel.nema.contentrepository.client.ArtifactService;
 import org.imirsel.nema.contentrepository.client.CommandLineFormatter;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
@@ -49,6 +51,7 @@ import org.imirsel.nema.webapp.model.DiyJavaTemplate;
 import org.imirsel.nema.webapp.model.DiyMatlabTemplate;
 import org.imirsel.nema.webapp.model.NiceParams;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -78,15 +81,20 @@ public class TasksServiceImpl {
 	final static String GROUP = "_group";
 
 	/**
-	 * upload ExecutableBundle to content repository, remove the old executableBundle if there is one; 
-	 * replace/add the new ResourcePath of executablebundle into the executableMap; 
+	 * upload ExecutableBundle to content repository, remove the old
+	 * executableBundle if there is one; replace/add the new ResourcePath of
+	 * executablebundle into the executableMap;
+	 * 
 	 * @param component
-	 * @param parameters  modified, the new path replace the old/is added
+	 * @param parameters
+	 *            modified, the new path replace the old/is added
 	 * @param os
 	 * @param group
 	 * @param bundle
 	 * @param uuid
-	 * @param executableMap Note that this map is going to be modified, old path is replaced by new path. 
+	 * @param executableMap
+	 *            Note that this map is going to be modified, old path is
+	 *            replaced by new path.
 	 * @throws ContentRepositoryServiceException
 	 */
 	public void addExecutable(final Component component,
@@ -107,6 +115,7 @@ public class TasksServiceImpl {
 				"true");
 		parameters.put(getName(component.getInstanceUri(), OS), os.getValue());
 		parameters.put(getName(component.getInstanceUri(), GROUP), group);
+		
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
 				uuid.toString(), bundle);
 		if (executableMap.containsKey(component)) {
@@ -124,21 +133,74 @@ public class TasksServiceImpl {
 
 	}
 
+	
+	/**TODO change after migrate to datamap back tag
+	 * upload ExecutableBundle to content repository, remove the old
+	 * executableBundle if there is one; replace/add the new ResourcePath of
+	 * executablebundle into the executableMap;
+	 * 
+	 * @param component
+	 * @param parameters
+	 *            modified, the new path replace the old/is added
+	 * @param os
+	 * @param group
+	 * @param bundle
+	 * @param uuid
+	 * @param executableMap
+	 *            Note that this map is going to be modified, old path is
+	 *            replaced by new path.
+	 * @throws ContentRepositoryServiceException
+	 */
+//	public void addExecutable(final Component component,
+//			final Map<String, Property> datatypeMap, final OsDataType os,
+//			final String group, final ExecutableBundle bundle, final UUID uuid,
+//			Map<Component, ResourcePath> executableMap)
+//			throws ContentRepositoryServiceException {
+//		logger.debug("add executable url into parameter for "
+//				+ bundle.getFileName());
+//		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+//		logger.debug("with credential " + credential.getUserID() + " string: "
+//				+ new String(credential.getPassword()));
+//		String credentialString = credential.getUserID() + ":"
+//				+ new String(credential.getPassword());
+//		datatypeMap.get(CREDENTIALS).setValue(credentialString);
+//		datatypeMap.get(REMOTE_COMPONENT).setValue("true");
+//		datatypeMap.get(OS).setValue(os.getValue());
+//		datatypeMap.get(GROUP).setValue(group);
+//		
+//		ResourcePath path = artifactService.saveExecutableBundle(credential,
+//				uuid.toString(), bundle);
+//		if (executableMap.containsKey(component)) {
+//			ResourcePath oldPath = executableMap.get(component);
+//			if (artifactService.exists(credential, oldPath))
+//				artifactService.removeExecutableBundle(credential, oldPath);
+//		}
+//		executableMap.put(component, path);
+//		if (path != null)
+//			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
+//		else
+//			throw new ContentRepositoryServiceException(
+//					"error in saving the executable bundle");
+//
+//	}
+	
+	
 	public UploadedExecutableBundle findBundle(ResourcePath path,
 			Map<String, Property> datatypeMap) {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		UploadedExecutableBundle bundle = null;
-		 try {
-			if ((path!=null) && (artifactService.exists(credential, path))){
-			 ExecutableBundle
-			 oldBundle=artifactService.getExecutableBundle(credential, path);
-			 bundle=(UploadedExecutableBundle)oldBundle;
-			 if (bundle==null) bundle=new UploadedExecutableBundle();
-			 bundle.setPreferredOs(datatypeMap.get(CREDENTIALS).getValue());
-			 bundle.setGroup(datatypeMap.get(GROUP).getValue());
-			 }
+		try {
+			if ((path != null) && (artifactService.exists(credential, path))) {
+				ExecutableBundle oldBundle = artifactService
+						.getExecutableBundle(credential, path);
+				bundle = (UploadedExecutableBundle) oldBundle;
+				if (bundle == null)
+					bundle = new UploadedExecutableBundle();
+				bundle.setPreferredOs(datatypeMap.get(CREDENTIALS).getValue());
+				bundle.setGroup(datatypeMap.get(GROUP).getValue());
+			}
 		} catch (ContentRepositoryServiceException e) {
-			logger.error(e,e);
+			logger.error(e, e);
 		}
 		return bundle;
 	}
@@ -170,8 +232,25 @@ public class TasksServiceImpl {
 
 		return parameters;
 	}
-	
-	public NiceParams getNiceParams(List<Param> params){
+
+	public Map<Component, Map<String, Property>> setDatatypeMaps(Flow flow) {
+
+		Map<Component, Map<String, Property>> datatypeMaps = new TreeMap<Component, Map<String, Property>>();
+		List<Component> componentList = flowService
+				.getComponents(flow.getUri());
+		logger.info("componentList: " + componentList.size());
+		for (int i = 0; i < componentList.size(); i++) {
+			Component component = componentList.get(i);
+			datatypeMaps.put(component, flowService
+					.getComponentPropertyDataType(component, flow.getUri()));
+
+		}
+		logger.debug("done populating default parameters now.");
+
+		return datatypeMaps;
+	}
+
+	public NiceParams getNiceParams(List<Param> params) {
 		return new NiceParams(params);
 	}
 
@@ -238,7 +317,7 @@ public class TasksServiceImpl {
 	public void setJavaTemplate(ParameterMap httpParam,
 			UploadedExecutableBundle executable,
 			JavaPredefinedCommandTemplate template) {
-	 //  executable.
+		// executable.
 		template.addClasspath(null);// TODO
 		String[] keys = getArray(httpParam, "sysVar");
 		String[] values = getArray(httpParam, "sysValue");
@@ -255,13 +334,13 @@ public class TasksServiceImpl {
 
 	}
 
-	public UploadedExecutableBundle setExecutable(UploadedExecutableBundle a){
-		if (a==null) return new UploadedExecutableBundle();
-		else return a;
+	public UploadedExecutableBundle setExecutable(UploadedExecutableBundle a) {
+		if (a == null)
+			return new UploadedExecutableBundle();
+		else
+			return a;
 	}
-	
-	
-	
+
 	/**
 	 * @deprecated generate a map from two string arrays (key[] and values[])
 	 * @param variables
@@ -482,6 +561,46 @@ public class TasksServiceImpl {
 	public Job run(Flow flow, Map<String, String> parameters, String name,
 			String description) throws MeandreServerException {
 		return this.testRun(flow, parameters, name, description);
+	}
+
+	/**
+	 * Update the dataMap with submitted data for one component
+	 * 
+	 * @param parameters
+	 *            http request parameters
+	 * @param dataMap
+	 *            dataMap for updated
+	 */
+	public void updateDataMap(ParameterMap parameters,
+			Map<String, Property> dataMap) {
+		for (String key : dataMap.keySet()) {
+			Property property = dataMap.get(key);
+			List<DataTypeBean> ltb = property.getDataTypeBeanList();
+			if ((ltb != null)
+					&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
+				MultipartFile file = parameters.getMultipartFile(property
+						.getName());
+
+				// TODO Save the file
+				// String address=null;
+				// File uploadedFile = new File(uploadDir + File.separator
+				// + fileName);
+				// item.write(uploadedFile);
+				// logger.debug("file uploaded: " + fileName
+				// + uploadedFile.getAbsolutePath());
+				// String webDir =
+				// uploadDir.substring(servletContext.getRealPath(
+				// "/").length());
+				// paramMap.put(fieldName, "http://" + req.getServerName() + ":"
+				// + req.getServerPort() + req.getContextPath() + webDir
+				// + fileName);
+				// property.setValue(address);
+
+			} else {
+				property.setValue(parameters.get(property.getName()));
+			}
+			dataMap.put(key, property);
+		}
 	}
 
 	/**
@@ -707,6 +826,85 @@ public class TasksServiceImpl {
 		return job;
 
 	}
+
+	/**TODO change to this later after fix the taglib. 
+	 * 
+	 * @param flow
+	 * @param datatypeMaps
+	 * @param name
+	 * @param description
+	 * @return
+	 * @throws MeandreServerException
+	 */
+//	public Job testRun(Flow flow,
+//			Map<Component, Map<String, Property>> datatypeMaps, String name,
+//			String description) throws MeandreServerException {
+//		HashMap<String, String> paramMap = new HashMap<String, String>();
+//	for (Component component:datatypeMaps.keySet()){
+//			Map<String, Property> m = flowService.getComponentPropertyDataType(
+//					component, flow.getUri());
+//			for (Entry<String, Property> entry : m.entrySet()) {
+//				paramMap.put(getName(component.getInstanceUri(), entry
+//						.getKey()), entry.getValue().getDefaultValue()
+//						.toString());
+//			}
+//		}
+//	String token = System.currentTimeMillis() + "-token";
+//	String flowId = flow.getId().toString();
+//	String flowUri = flow.getUri();
+//
+//	logger.debug("start to test run");
+//	if (flowId == null || flowUri == null) {
+//		logger
+//				.error("flowId or flowUri is null -some severe error happened...");
+//		throw new MeandreServerException("flowId or flowUri is null");
+//	}
+//	User user = userManager.getCurrentUser();
+//	if (user == null) {
+//		logger.error("user is null");
+//		throw new MeandreServerException("Could not get the user");
+//		// user = userManager.getUserByUsername("admin");
+//	}
+//
+//	Long longFlowId = Long.parseLong(flowId);
+//	Flow templateFlow = this.flowService.getFlow(longFlowId);
+//
+//	if (name == null) {
+//		name = paramMap.get("name");
+//		if (name == null) {
+//			name = templateFlow.getName() + File.separator + token;
+//		}
+//	}
+//	if (description == null) {
+//		description = paramMap.get("description");
+//		if (description == null) {
+//			description = templateFlow.getDescription() + " for flow: "
+//					+ token;
+//		}
+//	}
+//	long userId = user.getId();
+//	Flow instance = new Flow();
+//	instance.setCreatorId(userId);
+//	instance.setDateCreated(new Date());
+//	instance.setInstanceOf(templateFlow);
+//	instance.setKeyWords(templateFlow.getKeyWords());
+//	instance.setName(name);
+//	instance.setTemplate(false);
+//	// instance.setUri(newFlowUri);
+//	instance.setDescription(description);
+//	instance.setType(templateFlow.getType());
+//	instance.setTypeName(templateFlow.getTypeName());
+//
+//	instance = this.flowService.createNewFlow(userManager
+//			.getCurrentUserCredentials(), instance, paramMap, flowUri, user
+//			.getId());
+//	long instanceId = instance.getId();
+//
+//	Job job = this.flowService.executeJob(token, name, description,
+//			instanceId, user.getId(), user.getEmail());
+//	return job;
+//
+//	}
 
 	// TODO this method is the same as the one in ComponentPropertyTag, might
 	// need some
