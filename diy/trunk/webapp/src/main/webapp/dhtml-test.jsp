@@ -10,6 +10,7 @@ var templateDiv = $('param1');
 var clone = $(templateDiv.cloneNode(true));
 count++;
 clone.id="param"+count;
+$(clone).down('input').value="";
 $(templateDiv).insert({after: clone}); 
 }
 
