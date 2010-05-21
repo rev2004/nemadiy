@@ -4,13 +4,13 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-	<input name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
+	<input name="executableBundleInput" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 
 	<on-start>
 		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
 		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
 		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
-		<set name="flowScope.executable" value="executableService.setExecutable(executableBundle)"/> 
+		<set name="flowScope.executable" value="executableService.setExecutable(executableBundleInput)"/> 
 	</on-start>
 
 	<view-state id="upload" model="executable">
@@ -69,7 +69,7 @@
 	</view-state>
 
 	<action-state id="arguments">
-	<set name="flashScope.niceParams" value="executableService.getNiceParams(paramTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams"/>
+		<set name="flashScope.niceParams" value="executableService.getNiceParams(paramTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams"/>
 		<evaluate expression="executable.type" />
 		<transition on="JAVA" to="argumentsJava"/>
 		<transition on="MATLAB" to="argumentsMatlab"/>
@@ -82,9 +82,6 @@
 
 	<end-state id="success">
 	   
-		<output name="executableOs" value="resource.getOsDataType(executable.preferredOs)"
-			type="org.imirsel.nema.model.OsDataType" />
-		<output name="executableGroup" value="executable.group" type="java.lang.String" />
 		<output name="executableBundle" value="executable"
 			type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 	</end-state>

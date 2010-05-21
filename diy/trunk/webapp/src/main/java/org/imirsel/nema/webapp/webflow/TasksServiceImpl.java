@@ -119,9 +119,10 @@ public class TasksServiceImpl {
 		executableMap.put(component, path);
 		if (path != null){
 			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
-			messageContext.addMessage(new MessageBuilder().info()
+			messageContext.addMessage(new MessageBuilder().error()
                   .defaultText(
                         "success uploaed executable bundle"+bundle.getFileName()).build());
+			logger.debug("resource path is "+path);
 		}
 		else
 			throw new ContentRepositoryServiceException(
@@ -139,7 +140,9 @@ public class TasksServiceImpl {
 			if ((path != null) && (artifactService.exists(credential, path))) {
 				ExecutableBundle oldBundle = artifactService
 						.getExecutableBundle(credential, path);
-				bundle = (UploadedExecutableBundle) oldBundle;
+				logger.debug("find bundle "+oldBundle.getFileName());
+				bundle = new UploadedExecutableBundle(oldBundle);
+				logger.debug("success convert it into a uploaded bundle");
 				if (bundle == null)
 					bundle = new UploadedExecutableBundle();
 				bundle.setPreferredOs(datatypeMap.get(CREDENTIALS).getValue());
