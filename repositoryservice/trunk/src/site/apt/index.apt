@@ -13,16 +13,6 @@ Nema Repository Service
 
 Introduction
 
-Getting Started
-
-* Using Repository Service
-		
-		
-** Prerequisites
-		
-		
-** Execution parameters
-		
-		The repository service requires following parameters:
-		
-			
+	The Nema Repository Service provides access to the collection, tracks, datasets, ground truth and other entities
+	that make up the Nema Analytics. This is a work in progress and ultimately this repository will merge with the
+	Nema Content Repository JSR 170, and Nema Analytics codebase.
