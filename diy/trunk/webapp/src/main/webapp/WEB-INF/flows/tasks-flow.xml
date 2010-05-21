@@ -52,17 +52,21 @@
 
 	<view-state id="editSimpleComponentProperties">
 		<transition on="save" to="displayFlowComponents">
-			<evaluate expression="tasksService.saveParameter(flowRequestContext)" result="flowScope.parameterMap" />
+			<!-- <evaluate expression="tasksService.saveParameter(flowRequestContext)" result="flowScope.parameterMap" />-->
+			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
 
 	<view-state id="editRemoteServiceComponentProperties">
 		<on-entry>
-			<evaluate expression="tasksService.hideExecutableProperties(datatypeMap)" />
+			<evaluate expression="tasksService.shownMap(datatypeMap)" result="viewScope.shownMap" />
 		</on-entry>
+		
 		<transition on="next" to="generateExecutable">
-			<evaluate expression="tasksService.saveParameter(flowRequestContext)" result="flowScope.parameterMap" />
+		    
+			<!-- <evaluate expression="tasksService.saveParameter(flowRequestContext)" result="flowScope.parameterMap" />-->
+			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
@@ -73,8 +77,14 @@
 		<output name="executableOs" type="org.imirsel.nema.model.OsDataType" />
 		<output name="executableGroup" type="java.lang.String" />
 		<transition on="success" to="displayFlowComponents">
+			<!--
+				<evaluate
+				expression="tasksService.addExecutable(component,parameterMap,executableOs,executableGroup,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap)"
+				/>
+			-->
 			<evaluate
-				expression="tasksService.addExecutable(component,parameterMap,executableOs,executableGroup,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap)" />
+				expression="tasksService.addExecutable(component,datatypeMap,executableOs,executableGroup,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap)" />
+
 		</transition>
 		<transition on="cancel" to="editRemoteServiceComponentProperties" />
 	</subflow-state>
@@ -82,7 +92,7 @@
 	<action-state id="editComponentProperties">
 		<evaluate expression="tasksService.getRoles()" result="conversationScope.userRoles" />
 		<evaluate expression="componentList.get(requestParameters.idx)" result="conversationScope.component" />
-		<set name="flowScope.datatypeMap" value="datatypeMaps[component]"/>
+		<set name="flowScope.datatypeMap" value="datatypeMaps[component]" />
 		<evaluate expression='tasksService.isRemoteServiceComponent(datatypeMap)'>
 			<attribute name="name" value="isRemoteService" />
 		</evaluate>

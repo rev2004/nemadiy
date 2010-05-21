@@ -10,19 +10,24 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.DynamicAttributes;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.annotations.parser.beans.BooleanDataTypeBean;
 import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
 import org.imirsel.nema.annotations.parser.beans.DoubleDataTypeBean;
 import org.imirsel.nema.annotations.parser.beans.IntegerDataTypeBean;
 import org.imirsel.nema.annotations.parser.beans.StringDataTypeBean;
 import org.imirsel.nema.model.Property;
+import org.imirsel.nema.webapp.webflow.TasksServiceImpl;
 
 /**This tag renders the component property
  *  -Added support for readonly and hidden
  * @author kumaramit01
  *
  */
-public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAttributes{
+public class ComponentPropertyTagAlt  extends SimpleTagSupport implements DynamicAttributes{
+	static private Log logger = LogFactory.getLog(ComponentPropertyTagAlt.class);
+
 	private ArrayList<String> keys = new ArrayList<String>();
 	private ArrayList<String> values = new ArrayList<String>();
 	private Property property;
@@ -79,6 +84,7 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 		List<DataTypeBean> ltb =this.property.getDataTypeBeanList();
 		String htmlWidget=null;
 		if(ltb.isEmpty()){
+			logger.debug("empty type bean:"+property.getName());
 			htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue(),false);
 		}else{
 			DataTypeBean dataTypeBean = ltb.get(0);
@@ -86,9 +92,9 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 			canEdit = allowedToEdit(editRole);
 			if(dataTypeBean instanceof StringDataTypeBean){
 				StringDataTypeBean sd = (StringDataTypeBean) dataTypeBean;
-				System.out.println("Came here.... String DatsTypeBean "+ sd.getRenderer());
+				logger.debug("Came here.... String DatsTypeBean "+ sd.getRenderer());
 				if(sd.getRenderer()==null || sd.getRenderer().endsWith("StringRenderer")){
-					System.out.println("1");
+					logger.debug("1");
 					if(sd.getValueList()!=null){
 						if(sd.getValueList().length>0){
 							System.out.println("2");
@@ -98,7 +104,7 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 							htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
 						}
 					}else{
-						System.out.println("1-other");
+						logger.debug("1-other");
 						htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
 					}
 				}else if(sd.getRenderer().endsWith("FileRenderer")){
@@ -360,9 +366,9 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 
 
 	private String getName(String propertyName){
-	if(this.component==null){ 
+		/*if(this.component==null){ */
 			return propertyName;
-	}
+/*		}
 		int index = this.component.lastIndexOf("/");
 		if(index==-1){
 			return this.component+"_"+propertyName;
@@ -371,7 +377,7 @@ public class ComponentPropertyTag  extends SimpleTagSupport implements DynamicAt
 		String cname=this.component.substring(second+1,index);
 		String count = this.component.substring(index+1);
 		return cname+"_"+count+"_"+propertyName;
-
+*/
 	}
 
 

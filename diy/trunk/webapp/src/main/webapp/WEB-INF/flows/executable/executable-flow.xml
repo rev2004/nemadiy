@@ -10,12 +10,12 @@
 		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
 		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
 		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
-		<set name="flowScope.executable" value="tasksService.setExecutable(executableBundle)"/> 
+		<set name="flowScope.executable" value="executableService.setExecutable(executableBundle)"/> 
 	</on-start>
 
 	<view-state id="upload" model="executable">
 		<transition on="upload" to="arguments" >
-		<set name="flowScope.paramTemplate" value="tasksService.getEmptyTemplate(executable.type)" />
+		<set name="flowScope.paramTemplate" value="executableService.getEmptyTemplate(executable.type)" />
 		</transition>
 		<transition on="cancel" to="cancel" validate="false" />
 	</view-state>
@@ -27,9 +27,9 @@
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
 			<evaluate
-				expression="tasksService.setCommonTemplate(requestParameters,flowScope.paramTemplate)" />
+				expression="executableService.setCommonTemplate(requestParameters,flowScope.paramTemplate)" />
 			<evaluate
-				expression="tasksService.generateExecutableBundle(flowScope.paramTemplate,executable)"/>
+				expression="executableService.generateExecutableBundle(flowScope.paramTemplate,executable)"/>
 		</transition>
 	</view-state>
 
@@ -39,11 +39,11 @@
 		<transition on="review" to="review">
 
 			<evaluate
-				expression="tasksService.setCommonTemplate(requestParameters,paramTemplate)" />
+				expression="executableService.setCommonTemplate(requestParameters,paramTemplate)" />
 			<evaluate
-				expression="tasksService.setparamTemplate(requestParameters,executable,paramTemplate)" />
+				expression="executableService.setJavaTemplate(requestParameters,executable,paramTemplate)" />
 			<evaluate
-				expression="tasksService.generateExecutableBundle(paramTemplate,flowScope.executable)"/>
+				expression="executableService.generateExecutableBundle(paramTemplate,flowScope.executable)"/>
 
 		</transition>
 	</view-state>
@@ -55,10 +55,10 @@
 		<transition on="review" to="review">
 
 			<evaluate
-				expression="tasksService.setCommonTemplate(requestParameters,paramTemplate)" />
+				expression="executableService.setCommonTemplate(requestParameters,paramTemplate)" />
 
 			<evaluate
-				expression="tasksService.generateExecutableBundle(paramTemplate,flowScope.executable)"
+				expression="executableService.generateExecutableBundle(paramTemplate,flowScope.executable)"
 				 />
 		</transition>
 	</view-state>
@@ -71,7 +71,7 @@
 	</view-state>
 
 	<action-state id="arguments">
-	<set name="flashScope.niceParams" value="tasksService.getNiceParams(paramTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams"/>
+	<set name="flashScope.niceParams" value="executableService.getNiceParams(paramTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams"/>
 		<evaluate expression="executable.type" />
 		<transition on="JAVA" to="argumentsJava"/>
 		<transition on="MATLAB" to="argumentsMatlab"/>
@@ -83,13 +83,11 @@
 	<end-state id="cancel"></end-state>
 
 	<end-state id="success">
-		<output name="executableUrl" value="'LiteralValue'" type="java.lang.String" />
+	   
 		<output name="executableOs" value="resource.getOsDataType(executable.preferredOs)"
 			type="org.imirsel.nema.model.OsDataType" />
 		<output name="executableGroup" value="executable.group" type="java.lang.String" />
 		<output name="executableBundle" value="executable"
 			type="org.imirsel.nema.model.ExecutableBundle" />
-
-
 	</end-state>
 </flow>
