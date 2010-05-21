@@ -10,6 +10,13 @@
   Please enter the Task details, the name and
     description and the parameters to run the flow.
 </div>
+${messageContext.allMessages}
+<c:if test="${not empty messageContext.allMessages}">
+	<div class="message">
+		<c:forEach items="${messageContext.allMessages}" var="message"><p >${message}</p></c:forEach>
+	</div>
+</c:if>
+
 <br/>
 <div id="formcontainer_job">
   <div class="form_job">

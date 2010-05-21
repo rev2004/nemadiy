@@ -7,7 +7,7 @@
 <form:form>
 	<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
 	<fieldset id="pt1"><label>
-	${executable.typeName}  File:</label> ${executable.fileName} </fieldset>
+	${executable.typeName}  Executable:</label> ${executable.fileName} </fieldset>
 	<fieldset id="pt1"><label>environment:</label><code><c:forEach items="${executable.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach> </code></fieldset>
 	<fieldset id="pt1"><label>arguments:</label><c:out
 		value="${executable.commandLineFlags}" /></fieldset>

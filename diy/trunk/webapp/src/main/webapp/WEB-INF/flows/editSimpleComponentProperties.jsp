@@ -2,13 +2,16 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>component property editor</title>
+<meta name="heading" content="${flow.name}" />
 </head>
 <body>
-Flow: ${flow.name}
+<p>${flow.description}</p>
+
 <br />
-Component: ${component.name}
+<p>Component: ${component.name}</p>
 <br />
 <label>--${component.description}</label>
+<br/>
 <form:form>
   
   <c:forEach items="${datatypeMap}" var="entry">
