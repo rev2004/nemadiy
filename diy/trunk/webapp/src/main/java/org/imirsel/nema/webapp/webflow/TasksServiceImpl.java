@@ -75,57 +75,6 @@ public class TasksServiceImpl {
 	final static String OS = "_os";
 	final static String GROUP = "_group";
 
-
-	/**@deprecated
-	 * change after migrate to datamap back tag upload ExecutableBundle to
-	 * content repository, remove the old executableBundle if there is one;
-	 * replace/add the new ResourcePath of executablebundle into the
-	 * executableMap;
-	 * 
-	 * @param component
-	 * @param parameters
-	 *            modified, the new path replace the old/is added
-	 * @param os
-	 * @param group
-	 * @param bundle
-	 * @param uuid
-	 * @param executableMap
-	 *            Note that this map is going to be modified, old path is
-	 *            replaced by new path.
-	 * @throws ContentRepositoryServiceException
-	 */
-	public void addExecutable(final Component component,
-			final Map<String, Property> datatypeMap, final OsDataType os,
-			final String group, final ExecutableBundle bundle, final UUID uuid,
-			Map<Component, ResourcePath> executableMap)
-			throws ContentRepositoryServiceException {
-		logger.debug("add executable url into parameter for "
-				+ bundle.getFileName());
-		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-		logger.debug("with credential " + credential.getUserID() + " string: "
-				+ new String(credential.getPassword()));
-		String credentialString = credential.getUserID() + ":"
-				+ new String(credential.getPassword());
-		datatypeMap.get(CREDENTIALS).setValue(credentialString);
-		datatypeMap.get(REMOTE_COMPONENT).setValue("true");
-		datatypeMap.get(OS).setValue(os.getValue());
-		datatypeMap.get(GROUP).setValue(group);
-
-		ResourcePath path = artifactService.saveExecutableBundle(credential,
-				uuid.toString(), bundle);
-		if (executableMap.containsKey(component)) {
-			ResourcePath oldPath = executableMap.get(component);
-			if (artifactService.exists(credential, oldPath))
-				artifactService.removeExecutableBundle(credential, oldPath);
-		}
-		executableMap.put(component, path);
-		if (path != null)
-			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
-		else
-			throw new ContentRepositoryServiceException(
-					"error in saving the executable bundle");
-
-	}
 	/**
 	 * change after migrate to datamap back tag upload ExecutableBundle to
 	 * content repository, remove the old executableBundle if there is one;

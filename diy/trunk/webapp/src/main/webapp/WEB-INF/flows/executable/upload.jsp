@@ -10,7 +10,7 @@ function updateLabels(typeCode){
 	var archiveLabelMesage = "Archive containing the executable:";
 	var executableLabelMessage="Path to the executable inside the archive:";
 	if(val ==0){ // JAVA
-		archiveLabelMesage = "Executable Jar or zip file containing jars:";
+		archiveLabelMesage = "Executable JAR or ZIP file containing JARs:";
 		executableLabelMessage="Main class including the package: ";
 	}else if(val==1){// MATLAB
 		archiveLabelMesage = "Archive containing MATLAB script(s):";
@@ -43,7 +43,7 @@ function updateLabels(typeCode){
 	</fieldset>
 	<fieldset>
 	    <label id="archiveLabel">Executable Jar or zip file containing jars:</label>
-	    <input type="file" name="file" />
+	    <input type="file" name="uploadedFile" />
 	</fieldset>
     <fieldset>
         <label id="executableNameLabel" >Main class including the package:</label>
