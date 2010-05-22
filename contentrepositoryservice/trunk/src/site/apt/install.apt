@@ -8,9 +8,6 @@
 
 Installation Guide
 
-* Manual installation
-
-  This package comes as a tar gzip file. After you untar and gunzip the file (tar -zxvf) 
 
 * Using maven
 
