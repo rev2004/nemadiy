@@ -17,4 +17,8 @@ Code Structure
 
     The code structure is generated using Structure 101 for Java and is the report is available here.
     
-    Link to {{{http://nema-dev.lis.illinois.edu/s101j/tracker/${project.name}/${project.version}/arch.html} Code Structure}}
+    Link to {{{http://nema-dev.lis.illinois.edu/s101j/tracker/http://nema-dev.lis.illinois.edu/s101j/tracker/nema-contentrepository-service-core/${project.version}/arch.html} Code Structure of the core module}}
+      
+    Link to {{{http://nema-dev.lis.illinois.edu/s101j/tracker/http://nema-dev.lis.illinois.edu/s101j/tracker/nema-contentrepository-service-auth/${project.version}/arch.html} Code Structure of the auth module}}
+      
+    Link to {{{http://nema-dev.lis.illinois.edu/s101j/tracker/http://nema-dev.lis.illinois.edu/s101j/tracker/nema-contentrepository-service-client/${project.version}/arch.html} Code Structure of the client module}}
