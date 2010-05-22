@@ -7,11 +7,14 @@
 													------------
 
 
-Roadmap 0.0.1
+Roadmap 0.0.2
 
 
 * High Priority
 	
+	[[1]] Migrate the collection, audio resources and tracks to the content repository
+	
+	[[2]] Migrate the collection and resource metadata to the content repository.
 	
 * Medium Priority
 	

@@ -8,3 +8,7 @@
 
 Release Notes for 0.0.1
 
+	This is the first release of the content repository service. It supports functions to save/retrieve and delete Executable Bundles.
+	These bundles have user submitted java/jar/binary code submitted as a zip file along with the metadata on how to run the executable
+	code.
+
