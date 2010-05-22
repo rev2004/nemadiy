@@ -7,13 +7,13 @@
                                     ------------------------------
                                     
  
- Introduction
+Introduction
  
  
  	DIY core module has all the models and the entities for the DIY web application. Several software subsystems depend upon the 
  	DIY core models. Consult the POMs of the flow serivce and executor service for more details.
  	
  
- Entity Relationship Diagram
+Entity Relationship Diagram
  
  	Please see developer documentation by clicking on the link to the left.
