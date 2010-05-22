@@ -9,23 +9,60 @@
 												
 Nema Content Repository Service
 
-	This documentation is related to the executor service <<0.0.1-SNAPSHOT>> release ({{{changes-report.html}changelog}}).												
+	This documentation is related to the contentrepository service <<0.0.1-SNAPSHOT>> release ({{{changes-report.html}changelog}}).												
 
 Introduction
 
+	The content repository services software subsystem provides three modules <<<client>>, <<<auth>> and <<<core>>>. The <<<client>>> module
+	provides an implementation of <<<<org.imirsel.nema.contentrepository.client.ArtifactService>>> which has functions to store/retrieve
+	and remove executor bundles. Executor bundles are the java/jar/binary/shell script zip files along with metadata on how to execute them.
+	The {{{http://nema-dev.lis.illinois.edu/development/diy/}DIY web application}} creates these executable bundles and stores them
+	in the content repository. The {{{http://nema-dev.lis.illinois.edu/development/executionservice/} Execution Service}} connects to the
+	content repository and provisions the executor bundle to a remote machine and executes it.
+	
+	
+	The <<<auth>>> module provides <<<JAAS>>> login modules for the content repository.
+	
+	
+	The <<<core>>> module provides the java models that are shared with other software subsystems.
+	
+	
 	
 
 Getting Started
 
 	
 * Running Content Repository Service
-		
 	
-** Prerequisites
+	We use Apache Jackrabbit as the content repository and access the repository through <<<RMI>>>. The content repository is provisioned with custom
+	node types for NEMA, these node types are defined in <<<src/main/resources/custom_nodetypes.xml>>>
+	
+
+* Using Content Repository Service Client
+
+	The content repository service client can be used by adding following dependencies in your application.
+	
+	
+----------------------------------------
+		<dependency>
+			<groupId>javax.jcr</groupId>
+			<artifactId>jcr</artifactId>
+			<version>2.0</version>
+			<scope>compile</scope>
+		</dependency>
 		
-		
-** Parameters
-		
-		
-		The content repository service requires following parameters:
+
+		<dependency>
+			<groupId>org.imirsel</groupId>
+			<artifactId>nema-contentrepository-service-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
+			<exclusions>
+			<exclusion>
+				<groupId>org.imirsel</groupId>
+				<artifactId>nema-flowservice-api</artifactId>
+			</exclusion>
+			</exclusions>
+		</dependency>
+----------------------------------------
 	
