@@ -35,7 +35,7 @@ import sun.net.www.MimeTable;
  * @since 0.0.1
  * 
  */
-public class ContentRepositoryService implements ArtifactService {
+final public class ContentRepositoryService implements ArtifactService {
 
 	private Logger logger = Logger.getLogger(ContentRepositoryService.class.getName());
 	private Repository repository;
@@ -52,7 +52,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return
 	 * @throws ContentRepositoryServiceException
 	 */
-	public boolean validateNodeTypes(final SimpleCredentials credentials) throws ContentRepositoryServiceException {
+	public final boolean validateNodeTypes(final SimpleCredentials credentials) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -105,7 +105,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 *  @return returns boolean true/false
 	 *  @throws ContentRepositoryServiceException
 	 */
-	public boolean exists(final SimpleCredentials credentials,final ResourcePath resourcePath)
+	public final boolean exists(final SimpleCredentials credentials,final ResourcePath resourcePath)
 	throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
@@ -136,7 +136,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return
 	 * @throws ContentRepositoryServiceException
 	 */
-	public boolean removeExecutableBundle(final SimpleCredentials credentials,
+	public final boolean removeExecutableBundle(final SimpleCredentials credentials,
 			final ResourcePath resourcePath) throws ContentRepositoryServiceException{
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
@@ -182,7 +182,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @param bundle 
 	 * @throws ContentRepositoryServiceException
 	 */
-	public ResourcePath saveExecutableBundle(final SimpleCredentials credentials, final String flowInstanceId,
+	public final ResourcePath saveExecutableBundle(final SimpleCredentials credentials, final String flowInstanceId,
 			final ExecutableBundle bundle) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
@@ -296,7 +296,7 @@ public class ContentRepositoryService implements ArtifactService {
 			eresNode.setProperty ("jcr:mimeType", mimeType);
 			eresNode.setProperty ("jcr:encoding", "");
 			try {
-				eresNode.setProperty ("jcr:data", new BinaryValue(BundleUtils.getPropertyFileValue(bundle)));
+				eresNode.setProperty ("jcr:data", new BinaryValue(BundleUtils.getPropertyFileAsBytes(bundle)));
 			} catch (InvalidBundleException e) {
 				throw new RepositoryException(e.getMessage());
 			}
@@ -328,7 +328,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return resource path 
 	 * @throws ContentRepositoryServiceException
 	 */
-	public ResourcePath saveFlow(final SimpleCredentials credentials, final Flow flow,
+	public final ResourcePath saveFlow(final SimpleCredentials credentials, final Flow flow,
 			final String flowInstanceId,final byte[] flowContent) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
@@ -426,7 +426,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return ExecutableBundle
 	 * @throws ContentRepositoryServiceException
 	 */
-	public ExecutableBundle getExecutableBundle(final SimpleCredentials credentials,
+	public final ExecutableBundle getExecutableBundle(final SimpleCredentials credentials,
 			final ResourcePath resourcePath) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
@@ -461,7 +461,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return metadata for the executable bundle
 	 * @throws ContentRepositoryServiceException
 	 */
-	public ExecutableMetadata getBundleMetadata(final SimpleCredentials credentials,
+	public final ExecutableMetadata getBundleMetadata(final SimpleCredentials credentials,
 			final ResourcePath resourcePath) throws ContentRepositoryServiceException{
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
@@ -492,7 +492,7 @@ public class ContentRepositoryService implements ArtifactService {
 	 * @return the filesystem filepath for a resource.
 	 * @throws ContentRepositoryServiceException
 	 */
-	public String getExecutableBundleFSPath(final SimpleCredentials credentials,final ResourcePath resourcePath) throws ContentRepositoryServiceException {
+	public final String getExecutableBundleFSPath(final SimpleCredentials credentials,final ResourcePath resourcePath) throws ContentRepositoryServiceException {
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}

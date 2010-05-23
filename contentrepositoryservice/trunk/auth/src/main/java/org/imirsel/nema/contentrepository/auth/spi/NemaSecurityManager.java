@@ -65,7 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <code>SimpleSecurityManager</code>: simple implementation ignoring both
+ * <code>NemaSecurityManager</code>: simple implementation ignoring both
  * configuration entries for 'principalProvider' and for 'workspaceAccessManager'.
  * The AccessManager is initialized using
  * {@link AccessManager#init(org.apache.jackrabbit.core.security.AMContext)}.
