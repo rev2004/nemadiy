@@ -13,7 +13,7 @@ import org.imirsel.nema.model.OsDataType;
  * @author kumaramit01
  * @since 0.3.0
  */
-public class ResourceTypeServiceImpl implements ResourceTypeService {
+final public class ResourceTypeServiceImpl implements ResourceTypeService {
 	
 	/**Version of this class
 	 * 
@@ -44,13 +44,13 @@ public class ResourceTypeServiceImpl implements ResourceTypeService {
 		
 	}
 	
-	public List<FileDataType> getSupportedFileDataTypes(){
+	public final List<FileDataType> getSupportedFileDataTypes(){
 		return fileDataTypeList;
 	}
-	public List<OsDataType> getSupportedOperatingSystems(){
+	public final List<OsDataType> getSupportedOperatingSystems(){
 		return this.supportedOsList;
 	}
-	public List<GroupDataType> getSupportedGroups(){
+	public final List<GroupDataType> getSupportedGroups(){
 		return this.groupList;
 	}
 	
@@ -61,7 +61,7 @@ public class ResourceTypeServiceImpl implements ResourceTypeService {
 	 * @param value
 	 * @return OsDataType -returns the OsDataType
 	 */
-	public OsDataType getOsDataType(String value){
+	public final OsDataType getOsDataType(String value){
 		if(value.equalsIgnoreCase("Unix Like")){
 			OsDataType os = new OsDataType("Unix","Unix Like");
 			return os;

@@ -25,7 +25,7 @@ import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
  */
 public class BundleUtils {
 
-	protected static byte[] getPropertyFileValue(ExecutableBundle bundle) throws InvalidBundleException {
+	protected static byte[] getPropertyFileAsBytes(ExecutableBundle bundle) throws InvalidBundleException {
 		Properties properties = new Properties();
 		
 		if(bundle.getTypeName()==null){
@@ -50,7 +50,7 @@ public class BundleUtils {
 		if(bundle.getCommandLineFlags()!=null)
 		properties.setProperty("commandLineFlags", bundle.getCommandLineFlags());
 		if(bundle.getEnvironmentVariables()!=null){
-			properties.setProperty("environmentVariables", getAsJSONString(bundle.getEnvironmentVariables()));
+			properties.setProperty("environmentVariables", convertToJSONString(bundle.getEnvironmentVariables()));
 		}
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -64,7 +64,7 @@ public class BundleUtils {
 	}
 	
 	
-	protected static String getAsJSONString(Map<String, String> environmentVariables) {
+	protected static String convertToJSONString(Map<String, String> environmentVariables) {
 		 XStream xstream = new XStream(new JettisonMappedXmlDriver());
 		 xstream.setMode(XStream.NO_REFERENCES);
 		 return xstream.toXML(environmentVariables);
