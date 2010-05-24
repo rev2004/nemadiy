@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -41,7 +44,12 @@ import java.util.zip.ZipFile;
  * 
  * @author shirk
  */
-public class NemaZipFile {
+public class NemaZipFile implements Serializable {
+
+   /**
+    * Version of this class.
+    */
+   private static final long serialVersionUID = 8443898537076400529L;
 
    private static final Logger logger = 
       Logger.getLogger(NemaZipFile.class.getName());
@@ -57,9 +65,11 @@ public class NemaZipFile {
    private String fileSeparator = System.getProperty("file.separator");
    private String unzipDir = System.getProperty("java.io.tmpdir");
    
-   private ZipFile sourceZip;
+   private transient ZipFile sourceZip;
+   private String sourceZipPath;
    private String sourceZipName;
-   private File sourceZipContentDir;
+   private transient File sourceZipContentDir;
+   private String sourceZipContentDirPath;
    
    private FileState state = FileState.NEW;
    private FileType type = FileType.ZIP;
@@ -73,6 +83,7 @@ public class NemaZipFile {
     */
    public NemaZipFile(ZipFile zipFile) {
       sourceZip = zipFile;
+      sourceZipPath = zipFile.getName();
       int lastIdxOfFileSep = 
          zipFile.getName().lastIndexOf(fileSeparator);
       sourceZipName = 
@@ -358,8 +369,9 @@ public class NemaZipFile {
     * expanded.
     */
    private void makeTempDirForZipContents() {
-      sourceZipContentDir = new File(unzipDir + fileSeparator + 
-            UUID.randomUUID().toString());
+      sourceZipContentDirPath = unzipDir + fileSeparator + 
+            UUID.randomUUID().toString();
+      sourceZipContentDir = new File(sourceZipContentDirPath);
       sourceZipContentDir.mkdir();
    }
    
@@ -444,7 +456,18 @@ public class NemaZipFile {
 	 return false;
    }
    
+   private void readObject(ObjectInputStream inputStream) throws IOException,
+         ClassNotFoundException {
+      inputStream.defaultReadObject();
+      if (sourceZipPath != null) {
+         sourceZip = new ZipFile(new File(sourceZipPath));
+         sourceZipContentDir = new File(sourceZipContentDirPath);
+      }
+   }
 
+   private void writeObject(ObjectOutputStream outputStream) throws IOException {
+      outputStream.defaultWriteObject();
+   }
 
    
 }
