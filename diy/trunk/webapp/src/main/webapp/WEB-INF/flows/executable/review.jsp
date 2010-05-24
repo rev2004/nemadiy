@@ -1,6 +1,7 @@
 <%@ include file="/common/taglibs.jsp"%>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+ <meta name="heading" content="<fmt:message key='task.executable.review'/>"/>
 <title>Review the executable setting</title>
 </head>
 <body>

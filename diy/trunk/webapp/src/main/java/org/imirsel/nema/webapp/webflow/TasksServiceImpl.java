@@ -110,14 +110,13 @@ public class TasksServiceImpl {
 		datatypeMap.get(REMOTE_COMPONENT).setValue("true");
 		datatypeMap.get(OS).setValue(bundle.getPreferredOs());
 		datatypeMap.get(GROUP).setValue(bundle.getGroup());
-
-		ResourcePath path = artifactService.saveExecutableBundle(credential,
-				uuid.toString(), bundle);
 		if (executableMap.containsKey(component)) {
 			ResourcePath oldPath = executableMap.get(component);
 			if (artifactService.exists(credential, oldPath))
 				artifactService.removeExecutableBundle(credential, oldPath);
 		}
+		ResourcePath path = artifactService.saveExecutableBundle(credential,
+				uuid.toString(), bundle);		
 		executableMap.put(component, path);
 		if (path != null) {
 			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
@@ -232,6 +231,12 @@ public class TasksServiceImpl {
 		logger.debug("done populating default parameters now.");
 
 		return datatypeMaps;
+	}
+	
+	public List<Component> setComponentList(Map<Component, Map<String, Property>> datatypeMaps){
+		List<Component> list=new ArrayList<Component>(datatypeMaps.keySet());
+		Collections.sort(list);
+		return list;
 	}
 
 	/**
@@ -509,7 +514,7 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * change to this later after fix the taglib.
+	 *
 	 * 
 	 * @param flow
 	 * @param datatypeMaps
