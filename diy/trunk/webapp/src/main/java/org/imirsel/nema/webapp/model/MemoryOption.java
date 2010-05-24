@@ -3,7 +3,8 @@ package org.imirsel.nema.webapp.model;
 import java.io.Serializable;
 
 /**
- * help class for JavaExecutable
+ * help class for JavaExecutable that bundles the max/min memory args 
+ * for java executable with fixed options
  * 
  * @author gzhu1
  *

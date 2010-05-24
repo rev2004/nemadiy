@@ -22,14 +22,19 @@ import org.imirsel.nema.webapp.model.DiyMatlabTemplate;
 import org.imirsel.nema.webapp.model.NiceParams;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.springframework.webflow.core.collection.ParameterMap;
-
+/**
+ * Action class for webflow that generated the executable bundle (task/executable)
+ * @author gzhu1
+ * @since 0.6.0
+ *
+ */
 public class ExecutableServiceImpl {
 	static private Log logger = LogFactory.getLog(ExecutableServiceImpl.class);
 	private CommandLineFormatter commandLineFormatter;
 	private ResourceTypeService resourceServiceType;
 
 
-	/**
+	/** TODO check if OK to delete
 	 * return the PredefinedCommandTemplate according to the type String
 	 * 
 	 * @param type
@@ -50,6 +55,11 @@ public class ExecutableServiceImpl {
 		}
 	}
 
+	/**
+	 * generate a {@link NiceParams} object from a list of {@org.imirsel.nema.model.Param}. 
+	 * @param params
+	 * @return
+	 */
 	public NiceParams getNiceParams(List<Param> params){
 		return new NiceParams(params);
 	}
@@ -75,6 +85,12 @@ public class ExecutableServiceImpl {
 
 	}
 
+	/**
+	 * Set the special fields for JavaTemplate
+	 * @param httpParam
+	 * @param executable
+	 * @param template
+	 */
 	public void setJavaTemplate(ParameterMap httpParam,
 			UploadedExecutableBundle executable,
 			JavaPredefinedCommandTemplate template) {
@@ -112,7 +128,7 @@ public class ExecutableServiceImpl {
 	 * @param others
 	 * @return
 	 */
-	public void setCommonTemplate(String[] keys, String[] values,
+	private void setCommonTemplate(String[] keys, String[] values,
 			String[] inputs, String[] outputs, String[] others,
 			VanillaPredefinedCommandTemplate template) {
 		if (template == null)
@@ -165,6 +181,13 @@ public class ExecutableServiceImpl {
 		return ((array == null) ? "null" : String.valueOf(array.length));
 	}
 	
+	/**
+	 * Set the template fields of environment variables and params from Http request
+	 * parameters because their number is not known before-hand and cannot be handled 
+	 * by Spring's binding
+	 * @param httpParam  objects with http request parameters. 
+	 * @param template	Template to be filled by the http request parameter value
+	 */
 	public void setCommonTemplate(ParameterMap httpParam,
 			VanillaPredefinedCommandTemplate template) {
 		String[] keys = getArray(httpParam, "variable");

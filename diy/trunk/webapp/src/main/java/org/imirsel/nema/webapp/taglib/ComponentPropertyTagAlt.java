@@ -22,7 +22,9 @@ import org.imirsel.nema.webapp.webflow.TasksServiceImpl;
 
 /**This tag renders the component property
  *  -Added support for readonly and hidden
- * @author kumaramit01
+ *  This Alternation render differs for the "name" attribute of  "input" tag.
+ *  name is now simple name of property instead of the combination of the component name + property name  
+ * @author kumaramit01, gzhu1
  *
  */
 public class ComponentPropertyTagAlt  extends SimpleTagSupport implements DynamicAttributes{

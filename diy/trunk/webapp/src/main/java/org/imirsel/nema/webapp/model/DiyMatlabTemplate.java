@@ -17,7 +17,9 @@ import org.imirsel.nema.model.Path;
 import org.imirsel.nema.model.SysProperty;
 
 /**
+ * A null wrapper for {@link org.imirsel.nema.model.MatlabPredefinedCommandTemplate} 
  * @author gzhu1
+ * @since 0.6.0
  *
  */
 public class DiyMatlabTemplate extends MatlabPredefinedCommandTemplate {
@@ -26,24 +28,5 @@ public class DiyMatlabTemplate extends MatlabPredefinedCommandTemplate {
 
 	private static final long serialVersionUID = 1L;
 
-//	@Override
-//	public void generateCommandline(){
-//	
-//		
-//		MatlabPredefinedCommandTemplate command=new MatlabPredefinedCommandTemplate();
-//		command.setDebug(debug);
-//		command.setDisplay(display);
-//		command.setJvm(jvm);
-//		command.setLog(log);
-//		command.setLogfile(logfile);
-//		command.setSplash(splash);
-//		command.setTiming(timing);
-//		
-//		CommandLineFormatter formatter=new CommandLineFormatter();
-//		try {
-//			setEnvironment(formatter.getCommandLineString(command, resourceTypeService.getOsDataType(os),true));
-//		} catch (InvalidCommandLineFlagException e) {
-//			logger.error(e,e);
-//		}
-//	}
+
 }

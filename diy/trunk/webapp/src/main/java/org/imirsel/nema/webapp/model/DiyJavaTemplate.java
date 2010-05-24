@@ -18,8 +18,11 @@ import org.imirsel.nema.model.SysProperty;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
+ * A null wrapper for {@link org.imirsel.nema.model.JavaPredefinedCommandTemplate}. 
+ * It supports for various display purpose.  
  * @author gzhu1
- * 
+ * @since 0.6.0
+ *
  */
 public class DiyJavaTemplate extends JavaPredefinedCommandTemplate {
 	static private Log logger = LogFactory.getLog(DiyJavaTemplate.class);
