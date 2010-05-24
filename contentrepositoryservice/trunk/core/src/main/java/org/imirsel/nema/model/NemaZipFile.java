@@ -90,7 +90,8 @@ public class NemaZipFile implements Serializable {
     */
    private FileState state = FileState.NEW;
    
-   /** The type of file -jar or zip are the two supported types
+   /** 
+    * The type of file -jar or zip are the two supported types
     * @serial
     */
    private FileType type = FileType.ZIP;
@@ -477,12 +478,7 @@ public class NemaZipFile implements Serializable {
 	 return false;
    }
    
-   /**
-    * 
-    * @param inputStream
-    * @throws IOException
-    * @throws ClassNotFoundException
-    */
+
    private void readObject(ObjectInputStream inputStream) throws IOException,
          ClassNotFoundException {
       inputStream.defaultReadObject();
