@@ -34,26 +34,26 @@ public class ExecutableServiceImpl {
 	private ResourceTypeService resourceServiceType;
 
 
-	/** TODO check if OK to delete
-	 * return the PredefinedCommandTemplate according to the type String
-	 * 
-	 * @param type
-	 * @return
-	 */
-	public VanillaPredefinedCommandTemplate getEmptyTemplate(
-			ExecutableBundle.ExecutableType type) {
-		switch (type) {
-		case SHELL:
-		case C:
-			return new VanillaPredefinedCommandTemplate();
-		case JAVA:
-			return new DiyJavaTemplate();
-		case MATLAB:
-			return new DiyMatlabTemplate();
-		default:
-			return null;
-		}
-	}
+//	/** TODO check if OK to delete
+//	 * return the PredefinedCommandTemplate according to the type String
+//	 * 
+//	 * @param type
+//	 * @return
+//	 */
+//	public VanillaPredefinedCommandTemplate getEmptyTemplate(
+//			ExecutableBundle.ExecutableType type) {
+//		switch (type) {
+//		case SHELL:
+//		case C:
+//			return new VanillaPredefinedCommandTemplate();
+//		case JAVA:
+//			return new DiyJavaTemplate();
+//		case MATLAB:
+//			return new DiyMatlabTemplate();
+//		default:
+//			return null;
+//		}
+//	}
 
 	/**
 	 * generate a {@link NiceParams} object from a list of {@org.imirsel.nema.model.Param}. 

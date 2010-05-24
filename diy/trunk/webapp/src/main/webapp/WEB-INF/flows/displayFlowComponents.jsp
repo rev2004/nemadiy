@@ -32,17 +32,17 @@ ${messageContext.allMessages}
       <c:forEach items="${componentList}" var="component" varStatus="status">
         <c:if test="${!component.hidden}">
           <fieldset id="${component.name}">
-          <c:out value="${component.name}" />
+          ${component.name}
           <br/>
-          <label>${component.description}</label>
-          <a href="${flowExecutionUrl}&idx=${status.index}&_eventId=edit">edit</a>
+          <label>${component.description}</label>          
+         <div>    <a href="${flowExecutionUrl}&idx=${status.index}&_eventId=edit">Edit</a></div>
           </fieldset>
         </c:if>
       </c:forEach>
       <input type="hidden" name="flowTemplateId" value="${flow.id}" />
       <input type="hidden" name="flowTemplateUri" value="${flow.uri}" />
       <fieldset id="button">
-      <input type="submit" name="_eventId_test" value="Review" />
+      <input type="submit" name="_eventId_review" value="Review" />
       <input type="submit" name="_eventId_cancel" value="Cancel" />
       <input type="submit" name="_eventId_clear" value="Clear" />
       </fieldset>
