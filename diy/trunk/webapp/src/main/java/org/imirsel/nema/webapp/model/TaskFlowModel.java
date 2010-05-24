@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.ResourcePath;
+import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 
 /**
  * Model object for the webflow for template task, a UUIC is assigned for every task.
@@ -29,6 +30,7 @@ public class TaskFlowModel implements Serializable {
 	private UUID uuid;
 	
 	private Map<Component,ResourcePath> executableMap;
+	private Map<Component,VanillaPredefinedCommandTemplate> templateMap;
 	public UUID getUuid(){
 		return uuid;
 	}
@@ -38,6 +40,7 @@ public class TaskFlowModel implements Serializable {
 		uuid=UUID.randomUUID();
 		logger.debug("set a new id "+uuid.toString());
 		executableMap=new HashMap<Component,ResourcePath>();
+		templateMap=new HashMap<Component,VanillaPredefinedCommandTemplate>();
 	}
 
 
@@ -71,6 +74,14 @@ public class TaskFlowModel implements Serializable {
 
 	public Map<Component,ResourcePath> getExecutableMap() {
 		return executableMap;
+	}
+
+
+	
+
+
+	public Map<Component,VanillaPredefinedCommandTemplate> getTemplateMap() {
+		return templateMap;
 	}
 
 }
