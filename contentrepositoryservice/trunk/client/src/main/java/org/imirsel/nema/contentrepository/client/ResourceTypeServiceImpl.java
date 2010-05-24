@@ -1,6 +1,7 @@
 package org.imirsel.nema.contentrepository.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.imirsel.nema.model.FileDataType;
@@ -19,9 +20,9 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 	 * 
 	 */
 	private static final long serialVersionUID = 5186004401706711111L;
-	private List<FileDataType> fileDataTypeList  = new ArrayList<FileDataType>();
-	private List<OsDataType> supportedOsList  = new ArrayList<OsDataType>();
-	private List<GroupDataType> groupList = new ArrayList<GroupDataType>();
+	private final List<FileDataType> fileDataTypeList  = new ArrayList<FileDataType>();
+	private final List<OsDataType> supportedOsList  = new ArrayList<OsDataType>();
+	private final List<GroupDataType> groupList = new ArrayList<GroupDataType>();
 	
 	public ResourceTypeServiceImpl(){
 		fileDataTypeList.add( new FileDataType("Chord Interval Text File",
@@ -45,13 +46,13 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 	}
 	
 	public final List<FileDataType> getSupportedFileDataTypes(){
-		return fileDataTypeList;
+		return Collections.unmodifiableList(fileDataTypeList);
 	}
 	public final List<OsDataType> getSupportedOperatingSystems(){
-		return this.supportedOsList;
+		return Collections.unmodifiableList(this.supportedOsList);
 	}
 	public final List<GroupDataType> getSupportedGroups(){
-		return this.groupList;
+		return Collections.unmodifiableList(this.groupList);
 	}
 	
 	
@@ -66,7 +67,7 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 			OsDataType os = new OsDataType("Unix","Unix Like");
 			return os;
 		}else if(value.equals("Windows Like")){
-			OsDataType os = new OsDataType("Unix","Unix Like");
+			OsDataType os = new OsDataType("Windows","Windows Like");
 			return os;
 		}else{
 			throw new IllegalArgumentException("error invalid Os: " + value);

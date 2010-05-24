@@ -1,7 +1,11 @@
 package org.imirsel.nema.model;
 
 import java.io.Serializable;
-
+/**
+ *  //TODO missing equals and hashCode
+ * @author kumaramit01
+ *
+ */
 public class FileDataType  implements Serializable{
 	/** Version of this class
 	 * 

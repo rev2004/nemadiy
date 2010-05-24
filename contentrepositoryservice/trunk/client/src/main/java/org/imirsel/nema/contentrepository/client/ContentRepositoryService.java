@@ -37,13 +37,13 @@ import sun.net.www.MimeTable;
  */
 final public class ContentRepositoryService implements ArtifactService {
 
-	private Logger logger = Logger.getLogger(ContentRepositoryService.class.getName());
+	private final Logger logger = Logger.getLogger(ContentRepositoryService.class.getName());
 	private Repository repository;
-	private String USERS_DIR ="users";
-	private String FLOWS_DIR ="flows";
-	private String EXECUTOR_BUNDLE_DIR ="executables";
-	private String DEFAULT_WORKSPACE="default";
-	private String DEFAULT_PROTOCOL ="jcr";
+	private final String USERS_DIR ="users";
+	private final String FLOWS_DIR ="flows";
+	private final String EXECUTOR_BUNDLE_DIR ="executables";
+	private final String DEFAULT_WORKSPACE="default";
+	private final String DEFAULT_PROTOCOL ="jcr";
 
 
 	/**Validates the content repository -checks various content types are present

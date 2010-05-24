@@ -74,6 +74,7 @@ public final class FileSystemPathUtil {
      * private constructor
      */
     private FileSystemPathUtil() {
+    	throw new AssertionError("Cannot initialize this");
     }
 
     /**
