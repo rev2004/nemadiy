@@ -36,50 +36,53 @@
 
 	<div style="margin-bottom:5px;">Upload the Executable</div>
 
-	<form:form modelAttribute="executable" enctype="multipart/form-data">
-
-		<form:errors path="*" cssStyle="color:OrangeRed" class="error" />
-
-		<fieldset>
-			<label id="executableTypeLabel">Specify the executable type:</label>
-			<form:select path="typeCode" onChange="updateLabels(this);" items="${executable.typeOptions}" itemLabel="name"
-				itemValue="code" />
-		</fieldset>
-		<fieldset>
-			<label id="archiveLabel">Executable Jar or zip file containing jars:</label>
-			<input type="file" name="uploadedFile" />
-		</fieldset>
-		<fieldset>
-			<label id="executableNameLabel">Main class including the package:</label>
-			<form:input path="executableName" />
-		</fieldset>
-		<fieldset id="preferredOsLabel">
-			<label>Operating system required to run the executable:</label>
-			<form:select path="preferredOs" items="${supportedOs}" itemLabel="name" itemValue="value" />
-		</fieldset>
-		<fieldset>
-			<label id="groupLabel">Select the group:</label>
-			<form:select path="group" items="${supportedGroups}" itemLabel="name" itemValue="value" />
-		</fieldset>
-		<c:if test="${not empty executable.fileName}">
-			<fieldset id="pt1">
-				<label>
-					${executable.typeName} Executable:</label>
-				${executable.fileName}
-			</fieldset>
-			<fieldset id="pt1">
-				<label>environment:</label>				
-					<c:forEach items="${executable.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach>
-			</fieldset>
-			<fieldset id="pt1">
-				<label>arguments:</label>
-				<c:out value="${executable.commandLineFlags}" />
-			</fieldset>
-		</c:if>
-		<fieldset id="button">
-			<input type="submit" name="_eventId_upload" value="Upload" />
-			<input type="submit" name="_eventId_cancel" value="Cancel" />
-		</fieldset>
-	</form:form>
+<form:form modelAttribute="executable" enctype="multipart/form-data">
+	
+	<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
+	
+	<fieldset>
+	    <label id="executableTypeLabel">Specify the executable type:</label>
+	    <form:select path="typeCode" onChange="updateLabels(this);" items="${executable.typeOptions}" itemLabel="name" itemValue="code" />
+	</fieldset>
+	<c:if test="${executable.fileName eq null}">
+	    <fieldset>
+	        <label id="archiveLabel">Executable Jar or zip file containing jars:</label>
+	        <input type="file" name="uploadedFile" />
+	    </fieldset>
+	</c:if>
+    <c:if test="${executable.fileName ne null}">
+        <fieldset>
+            <label id="archiveLabel">Executable Jar or zip file containing jars:</label>
+            ${executable.fileName}
+        </fieldset>
+    </c:if>
+    <fieldset>
+        <label id="executableNameLabel" >Main class including the package:</label>
+        <form:input path="executableName" />
+    </fieldset>
+    <fieldset id="preferredOsLabel">
+        <label>Operating system required to run the executable:</label>
+        <form:select path="preferredOs" items="${supportedOs}" itemLabel="name" itemValue="value" />
+	</fieldset>
+	<fieldset>
+	    <label id="groupLabel">Select the group:</label>
+	    <form:select path="group" items="${supportedGroups}" itemLabel="name" itemValue="value" />
+	</fieldset>
+        <c:if test="${not empty executable.fileName}">
+            <fieldset id="pt1">
+                <label>environment:</label>             
+                    <c:forEach items="${executable.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach>
+            </fieldset>
+            <fieldset id="pt1">
+                <label>arguments:</label>
+                <c:out value="${executable.commandLineFlags}" />
+            </fieldset>
+        </c:if>
+        
+	<fieldset id="button">
+	    <input type="submit" name="_eventId_upload" value="Next" />
+	    <input type="submit" name="_eventId_cancel" value="Cancel" />
+	</fieldset>
+</form:form>
 
 </body>

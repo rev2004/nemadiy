@@ -21,14 +21,14 @@
 
 
 	<view-state id="upload" model="executable">
-		<transition on="upload" to="arguments">
-
+		<transition on="upload" to="arguments" />
+		<transition on="cancel" to="cancel" validate="false">
+		  <evaluate expression="executable.clear()"></evaluate>
 		</transition>
-		<transition on="cancel" to="cancel" validate="false" />
 	</view-state>
 
 	<view-state id="argumentsPlain">
-			<on-entry>
+	    <on-entry>
 			<set name="flashScope.niceParams" value="executableService.getNiceParams(plainTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
 		</on-entry>
 		<transition on="cancel" to="cancel" />

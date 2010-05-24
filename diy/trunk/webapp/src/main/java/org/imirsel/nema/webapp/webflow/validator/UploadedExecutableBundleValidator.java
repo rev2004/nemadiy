@@ -21,7 +21,7 @@ public class UploadedExecutableBundleValidator {
    public void validateUpload(UploadedExecutableBundle uploadedExecutable,
          ValidationContext context) {
       MessageContext messages = context.getMessageContext();
-
+      
       // Validate that an executable archive has been provided
       if(null==uploadedExecutable.getFileName() || "".equals(uploadedExecutable.getFileName())) {
          messages.addMessage(new MessageBuilder().error().source("uploadedFile")
@@ -68,19 +68,24 @@ public class UploadedExecutableBundleValidator {
          return;
       }
 
+      // Validate that an executable file has been specified
+      if (null==uploadedExecutable.getExecutableName() || 
+            "".equals(uploadedExecutable.getExecutableName())) {
+         messages.addMessage(new MessageBuilder().error().source("executableName")
+               .defaultText(
+                     "You must specify the " + getExeFileType(uploadedExecutable) + " in the supplied archive.")
+               .build());
+         return;
+      }
+      
+      
       // Finally, validate the the specified executable file exists within
       // the uploaded archive.
       try {
          if (!uploadedExecutable.containsExecutable()) {
-            String exeFileType;
-            if (uploadedExecutable.getType() == ExecutableType.JAVA) {
-               exeFileType = "main class";
-            } else {
-               exeFileType = "executable file";
-            }
             messages.addMessage(new MessageBuilder().error().source("file")
                   .defaultText(
-                        "The specified " + exeFileType
+                        "The specified " + getExeFileType(uploadedExecutable)
                               + " was not found in the uploaded archive.")
                   .build());
             return;
@@ -89,8 +94,21 @@ public class UploadedExecutableBundleValidator {
          logger.warning(e.getMessage());
       }
       
+
    }
 
+   
+   private String getExeFileType(UploadedExecutableBundle uploadedExecutable) {
+      String exeFileType;
+      if (uploadedExecutable.getType() == ExecutableType.JAVA) {
+         exeFileType = "main class";
+      } else {
+         exeFileType = "executable file";
+      }
+      return exeFileType;
+      
+   }
+   
    public boolean isNullOrEmpty(String str) {
       return str == null || str.trim().equals("");
    }

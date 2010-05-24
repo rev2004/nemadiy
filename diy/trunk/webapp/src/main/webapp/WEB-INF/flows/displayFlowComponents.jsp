@@ -32,9 +32,9 @@ ${messageContext.allMessages}
       <c:forEach items="${componentList}" var="component" varStatus="status">
         <c:if test="${!component.hidden}">
           <fieldset id="${component.name}">
-          ${component.name}
+          Component Name: ${component.name}
           <br/>
-          <label>${component.description}</label>          
+          <label>Description: ${component.description}</label>          
          <div>    <a href="${flowExecutionUrl}&idx=${status.index}&_eventId=edit">Edit</a></div>
           </fieldset>
         </c:if>
