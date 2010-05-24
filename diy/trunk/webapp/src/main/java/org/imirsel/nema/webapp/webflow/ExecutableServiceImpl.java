@@ -13,6 +13,7 @@ import org.imirsel.nema.contentrepository.client.ResourceTypeService;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.InvalidCommandLineFlagException;
 import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
+import org.imirsel.nema.model.MatlabPredefinedCommandTemplate;
 import org.imirsel.nema.model.Param;
 import org.imirsel.nema.model.Path;
 import org.imirsel.nema.model.SysProperty;
@@ -22,48 +23,73 @@ import org.imirsel.nema.webapp.model.DiyMatlabTemplate;
 import org.imirsel.nema.webapp.model.NiceParams;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.springframework.webflow.core.collection.ParameterMap;
+
 /**
- * Action class for webflow that generated the executable bundle (task/executable)
+ * Action class for webflow that generated the executable bundle
+ * (task/executable)
+ * 
  * @author gzhu1
  * @since 0.6.0
- *
+ * 
  */
 public class ExecutableServiceImpl {
 	static private Log logger = LogFactory.getLog(ExecutableServiceImpl.class);
 	private CommandLineFormatter commandLineFormatter;
 	private ResourceTypeService resourceServiceType;
 
+	public void setTemplate(VanillaPredefinedCommandTemplate input,
+			ExecutableBundle.ExecutableType type,
+			VanillaPredefinedCommandTemplate plainTemplate,
+			JavaPredefinedCommandTemplate javaTemplate,
+			MatlabPredefinedCommandTemplate matlabTemplate) {
+		logger.debug("get input template "+type);
+		if (type != null) {
+			switch (type) {
+			case SHELL:
+			case C:
+				plainTemplate = input;
+				break;
+			case JAVA:
+				javaTemplate = (DiyJavaTemplate) input;
+				break;
+			case MATLAB:
+				matlabTemplate = (DiyMatlabTemplate) input;
+				break;
+			default:
 
-//	/** TODO check if OK to delete
-//	 * return the PredefinedCommandTemplate according to the type String
-//	 * 
-//	 * @param type
-//	 * @return
-//	 */
-//	public VanillaPredefinedCommandTemplate getEmptyTemplate(
-//			ExecutableBundle.ExecutableType type) {
-//		switch (type) {
-//		case SHELL:
-//		case C:
-//			return new VanillaPredefinedCommandTemplate();
-//		case JAVA:
-//			return new DiyJavaTemplate();
-//		case MATLAB:
-//			return new DiyMatlabTemplate();
-//		default:
-//			return null;
-//		}
-//	}
+			}
+		}
+	}
+
+	public VanillaPredefinedCommandTemplate selectTemplate(
+			ExecutableBundle.ExecutableType type,
+			VanillaPredefinedCommandTemplate plainTemplate,
+			JavaPredefinedCommandTemplate javaTemplate,
+			MatlabPredefinedCommandTemplate matlabTemplate) {
+		logger.debug("generate for output template "+type);
+		switch (type) {
+		case SHELL:
+		case C:
+			return plainTemplate;
+		case JAVA:
+			return javaTemplate;
+		case MATLAB:
+			return matlabTemplate;
+		default:
+			return null;
+		}
+	}
 
 	/**
-	 * generate a {@link NiceParams} object from a list of {@org.imirsel.nema.model.Param}. 
+	 * generate a {@link NiceParams} object from a list of
+	 * {@org.imirsel.nema.model.Param}.
+	 * 
 	 * @param params
 	 * @return
 	 */
-	public NiceParams getNiceParams(List<Param> params){
+	public NiceParams getNiceParams(List<Param> params) {
 		return new NiceParams(params);
 	}
-
 
 	public void generateExecutableBundle(
 			VanillaPredefinedCommandTemplate template,
@@ -87,6 +113,7 @@ public class ExecutableServiceImpl {
 
 	/**
 	 * Set the special fields for JavaTemplate
+	 * 
 	 * @param httpParam
 	 * @param executable
 	 * @param template
@@ -95,10 +122,10 @@ public class ExecutableServiceImpl {
 			UploadedExecutableBundle executable,
 			JavaPredefinedCommandTemplate template) {
 
-	   List<Path> jarPaths = executable.getJarPaths();
-	   for(Path path:jarPaths) {
-	      template.addClasspath(path);
-	   }
+		List<Path> jarPaths = executable.getJarPaths();
+		for (Path path : jarPaths) {
+			template.addClasspath(path);
+		}
 		String[] keys = getArray(httpParam, "sysVar");
 		String[] values = getArray(httpParam, "sysValue");
 		List<SysProperty> properties = new ArrayList<SysProperty>();
@@ -114,11 +141,13 @@ public class ExecutableServiceImpl {
 
 	}
 
-	public UploadedExecutableBundle setExecutable(UploadedExecutableBundle a){
-		if (a==null) return new UploadedExecutableBundle();
-		else return a;
+	public UploadedExecutableBundle setExecutable(UploadedExecutableBundle a) {
+		if (a == null)
+			return new UploadedExecutableBundle();
+		else
+			return a;
 	}
-	
+
 	/**
 	 * 
 	 * @param keys
@@ -176,17 +205,20 @@ public class ExecutableServiceImpl {
 		template.setEnvironmentMap(map);
 
 	}
-	
+
 	private String output(String[] array) {
 		return ((array == null) ? "null" : String.valueOf(array.length));
 	}
-	
+
 	/**
-	 * Set the template fields of environment variables and params from Http request
-	 * parameters because their number is not known before-hand and cannot be handled 
-	 * by Spring's binding
-	 * @param httpParam  objects with http request parameters. 
-	 * @param template	Template to be filled by the http request parameter value
+	 * Set the template fields of environment variables and params from Http
+	 * request parameters because their number is not known before-hand and
+	 * cannot be handled by Spring's binding
+	 * 
+	 * @param httpParam
+	 *            objects with http request parameters.
+	 * @param template
+	 *            Template to be filled by the http request parameter value
 	 */
 	public void setCommonTemplate(ParameterMap httpParam,
 			VanillaPredefinedCommandTemplate template) {
@@ -212,15 +244,16 @@ public class ExecutableServiceImpl {
 			return null;
 		}
 	}
-	
+
 	public void setCommandLineFormatter(
 			CommandLineFormatter commandLineFormatter) {
 		this.commandLineFormatter = commandLineFormatter;
 	}
-	
+
 	public CommandLineFormatter getCommandLineFormatter() {
 		return commandLineFormatter;
 	}
+
 	public ResourceTypeService getResourceServiceType() {
 		return resourceServiceType;
 	}

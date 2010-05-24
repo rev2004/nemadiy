@@ -62,20 +62,15 @@
 		<transition on="next" to="displayFlowComponents" />
 		<transition on="back" to="editRemoteServiceComponentProperties" />
 	</view-state>
-	<action-state id="addExecutable">
-		<evaluate
-			expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,messageContext)" />
-		<transition on="success" to="addExecutableSuccess">
-		</transition>
-	</action-state>
+
 
 	<action-state id="getTemplate">
-		<set name="flowScope.flow" value="flowService.getFlow(id)"  />
-		<set name="flowScope.datatypeMaps" value="tasksService.setDatatypeMaps(flow)"  />
+		<set name="flowScope.flow" value="flowService.getFlow(id)" />
+		<set name="flowScope.datatypeMaps" value="tasksService.setDatatypeMaps(flow)" />
 		<set name="flowScope.componentList" value="tasksService.setComponentList(datatypeMaps)" />
 		<set name="flowScope.taskFlowModel.name" value="flow.name" />
-		<set name="flowScope.taskFlowModel.description" value="flow.description" >
-		<attribute name="name" value="lastStep"/>
+		<set name="flowScope.taskFlowModel.description" value="flow.description">
+			<attribute name="name" value="lastStep" />
 		</set>
 
 		<transition on="lastStep.success" to="displayFlowComponents" />
@@ -84,8 +79,15 @@
 	<subflow-state id="generateExecutable" subflow="task/executable">
 		<input name="executableBundleInput" value="tasksService.findBundle(taskFlowModel.executableMap[component],datatypeMap)"
 			type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
+		<input name="executableTemplateInput" value="taskFlowModel.templateMap[component]" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
+
+		<output name="executableTemplate" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 		<output name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
-		<transition on="success" to="addExecutable">
+		<transition on="success" to="addExecutableSuccess">
+			<evaluate
+				expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,messageContext)" />
+			<evaluate expression="taskFlowModel.templateMap.put(component,executableTemplate)" />
+
 		</transition>
 		<transition on="cancel" to="editRemoteServiceComponentProperties" />
 	</subflow-state>
