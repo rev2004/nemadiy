@@ -7,9 +7,9 @@ import java.io.Serializable;
  * @author kumaramit01
  * @since 0.0.1 
  */
-public class RepositoryResourcePath implements Serializable,ResourcePath{
+public class RepositoryResourcePath implements Serializable, ResourcePath{
 	/**
-	 * 
+	 * Version of this class.
 	 */
 	private static final long serialVersionUID = -8696944504877708390L;
 	private String path;
