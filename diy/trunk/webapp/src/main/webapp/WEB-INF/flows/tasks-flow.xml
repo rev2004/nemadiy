@@ -61,6 +61,7 @@
 	<view-state id="addExecutableSuccess">
 		<transition on="next" to="displayFlowComponents" />
 		<transition on="back" to="editRemoteServiceComponentProperties" />
+		<on-exit><evaluate expression="executableBundle.clear()"/></on-exit>
 	</view-state>
 
 
@@ -72,7 +73,6 @@
 		<set name="flowScope.taskFlowModel.description" value="flow.description">
 			<attribute name="name" value="lastStep" />
 		</set>
-
 		<transition on="lastStep.success" to="displayFlowComponents" />
 	</action-state>
 

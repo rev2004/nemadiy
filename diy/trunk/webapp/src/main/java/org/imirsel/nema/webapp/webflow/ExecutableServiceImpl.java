@@ -38,29 +38,13 @@ public class ExecutableServiceImpl {
 	private CommandLineFormatter commandLineFormatter;
 	private ResourceTypeService resourceServiceType;
 
-	public void setTemplate(VanillaPredefinedCommandTemplate input,
-			ExecutableBundle.ExecutableType type,
-			VanillaPredefinedCommandTemplate plainTemplate,
-			JavaPredefinedCommandTemplate javaTemplate,
-			MatlabPredefinedCommandTemplate matlabTemplate) {
-		logger.debug("get input template "+type);
-		if (type != null) {
-			switch (type) {
-			case SHELL:
-			case C:
-				plainTemplate = input;
-				break;
-			case JAVA:
-				javaTemplate = (DiyJavaTemplate) input;
-				break;
-			case MATLAB:
-				matlabTemplate = (DiyMatlabTemplate) input;
-				break;
-			default:
-
-			}
-		}
-	}
+	
+	/**
+	 * set the input template into the webflow scope according to type
+	 * @param input
+	 * @param type
+	 * @param scope
+	 */
 	public void setTemplate(VanillaPredefinedCommandTemplate input,
 			ExecutableBundle.ExecutableType type,
 			MutableAttributeMap scope) {
@@ -83,6 +67,14 @@ public class ExecutableServiceImpl {
 		}
 	}
 
+	/**
+	 * return the correct template (one of the three) according to type 
+	 * @param type
+	 * @param plainTemplate
+	 * @param javaTemplate
+	 * @param matlabTemplate
+	 * @return
+	 */
 	public VanillaPredefinedCommandTemplate selectTemplate(
 			ExecutableBundle.ExecutableType type,
 			VanillaPredefinedCommandTemplate plainTemplate,
