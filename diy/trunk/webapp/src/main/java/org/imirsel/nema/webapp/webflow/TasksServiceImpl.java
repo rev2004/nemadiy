@@ -112,8 +112,9 @@ public class TasksServiceImpl {
 		datatypeMap.get(GROUP).setValue(bundle.getGroup());
 		if (executableMap.containsKey(component)) {
 			ResourcePath oldPath = executableMap.get(component);
-			if (artifactService.exists(credential, oldPath))
+			if (artifactService.exists(credential, oldPath)) {
 				artifactService.removeExecutableBundle(credential, oldPath);
+			}
 		}
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
 				uuid.toString(), bundle);		
@@ -121,12 +122,13 @@ public class TasksServiceImpl {
 		if (path != null) {
 			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
 			messageContext.addMessage(new MessageBuilder().error().defaultText(
-					"success uploaed executable bundle" + bundle.getFileName())
+					"success uploaded executable bundle" + bundle.getFileName())
 					.build());
 			logger.debug("resource path is " + path);
-		} else
+		} else {
 			throw new ContentRepositoryServiceException(
 					"error in saving the executable bundle");
+		}
 
 	}
 

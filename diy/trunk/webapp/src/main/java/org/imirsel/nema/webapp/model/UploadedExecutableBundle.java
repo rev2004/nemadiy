@@ -3,6 +3,8 @@ package org.imirsel.nema.webapp.model;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,17 +33,24 @@ public class UploadedExecutableBundle extends ExecutableBundle {
    
    /** Raw file posted by the user. Kept around for only a short time. */
    private transient MultipartFile uploadedFile;
-   /** Bytes from the uploaded multipart file that are written to disk. */
+   /** Bytes from the uploaded multipart file written to a file on disk. */
    private transient File persistedFile;
+   /** Path to the persisted file */
+   private String persistedFilePath;
    /** The uploaded file readable in ZIP format. */ 
-   private transient ZipFile zipFile;   
+   private transient ZipFile zipFile;
    /** 
     * A wrapper for the ZIP file that provides some extra services needed by the
     * DIY application.
     */
-   private transient NemaZipFile nemaZipFile;
-   
+   private NemaZipFile nemaZipFile;
+   /**
+    * Whether or not the archive is readable as a ZIP file.
+    */
    private boolean isReadableAsZip = false;
+   /**
+    * List of paths to the JARs that are contained in the archive.
+    */
    private List<Path> jarPaths;
    
    /** Nobody knows what this is for */
@@ -68,7 +77,7 @@ public class UploadedExecutableBundle extends ExecutableBundle {
       this.setCommandLineFlags(bundle.getCommandLineFlags());
       this.setEnvironmentVariables(bundle.getEnvironmentVariables());
       this.setExecutableName(bundle.getExecutableName());
-      this.setFileName(bundle.getExecutableName());
+      this.setFileName(bundle.getFileName());
       this.setId(bundle.getId());
       this.setPreferredOs(bundle.getPreferredOs());
       this.setType(bundle.getType());
@@ -83,9 +92,6 @@ public class UploadedExecutableBundle extends ExecutableBundle {
     */
    public void setUploadedFile(MultipartFile file) throws IOException {
       try {
-         if(getFileName()!=null || "".equals(getFileName())) {
-            dispose();
-         }
          setFileName(file.getOriginalFilename());
          setBundleContent(file.getBytes());
          persistUploadedFile();
@@ -183,8 +189,10 @@ public class UploadedExecutableBundle extends ExecutableBundle {
       String tempDir = System.getProperty("java.io.tmpdir");
       String fileSeparator = System.getProperty("file.separator");
       
-      persistedFile = new File(tempDir + fileSeparator + UUID.randomUUID() + "_" +
-                                           getFileName() );
+      persistedFilePath = tempDir + fileSeparator + UUID.randomUUID() + "_" +
+                          getFileName();
+      persistedFile = new File(persistedFilePath);
+      
       FileOutputStream fos = null;
       
       try {
@@ -242,4 +250,30 @@ public class UploadedExecutableBundle extends ExecutableBundle {
    public List<Path> getJarPaths() {
       return jarPaths;
    }
+   
+
+   public void clear() {
+      super.clear();
+      dispose();
+      persistedFile = null;
+      persistedFilePath = null;
+      zipFile = null;
+      nemaZipFile = null;
+      jarPaths = null;
+      isReadableAsZip = false;
+   }
+   
+   private void readObject(ObjectInputStream inputStream) throws IOException,
+         ClassNotFoundException {
+      inputStream.defaultReadObject();
+      if(persistedFilePath!=null) {
+         persistedFile = new File(persistedFilePath);
+         zipFile = new ZipFile(persistedFile);
+      }
+   }
+
+   private void writeObject(ObjectOutputStream outputStream) throws IOException {
+      outputStream.defaultWriteObject();
+   }
+
 }
