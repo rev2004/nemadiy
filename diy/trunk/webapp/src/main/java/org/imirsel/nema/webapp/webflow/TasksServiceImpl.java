@@ -49,10 +49,10 @@ import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action class for the task template flow generation web flow.
+ * Action class for the task template flow generation webflow.
  * 
  * @author gzhu1
- * @since 0.5.1
+ * @since 0.6.0
  * 
  */
 public class TasksServiceImpl {
@@ -155,6 +155,13 @@ public class TasksServiceImpl {
 		return list;
 	}
 
+	/**
+	 * Retrieve the Executable bundle with resource path {@link path}, 
+	 * and populated the extra fields for UploadedExecutableBundle 
+	 * @param path
+	 * @param datatypeMap
+	 * @return
+	 */
 	public UploadedExecutableBundle findBundle(ResourcePath path,
 			Map<String, Property> datatypeMap) {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
@@ -205,6 +212,11 @@ public class TasksServiceImpl {
 		return parameters;
 	}
 
+	/**
+	 * Set the datatypeMaps from the flow.  
+	 * @param flow
+	 * @return
+	 */
 	public Map<Component, Map<String, Property>> setDatatypeMaps(Flow flow) {
 
 		Map<Component, Map<String, Property>> datatypeMaps = new TreeMap<Component, Map<String, Property>>();
@@ -285,6 +297,11 @@ public class TasksServiceImpl {
 		return hiddenProperties;
 	}
 
+	/**
+	 * hide some properties for remote executable components that set in the task/executable subflow
+	 * @param datatypeMap
+	 * @return  the datatype map fields that should be shown
+	 */
 	public Map<String, Property> shownMap(Map<String, Property> datatypeMap) {
 		Map<String, Property> shown = new HashMap<String, Property>();
 		shown.putAll(datatypeMap);
@@ -570,7 +587,7 @@ public class TasksServiceImpl {
 		return job;
 
 	}
-
+	
 	public Job run(Flow flow,
 			Map<Component, Map<String, Property>> datatypeMaps, String name,
 			String description) throws MeandreServerException {

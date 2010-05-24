@@ -15,14 +15,18 @@ import org.imirsel.nema.model.NemaZipFile;
 import org.imirsel.nema.model.Path;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * A null wrapper for {@link org.imirsel.nema.model.ExecutableBundle}. 
+ * It supports for various display purpose: file upload, validation, extra fields(OS,group)... 
+ * @author gzhu1
+ * @since 0.6.0
+ *
+ */
 public class UploadedExecutableBundle extends ExecutableBundle {
 
    private static final Logger logger = 
       Logger.getLogger(UploadedExecutableBundle.class.getName());
-   
-   /**
-    * Version of this class.
-    */
+ 
    private static final long serialVersionUID = -8886083754671426825L;
    
    /** Raw file posted by the user. Kept around for only a short time. */

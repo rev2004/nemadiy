@@ -11,10 +11,10 @@ import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.ResourcePath;
 
 /**
- * Model object for the webflow for template task
+ * Model object for the webflow for template task, a UUIC is assigned for every task.
  * 
  * @author gzhu1
- * @since 0.5
+ * @since 0.6.0
  * 
  */
 public class TaskFlowModel implements Serializable {
