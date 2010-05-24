@@ -16,7 +16,7 @@
 		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
 		<set name="flowScope.executable" value="executableService.setExecutable(executableBundleInput)" />
 		<evaluate
-			expression="executableService.setTemplate(executableTemplateInput,executableBundleInput.type,plainTemplate,javaTemplate,matlabTemplate)" />
+			expression="executableService.setTemplate(executableTemplateInput,executableBundleInput.type,flowScope)" />
 	</on-start>
 
 
