@@ -66,12 +66,33 @@ public class NemaZipFile implements Serializable {
    private String unzipDir = System.getProperty("java.io.tmpdir");
    
    private transient ZipFile sourceZip;
+   /**
+    * The name of the zip file
+    * @serial
+    */
    private String sourceZipPath;
+   /**
+    * The name of the source zip file -the location on the client's
+    * computer
+    * @serial
+    */
    private String sourceZipName;
    private transient File sourceZipContentDir;
+   /**
+    * The source directory where the file is unzipped
+    * @serial
+    * 
+    */
    private String sourceZipContentDirPath;
-   
+   /** 
+    * The state of the file -new file or opened
+    * @serial
+    */
    private FileState state = FileState.NEW;
+   
+   /** The type of file -jar or zip are the two supported types
+    * @serial
+    */
    private FileType type = FileType.ZIP;
    
    /**
@@ -456,6 +477,12 @@ public class NemaZipFile implements Serializable {
 	 return false;
    }
    
+   /**
+    * 
+    * @param inputStream
+    * @throws IOException
+    * @throws ClassNotFoundException
+    */
    private void readObject(ObjectInputStream inputStream) throws IOException,
          ClassNotFoundException {
       inputStream.defaultReadObject();
@@ -465,6 +492,14 @@ public class NemaZipFile implements Serializable {
       }
    }
 
+   /**
+    * Serializes {@code NemaZipFile} instance
+    * 
+    * @serialData The default serialization of the object -for future use
+    * 
+    * @param outputStream
+    * @throws IOException
+    */
    private void writeObject(ObjectOutputStream outputStream) throws IOException {
       outputStream.defaultWriteObject();
    }
