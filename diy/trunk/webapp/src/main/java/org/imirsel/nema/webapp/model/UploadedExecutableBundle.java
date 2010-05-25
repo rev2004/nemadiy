@@ -206,8 +206,9 @@ public class UploadedExecutableBundle extends ExecutableBundle {
     */
    private void persistUploadedFile() throws IOException {
       String tempDir = System.getProperty("java.io.tmpdir");
+      String fileSeparator = System.getProperty("file.separator");
       
-      persistedFilePath = tempDir + UUID.randomUUID() + "_" +
+      persistedFilePath = tempDir + fileSeparator + UUID.randomUUID() + "_" +
                           getFileName();
       persistedFile = new File(persistedFilePath);
       
