@@ -137,9 +137,8 @@ public class ExecutableServiceImpl {
 			JavaPredefinedCommandTemplate template) {
 
 		List<Path> jarPaths = executable.getJarPaths();
-		for (Path path : jarPaths) {
-			template.addClasspath(path);
-		}
+		template.setClasspath(jarPaths);
+
 		String[] keys = getArray(httpParam, "sysVar");
 		String[] values = getArray(httpParam, "sysValue");
 		List<SysProperty> properties = new ArrayList<SysProperty>();

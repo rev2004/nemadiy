@@ -24,13 +24,11 @@
 		<transition on="edit" to="editComponentProperties" />
 		<transition on="review" to="reviewTask" />
 		<transition on="cancel" to="selectTask" />
-		<transition on="clear" to="displayFlowComponents" />
 	</view-state>
 
 	<view-state id="reviewTask">
 		<transition on="run" to="run" />
-		<transition on="cancel" to="selectTask" />
-		<transition on="edit" to="displayFlowComponents" />
+		<transition on="back" to="displayFlowComponents" />
 	</view-state>
 
 	<view-state id="testResult">

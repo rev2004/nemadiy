@@ -38,7 +38,7 @@
 
 <form:form modelAttribute="executable" enctype="multipart/form-data">
 	
-	<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
+	<form:errors path="*" cssClass="error"/>
 	
 	<fieldset>
 	    <label id="executableTypeLabel">Specify the executable type:</label>

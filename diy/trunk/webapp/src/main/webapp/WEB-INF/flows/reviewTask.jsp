@@ -29,9 +29,8 @@
 			</fieldset>
 		</c:forEach>
 		<fieldset id="button">
-			<input type="submit" name="_eventId_run" value="Run" />
-			<input type="submit" name="_eventId_edit" value="Edit" />
-			<input type="submit" name="_eventId_cancel" value="Cancel" />
+            <input type="submit" name="_eventId_back" value="Back" />
+			<input type="submit" name="_eventId_run" value="Run Task" />
 		</fieldset>
 	</form:form>
 </body>

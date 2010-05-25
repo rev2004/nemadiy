@@ -9,8 +9,8 @@
 	<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
 	<fieldset id="pt1"><label>
 	${executable.typeName}  Executable:</label> ${executable.fileName} </fieldset>
-	<fieldset id="pt1"><label>environment:</label><code><c:forEach items="${executable.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach> </code></fieldset>
-	<fieldset id="pt1"><label>arguments:</label><c:out
+	<fieldset id="pt1"><label>Environment Variables:</label><code><c:forEach items="${executable.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach></code></fieldset>
+	<fieldset id="pt1"><label>Arguments:</label><c:out
 		value="${executable.commandLineFlags}" /></fieldset>
 
 	<fieldset id="button"><input type="submit"
