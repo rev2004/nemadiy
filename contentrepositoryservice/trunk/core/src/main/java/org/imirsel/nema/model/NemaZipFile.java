@@ -173,6 +173,7 @@ public class NemaZipFile implements Serializable {
          return;
       }
       logger.info("Closing archive " + sourceZipName + ".");
+      sourceZip.close();
       deleteDir(sourceZipContentDir);
       state=FileState.CLOSED;
    }
@@ -499,6 +500,9 @@ public class NemaZipFile implements Serializable {
     * @throws IOException
     */
    private void writeObject(ObjectOutputStream outputStream) throws IOException {
+      if(sourceZipPath!=null) {
+         sourceZip.close();
+      }
       outputStream.defaultWriteObject();
    }
 
