@@ -23,7 +23,7 @@
 	<view-state id="displayFlowComponents" model="taskFlowModel">
 		<transition on="edit" to="editComponentProperties" />
 		<transition on="review" to="reviewTask" />
-		<transition on="cancel" to="selectTask" />
+		<transition on="cancel" to="clearUp" />
 	</view-state>
 
 	<view-state id="reviewTask">
@@ -31,14 +31,7 @@
 		<transition on="back" to="displayFlowComponents" />
 	</view-state>
 
-	<view-state id="testResult">
-		<on-entry>
-			<evaluate expression="tasksService.getJobResult(job)" result="flowScope.resultSet" />
-		</on-entry>
-		<transition on="run" to="run" />
-		<transition on="cancel" to="selectTask" />
-		<transition on="edit" to="displayFlowComponents" />
-	</view-state>
+	
 
 	<view-state id="editSimpleComponentProperties">
 		<transition on="save" to="displayFlowComponents">
@@ -85,13 +78,14 @@
 		<output name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<transition on="success" to="addExecutableSuccess">
 			<evaluate
-				expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,messageContext)" />
+				expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,flowRequestContext.messageContext)" />
 			<evaluate expression="taskFlowModel.templateMap.put(component,executableTemplate)" />
 
 		</transition>
 		<transition on="done" to="editRemoteServiceComponentProperties" />
 	</subflow-state>
 
+	
 	<action-state id="editComponentProperties">
 		<evaluate expression="tasksService.getRoles()" result="conversationScope.userRoles" />
 		<evaluate expression="componentList.get(requestParameters.idx)" result="conversationScope.component" />
@@ -103,18 +97,26 @@
 		<transition on="isRemoteService.no" to="editSimpleComponentProperties" />
 	</action-state>
 
-	<action-state id="runTest">
-		<evaluate expression="tasksService.testRun(flow,datatypeMaps,taskFlowModel.name,taskFlowModel.description)"
-			result="flowScope.job" />
-		<transition on="success" to="testResult" />
-	</action-state>
+	
 
 	<action-state id="run">
 		<evaluate expression="tasksService.run(flow,datatypeMaps,taskFlowModel.name,taskFlowModel.description)"
 			result="flowScope.job" />
 		<transition on="success" to="checkRunResult" />
+		<transition on-exception="org.imirsel.nema.flowservice.MeandreServerException" to="runError"/>
 	</action-state>
+	
+	<view-state id="runError">
+	 	<transition on="retry" to="run"/>
+	 	<transition on="cancel" to="selectTask"/>
+	</view-state>
 
+	<action-state id="cleanUp">
+		<evaluate expression="tasksService.clearBundles(taskFlowModel.executableMap)"/>
+	    <evaluate expression="taskFlowModel.executableMap.clear()"/>
+	    <evaluate expression="taskFlowModel.templateMap.clear()"/>
+		<transition to="selectTask"/>	
+	</action-state>
 	<decision-state id="checkRunResult">
 		<if test="jobId==null" then="run" else="jobdetail" />
 	</decision-state>
