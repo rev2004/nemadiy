@@ -67,18 +67,7 @@
 	<fieldset>
 	    <label id="groupLabel">Select the group:</label>
 	    <form:select path="group" items="${supportedGroups}" itemLabel="name" itemValue="value" />
-	</fieldset>
-        <c:if test="${not empty executable.fileName}">
-            <fieldset id="pt1">
-                <label>environment:</label>             
-                    <c:forEach items="${executable.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach>
-            </fieldset>
-            <fieldset id="pt1">
-                <label>arguments:</label>
-                <c:out value="${executable.commandLineFlags}" />
-            </fieldset>
-        </c:if>
-        
+	</fieldset>        
 	<fieldset id="button">
 	    <input type="submit" name="_eventId_upload" value="Next" />
 	    <input type="submit" name="_eventId_cancel" value="Cancel" />

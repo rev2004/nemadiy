@@ -22,16 +22,14 @@
 
 	<view-state id="upload" model="executable">
 		<transition on="upload" to="arguments" />
-		<transition on="cancel" to="cancel" validate="false">
-		  <evaluate expression="executable.clear()"></evaluate>
-		</transition>
+		<transition on="cancel" to="cancel" validate="false"/>
 	</view-state>
 
 	<view-state id="argumentsPlain">
 	    <on-entry>
 			<set name="flashScope.niceParams" value="executableService.getNiceParams(plainTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
 		</on-entry>
-		<transition on="cancel" to="cancel" />
+        <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
 			<evaluate expression="executableService.setCommonTemplate(requestParameters,flowScope.plainTemplate)" />
@@ -44,7 +42,7 @@
 			<set name="flashScope.niceParams" value="executableService.getNiceParams(javaTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
 		</on-entry>
 
-		<transition on="cancel" to="cancel" />
+        <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
 
@@ -59,7 +57,7 @@
 		<on-entry>
 			<set name="flashScope.niceParams" value="executableService.getNiceParams(matlabTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
 		</on-entry>
-		<transition on="cancel" to="cancel" />
+        <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
 
@@ -70,7 +68,7 @@
 	</view-state>
 
 	<view-state id="review">
-		<transition on="cancel" to="cancel" />
+        <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="arguments" />
 		<transition on="save" to="success">
 		</transition>
@@ -82,10 +80,14 @@
 		<transition on="MATLAB" to="argumentsMatlab" />
 		<transition on="SHELL" to="argumentsPlain" />
 		<transition on="C" to="argumentsPlain" />
-
 	</action-state>
 
-	<end-state id="cancel"></end-state>
+    <action-state id="cancel">
+          <evaluate expression="executable.clear()"/>
+          <transition to="done"/>
+    </action-state>
+    
+	<end-state id="done"/>
 
 	<end-state id="success">
 

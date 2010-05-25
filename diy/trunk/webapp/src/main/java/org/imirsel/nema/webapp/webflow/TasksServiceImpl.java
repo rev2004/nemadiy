@@ -171,9 +171,7 @@ public class TasksServiceImpl {
 			if ((path != null) && (artifactService.exists(credential, path))) {
 				ExecutableBundle oldBundle = artifactService
 						.getExecutableBundle(credential, path);
-				logger.debug("find bundle " + oldBundle.getFileName());
 				bundle = new UploadedExecutableBundle(oldBundle);
-				logger.debug("success convert it into a uploaded bundle");
 				if (bundle == null)
 					bundle = new UploadedExecutableBundle();
 				bundle.setPreferredOs(datatypeMap.get(CREDENTIALS).getValue());
