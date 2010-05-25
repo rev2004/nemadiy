@@ -1,6 +1,7 @@
 package org.imirsel.nema.webapp.webflow;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -33,7 +34,6 @@ import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.JobResult;
-import org.imirsel.nema.model.OsDataType;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.Role;
@@ -45,7 +45,6 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
-
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -97,7 +96,7 @@ public class TasksServiceImpl {
 			final Map<String, Property> datatypeMap,
 			final UploadedExecutableBundle bundle, final UUID uuid,
 			Map<Component, ResourcePath> executableMap,
-			final MessageContext messageContext)
+			MessageContext messageContext)
 			throws ContentRepositoryServiceException {
 		logger.debug("add executable url into parameter for "
 				+ bundle.getFileName());
@@ -120,6 +119,7 @@ public class TasksServiceImpl {
 				uuid.toString(), bundle);		
 		executableMap.put(component, path);
 		if (path != null) {
+			//MessageContext messageContext=requestContext.getMessageContext();
 			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
 			messageContext.addMessage(new MessageBuilder().error().defaultText(
 					"success uploaded executable bundle" + bundle.getFileName())
@@ -132,6 +132,19 @@ public class TasksServiceImpl {
 
 	}
 
+	public void clearBundles(Map<Component, ResourcePath> executableMap){
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		for (Component component:executableMap.keySet()){
+			ResourcePath oldPath = executableMap.get(component);
+			try {
+				if (artifactService.exists(credential, oldPath)) {
+					artifactService.removeExecutableBundle(credential, oldPath);
+				}
+			} catch (ContentRepositoryServiceException e) {
+				logger.error(e,e);
+			}
+		}
+	}
 	
 	/**
 	 * return the list of flow templates belong to type, all templates are returned if type is not valid.  
@@ -364,12 +377,28 @@ public class TasksServiceImpl {
 				// + req.getServerPort() + req.getContextPath() + webDir
 				// + fileName);
 				// property.setValue(address);
+				
+				String uploadDir="";//TODO find some way to add uploadDir (Real address in HD) and WebDir (address in web)
+				String webDir="";   //TODO
+				String filename=file.getOriginalFilename();
+				File uploadedFile=new File(uploadDir+File.separator+filename);
+				try {
+					file.transferTo(uploadedFile);
+				} catch (IllegalStateException e) {
+					
+					logger.error(e,e);
+				} catch (IOException e) {
+					
+					logger.error(e,e);
+				}
+				property.setValue("http://"+webDir+filename);
+				
 
 			} else {
 				property.setValue(parameters.get(property.getName()));
 			}
 			dataMap.put(key, property);
-		}
+		}//for loop
 	}
 
 	/**
@@ -514,7 +543,7 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 *
+	 * Create a job with all the properties in datatypeMaps. 
 	 * 
 	 * @param flow
 	 * @param datatypeMaps
@@ -523,7 +552,7 @@ public class TasksServiceImpl {
 	 * @return
 	 * @throws MeandreServerException
 	 */
-	public Job testRun(Flow flow,
+	public Job run(Flow flow,
 			Map<Component, Map<String, Property>> datatypeMaps, String name,
 			String description) throws MeandreServerException {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
@@ -593,11 +622,7 @@ public class TasksServiceImpl {
 
 	}
 	
-	public Job run(Flow flow,
-			Map<Component, Map<String, Property>> datatypeMaps, String name,
-			String description) throws MeandreServerException {
-		return this.testRun(flow, datatypeMaps, name, description);
-	}
+
 
 	// TODO this method is the same as the one in ComponentPropertyTag, might
 	// need some

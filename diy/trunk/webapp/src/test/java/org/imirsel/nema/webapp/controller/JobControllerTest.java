@@ -113,7 +113,7 @@ public class JobControllerTest {
 	
 	
     @Test 
-    void testDoJobAction(){
+    public void testDoJobAction(){
 		 context.checking(new Expectations() {{
 			    oneOf(flowService).getJob(job1.getId()); will(returnValue(job1));
 		        oneOf(flowService).abortJob(job1.getId());	

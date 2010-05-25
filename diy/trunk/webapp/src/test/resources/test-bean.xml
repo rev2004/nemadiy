@@ -5,12 +5,12 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 	<bean id="job1" name="job1" class="org.imirsel.nema.model.Job"
-		p:id="100L" p:name="job1" p:description="this is the first mock job"
+		p:id="100" p:name="job1" p:description="this is the first mock job"
 		p:statusCode="1" p:flow-ref="flow1" />
 
 
 	<bean id="job2" name="job2" class="org.imirsel.nema.model.Job">
-		<property name="id" value="5000L" />
+		<property name="id" value="5000" />
 		<property name="name" value="job2" />
 		<property name="description" value="second mock job" />
 		<property name="statusCode" value="4" />
@@ -18,7 +18,7 @@
 	</bean>
 
 	<bean id="job3" name="job3" class="org.imirsel.nema.model.Job">
-		<property name="id" value="5001L" />
+		<property name="id" value="5001" />
 		<property name="name" value="job3" />
 		<property name="description" value=" mock job #3" />
 		<property name="statusCode" value="3" />
@@ -48,7 +48,7 @@
 		p:id="2" />
 
 	<bean id="user" name="user" class="org.imirsel.nema.model.User"
-		p:id="100L" p:username="userA" />
+		p:id="100" p:username="userA" />
 
 	<bean id="flow1" name="flow1" class="org.imirsel.nema.model.Flow"
 		p:uri="http://mock.nema.lis.illinois.edu/flow1" p:id="10" p:name="flow 1" />
