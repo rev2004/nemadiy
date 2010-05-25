@@ -67,31 +67,33 @@ public class NemaZipFile implements Serializable {
    
    private transient ZipFile sourceZip;
    /**
-    * The name of the zip file
+    * The complete path to the source ZIP file.
     * @serial
     */
    private String sourceZipPath;
    /**
-    * The name of the source zip file -the location on the client's
-    * computer
+    * The name of the source ZIP file. This is the short name and doesn't
+    * include any path information.
     * @serial
     */
    private String sourceZipName;
+   /**
+    * The directory where the source ZIP file is expanded.
+    */
    private transient File sourceZipContentDir;
    /**
-    * The source directory where the file is unzipped
+    * The String version of the directory where the file is expanded.
     * @serial
-    * 
     */
    private String sourceZipContentDirPath;
    /** 
-    * The state of the file -new file or opened
+    * The state of the file: NEW, OPENED, or CLOSED.
     * @serial
     */
    private FileState state = FileState.NEW;
    
    /** 
-    * The type of file -jar or zip are the two supported types
+    * The type of file. JAR and ZIP are the two supported types.
     * @serial
     */
    private FileType type = FileType.ZIP;
