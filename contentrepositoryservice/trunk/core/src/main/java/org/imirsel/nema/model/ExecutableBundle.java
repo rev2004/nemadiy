@@ -4,11 +4,15 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class ExecutableBundle implements Serializable, ExecutableMetadata {
-	/**
+
+   /**
 	 * Version of this class.
 	 */
 	private static final long serialVersionUID = -6672878925392305298L;
-
+	
+   private static final ExecutableType DEFAULT_EXECUTABLE_TYPE = ExecutableType.JAVA;
+   private static final String DEFAULT_OS = "Unix Like";
+   
 	public enum ExecutableType {
 		JAVA("Java",0), MATLAB("MATLAB",1), C("C",2), SHELL("Shell",3);
 
@@ -67,10 +71,10 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
 
 	private String id;
 	private String fileName;
-	private ExecutableType type = ExecutableType.JAVA;
+	private ExecutableType type = DEFAULT_EXECUTABLE_TYPE;
 	private String executableName;
 	private String commandLineFlags;
-	private String preferredOs = "Unix Like";
+	private String preferredOs = DEFAULT_OS;
 	private Map<String, String> environmentVariables;
 	private byte[] bundleContent;
 	
@@ -133,6 +137,15 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
    }
    public void setPreferredOs(String preferredOs) {
       this.preferredOs = preferredOs;
+   }
+   public void clear() {
+      id = null;
+      fileName = null;
+      executableName = null;
+      type = DEFAULT_EXECUTABLE_TYPE;
+      bundleContent = null;
+      commandLineFlags = null;
+      environmentVariables = null;
    }
 
 }
