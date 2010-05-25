@@ -35,16 +35,15 @@ ${messageContext.allMessages}
           Component Name: ${component.name}
           <br/>
           <label>Description: ${component.description}</label>          
-         <div>    <a href="${flowExecutionUrl}&idx=${status.index}&_eventId=edit">Edit</a></div>
+         <div style="margin-top: 5px">    <a href="${flowExecutionUrl}&idx=${status.index}&_eventId=edit">Edit Properties</a></div>
           </fieldset>
         </c:if>
       </c:forEach>
       <input type="hidden" name="flowTemplateId" value="${flow.id}" />
       <input type="hidden" name="flowTemplateUri" value="${flow.uri}" />
       <fieldset id="button">
-      <input type="submit" name="_eventId_review" value="Review" />
+      <input type="submit" name="_eventId_review" value="Review Task" />
       <input type="submit" name="_eventId_cancel" value="Cancel" />
-      <input type="submit" name="_eventId_clear" value="Clear" />
       </fieldset>
     </form:form>
   </div>

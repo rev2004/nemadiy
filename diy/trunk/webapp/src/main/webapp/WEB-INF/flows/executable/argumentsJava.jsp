@@ -48,7 +48,7 @@
         <form:select path="memoryOption" items="${javaTemplate.memoryOptions}" itemLabel="label" itemValue="code"  />
     </fieldset>
 	<fieldset>
-        <label>System property:</label>
+        <label>System Properties:</label>
         <input type="button" value="+" onclick="add($('sysMain'),$('sysParam1'),2)" /><br />
         <div id='sysMain'>
         <c:forEach	items="${javaTemplate.properties}" var="item">

@@ -36,7 +36,7 @@ public class UploadedExecutableBundle extends ExecutableBundle {
    /** Bytes from the uploaded multipart file written to a file on disk. */
    private transient File persistedFile;
    /** Path to the persisted file */
-   private String persistedFilePath;
+   private String persistedFilePath = null;
    /** The uploaded file readable in ZIP format. */ 
    private transient ZipFile zipFile;
    /** 
@@ -91,8 +91,16 @@ public class UploadedExecutableBundle extends ExecutableBundle {
     * file bytes.
     */
    public void setUploadedFile(MultipartFile file) throws IOException {
+      
+      String fileName = file.getOriginalFilename();
+      
+      // This happens when the form is submitted, but no file is selected.
+      if(null==fileName || "".equals(fileName)) {
+         return;
+      }
+      
       try {
-         setFileName(file.getOriginalFilename());
+         setFileName(fileName);
          setBundleContent(file.getBytes());
          persistUploadedFile();
          createZip();
@@ -187,9 +195,8 @@ public class UploadedExecutableBundle extends ExecutableBundle {
     */
    private void persistUploadedFile() throws IOException {
       String tempDir = System.getProperty("java.io.tmpdir");
-      String fileSeparator = System.getProperty("file.separator");
       
-      persistedFilePath = tempDir + fileSeparator + UUID.randomUUID() + "_" +
+      persistedFilePath = tempDir + UUID.randomUUID() + "_" +
                           getFileName();
       persistedFile = new File(persistedFilePath);
       
@@ -266,7 +273,7 @@ public class UploadedExecutableBundle extends ExecutableBundle {
    private void readObject(ObjectInputStream inputStream) throws IOException,
          ClassNotFoundException {
       inputStream.defaultReadObject();
-      if(persistedFilePath!=null) {
+      if(persistedFilePath!=null && !persistedFilePath.equals("")) {
          persistedFile = new File(persistedFilePath);
          zipFile = new ZipFile(persistedFile);
       }
