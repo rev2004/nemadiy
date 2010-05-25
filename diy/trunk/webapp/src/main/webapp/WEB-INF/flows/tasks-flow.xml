@@ -23,7 +23,7 @@
 	<view-state id="displayFlowComponents" model="taskFlowModel">
 		<transition on="edit" to="editComponentProperties" />
 		<transition on="review" to="reviewTask" />
-		<transition on="cancel" to="clearUp" />
+		<transition on="cancel" to="cleanUp" />
 	</view-state>
 
 	<view-state id="reviewTask">
@@ -33,7 +33,7 @@
 
 	
 
-	<view-state id="editSimpleComponentProperties">
+	<view-state id="editSimpleComponentProperties" >
 		<transition on="save" to="displayFlowComponents">
 			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
 		</transition>
@@ -49,8 +49,8 @@
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
-	<view-state id="addExecutableSuccess">
-		<transition on="next" to="displayFlowComponents" />
+	<view-state id="addExecutableSuccess"  >
+		<transition  on="next" to="displayFlowComponents" />
 		<transition on="back" to="editRemoteServiceComponentProperties" />
 		<on-exit><evaluate expression="executableBundle.clear()"/></on-exit>
 	</view-state>
@@ -66,7 +66,7 @@
 		<set name="flowScope.taskFlowModel.description" value="flow.description">
 			<attribute name="name" value="lastStep" />
 		</set>
-		<transition on="lastStep.success" to="displayFlowComponents" />
+		<transition on="lastStep.success"  to="displayFlowComponents" />
 	</action-state>
 
 	<subflow-state id="generateExecutable" subflow="task/executable">
@@ -76,7 +76,7 @@
 
 		<output name="executableTemplate" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 		<output name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
-		<transition on="success" to="addExecutableSuccess">
+		<transition on="success" to="addExecutableSuccess" >
 			<evaluate
 				expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,flowRequestContext.messageContext)" />
 			<evaluate expression="taskFlowModel.templateMap.put(component,executableTemplate)" />
@@ -104,6 +104,7 @@
 			result="flowScope.job" />
 		<transition on="success" to="checkRunResult" />
 		<transition on-exception="org.imirsel.nema.flowservice.MeandreServerException" to="runError"/>
+		<transition on-exception="org.imirsel.nema.flowservice.ServiceException" to="runError"/>
 	</action-state>
 	
 	<view-state id="runError">

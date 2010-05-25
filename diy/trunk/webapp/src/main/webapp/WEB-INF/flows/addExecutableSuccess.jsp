@@ -10,9 +10,17 @@
 <div class="message">
 <h2>You have already uploaded the executable bundle to the content repository.</h2>
 </div>
-message:${empty flowRequestContext.messageContext.allMessages}
+
+<c:forEach items="${flowRequestContext.messageContext.allMessages}" var="message">
+  <c:if test="${message.severity eq 'Error'}">
+    <div class="message">
+      <div class="portlet-msg-alert">${message.text}</div>
+    </div>
+  </c:if>
+</c:forEach>
+
 <form:form>
-    <form:errors/>
+    
 	<fieldset id="pt1">
 	Preferred OS: ${executableBundle.preferredOs}<br />
 	Group: ${executableBundle.group }<br />

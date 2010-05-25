@@ -70,7 +70,7 @@
 	<view-state id="review">
         <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="arguments" />
-		<transition on="save" to="success">
+		<transition on="save" to="success" >
 		</transition>
 	</view-state>
 
