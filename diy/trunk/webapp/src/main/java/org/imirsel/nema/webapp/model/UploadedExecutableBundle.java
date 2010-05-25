@@ -81,6 +81,12 @@ public class UploadedExecutableBundle extends ExecutableBundle {
       this.setId(bundle.getId());
       this.setPreferredOs(bundle.getPreferredOs());
       this.setType(bundle.getType());
+      try {
+         init();
+      } catch (IOException e) {
+         throw new RuntimeException("Could not create executable bundle for " + 
+               bundle.getFileName()+".",e);
+      }
    }
    
    /**
@@ -98,19 +104,24 @@ public class UploadedExecutableBundle extends ExecutableBundle {
       if(null==fileName || "".equals(fileName)) {
          return;
       }
+
+      setFileName(fileName);
+      setBundleContent(file.getBytes());
       
       try {
-         setFileName(fileName);
-         setBundleContent(file.getBytes());
-         persistUploadedFile();
-         createZip();
-         if(isReadableAsZip) {
-            createAndOpenNemaZipFile();
-            createJarPaths();
-         }
+         init();
       } catch (IOException e) {
          throw new IOException("An error occured while retrieving the " +
                "bytes of the uploaded file.",e);
+      }
+   }
+
+   private void init() throws IOException {
+      persistUploadedFile();
+      createZip();
+      if(isReadableAsZip) {
+         createAndOpenNemaZipFile();
+         createJarPaths();
       }
    }
    
@@ -280,6 +291,9 @@ public class UploadedExecutableBundle extends ExecutableBundle {
    }
 
    private void writeObject(ObjectOutputStream outputStream) throws IOException {
+       if(zipFile!=null) {
+         zipFile.close();
+       }
       outputStream.defaultWriteObject();
    }
 

@@ -64,6 +64,8 @@
 
 
 	<action-state id="getTemplate">
+	    <evaluate expression="taskFlowModel.executableMap.clear()"/>
+	    <evaluate expression="taskFlowModel.templateMap.clear()"/>
 		<set name="flowScope.flow" value="flowService.getFlow(id)" />
 		<set name="flowScope.datatypeMaps" value="tasksService.setDatatypeMaps(flow)" />
 		<set name="flowScope.componentList" value="tasksService.setComponentList(datatypeMaps)" />
@@ -87,7 +89,7 @@
 			<evaluate expression="taskFlowModel.templateMap.put(component,executableTemplate)" />
 
 		</transition>
-		<transition on="cancel" to="editRemoteServiceComponentProperties" />
+		<transition on="done" to="editRemoteServiceComponentProperties" />
 	</subflow-state>
 
 	<action-state id="editComponentProperties">
