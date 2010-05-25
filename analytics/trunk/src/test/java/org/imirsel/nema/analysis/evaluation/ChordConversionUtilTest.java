@@ -47,6 +47,12 @@ public class ChordConversionUtilTest {
 //	}
 
 	@Test
+	public void testInitUtil() throws Exception{
+		ChordConversionUtil util = ChordConversionUtil.getInstance();
+		assertTrue(util!=null);
+	}
+	
+	@Test
 	public void testReadChordDictionaryFile() throws IOException{
 		File dictFile = new File("src/test/resources/chord/ShorthandDictionary.txt");
 		Map<String,int[]> map = ChordConversionUtil.readChordDictionary(dictFile);
