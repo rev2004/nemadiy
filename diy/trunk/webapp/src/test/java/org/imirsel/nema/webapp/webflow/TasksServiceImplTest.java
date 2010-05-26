@@ -1,103 +1,103 @@
-/**
- * 
- */
 package org.imirsel.nema.webapp.webflow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.imirsel.nema.contentrepository.client.ArtifactService;
 import org.imirsel.nema.flowservice.FlowService;
-import org.imirsel.nema.webapp.controller.JobController;
+import org.imirsel.nema.service.UserManager;
 import org.jmock.Mockery;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author gzhu1
- *
- */
 public class TasksServiceImplTest {
 	Mockery context=new Mockery();
 	final FlowService flowService=context.mock(FlowService.class);
+	private UserManager userManager=context.mock(UserManager.class);
+	private String uploadDirectory="upload";
+	private ArtifactService artifactService=context.mock(ArtifactService.class);
 	static private Log logger=LogFactory.getLog(TasksServiceImplTest.class);
-
-	/**
-	 * @throws java.lang.Exception
-	 */
+	TasksServiceImpl tasksService=new TasksServiceImpl();
 	@Before
 	public void setUp() throws Exception {
+		tasksService.setArtifactService(artifactService);
+		tasksService.setFlowService(flowService);
+		tasksService.setUserManager(userManager);
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
-
-	/**
-	 * Test method for {@link org.imirsel.nema.webapp.webflow.TasksServiceImpl#getRoles()}.
-	 */
 	@Test
-	public void testGetRoles() {
+	public final void testAddExecutable() {
 		fail("Not yet implemented"); // TODO
 	}
 
-	/**
-	 * Test method for {@link org.imirsel.nema.webapp.webflow.TasksServiceImpl#fillDefaultParameter(org.imirsel.nema.model.Flow)}.
-	 */
 	@Test
-	public void testFillDefaultParameter() {
+	public final void testClearBundles() {
 		fail("Not yet implemented"); // TODO
 	}
 
-	/**
-	 * Test method for {@link org.imirsel.nema.webapp.webflow.TasksServiceImpl#saveParameter(org.springframework.webflow.execution.RequestContext)}.
-	 */
 	@Test
-	public void testSaveParameter() {
+	public final void testGetFlowTemplates() {
 		fail("Not yet implemented"); // TODO
 	}
 
-	/**
-	 * Test method for {@link org.imirsel.nema.webapp.webflow.TasksServiceImpl#getUploadDirectory()}.
-	 */
 	@Test
-	public void testGetUploadDirectory() {
+	public final void testFindBundle() {
 		fail("Not yet implemented"); // TODO
 	}
 
-	/**
-	 * Test method for {@link org.imirsel.nema.webapp.webflow.TasksServiceImpl#setUploadDirectory(java.lang.String)}.
-	 */
 	@Test
-	public void testSetUploadDirectory() {
+	public final void testFillDefaultParameter() {
 		fail("Not yet implemented"); // TODO
 	}
 
-	/**
-	 * Test method for {@link org.imirsel.nema.webapp.webflow.TasksServiceImpl#testRun(org.imirsel.nema.model.Flow, java.util.Map, java.lang.String, java.lang.String)}.
-	 */
 	@Test
-	public void testTestRun() {
+	public final void testSetDatatypeMaps() {
 		fail("Not yet implemented"); // TODO
 	}
 
-	/**
-	 * Test method for {@link org.imirsel.nema.webapp.webflow.TasksServiceImpl#run(org.imirsel.nema.model.Flow, java.util.Map, java.lang.String, java.lang.String)}.
-	 */
 	@Test
-	public void testRun() {
+	public final void testSetComponentList() {
 		fail("Not yet implemented"); // TODO
 	}
 
-	/**
-	 * Test method for {@link org.imirsel.nema.webapp.webflow.TasksServiceImpl#getJobResult(org.imirsel.nema.model.Job)}.
-	 */
 	@Test
-	public void testGetJobResult() {
+	public final void testGetJobResult() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public final void testGetUploadDirectory() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public final void testHideExecutableProperties() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public final void testShownMap() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public final void testIsRemoteServiceComponent() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public final void testUpdateDataMap() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public final void testSaveParameter() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	@Test
+	public final void testRun() {
 		fail("Not yet implemented"); // TODO
 	}
 

@@ -31,8 +31,7 @@
        </c:otherwise>
     </c:choose>
  </fieldset>
-  
-  
+   <input type="submit" name="_eventId_save" value="Save" />
   <input type="submit" name="_eventId_cancel" value="Cancel" />
 </form:form>
 </body>

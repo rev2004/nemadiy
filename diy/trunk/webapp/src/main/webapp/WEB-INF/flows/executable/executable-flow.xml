@@ -48,11 +48,9 @@
         <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-
 			<evaluate expression="executableService.setCommonTemplate(requestParameters,javaTemplate)" />
 			<evaluate expression="executableService.setJavaTemplate(requestParameters,executable,javaTemplate)" />
 			<evaluate expression="executableService.generateExecutableBundle(javaTemplate,flowScope.executable)" />
-
 		</transition>
 	</view-state>
 
@@ -63,9 +61,7 @@
         <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-
 			<evaluate expression="executableService.setCommonTemplate(requestParameters,matlabTemplate)" />
-
 			<evaluate expression="executableService.generateExecutableBundle(matlabTemplate,flowScope.executable)" />
 		</transition>
 	</view-state>
@@ -93,10 +89,8 @@
 	<end-state id="done"/>
 
 	<end-state id="success">
-
 		<output name="executableBundle" value="executable" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<output name="executableTemplate" value="executableService.selectTemplate(executable.type,plainTemplate,javaTemplate,matlabTemplate)"
 			type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
-
 	</end-state>
 </flow>

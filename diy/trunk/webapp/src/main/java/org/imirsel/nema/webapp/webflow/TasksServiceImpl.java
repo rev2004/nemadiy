@@ -44,6 +44,7 @@ import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -63,8 +64,12 @@ public class TasksServiceImpl {
 	static private Log logger = LogFactory.getLog(TasksServiceImpl.class);
 	private FlowService flowService;
 	private UserManager userManager;
-	private String uploadDirectory;
 	private ArtifactService artifactService;
+	private String uploadDirectory;
+	private String physicalDir;
+	private String webDir;
+	
+	
 	/**
 	 * properties' name in the component datatype map
 	 */
@@ -289,14 +294,7 @@ public class TasksServiceImpl {
 		return roles;
 	}
 
-	/**
-	 * Returns upload directory
-	 * 
-	 * @return upload directory
-	 */
-	public String getUploadDirectory() {
-		return uploadDirectory;
-	}
+
 
 	/**
 	 * hide some fields that needs special processing for remote service
@@ -363,25 +361,13 @@ public class TasksServiceImpl {
 				MultipartFile file = parameters.getMultipartFile(property
 						.getName());
 
-				// TODO Save the file
-				// String address=null;
-				// File uploadedFile = new File(uploadDir + File.separator
-				// + fileName);
-				// item.write(uploadedFile);
-				// logger.debug("file uploaded: " + fileName
-				// + uploadedFile.getAbsolutePath());
-				// String webDir =
-				// uploadDir.substring(servletContext.getRealPath(
-				// "/").length());
-				// paramMap.put(fieldName, "http://" + req.getServerName() + ":"
-				// + req.getServerPort() + req.getContextPath() + webDir
-				// + fileName);
-				// property.setValue(address);
-				
-				String uploadDir="";//TODO find some way to add uploadDir (Real address in HD) and WebDir (address in web)
-				String webDir="";   //TODO
+				File dirPath = new File(physicalDir);
+
+				if (!dirPath.exists()) {
+					dirPath.mkdirs();
+				}
 				String filename=file.getOriginalFilename();
-				File uploadedFile=new File(uploadDir+File.separator+filename);
+				File uploadedFile=new File(physicalDir+File.separator+filename);
 				try {
 					file.transferTo(uploadedFile);
 				} catch (IllegalStateException e) {
@@ -433,86 +419,6 @@ public class TasksServiceImpl {
 		}
 	}
 
-	/**
-	 * @deprecated No longer used. Problemetic.
-	 * @param context
-	 * @throws MeandreServerException
-	 */
-	@SuppressWarnings("unchecked")
-	public void saveParameterOld(RequestContext context)
-			throws MeandreServerException {
-		String token = System.currentTimeMillis() + "-token";
-
-		logger.debug("start to save parameter");
-		HttpServletRequest req = (HttpServletRequest) context
-				.getExternalContext().getNativeRequest();
-		ServletContext servletContext = (ServletContext) context
-				.getExternalContext().getNativeContext();
-
-		Map<String, String> paramMap = (Map<String, String>) context
-				.getFlowScope().get("parameterMap");
-
-		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
-		if (!isMultipart) {
-			logger.error("Error -this should be multipart");
-			throw new MeandreServerException(
-					"the call to saveFlow should be multipart");
-		}
-
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		ServletFileUpload upload = new ServletFileUpload(factory);
-		// upload.setSizeMax(yourMaxRequestSize);
-		String uploadDir = (servletContext).getRealPath(getUploadDirectory())
-				+ "/" + req.getRemoteUser() + "/" + token + "/";
-		// Create the directory if it doesn't exist
-		File dirPath = new File(uploadDir);
-
-		if (!dirPath.exists()) {
-			dirPath.mkdirs();
-		}
-
-		try {
-			List<FileItem> items = upload.parseRequest(req);
-			Iterator<FileItem> iter = items.iterator();
-			logger.debug("start to save parameters #" + items.size());
-			while (iter.hasNext()) {
-				FileItem item = iter.next();
-				if (item.isFormField()) {
-					String name = item.getFieldName();
-					String value = item.getString();
-					paramMap.put(name, value);
-
-				} else {
-					String fieldName = item.getFieldName();
-					String fileName = item.getName();
-					String contentType = item.getContentType();
-					boolean isInMemory = item.isInMemory();
-					long sizeInBytes = item.getSize();
-					if (fileName != null && sizeInBytes > 0
-							&& fileName.length() > 0) {
-						File uploadedFile = new File(uploadDir + File.separator
-								+ fileName);
-						item.write(uploadedFile);
-						logger.debug("file uploaded: " + fileName
-								+ uploadedFile.getAbsolutePath());
-						String webDir = uploadDir.substring(servletContext
-								.getRealPath("/").length());
-						paramMap.put(fieldName, "http://" + req.getServerName()
-								+ ":" + req.getServerPort()
-								+ req.getContextPath() + webDir + fileName);
-					}
-				}
-			}
-
-		} catch (FileUploadException e) {
-			logger.error(e, e);
-			throw new MeandreServerException(e);
-		} catch (Exception e) {
-			logger.error(e, e);
-			throw new MeandreServerException(e);
-		}
-
-	}
 
 	public void setFlowService(FlowService flowService) {
 		this.flowService = flowService;
@@ -526,6 +432,28 @@ public class TasksServiceImpl {
 	public void setUploadDirectory(String uploadDirectory) {
 		this.uploadDirectory = uploadDirectory;
 	}
+	
+	/**
+	 * set the real physical/web path from the servlet context/request for uploading
+	 * @param externalContext
+	 * @param httpServletRequest
+	 */
+	public void setUploadingPaths(ExternalContext externalContext,UUID uuid){
+		ServletContext context = (ServletContext)externalContext.getNativeContext();
+		HttpServletRequest req = (HttpServletRequest) externalContext.getNativeRequest();
+
+		physicalDir = context.getRealPath(uploadDirectory)
+		+ "/" + req.getRemoteUser() + "/" + uuid + "/";
+		// Create the directory if it doesn't exist
+
+		String subDir = physicalDir.substring(context
+				.getRealPath("/").length());
+		webDir="http://" + req.getServerName()
+				+ ":" + req.getServerPort()+"/"
+				+ req.getContextPath() + subDir;
+
+		logger.info("set the uploading path: "+physicalDir+","+webDir);
+	}
 
 	public void setUserManager(UserManager userManager) {
 		this.userManager = userManager;
@@ -538,10 +466,19 @@ public class TasksServiceImpl {
 	 * @return
 	 */
 	public int test(String input) {
+
 		logger.debug(input);
 		return 1;
 	}
 
+	
+	public int test(RequestContext context){
+		ServletContext servletContext = (ServletContext)context.getExternalContext().getNativeContext();
+		String uploadDir = (servletContext).getRealPath("/")+"test";
+		logger.debug(uploadDir);
+		return 1;
+	}
+	
 	/**
 	 * Create a job with all the properties in datatypeMaps. 
 	 * 
