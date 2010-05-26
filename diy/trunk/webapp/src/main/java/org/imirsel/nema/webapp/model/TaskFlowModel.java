@@ -31,9 +31,7 @@ public class TaskFlowModel implements Serializable {
 	
 	private Map<Component,ResourcePath> executableMap;
 	private Map<Component,VanillaPredefinedCommandTemplate> templateMap;
-	public UUID getUuid(){
-		return uuid;
-	}
+	
 	
 	
 	public TaskFlowModel() {
@@ -43,7 +41,9 @@ public class TaskFlowModel implements Serializable {
 		templateMap=new HashMap<Component,VanillaPredefinedCommandTemplate>();
 	}
 
-
+	public UUID getUuid(){
+		return uuid;
+	}
 	public String getId() {
 		return id;
 	}

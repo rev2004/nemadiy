@@ -99,6 +99,7 @@ public class JobControllerTest {
 		 }});  
 		 MockHttpServletRequest request=new MockHttpServletRequest();
 		 request.setRequestURI("http://test.com/get/getUserJobs");
+		 jobController.setUserManager(userManager);
 		 ModelAndView mav=jobController.getUserJobs(request, null);
 		 assertModelAttributeValue(mav,Constants.JOBLIST,jobList);	
 		 assertViewName(mav,"job/jobList");
@@ -135,7 +136,7 @@ public class JobControllerTest {
 		}
 		request=new MockHttpServletRequest();
 		 request.addParameter("id",String.valueOf(job1.getId()));
-		 request.addParameter("submit", "Abort This Job");
+		 request.addParameter("submit", "Delete This Job");
 	
 		try {
 			mav = jobController.doJobAction(request, null);
