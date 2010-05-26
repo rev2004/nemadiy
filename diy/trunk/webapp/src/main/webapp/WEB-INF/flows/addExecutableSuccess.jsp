@@ -12,7 +12,7 @@
 </div>
 
 <c:forEach items="${flowRequestContext.messageContext.allMessages}" var="message">
-  <c:if test="${message.severity eq 'Error'}">
+  <c:if test="${message.severity eq 'Info'}">
     <div class="message">
       <div class="portlet-msg-alert">${message.text}</div>
     </div>
