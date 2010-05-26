@@ -16,6 +16,7 @@
 						<h4>${component.name}:</h4>
 					</thead>
 					<c:forEach var="property" items="${datatypeMaps[component]}">
+					<c:if test="${not fn:startsWith(property.key,'_') }">
 						<tr>
 							<td>
 								<c:out value="${property.key}" />
@@ -24,6 +25,7 @@
 								<c:out value="${property.value.value}" />
 							</td>
 						</tr>
+						</c:if>
 					</c:forEach>
 				</table>
 			</fieldset>

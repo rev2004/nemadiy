@@ -78,7 +78,7 @@
 		<output name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<transition on="success" to="addExecutableSuccess" >
 			<evaluate
-				expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,flowRequestContext.messageContext)" />
+				expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,messageContext)" />
 			<evaluate expression="taskFlowModel.templateMap.put(component,executableTemplate)" />
 
 		</transition>

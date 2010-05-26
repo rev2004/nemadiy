@@ -121,7 +121,7 @@ public class TasksServiceImpl {
 		if (path != null) {
 			//MessageContext messageContext=requestContext.getMessageContext();
 			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
-			messageContext.addMessage(new MessageBuilder().error().defaultText(
+			messageContext.addMessage(new MessageBuilder().info().defaultText(
 					"success uploaded executable bundle" + bundle.getFileName())
 					.build());
 			logger.debug("resource path is " + path);

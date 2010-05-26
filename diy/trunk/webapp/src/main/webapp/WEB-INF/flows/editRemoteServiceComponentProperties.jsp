@@ -24,13 +24,19 @@
     </fieldset>
   </c:forEach>
   
-  <c:if test="${taskFlowModel.executableMap[component]!=null}">
-    <fieldset id="pt1">
+     <fieldset id="pt1">
     <label for="jobname"> Profile: </label>
-    ${taskFlowModel.executableMap[component].path}
+     <c:choose >
+      <c:when test="${taskFlowModel.executableMap[component]==null}">
+       None  <input type="submit" name="_eventId_next" value="Create" />
+      </c:when>
+      <c:otherwise>
+        ${taskFlowModel.executableMap[component].path}  <input type="submit" name="_eventId_next" value="Edit" />
+       </c:otherwise>
+    </c:choose>
  </fieldset>
-  </c:if>
-  <input type="submit" name="_eventId_next" value="Next" />
+  
+  
   <input type="submit" name="_eventId_cancel" value="Cancel" />
 </form:form>
 </body>
