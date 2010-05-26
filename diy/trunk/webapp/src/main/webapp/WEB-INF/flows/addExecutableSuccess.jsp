@@ -7,14 +7,11 @@
 <meta name="heading" content="${taskFlowModel.name}.${component.name}" />
 </head>
 <body>
-<div class="message">
-<h2>You have already uploaded the executable bundle to the content repository.</h2>
-</div>
 
 <c:forEach items="${flowRequestContext.messageContext.allMessages}" var="message">
   <c:if test="${message.severity eq 'Info'}">
     <div class="message">
-      <div class="portlet-msg-alert">${message.text}</div>
+      ${message.text}
     </div>
   </c:if>
 </c:forEach>
@@ -34,8 +31,8 @@
 		value="${executableBundle.commandLineFlags}" /></fieldset>
 
 		<fieldset id="button">
-      <input type="submit" name="_eventId_next" value="Next" />
-      <input type="submit" name="_eventId_back" value="Revise" />
+      <input type="submit" name="_eventId_next" value="Back to Task Components" />
+      <input type="submit" name="_eventId_back" value="Revise Executable Profile" />
       </fieldset>
 </form:form>
 </body>

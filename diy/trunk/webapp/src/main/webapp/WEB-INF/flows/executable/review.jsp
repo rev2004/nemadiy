@@ -18,10 +18,10 @@
 	<fieldset id="pt1"><label>Arguments:</label><c:out	value="${executable.commandLineFlags}" />
 	</fieldset>
 
-	<fieldset id="button"><input type="submit"
-		name="_eventId_save" value="Save" /> <input type="submit"
-		name="_eventId_back" value="Back" /> <input type="submit"
-		name="_eventId_cancel" value="Cancel" /></fieldset>
-
+	<fieldset id="button">
+	    <input type="submit" name="_eventId_back" value="Back" />
+	    <input type="submit" name="_eventId_save" value="Save" />
+	    <input type="submit" name="_eventId_cancel" value="Cancel" />
+	</fieldset>
 </form:form>
 </body>

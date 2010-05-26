@@ -122,12 +122,12 @@ public class TasksServiceImpl {
 			//MessageContext messageContext=requestContext.getMessageContext();
 			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
 			messageContext.addMessage(new MessageBuilder().info().defaultText(
-					"success uploaded executable bundle" + bundle.getFileName())
+					"Executable archive was successfully uploaded.")
 					.build());
 			logger.debug("resource path is " + path);
 		} else {
 			throw new ContentRepositoryServiceException(
-					"error in saving the executable bundle");
+					"An error occurred while saving the executable archive: " + bundle.getFileName());
 		}
 
 	}

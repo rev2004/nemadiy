@@ -31,8 +31,6 @@
 		<transition on="back" to="displayFlowComponents" />
 	</view-state>
 
-	
-
 	<view-state id="editSimpleComponentProperties" >
 		<transition on="save" to="displayFlowComponents">
 			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
@@ -84,7 +82,6 @@
 		</transition>
 		<transition on="done" to="editRemoteServiceComponentProperties" />
 	</subflow-state>
-
 	
 	<action-state id="editComponentProperties">
 		<evaluate expression="tasksService.getRoles()" result="conversationScope.userRoles" />
@@ -97,14 +94,12 @@
 		<transition on="isRemoteService.no" to="editSimpleComponentProperties" />
 	</action-state>
 
-	
-
 	<action-state id="run">
 		<evaluate expression="tasksService.run(flow,datatypeMaps,taskFlowModel.name,taskFlowModel.description)"
 			result="flowScope.job" />
 		<transition on="success" to="checkRunResult" />
-		<transition on-exception="org.imirsel.nema.flowservice.MeandreServerException" to="runError"/>
-		<transition on-exception="org.imirsel.nema.flowservice.ServiceException" to="runError"/>
+	<!-- 	<transition on-exception="org.imirsel.nema.flowservice.MeandreServerException" to="runError"/>
+		<transition on-exception="org.imirsel.nema.flowservice.ServiceException" to="runError"/> -->
 	</action-state>
 	
 	<view-state id="runError">
@@ -118,6 +113,7 @@
 	    <evaluate expression="taskFlowModel.templateMap.clear()"/>
 		<transition to="selectTask"/>	
 	</action-state>
+	
 	<decision-state id="checkRunResult">
 		<if test="jobId==null" then="run" else="jobdetail" />
 	</decision-state>
