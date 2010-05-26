@@ -9,7 +9,7 @@
 
 <form:form>
     <form:errors path="*"/>
-    <h2> Opps, connection to Meandrea servers is down! </h2>
+    <h2>An unexpected system error has occurred.</h2>
 	<input type="submit" name="_eventId_retry" value="Try it Again" />
 	<input type="submit" name="_eventId_cancel" value="Cancel" />
 
