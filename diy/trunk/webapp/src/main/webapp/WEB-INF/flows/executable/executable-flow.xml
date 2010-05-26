@@ -22,6 +22,9 @@
 
 	<view-state id="upload" model="executable">
 		<transition on="upload" to="arguments" />
+		<transition on="clearArchive" to="upload" validate="false">
+		    <evaluate expression="executable.clear()"></evaluate>
+		</transition>
 		<transition on="cancel" to="cancel" validate="false"/>
 	</view-state>
 
