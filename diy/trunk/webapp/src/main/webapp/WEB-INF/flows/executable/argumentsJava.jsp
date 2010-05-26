@@ -152,12 +152,7 @@
 	</div>
 	</fieldset>
 	
-	<!-- End of common area -->
-	<fieldset id="button">
-	   <input type="submit" name="_eventId_review" value="Review" />
-	   <input type="submit" name="_eventId_back" value="Back" />
-	   <input type="submit" name="_eventId_cancel" value="Cancel" />
-	</fieldset>
+    <n:argumentPagesSubmitButtons/>
 
 </form:form>
 </body>
