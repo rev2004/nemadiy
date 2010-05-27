@@ -468,7 +468,7 @@
 		<!--
 			Properties calculated by AppFuse when running full-source plugin
 		-->
-		<aspectj.version>1.6.0</aspectj.version>
+		<aspectj.version>1.6.8</aspectj.version>
 		<clickstream.version>1.0.2</clickstream.version>
 		<commons.beanutils.version>1.7.0</commons.beanutils.version>
 		<commons.collections.version>3.2</commons.collections.version>

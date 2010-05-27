@@ -516,7 +516,6 @@ public class TasksServiceImpl {
 		if (user == null) {
 			logger.error("user is null");
 			throw new MeandreServerException("Could not get the user");
-			// user = userManager.getUserByUsername("admin");
 		}
 
 		Long longFlowId = Long.parseLong(flowId);
@@ -543,7 +542,7 @@ public class TasksServiceImpl {
 		instance.setKeyWords(templateFlow.getKeyWords());
 		instance.setName(name);
 		instance.setTemplate(false);
-		// instance.setUri(newFlowUri);
+		//instance.setUri(newFlowUri);
 		instance.setDescription(description);
 		instance.setType(templateFlow.getType());
 		instance.setTypeName(templateFlow.getTypeName());

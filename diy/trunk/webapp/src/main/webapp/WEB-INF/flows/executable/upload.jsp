@@ -32,6 +32,9 @@
                 $('archiveLabel').innerHTML=archiveLabelMessage;
                 $('uploadedArchiveLabel').innerHTML=uploadedArchiveLabelMessage;
                 $('executableNameLabel').innerHTML=executableLabelMessage;
+function fixLabels(){
+	alert("here....");
+}
 
                 }
                 
@@ -92,5 +95,12 @@
         <input type="submit" name="_eventId_cancel" value="Cancel" />
     </fieldset>
 </form:form>
+
+<script>
+jQuery(document).ready( function() {
+	  // put your code here
+		console.log("hello world");
+	}); 
+</script>
 
 </body>
