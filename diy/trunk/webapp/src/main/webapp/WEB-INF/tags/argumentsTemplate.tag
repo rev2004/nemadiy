@@ -1,3 +1,12 @@
+<%@ tag isELIgnored="false" %>
+<%@ attribute name="plainTemplate" required="true" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate"%>
+<%@ attribute name="niceParams" required="true" type="org.imirsel.nema.webapp.model.NiceParams"%>
+<%@ attribute name="supportFiles" required="true" type="java.util.List"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core"   prefix="c" %>
+
+	
+	
+	
 	<fieldset id="pt1">
 			<label>Environment Variables:</label>
 			<input type="button" value="+" onclick="add($('envMain'),$('envParam1'),2)" />
