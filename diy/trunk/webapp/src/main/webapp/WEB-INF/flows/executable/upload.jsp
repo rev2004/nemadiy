@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
         <title>Upload the Executable</title>
-        <meta name="heading" content="<fmt:message key='task.executable.upload' />"/>
+        <meta name="heading" content="Create Executable Profile: Step 1 of 3"/>
             <script>
 
                 function updateLabels(val){

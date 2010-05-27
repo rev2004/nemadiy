@@ -127,12 +127,12 @@ public class TasksServiceImpl {
 			//MessageContext messageContext=requestContext.getMessageContext();
 			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
 			messageContext.addMessage(new MessageBuilder().info().defaultText(
-					"Executable archive was successfully uploaded.")
+					"Executable profile was successfully saved.")
 					.build());
 			logger.debug("resource path is " + path);
 		} else {
 			throw new ContentRepositoryServiceException(
-					"An error occurred while saving the executable archive: " + bundle.getFileName());
+					"An error occurred while saving the executable profile: " + bundle.getFileName());
 		}
 
 	}

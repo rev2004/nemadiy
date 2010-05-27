@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Success Adding Executable Bundle</title>
-<meta name="heading" content="${taskFlowModel.name}.${component.name}" />
+<meta name="heading" content="Executable Profile Saved" />
 </head>
 <body>
 
@@ -32,7 +32,7 @@
 
 		<fieldset id="button">
       <input type="submit" name="_eventId_next" value="Back to Task Components" />
-      <input type="submit" name="_eventId_back" value="Revise Executable Profile" />
+      <input type="submit" name="_eventId_back" value="Back to Component Properties" />
       </fieldset>
 </form:form>
 </body>
