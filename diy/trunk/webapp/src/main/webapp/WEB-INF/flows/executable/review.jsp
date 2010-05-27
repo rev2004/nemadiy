@@ -1,10 +1,13 @@
 <%@ include file="/common/taglibs.jsp"%>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
- <meta name="heading" content="<fmt:message key='task.executable.review'/>"/>
+ <meta name="heading" content="Create Executable Profile: Step 3 of 3"/>
 <title>Review the executable setting</title>
 </head>
 <body>
+
+<div style="margin-bottom:5px">Review the Executable Profile Settings</div>
+
 <form:form>
 	<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
 	<fieldset id="pt1"><label>
@@ -15,7 +18,9 @@
 			<c:forEach items="${executable.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach> 
 	</fieldset>
 
-	<fieldset id="pt1"><label>Arguments:</label><c:out	value="${executable.commandLineFlags}" />
+	<fieldset id="pt1">
+	     <label>Arguments:</label>
+	     ${executable.commandLineFlags}
 	</fieldset>
 
 	<fieldset id="button">

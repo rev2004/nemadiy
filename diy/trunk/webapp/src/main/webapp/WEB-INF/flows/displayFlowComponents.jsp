@@ -14,8 +14,7 @@ function setIdx(idx)
 <p>${flow.description}</p>
 
 <div class="actionBox">
-  Please enter the Task details, the name and
-    description and the parameters to run the flow.
+  Please enter the Job details, and edit the properties of the task components accordingly.
 </div>
 ${messageContext.allMessages}
 <c:if test="${not empty messageContext.allMessages}">
@@ -29,12 +28,12 @@ ${messageContext.allMessages}
   <div class="form_job">
     <form:form commandName="taskFlowModel" id="myForm">
       <fieldset id="pt1">
-        <label>Please enter Task Name:</label>
-        <form:input path="name" />
+        <label>Enter the Job Name:</label>
+        <form:input path="name" cssStyle="width:200px;"/>
       </fieldset>
       <fieldset id="pt1">
-        <label>Please enter Task Description:</label>
-        <form:textarea path="description" rows="5" cols="50" />
+        <label >Enter the Job Description:</label>
+        <form:input path="description" cssStyle="width:300px;"/>
       </fieldset>
       <c:forEach items="${componentList}" var="component" varStatus="status">
         <c:if test="${!component.hidden}">

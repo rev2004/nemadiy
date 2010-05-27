@@ -3,12 +3,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>fill the arguments</title>
     <script type="text/javascript" src="/scripts/add.js" ></script>
-    <meta name="heading" content="<fmt:message key='task.executable.java'/>"/>
+    <meta name="heading" content="Create Executable Profile: Step 2 of 3"/>
 </head>
 <body>
 
 
-<div style="margin-bottom:5px">Specify Arguments for the Executable</div>
+<div style="margin-bottom:5px">Specify the Arguments for the Java Process</div>
 
 <form:form   commandName="javaTemplate">
 	<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
