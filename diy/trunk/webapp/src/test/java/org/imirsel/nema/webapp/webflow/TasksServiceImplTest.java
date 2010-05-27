@@ -24,6 +24,8 @@ public class TasksServiceImplTest {
 		tasksService.setArtifactService(artifactService);
 		tasksService.setFlowService(flowService);
 		tasksService.setUserManager(userManager);
+		tasksService.setUploadDirectory(uploadDirectory);
+		
 	}
 
 	@Test
