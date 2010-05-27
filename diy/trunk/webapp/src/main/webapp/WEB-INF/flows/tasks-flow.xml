@@ -55,8 +55,8 @@
 			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
 		</transition>
 		<transition on="remove" to="editRemoteServiceComponentProperties">
-			<evaluate expression="tasksService.removeExecutable(component,tasksFlowModel.executableMap,datatypeMap)" />
-			<evaluate expression="tasksFlowModel.executableTempalte.remove(component)"/>
+			<evaluate expression="tasksService.removeExecutable(component,taskFlowModel.executableMap,datatypeMap)" />
+			<evaluate expression="taskFlowModel.templateMap.remove(component)"/>
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
@@ -75,8 +75,8 @@
 		<set name="flowScope.flow" value="flowService.getFlow(id)" />
 		<set name="flowScope.datatypeMaps" value="tasksService.setDatatypeMaps(flow)" />
 		<set name="flowScope.componentList" value="tasksService.setComponentList(datatypeMaps)" />
-		<set name="flowScope.taskFlowModel.name" value="flow.name" />
-		<set name="flowScope.taskFlowModel.description" value="flow.description">
+		<set name="flowScope.taskFlowModel.name" value="flow.name" >
+		
 			<attribute name="name" value="lastStep" />
 		</set>
 		<transition on="lastStep.success" to="displayFlowComponents" />
