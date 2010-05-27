@@ -57,7 +57,7 @@
 		
 		  <site>
      	  <id>nema-site</id>
-     	  <url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/nema-content-repository/client</url>
+     	  <url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/nema-content-repository/nema-contentrepository-service-client</url>
     	  </site>
 		
 

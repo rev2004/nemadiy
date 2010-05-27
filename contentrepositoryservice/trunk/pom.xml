@@ -50,7 +50,7 @@
 			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-snapshots-local</url>
 		</snapshotRepository>
 		
-		  <site>
+	  <site>
      	  <id>nema-site</id>
      	  <url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/nema-content-repository</url>
     	  </site>

@@ -16,7 +16,7 @@ public class VanillaPredefinedCommandTemplate implements
 		PredefinedCommandTemplate, Serializable{
 	
 	
-	/**
+	/**version of this class
 	 * 
 	 */
 	private static final long serialVersionUID = -3307989303515424283L;
