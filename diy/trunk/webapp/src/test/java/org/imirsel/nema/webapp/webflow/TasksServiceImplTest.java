@@ -2,14 +2,24 @@ package org.imirsel.nema.webapp.webflow;
 
 import static org.junit.Assert.fail;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.contentrepository.client.ArtifactService;
 import org.imirsel.nema.flowservice.FlowService;
+import org.imirsel.nema.model.Component;
 import org.imirsel.nema.service.UserManager;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"/test-bean.xml","/testTasksService-bean.xml"})
 
 public class TasksServiceImplTest {
 	Mockery context=new Mockery();
@@ -28,6 +38,14 @@ public class TasksServiceImplTest {
 		
 	}
 
+	@Resource
+	Component component1;
+	
+	@Resource 
+	Component component2;
+	
+	
+	
 	@Test
 	public final void testAddExecutable() {
 		fail("Not yet implemented"); // TODO

@@ -12,11 +12,11 @@
 <br />
 <label>--${component.description}</label>
 <br/>
-<form:form>
+<form:form enctype="multipart/form-data">
   
   <c:forEach items="${shownMap}" var="entry">
     <fieldset id="pt1">
-    <label for="jobname"> ${entry.key} </label>
+    <label for="jobname"> ${entry.key}: </label>
     <render:property roles="${userRoles}"
             component="${component.instanceUri}" value="${entry.value}"
             class="cssClass" />

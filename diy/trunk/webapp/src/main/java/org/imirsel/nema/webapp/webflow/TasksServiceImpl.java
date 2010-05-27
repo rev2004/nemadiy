@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,10 +17,6 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
@@ -101,7 +96,7 @@ public class TasksServiceImpl {
 			Map<Component, ResourcePath> executableMap,
 			MessageContext messageContext)
 			throws ContentRepositoryServiceException {
-		removeExecutable(component,executableMap,datatypeMap);
+		removeExecutable(component, executableMap, datatypeMap);
 		logger.debug("add executable url into parameter for "
 				+ bundle.getFileName());
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
@@ -121,25 +116,27 @@ public class TasksServiceImpl {
 			// MessageContext messageContext=requestContext.getMessageContext();
 			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
 			messageContext.addMessage(new MessageBuilder().info().defaultText(
-					"Executable profile was successfully saved.")
-					.build());
+					"Executable profile was successfully saved.").build());
 			logger.debug("resource path is " + path);
 		} else {
 			throw new ContentRepositoryServiceException(
 
-					"An error occurred while saving the executable profile: " + bundle.getFileName());
+			"An error occurred while saving the executable profile: "
+					+ bundle.getFileName());
 		}
 
 	}
 
-
 	/**
-	 * remove the executable bundle from he content repository service, 
+	 * remove the executable bundle from he content repository service,
+	 * 
 	 * @param component
 	 * @param executableMap
 	 * @param datatypeMap
 	 */
-	public void removeExecutable(Component component,Map<Component,ResourcePath> executableMap,Map<String,Property> datatypeMap){
+	public void removeExecutable(Component component,
+			Map<Component, ResourcePath> executableMap,
+			Map<String, Property> datatypeMap) {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		if (executableMap.containsKey(component)) {
 			ResourcePath oldPath = executableMap.get(component);
@@ -148,20 +145,19 @@ public class TasksServiceImpl {
 					artifactService.removeExecutableBundle(credential, oldPath);
 				}
 			} catch (ContentRepositoryServiceException e) {
-				logger.error(e,e);
+				logger.error(e, e);
 			}
 			executableMap.remove(component);
 		}
 		datatypeMap.get(EXECUTABLE_URL).setValue("");
-		
 
 	}
-	
-	
-	
-	
-	
-	
+
+	/**
+	 * clear all executable bundles sent over to content repository
+	 * 
+	 * @param executableMap
+	 */
 	public void clearBundles(Map<Component, ResourcePath> executableMap) {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		for (Component component : executableMap.keySet()) {
@@ -260,26 +256,6 @@ public class TasksServiceImpl {
 		return list;
 	}
 
-	/**
-	 * 
-	 * @param job
-	 * @return result set of job
-	 */
-	public DisplayResultSet getJobResult(Job job) {
-		Set<JobResult> results = job.getResults();
-		if (results == null)
-			return null;
-		else {
-			for (JobResult result : results) {
-				logger.debug("RESULT: " + result.getUrl() + "  "
-						+ result.getId());
-				result.setUrl(processUrl(result.getUrl()));
-
-			}
-			DisplayResultSet resultSet = new DisplayResultSet(results);
-			return resultSet;
-		}
-	}
 
 	// TODO this method is the same as the one in ComponentPropertyTag, might
 	// need some
@@ -344,13 +320,6 @@ public class TasksServiceImpl {
 						.toString().equalsIgnoreCase("true"));
 	}
 
-	private String processUrl(String url) {
-		String identifier = "published_resources/nema";
-		int index = url.indexOf(identifier);
-		String resultFolder = url.substring(index + identifier.length());
-		return "http://nema.lis.uiuc.edu/nema_out" + resultFolder;
-
-	}
 
 	/**
 	 * Create a job with all the properties in datatypeMaps.
@@ -415,7 +384,7 @@ public class TasksServiceImpl {
 		instance.setKeyWords(templateFlow.getKeyWords());
 		instance.setName(name);
 		instance.setTemplate(false);
-		//instance.setUri(newFlowUri);
+		// instance.setUri(newFlowUri);
 		instance.setDescription(description);
 		instance.setType(templateFlow.getType());
 		instance.setTypeName(templateFlow.getTypeName());
@@ -503,8 +472,9 @@ public class TasksServiceImpl {
 
 	/**
 	 * By default this field is set by method {@link setUploadingPaths}, and
-	 * this field <B>must</B> match field webDir  {@link setWebDir}.  
-	 * It is the physical directory used to store the uploading field of file type.  
+	 * this field <B>must</B> match field webDir {@link setWebDir}. It is the
+	 * physical directory used to store the uploading field of file type.
+	 * 
 	 * @param physicalDir
 	 */
 	public void setPhysicalDir(String physicalDir) {
@@ -555,8 +525,9 @@ public class TasksServiceImpl {
 
 	/**
 	 * By default this field is set by method {@link setUploadingPaths}, and
-	 * this field <B>must</B> match field physicalDir  {@link setPhysicalDir}.  
-	 * It is the web directory used to store the uploading field of file type. 
+	 * this field <B>must</B> match field physicalDir {@link setPhysicalDir}. It
+	 * is the web directory used to store the uploading field of file type.
+	 * 
 	 * @param webDir
 	 */
 	public void setWebDir(String webDir) {
@@ -565,43 +536,45 @@ public class TasksServiceImpl {
 
 	/**
 	 * hide some properties for remote executable components that set in the
-	 * task/executable subflow
-	 * capitalize the first letter of the key(name) of the datatypeMap for display.  
+	 * task/executable subflow capitalize the first letter of the key(name) of
+	 * the datatypeMap for display.
 	 * 
 	 * @param datatypeMap
 	 * @return the datatype map fields that should be shown
 	 */
-	public Map<String, Property> shownRemoteMap(Map<String, Property> datatypeMap) {
-		Map<String, Property> shown =new HashMap<String, Property>();
+	public Map<String, Property> shownRemoteMap(
+			Map<String, Property> datatypeMap) {
+		Map<String, Property> shown = new HashMap<String, Property>();
 		shown.putAll(datatypeMap);
 		shown.remove(REMOTE_COMPONENT);
 		shown.remove(CREDENTIALS);
 		shown.remove(EXECUTABLE_URL);
 		shown.remove(GROUP);
 		shown.remove(OS);
-		shown=shownMap(shown);
+		shown = shownMap(shown);
 		return shown;
 	}
 
 	/**
-	 * capitalize the first letter of the key(name) of the datatypeMap for display.  
+	 * capitalize the first letter of the key(name) of the datatypeMap for
+	 * display.
+	 * 
 	 * @param datatypeMap
 	 * @return
 	 */
 	public Map<String, Property> shownMap(Map<String, Property> datatypeMap) {
 		Map<String, Property> shown = new HashMap<String, Property>();
-		for (Map.Entry<String,Property> entry:datatypeMap.entrySet()){
-			String key=entry.getKey();
-			String newKey="no name";
-			if (!key.isEmpty()){
-				newKey=key.substring(0, 1).toUpperCase()+key.substring(1);
+		for (Map.Entry<String, Property> entry : datatypeMap.entrySet()) {
+			String key = entry.getKey();
+			String newKey = "no name";
+			if (!key.isEmpty()) {
+				newKey = key.substring(0, 1).toUpperCase() + key.substring(1);
 			}
 			shown.put(newKey, entry.getValue());
 		}
 		return shown;
 	}
-	
-	
+
 	public int test(RequestContext context) {
 		ServletContext servletContext = (ServletContext) context
 				.getExternalContext().getNativeContext();
@@ -640,26 +613,25 @@ public class TasksServiceImpl {
 					&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
 				MultipartFile file = parameters.getMultipartFile(property
 						.getName());
+				if (file != null) {
+					File dirPath = new File(physicalDir);
 
-				File dirPath = new File(physicalDir);
+					if (!dirPath.exists()) {
+						dirPath.mkdirs();
+					}
+					String filename = file.getOriginalFilename();
+					File uploadedFile = new File(physicalDir + filename);
+					try {
+						file.transferTo(uploadedFile);
+					} catch (IllegalStateException e) {
 
-				if (!dirPath.exists()) {
-					dirPath.mkdirs();
+						logger.error(e, e);
+					} catch (IOException e) {
+
+						logger.error(e, e);
+					}
+					property.setValue(webDir + filename);
 				}
-				String filename = file.getOriginalFilename();
-				File uploadedFile = new File(physicalDir + File.separator
-						+ filename);
-				try {
-					file.transferTo(uploadedFile);
-				} catch (IllegalStateException e) {
-
-					logger.error(e, e);
-				} catch (IOException e) {
-
-					logger.error(e, e);
-				}
-				property.setValue("http://" + webDir + filename);
-
 			} else {
 				property.setValue(parameters.get(property.getName()));
 			}

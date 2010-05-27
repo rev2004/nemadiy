@@ -110,7 +110,8 @@ public class ComponentPropertyTagAlt  extends SimpleTagSupport implements Dynami
 						htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
 					}
 				}else if(sd.getRenderer().endsWith("FileRenderer")){
-					htmlWidget=createInputBox(property.getName(),"file",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
+					logger.debug("render file "+property.getName());
+					htmlWidget=createFileBox(property.getName(),"file",cssWriter.toString(),property.getValue(), sd.isHidden());
 				}else if(sd.getRenderer().endsWith("CollectionRenderer")){
 					// this is a collection renderer...
 					if(property.getValueList().length>0){
@@ -363,6 +364,25 @@ public class ComponentPropertyTagAlt  extends SimpleTagSupport implements Dynami
 			swriter.append(" disabled=\'disabled\'");
 		}
 		swriter.append("/>");
+		return swriter.toString();
+	}
+	
+	private String createFileBox(String name, String type, String styleString,
+			 String value, boolean hidden) {
+		
+		if(hidden){
+			return " ";
+		}
+		StringWriter swriter = new StringWriter();
+		if((value!=null)&&(!value.isEmpty())){
+			swriter.append(value).append( "<div style='margin: 5px'> change the file: ");
+		}
+		
+		swriter.append("<input type='"+type+"' name='"+getName(name)+"' "+ styleString);
+		if(!canEdit){
+			swriter.append(" disabled=\'disabled\'");
+		}
+		swriter.append("/></div>");
 		return swriter.toString();
 	}
 
