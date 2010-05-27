@@ -28,13 +28,11 @@ import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
-import org.imirsel.nema.model.JobResult;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
-import org.imirsel.nema.webapp.jobs.DisplayResultSet;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
@@ -613,7 +611,7 @@ public class TasksServiceImpl {
 					&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
 				MultipartFile file = parameters.getMultipartFile(property
 						.getName());
-				if (file != null) {
+				if ((file != null)&&(!file.isEmpty())) {
 					File dirPath = new File(physicalDir);
 
 					if (!dirPath.exists()) {
