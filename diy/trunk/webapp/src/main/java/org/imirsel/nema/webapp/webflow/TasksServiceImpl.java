@@ -57,25 +57,23 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class TasksServiceImpl {
 
-	public void setArtifactService(ArtifactService artifactService) {
-		this.artifactService = artifactService;
-	}
-
 	static private Log logger = LogFactory.getLog(TasksServiceImpl.class);
+
 	private FlowService flowService;
 	private UserManager userManager;
 	private ArtifactService artifactService;
 	private String uploadDirectory;
 	private String physicalDir;
 	private String webDir;
-	
-	
 	/**
 	 * properties' name in the component datatype map
 	 */
 	final static String REMOTE_COMPONENT = "_remoteComponent";
+
 	final static String CREDENTIALS = "_credentials";
+
 	final static String EXECUTABLE_URL = "profileName";
+
 	final static String OS = "_os";
 	final static String GROUP = "_group";
 
@@ -103,6 +101,7 @@ public class TasksServiceImpl {
 			Map<Component, ResourcePath> executableMap,
 			MessageContext messageContext)
 			throws ContentRepositoryServiceException {
+		removeExecutable(component,executableMap,datatypeMap);
 		logger.debug("add executable url into parameter for "
 				+ bundle.getFileName());
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
@@ -114,17 +113,12 @@ public class TasksServiceImpl {
 		datatypeMap.get(REMOTE_COMPONENT).setValue("true");
 		datatypeMap.get(OS).setValue(bundle.getPreferredOs());
 		datatypeMap.get(GROUP).setValue(bundle.getGroup());
-		if (executableMap.containsKey(component)) {
-			ResourcePath oldPath = executableMap.get(component);
-			if (artifactService.exists(credential, oldPath)) {
-				artifactService.removeExecutableBundle(credential, oldPath);
-			}
-		}
+
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
-				uuid.toString(), bundle);		
+				uuid.toString(), bundle);
 		executableMap.put(component, path);
 		if (path != null) {
-			//MessageContext messageContext=requestContext.getMessageContext();
+			// MessageContext messageContext=requestContext.getMessageContext();
 			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
 			messageContext.addMessage(new MessageBuilder().info().defaultText(
 					"Executable profile was successfully saved.")
@@ -132,14 +126,22 @@ public class TasksServiceImpl {
 			logger.debug("resource path is " + path);
 		} else {
 			throw new ContentRepositoryServiceException(
+
 					"An error occurred while saving the executable profile: " + bundle.getFileName());
 		}
 
 	}
 
-	public void clearBundles(Map<Component, ResourcePath> executableMap){
+
+	/**
+	 * remove the executable bundle from he content repository service, 
+	 * @param component
+	 * @param executableMap
+	 * @param datatypeMap
+	 */
+	public void removeExecutable(Component component,Map<Component,ResourcePath> executableMap,Map<String,Property> datatypeMap){
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-		for (Component component:executableMap.keySet()){
+		if (executableMap.containsKey(component)) {
 			ResourcePath oldPath = executableMap.get(component);
 			try {
 				if (artifactService.exists(credential, oldPath)) {
@@ -148,57 +150,30 @@ public class TasksServiceImpl {
 			} catch (ContentRepositoryServiceException e) {
 				logger.error(e,e);
 			}
+			executableMap.remove(component);
 		}
+		datatypeMap.get(EXECUTABLE_URL).setValue("");
+		
+
 	}
 	
-	/**
-	 * return the list of flow templates belong to type, all templates are returned if type is not valid.  
-	 * used a very lenient criteria, check both flowtype and keywords
-	 * @param type controlled by {@link Flow.FlowType}, first letter needs capitalize. 
-	 * @return
-	 */
-	public List<Flow> getFlowTemplates(String type) {
-		Flow.FlowType flowType = (type==null?null:Flow.FlowType.toFlowType(type));
-
-		Set<Flow> flowSet = this.flowService.getFlowTemplates();
-		List<Flow> list = new ArrayList<Flow>();
-		if (flowType != null) {
-			for (Flow flow : flowSet) {
-				if ((flow.getType().equals(flowType)))
-					list.add(flow);
-
-			}
-		} else {
-			list.addAll(flowSet);
-		}
-		return list;
-	}
-
-	/**
-	 * Retrieve the Executable bundle with resource path {@link path}, 
-	 * and populated the extra fields for UploadedExecutableBundle 
-	 * @param path
-	 * @param datatypeMap
-	 * @return
-	 */
-	public UploadedExecutableBundle findBundle(ResourcePath path,
-			Map<String, Property> datatypeMap) {
+	
+	
+	
+	
+	
+	public void clearBundles(Map<Component, ResourcePath> executableMap) {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-		UploadedExecutableBundle bundle = null;
-		try {
-			if ((path != null) && (artifactService.exists(credential, path))) {
-				ExecutableBundle oldBundle = artifactService
-						.getExecutableBundle(credential, path);
-				bundle = new UploadedExecutableBundle(oldBundle);
-				if (bundle == null)
-					bundle = new UploadedExecutableBundle();
-				bundle.setPreferredOs(datatypeMap.get(CREDENTIALS).getValue());
-				bundle.setGroup(datatypeMap.get(GROUP).getValue());
+		for (Component component : executableMap.keySet()) {
+			ResourcePath oldPath = executableMap.get(component);
+			try {
+				if (artifactService.exists(credential, oldPath)) {
+					artifactService.removeExecutableBundle(credential, oldPath);
+				}
+			} catch (ContentRepositoryServiceException e) {
+				logger.error(e, e);
 			}
-		} catch (ContentRepositoryServiceException e) {
-			logger.error(e, e);
 		}
-		return bundle;
 	}
 
 	/**
@@ -230,30 +205,58 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Set the datatypeMaps from the flow.  
-	 * @param flow
+	 * Retrieve the Executable bundle with resource path {@link path}, and
+	 * populated the extra fields for UploadedExecutableBundle
+	 * 
+	 * @param path
+	 * @param datatypeMap
 	 * @return
 	 */
-	public Map<Component, Map<String, Property>> setDatatypeMaps(Flow flow) {
-
-		Map<Component, Map<String, Property>> datatypeMaps = new TreeMap<Component, Map<String, Property>>();
-		List<Component> componentList = flowService
-				.getComponents(flow.getUri());
-		logger.info("componentList: " + componentList.size());
-		for (int i = 0; i < componentList.size(); i++) {
-			Component component = componentList.get(i);
-			datatypeMaps.put(component, flowService
-					.getComponentPropertyDataType(component, flow.getUri()));
-
+	public UploadedExecutableBundle findBundle(ResourcePath path,
+			Map<String, Property> datatypeMap) {
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		UploadedExecutableBundle bundle = null;
+		try {
+			if ((path != null) && (artifactService.exists(credential, path))) {
+				ExecutableBundle oldBundle = artifactService
+						.getExecutableBundle(credential, path);
+				bundle = new UploadedExecutableBundle(oldBundle);
+				if (bundle == null)
+					bundle = new UploadedExecutableBundle();
+				bundle.setPreferredOs(datatypeMap.get(CREDENTIALS).getValue());
+				bundle.setGroup(datatypeMap.get(GROUP).getValue());
+			}
+		} catch (ContentRepositoryServiceException e) {
+			logger.error(e, e);
 		}
-		logger.debug("done populating default parameters now.");
-
-		return datatypeMaps;
+		return bundle;
 	}
-	
-	public List<Component> setComponentList(Map<Component, Map<String, Property>> datatypeMaps){
-		List<Component> list=new ArrayList<Component>(datatypeMaps.keySet());
-		Collections.sort(list);
+
+	/**
+	 * return the list of flow templates belong to type, all templates are
+	 * returned if type is not valid. used a very lenient criteria, check both
+	 * flowtype and keywords
+	 * 
+	 * @param type
+	 *            controlled by {@link Flow.FlowType}, first letter needs
+	 *            capitalize.
+	 * @return
+	 */
+	public List<Flow> getFlowTemplates(String type) {
+		Flow.FlowType flowType = (type == null ? null : Flow.FlowType
+				.toFlowType(type));
+
+		Set<Flow> flowSet = this.flowService.getFlowTemplates();
+		List<Flow> list = new ArrayList<Flow>();
+		if (flowType != null) {
+			for (Flow flow : flowSet) {
+				if ((flow.getType().equals(flowType)))
+					list.add(flow);
+
+			}
+		} else {
+			list.addAll(flowSet);
+		}
 		return list;
 	}
 
@@ -278,6 +281,23 @@ public class TasksServiceImpl {
 		}
 	}
 
+	// TODO this method is the same as the one in ComponentPropertyTag, might
+	// need some
+	// refaction to get rid of one
+	private String getName(String component, String propertyName) {
+		if (component == null) {
+			return propertyName;
+		}
+		int index = component.lastIndexOf("/");
+		if (index == -1) {
+			return component + "_" + propertyName;
+		}
+		int second = component.substring(0, index).lastIndexOf("/");
+		String cname = component.substring(second + 1, index);
+		String count = component.substring(index + 1);
+		return cname + "_" + count + "_" + propertyName;
+	}
+
 	/**
 	 * @return roles from the default user manager
 	 */
@@ -293,8 +313,6 @@ public class TasksServiceImpl {
 		}
 		return roles;
 	}
-
-
 
 	/**
 	 * hide some fields that needs special processing for remote service
@@ -314,22 +332,6 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * hide some properties for remote executable components that set in the task/executable subflow
-	 * @param datatypeMap
-	 * @return  the datatype map fields that should be shown
-	 */
-	public Map<String, Property> shownMap(Map<String, Property> datatypeMap) {
-		Map<String, Property> shown = new HashMap<String, Property>();
-		shown.putAll(datatypeMap);
-		shown.remove(REMOTE_COMPONENT);
-		shown.remove(CREDENTIALS);
-		shown.remove(EXECUTABLE_URL);
-		shown.remove(GROUP);
-		shown.remove(OS);
-		return shown;
-	}
-
-	/**
 	 * return Boolean (not boolean) value for webflow mapping.
 	 * 
 	 * @param datatypeMap
@@ -342,145 +344,16 @@ public class TasksServiceImpl {
 						.toString().equalsIgnoreCase("true"));
 	}
 
-	/**
-	 * Update the dataMap with submitted data for one component
-	 * 
-	 * @param parameters
-	 *            http request parameters
-	 * @param dataMap
-	 *            dataMap for updated
-	 */
-	public void updateDataMap(ParameterMap parameters,
-			Map<String, Property> dataMap) {
-		for (String key : dataMap.keySet()) {
-			Property property = dataMap.get(key);
-			List<DataTypeBean> ltb = property.getDataTypeBeanList();
-			if ((ltb != null) && (!ltb.isEmpty())
-					&& (ltb.get(0).getRenderer() != null)
-					&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
-				MultipartFile file = parameters.getMultipartFile(property
-						.getName());
+	private String processUrl(String url) {
+		String identifier = "published_resources/nema";
+		int index = url.indexOf(identifier);
+		String resultFolder = url.substring(index + identifier.length());
+		return "http://nema.lis.uiuc.edu/nema_out" + resultFolder;
 
-				File dirPath = new File(physicalDir);
-
-				if (!dirPath.exists()) {
-					dirPath.mkdirs();
-				}
-				String filename=file.getOriginalFilename();
-				File uploadedFile=new File(physicalDir+File.separator+filename);
-				try {
-					file.transferTo(uploadedFile);
-				} catch (IllegalStateException e) {
-					
-					logger.error(e,e);
-				} catch (IOException e) {
-					
-					logger.error(e,e);
-				}
-				property.setValue("http://"+webDir+filename);
-				
-
-			} else {
-				property.setValue(parameters.get(property.getName()));
-			}
-			dataMap.put(key, property);
-		}//for loop
 	}
 
 	/**
-	 * 
-	 * @param context
-	 *            request context from the web flow. All the request parameters
-	 *            are encoded in the http request parameters.
-	 * @return parameter map
-	 * @throws MeandreServerException
-	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, String> saveParameter(RequestContext context)
-			throws MeandreServerException {
-
-		logger.debug("start to save parameter");
-		Map<String, String> paramMap = (Map<String, String>) context
-				.getFlowScope().get("parameterMap");
-		Map<String, String> map = context.getRequestParameters().asMap();
-		try {
-			logger.debug("start to save parameters #" + map.size());
-			for (String name : map.keySet()) {
-				if (paramMap.containsKey(name)) {
-					logger.debug("replace parameter  (" + name + ":"
-							+ map.get(name) + ")");
-					paramMap.put(name, map.get(name));
-				}
-			}
-			return paramMap;
-		} catch (Exception e) {
-			logger.error(e, e);
-			throw new MeandreServerException(e);
-		}
-	}
-
-
-	public void setFlowService(FlowService flowService) {
-		this.flowService = flowService;
-	}
-
-	/**
-	 * Set the upload directory
-	 * 
-	 * @param uploadDirectory
-	 */
-	public void setUploadDirectory(String uploadDirectory) {
-		this.uploadDirectory = uploadDirectory;
-	}
-	
-	/**
-	 * set the real physical/web path from the servlet context/request for uploading
-	 * @param externalContext
-	 * @param httpServletRequest
-	 */
-	public void setUploadingPaths(ExternalContext externalContext,UUID uuid){
-		ServletContext context = (ServletContext)externalContext.getNativeContext();
-		HttpServletRequest req = (HttpServletRequest) externalContext.getNativeRequest();
-
-		physicalDir = context.getRealPath(uploadDirectory)
-		+ "/" + req.getRemoteUser() + "/" + uuid + "/";
-		// Create the directory if it doesn't exist
-
-		String subDir = physicalDir.substring(context
-				.getRealPath("/").length());
-		webDir="http://" + req.getServerName()
-				+ ":" + req.getServerPort()+"/"
-				+ req.getContextPath() + subDir;
-
-		logger.info("set the uploading path: "+physicalDir+","+webDir);
-	}
-
-	public void setUserManager(UserManager userManager) {
-		this.userManager = userManager;
-	}
-
-	/**
-	 * Only for testing purpose
-	 * 
-	 * @param input
-	 * @return
-	 */
-	public int test(String input) {
-
-		logger.debug(input);
-		return 1;
-	}
-
-	
-	public int test(RequestContext context){
-		ServletContext servletContext = (ServletContext)context.getExternalContext().getNativeContext();
-		String uploadDir = (servletContext).getRealPath("/")+"test";
-		logger.debug(uploadDir);
-		return 1;
-	}
-	
-	/**
-	 * Create a job with all the properties in datatypeMaps. 
+	 * Create a job with all the properties in datatypeMaps.
 	 * 
 	 * @param flow
 	 * @param datatypeMaps
@@ -557,32 +430,241 @@ public class TasksServiceImpl {
 		return job;
 
 	}
-	
 
+	/**
+	 * 
+	 * @param context
+	 *            request context from the web flow. All the request parameters
+	 *            are encoded in the http request parameters.
+	 * @return parameter map
+	 * @throws MeandreServerException
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, String> saveParameter(RequestContext context)
+			throws MeandreServerException {
 
-	// TODO this method is the same as the one in ComponentPropertyTag, might
-	// need some
-	// refaction to get rid of one
-	private String getName(String component, String propertyName) {
-		if (component == null) {
-			return propertyName;
+		logger.debug("start to save parameter");
+		Map<String, String> paramMap = (Map<String, String>) context
+				.getFlowScope().get("parameterMap");
+		Map<String, String> map = context.getRequestParameters().asMap();
+		try {
+			logger.debug("start to save parameters #" + map.size());
+			for (String name : map.keySet()) {
+				if (paramMap.containsKey(name)) {
+					logger.debug("replace parameter  (" + name + ":"
+							+ map.get(name) + ")");
+					paramMap.put(name, map.get(name));
+				}
+			}
+			return paramMap;
+		} catch (Exception e) {
+			logger.error(e, e);
+			throw new MeandreServerException(e);
 		}
-		int index = component.lastIndexOf("/");
-		if (index == -1) {
-			return component + "_" + propertyName;
-		}
-		int second = component.substring(0, index).lastIndexOf("/");
-		String cname = component.substring(second + 1, index);
-		String count = component.substring(index + 1);
-		return cname + "_" + count + "_" + propertyName;
 	}
 
-	private String processUrl(String url) {
-		String identifier = "published_resources/nema";
-		int index = url.indexOf(identifier);
-		String resultFolder = url.substring(index + identifier.length());
-		return "http://nema.lis.uiuc.edu/nema_out" + resultFolder;
+	public void setArtifactService(ArtifactService artifactService) {
+		this.artifactService = artifactService;
+	}
 
+	public List<Component> setComponentList(
+			Map<Component, Map<String, Property>> datatypeMaps) {
+		List<Component> list = new ArrayList<Component>(datatypeMaps.keySet());
+		Collections.sort(list);
+		return list;
+	}
+
+	/**
+	 * Set the datatypeMaps from the flow.
+	 * 
+	 * @param flow
+	 * @return
+	 */
+	public Map<Component, Map<String, Property>> setDatatypeMaps(Flow flow) {
+
+		Map<Component, Map<String, Property>> datatypeMaps = new TreeMap<Component, Map<String, Property>>();
+		List<Component> componentList = flowService
+				.getComponents(flow.getUri());
+		logger.info("componentList: " + componentList.size());
+		for (int i = 0; i < componentList.size(); i++) {
+			Component component = componentList.get(i);
+			datatypeMaps.put(component, flowService
+					.getComponentPropertyDataType(component, flow.getUri()));
+
+		}
+		logger.debug("done populating default parameters now.");
+
+		return datatypeMaps;
+	}
+
+	public void setFlowService(FlowService flowService) {
+		this.flowService = flowService;
+	}
+
+	/**
+	 * By default this field is set by method {@link setUploadingPaths}, and
+	 * this field <B>must</B> match field webDir  {@link setWebDir}.  
+	 * It is the physical directory used to store the uploading field of file type.  
+	 * @param physicalDir
+	 */
+	public void setPhysicalDir(String physicalDir) {
+		this.physicalDir = physicalDir;
+	}
+
+	/**
+	 * Set the upload directory
+	 * 
+	 * @param uploadDirectory
+	 */
+	public void setUploadDirectory(String uploadDirectory) {
+		this.uploadDirectory = uploadDirectory;
+	}
+
+	/**
+	 * set the real physical/web path from the servlet context/request for
+	 * uploading
+	 * 
+	 * @param externalContext
+	 * @param httpServletRequest
+	 */
+	public void setUploadingPaths(ExternalContext externalContext, UUID uuid) {
+		if ((webDir == null) || (webDir.isEmpty())) {
+			ServletContext context = (ServletContext) externalContext
+					.getNativeContext();
+			HttpServletRequest req = (HttpServletRequest) externalContext
+					.getNativeRequest();
+
+			physicalDir = context.getRealPath(uploadDirectory) + "/"
+					+ req.getRemoteUser() + "/" + uuid + "/";
+			// Create the directory if it doesn't exist
+
+			String subDir = physicalDir.substring(context.getRealPath("/")
+					.length());
+			webDir = "http://" + req.getServerName() + ":"
+					+ req.getServerPort() + "/" + req.getContextPath() + subDir;
+
+			logger
+					.info("set the uploading path: " + physicalDir + ","
+							+ webDir);
+		}
+	}
+
+	public void setUserManager(UserManager userManager) {
+		this.userManager = userManager;
+	}
+
+	/**
+	 * By default this field is set by method {@link setUploadingPaths}, and
+	 * this field <B>must</B> match field physicalDir  {@link setPhysicalDir}.  
+	 * It is the web directory used to store the uploading field of file type. 
+	 * @param webDir
+	 */
+	public void setWebDir(String webDir) {
+		this.webDir = webDir;
+	}
+
+	/**
+	 * hide some properties for remote executable components that set in the
+	 * task/executable subflow
+	 * capitalize the first letter of the key(name) of the datatypeMap for display.  
+	 * 
+	 * @param datatypeMap
+	 * @return the datatype map fields that should be shown
+	 */
+	public Map<String, Property> shownRemoteMap(Map<String, Property> datatypeMap) {
+		Map<String, Property> shown =new HashMap<String, Property>();
+		shown.putAll(datatypeMap);
+		shown.remove(REMOTE_COMPONENT);
+		shown.remove(CREDENTIALS);
+		shown.remove(EXECUTABLE_URL);
+		shown.remove(GROUP);
+		shown.remove(OS);
+		shown=shownMap(shown);
+		return shown;
+	}
+
+	/**
+	 * capitalize the first letter of the key(name) of the datatypeMap for display.  
+	 * @param datatypeMap
+	 * @return
+	 */
+	public Map<String, Property> shownMap(Map<String, Property> datatypeMap) {
+		Map<String, Property> shown = new HashMap<String, Property>();
+		for (Map.Entry<String,Property> entry:datatypeMap.entrySet()){
+			String key=entry.getKey();
+			String newKey="no name";
+			if (!key.isEmpty()){
+				newKey=key.substring(0, 1).toUpperCase()+key.substring(1);
+			}
+			shown.put(newKey, entry.getValue());
+		}
+		return shown;
+	}
+	
+	
+	public int test(RequestContext context) {
+		ServletContext servletContext = (ServletContext) context
+				.getExternalContext().getNativeContext();
+		String uploadDir = (servletContext).getRealPath("/") + "test";
+		logger.debug(uploadDir);
+		return 1;
+	}
+
+	/**
+	 * Only for testing purpose
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public int test(String input) {
+
+		logger.debug(input);
+		return 1;
+	}
+
+	/**
+	 * Update the dataMap with submitted data for one component
+	 * 
+	 * @param parameters
+	 *            http request parameters
+	 * @param dataMap
+	 *            dataMap for updated
+	 */
+	public void updateDataMap(ParameterMap parameters,
+			Map<String, Property> dataMap) {
+		for (String key : dataMap.keySet()) {
+			Property property = dataMap.get(key);
+			List<DataTypeBean> ltb = property.getDataTypeBeanList();
+			if ((ltb != null) && (!ltb.isEmpty())
+					&& (ltb.get(0).getRenderer() != null)
+					&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
+				MultipartFile file = parameters.getMultipartFile(property
+						.getName());
+
+				File dirPath = new File(physicalDir);
+
+				if (!dirPath.exists()) {
+					dirPath.mkdirs();
+				}
+				String filename = file.getOriginalFilename();
+				File uploadedFile = new File(physicalDir + File.separator
+						+ filename);
+				try {
+					file.transferTo(uploadedFile);
+				} catch (IllegalStateException e) {
+
+					logger.error(e, e);
+				} catch (IOException e) {
+
+					logger.error(e, e);
+				}
+				property.setValue("http://" + webDir + filename);
+
+			} else {
+				property.setValue(parameters.get(property.getName()));
+			}
+			dataMap.put(key, property);
+		}// for loop
 	}
 
 }

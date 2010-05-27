@@ -35,6 +35,9 @@
 	</view-state>
 
 	<view-state id="editSimpleComponentProperties">
+	<on-entry>
+			<evaluate expression="tasksService.shownMap(datatypeMap)" result="viewScope.shownMap" />
+		</on-entry>
 		<transition on="save" to="displayFlowComponents">
 			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
 		</transition>
@@ -43,13 +46,17 @@
 
 	<view-state id="editRemoteServiceComponentProperties">
 		<on-entry>
-			<evaluate expression="tasksService.shownMap(datatypeMap)" result="viewScope.shownMap" />
+			<evaluate expression="tasksService.shownRemoteMap(datatypeMap)" result="viewScope.shownMap" />
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
 			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
 		</transition>
 		<transition on="next" to="generateExecutable">
 			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
+		</transition>
+		<transition on="remove" to="editRemoteServiceComponentProperties">
+			<evaluate expression="tasksService.removeExecutable(component,tasksFlowModel.executableMap,datatypeMap)" />
+			<evaluate expression="tasksFlowModel.executableTempalte.remove(component)"/>
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>

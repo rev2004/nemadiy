@@ -14,7 +14,7 @@
 <br/>
 <form:form>
   
-  <c:forEach items="${datatypeMap}" var="entry">
+  <c:forEach items="${shownMap}" var="entry">
     <fieldset id="pt1">
     <label for="jobname"> ${entry.key} </label>
     <render:property roles="${userRoles}"
