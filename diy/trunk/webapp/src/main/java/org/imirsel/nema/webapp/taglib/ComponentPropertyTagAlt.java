@@ -379,9 +379,9 @@ public class ComponentPropertyTagAlt  extends SimpleTagSupport implements Dynami
 		}
 		
 		swriter.append("<input type='"+type+"' name='"+getName(name)+"' "+ styleString);
-		if(!canEdit){
-			swriter.append(" disabled=\'disabled\'");
-		}
+		 if (!canEdit) {
+		 swriter.append(" disabled=\'disabled\'");
+		 }
 		swriter.append("/></div>");
 		return swriter.toString();
 	}

@@ -58,7 +58,6 @@ public class TasksServiceImpl {
 	private String uploadDirectory;
 	private String physicalDir;
 	private String webDir;
-	
 
 	/**
 	 * properties' name in the component datatype map
@@ -69,8 +68,6 @@ public class TasksServiceImpl {
 	final static String OS = "_os";
 	final static String GROUP = "_group";
 
-	
-	
 	public String getPhysicalDir() {
 		return physicalDir;
 	}
@@ -78,6 +75,7 @@ public class TasksServiceImpl {
 	public String getWebDir() {
 		return webDir;
 	}
+
 	/**
 	 * change after migrate to datamap back tag upload ExecutableBundle to
 	 * content repository, remove the old executableBundle if there is one;
@@ -102,7 +100,7 @@ public class TasksServiceImpl {
 			Map<Component, ResourcePath> executableMap,
 			MessageContext messageContext)
 			throws ContentRepositoryServiceException {
-		removeExecutable(component, executableMap, datatypeMap);
+
 		logger.debug("add executable url into parameter for "
 				+ bundle.getFileName());
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
@@ -114,13 +112,14 @@ public class TasksServiceImpl {
 		datatypeMap.get(REMOTE_COMPONENT).setValue("true");
 		datatypeMap.get(OS).setValue(bundle.getPreferredOs());
 		datatypeMap.get(GROUP).setValue(bundle.getGroup());
-
+		deleteExecutableFromRepository(component, executableMap.get(component),
+				credential);
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
 				uuid.toString(), bundle);
 		executableMap.put(component, path);
+		datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
 		if (path != null) {
 			// MessageContext messageContext=requestContext.getMessageContext();
-			datatypeMap.get(EXECUTABLE_URL).setValue(path.getPath());
 			messageContext.addMessage(new MessageBuilder().info().defaultText(
 					"Executable profile was successfully saved.").build());
 			logger.debug("resource path is " + path);
@@ -142,20 +141,16 @@ public class TasksServiceImpl {
 	 */
 	public void removeExecutable(Component component,
 			Map<Component, ResourcePath> executableMap,
-			Map<String, Property> datatypeMap) {
+			Map<String, Property> datatypeMap)
+			throws ContentRepositoryServiceException {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		if (executableMap.containsKey(component)) {
 			ResourcePath oldPath = executableMap.get(component);
-			try {
-				if (artifactService.exists(credential, oldPath)) {
-					artifactService.removeExecutableBundle(credential, oldPath);
-				}
-			} catch (ContentRepositoryServiceException e) {
-				logger.error(e, e);
-			}
+			deleteExecutableFromRepository(component, oldPath, credential);
 			executableMap.remove(component);
+			datatypeMap.get(EXECUTABLE_URL).setValue("");
 		}
-		datatypeMap.get(EXECUTABLE_URL).setValue("");
+		
 
 	}
 
@@ -164,18 +159,28 @@ public class TasksServiceImpl {
 	 * 
 	 * @param executableMap
 	 */
-	public void clearBundles(Map<Component, ResourcePath> executableMap) {
+	public void clearBundles(Map<Component, ResourcePath> executableMap)
+			throws ContentRepositoryServiceException {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		for (Component component : executableMap.keySet()) {
 			ResourcePath oldPath = executableMap.get(component);
-			try {
-				if (artifactService.exists(credential, oldPath)) {
-					artifactService.removeExecutableBundle(credential, oldPath);
-				}
-			} catch (ContentRepositoryServiceException e) {
-				logger.error(e, e);
-			}
+			deleteExecutableFromRepository(component, oldPath, credential);
 		}
+	}
+
+	private void deleteExecutableFromRepository(Component component,
+			ResourcePath path, SimpleCredentials credential)
+			throws ContentRepositoryServiceException {
+		try {
+			if (artifactService.exists(credential, path)) {
+				logger.info("remove from content repository executable bundle:"+path);
+				artifactService.removeExecutableBundle(credential, path);
+			}
+		} catch (ContentRepositoryServiceException e) {
+			logger.error(e, e);
+			throw (e);
+		}
+
 	}
 
 	/**
@@ -184,27 +189,27 @@ public class TasksServiceImpl {
 	 * @return parameter map for the template flow fill the paramater map from
 	 *         the template flow's default value.
 	 */
-	public Map<String, String> fillDefaultParameter(Flow flow) {
-
-		Map<String, String> parameters = new HashMap<String, String>();
-		List<Component> componentList = flowService
-				.getComponents(flow.getUri());
-		Collections.sort(componentList);
-		logger.info("componentList: " + componentList.size());
-		for (int i = 0; i < componentList.size(); i++) {
-			Component component = componentList.get(i);
-			Map<String, Property> m = flowService.getComponentPropertyDataType(
-					component, flow.getUri());
-			for (Entry<String, Property> entry : m.entrySet()) {
-				parameters.put(getName(component.getInstanceUri(), entry
-						.getKey()), entry.getValue().getDefaultValue()
-						.toString());
-			}
-		}
-		logger.debug("done populating default parameters now.");
-
-		return parameters;
-	}
+	// public Map<String, String> fillDefaultParameter(Flow flow) {
+	//
+	// Map<String, String> parameters = new HashMap<String, String>();
+	// List<Component> componentList = flowService
+	// .getComponents(flow.getUri());
+	// Collections.sort(componentList);
+	// logger.info("componentList: " + componentList.size());
+	// for (int i = 0; i < componentList.size(); i++) {
+	// Component component = componentList.get(i);
+	// Map<String, Property> m = flowService.getComponentPropertyDataType(
+	// component, flow.getUri());
+	// for (Entry<String, Property> entry : m.entrySet()) {
+	// parameters.put(getName(component.getInstanceUri(), entry
+	// .getKey()), entry.getValue().getDefaultValue()
+	// .toString());
+	// }
+	// }
+	// logger.debug("done populating default parameters now.");
+	//
+	// return parameters;
+	// }
 
 	/**
 	 * Retrieve the Executable bundle with resource path {@link path}, and
@@ -225,7 +230,7 @@ public class TasksServiceImpl {
 				bundle = new UploadedExecutableBundle(oldBundle);
 				if (bundle == null)
 					bundle = new UploadedExecutableBundle();
-				bundle.setPreferredOs(datatypeMap.get(CREDENTIALS).getValue());
+				bundle.setPreferredOs(datatypeMap.get(OS).getValue());
 				bundle.setGroup(datatypeMap.get(GROUP).getValue());
 			}
 		} catch (ContentRepositoryServiceException e) {
@@ -262,7 +267,6 @@ public class TasksServiceImpl {
 		return list;
 	}
 
-
 	// TODO this method is the same as the one in ComponentPropertyTag, might
 	// need some
 	// refaction to get rid of one
@@ -283,19 +287,18 @@ public class TasksServiceImpl {
 	/**
 	 * @return roles from the default user manager
 	 */
-	public String[] getRoles() {
-		Set<Role> roleList = this.userManager.getCurrentUser().getRoles();
-		int size = roleList.size();
-
-		String[] roles = new String[size];
-		int i = 0;
-		for (Role role : roleList) {
-			roles[i] = role.getName();
-			i++;
-		}
-		return roles;
-	}
-
+	 public String[] getRoles() {
+	 Set<Role> roleList = this.userManager.getCurrentUser().getRoles();
+	 int size = roleList.size();
+	
+	 String[] roles = new String[size];
+	 int i = 0;
+	 for (Role role : roleList) {
+	 roles[i] = role.getName();
+	 i++;
+	 }
+	 return roles;
+	 }
 
 	/**
 	 * return Boolean (not boolean) value for webflow mapping.
@@ -309,7 +312,6 @@ public class TasksServiceImpl {
 				&& (datatypeMap.get(REMOTE_COMPONENT).getDefaultValue()
 						.toString().equalsIgnoreCase("true"));
 	}
-
 
 	/**
 	 * Create a job with all the properties in datatypeMaps.
@@ -390,16 +392,15 @@ public class TasksServiceImpl {
 
 	}
 
-	
-
 	public void setArtifactService(ArtifactService artifactService) {
 		this.artifactService = artifactService;
 	}
 
 	/**
-	 * extracted the component list from the keyset of datatypeMaps,
-	 * Note: this method should be called only once for one flow template. 
-	 * The order of the list is used for index and should not be changed. 
+	 * extracted the component list from the keyset of datatypeMaps, Note: this
+	 * method should be called only once for one flow template. The order of the
+	 * list is used for index and should not be changed.
+	 * 
 	 * @param datatypeMaps
 	 * @return
 	 */
@@ -459,8 +460,8 @@ public class TasksServiceImpl {
 
 	/**
 	 * set the real physical/web path from the servlet context/request for
-	 * uploading, 
-	 * default behavior, when webDir has value (set by outside), skip this step.
+	 * uploading, default behavior, when webDir has value (set by outside), skip
+	 * this step.
 	 * 
 	 * @param externalContext
 	 * @param httpServletRequest
@@ -472,18 +473,20 @@ public class TasksServiceImpl {
 			HttpServletRequest req = (HttpServletRequest) externalContext
 					.getNativeRequest();
 
-			physicalDir = context.getRealPath(uploadDirectory) + "/"
-					+ req.getRemoteUser() + "/" + uuid + "/";
+			physicalDir = context.getRealPath(uploadDirectory + "/"
+					+ req.getRemoteUser() + "/" + uuid + "/");
 			// Create the directory if it doesn't exist
 
 			String subDir = physicalDir.substring(context.getRealPath("/")
 					.length());
 			webDir = "http://" + req.getServerName() + ":"
-					+ req.getServerPort()  + req.getContextPath() + "/"+ subDir;
+					+ req.getServerPort() + req.getContextPath() + "/" + subDir;
 
-			logger.info("set the uploading path: " + physicalDir + ","
+			logger
+					.info("set the uploading path: " + physicalDir + ","
 							+ webDir);
-			logger.debug("the context path:"+req.getContextPath()+ ", and subDir:"+subDir);
+			logger.debug("the context path:" + req.getContextPath()
+					+ ", and subDir:" + subDir);
 		}
 	}
 
@@ -581,7 +584,7 @@ public class TasksServiceImpl {
 					&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
 				MultipartFile file = parameters.getMultipartFile(property
 						.getName());
-				if ((file != null)&&(!file.isEmpty())) {
+				if ((file != null) && (!file.isEmpty())) {
 					File dirPath = new File(physicalDir);
 
 					if (!dirPath.exists()) {
