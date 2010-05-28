@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+		
+		<description>Mock objects for TasksServiceTest</description>
+
+	<bean id="component1" class="org.imirsel.nema.model.Component" p:uri="http://nema.test/component1" p:name="component 1"
+		p:description="this is the first component" p:instanceUri="http://mock.nema.lis.illinois.edu/component1" p:hidden="false" />
+	<bean id="component2" class="org.imirsel.nema.model.Component" p:uri="http://nema.test/component2" p:name="component 2"
+		p:description="this is the 2nd component" p:instanceUri="http://mock.nema.lis.illinois.edu/component2" p:hidden="false" />
+	<bean id="component3" class="org.imirsel.nema.model.Component" p:uri="http://nema.test/component3" p:name="component 3"
+		p:description="this is #3 component" p:instanceUri="http://mock.nema.lis.illinois.edu/component3" p:hidden="true" />
+
+	<bean id="boolDataType" class="org.imirsel.nema.annotations.parser.beans.BooleanDataTypeBean" p:hidden="false" />
+	<bean id="doubleDataType" class="org.imirsel.nema.annotations.parser.beans.DoubleDataTypeBean" p:hidden="false"
+		p:min="-10" p:max="100" />
+	<bean id="integerDataType" class="org.imirsel.nema.annotations.parser.beans.IntegerDataTypeBean" p:hidden="false"
+		p:min="-10" p:max="100" p:valueList="10,20,30" p:labelList="ten,twenty,thirty" />
+	<bean id="stringDataType1" class="org.imirsel.nema.annotations.parser.beans.StringDataTypeBean" p:hidden="false" />
+	<bean id="fileDataType" class="org.imirsel.nema.annotations.parser.beans.StringDataTypeBean" p:hidden="false"
+		p:renderer="test.FileRenderer" />
+	<bean id="stringDataType2" class="org.imirsel.nema.annotations.parser.beans.StringDataTypeBean" p:hidden="false"
+		p:renderer="notfilerenderer" />
+	<bean id="stringDataType3" class="org.imirsel.nema.annotations.parser.beans.StringDataTypeBean" p:hidden="true"
+		p:renderer="notfilerenderer" />
+	<bean id="stringDataType4" class="org.imirsel.nema.annotations.parser.beans.StringDataTypeBean" p:hidden="false"
+		p:renderer="ThisIsCollectionRenderer" p:valueList="a,b,c,d" p:labelList="A,B,C,D" />
+
+
+	<util:list id="dataTypeList1">
+		<ref bean="stringDataType1" />
+		<ref bean="integerDataType" />
+	</util:list>
+
+	<util:list id="dataTypeList2">
+		<ref bean="stringDataType3" />
+		<ref bean="integerDataType" />
+	</util:list>
+	<util:list id="dataTypeList3">
+		<ref bean="integerDataType" />
+	</util:list>
+	<util:list id="dataTypeList4">
+		<ref bean="fileDataType" />
+		<ref bean="integerDataType" />
+	</util:list>
+	<util:list id="dataTypeList5">
+		<ref bean="stringDataType4" />
+		<ref bean="stringDataType2" />
+		<ref bean="integerDataType" />
+	</util:list>
+	<util:list id="dataTypeList6">
+		<ref bean="boolDataType" />
+		<ref bean="stringDataType2" />
+		<ref bean="integerDataType" />
+	</util:list>
+
+	<bean id="property1" class="org.imirsel.nema.model.Property" p:name="property1" p:dataTypeBeanList-ref="dataTypeList1"
+		p:defaultValue="property1" p:description="property #1" scope="prototype"/>
+	<bean id="property2" class="org.imirsel.nema.model.Property" p:name="property2" p:dataTypeBeanList-ref="dataTypeList2"
+		p:defaultValue="property2" p:description="property #2" scope="prototype"/>
+	<bean id="property3" class="org.imirsel.nema.model.Property" p:name="property3" p:dataTypeBeanList-ref="dataTypeList3"
+		p:defaultValue="property3" p:description="property #3" scope="prototype"/>
+	<bean id="propertyFile" class="org.imirsel.nema.model.Property" p:name="property4" p:dataTypeBeanList-ref="dataTypeList4"
+		p:defaultValue="property4" p:description="property #4" p:value="http://nema.lis.uiuc.edu/executable" scope="prototype"/>
+	<bean id="property5" class="org.imirsel.nema.model.Property" p:name="property5" p:dataTypeBeanList-ref="dataTypeList5"
+		p:defaultValue="property5" p:description="property #5" scope="prototype"/>
+	<bean id="property6" class="org.imirsel.nema.model.Property" p:name="property6" p:dataTypeBeanList-ref="dataTypeList5"
+		p:defaultValue="property6" p:description="property #6 datatypelist 5" scope="prototype"/>
+	<bean id="propertyTrue" class="org.imirsel.nema.model.Property" p:name="propertyTrue" p:dataTypeBeanList-ref="dataTypeList6"
+		p:defaultValue="true" scope="prototype" />
+	<bean id="propertyFalse" class="org.imirsel.nema.model.Property" p:name="propertyFalse" p:dataTypeBeanList-ref="dataTypeList6"
+		p:defaultValue="False" scope="prototype" />
+
+
+	<util:map id="datatypeMap1">
+		<entry key="testField1" value-ref="property1" />
+		<entry key="TestField2" value-ref="property2" />
+	</util:map>
+
+	<util:map id="datatypeMap2">
+		<entry key="testField1" value-ref="property1" />
+		<entry key="TestField2" value-ref="property2" />
+		<entry key="testField3" value-ref="property3" />
+		<entry key="profileName" value-ref="propertyFile" />
+		<entry key="_os" value-ref="property5" />
+		<entry key="_group" value-ref="property6" />
+		<entry key="_remoteComponent" value-ref="propertyFalse"/>
+		<entry key="_credentials" value-ref="property1"/>
+	</util:map>
+
+	<util:map id="datatypeMap3">
+		<entry key="testField3-3" value-ref="property3" />
+		<entry key="profileName" value-ref="propertyFile" />
+	</util:map>
+
+	<bean id="mockHttpServletRequest" class="org.springframework.mock.web.MockHttpServletRequest" p:contextPath="/mock/Context"
+		p:remoteUser="mockUser" p:serverPort="1111" p:serverName="mock.nema.lis.illinois.edu" />
+	<bean id="mockExternalContext" class="org.springframework.webflow.test.MockExternalContext" p:nativeRequest-ref="mockHttpServletRequest" />
+
+	<util:map id="datatypeMaps">
+	<description>key list is componentLis, must sync with componentList</description>
+		<entry key-ref="component1" value-ref="datatypeMap1" />
+		<entry key-ref="component3" value-ref="datatypeMap3" />
+		<entry key-ref="component2" value-ref="datatypeMap2" />
+	</util:map>
+
+	<util:list id="componentList">
+	<description>The key list of datatypeMaps, must sync with datatypeMaps</description>
+		<ref bean="component1"/>
+		<ref bean="component2"/>
+		<ref bean="component3"/>
+	</util:list>
+	
+	<bean id="credentials" class="javax.jcr.SimpleCredentials" >
+		<constructor-arg index="0" value="user"/>
+		<constructor-arg index="1" value="pass"/>
+	</bean>
+	
+	<bean id="path1" class="org.imirsel.nema.webapp.mock.MockResourcePath" p:path="http://name.lis.uiuc.edu/path1"/>
+	<bean id="path2" class="org.imirsel.nema.webapp.mock.MockResourcePath" p:path="http://name.lis.uiuc.edu/path2"/>
+	<bean id="path3" class="org.imirsel.nema.webapp.mock.MockResourcePath" p:path="http://name.lis.uiuc.edu/path3"/>
+	<bean id="path4" class="org.imirsel.nema.webapp.mock.MockResourcePath" p:path="http://name.lis.uiuc.edu/path4"/>
+	
+	<util:map id="executableMap">
+		<entry key-ref="component3" value-ref="path1"/>
+		<entry key-ref="component2" value-ref="path2"/>
+	</util:map>
+	
+	<bean id="uploadBundle" class="org.imirsel.nema.webapp.model.UploadedExecutableBundle"
+	  p:group="group" p:preferredOs="unix"/>
+	  
+	<bean id="userManager" class="org.imirsel.nema.webapp.mock.MockUserManager" p:currentUserCredentials-ref="credentials"/>
+</beans>

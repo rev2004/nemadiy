@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.imirsel</groupId>
+  <artifactId>probes</artifactId>
+  <name>Nema: Probes and Plugin</name>
+  <version>0.6.0-SNAPSHOT</version>
+
+<scm>
+  	<connection>scm:svn:https://nemadiy.googlecode.com/svn/diy/trunk/probes</connection>
+  	<url>https://nemadiy.googlecode.com/svn/diy/trunk/probes</url>
+  </scm>
+  <organization>
+  	<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
+  	<url>http://www.lis.illinois.edu</url>
+  </organization>
+  
+  <url>http://nema-dev.lis.illinois.edu/development/diy/probes</url>
+  
+
+ <distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<name>IMIRSEL Releases</name>
+			<id>nema-releases</id>
+			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-releases-local/</url>
+			
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		
+			<snapshotRepository>
+				<id>nema-snapshots</id>
+				<name>IMIRSEL Snapshots</name>
+				<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-snapshots-local</url>
+			</snapshotRepository>
+			
+			<site>
+			<id>nema-site</id>
+			<url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/diy/probes</url>
+		</site>
+		
+		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
+	</distributionManagement>
+
+
+       	<profiles>
+       	<profile>
+		<id>architecture-check</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+			<plugin>
+				<groupId>com.structure101.java</groupId>
+				<artifactId>maven-structure101-plugin</artifactId>
+				<version>0.5</version>
+				<configuration>
+					<!-- put your configurations here -->
+					<project>
+						${project.name}
+					</project>
+					<breakOnError>false</breakOnError>
+					<classpath>${project.build.outputDirectory}</classpath>
+					<key></key>
+					<label>${project.version}</label>
+					<overwrite>true</overwrite>
+					<repository>http://nema-dev.lis.illinois.edu/s101j/data</repository>
+					<rpkey></rpkey>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+                                                       <goal>publish</goal>
+                                                        <goal>check-architecture</goal>
+                                                        <goal>check-xs</goal>
+                                                        <goal>report-summary</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			</plugins>
+			</build>
+		</profile>
+       	
+		<profile>
+			<id>attach-docs-and-sources</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+
+
+
+				</plugins>
+			</build>
+
+		</profile>
+
+        <profile>
+        <id>release</id>
+        <build>
+        <plugins>
+          <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+            
+
+          </plugin>
+       
+       
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>nemaflowservice.properties</exclude>
+							</excludes>
+						</configuration>
+ 					</execution>
+				</executions>
+ 			</plugin>
+		
+          
+
+        </plugins>
+        </build>
+        </profile>
+
+
+        </profiles>
+  
+  
+   	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav</artifactId>
+				<version>1.0-beta-2</version>
+			</extension>
+		</extensions>
+
+    <defaultGoal>install</defaultGoal>
+  	<plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <additionalProjectnatures>
+                        <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>                                                                                             
+                    </additionalProjectnatures>                                                                                                                                                      
+                    <additionalBuildcommands>                                                                                                                                                        
+                        <buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>                                                                                              
+                    </additionalBuildcommands>                                                                                                                                                       
+                    <downloadSources>true</downloadSources>                                                                                                                                          
+                    <downloadJavadocs>true</downloadJavadocs>                                                                                                                                        
+                    <wtpversion>1.5</wtpversion>                                                                                                                                                     
+                </configuration>                                                                                                                                                                     
+            </plugin>
+     
+     
+        <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3</version>
+   <!-- This plugin is used to create the jar file used by the meandre server.
+   The property file is present in the classpath and we don't want to
+   package it in the jar.
+	 -->  
+        <configuration>
+          <excludes>
+            <exclude>**/nemaflowservice.properties</exclude>
+          </excludes>
+        </configuration>
+      
+      </plugin>
+        	       </plugins>
+         <resources>
+      		<resource>
+        		<filtering>true</filtering>
+        		<directory>src/main/resources</directory>
+   		 	</resource>
+   		 </resources>
+   		 
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+        
+   
+        
+        
+    </build>
+<repositories>
+	<repository>
+		<id>nema-artifactory-repo</id>
+		<url>http://nema-dev.lis.illinois.edu/artifactory/repo</url>
+	</repository>
+	<repository>
+		<id>nema-artifactory-remote</id>
+		<url>http://nema-dev.lis.illinois.edu/artifactory/remote-repos</url>
+	</repository>
+</repositories>
+  
+  
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.2</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.hp.hpl.jena</groupId>
+      <artifactId>jena</artifactId>
+      <version>2.5.7</version>
+       <scope>test</scope>
+    </dependency>
+    
+        <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <version>6.1.17</version>
+       <scope>test</scope>
+    </dependency>
+    
+
+<dependency>
+  <groupId>org.slf4j</groupId>
+  <artifactId>slf4j-log4j12</artifactId>
+  <version>1.5.6</version>
+  <scope>test</scope>
+</dependency>
+
+<dependency>
+  <groupId>commons-httpclient</groupId>
+  <artifactId>commons-httpclient</artifactId>
+  <version>3.1</version>
+  <scope>test</scope>
+</dependency>
+
+
+<dependency>
+  <groupId>org.apache.lucene</groupId>
+  <artifactId>lucene-core</artifactId>
+  <version>2.9.0</version>
+  <scope>test</scope>
+</dependency>
+
+   <dependency>
+   <groupId>com.thoughtworks.xstream</groupId>
+   <artifactId>xstream</artifactId>
+   <version>1.3.1</version>
+   <scope>test</scope>
+   </dependency>
+    
+   <dependency>
+   <groupId>org.json</groupId>
+   <artifactId>json</artifactId>
+   <version>20090211</version>
+   <scope>test</scope>
+   </dependency>
+    
+    
+   <dependency>
+   <groupId>org.mortbay.jetty</groupId>
+   <artifactId>jetty-naming</artifactId>
+   <version>6.1.17</version>
+   <scope>test</scope>
+   </dependency>
+   
+   
+   <dependency>
+  <groupId>org.jmock</groupId>
+  <artifactId>jmock-junit4</artifactId>
+  <version>2.5.1</version>
+  <scope>test</scope>
+  </dependency>
+  
+  
+   <dependency>
+  <groupId>mysql</groupId>
+  <artifactId>mysql-connector-java</artifactId>
+  <version>${mysql.connector.version}</version>
+  <scope>test</scope>
+  </dependency>
+  
+  
+  
+    
+    
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons.dbcp.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xercesImpl</artifactId>
+                    <groupId>xerces</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    	<dependency>
+            <groupId>org.meandre</groupId>
+            <artifactId>meandre-kernel</artifactId>
+            <version>${meandre-server.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.meandre</groupId>
+            <artifactId>meandre-plugins</artifactId>
+            <version>${meandre-server.version}</version>
+        </dependency>
+    
+        
+         <dependency>
+            <groupId>org.meandre</groupId>
+            <artifactId>meandre-annotation</artifactId>
+            <version>${meandre-server.version}</version>
+        </dependency>
+        
+      <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.imirsel</groupId>
+            <artifactId>nema-directoryservice</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.imirsel</groupId>
+            <artifactId>nema-artifactservice</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
+        
+        
+               
+        <dependency>
+            <groupId>org.imirsel</groupId>
+            <artifactId>imirsel-meandre-client</artifactId>
+            <version>0.5.0</version>
+            <scope>test</scope>
+        </dependency>
+       <!-- 
+         <dependency>
+            <groupId>org.imirsel</groupId>
+            <artifactId>nema-mock-flowservice</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        -->
+        
+        <dependency>
+    <groupId>javax.help</groupId>
+    <artifactId>javahelp</artifactId>
+    <version>2.0.02</version>
+</dependency> 
+        
+    
+
+  </dependencies>
+
+  <properties>
+   <commons.dbcp.version>1.2.1</commons.dbcp.version>                     
+   <jstl.version>1.1.2</jstl.version>                                     
+   <log4j.version>1.2.13</log4j.version>                                  
+   <meandre-server.version>1.4.8</meandre-server.version> 
+   <meandre-client.version>1.4.8</meandre-client.version> 
+   <servlet.version>2.4</servlet.version>
+   <mysql.connector.version>5.1.6</mysql.connector.version>
+
+  </properties>
+  
+ 
+
+
+</project>

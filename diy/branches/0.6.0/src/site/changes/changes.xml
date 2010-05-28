@@ -1,0 +1,36 @@
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+  <properties>
+    <title>NEMA DIY Application</title>
+    <author email="kumaramit01@gmail.com">Amit Kumar</author>
+   </properties>
+  <body>
+    <release version="0.5.1" date="?????" description="Subsequent release">
+      <action dev="kumaramit01" type="add">
+        Added site documentation.
+      </action>
+       <action dev="zzgame,shirk" type="update">
+        Updated  application to use spring webflow.
+      </action>
+       <action dev="zzgame,shirk" type="update">
+       	Added support for java/jar/binary and matlab executable bundles
+       </action>
+       
+       <action dev="kumaramit01" type="update">
+       	Added support for content  repository for storing the flows.
+       </action>
+      
+ 
+    </release>
+
+    <release version="0.5.0" date="2010-02-17" description="Second release">
+      <action dev="kumaramit01" type="add">
+     	 Added several test cases.
+      </action>
+    </release>
+    
+
+  </body>
+</document>
+

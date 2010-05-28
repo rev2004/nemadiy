@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+	start-state="startPoint">
+
+	<var name="taskFlowModel" class="org.imirsel.nema.webapp.model.TaskFlowModel" />
+	<var name="flow" class="org.imirsel.nema.model.Flow" />
+	<var name="componentList" class="java.util.ArrayList" />
+	<input name="type" type="java.lang.String" />
+	<input name="id" type="java.lang.Integer" />
+	<on-start>
+		<evaluate expression="tasksService.setUploadingPaths(externalContext,taskFlowModel.uuid)"/>
+	</on-start>
+
+	<view-state id="selectTask" model="taskFlowModel">
+		<on-entry>
+			<evaluate expression="tasksService.getFlowTemplates(type)" result="flowScope.flowList"></evaluate>
+		</on-entry>
+		<transition on="show" to="getTemplate">
+			<evaluate expression="tasksService.test(taskFlowModel.id)"></evaluate>
+			<set name="flowScope.id" value="taskFlowModel.id" />
+		</transition>
+	</view-state>
+
+	<view-state id="displayFlowComponents" model="taskFlowModel">
+		<transition on="edit" to="editComponentProperties" />
+		<transition on="review" to="reviewTask" />
+		<transition on="cancel" to="cleanUp" />
+	</view-state>
+
+	<view-state id="reviewTask">
+		<transition on="run" to="run" />
+		<transition on="back" to="displayFlowComponents" />
+	</view-state>
+
+	<view-state id="editSimpleComponentProperties">
+	<on-entry>
+			<evaluate expression="tasksService.shownMap(datatypeMap)" result="viewScope.shownMap" />
+		</on-entry>
+		<transition on="save" to="displayFlowComponents">
+			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
+		</transition>
+		<transition on="cancel" to="displayFlowComponents" />
+	</view-state>
+
+	<view-state id="editRemoteServiceComponentProperties">
+		<on-entry>
+			<evaluate expression="tasksService.shownRemoteMap(datatypeMap)" result="viewScope.shownMap" />
+		</on-entry>
+		<transition on="save" to="displayFlowComponents">
+			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
+		</transition>
+		<transition on="next" to="generateExecutable">
+			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
+		</transition>
+		<transition on="remove" to="editRemoteServiceComponentProperties">
+			<evaluate expression="tasksService.removeExecutable(component,taskFlowModel.executableMap,datatypeMap)" />
+			<evaluate expression="taskFlowModel.templateMap.remove(component)"/>
+		</transition>
+		<transition on="cancel" to="displayFlowComponents" />
+	</view-state>
+	<view-state id="addExecutableSuccess">
+		<transition on="next" to="displayFlowComponents" />
+		<transition on="back" to="editRemoteServiceComponentProperties" />
+		<on-exit>
+			<evaluate expression="executableBundle.clear()" />
+		</on-exit>
+	</view-state>
+
+
+	<action-state id="getTemplate">
+		<evaluate expression="taskFlowModel.executableMap.clear()" />
+		<evaluate expression="taskFlowModel.templateMap.clear()" />
+		<set name="flowScope.flow" value="flowService.getFlow(id)" />
+		<set name="flowScope.datatypeMaps" value="tasksService.setDatatypeMaps(flow)" />
+		<set name="flowScope.componentList" value="tasksService.setComponentList(datatypeMaps)" />
+		<set name="flowScope.taskFlowModel.name" value="flow.name" >
+		
+			<attribute name="name" value="lastStep" />
+		</set>
+		<transition on="lastStep.success" to="displayFlowComponents" />
+	</action-state>
+
+	<subflow-state id="generateExecutable" subflow="task/executable">
+		<input name="executableBundleInput" value="tasksService.findBundle(taskFlowModel.executableMap[component],datatypeMap)"
+			type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
+		<input name="executableTemplateInput" value="taskFlowModel.templateMap[component]" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
+
+		<output name="executableTemplate" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
+		<output name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
+		<transition on="success" to="addExecutableSuccess">
+			<evaluate
+				expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,messageContext)" />
+			<evaluate expression="taskFlowModel.templateMap.put(component,executableTemplate)" />
+
+		</transition>
+		<transition on="done" to="editRemoteServiceComponentProperties" />
+	</subflow-state>
+
+	<action-state id="editComponentProperties">
+		<evaluate expression="tasksService.getRoles()" result="conversationScope.userRoles" />
+		<evaluate expression="componentList.get(requestParameters.idx)" result="conversationScope.component" />
+		<set name="flowScope.datatypeMap" value="datatypeMaps[component]" />
+		<evaluate expression='tasksService.isRemoteServiceComponent(datatypeMap)'>
+			<attribute name="name" value="isRemoteService" />
+		</evaluate>
+		<transition on="isRemoteService.yes" to="editRemoteServiceComponentProperties" />
+		<transition on="isRemoteService.no" to="editSimpleComponentProperties" />
+	</action-state>
+
+	<action-state id="run">
+		<evaluate expression="tasksService.run(flow,datatypeMaps,taskFlowModel.name,taskFlowModel.description)"
+			result="flowScope.job" />
+		<transition on="success" to="checkRunResult" />
+		<!--
+			<transition on-exception="org.imirsel.nema.flowservice.MeandreServerException" to="runError"/> <transition
+			on-exception="org.imirsel.nema.flowservice.ServiceException" to="runError"/>
+		-->
+	</action-state>
+
+	<view-state id="runError">
+		<transition on="retry" to="run" />
+		<transition on="cancel" to="selectTask" />
+	</view-state>
+
+	<action-state id="cleanUp">
+		<evaluate expression="tasksService.clearBundles(taskFlowModel.executableMap)" />
+		<evaluate expression="taskFlowModel.executableMap.clear()" />
+		<evaluate expression="taskFlowModel.templateMap.clear()" />
+		<transition to="selectTask" />
+	</action-state>
+
+	<decision-state id="checkRunResult">
+		<if test="jobId==null" then="run" else="jobdetail" />
+	</decision-state>
+
+	<decision-state id="startPoint">
+		<if test="id==null" then="selectTask" else="getTemplate" />
+	</decision-state>
+
+	<end-state id="jobdetail" view="externalRedirect:contextRelative:get/JobManager.jobDetail?id=${job.id}" />
+</flow>
