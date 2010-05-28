@@ -37,7 +37,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	@Before
 	public void setUp() throws Exception {
 		repository = factory.getRepository(RMI_URL);
-		nemaCredentials = new SimpleCredentials("user", "user".toCharArray());
+		nemaCredentials = new SimpleCredentials("user", "12dea96fec20593566ab75692c9949596833adc9".toCharArray());
 	}
 
 
@@ -56,13 +56,13 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	}
 	
 	
-	@Ignore
+	
 	@Test
 	public void testSaveFlow() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		byte[] flowContent = ContentRepositoryTestUtil.getFlowContent();
-		String flowInstanceId = "flowInstance";
+		String flowInstanceId = "flowInstance1";
 		Flow flow = new Flow();
 		flow.setCreatorId(1l);
 		flow.setDateCreated(new Date());
@@ -74,7 +74,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		flow.setType(FlowType.FEATURE_EXTRACTION);
 		flow.setUri("http://www.imirsel.org/test/testinstanceFlow");
 		ResourcePath rp=crs.saveFlow(nemaCredentials, flow, flowInstanceId, flowContent);
-		assertEquals(rp.getPath(),"/users/user/flows/flowInstance/flowInstance");
+		assertEquals(rp.getPath(),"/users/user/flows/flowInstance/flowInstance1");
 	}
 	
 	@Ignore
@@ -115,6 +115,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	}
 	
 
+	@Ignore
 	@Test
 	public void testJavaSaveExecutableBundle() throws ContentRepositoryServiceException, ZipException, InvalidCommandLineFlagException, IOException {
 		ContentRepositoryService crs = new ContentRepositoryService();
