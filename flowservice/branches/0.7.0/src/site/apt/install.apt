@@ -1,0 +1,53 @@
+                                    ------------------
+                                    Installation Guide
+                                    ------------------
+                                    Andrew Shirk
+                                    ------------------
+                                       2010-04-11
+                                    ------------------
+
+Installation Guide
+
+  The NEMA Flow Service uses a client/server model. The client and the server
+  each have their own binary components that require installation. This page documents the
+  installation of the server side components.
+
+* Manual installation
+
+  This package comes as a tar gzip file. After you untar and gunzip the file (tar -zxvf), notice the following configuration files, scripts and libraries:
+
+*--------------------------------------------+---------------------------------------------+
+|| file                                      || description                               ||
+*--------------------------------------------+---------------------------------------------+
+| logging.properties                         | set the logging levels                      |
+*--------------------------------------------+---------------------------------------------+
+| mail.properties                            | set the mail server for sending email       |
+*--------------------------------------------+---------------------------------------------+
+| flowservice.properties                     | specify the locations and login credentials |
+|                                            | for the meandre servers that should be used |
+|                                            | for processing jobs                         |
+*--------------------------------------------+---------------------------------------------+
+| jdbc.properties                            | the location and login credentials for the  |
+|                                            | database required by the flow service       |
+*--------------------------------------------+---------------------------------------------+
+| RepositoryProperties.properties            | the location and login credentials for the  |
+|                                            | database required by the repository         |
+|                                            | which the flow service depends upon.        |
+*--------------------------------------------+---------------------------------------------+
+| run.bat                                    | runs the application on windows             |
+*--------------------------------------------+---------------------------------------------+
+| run.sh		                             | runs the application                        |
+*--------------------------------------------+---------------------------------------------+
+| run-console.sh                             | runs the application on the console         |
+*--------------------------------------------+---------------------------------------------+
+| nema-flow-service-0.6.1.jar                | jar file with application main              |
+*--------------------------------------------+---------------------------------------------+
+| lib folder                                 | jar dependencies of the application         |
+*--------------------------------------------+---------------------------------------------+
+
+
+  After you have completed the configuration of the various properties files, execute the run.sh
+  script to start the service on Linux/Unix, or the run.bat script to start the service on Windows.
+  
+  The Flow Service depends on the existence of several other services.
+

@@ -1,0 +1,49 @@
+												----------
+												Overview
+												----------
+												Andrew Shirk
+												----------
+												2010-04-13
+												-----------
+												
+												
+NEMA Flow Service
+
+	This documentation is related to the NEMA Flow service <<0.7.0-SNAPSHOT>> release ({{{changes-report.html}changelog}}).												
+
+Introduction
+
+	The NEMA Flow Service receives and manages requests for executions of Meandre
+    flows. As job requests arrive at the Flow Service, they are scheduled
+    for execution, then dispatched to a Meandre server when one becomes
+    available. A round robin algorithm is used to balance the job processing
+    load across the collection of Meandre servers. In addition to dispatching
+    jobs to Meandre servers, the Flow Service also monitors the progress
+    of all jobs and sends notifications to users as job status changes. A 
+    simple interface that clients can use to query for jobs and job updates
+    is also provided.
+
+Getting Started
+
+	
+* Running Flow Service
+		
+	
+** Prerequisites
+
+		The Meandre Servers and the mysql database should be running prior to running the flow service.
+	
+** Execution parameters
+		
+		
+		The flow service reads the list of Meandre servers, the connection ports, the username
+		the password and maximum number of jobs that the server can run from a property file.
+		By default it tries to read the property file "flowservice.properties" from the classpath.
+		The current working directory is in the classpath and it will read the <<<flowservice.properties>>>
+		file from there. The <<<jdbc.properties>>> file and <<<mail.properties>>> file are also read from the
+		classpath to set the jdbc datasource and mail server information.
+	
+
+
+
+
