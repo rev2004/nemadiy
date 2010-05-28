@@ -58,18 +58,26 @@ public class TasksServiceImpl {
 	private String uploadDirectory;
 	private String physicalDir;
 	private String webDir;
+	
+
 	/**
 	 * properties' name in the component datatype map
 	 */
 	final static String REMOTE_COMPONENT = "_remoteComponent";
-
 	final static String CREDENTIALS = "_credentials";
-
 	final static String EXECUTABLE_URL = "profileName";
-
 	final static String OS = "_os";
 	final static String GROUP = "_group";
 
+	
+	
+	public String getPhysicalDir() {
+		return physicalDir;
+	}
+
+	public String getWebDir() {
+		return webDir;
+	}
 	/**
 	 * change after migrate to datamap back tag upload ExecutableBundle to
 	 * content repository, remove the old executableBundle if there is one;
@@ -288,22 +296,6 @@ public class TasksServiceImpl {
 		return roles;
 	}
 
-	/**
-	 * hide some fields that needs special processing for remote service
-	 * component
-	 * 
-	 * @param datatypeMap
-	 */
-	public List<Property> hideExecutableProperties(
-			Map<String, Property> datatypeMap) {
-		List<Property> hiddenProperties = new ArrayList<Property>();
-		hiddenProperties.add(datatypeMap.remove(REMOTE_COMPONENT));
-		hiddenProperties.add(datatypeMap.remove(CREDENTIALS));
-		hiddenProperties.add(datatypeMap.remove(EXECUTABLE_URL));
-		hiddenProperties.add(datatypeMap.remove(GROUP));
-		hiddenProperties.add(datatypeMap.remove(OS));
-		return hiddenProperties;
-	}
 
 	/**
 	 * return Boolean (not boolean) value for webflow mapping.
@@ -398,42 +390,19 @@ public class TasksServiceImpl {
 
 	}
 
-	/**
-	 * 
-	 * @param context
-	 *            request context from the web flow. All the request parameters
-	 *            are encoded in the http request parameters.
-	 * @return parameter map
-	 * @throws MeandreServerException
-	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, String> saveParameter(RequestContext context)
-			throws MeandreServerException {
-
-		logger.debug("start to save parameter");
-		Map<String, String> paramMap = (Map<String, String>) context
-				.getFlowScope().get("parameterMap");
-		Map<String, String> map = context.getRequestParameters().asMap();
-		try {
-			logger.debug("start to save parameters #" + map.size());
-			for (String name : map.keySet()) {
-				if (paramMap.containsKey(name)) {
-					logger.debug("replace parameter  (" + name + ":"
-							+ map.get(name) + ")");
-					paramMap.put(name, map.get(name));
-				}
-			}
-			return paramMap;
-		} catch (Exception e) {
-			logger.error(e, e);
-			throw new MeandreServerException(e);
-		}
-	}
+	
 
 	public void setArtifactService(ArtifactService artifactService) {
 		this.artifactService = artifactService;
 	}
 
+	/**
+	 * extracted the component list from the keyset of datatypeMaps,
+	 * Note: this method should be called only once for one flow template. 
+	 * The order of the list is used for index and should not be changed. 
+	 * @param datatypeMaps
+	 * @return
+	 */
 	public List<Component> setComponentList(
 			Map<Component, Map<String, Property>> datatypeMaps) {
 		List<Component> list = new ArrayList<Component>(datatypeMaps.keySet());
@@ -490,7 +459,8 @@ public class TasksServiceImpl {
 
 	/**
 	 * set the real physical/web path from the servlet context/request for
-	 * uploading
+	 * uploading, 
+	 * default behavior, when webDir has value (set by outside), skip this step.
 	 * 
 	 * @param externalContext
 	 * @param httpServletRequest
@@ -509,11 +479,11 @@ public class TasksServiceImpl {
 			String subDir = physicalDir.substring(context.getRealPath("/")
 					.length());
 			webDir = "http://" + req.getServerName() + ":"
-					+ req.getServerPort() + "/" + req.getContextPath() + subDir;
+					+ req.getServerPort()  + req.getContextPath() + "/"+ subDir;
 
-			logger
-					.info("set the uploading path: " + physicalDir + ","
+			logger.info("set the uploading path: " + physicalDir + ","
 							+ webDir);
+			logger.debug("the context path:"+req.getContextPath()+ ", and subDir:"+subDir);
 		}
 	}
 
