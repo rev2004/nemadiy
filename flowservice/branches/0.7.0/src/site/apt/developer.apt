@@ -1,0 +1,28 @@
+   									------------------------------
+                                          Developer Information
+                                    ------------------------------
+                                         Andrew Shirk
+                                    ------------------------------
+                                           2010-04-13
+                                    ------------------------------
+                                    
+Developer Documentation
+
+
+Flow Service Architecture
+
+    The Flow Service receives and manages requests for executions of Meandre
+    flows. As job requests arrive at the Flow Service, they are scheduled
+    for execution, then dispatched to a Meandre server when one becomes
+    available. A round robin algorithm is used to balance the job processing
+    load across the collection of Meandre servers. In addition to dispatching
+    jobs to Meandre servers, the Flow Service also monitors the progress
+    of all jobs and sends notifications to users as job status changes. A 
+    simple interface that clients can use to query for jobs and job updates
+    is also provided.
+
+[images/flow-service-architecture.png]
+
+Code Structure
+
+[images/code-structure.jpeg]
