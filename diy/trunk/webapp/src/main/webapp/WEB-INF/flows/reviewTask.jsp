@@ -1,16 +1,16 @@
 <%@ include file="/common/taglibs.jsp"%>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<meta name="heading" content="${taskFlowModel.name}"/>
+	<meta name="heading" content="Preview Job Settings"/>
 </head>
 <body>
 	<form:form>
-	    <fieldset id="pt1">
-	    	<h4>Description:</h4>
-	        ${taskFlowModel.description}
+	    <fieldset>
+	        <div style="margin-bottom:5px;"><label style="font-weight:bold;">Job Name:</label> ${taskFlowModel.name}</div>
+	    	<div style="margin-bottom:5px;"><label style="font-weight:bold;">Job Description:</label> ${taskFlowModel.description}</div>
 	    </fieldset>
 		<c:forEach var="component" items="${componentList}">
-			<fieldset id="pt1">
+			<fieldset>
 				<table>
 					<thead>
 						<h4>${component.name}:</h4>
@@ -32,7 +32,7 @@
 		</c:forEach>
 		<fieldset id="button">
             <input type="submit" name="_eventId_back" value="Back" />
-			<input type="submit" name="_eventId_run" value="Run Task" />
+			<input type="submit" name="_eventId_run" value="Run Job" />
 		</fieldset>
 	</form:form>
 </body>
