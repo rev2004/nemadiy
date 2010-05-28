@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>nema-contentrepository-service</artifactId>
+    <groupId>org.imirsel</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <groupId>org.imirsel</groupId>
+  <artifactId>nema-contentrepository-service-client</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>nema-contentrepository-service-client</name>
+  <packaging>jar</packaging>
+<mailingLists>
+		<mailingList>
+			<name>NEMA Developers Mailing List</name>
+			<post>nema-developers@googlegroups.com</post>
+			<archive>http://groups.google.com/group/nema-developers</archive>
+		</mailingList>
+	</mailingLists>
+
+
+	<prerequisites>
+		<maven>2.2.0</maven>
+	</prerequisites>
+	
+	
+	<organization>
+     <name>IMIRSEL -Graduate School of Library Information Science UIUC</name>
+     <url>http://www.imirsel.org/</url>
+    </organization>
+	
+
+
+	<inceptionYear>2010</inceptionYear>
+	<licenses>
+		<license>
+			<name>Apache License</name>
+			<url>LICENSE.txt</url>
+		</license>
+	</licenses>
+	
+		<distributionManagement>
+		<repository>
+			<name>IMIRSEL Releases</name>
+			<id>nema-releases</id>
+			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-releases-local/</url>
+
+		</repository>
+		<snapshotRepository>
+			<id>nema-snapshots</id>
+			<name>IMIRSEL Snapshots</name>
+			<url>dav:http://nema-dev.lis.illinois.edu/artifactory/libs-snapshots-local</url>
+		</snapshotRepository>
+		
+		  <site>
+     	  <id>nema-site</id>
+     	  <url>scp://nema-dev.lis.illinois.edu:/home/meandre/buildtools/www/nema-content-repository/nema-contentrepository-service-client</url>
+    	  </site>
+		
+
+		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
+	</distributionManagement>
+
+
+	<issueManagement>
+		<system>Google Code</system>
+		<url>http://code.google.com/p/nemadiy/issues/list</url>
+	</issueManagement>
+
+	<developers>
+		<developer>
+			<id>kumaramit01</id>
+			<name>Amit Kumar</name>
+			<email>kumaramit01@gmail.com</email>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+	</developers>
+
+
+	<repositories>
+		<repository>
+			<id>nema-artifactory-repo</id>
+			<url>http://nema-dev.lis.illinois.edu/artifactory/repo</url>
+		</repository>
+		<repository>
+			<id>nema-artifactory-remote</id>
+			<url>http://nema-dev.lis.illinois.edu/artifactory/remote-repos</url>
+		</repository>
+	</repositories>
+
+	<scm>
+		<connection>scm:svn:http://nema-diy.googlecode.com/svn//trunk</connection>
+		<developerConnection>scm:svn:https://nema-diy.googlecode.com/svn/contentrepository/trunk</developerConnection>
+		<tag>HEAD</tag>
+		<url>http://nema-diy.googlecode.com/svn/contentrepository/trunk</url>
+	</scm>
+  
+  
+  
+  
+  <dependencies>
+   <dependency>
+    <groupId>org.imirsel</groupId>
+    <artifactId>nema-contentrepository-service-core</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <scope>compile</scope>
+    </dependency>
+    
+    <dependency>
+    <groupId>org.apache.jackrabbit</groupId>
+    <artifactId>jackrabbit-core</artifactId>
+    <version>2.1.0</version>
+    <scope>compile</scope>
+  </dependency>
+  
+  <dependency>
+  <groupId>org.imirsel</groupId>
+  <artifactId>nema-executorservice-api</artifactId>
+  <version>0.3.0-SNAPSHOT</version>
+  <scope>compile</scope>
+  </dependency>
+
+  </dependencies>
+
+</project>
