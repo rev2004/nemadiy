@@ -327,14 +327,16 @@ public class TasksServiceImpl {
 			Map<Component, Map<String, Property>> datatypeMaps, String name,
 			String description) throws MeandreServerException {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
-		for (Component component : datatypeMaps.keySet()) {
-			Map<String, Property> m = flowService.getComponentPropertyDataType(
-					component, flow.getUri());
-			for (Entry<String, Property> entry : m.entrySet()) {
-				paramMap.put(
-						getName(component.getInstanceUri(), entry.getKey()),
-						entry.getValue().getDefaultValue().toString());
+
+		Component component;
+		for (Entry<Component,Map<String, Property>> mapsEntry:datatypeMaps.entrySet()){
+			component=mapsEntry.getKey();
+			for (Entry<String,Property> entry:mapsEntry.getValue().entrySet()){
+			paramMap.put(
+					getName(component.getInstanceUri(), entry.getKey()),
+					entry.getValue().getValue());
 			}
+
 		}
 		String token = System.currentTimeMillis() + "-token";
 		String flowId = flow.getId().toString();
@@ -352,19 +354,17 @@ public class TasksServiceImpl {
 			throw new MeandreServerException("Could not get the user");
 		}
 
-		Long longFlowId = Long.parseLong(flowId);
-		Flow templateFlow = this.flowService.getFlow(longFlowId);
 
 		if (name == null) {
 			name = paramMap.get("name");
 			if (name == null) {
-				name = templateFlow.getName() + File.separator + token;
+				name = flow.getName() + File.separator + token;
 			}
 		}
 		if (description == null) {
 			description = paramMap.get("description");
 			if (description == null) {
-				description = templateFlow.getDescription() + " for flow: "
+				description = flow.getDescription() + " for flow: "
 						+ token;
 			}
 		}
@@ -372,14 +372,13 @@ public class TasksServiceImpl {
 		Flow instance = new Flow();
 		instance.setCreatorId(userId);
 		instance.setDateCreated(new Date());
-		instance.setInstanceOf(templateFlow);
-		instance.setKeyWords(templateFlow.getKeyWords());
+		instance.setInstanceOf(flow);
+		instance.setKeyWords(flow.getKeyWords());
 		instance.setName(name);
 		instance.setTemplate(false);
-		// instance.setUri(newFlowUri);
 		instance.setDescription(description);
-		instance.setType(templateFlow.getType());
-		instance.setTypeName(templateFlow.getTypeName());
+		instance.setType(flow.getType());
+		instance.setTypeName(flow.getTypeName());
 
 		instance = this.flowService.createNewFlow(userManager
 				.getCurrentUserCredentials(), instance, paramMap, flowUri, user

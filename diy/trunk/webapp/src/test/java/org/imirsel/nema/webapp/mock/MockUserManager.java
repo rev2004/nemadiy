@@ -21,13 +21,18 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
 public class MockUserManager implements UserManager {
 
 	SimpleCredentials credentials;
+	User currentUser;
+	public void setCurrentUser(User currentUser) {
+		this.currentUser = currentUser;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.imirsel.nema.service.UserManager#getCurrentUser()
 	 */
 	@Override
 	public User getCurrentUser() {
 		
-		return null;
+		return currentUser;
 	}
 
 	/* (non-Javadoc)
