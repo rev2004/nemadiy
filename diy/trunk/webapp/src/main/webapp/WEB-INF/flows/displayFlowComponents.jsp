@@ -8,7 +8,7 @@ function setIdx(idx)
 	$('idx').value=idx;
 }
 </script> 
-<meta name="heading" content="${flow.name}" />
+<meta name="heading" content="Edit Task Properties: ${flow.name}" />
 </head>
 
 <p>${flow.description}</p>
@@ -51,7 +51,7 @@ ${messageContext.allMessages}
       <input type="hidden" name="flowTemplateUri" value="${flow.uri}" />
       <input type="hidden" name="idx" value="0" id="idx"/>
       <fieldset id="button">
-      <input type="submit" name="_eventId_review" value="Review Task" />
+      <input type="submit" name="_eventId_review" value="Review Job and Task Settings" />
       <input type="submit" name="_eventId_cancel" value="Cancel" />
       </fieldset>
     </form:form>

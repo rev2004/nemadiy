@@ -1,7 +1,7 @@
 <%@ include file="/common/taglibs.jsp"%>
 <head>
 <title><fmt:message key="flow.type"/></title>
-<meta name="heading" content="<fmt:message key='flowtype.heading'/>"/>
+<meta name="heading" content="Prepare a New Job"/>
 </head>
 <body id="jobstype"/>
 <form:form commandName="taskFlowModel">
