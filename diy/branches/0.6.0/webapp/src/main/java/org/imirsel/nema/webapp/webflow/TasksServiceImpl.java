@@ -259,7 +259,6 @@ public class TasksServiceImpl {
 			for (Flow flow : flowSet) {
 				if ((flow.getType().equals(flowType)))
 					list.add(flow);
-
 			}
 		} else {
 			list.addAll(flowSet);
@@ -335,7 +334,7 @@ public class TasksServiceImpl {
 			for (Entry<String, Property> entry : mapsEntry.getValue()
 					.entrySet()) {
 				paramMap.put(
-						getName(component.getInstanceUri(), entry.getKey()),
+						getName(component.getInstanceUri(), entry.getValue().getName()),
 						entry.getValue().getValue());
 			}
 
@@ -486,15 +485,14 @@ public class TasksServiceImpl {
 					.getNativeContext();
 			HttpServletRequest req = (HttpServletRequest) externalContext
 					.getNativeRequest();
-
-			physicalDir = context.getRealPath(uploadDirectory + "/"
-					+ req.getRemoteUser() + "/" + uuid + "/");
+			String subDir = uploadDirectory + "/" + req.getRemoteUser() + "/"
+					+ uuid + "/";
+			physicalDir = context.getRealPath(subDir);
 			// Create the directory if it doesn't exist
 			if (!physicalDir.endsWith(File.separator)) {
 				physicalDir = physicalDir + File.separator;
 			}
-			String subDir = uploadDirectory + "/" + req.getRemoteUser() + "/"
-					+ uuid + "/";
+
 			webDir = "http://" + req.getServerName() + ":"
 					+ req.getServerPort() + req.getContextPath() + subDir;
 
@@ -595,38 +593,37 @@ public class TasksServiceImpl {
 			Map<String, Property> dataMap) {
 		for (String key : dataMap.keySet()) {
 			Property property = dataMap.get(key);
-			List<DataTypeBean> ltb = property.getDataTypeBeanList();
-			if ((ltb != null) && (!ltb.isEmpty())
-					&& (ltb.get(0).getRenderer() != null)
-					&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
-				MultipartFile file = parameters.getMultipartFile(property
-						.getName());
-				if ((file != null) && (!file.isEmpty())) {
-					File dirPath = new File(physicalDir);
+			if (parameters.contains(property.getName())) {
+				List<DataTypeBean> ltb = property.getDataTypeBeanList();
+				if ((ltb != null) && (!ltb.isEmpty())
+						&& (ltb.get(0).getRenderer() != null)
+						&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
+					MultipartFile file = parameters.getMultipartFile(property
+							.getName());
+					if ((file != null) && (!file.isEmpty())) {
+						File dirPath = new File(physicalDir);
 
-					if (!dirPath.exists()) {
-						dirPath.mkdirs();
+						if (!dirPath.exists()) {
+							dirPath.mkdirs();
+						}
+						String filename = file.getOriginalFilename();
+						File uploadedFile = new File(physicalDir + filename);
+						try {
+							file.transferTo(uploadedFile);
+						} catch (IllegalStateException e) {
+
+							logger.error(e, e);
+						} catch (IOException e) {
+
+							logger.error(e, e);
+						}
+						property.setValue(webDir + filename);
 					}
-					String filename = file.getOriginalFilename();
-					File uploadedFile = new File(physicalDir + filename);
-					try {
-						file.transferTo(uploadedFile);
-					} catch (IllegalStateException e) {
-
-						logger.error(e, e);
-					} catch (IOException e) {
-
-						logger.error(e, e);
-					}
-					property.setValue(webDir + filename);
-				}
-			} else {
-				String newValue = parameters.get(property.getName());
-				if ((newValue != null) && (!newValue.isEmpty())) {
+				} else {
 					property.setValue(parameters.get(property.getName()));
 				}
 			}
-			// dataMap.put(key, property);
+			
 		}// for loop
 	}
 
