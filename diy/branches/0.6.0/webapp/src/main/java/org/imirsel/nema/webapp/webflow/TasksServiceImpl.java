@@ -122,7 +122,7 @@ public class TasksServiceImpl {
 			// MessageContext messageContext=requestContext.getMessageContext();
 			messageContext.addMessage(new MessageBuilder().info().defaultText(
 					"Executable profile was successfully saved.").build());
-			logger.debug("resource path is " + path);
+			logger.debug("resource path is " + path.getPath());
 		} else {
 			throw new ContentRepositoryServiceException(
 
@@ -150,7 +150,6 @@ public class TasksServiceImpl {
 			executableMap.remove(component);
 			datatypeMap.get(EXECUTABLE_URL).setValue("");
 		}
-		
 
 	}
 
@@ -172,8 +171,9 @@ public class TasksServiceImpl {
 			ResourcePath path, SimpleCredentials credential)
 			throws ContentRepositoryServiceException {
 		try {
-			if (artifactService.exists(credential, path)) {
-				logger.info("remove from content repository executable bundle:"+path);
+			if ((path != null) && (artifactService.exists(credential, path))) {
+				logger.info("remove from content repository executable bundle:"
+						+ path);
 				artifactService.removeExecutableBundle(credential, path);
 			}
 		} catch (ContentRepositoryServiceException e) {
@@ -287,18 +287,18 @@ public class TasksServiceImpl {
 	/**
 	 * @return roles from the default user manager
 	 */
-	 public String[] getRoles() {
-	 Set<Role> roleList = this.userManager.getCurrentUser().getRoles();
-	 int size = roleList.size();
-	
-	 String[] roles = new String[size];
-	 int i = 0;
-	 for (Role role : roleList) {
-	 roles[i] = role.getName();
-	 i++;
-	 }
-	 return roles;
-	 }
+	public String[] getRoles() {
+		Set<Role> roleList = this.userManager.getCurrentUser().getRoles();
+		int size = roleList.size();
+
+		String[] roles = new String[size];
+		int i = 0;
+		for (Role role : roleList) {
+			roles[i] = role.getName();
+			i++;
+		}
+		return roles;
+	}
 
 	/**
 	 * return Boolean (not boolean) value for webflow mapping.
@@ -327,14 +327,18 @@ public class TasksServiceImpl {
 			Map<Component, Map<String, Property>> datatypeMaps, String name,
 			String description) throws MeandreServerException {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
-		for (Component component : datatypeMaps.keySet()) {
-			Map<String, Property> m = flowService.getComponentPropertyDataType(
-					component, flow.getUri());
-			for (Entry<String, Property> entry : m.entrySet()) {
+
+		Component component;
+		for (Entry<Component, Map<String, Property>> mapsEntry : datatypeMaps
+				.entrySet()) {
+			component = mapsEntry.getKey();
+			for (Entry<String, Property> entry : mapsEntry.getValue()
+					.entrySet()) {
 				paramMap.put(
 						getName(component.getInstanceUri(), entry.getKey()),
-						entry.getValue().getDefaultValue().toString());
+						entry.getValue().getValue());
 			}
+
 		}
 		String token = System.currentTimeMillis() + "-token";
 		String flowId = flow.getId().toString();
@@ -352,34 +356,29 @@ public class TasksServiceImpl {
 			throw new MeandreServerException("Could not get the user");
 		}
 
-		Long longFlowId = Long.parseLong(flowId);
-		Flow templateFlow = this.flowService.getFlow(longFlowId);
-
 		if (name == null) {
 			name = paramMap.get("name");
 			if (name == null) {
-				name = templateFlow.getName() + File.separator + token;
+				name = flow.getName() + File.separator + token;
 			}
 		}
 		if (description == null) {
 			description = paramMap.get("description");
 			if (description == null) {
-				description = templateFlow.getDescription() + " for flow: "
-						+ token;
+				description = flow.getDescription() + " for flow: " + token;
 			}
 		}
 		long userId = user.getId();
 		Flow instance = new Flow();
 		instance.setCreatorId(userId);
 		instance.setDateCreated(new Date());
-		instance.setInstanceOf(templateFlow);
-		instance.setKeyWords(templateFlow.getKeyWords());
+		instance.setInstanceOf(flow);
+		instance.setKeyWords(flow.getKeyWords());
 		instance.setName(name);
 		instance.setTemplate(false);
-		// instance.setUri(newFlowUri);
 		instance.setDescription(description);
-		instance.setType(templateFlow.getType());
-		instance.setTypeName(templateFlow.getTypeName());
+		instance.setType(flow.getType());
+		instance.setTypeName(flow.getTypeName());
 
 		instance = this.flowService.createNewFlow(userManager
 				.getCurrentUserCredentials(), instance, paramMap, flowUri, user
@@ -441,7 +440,9 @@ public class TasksServiceImpl {
 	/**
 	 * By default this field is set by method {@link setUploadingPaths}, and
 	 * this field <B>must</B> match field webDir {@link setWebDir}. It is the
-	 * physical directory used to store the uploading field of file type.
+	 * physical directory used to store the uploading field of file type. This
+	 * one should end with proper "/" or "\" TODO this is a bad implementation
+	 * of file upload, it needs more robust implementation
 	 * 
 	 * @param physicalDir
 	 */
@@ -450,18 +451,31 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Set the upload directory
+	 * Set the upload directory, this one should start with "/" and end with no
+	 * "/", an empty one would be "". The method should check on it and correct
+	 * it if possible.
+	 * 
+	 * TODO this is a bad implementation of file upload, it needs more robust
+	 * implementation
 	 * 
 	 * @param uploadDirectory
 	 */
 	public void setUploadDirectory(String uploadDirectory) {
+		if ((!uploadDirectory.isEmpty()) && (!uploadDirectory.startsWith("/"))) {
+			uploadDirectory = "/" + uploadDirectory;
+		}
+		if ((!uploadDirectory.isEmpty()) && (uploadDirectory.endsWith("/"))) {
+			uploadDirectory = uploadDirectory.substring(0, uploadDirectory
+					.length() - 1);
+		}
 		this.uploadDirectory = uploadDirectory;
 	}
 
 	/**
 	 * set the real physical/web path from the servlet context/request for
 	 * uploading, default behavior, when webDir has value (set by outside), skip
-	 * this step.
+	 * this step. TODO this is a bad implementation of file upload, it needs
+	 * more robust implementation
 	 * 
 	 * @param externalContext
 	 * @param httpServletRequest
@@ -476,11 +490,13 @@ public class TasksServiceImpl {
 			physicalDir = context.getRealPath(uploadDirectory + "/"
 					+ req.getRemoteUser() + "/" + uuid + "/");
 			// Create the directory if it doesn't exist
-
-			String subDir = physicalDir.substring(context.getRealPath("/")
-					.length());
+			if (!physicalDir.endsWith(File.separator)) {
+				physicalDir = physicalDir + File.separator;
+			}
+			String subDir = uploadDirectory + "/" + req.getRemoteUser() + "/"
+					+ uuid + "/";
 			webDir = "http://" + req.getServerName() + ":"
-					+ req.getServerPort() + req.getContextPath() + "/" + subDir;
+					+ req.getServerPort() + req.getContextPath() + subDir;
 
 			logger
 					.info("set the uploading path: " + physicalDir + ","
@@ -497,7 +513,8 @@ public class TasksServiceImpl {
 	/**
 	 * By default this field is set by method {@link setUploadingPaths}, and
 	 * this field <B>must</B> match field physicalDir {@link setPhysicalDir}. It
-	 * is the web directory used to store the uploading field of file type.
+	 * is the web directory used to store the uploading field of file type. This
+	 * one should end with "/"
 	 * 
 	 * @param webDir
 	 */
@@ -604,9 +621,12 @@ public class TasksServiceImpl {
 					property.setValue(webDir + filename);
 				}
 			} else {
-				property.setValue(parameters.get(property.getName()));
+				String newValue = parameters.get(property.getName());
+				if ((newValue != null) && (!newValue.isEmpty())) {
+					property.setValue(parameters.get(property.getName()));
+				}
 			}
-			dataMap.put(key, property);
+			// dataMap.put(key, property);
 		}// for loop
 	}
 

@@ -20,10 +20,12 @@ import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.contentrepository.client.ArtifactService;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
 import org.imirsel.nema.flowservice.FlowService;
+import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.ResourcePath;
+import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.jmock.Expectations;
@@ -147,7 +149,7 @@ public class TasksServiceTest {
 			assertEquals(uploadBundle.getGroup(), data.get(tasksService.GROUP).getValue());
 			assertEquals(credentials.getUserID() + ":"+ new String(credentials.getPassword()),
 					data.get(tasksService.CREDENTIALS).getValue());
-			assertEquals(path4,map.get(component2));
+			assertEquals(path4,map.get(component3));
 
 		} catch (ContentRepositoryServiceException e) {
 			logger.error(e, e);
@@ -249,6 +251,8 @@ public class TasksServiceTest {
 
 	@Resource
 	Flow flow1;
+	@Resource
+	Flow flow2;
 
 	@Test
 	public final void testSetDatatypeMaps() {
@@ -393,9 +397,29 @@ public class TasksServiceTest {
 		fail("Not yet implemented"); // TODO
 	}
 
+	@Resource
+	User user;
+	
+	@SuppressWarnings("unchecked")
 	@Test
 	public final void testRun() {
-		fail("Not yet implemented"); // TODO
+		try{
+		final String name="job name";
+		final String description="job description";
+		context.checking(new Expectations() {
+			{
+				oneOf(flowService).createNewFlow(with(same(credentials)),with(aNonNull(Flow.class)), 
+						(HashMap<String,String>)with(any(HashMap.class)), with(same(flow1.getUri())), 
+						with(same(user.getId()))); will(returnValue(flow2));
+				oneOf(flowService).executeJob(with(aNonNull(String.class)),
+						with(same(name)),with(same(description)),with(same(flow2.getId())),
+								with(same(user.getId())),with(same(user.getEmail())));
+			}
+		});
+		 tasksService.run(flow1,datatypeMaps,name,description);
+		}catch (MeandreServerException e) {
+			logger.error(e,e);
+		}
 	}
 
 }
