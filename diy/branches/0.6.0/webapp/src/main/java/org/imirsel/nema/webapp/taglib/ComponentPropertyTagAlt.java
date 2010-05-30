@@ -375,7 +375,7 @@ public class ComponentPropertyTagAlt  extends SimpleTagSupport implements Dynami
 		}
 		StringWriter swriter = new StringWriter();
 		if((value!=null)&&(!value.isEmpty())){
-			swriter.append(value).append( "<div style='margin: 5px'> change the file: ");
+			swriter.append(value).append( "<div style='margin: 5px'> Change the File: ");
 		}
 		
 		swriter.append("<input type='"+type+"' name='"+getName(name)+"' "+ styleString);
