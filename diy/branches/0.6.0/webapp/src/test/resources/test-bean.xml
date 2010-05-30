@@ -60,4 +60,9 @@
 		p:uri="http://mock.nema.lis.illinois.edu/flow3" p:id="10" p:name="flow THREE" 
 		p:type="CLASSIFICATION"/>
 
+	<util:set id="flowSet">
+		<ref bean="flow1"/>
+		<ref bean="flow2"/>
+		<ref bean="flow3"/>
+	</util:set>
 </beans>

@@ -3,6 +3,7 @@ package org.imirsel.nema.webapp.webflow;
 import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,11 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockParameterMap;
+
+import com.hp.hpl.jena.util.OneToManyMap.Entry;
 
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -54,7 +59,7 @@ public class TasksServiceTest {
 
 	@Resource
 	private UserManager userManager;
-	private String uploadDirectory = "upload";
+	private String uploadDirectory = "/upload";
 	private ArtifactService artifactService = context
 			.mock(ArtifactService.class);
 	private UUID uuid;
@@ -181,7 +186,28 @@ public class TasksServiceTest {
 
 	@Test
 	public final void testGetFlowTemplates() {
-		fail("Not yet implemented"); // TODO
+		context.checking(new Expectations() {
+			{
+				exactly(3).of(flowService).getFlowTemplates();	will(returnValue(flowSet));
+				
+			}
+		});
+	
+		List<Flow> list=tasksService.getFlowTemplates(null);
+		Set<Flow>  set=new HashSet<Flow>(list);
+		assertEquals(flowSet, set );
+	
+		Set<Flow>  featureExtractionSet=new HashSet<Flow>();
+		featureExtractionSet.add(flow1);featureExtractionSet.add(flow2);
+		list=tasksService.getFlowTemplates("Feature Extraction");
+		set=new HashSet<Flow>(list);
+		assertEquals(featureExtractionSet,set);
+		
+		list=tasksService.getFlowTemplates("not existing type");
+		set=new HashSet<Flow>(list);
+		assertEquals(flowSet,set);
+	
+		context.assertIsSatisfied();
 	}
 
 	@Test
@@ -253,6 +279,9 @@ public class TasksServiceTest {
 	Flow flow1;
 	@Resource
 	Flow flow2;
+	
+	@Resource 
+	Set<Flow> flowSet;
 
 	@Test
 	public final void testSetDatatypeMaps() {
@@ -295,6 +324,10 @@ public class TasksServiceTest {
 	@Resource
 	MockExternalContext mockExternalContext;
 
+	/**
+	 * TODO
+	 * this test is not well writen, it is going to fail in windows due to the jmock setting
+	 */
 	@Test
 	public final void testSetUploadingPaths() {
 		final String subStr = uploadDirectory + "/"
@@ -302,13 +335,12 @@ public class TasksServiceTest {
 
 		final ServletContext mockServletContext = context
 				.mock(ServletContext.class);
-		final String root = "/mock/home/webapp/";
+		final String root = "/mock/home/webapp";
 		context.checking(new Expectations() {
 			{
 				oneOf(mockServletContext).getRealPath(subStr);
-				will(returnValue(root + subStr));
-				oneOf(mockServletContext).getRealPath("/");
-				will(returnValue(root));
+				will(returnValue(root + uploadDirectory + "/"
+						+ mockHttpServletRequest.getRemoteUser() + "/" + uuid));
 			}
 		});
 		mockExternalContext.setNativeContext(mockServletContext);
@@ -325,10 +357,10 @@ public class TasksServiceTest {
 
 		tasksService.setWebDir(null);
 		tasksService.setUploadingPaths(mockExternalContext, uuid);
-		assertEquals("http://mock.nema.lis.illinois.edu:1111/mock/Context/"
+		assertEquals("http://mock.nema.lis.illinois.edu:1111/mock/Context"
 				+ subStr, tasksService.getWebDir());
 		assertEquals(root + uploadDirectory + "/"
-				+ mockHttpServletRequest.getRemoteUser() + "/" + uuid + "/",
+				+ mockHttpServletRequest.getRemoteUser() + "/" + uuid + File.separator,
 				tasksService.getPhysicalDir());
 		context.assertIsSatisfied();
 	}
@@ -392,9 +424,36 @@ public class TasksServiceTest {
 
 	}
 
+	@Resource
+	Map<String,String> parameters1;
+	@Resource
+	Map<String,String> parameters2;
+	
+	//TODO no multipart file upload test yet.  
+	//Not sure how to test writing a file because not to sure how to get definite directory
 	@Test
 	public final void testUpdateDataMap() {
-		fail("Not yet implemented"); // TODO
+		MockParameterMap parameterMap=new MockParameterMap();
+		for (Map.Entry<String,String> entry:parameters1.entrySet()){
+			parameterMap.put(entry.getKey(),entry.getValue());
+		}
+		Map<String,Property> data=new HashMap<String,Property>(datatypeMap1);
+		tasksService.updateDataMap(parameterMap, data);
+		assertEquals(parameters1.get("property1"), data.get("testField1").getValue());
+		assertEquals(parameters1.get("property2"), data.get("TestField2").getValue());
+		assertFalse(data.containsKey("property3"));
+		
+		parameterMap=new MockParameterMap();
+		for (Map.Entry<String,String> entry:parameters2.entrySet()){
+			parameterMap.put(entry.getKey(),entry.getValue());
+		}
+		data=new HashMap<String,Property>(datatypeMap1);
+		tasksService.updateDataMap(parameterMap, data);
+		assertEquals(parameters2.get("property1"), data.get("testField1").getValue());
+		assertEquals(parameters1.get("property2"), data.get("TestField2").getValue());
+		assertFalse(data.containsKey("property3"));	
+		
+		
 	}
 
 	@Resource

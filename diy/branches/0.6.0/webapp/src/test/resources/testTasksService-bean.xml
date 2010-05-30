@@ -95,6 +95,22 @@
 		<entry key="profileName" value-ref="propertyFile" />
 	</util:map>
 
+	<util:map id="parameters1">
+		<description>parameter map for datatypeMap1</description>
+		<entry key="property1" value="new value for testField1"/>
+		<entry key="property3" value="new value for testField3"/>
+		<entry key="property2" value="new value for testField2"/>
+	</util:map>
+	
+	
+	<util:map id="parameters2">
+		<description>parameter map for datatypeMap1</description>
+		<entry key="property1" value="another value for testField1"/>
+		<entry key="property3" value="another value for testField3"/>
+		
+	</util:map>
+	
+	
 	<bean id="mockHttpServletRequest" class="org.springframework.mock.web.MockHttpServletRequest" p:contextPath="/mock/Context"
 		p:remoteUser="mockUser" p:serverPort="1111" p:serverName="mock.nema.lis.illinois.edu" />
 	<bean id="mockExternalContext" class="org.springframework.webflow.test.MockExternalContext" p:nativeRequest-ref="mockHttpServletRequest" />
