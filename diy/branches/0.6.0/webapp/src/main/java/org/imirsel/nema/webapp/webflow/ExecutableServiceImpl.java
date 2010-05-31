@@ -153,7 +153,6 @@ public class ExecutableServiceImpl {
 			template.setProperties(properties);
 			logger.debug("generate map of size " + length);
 		}
-
 	}
 
 	public UploadedExecutableBundle setExecutable(UploadedExecutableBundle a) {
@@ -218,7 +217,6 @@ public class ExecutableServiceImpl {
 					+ template.getEnvironmentMap().size());
 		}
 		template.setEnvironmentMap(map);
-
 	}
 
 	private String output(String[] array) {
