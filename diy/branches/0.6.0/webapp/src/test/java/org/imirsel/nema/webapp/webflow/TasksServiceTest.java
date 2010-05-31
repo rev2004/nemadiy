@@ -1,14 +1,16 @@
 package org.imirsel.nema.webapp.webflow;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -32,6 +34,7 @@ import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
+import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,13 +42,8 @@ import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockParameterMap;
-
-import com.hp.hpl.jena.util.OneToManyMap.Entry;
-
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -54,7 +52,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 @ContextConfiguration(locations = { "/test-bean.xml",
 		"/testTasksService-bean.xml" })
 public class TasksServiceTest {
-	Mockery context = new Mockery();
+	Mockery context = new JUnit4Mockery() ;
 	final FlowService flowService = context.mock(FlowService.class);
 
 	@Resource
