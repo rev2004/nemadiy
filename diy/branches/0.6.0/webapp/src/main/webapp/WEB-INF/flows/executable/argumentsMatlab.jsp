@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>fill the arguments</title>
-		<script type="text/javascript" src="/scripts/add.js"></script>
+		<script type="text/javascript" src="<c:url value='/scripts/add.js'>"></script>
  <meta name="heading" content="Create Executable Profile: Step 2 of 3"/>
 </head>
 <body>
