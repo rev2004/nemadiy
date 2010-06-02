@@ -82,7 +82,7 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
 		
     	/* Indices into the new, interpolated data array-list */
         int index = 0;
-        int oldindex = -1;
+        int oldindex = 0;
 
         /*
          *  minDiff and currDiff represent time-stamp differences to make 
@@ -98,10 +98,10 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
             
             /* Case where the file's time-step is less than 10ms */
             if (index == oldindex) {
-                currDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*index);
-                if (currDiff <= minDiff) {	
+                currDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*(double)index);
+                if (currDiff < minDiff) {	
                 	melodyInterpF0.set(index, new Double(melodyDataRaw[i][1]));
-                	melodyInterpTimeStamp.set(index, new Double(TIMEINC*index));
+                	melodyInterpTimeStamp.set(index, new Double(TIMEINC*(double)index));
                     minDiff = currDiff;
                 }
             }
@@ -112,8 +112,8 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
          	 */
             else if (index == oldindex + 1) {
             	melodyInterpF0.add(new Double(melodyDataRaw[i][1]));
-            	melodyInterpTimeStamp.add(new Double(TIMEINC*index));
-                minDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*index);
+            	melodyInterpTimeStamp.add(new Double(TIMEINC*(double)index));
+                minDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*(double)index);
             }
             
             /* 
@@ -124,11 +124,11 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
                 int indDiff = index - oldindex;
                 for (int j = 0; j < indDiff-1; j++) {
                 	melodyInterpF0.add(melodyInterpF0.get(oldindex));
-                	melodyInterpTimeStamp.add(new Double(TIMEINC*oldindex + (j+1)*TIMEINC));
+                	melodyInterpTimeStamp.add(new Double(TIMEINC*(double)oldindex + (double)(j+1)*TIMEINC));
                 }
                 melodyInterpF0.add(new Double(melodyDataRaw[i][1]));
-                melodyInterpTimeStamp.add(new Double(TIMEINC*index));
-                minDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*index);
+                melodyInterpTimeStamp.add(new Double(TIMEINC*(double)index));
+                minDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*(double)index);
             }
             oldindex = index;                                
         }   
