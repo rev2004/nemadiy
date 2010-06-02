@@ -90,9 +90,6 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
          *  closest-in-time to the MIREX-spec desired time-stamp
          */
         double minDiff = 10000000.0;
-        if (melodyDataRaw[0][0] > 0.0) {
-        	minDiff = melodyDataRaw[0][0] + 0.000000001;
-        }
         
         double currDiff = 0.0;
         
