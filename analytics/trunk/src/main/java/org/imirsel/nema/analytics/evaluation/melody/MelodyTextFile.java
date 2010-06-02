@@ -99,7 +99,7 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
             /* Case where the file's time-step is less than 10ms */
             if (index == oldindex) {
                 currDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*index);
-                if (currDiff < minDiff) {	
+                if (currDiff <= minDiff) {	
                 	melodyInterpF0.set(index, new Double(melodyDataRaw[i][1]));
                 	melodyInterpTimeStamp.set(index, new Double(TIMEINC*index));
                     minDiff = currDiff;
