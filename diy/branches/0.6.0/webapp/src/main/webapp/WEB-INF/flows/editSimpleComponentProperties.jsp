@@ -20,6 +20,6 @@
     </fieldset>
   </c:forEach>
   <input type="submit" name="_eventId_save" value="Save" />
-  <input type="submit" name="_eventId_cancel" value="Cancel" />
+  <input type="submit" name="_eventId_cancel" value="Cancel"  style="float:right"/>
 </form:form>
 </body>

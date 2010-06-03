@@ -26,7 +26,7 @@
 	<fieldset id="button">
 	    <input type="submit" name="_eventId_back" value="Back" />
 	    <input type="submit" name="_eventId_save" value="Save" />
-	    <input type="submit" name="_eventId_cancel" value="Cancel" />
+	    <input type="submit" name="_eventId_cancel" value="Cancel"  style="float:right"/>
 	</fieldset>
 </form:form>
 </body>
