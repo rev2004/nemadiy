@@ -46,7 +46,7 @@ import org.imirsel.nema.model.NemaTrackList;
  */
 @Component(creator="Kris West", description="Evaluates multi-fold results from a single system", 
 		name="EvaluateSingleResultSet",
-		tags="evaluation comparison",
+		tags="evaluation",
 		dependency={"commons-compress-1.0.jar","jfreechart-1.0.9.jar","jcommon-1.0.12.jar"})
 		public class EvaluateSingleResultSet extends NemaComponent {
 
@@ -73,8 +73,8 @@ import org.imirsel.nema.model.NemaTrackList;
 //	public final static String DATA_INPUT_SYSTEM_DESC = "SystemDescription";
 
 	//OUTPUTS
-	@ComponentOutput(description="Evaluation results model encoding all the data evaluated and the evaluation metrics. " +
-			"The results will ahve already been rendered to the output directory.", name="Evaluation results")
+	@ComponentOutput(description="Evaluation results model encoding all the data evaluated and the evaluation metrics, suitable for use with the RenderResultSet component."
+		, name="Evaluation results")
 	final static String DATA_OUTPUT_EVAL_RESULTS= "Evaluation results";
 
 	private String systemID = null;
@@ -150,7 +150,7 @@ import org.imirsel.nema.model.NemaTrackList;
 		    	Collections.sort(testSetList,trackListComp);   
 		    }
 		    this.getLogger().info("Initializing evaluation toolset for metadata type: " + task.getSubjectTrackMetadataName());
-	        Evaluator eval = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, rootEvaluationDir, procWorkingDir, trainSetList, testSetList, true, matlabPath);
+	        Evaluator eval = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, trainSetList, testSetList);
 	        eval.addLogDestination(getLogDestination());
 	        
 	        //add the ground-truth
@@ -175,8 +175,7 @@ import org.imirsel.nema.model.NemaTrackList;
 			// output the raw results dir for reprocessing or storage in the repository
 			cc.pushDataComponentToOutput(DATA_OUTPUT_EVAL_RESULTS, evalOutput);
 			
-	        this.getLogger().info("Evaluation Complete\n" +
-	        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
+	        this.getLogger().info("Evaluation Complete");
 			
 	    } catch (Exception e) {
 			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when performing the evaluation!",e);
