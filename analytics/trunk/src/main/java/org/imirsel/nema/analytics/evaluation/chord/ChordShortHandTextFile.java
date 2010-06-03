@@ -79,6 +79,7 @@ public class ChordShortHandTextFile extends SingleTrackEvalFileTypeImpl {
 		return obj;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void writeFile(File theFile, NemaData data)
 			throws IllegalArgumentException, FileNotFoundException, IOException {

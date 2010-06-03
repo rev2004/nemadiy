@@ -13,9 +13,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
-
 import org.imirsel.nema.analytics.util.io.NemaFileType;
 import org.imirsel.nema.model.NemaData;
 

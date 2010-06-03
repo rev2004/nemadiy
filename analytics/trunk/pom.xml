@@ -16,7 +16,7 @@
 		</mailingList>
 	</mailingLists>
 
-    <url>http://nema-dev.lis.illinois.edu/development/${pom.artifactId}</url>
+    <url>http://nema-dev.lis.illinois.edu/development/${project.artifactId}</url>
     <inceptionYear>2010</inceptionYear>
 	<licenses>
 		<license>
