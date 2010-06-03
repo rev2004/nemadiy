@@ -79,6 +79,17 @@ public interface RepositoryUpdateClientInterface extends
     public void insertTrackCollectionLink(int collection_id, String track_id) throws SQLException;
 
     /**
+     * Inserts a file path that points to a legacy location for a particular 
+     * file. As files are moved and renamed on ingestion, this provides a link
+     * back to the original file location.
+     * @param file_id The file id to link to the path.
+     * @param legacyFilePath The legacy file path.
+     * @throws SQLException Thrown if a problem with the update occurs.
+     * @since 0.2.0
+     */
+    public void insertLegacyFilePath(int file_id, String legacyFilePath) throws SQLException;
+    
+    /**
      * Inserts a new file path, relating to a track ID, into the repository DB.
      * @param track_id The track ID to insert the file path against.
      * @param path The filesystem path to insert against the track ID.

@@ -35,6 +35,20 @@ public class NemaDataConstants {
     /** Constant definition for header used in ASCII file     */
     public final static String fileHeader = "nema-analytics NemaData (8th Feb 2010)";
     
+    //Similarity evaluator constants
+    public final static String SEARCH_TRACK_DISTANCE_LIST = "Similar track list";
+    public final static String SEARCH_DISTANCE_MATRIX_NAME = "Distance matrix name";
+    
+    public final static String SEARCH_ARTIST_FILTERED_GENRE_NEIGHBOURHOOD = "Search Artist-Filtered Genre Neighbourhood clustering";
+    public final static String SEARCH_TEST_LEVELS = "Number of results search statisitcs calculated at";
+    public final static String SEARCH_GENRE_NEIGHBOURHOOD = "Search Genre Neighbourhood clustering";
+    public final static String SEARCH_ARTIST_NEIGHBOURHOOD = "Search Artist Neighbourhood clustering";
+    public final static String SEARCH_ALBUM_NEIGHBOURHOOD = "Search Album Neighbourhood clustering";
+    public final static String SEARCH_TRIANGULAR_INEQUALITY = "Search Triangular inequality holds";
+    public final static String SEARCH_PEAK_SIMILAR_TRACKS = "Peak number of tracks a single track similar to";
+    public final static String SEARCH_TRACKS_NEVER_SIMILAR = "Percantage of tracks never similar to another track";
+    
+    
     //Test/Train classification evaluator constants
     public final static String CLASSIFICATION_EXPERIMENT_CLASSNAMES = "Classification Experiment Classnames";
     public final static String CLASSIFICATION_CONFUSION_MATRIX_RAW = "Classification Confusion Matrix - raw";
@@ -61,14 +75,14 @@ public class NemaDataConstants {
     
     //Tag classification evaluator constants
     /** Constant definition for tag classification data in the form of a 
-     * <code>HashMap<String,HashSet<String>></code> - mapping paths to a set
+     * {@code HashMap<String,HashSet<String>>} - mapping paths to a set
      * of relevant tags. */
     public static final String TAG_BINARY_RELEVANCE_MAP = "Tag classification binary relevance map";
     /** Constant definition for the list of tag names appearing in the data in 
-     * the form of a <code>HashSet<String></code>. */
+     * the form of a {@code HashSet<String>}. */
     public static final String TAG_NAME_SET = "Tag name set";
     /** Constant definition for tag classification data in the form of a 
-     * <code>HashMap<String,HashMap<String,Double>></code> - mapping paths
+     * {@code HashMap<String,HashMap<String,Double>>} - mapping paths
      * to a map linking tags to their affinity values. */
     public static final String TAG_AFFINITY_MAP = "Tag classification affinity map";
     
