@@ -98,6 +98,13 @@
 			<email>shirk@illinois.edu</email>
 			<timezone>-5</timezone>
 		</developer>
+		<developer>
+			<id>gzhu1</id>
+			<name>Guojun Zhu</name>
+			<email>zggame@gmail.com</email>
+			<timezone>-5</timezone>
+		</developer>
+			
 	</developers>
 
 
