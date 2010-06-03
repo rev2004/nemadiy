@@ -206,7 +206,6 @@ public interface FlowService {
     * @param userId The ID of the user who is creating this flow.
     * @return The URI of the new flow.
     * @deprecated  Not for public use. This method will be removed in 0.7.0 release.
-    * @see createNewFlow(Credentials credentials,HashMap<String,String> paramMap, String flowUri, long userId)
     * @since 0.5.0
     */
    public String createNewFlow(HashMap<String,String> paramMap, String flowUri, long userId);
