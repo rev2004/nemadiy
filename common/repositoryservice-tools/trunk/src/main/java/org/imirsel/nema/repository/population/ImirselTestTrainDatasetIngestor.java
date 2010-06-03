@@ -28,64 +28,64 @@ public class ImirselTestTrainDatasetIngestor {
 	
 	public static void main(String[] args) {
 		try {
-		File rootAudioDir = new File(args[0]); 
-		String audioFileExtension = args[1];
-		int collection_id = Integer.parseInt(args[2]); 
-		File audioDirectory = new File(args[3]); 
-		String seriesName = args[4];
-		String datasetName = args[5];
-		String datasetDescription = args[6];
-		String metadataType = args[7];
-		Class<? extends SingleTrackEvalFileType> readerFileType;
-		Class<? extends SingleTrackEvalFileType> writerFileType;
-		try {
-			readerFileType = (Class<? extends SingleTrackEvalFileType>) ImirselDatasetIngestor.class.getClassLoader().loadClass(args[8]);
-			writerFileType = (Class<? extends SingleTrackEvalFileType>) ImirselDatasetIngestor.class.getClassLoader().loadClass(args[9]);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-		File groundtruthFile = new File(args[10]); 
-		
-		boolean doingFileMeta = false;
-		boolean doingTestList = false;
-		boolean doingTrainList = false;
-		List<File> testDirs = new ArrayList<File>();
-		List<File> trainDirs = new ArrayList<File>();
-		List<String[]> fileMetadataTags = new ArrayList<String[]>();
-		for(int i = 11; i < args.length; i++) {
-			if(args[i].equals("-m")) {
-				doingFileMeta = true;
-				doingTestList = false;
-				doingTrainList = false;
-				continue;
-			}else if(args[i].equals("-test")) {
-				doingFileMeta = false;
-				doingTestList = true;
-				doingTrainList = false;
-				continue;
-			}else if(args[i].equals("-train")) {
-				doingFileMeta = false;
-				doingTestList = false;
-				doingTrainList = true;
-				continue;
+			File rootAudioDir = new File(args[0]); 
+			String audioFileExtension = args[1];
+			int collection_id = Integer.parseInt(args[2]); 
+			File audioDirectory = new File(args[3]); 
+			String seriesName = args[4];
+			String datasetName = args[5];
+			String datasetDescription = args[6];
+			String metadataType = args[7];
+			Class<? extends SingleTrackEvalFileType> readerFileType;
+			Class<? extends SingleTrackEvalFileType> writerFileType;
+			try {
+				readerFileType = (Class<? extends SingleTrackEvalFileType>) ImirselDatasetIngestor.class.getClassLoader().loadClass(args[8]);
+				writerFileType = (Class<? extends SingleTrackEvalFileType>) ImirselDatasetIngestor.class.getClassLoader().loadClass(args[9]);
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			File groundtruthFile = new File(args[10]); 
+			
+			boolean doingFileMeta = false;
+			boolean doingTestList = false;
+			boolean doingTrainList = false;
+			List<File> testDirs = new ArrayList<File>();
+			List<File> trainDirs = new ArrayList<File>();
+			List<String[]> fileMetadataTags = new ArrayList<String[]>();
+			for(int i = 11; i < args.length; i++) {
+				if(args[i].equals("-m")) {
+					doingFileMeta = true;
+					doingTestList = false;
+					doingTrainList = false;
+					continue;
+				}else if(args[i].equals("-test")) {
+					doingFileMeta = false;
+					doingTestList = true;
+					doingTrainList = false;
+					continue;
+				}else if(args[i].equals("-train")) {
+					doingFileMeta = false;
+					doingTestList = false;
+					doingTrainList = true;
+					continue;
+				}
+				
+				if(doingTestList) {
+					testDirs.add(new File(args[i]));
+				}else if(doingTrainList) {
+					trainDirs.add(new File(args[i]));
+				}else if (doingFileMeta) {
+					String[] comps = args[i].split("=");
+					if (comps.length != 2) {
+						throw new RuntimeException("Failed to parse file metadata key=value pair: " + args[i]);
+					}
+					fileMetadataTags.add(comps);
+				}else {
+					System.out.println("WARNING: ignoring argument: " + args[i]);
+				}
 			}
 			
-			if(doingTestList) {
-				testDirs.add(new File(args[i]));
-			}else if(doingTrainList) {
-				trainDirs.add(new File(args[i]));
-			}else if (doingFileMeta) {
-				String[] comps = args[i].split("=");
-				if (comps.length != 2) {
-					throw new RuntimeException("Failed to parse file metadata key=value pair: " + args[i]);
-				}
-				fileMetadataTags.add(comps);
-			}else {
-				System.out.println("WARNING: ignoring argument: " + args[i]);
-			}
-		}
-		
-		moveRenameAndInsertDataset(rootAudioDir, audioFileExtension, groundtruthFile, testDirs, trainDirs,fileMetadataTags, collection_id, audioDirectory, seriesName, datasetName, datasetDescription, metadataType, readerFileType, writerFileType);
+			moveRenameAndInsertDataset(rootAudioDir, audioFileExtension, groundtruthFile, testDirs, trainDirs, fileMetadataTags, collection_id, audioDirectory, seriesName, datasetName, datasetDescription, metadataType, readerFileType, writerFileType);
 		}catch(Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -183,8 +183,8 @@ public class ImirselTestTrainDatasetIngestor {
 			List<NemaData> testList = listFileReader.readFile(file);
 			testLists.add(testList);
 			//confirm we have metadata for all tracks
-			for (Iterator iterator2 = testList.iterator(); iterator2.hasNext();) {
-				NemaData nemaData = (NemaData) iterator2.next();
+			for (Iterator<NemaData> iterator2 = testList.iterator(); iterator2.hasNext();) {
+				NemaData nemaData = iterator2.next();
 				if (!idToMetadata.containsKey(nemaData.getId())){
 					throw new IllegalArgumentException("Groundtruth did not contain metadata for trackID: " + nemaData.getId() + " from test list file: " + file.getAbsolutePath());
 				}
@@ -195,11 +195,11 @@ public class ImirselTestTrainDatasetIngestor {
 		for (Iterator<File> it = trainListFiles.iterator(); it
 				.hasNext();) {
 			File file = it.next();
-			List<NemaData> trainList = FileConversionUtil.readData(file, null, readerFileType);
+			List<NemaData> trainList = listFileReader.readFile(file);
 			trainLists.add(trainList);
 			//confirm we have metadata for all tracks
-			for (Iterator iterator2 = trainList.iterator(); iterator2.hasNext();) {
-				NemaData nemaData = (NemaData) iterator2.next();
+			for (Iterator<NemaData> iterator2 = trainList.iterator(); iterator2.hasNext();) {
+				NemaData nemaData = iterator2.next();
 				if (!idToMetadata.containsKey(nemaData.getId())){
 					throw new IllegalArgumentException("Groundtruth did not contain metadata for trackID: " + nemaData.getId() + " from train list file: " + file.getAbsolutePath());
 				}
@@ -273,7 +273,7 @@ public class ImirselTestTrainDatasetIngestor {
 		RepositoryManagementUtils.insertMetadataFromSingleTrackEvalFileType(idToMetadata.values(), metadataType, writerFileType);
 		
 		//collect up new lists of ids for folds
-		HashSet<String> subsetList = new HashSet<String>(newIdToNewFile.keySet());
+		HashSet<String> subsetList = new HashSet<String>();
 		//test
 		List<List<String>> newTestTrackIdLists = new ArrayList<List<String>>(testListFiles.size());
 		for (Iterator<List<NemaData>> iterator = testLists.iterator(); iterator
@@ -283,6 +283,8 @@ public class ImirselTestTrainDatasetIngestor {
 			for (Iterator<NemaData> iterator2 = aFold.iterator(); iterator2
 					.hasNext();) {
 				String id = iterator2.next().getId();
+				//convert to new id
+				id = idToMetadata.get(id).getId();
 				foldList.add(id);
 				subsetList.add(id);
 			}
@@ -297,6 +299,8 @@ public class ImirselTestTrainDatasetIngestor {
 			for (Iterator<NemaData> iterator2 = aFold.iterator(); iterator2
 					.hasNext();) {
 				String id = iterator2.next().getId();
+				//convert to new id
+				id = idToMetadata.get(id).getId();
 				foldList.add(id);
 				subsetList.add(id);
 			}

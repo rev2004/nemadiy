@@ -70,9 +70,11 @@ public class RepositoryManagementUtils {
     
     static final Logger logger = Logger.getLogger(RepositoryManagementUtils.class.getName());
 	
+    public static void insertDirOfAudioFiles(File root, List<String[]> fileMetadataTags, int collection_id) {
+    	insertDirOfAudioFiles(root, fileMetadataTags, collection_id, null);
+    }
     
-    
-	public static void insertDirOfAudioFiles(File root, List<String[]> fileMetadataTags, int collection_id) {
+	public static void insertDirOfAudioFiles(File root, List<String[]> fileMetadataTags, int collection_id, Map<File,File> newFileToOldFile) {
         try{
             logger.info("");
             logger.info("Collection id: " + collection_id);
@@ -212,7 +214,8 @@ public class RepositoryManagementUtils {
                 }
                 try{
                     //insert file against track
-                    int file_id = client.insertFile(track, idMap.get(track).getAbsolutePath());
+                	File toInsert = idMap.get(track);
+                    int file_id = client.insertFile(track, toInsert.getAbsolutePath());
                     if (file_id == -1){
                         numFilesFailed++;
                     }else{
@@ -221,8 +224,16 @@ public class RepositoryManagementUtils {
                             int metaValId = fileMetaIDs[i];
                             client.insertFileMetaLink(file_id, metaValId);
                         }
+                        //if available insert legacy file path
+                        if (newFileToOldFile != null){
+                        	File oldFile = newFileToOldFile.get(toInsert);
+                        	if (oldFile != null){
+                        		client.insertLegacyFilePath(file_id, oldFile.getAbsolutePath());
+                        	}
+                        }
                         numFilesInserted++;
                     }
+                    
                 }catch (SQLException ex){
                     logger.log(Level.SEVERE, null, ex);
                 }
