@@ -30,10 +30,10 @@ public interface ResourceTypeService extends Serializable{
 	public List<GroupDataType> getSupportedGroups();
 	
 	
-	/**
+	/** Returns the os type
 	 * 
 	 * @param value
-	 * @return
+	 * @return the Os informtion {@link OsDataType}
 	 */
 	public OsDataType getOsDataType(String value);
 }

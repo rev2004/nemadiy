@@ -94,7 +94,7 @@ public class NemaSecurityManager implements JackrabbitSecurityManager {
     private WorkspaceAccessManager workspaceAccessManager;
 
     /**
-     * factory for login-context {@see Repository#login())
+     * factory for login-context 
      */
     private AuthContextProvider authCtxProvider;
 
