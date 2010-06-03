@@ -52,7 +52,7 @@ ${messageContext.allMessages}
       <input type="hidden" name="idx" value="0" id="idx"/>
       <fieldset id="button">
       <input type="submit" name="_eventId_review" value="Review Job and Task Settings" />
-      <input type="submit" name="_eventId_cancel" value="Cancel" />
+      <input type="submit" name="_eventId_cancel" value="Cancel"  style="float:right"/>
       </fieldset>
     </form:form>
   </div>

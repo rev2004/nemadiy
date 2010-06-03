@@ -92,7 +92,7 @@ function fixLabels(){
     </fieldset>        
     <fieldset id="button">
         <input type="submit" name="_eventId_upload" value="Next" />
-        <input type="submit" name="_eventId_cancel" value="Cancel" />
+        <input type="submit" name="_eventId_cancel" value="Cancel" style="float:right"/>
     </fieldset>
 </form:form>
 
