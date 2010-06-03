@@ -9,6 +9,8 @@ import org.imirsel.nema.analytics.evaluation.chord.ChordEvaluator;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
 import org.imirsel.nema.analytics.evaluation.key.KeyEvaluator;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyEvaluator;
+import org.imirsel.nema.analytics.evaluation.tempo.TempoEvaluator;
+import org.imirsel.nema.analytics.evaluation.tempo.TempoResultRenderer;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaTask;
@@ -29,6 +31,7 @@ public class EvaluatorFactory {
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, ChordEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.MELODY_EXTRACTION_DATA, MelodyEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, KeyEvaluator.class);
+		EVALUATOR_REGISTRY.put(NemaDataConstants.TEMPO_EXTRACTION_DATA, TempoEvaluator.class);
 		
 			//classification tasks
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, ClassificationEvaluator.class);
