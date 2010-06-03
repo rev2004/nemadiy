@@ -31,6 +31,9 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
     public static final String INSERT_FILE = "INSERT INTO file(track_id,path) VALUES(?,?)";
     private PreparedStatement insertFile;
 
+    public static final String INSERT_LEGACY_FILE_PATH = "INSERT INTO legacy_file_paths(file_id,old_path) VALUES(?,?)";
+    private PreparedStatement insertLegacyFilePath;
+
     public static final String INSERT_FILE_METADATA_DEFINITIONS = "INSERT IGNORE INTO file_metadata_definitions(name) VALUES(?)";
     private PreparedStatement insertFileMetaDef;
 
@@ -78,6 +81,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
 		insertTrack = getDbCon().con.prepareStatement(INSERT_TRACK);
         insertTrackCollectionLink = getDbCon().con.prepareStatement(INSERT_TRACK_COLLECTION_LINK);
         insertFile = getDbCon().con.prepareStatement(INSERT_FILE, Statement.RETURN_GENERATED_KEYS);
+        insertLegacyFilePath = getDbCon().con.prepareStatement(INSERT_LEGACY_FILE_PATH);
         insertFileMetaDef = getDbCon().con.prepareStatement(INSERT_FILE_METADATA_DEFINITIONS);
         insertFileMeta = getDbCon().con.prepareStatement(INSERT_FILE_METADATA);
         insertFileMetaLink = getDbCon().con.prepareStatement(INSERT_FILE_METADATA_LINK);
@@ -144,6 +148,12 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         }
     }
 
+    public void insertLegacyFilePath(int file_id, String legacyFilePath) throws SQLException{
+        insertLegacyFilePath.setInt(1, file_id);
+        insertLegacyFilePath.setString(2, legacyFilePath);
+        insertLegacyFilePath.executeUpdate();
+    }
+    
     public void insertFileMetaDef(String name) throws SQLException{
         logger.info("Inserting File metadata type: " + name);
         insertFileMetaDef.setString(1, name);
