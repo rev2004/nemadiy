@@ -131,12 +131,12 @@
 	</action-state>
 
 	<decision-state id="checkRunResult">
-		<if test="jobId==null" then="run" else="jobdetail" />
+		<if test="(job.id!=null)" else="run" then="jobdetail" />
 	</decision-state>
 
 	<decision-state id="startPoint">
 		<if test="id==null" then="selectTask" else="getTemplate" />
 	</decision-state>
 
-	<end-state id="jobdetail" view="externalRedirect:contextRelative:get/JobManager.jobDetail?id=${job.id}" />
+	<end-state id="jobdetail" view="externalRedirect:contextRelative:/get/JobManager.jobDetail?id=#{flowScope.job.id}" />
 </flow>
