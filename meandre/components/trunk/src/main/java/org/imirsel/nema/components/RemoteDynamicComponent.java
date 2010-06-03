@@ -24,16 +24,16 @@ import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
 
 import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.model.DynamicType;
+import org.imirsel.nema.model.OsType;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
+import org.imirsel.nema.model.ResourceGroupEntry;
 import org.imirsel.nema.monitor.process.NemaProcess;
 import org.imirsel.nema.monitor.process.RecordStreamProcessMonitor;
-import org.imirsel.nema.service.executor.DynamicType;
-import org.imirsel.nema.service.executor.OsType;
 import org.imirsel.nema.service.executor.ProcessExecutorService;
 import org.imirsel.nema.service.executor.RemoteProcessMonitor;
-import org.imirsel.nema.service.executor.ResourceGroupEntry;
 import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
@@ -51,7 +51,7 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 public abstract class RemoteDynamicComponent extends NemaComponent {
 	//private Logger logger = Logger.getLogger(this.getClass().getName());
 
-	@ComponentProperty(defaultValue = "nema.lis.uiuc.edu", description = "Service Discovery Host", name = "host")
+	@ComponentProperty(defaultValue = "nema-dev.lis.illinois.edu", description = "Service Discovery Host", name = "host")
 	private static final String PROPERTY_1 = "host";
 	
 	@ComponentProperty(defaultValue = "exampleRun", description = "Profile Name", name = "profileName")
@@ -149,7 +149,7 @@ public abstract class RemoteDynamicComponent extends NemaComponent {
 				}
 				
 				if(serviceFound==null){
-					throw new ComponentExecutionException("Suitable Service not found");
+					throw new ComponentExecutionException("Suitable Service not found " + profileName);
 				}
 				executorService = serviceFound;
 				System.out.println("Selecting: " + executorService.toString() + " for the execution. ");

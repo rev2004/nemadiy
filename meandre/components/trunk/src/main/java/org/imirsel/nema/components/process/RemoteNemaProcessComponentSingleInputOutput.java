@@ -23,7 +23,10 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentExecutionException;
 
-@Component(creator = "Amit Kumar", description = "This component takes input string array of files and pushes the string array of files produced by the execution of binary code.", name = "RemoteSingleInputOutput", tags = "remote")
+@Component(creator = "Amit Kumar", 
+		description = "This component takes input string array of files and pushes " +
+				"the string array of files produced by the execution of binary code.",
+		name = "RemoteSingleInputOutput", tags = "remote")
 public class RemoteNemaProcessComponentSingleInputOutput extends RemoteProcessExecutorComponent{
 	
 	@ComponentInput(description = "String input files", name = "inputFiles")
@@ -78,6 +81,7 @@ public class RemoteNemaProcessComponentSingleInputOutput extends RemoteProcessEx
 			formatModel.clearPreparedPaths();
 			formatModel.setPreparedPathForInput(1, file.getAbsolutePath());
 			formatModel.setPreparedPathForOutput(1, outputFile.getAbsolutePath());
+		   
 		
 			
 			ProcessArtifact paInputs = new ProcessArtifact(file.getAbsolutePath(),"File");
