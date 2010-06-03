@@ -3,8 +3,6 @@
  */
 package org.imirsel.nema.analytics.evaluation;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -37,8 +35,8 @@ import org.imirsel.nema.model.NemaTrackList;
 public abstract class EvaluatorImpl implements Evaluator {
 
 	protected Logger _logger;
-	protected File workingDir;
-	protected File outputDir;
+//	protected File workingDir;
+//	protected File outputDir;
 	protected Map<String,NemaData> trackIDToGT;
 	protected Map<String,Map<NemaTrackList,List<NemaData>>> jobIDToFoldResults;
 	protected Map<String,String> jobIDToName;
@@ -47,16 +45,10 @@ public abstract class EvaluatorImpl implements Evaluator {
 	protected List<NemaTrackList> trainingSets;
 	protected List<NemaTrackList> testSets;
 	
-	
-	
 	protected List<String> overallEvalMetrics;
 	protected List<String> foldEvalMetrics;
 	protected List<String> trackEvalMetrics;
 	
-	//temporary variables for matlab until we have java implementation of stats tests
-	protected boolean performMatlabStatSigTests = true;
-	protected File matlabPath = new File("matlab");
-		
 	public EvaluatorImpl(){
 		_logger = Logger.getLogger(this.getClass().getName());
 		
@@ -220,21 +212,21 @@ public abstract class EvaluatorImpl implements Evaluator {
 		getLogger().addHandler(handler);
 	}
 
-	public void setOutputDir(File outputDir_) throws FileNotFoundException {
-		outputDir = outputDir_;
-		outputDir.mkdirs();
-		if (!outputDir.exists()){
-			throw new FileNotFoundException("Output directory " + outputDir.getAbsolutePath() + " was not found and could not be created!");
-		}
-	}
-
-	public void setWorkingDir(File workingDir_) throws FileNotFoundException {
-		workingDir = workingDir_;
-		workingDir.mkdirs();
-		if (!workingDir.exists()){
-			throw new FileNotFoundException("Working directory " + workingDir.getAbsolutePath() + " was not found and could not be created!");
-		}
-	}
+//	public void setOutputDir(File outputDir_) throws FileNotFoundException {
+//		outputDir = outputDir_;
+//		outputDir.mkdirs();
+//		if (!outputDir.exists()){
+//			throw new FileNotFoundException("Output directory " + outputDir.getAbsolutePath() + " was not found and could not be created!");
+//		}
+//	}
+//
+//	public void setWorkingDir(File workingDir_) throws FileNotFoundException {
+//		workingDir = workingDir_;
+//		workingDir.mkdirs();
+//		if (!workingDir.exists()){
+//			throw new FileNotFoundException("Working directory " + workingDir.getAbsolutePath() + " was not found and could not be created!");
+//		}
+//	}
 	
 	public void addResults(String systemName, String jobID, NemaTrackList fold, List<NemaData> results) throws IllegalArgumentException{
 		NemaData data;
@@ -247,7 +239,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 				String[] avail = data.metadataKeys();
 				String keyString = "";
 	            for (int i=0;i<avail.length;i++) {
-	                keyString += (String)avail[i] + "\t";
+	                keyString += avail[i] + "\t";
 	            }
 				_logger.warning("Results object received for job ID '" + jobID + "', track ID '" + data.getId() + "' does not contain '" + metaKey + "' metadata!\n" +
 						"Metadata keys available:\n"
@@ -278,7 +270,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 				String[] avail = data.metadataKeys();
 				String keyString = "";
 	            for (int i=0;i<avail.length;i++) {
-	                keyString += (String)avail[i] + "\t";
+	                keyString += avail[i] + "\t";
 	            }
 				_logger.warning("Ground-truth object received for track ID '" + data.getId() + "' does not contain '" + metaKey + "' metadata!\n" +
 						"Metadata keys available:\n"
@@ -312,26 +304,26 @@ public abstract class EvaluatorImpl implements Evaluator {
 	public NemaDataset getDataset() {
 		return dataset;
 	}
-
-	public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests) {
-		this.performMatlabStatSigTests = performMatlabStatSigTests;
-	}
-
-	public boolean getPerformMatlabStatSigTests() {
-		return performMatlabStatSigTests;
-	}
-
-	public void setMatlabPath(File matlabPath) {
-		this.matlabPath = matlabPath;
-	}
-
-	public File getMatlabPath() {
-		return matlabPath;
-	}
+//
+//	public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests) {
+//		this.performMatlabStatSigTests = performMatlabStatSigTests;
+//	}
+//
+//	public boolean getPerformMatlabStatSigTests() {
+//		return performMatlabStatSigTests;
+//	}
+//
+//	public void setMatlabPath(File matlabPath) {
+//		this.matlabPath = matlabPath;
+//	}
+//
+//	public File getMatlabPath() {
+//		return matlabPath;
+//	}
 
 	public abstract NemaEvaluationResultSet evaluate() throws IllegalArgumentException, IOException;
 	
 	public abstract NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData);
 
-    public abstract void renderResults(NemaEvaluationResultSet results, File outputDir) throws IOException;
+//    public abstract void renderResults(NemaEvaluationResultSet results, File outputDir) throws IOException;
 }

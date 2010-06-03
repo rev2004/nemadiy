@@ -9,12 +9,9 @@
 
 package org.imirsel.nema.analytics.evaluation;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -31,25 +28,25 @@ import org.imirsel.nema.model.NemaTrackList;
  * @since 0.1.0
  */
 public interface Evaluator { 
-    
-	/**
-	 * Set the working directory for the utility, to be used for creation of an temp files
-	 * required.
-	 * 
-	 * @param workingDir File representing the path to the working directory.
-	 * @throws FileNotFoundException Thrown if the specified path can't be found or created.
-	 */
-    public void setWorkingDir(File workingDir) throws FileNotFoundException;
-    
-    /**
-     * Sets the output directory for the utility. Outputs may include encoded data files,
-     * reports, an HTML mini-site providing an interface to the results etc.
-     * 
-     * @param outputDir File representing the output directory.
-     * @throws FileNotFoundException Thrown if the specified path can't be found or created.
-     */
-    public void setOutputDir(File outputDir) throws FileNotFoundException;
-    
+//    
+//	/**
+//	 * Set the working directory for the utility, to be used for creation of an temp files
+//	 * required.
+//	 * 
+//	 * @param workingDir File representing the path to the working directory.
+//	 * @throws FileNotFoundException Thrown if the specified path can't be found or created.
+//	 */
+//    public void setWorkingDir(File workingDir) throws FileNotFoundException;
+//    
+//    /**
+//     * Sets the output directory for the utility. Outputs may include encoded data files,
+//     * reports, an HTML mini-site providing an interface to the results etc.
+//     * 
+//     * @param outputDir File representing the output directory.
+//     * @throws FileNotFoundException Thrown if the specified path can't be found or created.
+//     */
+//    public void setOutputDir(File outputDir) throws FileNotFoundException;
+//    
     /**
      * Set the task description so that the task name, description and metadata type may 
      * be encoded in the results and used on any generated result pages. The 
@@ -204,41 +201,41 @@ public interface Evaluator {
      */
     public NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData);
     
-    /**
-     * Render results from the Evaluator to a folder on disk.
-     * 
-     * @param results The results Object to render.
-     * @param outputDir The directory to render the results into.
-     * @throws IOException Thrown if an IOException occurs while rendering the 
-     * results.
-     */
-    public void renderResults(NemaEvaluationResultSet results, File outputDir) throws IOException;
-    
-    //TODO: remove these temporary methods when we get a java implementation of stats tests
-    
-    /**
-     * Sets a flag determining whether significance tests are performed in 
-     * matlab.
-     * @param performMatlabStatSigTests The flag to set.
-     */
-	public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests);
-
-	/**
-	 * Returns a flag determining whether significance tests are performed in 
-	 * matlab.
-	 * @return The flag value.
-	 */
-	public boolean getPerformMatlabStatSigTests();
-
-	/**
-	 * Sets the path to the matlab executable.
-	 * @param matlabPath The executable path.
-	 */
-	public void setMatlabPath(File matlabPath);
-
-	/**
-	 * Returns  the path to the matlab executable.
-	 * @return matlabPath The executable path.
-	 */
-	public File getMatlabPath();
+//    /**
+//     * Render results from the Evaluator to a folder on disk.
+//     * 
+//     * @param results The results Object to render.
+//     * @param outputDir The directory to render the results into.
+//     * @throws IOException Thrown if an IOException occurs while rendering the 
+//     * results.
+//     */
+//    public void renderResults(NemaEvaluationResultSet results, File outputDir) throws IOException;
+//    
+//    //TODO: remove these temporary methods when we get a java implementation of stats tests
+//    
+//    /**
+//     * Sets a flag determining whether significance tests are performed in 
+//     * matlab.
+//     * @param performMatlabStatSigTests The flag to set.
+//     */
+//	public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests);
+//
+//	/**
+//	 * Returns a flag determining whether significance tests are performed in 
+//	 * matlab.
+//	 * @return The flag value.
+//	 */
+//	public boolean getPerformMatlabStatSigTests();
+//
+//	/**
+//	 * Sets the path to the matlab executable.
+//	 * @param matlabPath The executable path.
+//	 */
+//	public void setMatlabPath(File matlabPath);
+//
+//	/**
+//	 * Returns  the path to the matlab executable.
+//	 * @return matlabPath The executable path.
+//	 */
+//	public File getMatlabPath();
 }

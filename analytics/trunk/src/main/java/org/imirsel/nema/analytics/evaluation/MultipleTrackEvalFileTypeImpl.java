@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
-
-
 import org.imirsel.nema.analytics.util.io.NemaFileTypeImpl;
 import org.imirsel.nema.model.NemaData;
 
@@ -56,7 +53,9 @@ public abstract class MultipleTrackEvalFileTypeImpl extends NemaFileTypeImpl imp
 		Collections.sort(filesToUse);
 		
 		for(Iterator<File> it = filesToUse.iterator();it.hasNext();){
-			out.add(readFile(it.next()));
+			File toRead = it.next();
+			getLogger().info("Reading file: " + toRead.getAbsolutePath());
+			out.add(readFile(toRead));
 		}
 		
 		getLogger().info("Retrieved " + out.size() + " of " + files.length + " files from " + theDir.getAbsolutePath());

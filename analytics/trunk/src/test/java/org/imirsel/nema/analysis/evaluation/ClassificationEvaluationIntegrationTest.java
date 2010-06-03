@@ -101,7 +101,7 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 		Evaluator evaluator = null;
 
 		//evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
-		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
 		
 		MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
 		List<NemaData> groundTruth = reader.readFile(groundTruthFile);
@@ -136,7 +136,7 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 		Evaluator evaluator = null;
 		
 		//evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
-		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
 		
 		MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
 		List<NemaData> groundTruth = reader.readFile(groundTruthFile);

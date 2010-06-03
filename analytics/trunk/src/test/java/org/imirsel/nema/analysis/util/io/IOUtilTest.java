@@ -80,7 +80,9 @@ public class IOUtilTest {
 	public void testListFiles() throws Exception{
 		File tmpDir = File.createTempFile("testIOUtil", "tmp");
 		System.out.println("temp location is: " + tmpDir.getAbsolutePath());
+		tmpDir.delete();
 		tmpDir.mkdirs();
+		tmpDir.deleteOnExit();
 		File f1 = new File(tmpDir,"1.dd");
 		File f2 = new File(tmpDir,"2.dd");
 		try {

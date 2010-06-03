@@ -80,30 +80,30 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
         id++;
     }
 
-	@Test
-	public void testConvertGtToNumberFormat() throws Exception{
-		ChordNumberTextFile writer = new ChordNumberTextFile();
-		for (Iterator<NemaData> iterator = groundTruth.iterator(); iterator.hasNext();) {
-			NemaData data = iterator.next();
-			
-			File tmp = File.createTempFile(data.getId(), ".chordNumber.txt");
-			writer.writeFile(tmp, data);
-			tmp.deleteOnExit();
-		}
-	}
-	
-
-	@Test
-	public void testConvertGtToIntervalFormat() throws Exception{
-		ChordIntervalTextFile writer = new ChordIntervalTextFile();
-		for (Iterator<NemaData> iterator = groundTruth.iterator(); iterator.hasNext();) {
-			NemaData data = iterator.next();
-			
-			File tmp = File.createTempFile(data.getId(), ".chordNumber.txt");
-			writer.writeFile(tmp, data);
-			tmp.deleteOnExit();
-		}
-	}
+//	@Test
+//	public void testConvertGtToNumberFormat() throws Exception{
+//		ChordNumberTextFile writer = new ChordNumberTextFile();
+//		for (Iterator<NemaData> iterator = groundTruth.iterator(); iterator.hasNext();) {
+//			NemaData data = iterator.next();
+//			
+//			File tmp = File.createTempFile(data.getId(), ".chordNumber.txt");
+//			writer.writeFile(tmp, data);
+//			tmp.deleteOnExit();
+//		}
+//	}
+//	
+//
+//	@Test
+//	public void testConvertGtToIntervalFormat() throws Exception{
+//		ChordIntervalTextFile writer = new ChordIntervalTextFile();
+//		for (Iterator<NemaData> iterator = groundTruth.iterator(); iterator.hasNext();) {
+//			NemaData data = iterator.next();
+//			
+//			File tmp = File.createTempFile(data.getId(), ".chordNumber.txt");
+//			writer.writeFile(tmp, data);
+//			tmp.deleteOnExit();
+//		}
+//	}
 	
 	
 	@Test
@@ -115,7 +115,7 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 		
 		//test reader and setup for evaluation
 //		evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, false, null);
-		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
 		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
 		evaluator.setGroundTruth(groundTruth);
@@ -138,7 +138,7 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 		Evaluator evaluator = null;
 		
 		//test reader and setup for evaluation
-		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, outputDirectory, workingDirectory, null, testSets, false, null);
+		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
 		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
 		evaluator.setGroundTruth(groundTruth);

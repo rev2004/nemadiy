@@ -1,6 +1,5 @@
 package org.imirsel.nema.analytics.evaluation;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
@@ -42,23 +41,24 @@ public class EvaluatorFactory {
 	public static Evaluator getEvaluator(String metadataKey,
 			NemaTask task,
             NemaDataset dataset,
-            File outputDir,
-            File workingDir, 
+//            File outputDir,
+//            File workingDir, 
             List<NemaTrackList> trainingSets,
-			List<NemaTrackList> testSets,
-            boolean performMatlabStatSigTests,
-            File matlabPath) throws InstantiationException, IllegalAccessException, FileNotFoundException{
+			List<NemaTrackList> testSets//,
+//            boolean performMatlabStatSigTests,
+//            File matlabPath
+            ) throws InstantiationException, IllegalAccessException, FileNotFoundException{
 		
 		Class<? extends Evaluator> evalClass = EVALUATOR_REGISTRY.get(metadataKey);
 		Evaluator out = evalClass.newInstance();
 		out.setTask(task);
 		out.setDataset(dataset);
-		out.setOutputDir(outputDir);
-		out.setWorkingDir(workingDir);
+//		out.setOutputDir(outputDir);
+//		out.setWorkingDir(workingDir);
 		out.setTrainingSets(trainingSets);
 		out.setTestSets(testSets);
-		out.setPerformMatlabStatSigTests(performMatlabStatSigTests);
-		out.setMatlabPath(matlabPath);
+//		out.setPerformMatlabStatSigTests(performMatlabStatSigTests);
+//		out.setMatlabPath(matlabPath);
 		
 		return out;
 	}
