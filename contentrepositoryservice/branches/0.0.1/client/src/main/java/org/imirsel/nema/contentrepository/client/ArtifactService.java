@@ -7,7 +7,6 @@ import javax.jcr.SimpleCredentials;
 import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
-import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 
 /**
@@ -72,7 +71,7 @@ public interface ArtifactService {
 	 * 
 	 * @param credentials
 	 * @param path
-	 * @return
+	 * @return executable metadata of the bundle {@link ExecutableMetadata}
 	 * @throws RepositoryException
 	 * @throws LoginException
 	 */
@@ -85,7 +84,7 @@ public interface ArtifactService {
 	 * 
 	 * @param credentials
 	 * @param resourcePath
-	 * @return
+	 * @return true/false
 	 * @throws ContentRepositoryServiceException
 	 * @throws LoginException
 	 * @throws RepositoryException
@@ -123,7 +122,7 @@ public interface ArtifactService {
 	 * 
 	 * @param credentials
 	 * @param resourcePath
-	 * @return
+	 * @return the bundle's file system path
 	 * @throws ContentRepositoryServiceException
 	 */
 	public String getExecutableBundleFSPath(
