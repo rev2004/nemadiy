@@ -16,6 +16,14 @@ public class RepositoryResourcePath implements Serializable, ResourcePath{
 	private String workspace;
 	private String protocol;
 	
+	/**
+	 * Creates a new Repository Resource Path object with the protocol, workspace
+	 * and path information
+	 * 
+	 * @param protocol "jcr" is the supported protocol
+	 * @param workspace "default" is the supported workspace
+	 * @param path
+	 */
 	public RepositoryResourcePath(String protocol, String workspace,String path){
 		this.path = path;
 		if(workspace==null){
@@ -28,8 +36,6 @@ public class RepositoryResourcePath implements Serializable, ResourcePath{
 		this.protocol = protocol;
 		
 	}
-	
-	
 
 	public String getPath() {
 		return path;
