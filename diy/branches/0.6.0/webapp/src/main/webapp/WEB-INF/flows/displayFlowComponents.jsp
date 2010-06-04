@@ -36,7 +36,7 @@ ${messageContext.allMessages}
         <form:input path="description" cssStyle="width:300px;"/>
       </fieldset>
       <c:forEach items="${componentList}" var="component" varStatus="status">
-        <c:if test="${!component.hidden}">
+        <c:if test="${(!component.hidden)&&(not empty datatypeMaps[component])}">
           <fieldset id="${component.name}">
           Component Name: ${component.name}
           <br/>
