@@ -423,7 +423,7 @@ public class TasksServiceImpl {
 		logger.info("componentList: " + componentList.size());
 		for (int i = 0; i < componentList.size(); i++) {
 			Component component = componentList.get(i);
-			datatypeMaps.put(component, flowService
+			if (!component.isHidden()) datatypeMaps.put(component, flowService
 					.getComponentPropertyDataType(component, flow.getUri()));
 
 		}
