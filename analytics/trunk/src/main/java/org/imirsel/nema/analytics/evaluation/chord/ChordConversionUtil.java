@@ -62,13 +62,19 @@ public class ChordConversionUtil {
 		
 		try {
 			chordNumberToNoteNumbers = readChordDictionary(CHORDNUMBERS_DICTIONARY_CLASSPATH);
-			NoteNumbersToChordNumbers = readChordDictionary(SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH); //reverseMap(chordNumberToNoteNumbers);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
 					"Failed to read chord dictionary from classpath: "
 							+ CHORDNUMBERS_DICTIONARY_CLASSPATH, e);
 		}
 		
+		try{
+			NoteNumbersToChordNumbers = readChordDictionary(SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH); //reverseMap(chordNumberToNoteNumbers);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(
+					"Failed to read chord dictionary from classpath: "
+							+ SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH, e);
+		}
 	}
 
 	
