@@ -17,7 +17,6 @@ import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFi
 import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.repositoryservice.RepositoryUpdateClientInterface;
-import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.imirsel.nema.repository.RepositoryClientImpl;
 
 public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements RepositoryUpdateClientInterface{
