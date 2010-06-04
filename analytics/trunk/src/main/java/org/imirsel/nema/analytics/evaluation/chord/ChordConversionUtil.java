@@ -31,7 +31,7 @@ public class ChordConversionUtil {
 	public final String INTERVAL_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/IntervalDictionary.txt";
 	public final String SHORTHAND_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/ShorthandDictionary.txt";
 	public final String CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/NoteNumbersDictionary.txt";
-	public final String SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH = "org/imirsel/nema/analytics/evaluation/chord/Shorthand2NoteNumberDictionary.txt";
+	public final String SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/analytics/evaluation/chord/Shorthand2NoteNumberDictionary.txt";
 
 	public static ChordConversionUtil getInstance(){
 		if (instance == null){
