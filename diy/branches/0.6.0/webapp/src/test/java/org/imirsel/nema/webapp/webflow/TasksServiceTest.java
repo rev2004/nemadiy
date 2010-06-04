@@ -468,7 +468,7 @@ public class TasksServiceTest {
 				oneOf(flowService).createNewFlow(with(same(credentials)),with(aNonNull(Flow.class)), 
 						(HashMap<String,String>)with(any(HashMap.class)), with(same(flow1.getUri())), 
 						with(same(user.getId()))); will(returnValue(flow2));
-				oneOf(flowService).executeJob(with(aNonNull(String.class)),
+				oneOf(flowService).executeJob(with(same(credentials)),with(aNonNull(String.class)),
 						with(same(name)),with(same(description)),with(same(flow2.getId())),
 								with(same(user.getId())),with(same(user.getEmail())));
 			}
