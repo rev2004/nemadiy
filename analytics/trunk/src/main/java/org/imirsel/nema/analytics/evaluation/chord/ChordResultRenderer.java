@@ -44,44 +44,27 @@ public class ChordResultRenderer extends ResultRendererImpl {
 	@Override
 	public void renderResults(NemaEvaluationResultSet results)
 			throws IOException {
-		String jobId;
-		Map<NemaTrackList, List<NemaData>> sysResults;
-
-		// Make per system result dirs
-		Map<String, File> jobIDToResultDir = new HashMap<String, File>();
-		Map<String, List<File>> jobIDToFoldResultDirs = new HashMap<String, List<File>>();
-
+		
 		int numFolds = results.getTestSetTrackLists().size();
 		int numJobs = results.getJobIds().size();
-
-		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
-			jobId = it.next();
-			// make a sub-dir for the systems results
-			File sysDir = new File(outputDir.getAbsolutePath() + File.separator
-					+ jobId);
-			sysDir.mkdirs();
-
-			// make a sub-dir for each fold
-			List<File> foldDirs = new ArrayList<File>(numFolds);
-			for (int i = 0; i < numFolds; i++) {
-				File foldDir = new File(sysDir.getAbsolutePath()
-						+ File.separator + "fold_" + i);
-				foldDir.mkdirs();
-				foldDirs.add(foldDir);
-			}
-
-			jobIDToResultDir.put(jobId, sysDir);
-			jobIDToFoldResultDirs.put(jobId, foldDirs);
-		}
+		
+		
+		getLogger().info("Creating system result directories...");
+		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
+		
+		getLogger().info("Creating per-fold result directories...");
+		Map<String, List<File>> jobIDToFoldResultDirs = makePerFoldSystemResultDirs(
+				jobIDToResultDir, numFolds);
+		
 
 		// plot chords for each track in each fold
 		Map<String, List<File[]>> jobIDToResultPlotFileList = new HashMap<String, List<File[]>>();
 		// iterate over systems
 		for (Iterator<String> it_systems = results.getJobIds().iterator(); it_systems
 				.hasNext();) {
-			jobId = it_systems.next();
+			String jobId = it_systems.next();
 			getLogger().info("Plotting Chord transcriptions for: " + jobId);
-			sysResults = results.getPerTrackEvaluationAndResults(jobId);
+			Map<NemaTrackList,List<NemaData>> sysResults = results.getPerTrackEvaluationAndResults(jobId);
 
 			// iterate over folds
 			List<File> foldDirs = jobIDToFoldResultDirs.get(jobId);
@@ -115,7 +98,7 @@ public class ChordResultRenderer extends ResultRendererImpl {
 			jobIDToResultPlotFileList.put(jobId, plotFolds);
 		}
 
-		// write out per metric CSV results files
+		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");
 		File overlapCsv = new File(outputDir.getAbsolutePath() + File.separator
 				+ "overlap.csv");
@@ -126,53 +109,18 @@ public class ChordResultRenderer extends ResultRendererImpl {
 						.getJobIdToJobName(),
 						NemaDataConstants.CHORD_OVERLAP_RATIO), overlapCsv);
 
-		// write out results summary CSV
-		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator
-				+ "summaryResults.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles
-				.prepSummaryTable(results.getJobIdToOverallEvaluation(),
-						results.getJobIdToJobName(), results
-								.getOverallEvalMetricsKeys()), summaryCsv);
+		/* Write out per track CSV for each system */
+		getLogger().info("Writing out per-system result files...");
+		File summaryCsv = writeOverallResultsCSV(results);
 
 		// write out per system CSVs - per track
 		getLogger().info("Writing out CSV result files for each system...");
-		Map<String, List<File>> jobIDToCSVs = new HashMap<String, List<File>>(
-				numJobs);
-		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
-			jobId = it.next();
-			sysResults = results.getPerTrackEvaluationAndResults(jobId);
-
-			File sysDir = jobIDToResultDir.get(jobId);
-			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator
-					+ "per_track_results.csv");
-			WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles
-					.prepTableDataOverTracks(results.getTestSetTrackLists(),
-							sysResults, results
-									.getTrackEvalMetricsAndResultsKeys()),
-					trackCSV);
-			ArrayList<File> list = new ArrayList<File>(2);
-			list.add(trackCSV);
-			jobIDToCSVs.put(jobId, list);
-		}
-
-		// write out per system CSVs - per fold
-		getLogger().info("Writing out CSV result files for each system...");
-
-		for (Iterator<String> it = results.getJobIdToJobName().keySet()
-				.iterator(); it.hasNext();) {
-			jobId = it.next();
-			Map<NemaTrackList, NemaData> sysFoldResults = results
-					.getPerFoldEvaluation(jobId);
-
-			File sysDir = jobIDToResultDir.get(jobId);
-			File foldCSV = new File(sysDir.getAbsolutePath() + File.separator
-					+ "per_fold_results.csv");
-			WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles
-					.prepTableDataOverFolds(results.getTestSetTrackLists(),
-							sysFoldResults, results.getFoldEvalMetricsKeys()),
-					foldCSV);
-			jobIDToCSVs.get(jobId).add(foldCSV);
-		}
+		Map<String, File> jobIDToPerTrackCSV = writePerTrackSystemResultCSVs(
+				results, jobIDToResultDir);
+		Map<String, File> jobIDToPerFoldCSV = writePerFoldSystemResultCSVs(
+				results, jobIDToResultDir);
+		
+		
 
 		// perform statistical tests
 		/* Do we need to stats tests? */
@@ -202,29 +150,25 @@ public class ChordResultRenderer extends ResultRendererImpl {
 			friedmanWeightedOverlapTable = tmp[1];
 		}
 
-		// create tarballs of individual result dirs
+		/* Create tar-balls of individual result directories */
 		getLogger().info("Preparing evaluation data tarballs...");
-		Map<String, File> jobIDToTgz = new HashMap<String, File>(results
-				.getJobIdToJobName().size());
-		for (Iterator<String> it = results.getJobIdToJobName().keySet()
-				.iterator(); it.hasNext();) {
-			jobId = it.next();
-			jobIDToTgz.put(jobId, IOUtil.tarAndGzip(new File(outputDir
-					.getAbsolutePath()
-					+ File.separator + jobId)));
-		}
+		Map<String, File> jobIDToTgz = compressResultDirectories(jobIDToResultDir);
+
 
 		// write result HTML pages
 		writeHtmlResultPages(performStatSigTests, results, overlapCsv,
-				summaryCsv, jobIDToCSVs, friedmanOverlapTablePNG,
+				summaryCsv, jobIDToPerTrackCSV, jobIDToPerFoldCSV, friedmanOverlapTablePNG,
 				friedmanOverlapTable, friedmanWeightedOverlapTablePNG,
 				friedmanWeightedOverlapTable, jobIDToTgz);
 
 	}
 
+	
+
 	private void writeHtmlResultPages(boolean performStatSigTests,
 			NemaEvaluationResultSet results, File overlapCsv, File summaryCsv,
-			Map<String, List<File>> jobIDToCSV, File friedmanOverlapTablePNG,
+			Map<String, File> jobIDToPerTrackCSV, 
+			Map<String, File> jobIDToPerFoldCSV, File friedmanOverlapTablePNG,
 			File friedmanOverlapTable, File friedmanWeightedOverlapTablePNG,
 			File friedmanWeightedOverlapTable, Map<String, File> jobIDToTgz) {
 
@@ -370,15 +314,14 @@ public class ChordResultRenderer extends ResultRendererImpl {
 
 			// Per system CSVs
 			List<String> perSystemCsvs = new ArrayList<String>(numJobs * 2);
-			for (Iterator<String> it = jobIDToCSV.keySet().iterator(); it
+			for (Iterator<String> it = jobIDToPerTrackCSV.keySet().iterator(); it
 					.hasNext();) {
 				jobId = it.next();
-				List<File> files = jobIDToCSV.get(jobId);
-				for (Iterator<File> iterator = files.iterator(); iterator
-						.hasNext();) {
-					perSystemCsvs.add(IOUtil.makeRelative(iterator.next(),
-							outputDir));
-				}
+				File pertrack = jobIDToPerTrackCSV.get(jobId);
+				perSystemCsvs.add(IOUtil.makeRelative(pertrack, outputDir));
+				File perfold = jobIDToPerFoldCSV.get(jobId);
+				perSystemCsvs.add(IOUtil.makeRelative(perfold, outputDir));
+				
 			}
 			items.add(new FileListItem("perSystemCSVs",
 					"Per-system CSV result files", perSystemCsvs));
@@ -408,7 +351,7 @@ public class ChordResultRenderer extends ResultRendererImpl {
 
 			// System Tarballs
 			List<String> tarballPaths = new ArrayList<String>(numJobs);
-			for (Iterator<String> it = jobIDToCSV.keySet().iterator(); it
+			for (Iterator<String> it = jobIDToTgz.keySet().iterator(); it
 					.hasNext();) {
 				jobId = it.next();
 				tarballPaths.add(IOUtil.makeRelative(jobIDToTgz.get(jobId),

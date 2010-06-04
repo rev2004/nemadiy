@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
+import org.imirsel.nema.analytics.evaluation.ResultRenderer;
+import org.imirsel.nema.analytics.evaluation.ResultRendererFactory;
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.chord.ChordIntervalTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordNumberTextFile;
@@ -112,10 +114,12 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 		File resultsDirectory = new File("src/test/resources/chord/CH");
 		String	systemName = "CH-System";
 		Evaluator evaluator = null;
+		ResultRenderer renderer = null;
 		
 		//test reader and setup for evaluation
 //		evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, false, null);
 		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
+		renderer = ResultRendererFactory.getRenderer(task.getSubjectTrackMetadataName(), outputDirectory, workingDirectory, false, null);
 		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
 		evaluator.setGroundTruth(groundTruth);
@@ -127,6 +131,9 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 		//test evaluation
 		NemaEvaluationResultSet results = evaluator.evaluate();
 		assertTrue(results != null);
+		
+		//test rendering
+		renderer.renderResults(results);
 	}
 
 	@Test
@@ -136,9 +143,11 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 		String	systemName1 = "CH-System";
 		String	systemName2 = "MD-System";
 		Evaluator evaluator = null;
+		ResultRenderer renderer = null;
 		
 		//test reader and setup for evaluation
 		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
+		renderer = ResultRendererFactory.getRenderer(task.getSubjectTrackMetadataName(), outputDirectory, workingDirectory, false, null);
 		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
 		evaluator.setGroundTruth(groundTruth);
@@ -155,6 +164,9 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 		//test evaluation
 		NemaEvaluationResultSet results = evaluator.evaluate();
 		assertTrue(results != null);
+
+		//test rendering
+		renderer.renderResults(results);
 	}
 	
 	@After

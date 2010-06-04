@@ -15,13 +15,24 @@ public abstract class PageItem {
     protected String caption;
 
     public PageItem(String name, String caption){
-    	String regex = "\\W";
-        this.name = name.replaceAll(regex, "_");
+    	this.name = cleanName(name);
         this.caption = caption;
 
         if(this.name.contains("\\s")){
             throw new IllegalArgumentException("The item name should be suitable for use as an identifier in html and should not contain reserved characters or spaces");
         }
+    }
+    
+    /**
+     * Removes foreign characters and symbols from strings, maps to lowercase
+     * and replaces whitespace with underscores. Used to create names for
+     * items.
+     * 
+     * @param name String to be cleaned
+     * @return Cleaned version of String.
+     */
+    public static String cleanName(String name){
+        return name.toLowerCase().replaceAll("\\s+", "_").replaceAll("[^a-z0-9]", "");
     }
 
     /**
