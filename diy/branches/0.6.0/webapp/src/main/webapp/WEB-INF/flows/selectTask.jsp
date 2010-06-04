@@ -2,16 +2,36 @@
 <head>
 <title><fmt:message key="flow.type"/></title>
 <meta name="heading" content="Prepare a New Job"/>
+<script type="text/javascript">
+ var name="";
+ var previous="";
+ function change(){
+	 previous=name;
+	 //$(previous).hide();
+	 
+	 name="flow"+$('select').value; 
+	 $(name).show();
+	 $(previous).hide();
+	 
+ }
+</script>
 </head>
-<body id="jobstype"/>
+<body id="jobstype" onload="change()"/>
 <form:form commandName="taskFlowModel">
 <c:choose>
 <c:when test="${not empty flowList}">
   <h2>Select Task</h2>
   Please select a task to create your job for:
-  <form:select path="id" items="${flowList}" itemLabel="name" itemValue="id" ></form:select>
+  <form:select id="select" path="id" items="${flowList}" itemLabel="name" itemValue="id" onchange="change();"></form:select>
+  <c:forEach items="${flowList}" var="flow">
+  <div style="margin
+  <fieldset id="flow${flow.id}" style="display:none">
+   	<div><i>Keywords:</i> <c:out value="${flow.keyWords}"/></div>
+    <div><i>Description:</i> <c:out value="${flow.description}"/></div>
+  </fieldset>
+  </c:forEach>
   <input type="submit" name="_eventId_show" value="GO"/>
-
+   
 </c:when>
 <c:otherwise><div class="error"> Sorry, no template exists!</div></c:otherwise>
 </c:choose>

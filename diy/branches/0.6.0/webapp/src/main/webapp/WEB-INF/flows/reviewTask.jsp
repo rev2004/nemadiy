@@ -10,6 +10,7 @@
 	    	<div style="margin-bottom:5px;"><label style="font-weight:bold;">Job Description:</label> ${taskFlowModel.description}</div>
 	    </fieldset>
 		<c:forEach var="component" items="${componentList}">
+		 <c:if test="${(!component.hidden)&&(not empty datatypeMaps[component])}">
 			<fieldset>
 				<table>
 					<thead>
@@ -21,6 +22,7 @@
 							<td>
 								<c:out value="${property.key}" />
 							</td>
+							<td>:</td>
 							<td>
 								<c:out value="${property.value.value}" />
 							</td>
@@ -29,6 +31,7 @@
 					</c:forEach>
 				</table>
 			</fieldset>
+			</c:if>
 		</c:forEach>
 		<fieldset id="button">
             <input type="submit" name="_eventId_back" value="Back" />
