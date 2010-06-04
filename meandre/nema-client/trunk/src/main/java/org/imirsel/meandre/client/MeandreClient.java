@@ -1035,6 +1035,7 @@ public class MeandreClient extends MeandreBaseClient{
 	}
 	
 	/**
+	 * Runs the model 
 	 * 
 	 * @param fileName
 	 * @param token
@@ -1071,6 +1072,50 @@ public class MeandreClient extends MeandreBaseClient{
 		//NOTE: "InMemoryBytes" is given as the filename, and it is not
 		//clear what it's used for by httpclient in this context
 		PartSource source = new ByteArrayPartSource("InMemoryBytes",baModel);
+		postParts.add(new FilePart("repository", source));
+		nvps.add(new NameValuePair("token",token));
+		if(!probeList.isEmpty()){
+			Set<String> keys = probeList.keySet();
+			Iterator<String> itK = keys.iterator();
+			String key = null;
+			while(itK.hasNext()){
+				key = itK.next();
+				nvps.add(new NameValuePair(key, probeList.get(key)));
+			}
+		}
+	
+		int httpCode= 200; 	
+		byte[] res=	executePostRequestBytes(sRestCommand, nvps, postParts);
+		System.out.println(new String(res));
+		if(httpCode==200){
+			return true;
+		}else{
+			return false;
+		}
+	
+	}
+	
+	
+	/**
+	 * Runs the model with flowbytes
+	 * 
+	 * @param flowBytes
+	 * @param token
+	 * @param probeList
+	 * @return true/false
+	 * @throws TransmissionException
+	 */
+	public boolean runAsyncModelBytes(byte[] flowBytes, String token,HashMap<String, String> probeList) 
+	throws TransmissionException {
+		String sRestCommand = "services/execute/repository.txt";
+		Set<NameValuePair> nvps = new HashSet<NameValuePair>();
+		Set<Part> postParts = new HashSet<Part>();
+		if(flowBytes.length<=0){
+			new TransmissionException("Error -flowbytes are null");
+		}
+		//NOTE: "InMemoryBytes" is given as the filename, and it is not
+		//clear what it's used for by httpclient in this context
+		PartSource source = new ByteArrayPartSource("InMemoryBytes",flowBytes);
 		postParts.add(new FilePart("repository", source));
 		nvps.add(new NameValuePair("token",token));
 		if(!probeList.isEmpty()){

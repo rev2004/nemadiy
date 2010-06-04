@@ -3,7 +3,7 @@ package org.imirsel.meandre.client;
 
 /**Server Response with flow execution parameters
  * 
- * @author amitku
+ * @author kumaramit01
  *
  */
 public class ExecResponse {
