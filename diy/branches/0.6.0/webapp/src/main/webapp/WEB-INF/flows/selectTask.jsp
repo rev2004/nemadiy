@@ -7,8 +7,7 @@
  var previous="";
  function change(){
 	 previous=name;
-	 //$(previous).hide();
-	 
+	 //$(previous).hide();	 
 	 name="flow"+$('select').value; 
 	 $(name).show();
 	 $(previous).hide();
@@ -24,11 +23,12 @@
   Please select a task to create your job for:
   <form:select id="select" path="id" items="${flowList}" itemLabel="name" itemValue="id" onchange="change();"></form:select>
   <c:forEach items="${flowList}" var="flow">
-  <div style="margin
-  <fieldset id="flow${flow.id}" style="display:none">
+  <div style="margin:5px; display:none" id="flow${flow.id}">
+  <fieldset>
    	<div><i>Keywords:</i> <c:out value="${flow.keyWords}"/></div>
     <div><i>Description:</i> <c:out value="${flow.description}"/></div>
   </fieldset>
+  </div>
   </c:forEach>
   <input type="submit" name="_eventId_show" value="GO"/>
    
