@@ -4,7 +4,7 @@
 	<groupId>org.imirsel</groupId>
 	<artifactId>nema-component</artifactId>
 	<name>Nema Components</name>
-	<version>0.2.0-SNAPSHOT</version>
+	<version>0.6.0-SNAPSHOT</version>
 	<description>NEMA Components</description>
 	<scm>
 		<connection>scm:svn:https://nemadiy.googlecode.com/svn/meandre/components/trunk</connection>
