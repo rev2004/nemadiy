@@ -239,6 +239,7 @@ public class ImirselTestTrainDatasetIngestor {
 		//alter track IDs and copy each audio file to new home with name based on track id and encoding
 		System.out.println("Renaming tracks and copying to: " + newHome.getAbsolutePath());
 		Map<String,File> newIdToNewFile = new HashMap<String,File>();
+		Map<File,File> newFileToOldFile = new HashMap<File,File>();
 		
 		int trackCount = 0;
 		for (Iterator<NemaData> iterator = idToMetadata.values().iterator(); iterator
@@ -263,11 +264,13 @@ public class ImirselTestTrainDatasetIngestor {
 				System.out.println("WARNING: old and new file lengths don't match!");
 			}
 			
+			newFileToOldFile.put(newFile,oldFile);
+			
 			System.out.println("---");
 		}
 		
 		//insert renamed audio files and file metadata
-		RepositoryManagementUtils.insertDirOfAudioFiles(newHome, fileMetadataTags, collection_id);
+		RepositoryManagementUtils.insertDirOfAudioFiles(newHome, fileMetadataTags, collection_id, newFileToOldFile);
 		
 		//insert track metadata
 		RepositoryManagementUtils.insertMetadataFromSingleTrackEvalFileType(idToMetadata.values(), metadataType, writerFileType);
