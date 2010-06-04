@@ -163,21 +163,8 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			//perform conversion of input data into required formats
 			try {
 				inputFiles = FileConversionUtil.prepareProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, dataToProcess, inputType1);
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (Exception e) {
+				throw new ComponentExecutionException(e);
 			}
 			
 			getLogger().info("Preparing process output file names...");
@@ -296,21 +283,8 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			Map<NemaTrackList, List<NemaData>> outputData = null;
 			try {
 				outputData = FileConversionUtil.readProcessOutput(outputFiles, task, outputType1);
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			}catch(Exception e) {
+			 throw new ComponentExecutionException(e);
 			}
 			
 			if(outputData==null){
