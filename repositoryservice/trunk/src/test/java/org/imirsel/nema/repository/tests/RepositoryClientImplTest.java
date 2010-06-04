@@ -284,7 +284,7 @@ public class RepositoryClientImplTest extends BaseManagerTestCase {
 			throws SQLException {
 
 		// retrieve a dataset to do resolution on
-		NemaDataset dataset = clientImpl.getDataset(19); // MIREX 05 melody
+		NemaDataset dataset = clientImpl.getDataset(28); // MIREX 05 melody
 
 		// produce experiment sets
 		Map<NemaTrackList, List<NemaData>> testSets = new HashMap<NemaTrackList, List<NemaData>>();
@@ -327,7 +327,7 @@ public class RepositoryClientImplTest extends BaseManagerTestCase {
 			throws SQLException {
 
 		// retrieve a dataset to do resolution on
-		NemaDataset dataset = clientImpl.getDataset(19); // MIREX 05 melody
+		NemaDataset dataset = clientImpl.getDataset(28); // MIREX 05 melody
 
 		// produce experiment sets
 		Map<NemaTrackList, List<NemaData>> testSets = new HashMap<NemaTrackList, List<NemaData>>();
@@ -377,7 +377,7 @@ public class RepositoryClientImplTest extends BaseManagerTestCase {
 			throws SQLException {
 
 		// retrieve a dataset to do resolution on
-		NemaDataset dataset = clientImpl.getDataset(19); // MIREX 05 melody
+		NemaDataset dataset = clientImpl.getDataset(28); // MIREX 05 melody
 
 		// produce experiment sets
 		Map<NemaTrackList, List<NemaData>> testSets = new HashMap<NemaTrackList, List<NemaData>>();
@@ -424,7 +424,7 @@ public class RepositoryClientImplTest extends BaseManagerTestCase {
 			throws SQLException {
 
 		// retrieve a dataset to do resolution on
-		NemaDataset dataset = clientImpl.getDataset(19); // MIREX 05 melody
+		NemaDataset dataset = clientImpl.getDataset(28); // MIREX 05 melody
 
 		// produce experiment sets
 		Map<NemaTrackList, List<NemaData>> testSets = new HashMap<NemaTrackList, List<NemaData>>();
