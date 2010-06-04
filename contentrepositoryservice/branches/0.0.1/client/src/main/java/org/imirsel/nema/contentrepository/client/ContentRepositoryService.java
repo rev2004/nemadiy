@@ -518,8 +518,56 @@ final public class ContentRepositoryService implements ArtifactService {
 		}
 
 	}
+	
+	/**
+	 *  Return the flow data as bytes.
+	 *  @param credentials User's credential to connect to the server
+	 *  @param resourcepath ResourcePath of the flow resource
+	 *  @return byte data of the flow
+	 */
+	public byte[] retrieveFlow(SimpleCredentials credentials,
+			ResourcePath resourcePath) throws ContentRepositoryServiceException {
+		if(repository==null){
+			throw new ContentRepositoryServiceException("Repository not set");
+		}
+		Session session = null;
+		try {
+			session = repository.login(credentials);
+			boolean exists=session.itemExists(resourcePath.getPath());
+			if(!exists){
+				throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
+			}
+			Node node=session.getNode(resourcePath.getPath());
+			
+			Node resNode = node.getNode ("jcr:content");
+			String fileName = node.getName();
+			Property dataProperty = resNode.getProperty("jcr:data");
+
+			InputStream is = dataProperty.getBinary().getStream();
+				long length =dataProperty.getBinary().getSize();
+				byte[] data;
+				try {
+					data =BundleUtils.readByteDataFromStream(is,length);
+				} catch (IOException e) {
+					throw new ContentRepositoryServiceException(e);
+				}
+			return data;
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}finally{
+			if(session!=null)
+				session.logout();
+		}
+
+	}
 
 
+
+
+	/**
+	 * Set the repository to be used by the service
+	 * @param repository
+	 */
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 	}
@@ -609,7 +657,7 @@ final public class ContentRepositoryService implements ArtifactService {
 		bundle.setId(fileNode.getIdentifier());
 		return bundle;
 	}
-
+	
 
 
 
