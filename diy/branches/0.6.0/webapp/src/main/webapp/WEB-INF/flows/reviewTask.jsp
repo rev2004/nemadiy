@@ -20,7 +20,7 @@
 					<c:if test="${not fn:startsWith(property.key,'_') }">
 						<tr>
 							<td>
-								<c:out value="${property.key}" />
+								<B><c:out value="${property.key}" /></B>
 							</td>
 							<td>:</td>
 							<td>
