@@ -46,6 +46,18 @@ public class Page {
     }
 
     /**
+     * Removes foreign characters and symbols from strings, maps to lowercase
+     * and replaces whitespace with underscores. Used to create names for
+     * HTML files.
+     * 
+     * @param name String to be cleaned
+     * @return Cleaned version of String.
+     */
+    public static String cleanName(String name){
+        return name.toLowerCase().replaceAll("\\s+", "_").replaceAll("[^a-z0-9]", "");
+    }
+    
+    /**
      * Writes a set of result pages to a specified directory.
      * 
      * @param set_title The title to use for the page set, which prepended to the page titles
@@ -73,7 +85,7 @@ public class Page {
         for (; it.hasNext();){
             aPage = it.next();
             //names[idx] = aPage.getName();
-            filenames[idx] = aPage.getId().replaceAll("\\s", "_") + ".htm";
+            filenames[idx] = cleanName(aPage.getId()).trim() + ".htm";
             idx++;
         }
 

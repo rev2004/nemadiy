@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
+import org.imirsel.nema.analytics.evaluation.ResultRenderer;
+import org.imirsel.nema.analytics.evaluation.ResultRendererFactory;
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile;
 import org.imirsel.nema.model.NemaData;
@@ -114,10 +116,11 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 		File resultsDirectory2 = new File("src/test/resources/melody/KD-2-fold/fold2");
 		String	systemName = "KD-System";
 		Evaluator evaluator = null;
+		ResultRenderer renderer = null;
 		
 		//evaluator = new MelodyEvaluator(task, dataset, outputDirectory, workingDirectory, testSets);
 		evaluator = EvaluatorFactory.getEvaluator(twoSetTask.getSubjectTrackMetadataName(), twoSetTask, twoSetDataset, null, twoTestSets);
-		
+		renderer = ResultRendererFactory.getRenderer(twoSetTask.getSubjectTrackMetadataName(), outputDirectory, workingDirectory, false, null);
 		SingleTrackEvalFileType reader = new MelodyTextFile();
 		
 		List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, ".txt");
@@ -134,6 +137,9 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 		NemaEvaluationResultSet evalResults = evaluator.evaluate();
 		assertTrue(evalResults != null);
 		
+
+		//test rendering
+		renderer.renderResults(evalResults);
 		
 	  //File resultFile = new File("src/test/resources/classification/evaluation/GT1/report.txt");
 	  //File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");
@@ -148,10 +154,11 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 		File resultsDirectory = new File("src/test/resources/melody/KD");
 		String	systemName = "KD-System";
 		Evaluator evaluator = null;
+		ResultRenderer renderer = null;
 		
 		//evaluator = new MelodyEvaluator(task, dataset, outputDirectory, workingDirectory, testSets);
 		evaluator = EvaluatorFactory.getEvaluator(singleSetTask.getSubjectTrackMetadataName(), singleSetTask, singleSetDataset, null, singleTestSet);
-		
+		renderer = ResultRendererFactory.getRenderer(singleSetTask.getSubjectTrackMetadataName(), outputDirectory, workingDirectory, false, null);
 		SingleTrackEvalFileType reader = new MelodyTextFile();
 		
 		List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, ".txt");
@@ -163,6 +170,8 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 		NemaEvaluationResultSet results = evaluator.evaluate();
 		assertTrue(results != null);
 		
+		//test rendering
+		renderer.renderResults(results);
 		
 	  //File resultFile = new File("src/test/resources/classification/evaluation/GT1/report.txt");
 	  //File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");

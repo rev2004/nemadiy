@@ -33,27 +33,15 @@ public class KeyResultRenderer extends ResultRendererImpl {
 	@Override
 	public void renderResults(NemaEvaluationResultSet results)
 			throws IOException {
-		int numJobs = results.getJobIds().size();
-		String jobId;
-		Map<NemaTrackList, List<NemaData>> sysResults;
-		
-		/* Make per system result directories */
-		Map<String, File> jobIDToResultDir = new HashMap<String, File>();
-		for (Iterator<String> it = results.getJobIds().iterator(); it
-				.hasNext();) {
-			jobId = it.next();
-			
-			/* Make a sub-directory for the systems results */
-			File sysDir = new File(outputDir.getAbsolutePath() + File.separator + jobId);
-			sysDir.mkdirs();
-			jobIDToResultDir.put(jobId, sysDir);
-		}
+		getLogger().info("Creating system result directories...");
+		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
+
 
 		/* Plot summary bar plot for each system */
-		List<NemaData> resultList;
+		getLogger().info("Plotting result summaries...");
 		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
 		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
-			jobId = it.next();
+			String jobId = it.next();
 			File sysDir = jobIDToResultDir.get(jobId);
 		
 			/* Get summary results to plot */	
@@ -64,38 +52,23 @@ public class KeyResultRenderer extends ResultRendererImpl {
 		}
 
 		/* Write out summary CSV */
-		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "allResults.csv");
-		WriteCsvResultFiles.writeTableToCsv(
-				WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), results.getOverallEvalMetricsKeys()),
-				summaryCsv
-			);
+		getLogger().info("Writing out CSV result files over whole task...");
+		File summaryCsv = writeOverallResultsCSV(results);
+		
 
 		/* Write out per track CSV for each system */
-		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(numJobs);
-		for (Iterator<String> it = results.getJobIds().iterator(); it
-				.hasNext();) {
-			jobId = it.next();
-			sysResults = results.getPerTrackEvaluationAndResults(jobId);
-			
-			File sysDir = jobIDToResultDir.get(jobId);
-			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "perTrack.csv");
-			WriteCsvResultFiles.writeTableToCsv(
-					WriteCsvResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, results.getTrackEvalMetricsAndResultsKeys()),
-					trackCSV
-				);
-			jobIDToPerTrackCSV.put(jobId, trackCSV);
-		}
+		getLogger().info("Writing out per-system result files...");
+		Map<String, File> jobIDToPerTrackCSV = writePerTrackSystemResultCSVs(
+				results, jobIDToResultDir);
+
 
 		/* Create tar-balls of individual result directories */
-		Map<String, File> jobIDToTgz = new HashMap<String, File>(results.getJobIdToJobName()
-				.size());
-		for (Iterator<String> it = results.getJobIds().iterator(); it
-				.hasNext();) {
-			jobId = it.next();
-			jobIDToTgz.put(jobId, IOUtil.tarAndGzip(jobIDToResultDir.get(jobId)));
-		}
+		getLogger().info("Preparing evaluation data tarballs...");
+		Map<String, File> jobIDToTgz = compressResultDirectories(jobIDToResultDir);
+
 		
 		/* Write result HTML pages */
+		getLogger().info("Creating result HTML files...");
 		writeResultHtmlPages(results, jobIDToResultPlotFileList, summaryCsv, 
 				jobIDToPerTrackCSV, jobIDToTgz, outputDir);
 	}

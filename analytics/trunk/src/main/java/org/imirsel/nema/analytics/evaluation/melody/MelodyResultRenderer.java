@@ -34,27 +34,18 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 	
 	@Override
 	public void renderResults(NemaEvaluationResultSet results) throws IOException {
-		String jobId;
-		int numJobs = results.getJobIds().size();
-		Map<NemaTrackList, List<NemaData>> sysResults;
-		/* Make per system result directories */
-		Map<String, File> jobIDToResultDir = new HashMap<String, File>();
-		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
-			jobId = it.next();
-			/* Make a sub-directory for the systems results */
-			File sysDir = new File(outputDir.getAbsolutePath() + File.separator + jobId);
-			sysDir.mkdirs();
-			jobIDToResultDir.put(jobId, sysDir);
-		}
+		getLogger().info("Creating system result directories...");
+		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
 
 		/* Plot melody transcription against GT for each track result for each system */
+		getLogger().info("Plotting transcriptions...");
 		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
 		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
-			jobId = it.next();
+			String jobId = it.next();
 			File sysDir = jobIDToResultDir.get(jobId);
 		
 			/* Get results to plot */
-			sysResults = results.getPerTrackEvaluationAndResults(jobId);
+			Map<NemaTrackList, List<NemaData>> sysResults = results.getPerTrackEvaluationAndResults(jobId);
 			File[] plotFiles = plotTranscriptionForJob(jobId, sysResults, sysDir);
 			
 			jobIDToResultPlotFileList.put(jobId, plotFiles);
@@ -62,43 +53,24 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 
 		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");
-		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "allResults.csv");
-		WriteCsvResultFiles.writeTableToCsv(
-				WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), results.getOverallEvalMetricsKeys()),
-				summaryCsv
-			);
-
+		File summaryCsv = writeOverallResultsCSV(results);
+		
 		/* Write out per track CSV for each system */
-		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(numJobs);
-		for (Iterator<String> it = results.getJobIds().iterator(); it
-				.hasNext();) {
-			jobId = it.next();
-			sysResults = results.getPerTrackEvaluationAndResults(jobId);
-			
-			File sysDir = jobIDToResultDir.get(jobId);
-			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "perTrack.csv");
-			WriteCsvResultFiles.writeTableToCsv(
-					WriteCsvResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, results.getTrackEvalMetricsAndResultsKeys())
-					,trackCSV);
-			jobIDToPerTrackCSV.put(jobId, trackCSV);
-		}
-
+		getLogger().info("Writing out per-system result files...");
+		Map<String, File> jobIDToPerTrackCSV = writePerTrackSystemResultCSVs(
+				results, jobIDToResultDir);
 
 		/* Create tar-balls of individual result directories */
 		getLogger().info("Preparing evaluation data tarballs...");
-		Map<String, File> jobIDToTgz = new HashMap<String, File>(numJobs);
-		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
-			jobId = it.next();
-			jobIDToTgz.put(jobId, IOUtil.tarAndGzip(jobIDToResultDir.get(jobId)));
-		}
+		Map<String, File> jobIDToTgz = compressResultDirectories(jobIDToResultDir);
 
 		/* Write result HTML pages */
 		getLogger().info("Creating result HTML files...");
-
 		writeResultHtmlPages(results,
 				jobIDToResultPlotFileList, summaryCsv, jobIDToPerTrackCSV,
 				jobIDToTgz, outputDir);
 	}
+
 
 	/**
 	 * Writes the result HTML pages for the evaluation of multiple jobs/algorithms
@@ -157,7 +129,7 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 						results.getTrackEvalMetricsAndResultsKeys()
 					);
 				
-				items.add(new TableItem(jobId + "_results", results.getJobName(jobId)
+				items.add(new TableItem(results.getJobName(jobId) + "_results", results.getJobName(jobId)
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));
 
@@ -171,7 +143,7 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 				items.add(new FileListItem("plots", "Per track result plots",
 						plotPathList));
 
-				aPage = new Page(jobId + "_results", results.getJobName(jobId),
+				aPage = new Page(results.getJobName(jobId) + "_results", results.getJobName(jobId),
 						items, true);
 				resultPages.add(aPage);
 			}
@@ -234,8 +206,7 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 					.hasNext();) {
 				result = iterator.next();
 				plotFiles.add(new File(sysDir.getAbsolutePath()
-						+ File.separator + jobId + File.separator
-						+ "fold_" + testSet.getFoldNumber() + MELODY_PLOT_EXT));
+						+ File.separator + "fold_" + testSet.getFoldNumber() + MELODY_PLOT_EXT));
 	
 				// TODO actually plot the result
 			}
