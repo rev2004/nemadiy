@@ -22,11 +22,9 @@ import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
-import org.imirsel.nema.annotations.StringDataType;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
-import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -46,8 +44,7 @@ import org.imirsel.nema.model.NemaTrackList;
  */
 @Component(creator="Kris West", description="Evaluates multi-fold results from a single system", 
 		name="EvaluateSingleResultSet",
-		tags="evaluation",
-		dependency={"commons-compress-1.0.jar","jfreechart-1.0.9.jar","jcommon-1.0.12.jar"})
+		tags="evaluation")
 		public class EvaluateSingleResultSet extends NemaComponent {
 
 	//INPUTS

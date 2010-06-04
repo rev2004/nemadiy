@@ -85,6 +85,8 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent {
 			e1.printStackTrace();
 		}
 		Name name = new Name(profileName);
+		getLogger().info("Profile Name is: " + profileName);
+		
 		Entry[] attrList = new Entry[]{name};
 		Class<ProcessExecutorService>[] classes = new Class[1]; 
 		classes[0] = ProcessExecutorService.class;
@@ -94,7 +96,11 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent {
 			}catch (RemoteException e) {
 				throw new ComponentExecutionException(e.getMessage());
 			}
-		getLogger().info("ExecutorService found");
+		if(this.executorService == null){
+			getLogger().severe("Error -could not find executor service that supports " + profileName);
+		}else{
+			getLogger().info("ExecutorService found");
+		}
 	}
 
 

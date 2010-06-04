@@ -12,33 +12,17 @@ package org.imirsel.nema.components.evaluation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-
-import org.imirsel.nema.analytics.evaluation.Evaluator;
-import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.imirsel.nema.analytics.evaluation.ResultRenderer;
 import org.imirsel.nema.analytics.evaluation.ResultRendererFactory;
-import org.imirsel.nema.annotations.StringDataType;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
-import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.imirsel.nema.components.NemaComponent;
-import org.imirsel.nema.model.NemaData;
-import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
-import org.imirsel.nema.model.NemaTask;
-import org.imirsel.nema.model.NemaTrackList;
 
 
 /** ResultRendering component that converts results sets into evaluation
@@ -49,8 +33,7 @@ import org.imirsel.nema.model.NemaTrackList;
  */
 @Component(creator="Kris West", description="Converts results sets into evaluation reports, including the performance of any required statistical tests or plotting operations.", 
 		name="RenderResultSet",
-		tags="evaluation comparison reporting",
-		dependency={"commons-compress-1.0.jar","jfreechart-1.0.9.jar","jcommon-1.0.12.jar"})
+		tags="evaluation comparison reporting")
 		public class RenderResultSet extends NemaComponent {
 
 	//INPUTS	
@@ -69,6 +52,7 @@ import org.imirsel.nema.model.NemaTrackList;
 	 * @throws ComponentContextException 
 	 * @throws ComponentExecutionException 
 	 */
+	@Override
 	public void initialize (ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException{
 		super.initialize(ccp);
 	}
@@ -82,6 +66,7 @@ import org.imirsel.nema.model.NemaTrackList;
 	 *         access was detected
 
 	 */
+	@Override
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
 		NemaEvaluationResultSet results = (NemaEvaluationResultSet)cc.getDataComponentFromInput(DATA_INPUT_EVAL_RESULT_SET);
 
@@ -90,30 +75,24 @@ import org.imirsel.nema.model.NemaTrackList;
 		File procResDir = new File(getAbsoluteResultLocationForJob());
 	    File procWorkingDir = new File(getProcessWorkingDirectory());
 	    String processResultsDirName;
+		try {
+			processResultsDirName = procResDir.getCanonicalPath();
+		} catch (IOException e) {
+			ComponentExecutionException ex = new ComponentExecutionException("Failed to get canonical path for File: " + procResDir.toString(),e);
+			throw ex;
+		}
+	
 	    try{
-			try {
-				processResultsDirName = procResDir.getCanonicalPath();
-			} catch (IOException e) {
-				ComponentExecutionException ex = new ComponentExecutionException("Failed to get canonical path for File: " + procResDir.toString(),e);
-				throw ex;
-			}
 		    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
-		    
 	        //init renderer
-		    
 		    ResultRenderer renderer = ResultRendererFactory.getRenderer(results.getTask().getSubjectTrackMetadataName(), rootEvaluationDir, procWorkingDir, true, matlabPath);
 		    renderer.addLogDestination(getLogDestination());
-	        
-	        
 			//perform rendering
 		    renderer.renderResults(results);
-			
 			// output the raw results for reprocessing or storage in the repository
 			cc.pushDataComponentToOutput(DATA_OUTPUT_EVAL_RESULTS, results);
-			
 	        this.getLogger().info("Rendering Complete\n" +
 	        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
-			
 	    } catch (Exception e) {
 			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when rendering the results!",e);
 			throw ex;
@@ -126,6 +105,7 @@ import org.imirsel.nema.model.NemaTrackList;
 	 * @param ccp The properties associated to a component context
 	 * @throws ComponentContextException 
 	 */
+	@Override
 	public void dispose (ComponentContextProperties ccp) throws ComponentContextException {
 		super.dispose(ccp);
 	}
