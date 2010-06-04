@@ -379,12 +379,12 @@ public class TasksServiceImpl {
 		instance.setType(flow.getType());
 		instance.setTypeName(flow.getTypeName());
 
-		instance = this.flowService.createNewFlow(userManager
-				.getCurrentUserCredentials(), instance, paramMap, flowUri, user
+		SimpleCredentials credential=userManager.getCurrentUserCredentials();
+		instance = this.flowService.createNewFlow(credential, instance, paramMap, flowUri, user
 				.getId());
 		long instanceId = instance.getId();
 
-		Job job = this.flowService.executeJob(token, name, description,
+		Job job = this.flowService.executeJob(credential,token, name, description,
 				instanceId, user.getId(), user.getEmail());
 		return job;
 

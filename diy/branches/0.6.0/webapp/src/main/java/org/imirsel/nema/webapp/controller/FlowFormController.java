@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -209,11 +210,11 @@ public class FlowFormController extends MultiActionController{
 		instance.setTypeName(templateFlow.getTypeName());
 		
 		//long instanceId=this.getFlowService().storeFlowInstance(instance);
-		
-		Flow flow=flowService.createNewFlow(userManager.getCurrentUserCredentials(),instance,paramMap,flowUri,user.getId());
+		SimpleCredentials credential=userManager.getCurrentUserCredentials();
+		Flow flow=flowService.createNewFlow(credential,instance,paramMap,flowUri,user.getId());
 		long instanceId = flow.getId();
 		
-		Job job=this.getFlowService().executeJob(token, name,description, instanceId, user.getId(), user.getEmail());
+		Job job=this.getFlowService().executeJob(credential,token, name,description, instanceId, user.getId(), user.getEmail());
 		ModelAndView mav= new ModelAndView(new RedirectView("JobManager.jobDetail",true));
 		//ModelAndView mav = new ModelAndView("job/job");
 		mav.addObject("id", job.getId());
