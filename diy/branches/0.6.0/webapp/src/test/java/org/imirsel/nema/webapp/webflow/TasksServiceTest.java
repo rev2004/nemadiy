@@ -301,7 +301,9 @@ public class TasksServiceTest {
 		});
 		Map<Component, Map<String, Property>> map = tasksService
 				.setDatatypeMaps(flow1);
-		assertEquals(datatypeMaps, map);
+		Map<Component, Map<String, Property>> expected=new HashMap<Component, Map<String, Property>>(datatypeMaps);
+		expected.remove(component3);
+		assertEquals(expected, map);
 		context.assertIsSatisfied();
 	}
 
