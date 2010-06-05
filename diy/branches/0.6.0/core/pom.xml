@@ -281,6 +281,10 @@
                     <artifactId>commons-collections</artifactId>
                     <groupId>commons-collections</groupId>
                 </exclusion>
+                <exclusion>
+                	<artifactId>cglib</artifactId>
+                	<groupId>cglib</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
