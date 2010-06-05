@@ -3,6 +3,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
        default-lazy-init="true">
 
-    <bean name="jsonView" class="org.springframework.web.servlet.view.json.JsonView">
+    <bean name="jsonView" class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
     </bean>
    </beans>

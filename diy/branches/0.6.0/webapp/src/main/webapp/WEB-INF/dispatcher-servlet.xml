@@ -19,7 +19,7 @@
 				<prop key="org.springframework.remoting.RemoteConnectFailureException">
 					remoteAccessFailure
                 </prop>
-				<prop key="org.springframework.remoting.RemoteLookupFailureExceptio">
+				<prop key="org.springframework.remoting.RemoteLookupFailureException">
 					remoteAccessFailure
                 </prop>
 				<prop key="org.imirsel.meandre.client.TransmissionException">
