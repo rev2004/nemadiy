@@ -34,7 +34,7 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 @Component(creator="Kris West", description="Converts results sets into evaluation reports, including the performance of any required statistical tests or plotting operations.", 
 		name="RenderResultSet",
 		tags="evaluation comparison reporting")
-		public class RenderResultSet extends NemaComponent {
+	public class RenderResultSet extends NemaComponent {
 
 	//INPUTS	
 	@ComponentInput(description = "The evaluation results set to render.", name = "Eval result set")
