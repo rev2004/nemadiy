@@ -124,8 +124,7 @@
     </div>
   </form>
   
-
-    <c:if test="${job.statusCode==2}">
+  
   	<script>
     new Ajax.PeriodicalUpdater('console', "<c:url value='/get/JobManager.getConsole'/>",
 		  {
@@ -135,7 +134,6 @@
 		    decay:2
 		});
     </script>
-  </c:if>
   <textarea id="console" cols='90' rows='100'>(getting console...)</textarea>
   
   
