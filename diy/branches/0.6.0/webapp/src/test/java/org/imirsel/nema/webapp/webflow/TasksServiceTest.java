@@ -289,14 +289,12 @@ public class TasksServiceTest {
 				oneOf(flowService).getComponents(flow1.getUri());
 				will(returnValue(componentList));
 				oneOf(flowService).getComponentPropertyDataType(
-						componentList.get(2), flow1.getUri());
-				will(returnValue(datatypeMaps.get(componentList.get(2))));
+						component1, flow1.getUri());
+				will(returnValue(datatypeMaps.get(component1)));
 				oneOf(flowService).getComponentPropertyDataType(
-						componentList.get(1), flow1.getUri());
-				will(returnValue(datatypeMaps.get(componentList.get(1))));
-				oneOf(flowService).getComponentPropertyDataType(
-						componentList.get(0), flow1.getUri());
-				will(returnValue(datatypeMaps.get(componentList.get(0))));
+						component2, flow1.getUri());
+				will(returnValue(datatypeMaps.get(component2)));
+				
 			}
 		});
 		Map<Component, Map<String, Property>> map = tasksService

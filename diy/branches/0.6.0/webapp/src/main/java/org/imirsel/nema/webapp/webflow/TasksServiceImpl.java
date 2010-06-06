@@ -62,7 +62,7 @@ public class TasksServiceImpl {
 	/**
 	 * properties' name in the component datatype map
 	 */
-	final static String REMOTE_COMPONENT = "_remoteComponent";
+	final static String REMOTE_COMPONENT = "_remoteDynamicComponent";
 	final static String CREDENTIALS = "_credentials";
 	final static String EXECUTABLE_URL = "profileName";
 	final static String OS = "_os";

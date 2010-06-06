@@ -86,7 +86,7 @@
 		<entry key="profileName" value-ref="propertyFile" />
 		<entry key="_os" value-ref="property5" />
 		<entry key="_group" value-ref="property6" />
-		<entry key="_remoteComponent" value-ref="propertyFalse"/>
+		<entry key="_remoteDynamicComponent" value-ref="propertyFalse"/>
 		<entry key="_credentials" value-ref="property1"/>
 	</util:map>
 
