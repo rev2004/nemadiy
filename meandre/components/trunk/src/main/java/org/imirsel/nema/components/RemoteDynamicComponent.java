@@ -74,6 +74,11 @@ public abstract class RemoteDynamicComponent extends NemaComponent {
 	private static final String PROPERTY_6 ="_os";
 	
 	
+	@StringDataType(hide=true)
+	@ComponentProperty(defaultValue = "true", description = "indicates to the UI that this is a remote component", name = "_remoteDynamicComponent")
+	private static final String PROPERTY_8 ="_remoteDynamicComponent";
+	
+	
 	
 	private ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor> processMonitorMap = 
 		new ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor>();
