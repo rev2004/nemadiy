@@ -11,6 +11,7 @@
 <form:form enctype="multipart/form-data">
   
   <c:forEach items="${shownMap}" var="entry">
+  	<c:if test="${not fn:startsWith(entry.key,'_') }">
     <fieldset id="pt1">
     <label for="jobname"> ${entry.key}: </label>
     <render:property roles="${userRoles}"
@@ -18,6 +19,7 @@
             class="cssClass" />
     <font color="green">${entry.value.description}</font>
     </fieldset>
+    </c:if>
   </c:forEach>
   
      <fieldset id="pt1">
