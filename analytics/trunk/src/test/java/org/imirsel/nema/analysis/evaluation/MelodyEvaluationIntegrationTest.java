@@ -114,7 +114,7 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 		File groundTruthDirectory = new File("src/test/resources/melody/groundtruth");
 		File resultsDirectory1 = new File("src/test/resources/melody/KD-2-fold/fold1");
 		File resultsDirectory2 = new File("src/test/resources/melody/KD-2-fold/fold2");
-		String	systemName = "KD-System";
+		String	systemName = "SystemName";
 		Evaluator evaluator = null;
 		ResultRenderer renderer = null;
 		
@@ -131,8 +131,8 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 		
 		//divide into the two folds
 		
-		evaluator.addResults(systemName, systemName, twoTestSets.get(0), results1);
-		evaluator.addResults(systemName, systemName, twoTestSets.get(1), results2);
+		evaluator.addResults(systemName, "**FlowID**", twoTestSets.get(0), results1);
+		evaluator.addResults(systemName, "**FlowID**", twoTestSets.get(1), results2);
 		
 		NemaEvaluationResultSet evalResults = evaluator.evaluate();
 		assertTrue(evalResults != null);
@@ -152,7 +152,7 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 	public void testEvaluateKD()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		File groundTruthDirectory = new File("src/test/resources/melody/groundtruth");
 		File resultsDirectory = new File("src/test/resources/melody/KD");
-		String	systemName = "KD-System";
+		String	systemName = "SystemName";
 		Evaluator evaluator = null;
 		ResultRenderer renderer = null;
 		
@@ -165,7 +165,7 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 		evaluator.setGroundTruth(groundTruth);
 	
 		List<NemaData> resultsForAllTracks = reader.readDirectory(resultsDirectory, null);
-		evaluator.addResults(systemName, systemName, singleTestSet.get(0), resultsForAllTracks);
+		evaluator.addResults(systemName, "**FlowID**", singleTestSet.get(0), resultsForAllTracks);
 	
 		NemaEvaluationResultSet results = evaluator.evaluate();
 		assertTrue(results != null);
