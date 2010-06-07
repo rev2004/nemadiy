@@ -10,8 +10,6 @@
 
 package org.imirsel.nema.components.evaluation;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,11 +20,9 @@ import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
-import org.imirsel.nema.annotations.StringDataType;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
-import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -82,6 +78,7 @@ import org.imirsel.nema.model.NemaTrackList;
 	 * @throws ComponentContextException 
 	 * @throws ComponentExecutionException 
 	 */
+	@Override
 	public void initialize (ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException{
 		super.initialize(ccp);
 	}
@@ -95,6 +92,7 @@ import org.imirsel.nema.model.NemaTrackList;
 	 *         access was detected
 
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
 		NemaTask task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
@@ -104,21 +102,8 @@ import org.imirsel.nema.model.NemaTrackList;
 		Map<String,Map<NemaTrackList,List<NemaData>>> jobIdToTestSets = (Map<String,Map<NemaTrackList,List<NemaData>>>)cc.getDataComponentFromInput(DATA_INPUT_TEST_SETS_MAP);
 		Map<String,String> systemIDToName =  (Map<String,String>)cc.getDataComponentFromInput(DATA_INPUT_SYSTEM_NAMES);
 		
-		//TODO: get the matlab path used by some evaluators from somewhere? Perhaps environment variable or props file until we can remove the need for it 
-		File matlabPath = new File("/usr/local/bin/matlab");
-
-		File procResDir = new File(getAbsoluteResultLocationForJob());
-	    File procWorkingDir = new File(getProcessWorkingDirectory());
-	    String processResultsDirName;
-	    try{
-			try {
-				processResultsDirName = procResDir.getCanonicalPath();
-			} catch (IOException e) {
-				ComponentExecutionException ex = new ComponentExecutionException("Failed to get canonical path for File: " + procResDir.toString(),e);
-				throw ex;
-			}
-		    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
-		    
+		try{
+			
 	        //init evaluator
 		    List<NemaTrackList> trainSetList = null;
 		    List<NemaTrackList> testSetList = null;
@@ -190,6 +175,7 @@ import org.imirsel.nema.model.NemaTrackList;
 	 * @param ccp The properties associated to a component context
 	 * @throws ComponentContextException 
 	 */
+	@Override
 	public void dispose (ComponentContextProperties ccp) throws ComponentContextException {
 		super.dispose(ccp);
 	}
