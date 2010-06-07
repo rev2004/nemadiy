@@ -261,7 +261,7 @@ public class ChordResultRenderer extends ResultRendererImpl {
 						.prepTableDataOverFolds(results.getTestSetTrackLists(),
 								systemFoldResults, results
 										.getFoldEvalMetricsKeys());
-				items.add(new TableItem(jobId + "_per_fold", results
+				items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_per_fold", results
 						.getJobIdToJobName().get(jobId)
 						+ " per fold results", systemFoldTable.getColHeaders(),
 						systemFoldTable.getRows()));
@@ -270,12 +270,12 @@ public class ChordResultRenderer extends ResultRendererImpl {
 						.prepTableDataOverTracks(
 								results.getTestSetTrackLists(), sysResults,
 								results.getTrackEvalMetricsAndResultsKeys());
-				items.add(new TableItem(jobId + "_per_track", results
+				items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_per_track", results
 						.getJobIdToJobName().get(jobId)
 						+ " per track results", systemTrackTable
 						.getColHeaders(), systemTrackTable.getRows()));
 
-				aPage = new Page(jobId, results.getJobIdToJobName().get(jobId),
+				aPage = new Page(results.getJobIdToJobName().get(jobId), results.getJobIdToJobName().get(jobId),
 						items, false);
 				resultPages.add(aPage);
 			}
