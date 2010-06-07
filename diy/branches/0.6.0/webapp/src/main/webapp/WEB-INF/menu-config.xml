@@ -14,9 +14,8 @@
 		
 		
 		<Menu name="JobMenu" title="Jobs" roles="ROLE_ADMIN,ROLE_USER" width="60">
-		    <Item name="PrepareJob" title="Prepare New Job" page="/get/task" width="120"/>
 		    <Item name="MyJobs" title="Job List" page="/get/JobManager.getUserJobs" width="120"/>
-		    
+		    <Item name="PrepareJob" title="Prepare New Job" page="/get/task" width="120"/>		    
             <Item name="MySubmissions" title="Mirex Submissions" page="/get/JobManager.getSubmissions" width="120"/>
             <!-- <Item name="flowTemplate" title="Create w/ Template" page="get/task" width="120"/>-->
             <!--  Add this back later when grouping is needed... <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/task?type=extraction" width="120"/> -->
