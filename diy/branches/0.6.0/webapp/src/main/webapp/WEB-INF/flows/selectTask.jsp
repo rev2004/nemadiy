@@ -16,13 +16,13 @@
 <c:choose>
 <c:when test="${not empty flowList}">
   <h2>Select Task</h2>
-  Please select a task to create your job for:
-  <form:select id="select" path="id" items="${flowList}" itemLabel="name" itemValue="id" onchange="change();"></form:select>
+  <div style="margin-bottom:5px">Please select a task to create your job for:</div>
+  <form:select id="select" path="id" items="${flowList}" itemLabel="name" itemValue="id" onchange="change();" cssStyle="margin-bottom:5px"></form:select>
   <c:forEach items="${flowList}" var="flow">
-  	<div style="margin:5px; display:none" id="flow${flow.id}">
-	  <fieldset>
- 	  	<div><i>Keywords:</i> ${flow.keyWords}</div>
-  		<div><i>Description:</i>${flow.description}</div>
+  	<div style="display:none" id="flow${flow.id}">
+	  <fieldset style="padding-bottom:15px">
+ 	  	<div><span style="font-weight:bold">Keywords:</span> ${flow.keyWords}</div>
+  		<div><span style="font-weight:bold">Description:</span> ${flow.description}</div>
   	  </fieldset>
   	</div>
   </c:forEach>

@@ -6,7 +6,7 @@
    <c:if test="${pageContext.request.remoteUser == null}">
  	<menu:displayMenu name="MainMenu"/>
  	</c:if>
- 	<menu:displayMenu name="MirexMenu"/>
+
 	<menu:displayMenu name="JobMenu"/>
     <menu:displayMenu name="UserMenu"/>
     <menu:displayMenu name="AdminMenu"/>
