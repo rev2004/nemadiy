@@ -111,7 +111,7 @@ public class TempoResultRenderer extends ResultRendererImpl {
 
 				/* Add per track table */
 				Table perTrackTable = WriteCsvResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, results.getTrackEvalMetricsAndResultsKeys());
-				items.add(new TableItem(jobId + "_results", results.getJobName(jobId)
+				items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_results", results.getJobName(jobId)
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));
 
@@ -125,7 +125,7 @@ public class TempoResultRenderer extends ResultRendererImpl {
 				items.add(new FileListItem("plots", "System summary plot",
 						plotPathList));
 
-				aPage = new Page(jobId + "_results", results.getJobName(jobId),
+				aPage = new Page(results.getJobIdToJobName().get(jobId) + "_results", results.getJobName(jobId),
 						items, true);
 				resultPages.add(aPage);
 			}

@@ -53,19 +53,19 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
 	@Before
 	public void setUp() throws Exception {
 		singleSetTask = new NemaTask();
-        singleSetTask.setId(-1);
+        singleSetTask.setId(1);
         singleSetTask.setName("single fold task name");
         singleSetTask.setDescription("single fold task description");
-        singleSetTask.setDatasetId(-1);
-        singleSetTask.setSubjectTrackMetadataId(-1);
+        singleSetTask.setDatasetId(1);
+        singleSetTask.setSubjectTrackMetadataId(11);
         singleSetTask.setSubjectTrackMetadataName(NemaDataConstants.MELODY_EXTRACTION_DATA);
         
         twoSetTask = new NemaTask();
-        twoSetTask.setId(-1);
+        twoSetTask.setId(2);
         twoSetTask.setName("two fold task name");
         twoSetTask.setDescription("two fold task description");
-        twoSetTask.setDatasetId(-1);
-        twoSetTask.setSubjectTrackMetadataId(-1);
+        twoSetTask.setDatasetId(2);
+        twoSetTask.setSubjectTrackMetadataId(11);
         twoSetTask.setSubjectTrackMetadataName(NemaDataConstants.MELODY_EXTRACTION_DATA);
         
         singleSetDataset = new NemaDataset();
@@ -74,7 +74,7 @@ public class MelodyEvaluationIntegrationTest extends BaseManagerTestCase{
         singleSetDataset.setDescription("Single fold dataset description");
         
         twoSetDataset = new NemaDataset();
-        twoSetDataset.setId(singleSetTask.getDatasetId());
+        twoSetDataset.setId(twoSetTask.getDatasetId());
         twoSetDataset.setName("Two fold dataset name");
         twoSetDataset.setDescription("Two fold dataset description");
         
