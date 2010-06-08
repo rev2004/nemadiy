@@ -150,7 +150,6 @@ public class Job implements Serializable, Cloneable {
 	private Integer numTries = 0;
 	private String executionInstanceId;
 	private Set<JobResult> results;
-	@Transient
 	private String credentials;
 	
 	@Id
@@ -317,6 +316,7 @@ public class Job implements Serializable, Cloneable {
 	public void setCredentials(String credentials) {
 		this.credentials = credentials;
 	}
+	@Column(name="credentials",length=1024)
 	public String getCredentials() {
 		return credentials;
 	}
