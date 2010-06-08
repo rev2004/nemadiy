@@ -9,6 +9,8 @@ package org.imirsel.nema.webapp.jobs;
  */
 public class DisplayResult {
 	private String url;
+
+
 	private String displayString;
 	private String type;
 	
@@ -33,13 +35,21 @@ public class DisplayResult {
 	public String getDisplayString() {
 		return displayString;
 	}
-
+	public void setDisplayString(String displayString) {
+		this.displayString = displayString;
+	}
 	public String getType() {
 		return type;
 	}
 
 	public String getUrl() {
 		return url;
+	}
+
+
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 

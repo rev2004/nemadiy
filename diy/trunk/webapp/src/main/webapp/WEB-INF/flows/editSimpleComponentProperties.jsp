@@ -11,15 +11,17 @@
 <form:form enctype="multipart/form-data">
   
   <c:forEach items="${shownMap}" var="entry">
+  	<c:if test="${not fn:startsWith(entry.key,'_') }">
     <fieldset>
-    <label for="jobname"> ${entry.key}: </label>
+    <label for="jobname" class="label" > ${entry.key}: </label>
     <render:property roles="${userRoles}"
             component="${component.instanceUri}" value="${entry.value}"
             class="cssClass" />
     <font color="green">${entry.value.description}</font>
     </fieldset>
+    </c:if>
   </c:forEach>
   <input type="submit" name="_eventId_save" value="Save" />
-  <input type="submit" name="_eventId_cancel" value="Cancel" />
+  <input type="submit" name="_eventId_cancel" value="Cancel"  style="float:right"/>
 </form:form>
 </body>

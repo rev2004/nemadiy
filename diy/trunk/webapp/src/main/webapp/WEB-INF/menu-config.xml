@@ -10,17 +10,18 @@
 	    <Menu name="welcomeMenu" title="welcomeMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/welcome.jsp"/>
 		
 		
-		<Menu name="MirexMenu" title="mirexMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/get/task?id=10"/>
+		<!--  Add this back later when working... <Menu name="MirexMenu" title="mirexMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/get/task?id=10"/> -->
 		
 		
-		<Menu name="JobMenu" title="jobs.title" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/FlowManager.getFlowList">
-		    <Item name="MyJobs" title="My Tasks" page="/get/JobManager.getUserJobs" width="120"/>
-            <Item name="MySubmissions" title="My Submissions" page="/get/JobManager.getSubmissions" width="120"/>
-            <Item name="flowTemplate" title="Create w/ Template" page="get/task" width="120"/>
-            <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/task?type=extraction" width="120"/>
-            <Item name="JobTypeClassification" title="Classification" page="/get/task?type=classification" width="120"/>
-     	    <Item name="JobTypeEvaluation" title="Evaluation" page="/get/task?type=evaluation" width="120"/>
-            <Item name="JobTypeAnalysis" title="Analysis" page="/get/task?type=analysis" width="120"/>
+		<Menu name="JobMenu" title="Jobs" roles="ROLE_ADMIN,ROLE_USER" width="60">
+		    <Item name="MyJobs" title="Job List" page="/get/JobManager.getUserJobs" width="120"/>
+		    <Item name="PrepareJob" title="Prepare New Job" page="/get/task" width="120"/>		    
+            <Item name="MySubmissions" title="Mirex Submissions" page="/get/JobManager.getSubmissions" width="120"/>
+            <!-- <Item name="flowTemplate" title="Create w/ Template" page="get/task" width="120"/>-->
+            <!--  Add this back later when grouping is needed... <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/task?type=extraction" width="120"/> -->
+            <!--  Add this back later when grouping is needed... <Item name="JobTypeClassification" title="Classification" page="/get/task?type=classification" width="120"/> -->
+     	    <!--  Add this back later when grouping is needed... <Item name="JobTypeEvaluation" title="Evaluation" page="/get/task?type=evaluation" width="120"/> -->
+            <!--  Add this back later when grouping is needed... <Item name="JobTypeAnalysis" title="Analysis" page="/get/task?type=analysis" width="120"/> -->
      	</Menu>
    
    

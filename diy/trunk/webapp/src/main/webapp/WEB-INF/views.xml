@@ -4,5 +4,8 @@
        default-lazy-init="true">
 
     <bean name="jsonView" class="org.springframework.web.servlet.view.json.JsonView">
+        
     </bean>
+    
+  
    </beans>

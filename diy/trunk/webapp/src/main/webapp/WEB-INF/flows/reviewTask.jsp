@@ -6,21 +6,23 @@
 <body>
 	<form:form>
 	    <fieldset>
-	        <div style="margin-bottom:5px;"><label style="font-weight:bold;">Job Name:</label> ${taskFlowModel.name}</div>
-	    	<div style="margin-bottom:5px;"><label style="font-weight:bold;">Job Description:</label> ${taskFlowModel.description}</div>
+	        <div style="margin-bottom:5px;"><label class="label">Job Name:</label> <label class="name">${taskFlowModel.name}</label></div>
+	    	<div style="margin-bottom:5px;"><label class="label">Job Description:</label> ${taskFlowModel.description}</div>
 	    </fieldset>
 		<c:forEach var="component" items="${componentList}">
+		 <c:if test="${(!component.hidden)&&(not empty datatypeMaps[component])}">
 			<fieldset>
 				<table>
 					<thead>
-						<h4>${component.name}:</h4>
+						<label class="name">${component.name}:</label>
 					</thead>
 					<c:forEach var="property" items="${datatypeMaps[component]}">
 					<c:if test="${not fn:startsWith(property.key,'_') }">
 						<tr>
 							<td>
-								<c:out value="${property.key}" />
+								<label class="label"><c:out value="${property.key}" /></label>
 							</td>
+							<td>:</td>
 							<td>
 								<c:out value="${property.value.value}" />
 							</td>
@@ -29,6 +31,7 @@
 					</c:forEach>
 				</table>
 			</fieldset>
+			</c:if>
 		</c:forEach>
 		<fieldset id="button">
             <input type="submit" name="_eventId_back" value="Back" />

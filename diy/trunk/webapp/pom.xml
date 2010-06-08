@@ -15,8 +15,6 @@
 	<packaging>war</packaging>
 	<name>Nema Modular Application - Web</name>
 	<url>http://nema-dev.lis.illinois.edu/development/diy/nema-webapp</url>
-
-
 	<distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
@@ -40,36 +38,16 @@
 		<downloadUrl>http://nema-dev.lis.illinois.edu/artifactory/</downloadUrl>
 	</distributionManagement>
 
-
-
 	<build>
 		<plugins>
-	<!--		<plugin>
-				<groupId>org.zeroturnaround</groupId>
-				<artifactId>javarebel-maven-plugin</artifactId>
-
-				<executions>
-					<execution>
-						<id>generate-rebel-xml</id>
-						<phase>process-resources</phase>
-						<goals>
-
-							<goal>generate</goal>
-
-						</goals>
-					</execution>
-
-				</executions>
-				<configuration>
-					<dir
-						name="/home/gzhu1/tools/workspace/nema-diy/webapp/src/main/webapp/WEB-INF">
-						<include name="*.xml" />
-						<include name="**/*.xml" />
-						<include name="**/**/*.xml" />
-					</dir>
-				</configuration>
-			</plugin>
-	-->		<plugin>
+			<!--
+				<plugin> <groupId>org.zeroturnaround</groupId> <artifactId>javarebel-maven-plugin</artifactId> <executions>
+				<execution> <id>generate-rebel-xml</id> <phase>process-resources</phase> <goals> <goal>generate</goal> </goals>
+				</execution> </executions> <configuration> <dir
+				name="/home/gzhu1/tools/workspace/nema-diy/webapp/src/main/webapp/WEB-INF"> <include name="*.xml" /> <include
+				name="**/*.xml" /> <include name="**/**/*.xml" /> </dir> </configuration> </plugin>
+			-->
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>dbunit-maven-plugin</artifactId>
 				<version>1.0-beta-1</version>
@@ -112,7 +90,7 @@
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
-				<version>6.1.9</version>
+				<version>6.1.22</version>
 				<configuration>
 
 					<contextPath>/</contextPath>
@@ -141,11 +119,9 @@
 						**/jdbc.properties,**/hibernate.cfg.xml,**/sql-map-config.xml,**/web.xml,WEB-INF/classes/META-INF/**
                     </dependentWarExcludes>
 					<!--
-						<webResources> <resource>
-						<directory>src/main/webapp/WEB-INF</directory>
-						<targetPath>WEB-INF</targetPath> <filtering>true</filtering>
-						<includes> <include>dispatcher-servlet.xml</include> </includes>
-						</resource> </webResources>
+						<webResources> <resource> <directory>src/main/webapp/WEB-INF</directory> <targetPath>WEB-INF</targetPath>
+						<filtering>true</filtering> <includes> <include>dispatcher-servlet.xml</include> </includes> </resource>
+						</webResources>
 					-->
 				</configuration>
 			</plugin>
@@ -424,7 +400,30 @@
 			<artifactId>json</artifactId>
 			<version>20090211</version>
 		</dependency>
+		<dependency>
+			<groupId>net.sf.spring-json</groupId>
+			<artifactId>spring-json</artifactId>
+			<version>1.3.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>cglib-full</artifactId>
+					<groupId>cglib</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-mock</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-webmvc</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
 
+			</exclusions>
+		</dependency>
 
 		<!--  Needed by the meandre -->
 		<dependency>
@@ -445,7 +444,7 @@
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>imirsel-meandre-client</artifactId>
-			<version>0.5.0</version>
+			<version>0.7.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -462,6 +461,54 @@
 			<artifactId>nema-flowservice-api</artifactId>
 			<version>${flowservice.version}</version>
 			<scope>compile</scope>
+
+			<exclusions>
+
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context-support</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-tx</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-agent</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-hibernate3</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-test</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aspects</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -469,17 +516,66 @@
 			<artifactId>nema-flow-service</artifactId>
 			<version>${flowservice.version}</version>
 			<scope>compile</scope>
+			<exclusions>
+
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context-support</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-tx</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-agent</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-hibernate3</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-test</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aspects</artifactId>
+				</exclusion>
+			</exclusions>
+
+
 		</dependency>
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-repositoryservice</artifactId>
-			<version>0.2.0-SNAPSHOT</version>
+			<version>0.3.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-repositoryservice-api</artifactId>
-			<version>0.2.0-SNAPSHOT</version>
+			<version>0.3.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -517,31 +613,49 @@
 		</dependency>
 
 		<dependency>
-			<groupId>net.sf.spring-json</groupId>
-			<artifactId>spring-json</artifactId>
-			<version>1.3.0</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>cglib-full</artifactId>
-					<groupId>cglib</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-contentrepository-service-client</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
 			<exclusions>
-			<exclusion>
-				<groupId>org.imirsel</groupId>
-				<artifactId>nema-flowservice-api</artifactId>
-			</exclusion>
+				<exclusion>
+					<groupId>org.imirsel</groupId>
+					<artifactId>nema-flowservice-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>spring-stubclasses</groupId>
+			<artifactId>spring-stubclasses</artifactId>
+			<version>0.0.0-SNAPSHOT</version>
+		</dependency>
+		<!-- testing dependency -->
+		<dependency>
+			<groupId>org.jmock</groupId>
+			<artifactId>jmock-legacy</artifactId>
+			<version>2.5.1</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>cglib</groupId>
+					<artifactId>cglib-nodep</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
 
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.5.3</version>
+		</dependency>
 
 
 	</dependencies>
@@ -736,7 +850,7 @@
 		</profile>
 	</profiles>
 	<properties>
-		<spring.webflow.version>2.0.9.RELEASE</spring.webflow.version>
+		<spring.webflow.version>2.1.0.M2</spring.webflow.version>
 		<flowservice.version>0.7.0-SNAPSHOT</flowservice.version>
 	</properties>
 </project>

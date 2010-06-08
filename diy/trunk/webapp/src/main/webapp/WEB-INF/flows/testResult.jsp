@@ -89,7 +89,7 @@
 
 	<input type="submit" name="_eventId_run" value="Run" />
 	<input type="submit" name="_eventId_edit" value="Edit" />
-	<input type="submit" name="_eventId_cancel" value="Cancel" />
+	<input type="submit" name="_eventId_cancel" value="Cancel"  style="float:right"/>
 
 </form:form> <c:if test="${job.statusCode==2}">
 	<script>

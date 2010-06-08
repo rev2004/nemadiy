@@ -8,7 +8,7 @@
 	
 	
 	<fieldset id="pt1">
-			<label>Environment Variables:</label>
+			<label class="label">Environment Variables:</label>
 			<input type="button" value="+" onclick="add($('envMain'),$('envParam1'),2)" />
 			<br />
 			<div id='envMain'>
@@ -31,7 +31,7 @@
 		</fieldset>
 
 		<fieldset id="pt1">
-			<label>Input Files:</label>
+			<label class="label">Input Files:</label>
 			<input type="button" value="+" onclick="addSelect($('inputMain'),$('inputParam1'))" />
 			<br />
 			<div id='inputMain'>
@@ -62,7 +62,7 @@
 			</div>
 		</fieldset>
 		<fieldset id="pt1">
-			<label>Output Files:</label>
+			<label class="label">Output Files:</label>
 			<input type="button" value="+" onclick="addSelect($('outputMain'),$('outputParam1'))" />
 			<br />
 			<div id='outputMain'>
@@ -93,7 +93,7 @@
 			</div>
 		</fieldset>
 		<fieldset id="pt1">
-			<label>Other Argument Flags:</label>
+			<label class="label">Other Argument Flags:</label>
 			<input type="button" value="+" onclick="add($('otherMain'),$('otherParam1'),1)" />
 			<br />
 			<div id='otherMain'>

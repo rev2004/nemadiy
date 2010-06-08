@@ -17,6 +17,13 @@ import org.imirsel.nema.model.JobResult;
  */
 public class DisplayResultSet {
 	private List<DisplayResult> children;
+	public void setChildren(List<DisplayResult> children) {
+		this.children = children;
+	}
+
+	public void setRoot(DisplayResult root) {
+		this.root = root;
+	}
 	private DisplayResult root;
 	final String ROOT_TOKEN = "result directory";
 	final String INDEX_TOKEN="results";
