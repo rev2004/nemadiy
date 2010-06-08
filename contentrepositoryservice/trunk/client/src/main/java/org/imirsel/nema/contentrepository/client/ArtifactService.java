@@ -7,7 +7,6 @@ import javax.jcr.SimpleCredentials;
 import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
-import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 
 /**
@@ -51,6 +50,17 @@ public interface ArtifactService {
 	public ResourcePath saveFlow(final SimpleCredentials credentials,
 			final Flow flow, final String flowInstanceId, byte[] flowContent)
 			throws ContentRepositoryServiceException;
+	
+	/**
+	 * Return the flow bytes
+	 * 
+	 * @param credentials The credentials of the user
+	 * @param resourcePath The resource path of the flow
+	 * @return flow byte array
+	 * @throws ContentRepositoryServiceException
+	 */
+	public byte[] retrieveFlow(final SimpleCredentials credentials, 
+			final ResourcePath resourcePath) throws ContentRepositoryServiceException;
 
 	/**
 	 * Returns the executable bundle -the byte array contains the the content.
@@ -72,7 +82,7 @@ public interface ArtifactService {
 	 * 
 	 * @param credentials
 	 * @param path
-	 * @return
+	 * @return executable metadata of the bundle {@link ExecutableMetadata}
 	 * @throws RepositoryException
 	 * @throws LoginException
 	 */
@@ -85,7 +95,7 @@ public interface ArtifactService {
 	 * 
 	 * @param credentials
 	 * @param resourcePath
-	 * @return
+	 * @return true/false
 	 * @throws ContentRepositoryServiceException
 	 * @throws LoginException
 	 * @throws RepositoryException
@@ -123,7 +133,7 @@ public interface ArtifactService {
 	 * 
 	 * @param credentials
 	 * @param resourcePath
-	 * @return
+	 * @return the bundle's file system path
 	 * @throws ContentRepositoryServiceException
 	 */
 	public String getExecutableBundleFSPath(

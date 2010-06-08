@@ -25,7 +25,6 @@ import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.InvalidBundleException;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
-import org.imirsel.nema.model.ExecutableBundle.ExecutableType;
 
 import sun.net.www.MimeTable;
 
@@ -49,7 +48,7 @@ final public class ContentRepositoryService implements ArtifactService {
 	/**Validates the content repository -checks various content types are present
 	 * 
 	 * @param credentials
-	 * @return
+	 * @return true/false
 	 * @throws ContentRepositoryServiceException
 	 */
 	public final boolean validateNodeTypes(final SimpleCredentials credentials) throws ContentRepositoryServiceException {
@@ -133,7 +132,7 @@ final public class ContentRepositoryService implements ArtifactService {
 	 * TODO:// ignores workspace...
 	 * @param credentials
 	 * @param resourcePath
-	 * @return
+	 * @return true/false
 	 * @throws ContentRepositoryServiceException
 	 */
 	public final boolean removeExecutableBundle(final SimpleCredentials credentials,
@@ -519,8 +518,56 @@ final public class ContentRepositoryService implements ArtifactService {
 		}
 
 	}
+	
+	/**
+	 *  Return the flow data as bytes.
+	 *  @param credentials User's credential to connect to the server
+	 *  @param resourcepath ResourcePath of the flow resource
+	 *  @return byte data of the flow
+	 */
+	public byte[] retrieveFlow(SimpleCredentials credentials,
+			ResourcePath resourcePath) throws ContentRepositoryServiceException {
+		if(repository==null){
+			throw new ContentRepositoryServiceException("Repository not set");
+		}
+		Session session = null;
+		try {
+			session = repository.login(credentials);
+			boolean exists=session.itemExists(resourcePath.getPath());
+			if(!exists){
+				throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
+			}
+			Node node=session.getNode(resourcePath.getPath());
+			
+			Node resNode = node.getNode ("jcr:content");
+			String fileName = node.getName();
+			Property dataProperty = resNode.getProperty("jcr:data");
+
+			InputStream is = dataProperty.getBinary().getStream();
+				long length =dataProperty.getBinary().getSize();
+				byte[] data;
+				try {
+					data =BundleUtils.readByteDataFromStream(is,length);
+				} catch (IOException e) {
+					throw new ContentRepositoryServiceException(e);
+				}
+			return data;
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}finally{
+			if(session!=null)
+				session.logout();
+		}
+
+	}
 
 
+
+
+	/**
+	 * Set the repository to be used by the service
+	 * @param repository
+	 */
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 	}
@@ -580,7 +627,6 @@ final public class ContentRepositoryService implements ArtifactService {
 
 
 
-		System.out.println("FOUND TYPENAME: " + typeName);
 		bundle.setTypeName(typeName);
 		bundle.setId(execId);
 		bundle.setCommandLineFlags(commandLineFlags);
@@ -596,8 +642,6 @@ final public class ContentRepositoryService implements ArtifactService {
 
 		String mimeType=mimeTypeProperty.getString();
 		String encodingType = encodingProperty.getString();
-
-
 		if(copyContent){
 			InputStream is = dataProperty.getBinary().getStream();
 			long length =dataProperty.getBinary().getSize();
@@ -609,16 +653,11 @@ final public class ContentRepositoryService implements ArtifactService {
 			}
 			bundle.setBundleContent(data);
 		}
-
-
 		bundle.setFileName(fileName);
 		bundle.setId(fileNode.getIdentifier());
-
-
-
 		return bundle;
 	}
-
+	
 
 
 
