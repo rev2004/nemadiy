@@ -13,55 +13,55 @@
 	<form:form commandName="matlabTemplate">
 		<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
 		<fieldset id="pt1">
-			<label>${executable.type}
+			<label class="label">${executable.type}
 				File:</label>
 			<c:out value="${executable.fileName}" />
 		</fieldset>
 
 		<fieldset id="pt1">
-			<label>jvm: </label>
+			<label class="label">jvm: </label>
 			yes
 			<form:radiobutton path="jvm" value="true" title="yes" />
 			no
 			<form:radiobutton path="jvm" title="no" value="false" />
 		</fieldset>
 		<fieldset id="pt1">
-			<label>timing: </label>
+			<label class="label">timing: </label>
 			yes
 			<form:radiobutton path="timing" value="true" title="yes" />
 			no
 			<form:radiobutton path="timing" title="no" value="false" />
 		</fieldset>
 		<fieldset id="pt1">
-			<label>splash: </label>
+			<label class="label">splash: </label>
 			yes
 			<form:radiobutton path="splash" value="true" title="yes" />
 			no
 			<form:radiobutton path="splash" title="no" value="false" />
 		</fieldset>
 		<fieldset id="pt1">
-			<label>display: </label>
+			<label class="label">display: </label>
 			yes
 			<form:radiobutton path="display" value="true" title="yes" />
 			no
 			<form:radiobutton path="display" title="no" value="false" />
 		</fieldset>
 		<fieldset id="pt1">
-			<label>debug: </label>
+			<label class="label">debug: </label>
 			enable
 			<form:radiobutton path="debug" value="true" title="yes" />
 			disable
 			<form:radiobutton path="debug" title="no" value="false" />
 		</fieldset>
 		<fieldset id="pt1">
-			<label>logfile: </label>
+			<label class="label">logfile: </label>
 			enable
 			<form:radiobutton path="logfile" value="true" title="yes" />
 			disable
 			<form:radiobutton path="logfile" title="no" value="false" />
 		</fieldset>
 		<fieldset id="pt1">
-			<label>log name: </label>
+			<label class="label">log name: </label>
 			<form:input path="log" />
 			(ignored if logfile is disabled)
 		</fieldset>

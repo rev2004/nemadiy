@@ -16,6 +16,7 @@ public class MockResourcePath implements ResourcePath {
 	 */
 	private static final long serialVersionUID = -779257993404882450L;
 	private String path;
+	private String protocol;
 	/* (non-Javadoc)
 	 * @see org.imirsel.nema.model.ResourcePath#getPath()
 	 */
@@ -30,7 +31,7 @@ public class MockResourcePath implements ResourcePath {
 	 */
 	@Override
 	public String getProtocol() {
-		return null;
+		return protocol;
 	}
 
 	/* (non-Javadoc)
@@ -43,6 +44,10 @@ public class MockResourcePath implements ResourcePath {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
 	}
 
 }

@@ -137,7 +137,7 @@ public class TasksServiceTest {
 			Map<Component, ResourcePath> map = new HashMap<Component, ResourcePath>(executableMap);
 			Map<String,Property> data=new HashMap<String,Property>(datatypeMap2);
 			tasksService.addExecutable(component2,data,uploadBundle,uuid,map,messageContext);
-			assertEquals(path3.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
+			assertEquals(path3.getProtocol()+"://"+path3.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
 			assertEquals("true", data.get(tasksService.REMOTE_COMPONENT).getValue());
 			assertEquals(uploadBundle.getPreferredOs(), data.get(tasksService.OS).getValue());
 			assertEquals(uploadBundle.getGroup(), data.get(tasksService.GROUP).getValue());
@@ -146,7 +146,7 @@ public class TasksServiceTest {
 			assertEquals(path3,map.get(component2));
 
 			tasksService.addExecutable(component3,data,uploadBundle,uuid,map,messageContext);
-			assertEquals(path4.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
+			assertEquals(path4.getProtocol()+"://"+path4.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
 			assertEquals("true", data.get(tasksService.REMOTE_COMPONENT).getValue());
 			assertEquals(uploadBundle.getPreferredOs(), data.get(tasksService.OS).getValue());
 			assertEquals(uploadBundle.getGroup(), data.get(tasksService.GROUP).getValue());
@@ -282,7 +282,7 @@ public class TasksServiceTest {
 	Set<Flow> flowSet;
 
 	@Test
-	public final void testSetDatatypeMaps() {
+	public final void testLoadDatatypeMaps() {
 
 		context.checking(new Expectations() {
 			{
@@ -298,7 +298,7 @@ public class TasksServiceTest {
 			}
 		});
 		Map<Component, Map<String, Property>> map = tasksService
-				.setDatatypeMaps(flow1);
+				.loadDatatypeMaps(flow1);
 		Map<Component, Map<String, Property>> expected=new HashMap<Component, Map<String, Property>>(datatypeMaps);
 		expected.remove(component3);
 		assertEquals(expected, map);
@@ -306,8 +306,8 @@ public class TasksServiceTest {
 	}
 
 	@Test
-	public final void testSetComponentList() {
-		List<Component> list = tasksService.setComponentList(datatypeMaps);
+	public final void testExtractComponentList() {
+		List<Component> list = tasksService.extractComponentList(datatypeMaps);
 		logger.debug("before sort:" + componentList.get(0).getName() + ","
 				+ componentList.get(1).getName());
 		Collections.sort(componentList);

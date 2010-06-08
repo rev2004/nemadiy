@@ -13,7 +13,7 @@
   <c:forEach items="${shownMap}" var="entry">
   	<c:if test="${not fn:startsWith(entry.key,'_') }">
     <fieldset id="pt1">
-    <label for="jobname"> ${entry.key}: </label>
+    <label for="jobname" class="label"> ${entry.key}: </label>
     <render:property roles="${userRoles}"
             component="${component.instanceUri}" value="${entry.value}"
             class="cssClass" />
@@ -23,7 +23,7 @@
   </c:forEach>
   
      <fieldset id="pt1">
-    <label for="jobname"> Executable Profile: </label>
+    <label for="jobname" class="label"> Executable Profile: </label>
      <c:choose >
       <c:when test="${taskFlowModel.executableMap[component]==null}">
        None  <input type="submit" name="_eventId_next" value="Create" />

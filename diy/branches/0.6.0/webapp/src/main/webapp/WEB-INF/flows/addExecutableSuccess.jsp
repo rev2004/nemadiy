@@ -18,17 +18,23 @@
 
 <form:form>
     
-	<fieldset id="pt1">
+	<fieldset >
 	Preferred OS: ${executableBundle.preferredOs}<br />
 	Group: ${executableBundle.group }<br />
 	Component: ${component.name}<br />
 
 	</fieldset>
-	<fieldset id="pt1"><label>
+	<fieldset ><label class="label">
 	${executableBundle.typeName}  Executable:</label> ${executableBundle.fileName} </fieldset>
-	<fieldset id="pt1"><label>environment:</label><code><c:forEach items="${executableBundle.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach> </code></fieldset>
-	<fieldset id="pt1"><label>arguments:</label><c:out
-		value="${executableBundle.commandLineFlags}" /></fieldset>
+	<fieldset "><label class="label">environment:</label>
+		<code>
+			<c:forEach items="${executableBundle.environmentVariables}" var="item">
+				(<label class="label">${item.key}</label>:${item.value}); 
+			</c:forEach> 
+		</code>
+		</fieldset>
+	<fieldset ><label class="label">arguments:</label>
+		<c:out	value="${executableBundle.commandLineFlags}" /></fieldset>
 
 		<fieldset id="button">
       <input type="submit" name="_eventId_next" value="Back to Task Components" />

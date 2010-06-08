@@ -13,7 +13,7 @@
   <c:forEach items="${shownMap}" var="entry">
   	<c:if test="${not fn:startsWith(entry.key,'_') }">
     <fieldset>
-    <label for="jobname"> ${entry.key}: </label>
+    <label for="jobname" class="label" > ${entry.key}: </label>
     <render:property roles="${userRoles}"
             component="${component.instanceUri}" value="${entry.value}"
             class="cssClass" />
