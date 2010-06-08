@@ -117,7 +117,7 @@ public class TasksServiceImpl {
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
 				uuid.toString(), bundle);
 		executableMap.put(component, path);
-		String uri = path.getProtocol() + "://"+path.getPath();
+		String uri = path.getProtocol() +":"+ path.getWorkspace() +"://"+path.getPath();
 		datatypeMap.get(EXECUTABLE_URL).setValue(uri);
 		if (path != null) {
 			// MessageContext messageContext=requestContext.getMessageContext();
