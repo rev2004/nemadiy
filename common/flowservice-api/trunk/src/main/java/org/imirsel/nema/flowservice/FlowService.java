@@ -51,7 +51,7 @@ public interface FlowService {
 	/**
 	 * Execute a {@link Job} using the specified {@link Flow} instance on 
 	 * behalf of the specified user.
-	 * 
+	 * @param credentials The Credentials of the Nema user.
 	 * @param token A unique identifier for the {@link Job}.
 	 * @param name User supplied name for the job.
 	 * @param description User supplied description for the job.
@@ -63,11 +63,14 @@ public interface FlowService {
 	 * @return The {@link Job} instance that was created as a result of the
 	 * new execution.
 	 * @since 0.4.0
+	 * @version 0.7.0 -Incompatiable with the previous release. Takes
+	 * a credentials object for the user to run the job. This credentials
+	 * should allow allow the user to connect and read flow data from the content
+	 * repository.
 	 */
    public Job executeJob(
-      String token, String name, String description, long flowInstanceId,
-      long userId,
-      String userEmail);
+	  final Credentials credentials, String token, String name, String description, long flowInstanceId,
+      long userId,String userEmail);
 
 	/**
 	 * Return all {@link Flow}s that are templates. Template {@link Flow}s are
@@ -206,7 +209,6 @@ public interface FlowService {
     * @param userId The ID of the user who is creating this flow.
     * @return The URI of the new flow.
     * @deprecated  Not for public use. This method will be removed in 0.7.0 release.
-    * @see createNewFlow(Credentials credentials,HashMap<String,String> paramMap, String flowUri, long userId)
     * @since 0.5.0
     */
    public String createNewFlow(HashMap<String,String> paramMap, String flowUri, long userId);
