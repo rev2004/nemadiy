@@ -153,5 +153,23 @@ public class NemaDataConstants {
     public static final String CHORD_LABEL_SEQUENCE = "Chord label sequence";
     public static final String CHORD_OVERLAP_RATIO = "Chord Overlap ratio";
     public static final String CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO = "Chord weighted average overlap ratio";
+    
+    // Structure Segmentation Evaluator Constants
+    public static final String STRUCTURE_SEGMENTATION_DATA = "Onset, offset, and segment label data";
+    public static final String STRUCTURE_SEGMENTATION_OVERSEGSCORE = "Normalised conditional entropy based over-segmentation score";
+    public static final String STRUCTURE_SEGMENTATION_UNDERSEGSCORE = "Normalised conditional entropy based under-segmentation score";
+    public static final String STRUCTURE_SEGMENTATION_PWF = "Frame pair clustering F-measure";
+    public static final String STRUCTURE_SEGMENTATION_PWPRECISION = "Frame pair clustering precision rate";
+    public static final String STRUCTURE_SEGMENTATION_PWRECALL = "Frame pair clustering recall rate";
+    public static final String STRUCTURE_SEGMENTATION_R = "Random clustering index";
+    public static final String STRUCTURE_SEGMENTATION_FMEASUREATPOINTFIVE = "Segment boundary recovery evaluation measure @ 0.5sec";
+    public static final String STRUCTURE_SEGMENTATION_PRECRATEATPOINTFIVE = "Segment boundary recovery precision rate @ 0.5sec";
+    public static final String STRUCTURE_SEGMENTATION_RECRATEATPOINTFIVE = "Segment boundary recovery recall rate @ 0.5sec";
+    public static final String STRUCTURE_SEGMENTATION_FMEASUREATTHREE = "Segment boundary recovery evaluation measure @ 3sec";
+    public static final String STRUCTURE_SEGMENTATION_PRECRATEATTHREE  = "Segment boundary recovery precision rate @ 3sec";
+    public static final String STRUCTURE_SEGMENTATION_RECRATEATTHREE  = "Segment boundary recovery recall rate @ 3sec";
+    public static final String STRUCTURE_SEGMENTATION_MEDCLAIM2TRUE = "Median distance from an annotated segment boundary to the closest found boundary";
+    public static final String STRUCTURE_SEGMENTATION_MEDTRUE2CLAIM = "Median distance from a found segment boundary to the closest annotated one";
+    
 
 }
