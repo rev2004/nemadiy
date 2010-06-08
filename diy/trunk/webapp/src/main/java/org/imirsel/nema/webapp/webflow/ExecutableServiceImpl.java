@@ -49,7 +49,7 @@ public class ExecutableServiceImpl {
 			ExecutableBundle.ExecutableType type,
 			MutableAttributeMap scope) {
 		logger.debug("get input template "+type);
-		if (type != null) {
+		if ((type != null)&&(input!=null)) {
 			switch (type) {
 			case SHELL:
 			case C:
@@ -102,6 +102,7 @@ public class ExecutableServiceImpl {
 	 * @return
 	 */
 	public NiceParams getNiceParams(List<Param> params) {
+		logger.debug("try to convert params :"+params);
 		return new NiceParams(params);
 	}
 
@@ -125,6 +126,7 @@ public class ExecutableServiceImpl {
 
 	}
 
+    
 	/**
 	 * Set the special fields for JavaTemplate
 	 * 
@@ -151,7 +153,6 @@ public class ExecutableServiceImpl {
 			template.setProperties(properties);
 			logger.debug("generate map of size " + length);
 		}
-
 	}
 
 	public UploadedExecutableBundle setExecutable(UploadedExecutableBundle a) {
@@ -216,7 +217,6 @@ public class ExecutableServiceImpl {
 					+ template.getEnvironmentMap().size());
 		}
 		template.setEnvironmentMap(map);
-
 	}
 
 	private String output(String[] array) {

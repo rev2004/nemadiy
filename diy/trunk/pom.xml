@@ -98,6 +98,13 @@
 			<email>shirk@illinois.edu</email>
 			<timezone>-5</timezone>
 		</developer>
+		<developer>
+			<id>gzhu1</id>
+			<name>Guojun Zhu</name>
+			<email>zggame@gmail.com</email>
+			<timezone>-5</timezone>
+		</developer>
+			
 	</developers>
 
 
@@ -288,7 +295,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
-			<optional>true</optional>
+			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>

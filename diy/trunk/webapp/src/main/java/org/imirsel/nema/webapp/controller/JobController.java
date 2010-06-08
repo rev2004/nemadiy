@@ -314,25 +314,24 @@ public class JobController extends MultiActionController {
 		System.out.println("NUMBER of RESULTS: "+ job.getResults().size());
 		
 		for(JobResult result:job.getResults()){
-			System.out.println("RESULT: " + result.getUrl() + "  "+ result.getId());
+			logger.debug("RESULT: " + result.getUrl() + "  "+ result.getId());
 			result.setUrl(processUrl(result.getUrl()));
 			
 		}
+		ModelAndView mav;
 		String uri=req.getRequestURI();
 		if (uri.substring(uri.length()-4).equalsIgnoreCase ("json")){
-			ModelAndView mav=new ModelAndView("jsonView");
-			mav.addObject(Constants.JOB,job);
-			return mav;
+			 mav=new ModelAndView("jsonView");
+		}else {
+			 mav= new ModelAndView("job/job");
 		}
-		else{
-		ModelAndView mav= new ModelAndView("job/job");
 		mav.addObject(Constants.JOB, job);
 		
 		logger.debug("start to render displayed results");
 		DisplayResultSet resultSet=new DisplayResultSet(job.getResults());
 		mav.addObject("resultSet", resultSet);
 		return mav;
-		}
+	
 	}
 
 

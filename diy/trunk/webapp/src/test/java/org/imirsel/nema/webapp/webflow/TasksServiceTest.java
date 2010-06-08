@@ -1,13 +1,16 @@
 package org.imirsel.nema.webapp.webflow;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -31,6 +34,7 @@ import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
+import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,9 +42,8 @@ import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.test.MockExternalContext;
-
+import org.springframework.webflow.test.MockParameterMap;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -49,12 +52,12 @@ import edu.emory.mathcs.backport.java.util.Collections;
 @ContextConfiguration(locations = { "/test-bean.xml",
 		"/testTasksService-bean.xml" })
 public class TasksServiceTest {
-	Mockery context = new Mockery();
+	Mockery context = new JUnit4Mockery() ;
 	final FlowService flowService = context.mock(FlowService.class);
 
 	@Resource
 	private UserManager userManager;
-	private String uploadDirectory = "upload";
+	private String uploadDirectory = "/upload";
 	private ArtifactService artifactService = context
 			.mock(ArtifactService.class);
 	private UUID uuid;
@@ -134,7 +137,7 @@ public class TasksServiceTest {
 			Map<Component, ResourcePath> map = new HashMap<Component, ResourcePath>(executableMap);
 			Map<String,Property> data=new HashMap<String,Property>(datatypeMap2);
 			tasksService.addExecutable(component2,data,uploadBundle,uuid,map,messageContext);
-			assertEquals(path3.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
+			assertEquals(path3.getProtocol()+"://"+path3.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
 			assertEquals("true", data.get(tasksService.REMOTE_COMPONENT).getValue());
 			assertEquals(uploadBundle.getPreferredOs(), data.get(tasksService.OS).getValue());
 			assertEquals(uploadBundle.getGroup(), data.get(tasksService.GROUP).getValue());
@@ -143,7 +146,7 @@ public class TasksServiceTest {
 			assertEquals(path3,map.get(component2));
 
 			tasksService.addExecutable(component3,data,uploadBundle,uuid,map,messageContext);
-			assertEquals(path4.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
+			assertEquals(path4.getProtocol()+"://"+path4.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
 			assertEquals("true", data.get(tasksService.REMOTE_COMPONENT).getValue());
 			assertEquals(uploadBundle.getPreferredOs(), data.get(tasksService.OS).getValue());
 			assertEquals(uploadBundle.getGroup(), data.get(tasksService.GROUP).getValue());
@@ -181,7 +184,28 @@ public class TasksServiceTest {
 
 	@Test
 	public final void testGetFlowTemplates() {
-		fail("Not yet implemented"); // TODO
+		context.checking(new Expectations() {
+			{
+				exactly(3).of(flowService).getFlowTemplates();	will(returnValue(flowSet));
+				
+			}
+		});
+	
+		List<Flow> list=tasksService.getFlowTemplates(null);
+		Set<Flow>  set=new HashSet<Flow>(list);
+		assertEquals(flowSet, set );
+	
+		Set<Flow>  featureExtractionSet=new HashSet<Flow>();
+		featureExtractionSet.add(flow1);featureExtractionSet.add(flow2);
+		list=tasksService.getFlowTemplates("Feature Extraction");
+		set=new HashSet<Flow>(list);
+		assertEquals(featureExtractionSet,set);
+		
+		list=tasksService.getFlowTemplates("not existing type");
+		set=new HashSet<Flow>(list);
+		assertEquals(flowSet,set);
+	
+		context.assertIsSatisfied();
 	}
 
 	@Test
@@ -253,34 +277,37 @@ public class TasksServiceTest {
 	Flow flow1;
 	@Resource
 	Flow flow2;
+	
+	@Resource 
+	Set<Flow> flowSet;
 
 	@Test
-	public final void testSetDatatypeMaps() {
+	public final void testLoadDatatypeMaps() {
 
 		context.checking(new Expectations() {
 			{
 				oneOf(flowService).getComponents(flow1.getUri());
 				will(returnValue(componentList));
 				oneOf(flowService).getComponentPropertyDataType(
-						componentList.get(2), flow1.getUri());
-				will(returnValue(datatypeMaps.get(componentList.get(2))));
+						component1, flow1.getUri());
+				will(returnValue(datatypeMaps.get(component1)));
 				oneOf(flowService).getComponentPropertyDataType(
-						componentList.get(1), flow1.getUri());
-				will(returnValue(datatypeMaps.get(componentList.get(1))));
-				oneOf(flowService).getComponentPropertyDataType(
-						componentList.get(0), flow1.getUri());
-				will(returnValue(datatypeMaps.get(componentList.get(0))));
+						component2, flow1.getUri());
+				will(returnValue(datatypeMaps.get(component2)));
+				
 			}
 		});
 		Map<Component, Map<String, Property>> map = tasksService
-				.setDatatypeMaps(flow1);
-		assertEquals(datatypeMaps, map);
+				.loadDatatypeMaps(flow1);
+		Map<Component, Map<String, Property>> expected=new HashMap<Component, Map<String, Property>>(datatypeMaps);
+		expected.remove(component3);
+		assertEquals(expected, map);
 		context.assertIsSatisfied();
 	}
 
 	@Test
-	public final void testSetComponentList() {
-		List<Component> list = tasksService.setComponentList(datatypeMaps);
+	public final void testExtractComponentList() {
+		List<Component> list = tasksService.extractComponentList(datatypeMaps);
 		logger.debug("before sort:" + componentList.get(0).getName() + ","
 				+ componentList.get(1).getName());
 		Collections.sort(componentList);
@@ -295,6 +322,10 @@ public class TasksServiceTest {
 	@Resource
 	MockExternalContext mockExternalContext;
 
+	/**
+	 * TODO
+	 * this test is not well writen, it is going to fail in windows due to the jmock setting
+	 */
 	@Test
 	public final void testSetUploadingPaths() {
 		final String subStr = uploadDirectory + "/"
@@ -302,13 +333,12 @@ public class TasksServiceTest {
 
 		final ServletContext mockServletContext = context
 				.mock(ServletContext.class);
-		final String root = "/mock/home/webapp/";
+		final String root = "/mock/home/webapp";
 		context.checking(new Expectations() {
 			{
 				oneOf(mockServletContext).getRealPath(subStr);
-				will(returnValue(root + subStr));
-				oneOf(mockServletContext).getRealPath("/");
-				will(returnValue(root));
+				will(returnValue(root + uploadDirectory + "/"
+						+ mockHttpServletRequest.getRemoteUser() + "/" + uuid));
 			}
 		});
 		mockExternalContext.setNativeContext(mockServletContext);
@@ -325,10 +355,10 @@ public class TasksServiceTest {
 
 		tasksService.setWebDir(null);
 		tasksService.setUploadingPaths(mockExternalContext, uuid);
-		assertEquals("http://mock.nema.lis.illinois.edu:1111/mock/Context/"
+		assertEquals("http://mock.nema.lis.illinois.edu:1111/mock/Context"
 				+ subStr, tasksService.getWebDir());
 		assertEquals(root + uploadDirectory + "/"
-				+ mockHttpServletRequest.getRemoteUser() + "/" + uuid + "/",
+				+ mockHttpServletRequest.getRemoteUser() + "/" + uuid + File.separator,
 				tasksService.getPhysicalDir());
 		context.assertIsSatisfied();
 	}
@@ -392,9 +422,36 @@ public class TasksServiceTest {
 
 	}
 
+	@Resource
+	Map<String,String> parameters1;
+	@Resource
+	Map<String,String> parameters2;
+	
+	//TODO no multipart file upload test yet.  
+	//Not sure how to test writing a file because not to sure how to get definite directory
 	@Test
 	public final void testUpdateDataMap() {
-		fail("Not yet implemented"); // TODO
+		MockParameterMap parameterMap=new MockParameterMap();
+		for (Map.Entry<String,String> entry:parameters1.entrySet()){
+			parameterMap.put(entry.getKey(),entry.getValue());
+		}
+		Map<String,Property> data=new HashMap<String,Property>(datatypeMap1);
+		tasksService.updateDataMap(parameterMap, data);
+		assertEquals(parameters1.get("property1"), data.get("testField1").getValue());
+		assertEquals(parameters1.get("property2"), data.get("TestField2").getValue());
+		assertFalse(data.containsKey("property3"));
+		
+		parameterMap=new MockParameterMap();
+		for (Map.Entry<String,String> entry:parameters2.entrySet()){
+			parameterMap.put(entry.getKey(),entry.getValue());
+		}
+		data=new HashMap<String,Property>(datatypeMap1);
+		tasksService.updateDataMap(parameterMap, data);
+		assertEquals(parameters2.get("property1"), data.get("testField1").getValue());
+		assertEquals(parameters1.get("property2"), data.get("TestField2").getValue());
+		assertFalse(data.containsKey("property3"));	
+		
+		
 	}
 
 	@Resource
@@ -411,7 +468,7 @@ public class TasksServiceTest {
 				oneOf(flowService).createNewFlow(with(same(credentials)),with(aNonNull(Flow.class)), 
 						(HashMap<String,String>)with(any(HashMap.class)), with(same(flow1.getUri())), 
 						with(same(user.getId()))); will(returnValue(flow2));
-				oneOf(flowService).executeJob(with(aNonNull(String.class)),
+				oneOf(flowService).executeJob(with(same(credentials)),with(aNonNull(String.class)),
 						with(same(name)),with(same(description)),with(same(flow2.getId())),
 								with(same(user.getId())),with(same(user.getEmail())));
 			}

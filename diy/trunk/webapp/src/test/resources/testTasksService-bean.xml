@@ -86,7 +86,7 @@
 		<entry key="profileName" value-ref="propertyFile" />
 		<entry key="_os" value-ref="property5" />
 		<entry key="_group" value-ref="property6" />
-		<entry key="_remoteComponent" value-ref="propertyFalse"/>
+		<entry key="_remoteDynamicComponent" value-ref="propertyFalse"/>
 		<entry key="_credentials" value-ref="property1"/>
 	</util:map>
 
@@ -95,6 +95,22 @@
 		<entry key="profileName" value-ref="propertyFile" />
 	</util:map>
 
+	<util:map id="parameters1">
+		<description>parameter map for datatypeMap1</description>
+		<entry key="property1" value="new value for testField1"/>
+		<entry key="property3" value="new value for testField3"/>
+		<entry key="property2" value="new value for testField2"/>
+	</util:map>
+	
+	
+	<util:map id="parameters2">
+		<description>parameter map for datatypeMap1</description>
+		<entry key="property1" value="another value for testField1"/>
+		<entry key="property3" value="another value for testField3"/>
+		
+	</util:map>
+	
+	
 	<bean id="mockHttpServletRequest" class="org.springframework.mock.web.MockHttpServletRequest" p:contextPath="/mock/Context"
 		p:remoteUser="mockUser" p:serverPort="1111" p:serverName="mock.nema.lis.illinois.edu" />
 	<bean id="mockExternalContext" class="org.springframework.webflow.test.MockExternalContext" p:nativeRequest-ref="mockHttpServletRequest" />
@@ -118,10 +134,14 @@
 		<constructor-arg index="1" value="pass"/>
 	</bean>
 	
-	<bean id="path1" class="org.imirsel.nema.webapp.mock.MockResourcePath" p:path="http://name.lis.uiuc.edu/path1"/>
-	<bean id="path2" class="org.imirsel.nema.webapp.mock.MockResourcePath" p:path="http://name.lis.uiuc.edu/path2"/>
-	<bean id="path3" class="org.imirsel.nema.webapp.mock.MockResourcePath" p:path="http://name.lis.uiuc.edu/path3"/>
-	<bean id="path4" class="org.imirsel.nema.webapp.mock.MockResourcePath" p:path="http://name.lis.uiuc.edu/path4"/>
+	<bean id="path1" class="org.imirsel.nema.webapp.mock.MockResourcePath" 
+		p:path="http://name.lis.uiuc.edu/path1" p:protocol="http"/>
+	<bean id="path2" class="org.imirsel.nema.webapp.mock.MockResourcePath" 
+		p:path="http://name.lis.uiuc.edu/path2" p:protocol="http"/>
+	<bean id="path3" class="org.imirsel.nema.webapp.mock.MockResourcePath" 
+		p:path="http://name.lis.uiuc.edu/path3" p:protocol="jcr"/>
+	<bean id="path4" class="org.imirsel.nema.webapp.mock.MockResourcePath" 
+		p:path="http://name.lis.uiuc.edu/path4"	p:protocol="jcr"/>
 	
 	<util:map id="executableMap">
 		<entry key-ref="component3" value-ref="path1"/>

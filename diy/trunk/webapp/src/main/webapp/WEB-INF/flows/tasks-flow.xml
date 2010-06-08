@@ -18,7 +18,6 @@
 			<evaluate expression="tasksService.getFlowTemplates(type)" result="flowScope.flowList"></evaluate>
 		</on-entry>
 		<transition on="show" to="getTemplate">
-			<evaluate expression="tasksService.test(taskFlowModel.id)"></evaluate>
 			<set name="flowScope.id" value="taskFlowModel.id" />
 		</transition>
 	</view-state>
@@ -55,8 +54,8 @@
 			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
 		</transition>
 		<transition on="remove" to="editRemoteServiceComponentProperties">
-			<evaluate expression="tasksService.removeExecutable(component,taskFlowModel.executableMap,datatypeMap)" />
-			<evaluate expression="taskFlowModel.templateMap.remove(component)"/>
+			<evaluate expression="tasksService.removeExecutable(flowScope.component,taskFlowModel.executableMap,datatypeMap)" />
+			<evaluate expression="taskFlowModel.templateMap.remove(flowScope.component)"/>
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
@@ -73,8 +72,8 @@
 		<evaluate expression="taskFlowModel.executableMap.clear()" />
 		<evaluate expression="taskFlowModel.templateMap.clear()" />
 		<set name="flowScope.flow" value="flowService.getFlow(id)" />
-		<set name="flowScope.datatypeMaps" value="tasksService.setDatatypeMaps(flow)" />
-		<set name="flowScope.componentList" value="tasksService.setComponentList(datatypeMaps)" />
+		<set name="flowScope.datatypeMaps" value="tasksService.loadDatatypeMaps(flow)" />
+		<set name="flowScope.componentList" value="tasksService.extractComponentList(datatypeMaps)" />
 		<set name="flowScope.taskFlowModel.name" value="flow.name" >
 		
 			<attribute name="name" value="lastStep" />
@@ -83,25 +82,25 @@
 	</action-state>
 
 	<subflow-state id="generateExecutable" subflow="task/executable">
-		<input name="executableBundleInput" value="tasksService.findBundle(taskFlowModel.executableMap[component],datatypeMap)"
+		<input name="executableBundleInput" value="tasksService.findBundle(taskFlowModel.executableMap[flowScope.component],datatypeMap)"
 			type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
-		<input name="executableTemplateInput" value="taskFlowModel.templateMap[component]" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
+		<input name="executableTemplateInput" value="taskFlowModel.templateMap[flowScope.component]" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 
 		<output name="executableTemplate" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 		<output name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<transition on="success" to="addExecutableSuccess">
 			<evaluate
-				expression="tasksService.addExecutable(component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,messageContext)" />
-			<evaluate expression="taskFlowModel.templateMap.put(component,executableTemplate)" />
+				expression="tasksService.addExecutable(flowScope.component,datatypeMap,executableBundle,taskFlowModel.uuid,taskFlowModel.executableMap,messageContext)" />
+			<evaluate expression="taskFlowModel.templateMap.put(flowScope.component,executableTemplate)" />
 
 		</transition>
 		<transition on="done" to="editRemoteServiceComponentProperties" />
 	</subflow-state>
 
 	<action-state id="editComponentProperties">
-		<evaluate expression="tasksService.getRoles()" result="conversationScope.userRoles" />
-		<evaluate expression="componentList.get(requestParameters.idx)" result="conversationScope.component" />
-		<set name="flowScope.datatypeMap" value="datatypeMaps[component]" />
+		<evaluate expression="tasksService.getRoles()" result="flowScope.userRoles" />
+		<evaluate expression="componentList.get(requestParameters.idx)" result="flowScope.component" />
+		<set name="flowScope.datatypeMap" value="datatypeMaps[flowScope.component]" />
 		<evaluate expression='tasksService.isRemoteServiceComponent(datatypeMap)'>
 			<attribute name="name" value="isRemoteService" />
 		</evaluate>
@@ -132,12 +131,15 @@
 	</action-state>
 
 	<decision-state id="checkRunResult">
-		<if test="jobId==null" then="run" else="jobdetail" />
+		<if test="(job.id!=null)" else="run" then="jobdetail" />
 	</decision-state>
 
 	<decision-state id="startPoint">
 		<if test="id==null" then="selectTask" else="getTemplate" />
 	</decision-state>
 
-	<end-state id="jobdetail" view="externalRedirect:contextRelative:get/JobManager.jobDetail?id=${job.id}" />
+	<end-state id="jobdetail" view="externalRedirect:contextRelative:/get/JobManager.jobDetail?id=#{flowScope.job.id}" />
+	<on-end>
+		<evaluate expression="tasksService.clearBundles(taskFlowModel.executableMap)" />
+	</on-end>
 </flow>

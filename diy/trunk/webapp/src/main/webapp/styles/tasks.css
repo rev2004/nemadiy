@@ -1,0 +1,9 @@
+label.label {
+	font-style:italic;
+}
+label.name {
+	font-weight:bold;
+}
+.surround{
+	margin:5px;
+}

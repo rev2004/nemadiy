@@ -51,7 +51,7 @@ public class UserFormControllerTest extends BaseControllerTestCase {
 
         mv = c.handleRequest(request, new MockHttpServletResponse());
 
-        assertEquals("redirect:mainMenu.html", mv.getViewName());
+        assertEquals("redirect:welcome.jsp", mv.getViewName());
     }
 
     public void testEdit() throws Exception {
@@ -117,7 +117,7 @@ public class UserFormControllerTest extends BaseControllerTestCase {
         mv = c.handleRequest(request, new MockHttpServletResponse());
 
         Errors errors = (Errors) mv.getModel().get(BindException.MODEL_KEY_PREFIX + "user");
-        assertTrue(errors.getAllErrors().size() == 10);
+        assertTrue(errors.getAllErrors().size() == 6);
     }
     
     public void testRemove() throws Exception {

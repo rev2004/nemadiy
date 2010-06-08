@@ -10,23 +10,23 @@
 
 <form:form>
 	<form:errors path="*" cssStyle="color:OrangeRed" class="error"/>
-	<fieldset id="pt1"><label>
-	${executable.typeName}  Executable:</label> ${executable.fileName} </fieldset>
+	<fieldset class="label"><label>
+	${executable.typeName}  Executable:</label><label class="name"> ${executable.fileName}</label> </fieldset>
 	<fieldset id="pt1">
-		<label>Environment Variables:</label>
+		<label class="label">Environment Variables:</label>
 			<c:if test="${empty executable.environmentVariables}">None</c:if>
 			<c:forEach items="${executable.environmentVariables}" var="item">(${item.key}:${item.value}); </c:forEach> 
 	</fieldset>
 
 	<fieldset id="pt1">
-	     <label>Arguments:</label>
+	     <label class="label">Arguments:</label>
 	     ${executable.commandLineFlags}
 	</fieldset>
 
 	<fieldset id="button">
 	    <input type="submit" name="_eventId_back" value="Back" />
 	    <input type="submit" name="_eventId_save" value="Save" />
-	    <input type="submit" name="_eventId_cancel" value="Cancel" />
+	    <input type="submit" name="_eventId_cancel" value="Cancel"  style="float:right"/>
 	</fieldset>
 </form:form>
 </body>

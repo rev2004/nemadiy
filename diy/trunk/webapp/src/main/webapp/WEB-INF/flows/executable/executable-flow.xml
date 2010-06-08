@@ -16,7 +16,7 @@
 		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
 		<set name="flowScope.executable" value="executableService.setExecutable(executableBundleInput)" />
 		<evaluate
-			expression="executableService.setTemplate(executableTemplateInput,executableBundleInput.type,flowScope)" />
+			expression="executableService.setTemplate(executableTemplateInput,executable.type,flowScope)" />
 	</on-start>
 
 
@@ -41,9 +41,9 @@
 	</view-state>
 
 	<view-state id="argumentsJava" model="javaTemplate">
-		<on-entry>
+		<on-render>
 			<set name="flashScope.niceParams" value="executableService.getNiceParams(javaTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
-		</on-entry>
+		</on-render>
 
         <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="upload" />
@@ -55,9 +55,9 @@
 	</view-state>
 
 	<view-state id="argumentsMatlab" model="matlabTemplate">
-		<on-entry>
+		<on-render>
 			<set name="flashScope.niceParams" value="executableService.getNiceParams(matlabTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
-		</on-entry>
+		</on-render>
         <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
@@ -69,8 +69,7 @@
 	<view-state id="review">
         <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="arguments" />
-		<transition on="save" to="success" >
-		</transition>
+		<transition on="save" to="success"/>
 	</view-state>
 
 	<action-state id="arguments">
