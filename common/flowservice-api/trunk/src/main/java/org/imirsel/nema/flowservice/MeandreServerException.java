@@ -6,7 +6,7 @@ package org.imirsel.nema.flowservice;
  * operation.
  * 
  * @author shirk
- * @since 1.0
+ * @since 0.4.0
  */
 public class MeandreServerException extends Exception {
 
