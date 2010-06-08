@@ -72,8 +72,8 @@
 		<evaluate expression="taskFlowModel.executableMap.clear()" />
 		<evaluate expression="taskFlowModel.templateMap.clear()" />
 		<set name="flowScope.flow" value="flowService.getFlow(id)" />
-		<set name="flowScope.datatypeMaps" value="tasksService.setDatatypeMaps(flow)" />
-		<set name="flowScope.componentList" value="tasksService.setComponentList(datatypeMaps)" />
+		<set name="flowScope.datatypeMaps" value="tasksService.loadDatatypeMaps(flow)" />
+		<set name="flowScope.componentList" value="tasksService.extractComponentList(datatypeMaps)" />
 		<set name="flowScope.taskFlowModel.name" value="flow.name" >
 		
 			<attribute name="name" value="lastStep" />

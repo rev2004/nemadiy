@@ -28,19 +28,19 @@ ${messageContext.allMessages}
   <div class="form_job">
     <form:form commandName="taskFlowModel" id="myForm">
       <fieldset id="pt1">
-        <label>Enter the Job Name:</label>
+        <label class="label">Enter the Job Name:</label>
         <form:input path="name" cssStyle="width:200px;"/>
       </fieldset>
       <fieldset id="pt1">
-        <label >Enter the Job Description:</label>
+        <label class="label">Enter the Job Description:</label>
         <form:input path="description" cssStyle="width:300px;"/>
       </fieldset>
       <c:forEach items="${componentList}" var="component" varStatus="status">
         <c:if test="${(!component.hidden)&&(not empty datatypeMaps[component])}">
           <fieldset id="${component.name}">
-          Component Name: ${component.name}
+          <label class="label" style="font:italic;">Component Name</label>: <label class="name">${component.name}</label>
           <br/>
-          <label>Description: ${component.description}</label>          
+          <label class="label">Description</label>: ${component.description}          
          <div style="margin-top: 5px">  <input type="submit" name="_eventId_edit"  onclick="setIdx(${status.index})" value="Edit Properties" /></div>
            
    

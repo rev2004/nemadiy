@@ -21,8 +21,8 @@
   <c:forEach items="${flowList}" var="flow">
   	<div style="display:none" id="flow${flow.id}">
 	  <fieldset style="padding-bottom:15px">
- 	  	<div><span style="font-weight:bold">Keywords:</span> ${flow.keyWords}</div>
-  		<div><span style="font-weight:bold">Description:</span> ${flow.description}</div>
+ 	  	<div><label class="label">Keywords:</label> ${flow.keyWords}</div>
+  		<div><label class="label">Description:</label> ${flow.description}</div>
   	  </fieldset>
   	</div>
   </c:forEach>

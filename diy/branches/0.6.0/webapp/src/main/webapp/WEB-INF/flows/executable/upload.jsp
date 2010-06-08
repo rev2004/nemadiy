@@ -58,36 +58,36 @@ function fixLabels(){
     </c:set>
         
     <fieldset style="${archiveNotSelectedStyle}">
-        <label id="executableTypeLabel">Specify the executable type:</label>
+        <label id="executableTypeLabel" class="label">Specify the executable type:</label>
         <form:select path="typeCode" onChange="updateLabels(this.options[this.value].value);" items="${executable.typeOptions}" itemLabel="name" itemValue="code" />
     </fieldset>
 
     <fieldset style="${archiveSelectedStyle}">
-        <label>Executable type:</label>
+        <label class="label">Executable type:</label>
         ${executable.typeName}
     </fieldset>
     
     <fieldset style="${archiveNotSelectedStyle}">
-        <label id="archiveLabel">Executable JAR or ZIP file containing JARs:</label>
+        <label id="archiveLabel" class="label">Executable JAR or ZIP file containing JARs:</label>
         <input type="file" name="uploadedFile" />
     </fieldset>
     
     <fieldset style="${archiveSelectedStyle}">
-        <label id="uploadedArchiveLabel">Chosen archive:</label>
+        <label id="uploadedArchiveLabel" class="label">Chosen archive:</label>
         ${executable.fileName}
         <input type="submit" name="_eventId_clearArchive" value="Clear Archive" />
     </fieldset>
 
     <fieldset>
-        <label id="executableNameLabel" >Main class including the package:</label>
+        <label id="executableNameLabel"  class="label">Main class including the package:</label>
         <form:input path="executableName" />
     </fieldset>
-    <fieldset id="preferredOsLabel">
-        <label>Operating system required to run the executable:</label>
+    <fieldset id="preferredOsLabel" >
+        <label class="label">Operating system required to run the executable:</label>
         <form:select path="preferredOs" items="${supportedOs}" itemLabel="name" itemValue="value" />
     </fieldset>
     <fieldset>
-        <label id="groupLabel">Select the group:</label>
+        <label id="groupLabel" class="label">Select the group:</label>
         <form:select path="group" items="${supportedGroups}" itemLabel="name" itemValue="value" />
     </fieldset>        
     <fieldset id="button">

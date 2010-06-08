@@ -184,34 +184,7 @@ public class TasksServiceImpl {
 
 	}
 
-	/**
-	 * @param flow
-	 *            template flow
-	 * @return parameter map for the template flow fill the paramater map from
-	 *         the template flow's default value.
-	 */
-	// public Map<String, String> fillDefaultParameter(Flow flow) {
-	//
-	// Map<String, String> parameters = new HashMap<String, String>();
-	// List<Component> componentList = flowService
-	// .getComponents(flow.getUri());
-	// Collections.sort(componentList);
-	// logger.info("componentList: " + componentList.size());
-	// for (int i = 0; i < componentList.size(); i++) {
-	// Component component = componentList.get(i);
-	// Map<String, Property> m = flowService.getComponentPropertyDataType(
-	// component, flow.getUri());
-	// for (Entry<String, Property> entry : m.entrySet()) {
-	// parameters.put(getName(component.getInstanceUri(), entry
-	// .getKey()), entry.getValue().getDefaultValue()
-	// .toString());
-	// }
-	// }
-	// logger.debug("done populating default parameters now.");
-	//
-	// return parameters;
-	// }
-
+	
 	/**
 	 * Retrieve the Executable bundle with resource path {@link path}, and
 	 * populated the extra fields for UploadedExecutableBundle
@@ -403,7 +376,7 @@ public class TasksServiceImpl {
 	 * @param datatypeMaps
 	 * @return
 	 */
-	public List<Component> setComponentList(
+	public List<Component> extractComponentList(
 			Map<Component, Map<String, Property>> datatypeMaps) {
 		List<Component> list = new ArrayList<Component>(datatypeMaps.keySet());
 		Collections.sort(list);
@@ -416,9 +389,9 @@ public class TasksServiceImpl {
 	 * @param flow
 	 * @return
 	 */
-	public Map<Component, Map<String, Property>> setDatatypeMaps(Flow flow) {
+	public Map<Component, Map<String, Property>> loadDatatypeMaps(Flow flow) {
 
-		Map<Component, Map<String, Property>> datatypeMaps = new TreeMap<Component, Map<String, Property>>();
+		Map<Component, Map<String, Property>> datatypeMaps = new HashMap<Component, Map<String, Property>>();
 		List<Component> componentList = flowService
 				.getComponents(flow.getUri());
 		logger.info("componentList: " + componentList.size());
