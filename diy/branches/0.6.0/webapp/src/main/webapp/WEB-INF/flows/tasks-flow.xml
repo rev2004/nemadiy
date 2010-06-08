@@ -139,4 +139,7 @@
 	</decision-state>
 
 	<end-state id="jobdetail" view="externalRedirect:contextRelative:/get/JobManager.jobDetail?id=#{flowScope.job.id}" />
+	<on-end>
+		<evaluate expression="tasksService.clearBundles(taskFlowModel.executableMap)" />
+	</on-end>
 </flow>
