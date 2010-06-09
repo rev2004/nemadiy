@@ -68,6 +68,13 @@ public abstract class PageItem {
      * @return HTML head tag data.
      */
     public abstract String getHeadData();
+    
+    /**
+     * Returns static declarations to add to the head tag of the page, i.e.
+     * importing required scripts etc.
+     * @return Tags to add to the HTML head tag.
+     */
+    public abstract String getHeadStaticDeclarations();
 
     /**
      * Returns data to add to the body tag of the page.

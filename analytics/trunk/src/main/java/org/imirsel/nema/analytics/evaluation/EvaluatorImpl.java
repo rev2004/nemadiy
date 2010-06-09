@@ -84,7 +84,10 @@ public abstract class EvaluatorImpl implements Evaluator {
 	}
 
     public NemaEvaluationResultSet getEmptyEvaluationResultSet(){
-    	return new NemaEvaluationResultSet(dataset, task, trainingSets, testSets, getOverallEvalMetricsKeys(), getFoldEvalMetricsKeys(), getTrackEvalMetricKeys());
+    	if(trackIDToGT == null){
+    		getLogger().warning("Ground-truth was not set before result set was created. Ground-truth will not be available in the results Object!");
+    	}
+    	return new NemaEvaluationResultSet(dataset, task, trainingSets, testSets, getOverallEvalMetricsKeys(), getFoldEvalMetricsKeys(), getTrackEvalMetricKeys(), trackIDToGT);
     }
 	
 	public List<String> getOverallEvalMetricsKeys() {

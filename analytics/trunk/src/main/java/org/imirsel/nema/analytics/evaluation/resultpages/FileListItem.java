@@ -40,6 +40,10 @@ public class FileListItem extends PageItem{
         this.paths.add(path);
     }
 
+    public String getHeadStaticDeclarations(){
+    	return "";
+    }
+    
     @Override
     public String getHeadData(){
         return "";

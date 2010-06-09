@@ -31,7 +31,11 @@ public class ImageItem extends PageItem{
     public void setImagePath(String imagePath){
         this.imagePath = imagePath;
     }
-
+    
+    public String getHeadStaticDeclarations(){
+    	return "";
+    }
+    
     @Override
     public String getHeadData(){
         return "";

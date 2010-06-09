@@ -13,16 +13,19 @@ import org.imirsel.nema.analytics.evaluation.WriteCsvResultFiles;
 import org.imirsel.nema.analytics.evaluation.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisFunctionTimestepPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
 import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTrackList;
 
 public class MelodyResultRenderer extends ResultRendererImpl {
 
 	public static final String MELODY_PLOT_EXT = ".melody.png";
+	public static final double TARGET_PLOT_RESOLUTION = 0.05;
 	
 	public MelodyResultRenderer() {
 		super();
@@ -37,19 +40,19 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
 
-		/* Plot melody transcription against GT for each track result for each system */
-		getLogger().info("Plotting transcriptions...");
-		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
-		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
-			String jobId = it.next();
-			File sysDir = jobIDToResultDir.get(jobId);
-		
-			/* Get results to plot */
-			Map<NemaTrackList, List<NemaData>> sysResults = results.getPerTrackEvaluationAndResults(jobId);
-			File[] plotFiles = plotTranscriptionForJob(jobId, sysResults, sysDir);
-			
-			jobIDToResultPlotFileList.put(jobId, plotFiles);
-		}
+//		/* Plot melody transcription against GT for each track result for each system */
+//		getLogger().info("Plotting transcriptions...");
+//		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
+//		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
+//			String jobId = it.next();
+//			File sysDir = jobIDToResultDir.get(jobId);
+//		
+//			/* Get results to plot */
+//			Map<NemaTrackList, List<NemaData>> sysResults = results.getPerTrackEvaluationAndResults(jobId);
+//			File[] plotFiles = plotTranscriptionForJob(jobId, sysResults, sysDir);
+//			
+//			jobIDToResultPlotFileList.put(jobId, plotFiles);
+//		}
 
 		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");
@@ -67,8 +70,11 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 		/* Write result HTML pages */
 		getLogger().info("Creating result HTML files...");
 		writeResultHtmlPages(results,
-				jobIDToResultPlotFileList, summaryCsv, jobIDToPerTrackCSV,
+				/*jobIDToResultPlotFileList, */summaryCsv, jobIDToPerTrackCSV,
 				jobIDToTgz, outputDir);
+		
+		getLogger().info("Done.");
+		
 	}
 
 
@@ -83,7 +89,7 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 	 * @param outputDir                 directory to write the HTML pages to.
 	 */
 	private void writeResultHtmlPages(NemaEvaluationResultSet results,
-			Map<String, File[]> jobIDToResultPlotFileList, File summaryCsv,
+			/*Map<String, File[]> jobIDToResultPlotFileList, */File summaryCsv,
 			Map<String, File> jobIDToPerTrackCSV, Map<String, File> jobIDToTgz, File outputDir) {
 		String jobId;
 		Map<NemaTrackList,List<NemaData>> sysResults;
@@ -133,15 +139,23 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));
 
-				/* Add list of plots */
-				List<String> plotPathList = new ArrayList<String>(numJobs);
-				File[] plotPaths = jobIDToResultPlotFileList.get(jobId);
-				for (int i = 0; i < plotPaths.length; i++) {
-					plotPathList.add(IOUtil.makeRelative(plotPaths[i],
-							outputDir));
+				/* Plot melody transcription against GT for each track result for each system */
+				PageItem[] plots = plotTranscriptionForJob(jobId, results);
+				for (int i = 0; i < plots.length; i++) {
+					items.add(plots[i]);
 				}
-				items.add(new FileListItem("plots", "Per track result plots",
-						plotPathList));
+				
+//				Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
+//					jobIDToResultPlotFileList.put(jobId, plotFiles);
+//				
+//				List<String> plotPathList = new ArrayList<String>(numJobs);
+//				File[] plotPaths = jobIDToResultPlotFileList.get(jobId);
+//				for (int i = 0; i < plotPaths.length; i++) {
+//					plotPathList.add(IOUtil.makeRelative(plotPaths[i],
+//							outputDir));
+//				}
+//				items.add(new FileListItem("plots", "Per track result plots",
+//						plotPathList));
 
 				aPage = new Page(results.getJobName(jobId) + "_results", results.getJobName(jobId),
 						items, true);
@@ -188,29 +202,66 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 	/**
 	 * Plots the melody transcriptions for each job, for each file
 	 * 
-	 * @param jobId    the jobId we wish to plot results for
-	 * @param results  a map of fold to the transcriptions to plot
-	 * @param sysDir   directory to store plots in
-	 * @return         a file array containing all the plots
+	 * @param jobId    the jobId we wish to plot results for.
+	 * @param results  The results Object containing the data to plot.
+	 * @param sysDir   directory to store plots in.
+	 * @return         an array of page items that will produce the plots.
 	 */
-	private File[] plotTranscriptionForJob(String jobId,
-			Map<NemaTrackList, List<NemaData>> results, File sysDir) {
-		NemaData result;
+	private PageItem[] plotTranscriptionForJob(String jobId,
+			NemaEvaluationResultSet results) {
+		NemaData result, groundtruth;
 
 		/* Plot each result */
-		List<File> plotFiles = new ArrayList<File>();
+		Map<NemaTrackList, List<NemaData>> job_results = results.getPerTrackEvaluationAndResults(jobId);
+		List<PageItem> plotItems = new ArrayList<PageItem>();
 		
-		for (Iterator<NemaTrackList> foldIt = results.keySet().iterator(); foldIt.hasNext();){
+		for (Iterator<NemaTrackList> foldIt = job_results.keySet().iterator(); foldIt.hasNext();){
 			NemaTrackList testSet = foldIt.next();
-			for (Iterator<NemaData> iterator = results.get(testSet).iterator(); iterator
+			for (Iterator<NemaData> iterator = job_results.get(testSet).iterator(); iterator
 					.hasNext();) {
 				result = iterator.next();
-				plotFiles.add(new File(sysDir.getAbsolutePath()
-						+ File.separator + "fold_" + testSet.getFoldNumber() + MELODY_PLOT_EXT));
+				groundtruth = results.getTrackIDToGT().get(result.getId());
+				
+				if(groundtruth == null){
+					getLogger().warning("No ground-truth found for '" + result.getId() + "' to be used in plotting");
+				}
+				
+//				File plotFile = new File(sysDir.getAbsolutePath()
+//						+ File.separator + "track_" + result.getId() + MELODY_PLOT_EXT);
+//				plotItems.add(plotFile);
 	
-				// TODO actually plot the result
+				double[][] rawData = result.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
+				double[][] rawGtData = groundtruth.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
+				
+				int tot = rawGtData.length;
+				
+				//setup time line for for X-axis
+				double startTimeSecs = 0.0;
+				double endTimeSecs = tot * NemaDataConstants.MELODY_TIME_INC;
+				
+				//setup data-series to plot
+				Map<String,double[][]> series = new HashMap<String, double[][]>(2);
+				series.put("Prediction", rawData);
+				series.put("Ground-truth", rawGtData);
+				
+				ProtovisFunctionTimestepPlotItem plot = new ProtovisFunctionTimestepPlotItem(
+						//plotname
+						results.getJobName(jobId) + "_" + result.getId(), 
+						//plot caption
+						results.getJobName(jobId) + ": Melody transcription for track " + result.getId(), 
+						//start time for x axis
+						startTimeSecs, 
+						//end time for x axis
+						endTimeSecs, 
+						//current resolution of data
+						NemaDataConstants.MELODY_TIME_INC,
+						//resolution to downsample to for plotting (too many values and current plot grinds to a halt)
+						TARGET_PLOT_RESOLUTION,
+						//series to plot
+						series);
+				plotItems.add(plot);
 			}
 		}
-		return plotFiles.toArray(new File[plotFiles.size()]);
+		return plotItems.toArray(new PageItem[plotItems.size()]);
 	}
 }
