@@ -135,13 +135,17 @@
 	</bean>
 	
 	<bean id="path1" class="org.imirsel.nema.webapp.mock.MockResourcePath" 
-		p:path="http://name.lis.uiuc.edu/path1" p:protocol="http"/>
+		p:path="http://name.lis.uiuc.edu/path1" p:protocol="http"
+		p:workspace="workspace1"/>
 	<bean id="path2" class="org.imirsel.nema.webapp.mock.MockResourcePath" 
-		p:path="http://name.lis.uiuc.edu/path2" p:protocol="http"/>
+		p:path="http://name.lis.uiuc.edu/path2" p:protocol="http"
+		p:workspace="workspace1"/>
 	<bean id="path3" class="org.imirsel.nema.webapp.mock.MockResourcePath" 
-		p:path="http://name.lis.uiuc.edu/path3" p:protocol="jcr"/>
+		p:path="http://name.lis.uiuc.edu/path3" p:protocol="jcr"
+		p:workspace="workspace3"/>
 	<bean id="path4" class="org.imirsel.nema.webapp.mock.MockResourcePath" 
-		p:path="http://name.lis.uiuc.edu/path4"	p:protocol="jcr"/>
+		p:path="http://name.lis.uiuc.edu/path4"	p:protocol="jcr"
+		p:workspace="workspace4"/>
 	
 	<util:map id="executableMap">
 		<entry key-ref="component3" value-ref="path1"/>

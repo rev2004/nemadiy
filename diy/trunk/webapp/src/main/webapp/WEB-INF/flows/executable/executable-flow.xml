@@ -35,7 +35,7 @@
         <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-			<evaluate expression="executableService.setCommonTemplate(requestParameters,flowScope.plainTemplate)" />
+			<evaluate expression="executableService.prepareCommonTemplate(requestParameters,flowScope.plainTemplate)" />
 			<evaluate expression="executableService.generateExecutableBundle(flowScope.plainTemplate,executable)" />
 		</transition>
 	</view-state>
@@ -48,8 +48,8 @@
         <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-			<evaluate expression="executableService.setCommonTemplate(requestParameters,javaTemplate)" />
-			<evaluate expression="executableService.setJavaTemplate(requestParameters,executable,javaTemplate)" />
+			<evaluate expression="executableService.prepareCommonTemplate(requestParameters,javaTemplate)" />
+			<evaluate expression="executableService.prepareJavaTemplate(requestParameters,executable,javaTemplate)" />
 			<evaluate expression="executableService.generateExecutableBundle(javaTemplate,flowScope.executable)" />
 		</transition>
 	</view-state>
@@ -61,7 +61,7 @@
         <transition on="cancel" to="cancel" validate="false"/>
 		<transition on="back" to="upload" />
 		<transition on="review" to="review">
-			<evaluate expression="executableService.setCommonTemplate(requestParameters,matlabTemplate)" />
+			<evaluate expression="executableService.prepareCommonTemplate(requestParameters,matlabTemplate)" />
 			<evaluate expression="executableService.generateExecutableBundle(matlabTemplate,flowScope.executable)" />
 		</transition>
 	</view-state>

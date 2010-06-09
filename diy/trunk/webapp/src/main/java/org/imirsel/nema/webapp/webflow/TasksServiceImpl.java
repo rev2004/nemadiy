@@ -77,16 +77,11 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * change after migrate to datamap back tag upload ExecutableBundle to
-	 * content repository, remove the old executableBundle if there is one;
+	 * Send Executable bundle to content repository,
 	 * replace/add the new ResourcePath of executablebundle into the
 	 * executableMap;
 	 * 
 	 * @param component
-	 * @param parameters
-	 *            modified, the new path replace the old/is added
-	 * @param os
-	 * @param group
 	 * @param bundle
 	 * @param uuid
 	 * @param executableMap
@@ -258,6 +253,7 @@ public class TasksServiceImpl {
 	}
 
 	/**
+	 * This method is necessary for render tag
 	 * @return roles from the default user manager
 	 */
 	public String[] getRoles() {
@@ -274,7 +270,6 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * return Boolean (not boolean) value for webflow mapping.
 	 * 
 	 * @param datatypeMap
 	 * @return
@@ -293,7 +288,7 @@ public class TasksServiceImpl {
 	 * @param datatypeMaps
 	 * @param name
 	 * @param description
-	 * @return
+	 * @return the job object created with the parameters 
 	 * @throws MeandreServerException
 	 */
 	public Job run(Flow flow,
@@ -397,8 +392,11 @@ public class TasksServiceImpl {
 		logger.info("componentList: " + componentList.size());
 		for (int i = 0; i < componentList.size(); i++) {
 			Component component = componentList.get(i);
-			if (!component.isHidden()) datatypeMaps.put(component, flowService
-					.getComponentPropertyDataType(component, flow.getUri()));
+			if (!component.isHidden()) {
+				Map<String,Property> datatypeMap=new TreeMap<String,Property>( flowService			
+					.getComponentPropertyDataType(component, flow.getUri())); 
+				datatypeMaps.put(component,datatypeMap);
+			}
 
 		}
 		logger.debug("done populating default parameters now.");
@@ -470,8 +468,7 @@ public class TasksServiceImpl {
 			webDir = "http://" + req.getServerName() + ":"
 					+ req.getServerPort() + req.getContextPath() + subDir;
 
-			logger
-					.info("set the uploading path: " + physicalDir + ","
+			logger.info("set the uploading path: " + physicalDir + ","
 							+ webDir);
 			logger.debug("the context path:" + req.getContextPath()
 					+ ", and subDir:" + subDir);
@@ -544,7 +541,7 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Only for testing purpose
+	 * Only for testing purpose, should never be used in production
 	 * 
 	 * @param input
 	 * @return

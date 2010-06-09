@@ -10,7 +10,7 @@
 	<input name="type" type="java.lang.String" />
 	<input name="id" type="java.lang.Integer" />
 	<on-start>
-		<evaluate expression="tasksService.setUploadingPaths(externalContext,taskFlowModel.uuid)"/>
+		<evaluate expression="tasksService.setUploadingPaths(externalContext,taskFlowModel.uuid)" />
 	</on-start>
 
 	<view-state id="selectTask" model="taskFlowModel">
@@ -34,7 +34,7 @@
 	</view-state>
 
 	<view-state id="editSimpleComponentProperties">
-	<on-entry>
+		<on-entry>
 			<evaluate expression="tasksService.shownMap(datatypeMap)" result="viewScope.shownMap" />
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
@@ -55,7 +55,7 @@
 		</transition>
 		<transition on="remove" to="editRemoteServiceComponentProperties">
 			<evaluate expression="tasksService.removeExecutable(flowScope.component,taskFlowModel.executableMap,datatypeMap)" />
-			<evaluate expression="taskFlowModel.templateMap.remove(flowScope.component)"/>
+			<evaluate expression="taskFlowModel.templateMap.remove(flowScope.component)" />
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
@@ -74,8 +74,8 @@
 		<set name="flowScope.flow" value="flowService.getFlow(id)" />
 		<set name="flowScope.datatypeMaps" value="tasksService.loadDatatypeMaps(flow)" />
 		<set name="flowScope.componentList" value="tasksService.extractComponentList(datatypeMaps)" />
-		<set name="flowScope.taskFlowModel.name" value="flow.name" >
-		
+		<set name="flowScope.taskFlowModel.name" value="flow.name">
+
 			<attribute name="name" value="lastStep" />
 		</set>
 		<transition on="lastStep.success" to="displayFlowComponents" />
@@ -112,10 +112,7 @@
 		<evaluate expression="tasksService.run(flow,datatypeMaps,taskFlowModel.name,taskFlowModel.description)"
 			result="flowScope.job" />
 		<transition on="success" to="checkRunResult" />
-		<!--
-			<transition on-exception="org.imirsel.nema.flowservice.MeandreServerException" to="runError"/> <transition
-			on-exception="org.imirsel.nema.flowservice.ServiceException" to="runError"/>
-		-->
+
 	</action-state>
 
 	<view-state id="runError">
@@ -139,6 +136,13 @@
 	</decision-state>
 
 	<end-state id="jobdetail" view="externalRedirect:contextRelative:/get/JobManager.jobDetail?id=#{flowScope.job.id}" />
+	
+	<global-transitions>
+		<transition on-exception="org.imirsel.nema.flowservice.MeandreServerException" to="runError" />
+		<transition on-exception="org.imirsel.nema.flowservice.ServiceException" to="runError" />
+		<transition on-exception="org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException" to="runError" />	
+	</global-transitions>
+	
 	<on-end>
 		<evaluate expression="tasksService.clearBundles(taskFlowModel.executableMap)" />
 	</on-end>
