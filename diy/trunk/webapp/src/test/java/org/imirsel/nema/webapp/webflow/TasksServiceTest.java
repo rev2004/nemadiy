@@ -349,12 +349,12 @@ public class TasksServiceTest {
 		tasksService.setPhysicalDir(physicalDirPre);
 		assertEquals(webDirPre, tasksService.getWebDir());
 		assertEquals(physicalDirPre, tasksService.getPhysicalDir());
-		tasksService.setUploadingPaths(mockExternalContext, uuid);
+		tasksService.buildUploadPath(mockExternalContext, uuid);
 		assertEquals(webDirPre, tasksService.getWebDir());
 		assertEquals(physicalDirPre, tasksService.getPhysicalDir());
 
 		tasksService.setWebDir(null);
-		tasksService.setUploadingPaths(mockExternalContext, uuid);
+		tasksService.buildUploadPath(mockExternalContext, uuid);
 		assertEquals("http://mock.nema.lis.illinois.edu:1111/mock/Context"
 				+ subStr, tasksService.getWebDir());
 		assertEquals(root + uploadDirectory + "/"
@@ -436,7 +436,7 @@ public class TasksServiceTest {
 			parameterMap.put(entry.getKey(),entry.getValue());
 		}
 		Map<String,Property> data=new HashMap<String,Property>(datatypeMap1);
-		tasksService.updateProperties(parameterMap, data);
+		tasksService.updateDataMap(parameterMap, data);
 		assertEquals(parameters1.get("property1"), data.get("testField1").getValue());
 		assertEquals(parameters1.get("property2"), data.get("TestField2").getValue());
 		assertFalse(data.containsKey("property3"));
@@ -446,7 +446,7 @@ public class TasksServiceTest {
 			parameterMap.put(entry.getKey(),entry.getValue());
 		}
 		data=new HashMap<String,Property>(datatypeMap1);
-		tasksService.updateProperties(parameterMap, data);
+		tasksService.updateDataMap(parameterMap, data);
 		assertEquals(parameters2.get("property1"), data.get("testField1").getValue());
 		assertEquals(parameters1.get("property2"), data.get("TestField2").getValue());
 		assertFalse(data.containsKey("property3"));	
