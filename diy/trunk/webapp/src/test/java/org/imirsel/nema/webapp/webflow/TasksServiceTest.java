@@ -436,7 +436,7 @@ public class TasksServiceTest {
 			parameterMap.put(entry.getKey(),entry.getValue());
 		}
 		Map<String,Property> data=new HashMap<String,Property>(datatypeMap1);
-		tasksService.updateDataMap(parameterMap, data);
+		tasksService.updateProperties(parameterMap, data);
 		assertEquals(parameters1.get("property1"), data.get("testField1").getValue());
 		assertEquals(parameters1.get("property2"), data.get("TestField2").getValue());
 		assertFalse(data.containsKey("property3"));
@@ -446,7 +446,7 @@ public class TasksServiceTest {
 			parameterMap.put(entry.getKey(),entry.getValue());
 		}
 		data=new HashMap<String,Property>(datatypeMap1);
-		tasksService.updateDataMap(parameterMap, data);
+		tasksService.updateProperties(parameterMap, data);
 		assertEquals(parameters2.get("property1"), data.get("testField1").getValue());
 		assertEquals(parameters1.get("property2"), data.get("TestField2").getValue());
 		assertFalse(data.containsKey("property3"));	
