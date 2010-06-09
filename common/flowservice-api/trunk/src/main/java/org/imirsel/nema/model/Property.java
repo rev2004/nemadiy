@@ -66,9 +66,6 @@ public class Property implements Comparable<Property>, Serializable{
 		if(!(object instanceof Property)){
 			return false;
 		}
-		if(object == null){
-			return false;
-		}
 		Property property = (Property)object;
 		// name of the property cannot be null
 		if(property.name==null){
