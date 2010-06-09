@@ -54,7 +54,7 @@ public class NiceParams {
 	}
 
 	/**
-	 *  comparing according to the sequence field.
+	 *  Comparing according to the sequence field.
 	 *
 	 */
 	static class ParamComparator implements Comparator<Param> {

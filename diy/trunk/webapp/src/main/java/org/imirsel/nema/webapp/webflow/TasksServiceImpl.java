@@ -517,7 +517,7 @@ public class TasksServiceImpl {
     */
    public Map<String, Property> formatPropertiesForDisplay(
          Map<String, Property> datatypeMap) {
-      Map<String, Property> formattedProps = new HashMap<String, Property>();
+      Map<String, Property> formattedProps = new TreeMap<String, Property>();
       
       
       // For properties of remote components, remove properties that 
@@ -534,13 +534,19 @@ public class TasksServiceImpl {
       // Title case the property names.
       for (Map.Entry<String, Property> entry : datatypeMap.entrySet()) {
          String key = entry.getKey();
-         String newKey = null;
-         if (!key.isEmpty()) {
-            newKey = key.substring(0, 1).toUpperCase() + key.substring(1);
+         
+         assert !key.isEmpty():"key is empty";
+         StringBuilder newkey=new StringBuilder(key.substring(0, 1).toUpperCase());
+         for (int i=1;i<key.length();i++){
+        	 if (Character.isUpperCase(key.charAt(i))&&(!Character.isUpperCase(key.charAt(i-1)))&&(key.charAt(i-1)!=' ')){
+        		 newkey.append(" ");
+        	 }
+        	 newkey.append(key.charAt(i));
          }
          formattedProps.remove(key);
-         formattedProps.put(newKey, entry.getValue());
+         formattedProps.put(newkey.toString(), entry.getValue());
       }
+      
       
       return formattedProps;
    }
