@@ -154,9 +154,9 @@ public class ProtovisFunctionTimestepPlotItem extends PageItem{
 		out += "</h4>\n";
         out += 	"\t<div id=\"center\">\n" +
         		"\t\t<div id=\"fig\">\n" +
-        		"\t\t\t<div style=\"text-align:right;padding-right:20;\">\n" +
-        		"\t\t\t\t<input checked id=\"scale\" type=\"checkbox\" onchange=\"vis.render()\">\n" +
-        		"\t\t\t\t<label for=\"scale\">Scale to fit</label>\n" +
+        		"\t\t\t<div style=\"text-align:right;padding-right:20px;\">\n" +
+        		"\t\t\t\t<input checked id=\"scale_" + getName() + "\" type=\"checkbox\" onchange=\"vis.render()\">\n" +
+        		"\t\t\t\t<label for=\"scale_" + getName() + "\">Scale to fit</label>\n" +
         		"\t\t\t</div>\n" + 
         		"\t\t\t<script type=\"text/javascript+protovis\">\n";
         
@@ -236,7 +236,7 @@ public class ProtovisFunctionTimestepPlotItem extends PageItem{
 			out += i + "                Math.max(0, pv.search.index(" + seriesVar[s] + ", d1, function(d) d.x) - 1),\n";
 			out += i + "                pv.search.index(" + seriesVar[s] + ", d2, function(d) d.x) + 1);\n";
 			out += i + "        fx.domain(d1, d2);\n";
-			out += i + "        fy.domain(scale.checked ? [0, pv.max(dd, function(d) d.y)] : y.domain());\n";
+			out += i + "        fy.domain(document.getElementById(\"scale_" + getName() + "\").checked ? [0, pv.max(dd, function(d) d.y)] : y.domain());\n";
 			out += i + "        return dd;\n";
 			out += i + "      })\n";
 		}
