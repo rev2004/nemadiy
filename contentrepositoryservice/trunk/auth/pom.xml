@@ -5,12 +5,12 @@
   <parent>
     <artifactId>nema-contentrepository-service</artifactId>
     <groupId>org.imirsel</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.imirsel</groupId>
   <artifactId>nema-contentrepository-service-auth</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>nema-contentrepository-service-auth</name>
   
@@ -112,7 +112,7 @@
     <dependency>
     <groupId>org.imirsel</groupId>
     <artifactId>nema-contentrepository-service-core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${contentrepository-client.version}</version>
     <scope>compile</scope>
     </dependency>
         <dependency>

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.imirsel</groupId>
   <artifactId>nema-contentrepository-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>nema-contentrepository-service</name>
   <url>http://nema-dev.lis.illinois.edu/development/nema-contentrepositoy-service</url>
@@ -289,7 +289,7 @@
 <dependency>
 	<groupId>org.imirsel</groupId>
 	<artifactId>nema-flowservice-api</artifactId>
-	<version>0.7.0-SNAPSHOT</version>
+	<version>${flowservice.version}</version>
 	   	<exclusions>
         <exclusion>
           <groupId>org.hibernate</groupId>
@@ -326,6 +326,12 @@
     <module>client</module>
     <module>core</module>
   </modules>
+  
+  <properties>
+  	<flowservice.version>0.8.0-SNAPSHOT</flowservice.version>
+  	 <contentrepository-client.version>0.0.2-SNAPSHOT</contentrepository-client.version>
+  	 <executorservice.version>0.5.0-SNAPSHOT</executorservice.version>
+  </properties>
   
   <profiles>
 	<profile>
