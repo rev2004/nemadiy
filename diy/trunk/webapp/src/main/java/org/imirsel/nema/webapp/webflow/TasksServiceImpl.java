@@ -513,21 +513,23 @@ public class TasksServiceImpl {
     */
    public Map<String, Property> formatPropertiesForDisplay(
          Map<String, Property> datatypeMap) {
-      Map<String, Property> formattedProps = new TreeMap<String, Property>();
+      Map<String, Property> tmpProps = new HashMap<String, Property>(datatypeMap);
       
       // For properties of remote components, remove properties that 
       // should be hidden.
-      if (areFromRemoteComponent(datatypeMap)) {
-         formattedProps.putAll(datatypeMap);
-         formattedProps.remove(REMOTE_COMPONENT);
-         formattedProps.remove(CREDENTIALS);
-         formattedProps.remove(EXECUTABLE_URL);
-         formattedProps.remove(GROUP);
-         formattedProps.remove(OS);
+      if (isRemoteServiceComponent(datatypeMap)) {
+        
+         tmpProps.remove(REMOTE_COMPONENT);
+         tmpProps.remove(CREDENTIALS);
+         tmpProps.remove(EXECUTABLE_URL);
+         tmpProps.remove(GROUP);
+         tmpProps.remove(OS);
       }
       
+      Map<String, Property> formattedProps = new TreeMap<String, Property>();
+      
       // Title case the property names.
-      for (Map.Entry<String, Property> entry : datatypeMap.entrySet()) {
+      for (Map.Entry<String, Property> entry : tmpProps.entrySet()) {
          String key = entry.getKey();
          
          assert !key.isEmpty():"key is empty";
@@ -541,11 +543,8 @@ public class TasksServiceImpl {
         	 }
         	 newkey.append(key.charAt(i));
          }
-         formattedProps.remove(key);
          formattedProps.put(newkey.toString(), entry.getValue());
       }
-      
-      
       return formattedProps;
    }
 

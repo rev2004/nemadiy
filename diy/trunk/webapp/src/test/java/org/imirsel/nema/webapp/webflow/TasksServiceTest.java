@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -284,16 +285,15 @@ public class TasksServiceTest {
 	@Test
 	public final void testLoadDatatypeMaps() {
 
+		
+		final Map<Component,List<Property> > fullMaps=new HashMap<Component,List<Property>>();
+		for (Component component:datatypeMaps.keySet()){
+			fullMaps.put(component, new ArrayList<Property>(datatypeMaps.get(component).values()));
+		}
 		context.checking(new Expectations() {
 			{
-				oneOf(flowService).getComponents(flow1.getUri());
-				will(returnValue(componentList));
-				oneOf(flowService).getComponentPropertyDataType(
-						component1, flow1.getUri());
-				will(returnValue(datatypeMaps.get(component1)));
-				oneOf(flowService).getComponentPropertyDataType(
-						component2, flow1.getUri());
-				will(returnValue(datatypeMaps.get(component2)));
+				oneOf(flowService).getAllComponentsAndPropertyDataTypes(flow1.getUri());
+				will(returnValue(fullMaps));
 				
 			}
 		});
@@ -322,12 +322,9 @@ public class TasksServiceTest {
 	@Resource
 	MockExternalContext mockExternalContext;
 
-	/**
-	 * TODO
-	 * this test is not well writen, it is going to fail in windows due to the jmock setting
-	 */
+
 	@Test
-	public final void testSetUploadingPaths() {
+	public final void testBuildUploadPath() {
 		final String subStr = uploadDirectory + "/"
 				+ mockHttpServletRequest.getRemoteUser() + "/" + uuid + "/";
 
@@ -364,48 +361,32 @@ public class TasksServiceTest {
 	}
 
 	@Test
-	public final void testShownMap() {
+	public final void testFormatPropertiesForDisplay() {
 		Map<String, Property> map1 = new HashMap<String, Property>(datatypeMap1);
 		map1.put(tasksService.REMOTE_COMPONENT, propertyFalse);
 		Map<String, Property> shown = tasksService.formatPropertiesForDisplay(map1);
-		String[] niceKeys = { "TestField1", "TestField2",
-				tasksService.REMOTE_COMPONENT };
+		String[] niceKeys = { "Test Field1", "Test Field2",
+				"_remote Dynamic Component" };
 		Set<String> niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys));
 		assertEquals(niceKeysSet, shown.keySet());
 
 		map1 = new HashMap<String, Property>(datatypeMap2);
-		map1.put(tasksService.REMOTE_COMPONENT, propertyFalse);
 		shown = tasksService.formatPropertiesForDisplay(map1);
-		String[] niceKeys2 = { "TestField1", "TestField2", "TestField3",
-				"ProfileName", "_os", "_group", tasksService.REMOTE_COMPONENT,"_credentials" };
+		String[] niceKeys2 = { "Test Field1", "Test Field2", "Test Field THREE",
+				"Profile Name", "_os", "_group", "_remote Dynamic Component","_credentials" };
 		niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys2));
 		assertEquals(niceKeysSet, shown.keySet());
 
-	}
-
-	@Test
-	public final void testShownRemoteMap() {
-		Map<String, Property> map1 = new HashMap<String, Property>(datatypeMap1);
-		map1.put(tasksService.REMOTE_COMPONENT, propertyFalse);
-		map1.put(tasksService.CREDENTIALS, null);
-		map1.put(tasksService.EXECUTABLE_URL, null);
-		map1.put(tasksService.GROUP, null);
-		map1.put(tasksService.OS, null);
-		Map<String, Property> shown = tasksService.formatPropertiesForDisplay(map1);
-		String[] niceKeys = { "TestField1", "TestField2" };
-		Set<String> niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys));
-		assertEquals(niceKeysSet, shown.keySet());
-
+	
 		map1 = new HashMap<String, Property>(datatypeMap2);
-		map1.put(tasksService.REMOTE_COMPONENT, propertyFalse);
-		map1.put(tasksService.CREDENTIALS, null);
-		map1.put(tasksService.EXECUTABLE_URL, null);
-		map1.put(tasksService.GROUP, null);
-
-		shown = tasksService.formatPropertiesForDisplay(map1);
-		String[] niceKeys2 = { "TestField1", "TestField2", "TestField3" };
-		niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys2));
+		map1.put(tasksService.REMOTE_COMPONENT, propertyTrue);
+		
+		 shown = tasksService.formatPropertiesForDisplay(map1);
+		String[] niceKeys3 = { "Test Field1", "Test Field2" ,"Test Field THREE"};
+		 niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys3));
 		assertEquals(niceKeysSet, shown.keySet());
+
+		
 
 	}
 
@@ -437,9 +418,9 @@ public class TasksServiceTest {
 		}
 		Map<String,Property> data=new HashMap<String,Property>(datatypeMap1);
 		tasksService.updateDataMap(parameterMap, data);
-		assertEquals(parameters1.get("property1"), data.get("testField1").getValue());
-		assertEquals(parameters1.get("property2"), data.get("TestField2").getValue());
-		assertFalse(data.containsKey("property3"));
+		assertEquals(parameters1.get("testField1"), data.get("testField1").getValue());
+		assertEquals(parameters1.get("TestField2"), data.get("TestField2").getValue());
+		assertFalse(data.containsKey("testFieldTHREE"));
 		
 		parameterMap=new MockParameterMap();
 		for (Map.Entry<String,String> entry:parameters2.entrySet()){
@@ -447,9 +428,9 @@ public class TasksServiceTest {
 		}
 		data=new HashMap<String,Property>(datatypeMap1);
 		tasksService.updateDataMap(parameterMap, data);
-		assertEquals(parameters2.get("property1"), data.get("testField1").getValue());
-		assertEquals(parameters1.get("property2"), data.get("TestField2").getValue());
-		assertFalse(data.containsKey("property3"));	
+		assertEquals(parameters2.get("testField1"), data.get("testField1").getValue());
+		assertEquals(parameters1.get("TestField2"), data.get("TestField2").getValue());
+		assertFalse(data.containsKey("testFieldTHREE"));	
 		
 		
 	}
