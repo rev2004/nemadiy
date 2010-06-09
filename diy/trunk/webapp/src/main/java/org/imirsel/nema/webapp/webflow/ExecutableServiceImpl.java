@@ -106,6 +106,11 @@ public class ExecutableServiceImpl {
 		return new NiceParams(params);
 	}
 
+	/**
+	 * Prepare the executable bundle with the template
+	 * @param template
+	 * @param executable modified in the method
+	 */
 	public void generateExecutableBundle(
 			VanillaPredefinedCommandTemplate template,
 			UploadedExecutableBundle executable) {
@@ -134,7 +139,7 @@ public class ExecutableServiceImpl {
 	 * @param executable
 	 * @param template
 	 */
-	public void setJavaTemplate(ParameterMap httpParam,
+	public void prepareJavaTemplate(ParameterMap httpParam,
 			UploadedExecutableBundle executable,
 			JavaPredefinedCommandTemplate template) {
 
@@ -155,6 +160,11 @@ public class ExecutableServiceImpl {
 		}
 	}
 
+	/**
+	 * 
+	 * @param a
+	 * @return a new UploadedExecutableBundle object if a is null
+	 */
 	public UploadedExecutableBundle setExecutable(UploadedExecutableBundle a) {
 		if (a == null)
 			return new UploadedExecutableBundle();
@@ -233,7 +243,7 @@ public class ExecutableServiceImpl {
 	 * @param template
 	 *            Template to be filled by the http request parameter value
 	 */
-	public void setCommonTemplate(ParameterMap httpParam,
+	public void prepareCommonTemplate(ParameterMap httpParam,
 			VanillaPredefinedCommandTemplate template) {
 		String[] keys = getArray(httpParam, "variable");
 		String[] values = getArray(httpParam, "value");

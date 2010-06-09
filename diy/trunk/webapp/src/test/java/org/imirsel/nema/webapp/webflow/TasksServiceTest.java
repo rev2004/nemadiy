@@ -137,7 +137,7 @@ public class TasksServiceTest {
 			Map<Component, ResourcePath> map = new HashMap<Component, ResourcePath>(executableMap);
 			Map<String,Property> data=new HashMap<String,Property>(datatypeMap2);
 			tasksService.addExecutable(component2,data,uploadBundle,uuid,map,messageContext);
-			assertEquals(path3.getProtocol()+"://"+path3.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
+			assertEquals(path3.getProtocol()+":"+ path3.getWorkspace() +"://"+path3.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
 			assertEquals("true", data.get(tasksService.REMOTE_COMPONENT).getValue());
 			assertEquals(uploadBundle.getPreferredOs(), data.get(tasksService.OS).getValue());
 			assertEquals(uploadBundle.getGroup(), data.get(tasksService.GROUP).getValue());
@@ -146,7 +146,7 @@ public class TasksServiceTest {
 			assertEquals(path3,map.get(component2));
 
 			tasksService.addExecutable(component3,data,uploadBundle,uuid,map,messageContext);
-			assertEquals(path4.getProtocol()+"://"+path4.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
+			assertEquals(path4.getProtocol()+":"+ path4.getWorkspace() +"://"+path4.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
 			assertEquals("true", data.get(tasksService.REMOTE_COMPONENT).getValue());
 			assertEquals(uploadBundle.getPreferredOs(), data.get(tasksService.OS).getValue());
 			assertEquals(uploadBundle.getGroup(), data.get(tasksService.GROUP).getValue());

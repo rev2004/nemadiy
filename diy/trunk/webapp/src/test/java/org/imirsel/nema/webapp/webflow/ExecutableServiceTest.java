@@ -47,7 +47,7 @@ public class ExecutableServiceTest {
 	}
 	
 	@Test
-	public final void testSetCommonTempl() {
+	public final void testPrepareCommonTempl() {
 		
 		MockParameterMap parameters=new MockParameterMap();
 		parameters.put("variable", keys);
@@ -56,7 +56,7 @@ public class ExecutableServiceTest {
 		parameters.put("output", files2);
 		parameters.put("other", keys);
 		VanillaPredefinedCommandTemplate template=new DiyJavaTemplate();
-		service.setCommonTemplate(parameters, template);
+		service.prepareCommonTemplate(parameters, template);
 		
 		Map<String,String> maps=new HashMap<String,String>();
 		maps.put("a", "1"); 
@@ -71,9 +71,10 @@ public class ExecutableServiceTest {
 		assertEquals(Arrays.asList(files2),nice.getOutputs());
 		assertEquals(Arrays.asList(keys),nice.getOthers());
 	}
+	
 	 UploadedExecutableBundle bundle=context.mock(UploadedExecutableBundle.class);
 	@Test
-	public final void testSetJavaTemplate(){
+	public final void testPrepareJavaTemplate(){
 		
 		final Path path1=new Path("path1");
 		final Path path2=new Path("path2");
@@ -94,7 +95,7 @@ public class ExecutableServiceTest {
 		maps.put("b", "2");
 		maps.put("c","3");
 	
-		service.setJavaTemplate(parameters, bundle,template);
+		service.prepareJavaTemplate(parameters, bundle,template);
 		assertEquals(paths, template.getClasspath());
 		Map<String,String> sys=new HashMap<String,String>();
 		for (SysProperty prop:template.getProperties()){

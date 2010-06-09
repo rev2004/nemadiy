@@ -127,23 +127,23 @@
 
 		<table id="table">
 			<tr>
-				<td><label class="label">Job Status:</label></td>
+				<td><label class="label">Job Status</label></td><td>:</td>
 				<td id="job.jobStatus">${job.jobStatus}</td>
 			</tr>
 			<tr>
-				<td><label class="label">Job Type:</label></td>
+				<td><label class="label">Job Type</label></td><td>:</td>
 				<td id="job.flowname">${job.flow.name}</td>
 			</tr>
 			<tr>
-				<td><label class="label">Submit Time:</label></td>
+				<td><label class="label">Submit Time</label></td><td>:</td>
 				<td id="job.submitTimestamp">${job.submitTimestamp}</td>
 			</tr>
 			<tr>
-				<td><label class="label">Start Time:</label></td>
+				<td><label class="label">Start Time</label></td><td>:</td>
 				<td id="job.startTimestamp">${job.startTimestamp}</td>
 			</tr>
 			<tr>
-				<td><label class="label">End Time:</label></td>
+				<td><label class="label">End Time</label></td><td>:</td>
 				<td id="job.endTimestamp">${job.endTimestamp}</td>
 			</tr>
 		</table>
@@ -186,6 +186,6 @@
 </form>
 
 
- <textarea id="console" cols='90' rows='100'>(getting console...)</textarea></div>
+ <textarea id="console" cols='89' rows='100'>(getting console...)</textarea></div>
 </body>
 
