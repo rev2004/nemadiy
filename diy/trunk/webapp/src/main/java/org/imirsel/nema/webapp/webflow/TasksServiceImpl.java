@@ -3,9 +3,11 @@ package org.imirsel.nema.webapp.webflow;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,6 +70,17 @@ public class TasksServiceImpl {
 	final static String OS = "_os";
 	final static String GROUP = "_group";
 
+	final static Set<String> HIDDEN_PROPERTIES=new HashSet<String>();
+	{
+		HIDDEN_PROPERTIES.add(REMOTE_COMPONENT);
+		HIDDEN_PROPERTIES.add(CREDENTIALS);
+		HIDDEN_PROPERTIES.add(EXECUTABLE_URL);
+		HIDDEN_PROPERTIES.add(OS);
+		HIDDEN_PROPERTIES.add(GROUP);				
+	}
+	
+	
+	
 	public String getPhysicalDir() {
 		return physicalDir;
 	}
@@ -598,4 +611,14 @@ public class TasksServiceImpl {
 		}// for loop
 	}
 
+	private List<Property> removeHiddenProperties(List<Property> properties){
+		List<Property> list=new ArrayList<Property>();
+		for (Property property:properties){
+			if (!HIDDEN_PROPERTIES.contains(property.getName())){
+				list.add(property);
+			}
+		}
+			
+		return list;
+	}
 }
