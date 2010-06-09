@@ -233,7 +233,7 @@ public interface FlowService {
     * @return The Map of the  {@link Component}s and list of {@link Property}
     * @since 0.8.0
     */
-   public Map<Component,List<Property>> getAllComponentsPropertyDataTypes(String flowUri);
+   public Map<Component,List<Property>> getAllComponentsAndPropertyDataTypes(String flowUri);
    
    
 
