@@ -467,7 +467,7 @@ public class TasksServiceImpl {
 	 * @param externalContext
 	 * @param httpServletRequest
 	 */
-	public void setUploadingPaths(ExternalContext externalContext, UUID uuid) {
+	public void buildUploadPath(ExternalContext externalContext, UUID uuid) {
 		if ((webDir == null) || (webDir.isEmpty())) {
 			ServletContext context = (ServletContext) externalContext
 					.getNativeContext();
@@ -484,10 +484,8 @@ public class TasksServiceImpl {
 			webDir = "http://" + req.getServerName() + ":"
 					+ req.getServerPort() + req.getContextPath() + subDir;
 
-			logger.info("set the uploading path: " + physicalDir + ","
+			logger.info("Built the upload path: " + physicalDir + ","
 							+ webDir);
-			logger.debug("the context path:" + req.getContextPath()
-					+ ", and subDir:" + subDir);
 		}
 	}
 
@@ -538,7 +536,10 @@ public class TasksServiceImpl {
          assert !key.isEmpty():"key is empty";
          StringBuilder newkey=new StringBuilder(key.substring(0, 1).toUpperCase());
          for (int i=1;i<key.length();i++){
-        	 if (Character.isUpperCase(key.charAt(i))&&(!Character.isUpperCase(key.charAt(i-1)))&&(key.charAt(i-1)!=' ')){
+          boolean currentCharIsUpper = Character.isUpperCase(key.charAt(i));
+          boolean previousCharIsNotUpper = !Character.isUpperCase(key.charAt(i-1));
+          boolean previousCharIsNotSpace = key.charAt(i-1)!=' ';
+        	 if (currentCharIsUpper && previousCharIsNotUpper && previousCharIsNotSpace){
         		 newkey.append(" ");
         	 }
         	 newkey.append(key.charAt(i));
