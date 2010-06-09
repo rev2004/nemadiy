@@ -367,7 +367,7 @@ public class TasksServiceTest {
 	public final void testShownMap() {
 		Map<String, Property> map1 = new HashMap<String, Property>(datatypeMap1);
 		map1.put(tasksService.REMOTE_COMPONENT, propertyFalse);
-		Map<String, Property> shown = tasksService.shownMap(map1);
+		Map<String, Property> shown = tasksService.formatPropertiesForDisplay(map1);
 		String[] niceKeys = { "TestField1", "TestField2",
 				tasksService.REMOTE_COMPONENT };
 		Set<String> niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys));
@@ -375,7 +375,7 @@ public class TasksServiceTest {
 
 		map1 = new HashMap<String, Property>(datatypeMap2);
 		map1.put(tasksService.REMOTE_COMPONENT, propertyFalse);
-		shown = tasksService.shownMap(map1);
+		shown = tasksService.formatPropertiesForDisplay(map1);
 		String[] niceKeys2 = { "TestField1", "TestField2", "TestField3",
 				"ProfileName", "_os", "_group", tasksService.REMOTE_COMPONENT,"_credentials" };
 		niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys2));
@@ -391,7 +391,7 @@ public class TasksServiceTest {
 		map1.put(tasksService.EXECUTABLE_URL, null);
 		map1.put(tasksService.GROUP, null);
 		map1.put(tasksService.OS, null);
-		Map<String, Property> shown = tasksService.shownRemoteMap(map1);
+		Map<String, Property> shown = tasksService.formatPropertiesForDisplay(map1);
 		String[] niceKeys = { "TestField1", "TestField2" };
 		Set<String> niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys));
 		assertEquals(niceKeysSet, shown.keySet());
@@ -402,7 +402,7 @@ public class TasksServiceTest {
 		map1.put(tasksService.EXECUTABLE_URL, null);
 		map1.put(tasksService.GROUP, null);
 
-		shown = tasksService.shownRemoteMap(map1);
+		shown = tasksService.formatPropertiesForDisplay(map1);
 		String[] niceKeys2 = { "TestField1", "TestField2", "TestField3" };
 		niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys2));
 		assertEquals(niceKeysSet, shown.keySet());
