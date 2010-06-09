@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.imirsel</groupId>
 		<artifactId>nema</artifactId>
-		<version>0.6.0-SNAPSHOT</version>
+		<version>0.7.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>org.imirsel</groupId>
@@ -444,7 +444,7 @@
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>imirsel-meandre-client</artifactId>
-			<version>0.7.0-SNAPSHOT</version>
+			<version>${imirsel-meandre-client.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -452,7 +452,7 @@
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-annotations</artifactId>
-			<version>0.6.0</version>
+			<version>${imirsel-nema-annotations.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -569,13 +569,13 @@
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-repositoryservice</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
+			<version>${repositoryservice.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-repositoryservice-api</artifactId>
-			<version>0.3.0-SNAPSHOT</version>
+			<version>${repositoryservice.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -615,7 +615,7 @@
 		<dependency>
 			<groupId>org.imirsel</groupId>
 			<artifactId>nema-contentrepository-service-client</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${contentrepository-client.version}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -851,6 +851,6 @@
 	</profiles>
 	<properties>
 		<spring.webflow.version>2.1.0.M2</spring.webflow.version>
-		<flowservice.version>0.7.0-SNAPSHOT</flowservice.version>
+		
 	</properties>
 </project>
