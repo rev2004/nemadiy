@@ -40,7 +40,7 @@ public class ExecutableServiceImpl {
 
 	
 	/**
-	 * set the input template into the webflow scope according to type
+	 * Set the input template into the webflow scope according to type
 	 * @param input
 	 * @param type
 	 * @param scope
@@ -68,7 +68,7 @@ public class ExecutableServiceImpl {
 	}
 
 	/**
-	 * return the correct template (one of the three) according to type 
+	 * Return the correct template (one of the three) according to type 
 	 * @param type
 	 * @param plainTemplate
 	 * @param javaTemplate
@@ -95,7 +95,7 @@ public class ExecutableServiceImpl {
 	}
 
 	/**
-	 * generate a {@link NiceParams} object from a list of
+	 * Generate a {@link NiceParams} object from a list of
 	 * {@org.imirsel.nema.model.Param}.
 	 * 
 	 * @param params
