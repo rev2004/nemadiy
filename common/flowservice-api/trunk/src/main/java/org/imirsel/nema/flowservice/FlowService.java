@@ -224,6 +224,18 @@ public interface FlowService {
     * @since 0.5.0
     */
    public Map<String, Property> getComponentPropertyDataType(Component component, String flowUri);
+   
+   
+   /**
+    * Return a map with the component and properties.
+    * 
+    * @param flowUri
+    * @return The Map of the  {@link Component}s and list of {@link Property}
+    * @since 0.8.0
+    */
+   public Map<Component,List<Property>> getAllComponentsPropertyDataTypes(String flowUri);
+   
+   
 
    /**
     * Return the {@link Component}s contained in the flow at the specified URI.
