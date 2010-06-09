@@ -10,7 +10,7 @@
 	<input name="type" type="java.lang.String" />
 	<input name="id" type="java.lang.Integer" />
 	<on-start>
-		<evaluate expression="tasksService.setUploadingPaths(externalContext,taskFlowModel.uuid)" />
+		<evaluate expression="tasksService.buildUploadPath(externalContext,taskFlowModel.uuid)" />
 	</on-start>
 
 	<view-state id="selectTask" model="taskFlowModel">
