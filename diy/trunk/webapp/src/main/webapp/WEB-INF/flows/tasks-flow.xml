@@ -35,7 +35,7 @@
 
 	<view-state id="editSimpleComponentProperties">
 		<on-entry>
-			<evaluate expression="tasksService.shownMap(datatypeMap)" result="viewScope.shownMap" />
+			<evaluate expression="tasksService.formatPropertiesForDisplay(datatypeMap)" result="viewScope.shownMap" />
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
 			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
@@ -45,7 +45,7 @@
 
 	<view-state id="editRemoteServiceComponentProperties">
 		<on-entry>
-			<evaluate expression="tasksService.shownRemoteMap(datatypeMap)" result="viewScope.shownMap" />
+			<evaluate expression="tasksService.formatPropertiesForDisplay(datatypeMap)" result="viewScope.shownMap" />
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
 			<evaluate expression="tasksService.updateDataMap(requestParameters,datatypeMap)" />
