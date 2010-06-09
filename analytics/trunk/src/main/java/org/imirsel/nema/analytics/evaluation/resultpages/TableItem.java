@@ -53,6 +53,14 @@ public class TableItem extends PageItem{
         this.dataRows = dataRows;
     }
 
+    public String getHeadStaticDeclarations(){
+    	String out = "<!-- Combo-handled YUI CSS files: --> \n";
+        out += "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://yui.yahooapis.com/combo?2.8.0r4/build/datatable/assets/skins/sam/datatable.css\"> \n";
+        out += "<!-- Combo-handled YUI JS files: --> \n";
+        out += "<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/combo?2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js&2.8.0r4/build/dragdrop/dragdrop-min.js&2.8.0r4/build/element/element-min.js&2.8.0r4/build/datasource/datasource-min.js&2.8.0r4/build/datatable/datatable-min.js\"></script>\n\n";
+        return out;
+    }
+    
     @Override
     public String getHeadData(){
         String out = "<script>\n";
@@ -120,7 +128,7 @@ public class TableItem extends PageItem{
         if (topLink){
             out += "<span class=\"toplink\"><a href=\"#top\">[top]</a></span>\n";
         }
-	out += "\t<br><br>\n";
+        out += "\t<br><br>\n";
         return out;
     }
 

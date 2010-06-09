@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -105,6 +106,14 @@ public class Page {
         rscFile = new File(directory.getAbsolutePath() + File.separator + "menu.css");
         CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/menu.css", rscFile);
 
+        rscFile = new File(directory.getAbsolutePath() + File.separator + "protovis-r3.2.js");
+        CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/protovis-r3.2.js", rscFile);
+        
+        //For javascript debugging use this script
+//        rscFile = new File(directory.getAbsolutePath() + File.separator + "protovis-d3.2.js");
+//        CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/util/resultpages/resources/protovis-d3.2.js", rscFile);
+
+        
 
         it = pages.iterator();
         idx = 0;
@@ -199,10 +208,24 @@ public class Page {
      * @return A string containing the HTML data.
      */
     public static String createPageHTML(String set_name, Page currPage, List<Page> pages, String[] pageFileNames){
-        String out = createHeader(set_name, currPage.getTitle());
+        //open header
+    	String out = createHeader(set_name, currPage.getTitle());
+
+        //add static declarations
+    	HashSet<Class> seen = new HashSet<Class>();
+        for (Iterator<PageItem> it = currPage.getItems().iterator(); it.hasNext();){
+        	PageItem item = it.next();
+        	if(!seen.contains(item.getClass())){
+        		out += item.getHeadStaticDeclarations();
+        		seen.add(item.getClass());
+        	}
+        }
+
+        //add data declarations
         for (Iterator<PageItem> it = currPage.getItems().iterator(); it.hasNext();){
             out += it.next().getHeadData();
         }
+        
         out += closeheader(set_name);
         out += createTabs(currPage, pages, pageFileNames);
         out += startContent();
@@ -238,11 +261,7 @@ public class Page {
         out += "</title>\n\n";
         out += "<LINK REL=StyleSheet HREF=\"menu.css\" TYPE=\"text/css\" >\n";
         out += "<LINK REL=StyleSheet HREF=\"tableblue.css\" TYPE=\"text/css\" >\n\n";
-        out += "<!-- Combo-handled YUI CSS files: --> \n";
-        out += "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://yui.yahooapis.com/combo?2.8.0r4/build/datatable/assets/skins/sam/datatable.css\"> \n";
-        out += "<!-- Combo-handled YUI JS files: --> \n";
-        out += "<script type=\"text/javascript\" src=\"http://yui.yahooapis.com/combo?2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js&2.8.0r4/build/dragdrop/dragdrop-min.js&2.8.0r4/build/element/element-min.js&2.8.0r4/build/datasource/datasource-min.js&2.8.0r4/build/datatable/datatable-min.js\"></script>\n\n";
-
+        
         return out;
     }
 

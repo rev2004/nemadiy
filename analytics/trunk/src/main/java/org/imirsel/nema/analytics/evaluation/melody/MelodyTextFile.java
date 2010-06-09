@@ -27,7 +27,6 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
 	public static final String WRITE_DELIMITER = "\t";
 	public static final DecimalFormat TIMESTAMP_DEC = new DecimalFormat("0.0000");
 	public static final DecimalFormat F0_DEC = new DecimalFormat("0.00");
-	private static final double TIMEINC = 0.01;		// MIREX-spec 10ms time-increment
 	public static final String TYPE_NAME = "Melody (single F0) text file";
 	
 	/**
@@ -95,14 +94,14 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
         
         /* Loop through original arbitrary time-stamped data */
         for (int i = 0; i < nrows; i++) {
-            index = (int)Math.round(melodyDataRaw[i][0]/TIMEINC);
+            index = (int)Math.round(melodyDataRaw[i][0]/NemaDataConstants.MELODY_TIME_INC);
             
             /* Case where the file's time-step is less than 10ms */
             if (index == oldindex) {
-                currDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*(double)index);
+                currDiff = Math.abs(melodyDataRaw[i][0] - NemaDataConstants.MELODY_TIME_INC*(double)index);
                 if (currDiff < minDiff) {	
                 	melodyInterpF0.set(index, new Double(melodyDataRaw[i][1]));
-                	melodyInterpTimeStamp.set(index, new Double(TIMEINC*(double)index));
+                	melodyInterpTimeStamp.set(index, new Double(NemaDataConstants.MELODY_TIME_INC*(double)index));
                     minDiff = currDiff;
                 }
             }
@@ -113,8 +112,8 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
          	 */
             else if (index == oldindex + 1) {
             	melodyInterpF0.add(new Double(melodyDataRaw[i][1]));
-            	melodyInterpTimeStamp.add(new Double(TIMEINC*(double)index));
-                minDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*(double)index);
+            	melodyInterpTimeStamp.add(new Double(NemaDataConstants.MELODY_TIME_INC*(double)index));
+                minDiff = Math.abs(melodyDataRaw[i][0] - NemaDataConstants.MELODY_TIME_INC*(double)index);
             }
             
             /* 
@@ -125,11 +124,11 @@ public class MelodyTextFile extends SingleTrackEvalFileTypeImpl {
                 int indDiff = index - oldindex;
                 for (int j = 0; j < indDiff-1; j++) {
                 	melodyInterpF0.add(melodyInterpF0.get(oldindex));
-                	melodyInterpTimeStamp.add(new Double(TIMEINC*(double)oldindex + (double)(j+1)*TIMEINC));
+                	melodyInterpTimeStamp.add(new Double(NemaDataConstants.MELODY_TIME_INC*(double)oldindex + (double)(j+1)*NemaDataConstants.MELODY_TIME_INC));
                 }
                 melodyInterpF0.add(new Double(melodyDataRaw[i][1]));
-                melodyInterpTimeStamp.add(new Double(TIMEINC*(double)index));
-                minDiff = Math.abs(melodyDataRaw[i][0] - TIMEINC*(double)index);
+                melodyInterpTimeStamp.add(new Double(NemaDataConstants.MELODY_TIME_INC*(double)index));
+                minDiff = Math.abs(melodyDataRaw[i][0] - NemaDataConstants.MELODY_TIME_INC*(double)index);
             }
             oldindex = index;                                
         }   
