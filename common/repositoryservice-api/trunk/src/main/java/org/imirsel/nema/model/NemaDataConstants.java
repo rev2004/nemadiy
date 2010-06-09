@@ -133,6 +133,7 @@ public class NemaDataConstants {
     public static final String MELODY_VOICING_RECALL = "Voicing Recall Rate";
     public static final String MELODY_VOICING_FALSE_ALARM = "Voicing False-Alarm Rate";
     public static final String MELODY_OVERALL_ACCURACY = "Overall Accuracy";
+    public static final double MELODY_TIME_INC = 0.01;		// MIREX-spec 10ms time-increment
     
     // Key Detection Evaluator Constants
     public static final String KEY_DETECTION_DATA = "The musical key (tonic/mode)";
@@ -153,7 +154,7 @@ public class NemaDataConstants {
     public static final String CHORD_LABEL_SEQUENCE = "Chord label sequence";
     public static final String CHORD_OVERLAP_RATIO = "Chord Overlap ratio";
     public static final String CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO = "Chord weighted average overlap ratio";
-    
+	
     // Structure Segmentation Evaluator Constants
     public static final String STRUCTURE_SEGMENTATION_DATA = "Onset, offset, and segment label data";
     public static final String STRUCTURE_SEGMENTATION_OVERSEGSCORE = "Normalised conditional entropy based over-segmentation score";
@@ -171,5 +172,4 @@ public class NemaDataConstants {
     public static final String STRUCTURE_SEGMENTATION_MEDCLAIM2TRUE = "Median distance from an annotated segment boundary to the closest found boundary";
     public static final String STRUCTURE_SEGMENTATION_MEDTRUE2CLAIM = "Median distance from a found segment boundary to the closest annotated one";
     
-
 }

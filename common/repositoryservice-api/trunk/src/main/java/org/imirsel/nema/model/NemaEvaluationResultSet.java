@@ -35,6 +35,7 @@ public class NemaEvaluationResultSet {
 	private Map<String,Map<NemaTrackList,NemaData>> jobIdToPerFoldEvaluation;
 	private Map<String,Map<NemaTrackList,List<NemaData>>> jobIdToPerTrackEvaluationAndResults;
 	
+	private Map<String,NemaData> trackIDToGT;
 	
 	/**
 	 * Constructor for test-only experiments. Accepts the NemaDataset, NemaTask 
@@ -50,16 +51,20 @@ public class NemaEvaluationResultSet {
 	 * to a fold of the experiment.
 	 * @param trackEvalMetricsAndResults A list of the evaluation metric and results 
 	 * keys that apply to every track in the experiment.
+	 * @param trackIDToGT A map of trackID to the ground-truth used to 
+	 * evaluate.
 	 */
 	public NemaEvaluationResultSet(NemaDataset dataset, NemaTask task,
 			List<NemaTrackList> testSetTrackLists, List<String> overallEvalMetrics,
-			List<String> foldEvalMetrics, List<String> trackEvalMetricsAndResults) {
+			List<String> foldEvalMetrics, List<String> trackEvalMetricsAndResults,
+			Map<String,NemaData> trackIDToGT) {
 		this.dataset = dataset;
 		this.task = task;
 		this.testSetTrackLists = testSetTrackLists;
 		this.overallEvalMetrics = overallEvalMetrics;
 		this.foldEvalMetrics = foldEvalMetrics;
 		this.trackEvalMetricsAndResults = trackEvalMetricsAndResults;
+		this.trackIDToGT = trackIDToGT;
 		
 		jobIdToJobName = new HashMap<String,String>();
 		jobIdToOverallEvaluation = new HashMap<String,NemaData>();
@@ -83,11 +88,14 @@ public class NemaEvaluationResultSet {
 	 * to a fold of the experiment.
 	 * @param trackEvalMetricsAndResults A list of the evaluation metric and results
 	 * keys that apply to every track in the experiment.
+	 * @param trackIDToGT A map of trackID to the ground-truth used to 
+	 * evaluate.
 	 */
 	public NemaEvaluationResultSet(NemaDataset dataset, NemaTask task,
 			List<NemaTrackList> trainingSetTrackLists,
 			List<NemaTrackList> testSetTrackLists, List<String> overallEvalMetrics,
-			List<String> foldEvalMetrics, List<String> trackEvalMetricsAndResults) {
+			List<String> foldEvalMetrics, List<String> trackEvalMetricsAndResults,
+			Map<String,NemaData> trackIDToGT) {
 		this.dataset = dataset;
 		this.task = task;
 		this.trainingSetTrackLists = trainingSetTrackLists;
@@ -95,6 +103,7 @@ public class NemaEvaluationResultSet {
 		this.overallEvalMetrics = overallEvalMetrics;
 		this.foldEvalMetrics = foldEvalMetrics;
 		this.trackEvalMetricsAndResults = trackEvalMetricsAndResults;
+		this.trackIDToGT = trackIDToGT;
 		
 		jobIdToJobName = new HashMap<String,String>();
 		jobIdToOverallEvaluation = new HashMap<String,NemaData>();
@@ -531,6 +540,24 @@ public class NemaEvaluationResultSet {
 	 */
 	public List<String> getTrackEvalMetricsAndResultsKeys() {
 		return trackEvalMetricsAndResults;
+	}
+
+	/**
+	 * Sets a String trackID to ground-truth NemaData Object map that was used to 
+	 * evaluate.
+	 * @param trackIDToGT String trackID to ground-truth NemaData map.
+	 */
+	public void setTrackIDToGT(Map<String,NemaData> trackIDToGT) {
+		this.trackIDToGT = trackIDToGT;
+	}
+
+	/**
+	 * Returns the String trackID to ground-truth NemaData Object map that was 
+	 * used to evaluate.
+	 * @return String trackID to ground-truth NemaData map.
+	 */
+	public Map<String,NemaData> getTrackIDToGT() {
+		return trackIDToGT;
 	}
 
 	
