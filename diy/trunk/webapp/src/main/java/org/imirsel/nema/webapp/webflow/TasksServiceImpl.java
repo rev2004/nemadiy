@@ -250,10 +250,8 @@ public class TasksServiceImpl {
 		return list;
 	}
 
-	// TODO this method is the same as the one in ComponentPropertyTag, might
-	// need some
-	// refaction to get rid of one
-	private String getName(String component, String propertyName) {
+
+	private String getFullyQualifiedPropertyName(String component, String propertyName) {
 		if (component == null) {
 			return propertyName;
 		}
@@ -318,7 +316,7 @@ public class TasksServiceImpl {
 			for (Entry<String, Property> entry : mapsEntry.getValue()
 					.entrySet()) {
 				paramMap.put(
-						getName(component.getInstanceUri(), entry.getValue().getName()),
+						getFullyQualifiedPropertyName(component.getInstanceUri(), entry.getValue().getName()),
 						entry.getValue().getValue());
 			}
 
@@ -517,7 +515,6 @@ public class TasksServiceImpl {
          Map<String, Property> datatypeMap) {
       Map<String, Property> formattedProps = new TreeMap<String, Property>();
       
-      
       // For properties of remote components, remove properties that 
       // should be hidden.
       if (areFromRemoteComponent(datatypeMap)) {
@@ -607,15 +604,5 @@ public class TasksServiceImpl {
 			
 		}// for loop
 	}
-
-	private List<Property> removeHiddenProperties(List<Property> properties){
-		List<Property> list=new ArrayList<Property>();
-		for (Property property:properties){
-			if (!HIDDEN_PROPERTIES.contains(property.getName())){
-				list.add(property);
-			}
-		}
-			
-		return list;
-	}
+	
 }
