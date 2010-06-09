@@ -504,66 +504,53 @@ public class TasksServiceImpl {
 		this.webDir = webDir;
 	}
 
-	/**
-	 * hide some properties for remote executable components that set in the
-	 * task/executable subflow capitalize the first letter of the key(name) of
-	 * the datatypeMap for display.
-	 * 
-	 * @param datatypeMap
-	 * @return the datatype map fields that should be shown
-	 */
-	public Map<String, Property> shownRemoteMap(
-			Map<String, Property> datatypeMap) {
-		Map<String, Property> shown = new HashMap<String, Property>();
-		shown.putAll(datatypeMap);
-		shown.remove(REMOTE_COMPONENT);
-		shown.remove(CREDENTIALS);
-		shown.remove(EXECUTABLE_URL);
-		shown.remove(GROUP);
-		shown.remove(OS);
-		shown = shownMap(shown);
-		return shown;
-	}
+   /**
+    * Hide some properties for remote executable components that set in the
+    * task/executable subflow. Capitalize the first letter of the key(name) of
+    * the datatypeMap for display.
+    * 
+    * @param datatypeMap
+    * @return the datatype map fields that should be shown
+    */
+   public Map<String, Property> formatPropertiesForDisplay(
+         Map<String, Property> datatypeMap) {
+      Map<String, Property> formattedProps = new HashMap<String, Property>();
+      
+      
+      // For properties of remote components, remove properties that 
+      // should be hidden.
+      if (areFromRemoteComponent(datatypeMap)) {
+         formattedProps.putAll(datatypeMap);
+         formattedProps.remove(REMOTE_COMPONENT);
+         formattedProps.remove(CREDENTIALS);
+         formattedProps.remove(EXECUTABLE_URL);
+         formattedProps.remove(GROUP);
+         formattedProps.remove(OS);
+      }
+      
+      // Title case the property names.
+      for (Map.Entry<String, Property> entry : datatypeMap.entrySet()) {
+         String key = entry.getKey();
+         String newKey = null;
+         if (!key.isEmpty()) {
+            newKey = key.substring(0, 1).toUpperCase() + key.substring(1);
+         }
+         formattedProps.remove(key);
+         formattedProps.put(newKey, entry.getValue());
+      }
+      
+      return formattedProps;
+   }
 
-	/**
-	 * capitalize the first letter of the key(name) of the datatypeMap for
-	 * display.
-	 * 
-	 * @param datatypeMap
-	 * @return
-	 */
-	public Map<String, Property> shownMap(Map<String, Property> datatypeMap) {
-		Map<String, Property> shown = new HashMap<String, Property>();
-		for (Map.Entry<String, Property> entry : datatypeMap.entrySet()) {
-			String key = entry.getKey();
-			String newKey = "no name";
-			if (!key.isEmpty()) {
-				newKey = key.substring(0, 1).toUpperCase() + key.substring(1);
-			}
-			shown.put(newKey, entry.getValue());
-		}
-		return shown;
-	}
-
-	public int test(RequestContext context) {
-		ServletContext servletContext = (ServletContext) context
-				.getExternalContext().getNativeContext();
-		String uploadDir = (servletContext).getRealPath("/") + "test";
-		logger.debug(uploadDir);
-		return 1;
-	}
-
-	/**
-	 * Only for testing purpose, should never be used in production
-	 * 
-	 * @param input
-	 * @return
-	 */
-	public int test(String input) {
-
-		logger.debug(input);
-		return 1;
-	}
+   private boolean areFromRemoteComponent(Map<String, Property> datatypeMap) {
+      for (Map.Entry<String, Property> entry : datatypeMap.entrySet()) {
+         String key = entry.getKey();
+         if(HIDDEN_PROPERTIES.contains(key)) {
+            return true;
+         }
+      }
+      return false;
+   }
 
 	/**
 	 * Update the dataMap with submitted data for one component
