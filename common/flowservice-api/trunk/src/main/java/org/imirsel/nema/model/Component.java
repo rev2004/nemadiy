@@ -65,9 +65,6 @@ public class Component implements Comparable<Component>, Serializable{
 	}
 	
 	public boolean equals(Object object){
-		if(object==null){
-			return false;
-		}
 		if(!(object instanceof Component)){
 			return false;
 		}
