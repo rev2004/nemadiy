@@ -67,32 +67,6 @@ public class ExecutableServiceImpl {
 		}
 	}
 
-	/**
-	 * Return the correct template (one of the three) according to type 
-	 * @param type
-	 * @param plainTemplate
-	 * @param javaTemplate
-	 * @param matlabTemplate
-	 * @return
-	 */
-	public VanillaPredefinedCommandTemplate selectTemplate(
-			ExecutableBundle.ExecutableType type,
-			VanillaPredefinedCommandTemplate plainTemplate,
-			JavaPredefinedCommandTemplate javaTemplate,
-			MatlabPredefinedCommandTemplate matlabTemplate) {
-		logger.debug("generate for output template "+type);
-		switch (type) {
-		case SHELL:
-		case C:
-			return plainTemplate;
-		case JAVA:
-			return javaTemplate;
-		case MATLAB:
-			return matlabTemplate;
-		default:
-			return null;
-		}
-	}
 
 	/**
 	 * Generate a {@link NiceParams} object from a list of
