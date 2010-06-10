@@ -82,7 +82,7 @@ public class KeyTextFile extends SingleTrackEvalFileTypeImpl {
 			throw new IllegalArgumentException("Track " + data.getId() + " should have a String[1][2] array for metadata" +
 					" type '" + NemaDataConstants.KEY_DETECTION_DATA + "', number of columns is wrong" ,e);
 		}
-		
+
 		/* Write out the file */
 		DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(theFile, WRITE_DELIMITER, keyDataStrArray);
 
