@@ -10,13 +10,13 @@
 	    	<div style="margin-bottom:5px;"><label class="label">Job Description:</label> ${taskFlowModel.description}</div>
 	    </fieldset>
 		<c:forEach var="component" items="${componentList}">
-		 <c:if test="${(!component.hidden)&&(not empty datatypeMaps[component])}">
+		 <c:if test="${(!component.hidden)&&(not empty componentMap[component])}">
 			<fieldset>
 				<table>
 					<thead>
 						<label class="name">${component.name}:</label>
 					</thead>
-					<c:forEach var="property" items="${datatypeMaps[component]}">
+					<c:forEach var="property" items="${componentMap[component]}">
 					<c:if test="${not fn:startsWith(property.key,'_') }">
 						<tr>
 							<td>
