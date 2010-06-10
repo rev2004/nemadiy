@@ -363,6 +363,7 @@ public class TasksServiceTest {
 		context.assertIsSatisfied();
 	}
 
+	@DirtiesContext
 	@Test
 	public final void testFormatPropertiesForDisplay() {
 		Map<String, Property> map1 = new HashMap<String, Property>(datatypeMap1);
@@ -393,6 +394,7 @@ public class TasksServiceTest {
 
 	}
 
+	@DirtiesContext
 	@Test
 	public final void testIsRemoteServiceComponent() {
 		Map<String, Property> map1 = new HashMap<String, Property>(datatypeMap1);
@@ -413,6 +415,7 @@ public class TasksServiceTest {
 	
 	//TODO no multipart file upload test yet.  
 	//Not sure how to test writing a file because not to sure how to get definite directory
+	@DirtiesContext
 	@Test
 	public final void testUpdateDataMap() {
 		MockParameterMap parameterMap=new MockParameterMap();

@@ -18,6 +18,7 @@ import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +36,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class JobControllerTest {
 
 	
-	Mockery context=new Mockery();
+	Mockery context=new JUnit4Mockery();
 	JobController jobController=new JobController();
 	final FlowService flowService=context.mock(FlowService.class);
 	static private Log logger=LogFactory.getLog(JobControllerTest.class);
