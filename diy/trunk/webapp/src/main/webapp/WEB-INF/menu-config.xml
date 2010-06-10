@@ -13,7 +13,7 @@
 		<!--  Add this back later when working... <Menu name="MirexMenu" title="mirexMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/get/task?id=10"/> -->
 		
 		
-		<Menu name="JobMenu" title="Jobs" roles="ROLE_ADMIN,ROLE_USER" width="60">
+		<Menu name="JobMenu" title="Jobs" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/JobManager.getUserJobs">
 		    <Item name="MyJobs" title="Job List" page="/get/JobManager.getUserJobs" width="120"/>
 		    <Item name="PrepareJob" title="Prepare New Job" page="/get/task" width="120"/>		    
             <Item name="MySubmissions" title="Mirex Submissions" page="/get/JobManager.getSubmissions" width="120"/>
