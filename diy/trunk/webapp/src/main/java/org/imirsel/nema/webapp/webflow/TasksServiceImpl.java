@@ -63,9 +63,8 @@ public class TasksServiceImpl {
 	private String physicalDir;
 	private String webDir;
 
-	/**
-	 * properties' name in the component datatype map
-	 */
+
+	// Component properties that should be hidden.
 	final static String REMOTE_COMPONENT = "_remoteDynamicComponent";
 	final static String CREDENTIALS = "_credentials";
 	final static String EXECUTABLE_URL = "profileName";
@@ -105,35 +104,30 @@ public class TasksServiceImpl {
 	 * @throws ContentRepositoryServiceException
 	 */
 	public void addExecutable(final Component component,
-			final Map<String, Property> datatypeMap,
+			final Map<String, Property> propertyMap,
 			final UploadedExecutableBundle bundle, final UUID uuid,
 			Map<Component, ResourcePath> executableMap,
 			MessageContext messageContext)
 			throws ContentRepositoryServiceException {
 
-		logger.debug("add executable url into parameter for "
-				+ bundle.getFileName());
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-		logger.debug("with credential " + credential.getUserID() + " string: "
-				+ new String(credential.getPassword()));
 		String credentialString = credential.getUserID() + ":"
 				+ new String(credential.getPassword());
-		datatypeMap.get(CREDENTIALS).setValue(credentialString);
-		datatypeMap.get(REMOTE_COMPONENT).setValue("true");
-		datatypeMap.get(OS).setValue(bundle.getPreferredOs());
-		datatypeMap.get(GROUP).setValue(bundle.getGroup());
+		propertyMap.get(CREDENTIALS).setValue(credentialString);
+		propertyMap.get(REMOTE_COMPONENT).setValue("true");
+		propertyMap.get(OS).setValue(bundle.getPreferredOs());
+		propertyMap.get(GROUP).setValue(bundle.getGroup());
 		deleteExecutableFromRepository(component, executableMap.get(component),
 				credential);
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
 				uuid.toString(), bundle);
 		executableMap.put(component, path);
 		String uri = path.getProtocol() +":"+ path.getWorkspace() +"://"+path.getPath();
-		datatypeMap.get(EXECUTABLE_URL).setValue(uri);
+		propertyMap.get(EXECUTABLE_URL).setValue(uri);
 		if (path != null) {
 			// MessageContext messageContext=requestContext.getMessageContext();
 			messageContext.addMessage(new MessageBuilder().info().defaultText(
 					"Executable profile was successfully saved.").build());
-			logger.debug("resource path is " + path.getPath());
 		} else {
 			throw new ContentRepositoryServiceException(
 
@@ -152,14 +146,14 @@ public class TasksServiceImpl {
 	 */
 	public void removeExecutable(Component component,
 			Map<Component, ResourcePath> executableMap,
-			Map<String, Property> datatypeMap)
+			Map<String, Property> propertyMap)
 			throws ContentRepositoryServiceException {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		if (executableMap.containsKey(component)) {
 			ResourcePath oldPath = executableMap.get(component);
 			deleteExecutableFromRepository(component, oldPath, credential);
 			executableMap.remove(component);
-			datatypeMap.get(EXECUTABLE_URL).setValue("");
+			propertyMap.get(EXECUTABLE_URL).setValue("");
 		}
 
 	}
@@ -204,7 +198,7 @@ public class TasksServiceImpl {
 	 * @return
 	 */
 	public UploadedExecutableBundle findBundle(ResourcePath path,
-			Map<String, Property> datatypeMap) {
+			Map<String, Property> propertyMap) {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		UploadedExecutableBundle bundle = null;
 		try {
@@ -214,8 +208,8 @@ public class TasksServiceImpl {
 				bundle = new UploadedExecutableBundle(oldBundle);
 				if (bundle == null)
 					bundle = new UploadedExecutableBundle();
-				bundle.setPreferredOs(datatypeMap.get(OS).getValue());
-				bundle.setGroup(datatypeMap.get(GROUP).getValue());
+				bundle.setPreferredOs(propertyMap.get(OS).getValue());
+				bundle.setGroup(propertyMap.get(GROUP).getValue());
 			}
 		} catch (ContentRepositoryServiceException e) {
 			logger.error(e, e);
@@ -283,14 +277,14 @@ public class TasksServiceImpl {
 	}
 
 	/**
+	 * Tests whether or not the supplied properties are from a remote component.
 	 * 
-	 * @param datatypeMap
-	 * @return
+	 * @param properties Map of property names to {@link Property} instances.
+	 * @return True if the properties are from a remote component.
 	 */
-	public Boolean isRemoteServiceComponent(Map<String, Property> datatypeMap) {
-
-		return datatypeMap.keySet().contains(REMOTE_COMPONENT)
-				&& (datatypeMap.get(REMOTE_COMPONENT).getDefaultValue()
+	public boolean areFromRemoteComponent(Map<String, Property> properties) {
+		return properties.keySet().contains(REMOTE_COMPONENT)
+				&& (properties.get(REMOTE_COMPONENT).getDefaultValue()
 						.toString().equalsIgnoreCase("true"));
 	}
 
@@ -305,12 +299,12 @@ public class TasksServiceImpl {
 	 * @throws MeandreServerException
 	 */
 	public Job run(Flow flow,
-			Map<Component, Map<String, Property>> datatypeMaps, String name,
+			Map<Component, Map<String, Property>> componentMap, String name,
 			String description) throws MeandreServerException {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 
 		Component component;
-		for (Entry<Component, Map<String, Property>> mapsEntry : datatypeMaps
+		for (Entry<Component, Map<String, Property>> mapsEntry : componentMap
 				.entrySet()) {
 			component = mapsEntry.getKey();
 			for (Entry<String, Property> entry : mapsEntry.getValue()
@@ -377,45 +371,45 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * extracted the component list from the keyset of datatypeMaps, Note: this
-	 * method should be called only once for one flow template. The order of the
-	 * list is used for index and should not be changed.
+	 * Extract a {@code List} of {@link Component}s from the given {@code Map}
+	 * of {@link Components}. The order of the list should not be changed.
 	 * 
-	 * @param datatypeMaps
-	 * @return
+	 * @param componentMap Map of {@link Component}s to component properties.
+	 * @return List of just {@link Component}s extracted from the supplied map.
 	 */
 	public List<Component> extractComponentList(
-			Map<Component, Map<String, Property>> datatypeMaps) {
-		List<Component> list = new ArrayList<Component>(datatypeMaps.keySet());
+			Map<Component, Map<String, Property>> componentMap) {
+		List<Component> list = new ArrayList<Component>(componentMap.keySet());
 		Collections.sort(list);
 		return list;
 	}
 
 	/**
-	 * Set the datatypeMaps from the flow.
+	 * Load the {@link Components} for the given {@link Flow}.
 	 * 
-	 * @param flow
-	 * @return
+	 * @param flow The {@link Flow} for which the properties should be loaded.
+	 * @return Map containing {@link Component}s to {@link Properties}.
 	 */
-	public Map<Component, Map<String, Property>> loadDatatypeMaps(Flow flow) {
-		Map<Component, List<Property>> allProperties = flowService.getAllComponentsAndPropertyDataTypes(flow.getUri());
-		Map<Component, Map<String, Property>> datatypeMaps = new HashMap<Component, Map<String, Property>>();
+	public Map<Component, Map<String, Property>> loadFlowComponents(Flow flow) {
+		Map<Component, List<Property>> componentsToPropertyLists = 
+		   flowService.getAllComponentsAndPropertyDataTypes(flow.getUri());
+		Map<Component, Map<String, Property>> componentsToPropertyMaps = 
+		   new HashMap<Component, Map<String, Property>>();
 		
-		for (Entry<Component, List<Property>> entry:allProperties.entrySet()) {
+		for (Entry<Component, List<Property>> entry:componentsToPropertyLists.entrySet()) {
 			Component component=entry.getKey();
 			if (!component.isHidden()) {
-				Map<String,Property> datatypeMap=new TreeMap<String,Property>( ); 
+				Map<String,Property> properties=new TreeMap<String,Property>( );
 				for (Property property:entry.getValue()){
-					datatypeMap.put(property.getName(), property);
+					properties.put(property.getName(), property);
 				}
 				
-				datatypeMaps.put(component,datatypeMap);
+				componentsToPropertyMaps.put(component,properties);
 			}
 
 		}
-		logger.debug("done populating default parameters now.");
 
-		return datatypeMaps;
+		return componentsToPropertyMaps;
 	}
 
 	public void setFlowService(FlowService flowService) {
@@ -504,20 +498,19 @@ public class TasksServiceImpl {
 	}
 
    /**
-    * Hide some properties for remote executable components that set in the
-    * task/executable subflow. Capitalize the first letter of the key(name) of
-    * the datatypeMap for display.
+    * Format the provided properties for display to the user.
     * 
-    * @param datatypeMap
-    * @return the datatype map fields that should be shown
+    * @param properties Map from property names to {@link Properties}.
+    * @return Map of {@link Properties} that have been formatted for display
+    * purposes.
     */
    public Map<String, Property> formatPropertiesForDisplay(
-         Map<String, Property> datatypeMap) {
-      Map<String, Property> tmpProps = new HashMap<String, Property>(datatypeMap);
+         Map<String, Property> properties) {
+      Map<String, Property> tmpProps = new HashMap<String, Property>(properties);
       
       // For properties of remote components, remove properties that 
       // should be hidden.
-      if (isRemoteServiceComponent(datatypeMap)) {
+      if (areFromRemoteComponent(properties)) {
         
          tmpProps.remove(REMOTE_COMPONENT);
          tmpProps.remove(CREDENTIALS);
@@ -548,28 +541,16 @@ public class TasksServiceImpl {
       return formattedProps;
    }
 
-   private boolean areFromRemoteComponent(Map<String, Property> datatypeMap) {
-      for (Map.Entry<String, Property> entry : datatypeMap.entrySet()) {
-         String key = entry.getKey();
-         if(HIDDEN_PROPERTIES.contains(key)) {
-            return true;
-         }
-      }
-      return false;
-   }
-
 	/**
-	 * Update the dataMap with submitted data for one component
+	 * Update the property values using the user-submitted parameters.
 	 * 
-	 * @param parameters
-	 *            http request parameters
-	 * @param dataMap
-	 *            dataMap for updated
+	 * @param parameters HTTP request parameters.
+	 * @param properties Properties to be updated.
 	 */
-	public void updateDataMap(ParameterMap parameters,
-			Map<String, Property> dataMap) {
-		for (String key : dataMap.keySet()) {
-			Property property = dataMap.get(key);
+	public void updateProperties(ParameterMap parameters,
+			Map<String, Property> properties) {
+		for (String key : properties.keySet()) {
+			Property property = properties.get(key);
 			if (parameters.contains(property.getName())) {
 				List<DataTypeBean> ltb = property.getDataTypeBeanList();
 				if ((ltb != null) && (!ltb.isEmpty())

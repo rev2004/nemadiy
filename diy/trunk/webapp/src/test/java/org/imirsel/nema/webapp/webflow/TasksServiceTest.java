@@ -300,7 +300,7 @@ public class TasksServiceTest {
 			}
 		});
 		Map<Component, Map<String, Property>> map = tasksService
-				.loadDatatypeMaps(flow1);
+				.loadFlowComponents(flow1);
 		Map<Component, Map<String, Property>> expected=new HashMap<Component, Map<String, Property>>(datatypeMaps);
 		expected.remove(component3);
 		assertEquals(expected, map);
@@ -397,12 +397,12 @@ public class TasksServiceTest {
 	public final void testIsRemoteServiceComponent() {
 		Map<String, Property> map1 = new HashMap<String, Property>(datatypeMap1);
 		map1.put(tasksService.REMOTE_COMPONENT, propertyFalse);
-		assertFalse(tasksService.isRemoteServiceComponent(map1));
-		assertFalse(tasksService.isRemoteServiceComponent(datatypeMap1));
+		assertFalse(tasksService.areFromRemoteComponent(map1));
+		assertFalse(tasksService.areFromRemoteComponent(datatypeMap1));
 		Map<String, Property> map2 = new HashMap<String, Property>(datatypeMap2);
 		map2.put(tasksService.REMOTE_COMPONENT, propertyTrue);
-		assertTrue(tasksService.isRemoteServiceComponent(map2));
-		assertFalse(tasksService.isRemoteServiceComponent(datatypeMap2));
+		assertTrue(tasksService.areFromRemoteComponent(map2));
+		assertFalse(tasksService.areFromRemoteComponent(datatypeMap2));
 
 	}
 
@@ -420,7 +420,7 @@ public class TasksServiceTest {
 			parameterMap.put(entry.getKey(),entry.getValue());
 		}
 		Map<String,Property> data=new HashMap<String,Property>(datatypeMap1);
-		tasksService.updateDataMap(parameterMap, data);
+		tasksService.updateProperties(parameterMap, data);
 		assertEquals(parameters1.get("testField1"), data.get("testField1").getValue());
 		assertEquals(parameters1.get("TestField2"), data.get("TestField2").getValue());
 		assertFalse(data.containsKey("testFieldTHREE"));
@@ -430,7 +430,7 @@ public class TasksServiceTest {
 			parameterMap.put(entry.getKey(),entry.getValue());
 		}
 		data=new HashMap<String,Property>(datatypeMap1);
-		tasksService.updateDataMap(parameterMap, data);
+		tasksService.updateProperties(parameterMap, data);
 		assertEquals(parameters2.get("testField1"), data.get("testField1").getValue());
 		assertEquals(parameters1.get("TestField2"), data.get("TestField2").getValue());
 		assertFalse(data.containsKey("testFieldTHREE"));	
