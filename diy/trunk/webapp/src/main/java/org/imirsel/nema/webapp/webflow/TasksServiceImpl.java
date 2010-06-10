@@ -63,7 +63,6 @@ public class TasksServiceImpl {
 	private String physicalDir;
 	private String webDir;
 
-
 	// Component properties that should be hidden.
 	final static String REMOTE_COMPONENT = "_remoteDynamicComponent";
 	final static String CREDENTIALS = "_credentials";
@@ -80,8 +79,6 @@ public class TasksServiceImpl {
 		HIDDEN_PROPERTIES.add(GROUP);				
 	}
 	
-	
-	
 	public String getPhysicalDir() {
 		return physicalDir;
 	}
@@ -91,9 +88,8 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Send Executable bundle to content repository,
-	 * replace/add the new ResourcePath of executablebundle into the
-	 * executableMap;
+	 * Send executable bundle to content repository, replace/add the new 
+	 * ResourcePath of executable bundle in the the executableMap.
 	 * 
 	 * @param component
 	 * @param bundle
@@ -117,7 +113,7 @@ public class TasksServiceImpl {
 		propertyMap.get(REMOTE_COMPONENT).setValue("true");
 		propertyMap.get(OS).setValue(bundle.getPreferredOs());
 		propertyMap.get(GROUP).setValue(bundle.getGroup());
-		deleteExecutableFromRepository(component, executableMap.get(component),
+		deleteExecutableFromRepository(executableMap.get(component),
 				credential);
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
 				uuid.toString(), bundle);
@@ -138,7 +134,7 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * remove the executable bundle from he content repository service,
+	 * Remove the executable bundle from the content repository.
 	 * 
 	 * @param component
 	 * @param executableMap
@@ -151,11 +147,10 @@ public class TasksServiceImpl {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		if (executableMap.containsKey(component)) {
 			ResourcePath oldPath = executableMap.get(component);
-			deleteExecutableFromRepository(component, oldPath, credential);
+			deleteExecutableFromRepository(oldPath, credential);
 			executableMap.remove(component);
 			propertyMap.get(EXECUTABLE_URL).setValue("");
 		}
-
 	}
 
 	/**
@@ -168,11 +163,11 @@ public class TasksServiceImpl {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		for (Component component : executableMap.keySet()) {
 			ResourcePath oldPath = executableMap.get(component);
-			deleteExecutableFromRepository(component, oldPath, credential);
+			deleteExecutableFromRepository(oldPath, credential);
 		}
 	}
 
-	private void deleteExecutableFromRepository(Component component,
+	private void deleteExecutableFromRepository(
 			ResourcePath path, SimpleCredentials credential)
 			throws ContentRepositoryServiceException {
 		try {

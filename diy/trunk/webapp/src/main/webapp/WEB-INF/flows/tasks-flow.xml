@@ -9,6 +9,7 @@
 	<var name="componentList" class="java.util.ArrayList" />
 	<input name="type" type="java.lang.String" />
 	<input name="id" type="java.lang.Integer" />
+	
 	<on-start>
 		<evaluate expression="tasksService.buildUploadPath(externalContext,taskFlowModel.uuid)" />
 	</on-start>
@@ -35,7 +36,7 @@
 
 	<view-state id="editSimpleComponentProperties">
 		<on-entry>
-			<evaluate expression="tasksService.formatPropertiesForDisplay(propertyMap)" result="viewScope.shownMap" />
+			<evaluate expression="tasksService.formatPropertiesForDisplay(propertyMap)" result="viewScope.formattedProperties" />
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
 			<evaluate expression="tasksService.updateProperties(requestParameters,propertyMap)" />
@@ -45,7 +46,7 @@
 
 	<view-state id="editRemoteServiceComponentProperties">
 		<on-entry>
-			<evaluate expression="tasksService.formatPropertiesForDisplay(propertyMap)" result="viewScope.shownMap" />
+			<evaluate expression="tasksService.formatPropertiesForDisplay(propertyMap)" result="viewScope.formattedProperties" />
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
 			<evaluate expression="tasksService.updateProperties(requestParameters,propertyMap)" />
