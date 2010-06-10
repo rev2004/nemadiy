@@ -1,8 +1,8 @@
 label.label {
-	font-style:italic;
+	font-weight:bold;
 }
 label.name {
-	font-weight:bold;
+	
 }
 .surround{
 	margin:5px;
