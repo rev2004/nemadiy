@@ -13,7 +13,7 @@
   <c:forEach items="${formattedProperties}" var="entry">
   	<c:if test="${not fn:startsWith(entry.key,'_') }">
     <fieldset id="pt1">
-    <label for="jobname" class="label"> ${entry.key}: </label>
+    <label for="jobname" class="label"> <render:displayName>${entry.value.name}:</render:displayName>  </label>
     <render:property roles="${userRoles}"
             component="${component.instanceUri}" value="${entry.value}"
             class="cssClass" />
