@@ -204,7 +204,6 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 	 * 
 	 * @param jobId    the jobId we wish to plot results for.
 	 * @param results  The results Object containing the data to plot.
-	 * @param sysDir   directory to store plots in.
 	 * @return         an array of page items that will produce the plots.
 	 */
 	private PageItem[] plotTranscriptionForJob(String jobId,
@@ -246,7 +245,7 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 				
 				ProtovisFunctionTimestepPlotItem plot = new ProtovisFunctionTimestepPlotItem(
 						//plotname
-						results.getJobName(jobId) + "_" + result.getId(), 
+						results.getJobName(jobId) + "_transcription_" + result.getId(), 
 						//plot caption
 						results.getJobName(jobId) + ": Melody transcription for track " + result.getId(), 
 						//start time for x axis

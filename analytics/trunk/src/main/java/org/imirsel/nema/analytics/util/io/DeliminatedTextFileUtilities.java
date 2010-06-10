@@ -284,20 +284,21 @@ public class DeliminatedTextFileUtilities {
         if (csvFile.exists())
         {
             if(csvFile.canRead()){
-                BufferedReader textBuffer;
+                BufferedReader textBuffer = null;
                 ArrayList<String[]> rowData = new ArrayList<String[]>();
                 int maxRowLength = 0;
                 try
                 {
-                    textBuffer = new BufferedReader( new FileReader(csvFile) );
-                }
-                catch(java.io.FileNotFoundException fnfe)
-                {
-                    throw new RuntimeException("The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n\tFile: " + csvFile.getPath());
-                }
-                String line = null; 
-                try
-                {
+	                try
+	                {
+	                    textBuffer = new BufferedReader( new FileReader(csvFile) );
+	                }
+	                catch(java.io.FileNotFoundException fnfe)
+	                {
+	                    throw new RuntimeException("The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n\tFile: " + csvFile.getPath());
+	                }
+	                String line = null; 
+	                
                     //read data
                     int count = 0;
                     line = textBuffer.readLine();
@@ -319,13 +320,16 @@ public class DeliminatedTextFileUtilities {
                 }
                 catch (java.io.IOException ioe)
                 {
-                    textBuffer.close();
                     throw new java.io.IOException("An IOException occured while reading file: " + csvFile.getPath() + "\n" + ioe);
                 }
                 catch (java.lang.NullPointerException npe)
                 {
-                    textBuffer.close();
                     throw new RuntimeException("NullPointerException caused by: " + csvFile.getCanonicalPath(), npe);
+                }
+                finally{
+                	if (textBuffer != null){
+                		textBuffer.close();
+                	}
                 }
                 
                 String[][] outputData = new String[rowData.size()][maxRowLength];

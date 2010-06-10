@@ -1,7 +1,5 @@
 package org.imirsel.nema.analytics.evaluation.structure;
 
-import java.util.Arrays;
-
 
 /**
  * Model representing a single segment.
@@ -70,11 +68,11 @@ public class NemaSegment {
 		this.offset = offset;
 	}
 
-	public String getNotes() {
+	public String getLabel() {
 		return label;
 	}
 
-	public void setNotes(String label) {
+	public void setLabel(String label) {
 		this.label = label;
 	}
 }

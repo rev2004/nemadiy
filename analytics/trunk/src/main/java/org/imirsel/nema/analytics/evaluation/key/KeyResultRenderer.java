@@ -13,10 +13,12 @@ import org.imirsel.nema.analytics.evaluation.WriteCsvResultFiles;
 import org.imirsel.nema.analytics.evaluation.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisBarChartPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
 import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTrackList;
 
@@ -36,21 +38,6 @@ public class KeyResultRenderer extends ResultRendererImpl {
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
 
-
-		/* Plot summary bar plot for each system */
-		getLogger().info("Plotting result summaries...");
-		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
-		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
-			String jobId = it.next();
-			File sysDir = jobIDToResultDir.get(jobId);
-		
-			/* Get summary results to plot */	
-			File[] summaryPlot = new File[1];
-			summaryPlot[0] = plotSummaryForJob(jobId, results.getJobIdToOverallEvaluation(),sysDir);
-
-			jobIDToResultPlotFileList.put(jobId, summaryPlot);
-		}
-
 		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");
 		File summaryCsv = writeOverallResultsCSV(results);
@@ -69,7 +56,7 @@ public class KeyResultRenderer extends ResultRendererImpl {
 		
 		/* Write result HTML pages */
 		getLogger().info("Creating result HTML files...");
-		writeResultHtmlPages(results, jobIDToResultPlotFileList, summaryCsv, 
+		writeResultHtmlPages(results, summaryCsv, 
 				jobIDToPerTrackCSV, jobIDToTgz, outputDir);
 	}
 
@@ -77,12 +64,11 @@ public class KeyResultRenderer extends ResultRendererImpl {
 	 * Writes the result HTML pages for the evaluation of multiple jobs/algorithms
 	 * 
 	 * @param results					Results to be written to HTML files
-	 * @param jobIDToResultPlotFileList map of a jobId to the results plots for that job
 	 * @param summaryCsv 				the summary csv file that summarizes all jobs
 	 * @param jobIDToPerTrackCSV 		map of jobId to individual per-track results csv files for that job
 	 * @param jobIDToTgz 				map of jobId to the tar-balls of individual job results
 	 */
-	private void writeResultHtmlPages(NemaEvaluationResultSet results, Map<String,File[]> jobIDToResultPlotFileList, 
+	private void writeResultHtmlPages(NemaEvaluationResultSet results, 
 			File summaryCsv, Map<String, File> jobIDToPerTrackCSV, Map<String, File> jobIDToTgz, File outputDir) {
 		String jobId;
 		int numJobs = results.getJobIds().size();
@@ -128,16 +114,22 @@ public class KeyResultRenderer extends ResultRendererImpl {
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));
 
-				/* Add list of plots */
-				List<String> plotPathList = new ArrayList<String>(numJobs);
-				File[] plotPaths = jobIDToResultPlotFileList.get(jobId);
-				for (int i = 0; i < plotPaths.length; i++) {
-					plotPathList.add(IOUtil.makeRelative(plotPaths[i],
-							outputDir));
-				}
-				items.add(new FileListItem("plots", "System summary plot",
-						plotPathList));
-
+				/* Plot summary result bar chart for each system */
+				PageItem plot = plotSummaryForJob(jobId, results);
+				items.add(plot);
+				
+//				
+//				
+//				/* Add list of plots */
+//				List<String> plotPathList = new ArrayList<String>(numJobs);
+//				File[] plotPaths = jobIDToResultPlotFileList.get(jobId);
+//				for (int i = 0; i < plotPaths.length; i++) {
+//					plotPathList.add(IOUtil.makeRelative(plotPaths[i],
+//							outputDir));
+//				}
+//				items.add(new FileListItem("plots", "System summary plot",
+//						plotPathList));
+//
 				aPage = new Page(results.getJobIdToJobName().get(jobId) + "_results", results.getJobName(jobId),
 						items, true);
 				resultPages.add(aPage);
@@ -180,24 +172,43 @@ public class KeyResultRenderer extends ResultRendererImpl {
 
 
 	/**
-	 * Plots the melody transcriptions for each job, for each file
+	 * Plots bar chart of the performance scores for a job.
 	 * 
-	 * @param jobId			the jobId we wish to plot results for
-	 * @param resultList	a list of the transcriptions to plot
-	 * @param sysDir		directory to store plots in
-	 * @return				a file array containing all the plots
+	 * @param jobId    the jobId we wish to plot results for.
+	 * @param results  The results Object containing the data to plot.
+	 * @return         a PageItem that will produce the plot.
 	 */
-	private static File plotSummaryForJob(String jobId,
-			Map<String, NemaData> jobIdToEvaluation, File sysDir) {
+	private static PageItem plotSummaryForJob(String jobId,
+			NemaEvaluationResultSet results) {
 
-		NemaData resultSummary = jobIdToEvaluation.get(jobId);
+		NemaData resultSummary = results.getJobIdToOverallEvaluation().get(jobId);
 
-		/* Plot each result */
-		File plotFile = null;
-
-		// TODO actually plot the result
-
-		return plotFile;
+		List<String> seriesNames = new ArrayList<String>();
+		List<Double> seriesVals = new ArrayList<Double>();
+		
+		seriesNames.add(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE);
+		seriesVals.add(resultSummary.getDoubleMetadata(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE));
+		
+		seriesNames.add(NemaDataConstants.KEY_DETECTION_CORRECT);
+		seriesVals.add(resultSummary.getDoubleMetadata(NemaDataConstants.KEY_DETECTION_CORRECT));
+		
+		seriesNames.add(NemaDataConstants.KEY_DETECTION_PERFECT_FIFTH_ERROR);
+		seriesVals.add(resultSummary.getDoubleMetadata(NemaDataConstants.KEY_DETECTION_PERFECT_FIFTH_ERROR));
+		
+		seriesNames.add(NemaDataConstants.KEY_DETECTION_RELATIVE_ERROR);
+		seriesVals.add(resultSummary.getDoubleMetadata(NemaDataConstants.KEY_DETECTION_RELATIVE_ERROR));
+		
+		seriesNames.add(NemaDataConstants.KEY_DETECTION_PARALLEL_ERROR);
+		seriesVals.add(resultSummary.getDoubleMetadata(NemaDataConstants.KEY_DETECTION_PARALLEL_ERROR));
+		
+		seriesNames.add(NemaDataConstants.KEY_DETECTION_ERROR);
+		seriesVals.add(resultSummary.getDoubleMetadata(NemaDataConstants.KEY_DETECTION_ERROR));
+		
+		String name = results.getJobName(jobId) + "_perf_summary";
+		String caption = results.getJobName(jobId) + ": Performance summary";
+		ProtovisBarChartPlotItem chart = new ProtovisBarChartPlotItem(name, caption, seriesNames, seriesVals);
+		
+		return chart;
 	}
 
 }

@@ -1,8 +1,10 @@
 package org.imirsel.nema.analytics.evaluation.structure;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -10,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.evaluation.chord.ChordConversionUtil;
@@ -33,40 +37,62 @@ public class StructureTextFile extends SingleTrackEvalFileTypeImpl {
 		super(TYPE_NAME);
 	}
 
+	private NemaSegment parseStructureLine(String line) throws IllegalArgumentException{
+		double onset, offset;
+		String onsetStr, offsetStr, label;
+		
+		Pattern delimPattern = Pattern.compile(READ_DELIMITER);
+        Matcher matcher = delimPattern.matcher(line);
+        
+        int i = 0;
+        int end = line.length();
+        //get onset string
+        matcher.region(i, end);
+        if (matcher.find()){
+        	onsetStr = line.substring(i,matcher.start());
+        }else{
+        	throw new IllegalArgumentException("Failed to parse line '" + line + "', onset string could not be found using regexp " + READ_DELIMITER + " as delimiter");
+        }
+        i = matcher.end();
+        
+        //get offset string
+        matcher.region(i, end);
+        if (matcher.find()){
+        	offsetStr = line.substring(i,matcher.start());
+        }else{
+        	throw new IllegalArgumentException("Failed to parse line '" + line + "', offset string could not be found using regexp " + READ_DELIMITER + " as delimiter");
+            }
+        
+        //get remainder of line as label
+        label = line.substring(matcher.end());
+        
+        onset = Double.parseDouble(onsetStr);
+        offset = Double.parseDouble(offsetStr);
+        
+		return new NemaSegment(onset, offset, label);
+	}
+	
 	@Override
 	public NemaData readFile(File theFile) throws IllegalArgumentException,
 	FileNotFoundException, IOException {
 
-		/* Read a space-delimited key text file as a 2D string array (should have just 1 row, 2 columns)*/
-		String[][] structDataStrArray = DeliminatedTextFileUtilities.loadDelimTextData(theFile, READ_DELIMITER, -1);
+		BufferedReader textBuffer = new BufferedReader( new FileReader(theFile) );
+		ArrayList<NemaSegment> segments = new ArrayList<NemaSegment>();
 
-		/* Check that the text file is of proper format: <tempo1>\t<tempo2>\t<salience>\n<EOF> */
-
-		double onset, offset;
-		String label;
-
-		int nrows = structDataStrArray.length;
-		List<NemaSegment> segments = new ArrayList<NemaSegment>(nrows);
-
-		for(int r = 0; r < nrows; r++) {
-			if (structDataStrArray[r].length != 3) {
-				String msg = "This file could not be parsed into separate Onset, Offset, Label fields! " +
-				"Format should be <Onset>\t<Offset>\t<Label>\n. Content: \n";
-				for (int i = 0; i < structDataStrArray[r].length; i++) {
-					msg += "'" + structDataStrArray[r][i] + "'";
-					if (i<structDataStrArray[r].length-1){
-						msg += ",";
-					}		
-				}
-				throw new IllegalArgumentException(msg);
-			}
-			onset = Double.parseDouble(structDataStrArray[r][0]);
-			offset = Double.parseDouble(structDataStrArray[r][1]);
-			label = structDataStrArray[r][2];
-
-			segments.add(new NemaSegment(onset, offset, label));
-		}
-
+        String line = null; 
+    
+        //read data
+        line = textBuffer.readLine();
+        while (line != null)
+        {
+        	line = line.trim();
+        	if (!line.equals("")){
+                segments.add(parseStructureLine(line));
+            }
+            line = textBuffer.readLine();
+        }
+        segments.trimToSize();
+        
 		/* Fill the NemaData object with the proper data and return it*/
 		NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
 		obj.setMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, segments);
