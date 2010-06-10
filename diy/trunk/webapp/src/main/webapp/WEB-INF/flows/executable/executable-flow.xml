@@ -5,7 +5,7 @@
 
 	<var name="plainTemplate" class="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 	<var name="javaTemplate" class="org.imirsel.nema.webapp.model.DiyJavaTemplate" />
-	<var name="matlabTemplate" class="org.imirsel.nema.webapp.model.DiyMatlabTemplate" />
+	<var name="matlabTemplate" class="org.imirsel.nema.model.MatlabPredefinedCommandTemplate" />
 	<var name="template" class="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 
 	<input name="executableBundleInput" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />

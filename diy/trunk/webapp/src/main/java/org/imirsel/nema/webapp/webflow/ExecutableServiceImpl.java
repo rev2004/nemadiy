@@ -19,7 +19,6 @@ import org.imirsel.nema.model.Path;
 import org.imirsel.nema.model.SysProperty;
 import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 import org.imirsel.nema.webapp.model.DiyJavaTemplate;
-import org.imirsel.nema.webapp.model.DiyMatlabTemplate;
 import org.imirsel.nema.webapp.model.NiceParams;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -59,7 +58,7 @@ public class ExecutableServiceImpl {
 				scope.put("javaTemplate",(DiyJavaTemplate) input);
 				break;
 			case MATLAB:
-				scope.put("matlabTemplate",(DiyMatlabTemplate) input);
+				scope.put("matlabTemplate",(MatlabPredefinedCommandTemplate) input);
 				break; 	
 			default:
 
