@@ -21,6 +21,7 @@ import org.imirsel.nema.analytics.evaluation.structure.NemaSegment;
  */
 public class ProtovisSegmentationPlotItem extends PageItem{
 
+	public static final String INDENT = "\t\t\t";
 	public static final DecimalFormat MS_FORMAT = new DecimalFormat("###.# ms");
 	
 	private double startTime;
@@ -64,27 +65,46 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		
 		int height = (3 + 33 * series.size()) + (15 * series.size()) + 20 + 2 + 20;
 		
+		out += 	"\t<div id=\"center\">\n" + 
+		       	"\t\t<div style=\"width: 860px; height: " + height + "px;\">\n";
 		
-        out += 	"\t<div id=\"center\">\n" +
-        		"\t\t<div style=\"width: 860px; height: " + height + "px;\">\n" +
-        		"\t\t\t<script type=\"text/javascript+protovis\">\n";
-        
-        out +=  "\t\t\tvar " + getName() + "_segmentationplot = new function() {\n";
-        
-        //setup data
-        String i = "\t\t\t\t";
-        out +=  i + "var start = " + startTime + ";\n" +
-        		i + "var end = " + endTime + ";\n\n";
-        
-        
-        String[] seriesNames = series.keySet().toArray(new String[series.size()]);
+		String functionName = getName() + "_segment_plot";
+		String[] seriesNames = series.keySet().toArray(new String[series.size()]);
         String[] seriesVar = new String[seriesNames.length];
         String[] seriesInitMethod = new String[seriesNames.length];
         
+		out +=  "\t\t<script type=\"text/javascript+protovis\">\n" +
+				"\t\t\tvar " + functionName + " = function() {\n";
+		
+		//setup data
+        
+        out +=  INDENT + "var start = " + startTime + ";\n" +
+        		INDENT + "var end = " + endTime + ";\n\n" + 
+        		
+        		INDENT + "var numseries = " + seriesNames.length + ";\n" + 
+        		
+        		INDENT + "/* Scales and sizing. */\n" + 
+			    INDENT + "var w = 810,\n" + 
+			    INDENT + "    hOffset = 0,\n" + 
+			    INDENT + "    legendOffset = 60,\n" + 
+			    INDENT + "    h1 = 3 + 33 * numseries,\n" + 
+			    INDENT + "    h2 = 15 * numseries,\n" + 
+			    INDENT + "    x = pv.Scale.linear(start, end).range(0, w-legendOffset),\n" + 
+			    INDENT + "    i = -1;\n\n" + 
+			    
+			    INDENT + "/* Root panel. */\n" + 
+			    INDENT + "var vis = new pv.Panel()\n" + 
+			    INDENT + "    .width(w)\n" + 
+			    INDENT + "    .height(h1 + 20 + h2 + hOffset)\n" + 
+			    INDENT + "    .bottom(20)\n" + 
+			    INDENT + "    .left(30)\n" + 
+			    INDENT + "    .right(20)\n" + 
+			    INDENT + "    .top(5);\n\n" +
+			    INDENT + "vis.render();";
+        
         for (int s = 0; s < seriesNames.length; s++) {
-        	System.out.println("\tgenerating series: " + seriesNames[s]);
         	seriesVar[s] = "data" + s;
-			out += i + "var " + seriesVar[s] + " = [\n";
+			out += INDENT + "var " + seriesVar[s] + " = [\n";
 			List<NemaSegment> data = series.get(seriesNames[s]);
 			NemaSegment seg = null;
 			for (Iterator<NemaSegment> it = data.iterator(); it.hasNext();) {
@@ -93,171 +113,156 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 				if(it.hasNext()){
 					out +=",\n";
 				}else{
-					out += "\n" + i + "];\n\n";
+					out += "\n" + INDENT + "];\n\n";
 				}
 			}
 		}
         
-        out += i + "var numseries = " + seriesNames.length + ";\n";        
-        out += i + "var allSeries = [";
+        out +=  INDENT + "var allSeries = [";
         for (int s = 0; s < seriesVar.length-1; s++) {
         	out += seriesVar[s] + ",";
         }
-        out += seriesVar[seriesVar.length-1] + "];\n";
-        out += i + "var seriesNames = [";
+        out += seriesVar[seriesVar.length-1] + "];\n" + 
+	    		INDENT + "var seriesNames = [";
         for (int j = 0; j < seriesNames.length; j++) {
 			out += "\"" + seriesNames[j] + "\"";
 			if (j < seriesNames.length-1){
 				out += ",";
 			}
 		}
-        out += "];\n";
+        
+        out += "];\n" + 
+        		INDENT + "var colors = [\"salmon\", \"steelblue\", \"green\", \"pink\", \"navy\"];\n\n" + 
         		
-        out += i + "var colors = [\"salmon\", \"steelblue\", \"green\", \"pink\", \"navy\"];\n\n";//
-
-        out += i + "/* Scales and sizing. */\n";
-		out += i + "var w = 810,\n";
-		out += i + "    hOffset = 0,\n";
-		out += i + "    legendOffset = 0,\n";
-		out += i + "    h1 = 3 + 33 * numseries,\n";
-		out += i + "    h2 = 15 * numseries,\n";
-		out += i + "    x = pv.Scale.linear(start, end).range(0, w),\n";
-		out += i + "    i = -1;\n\n";
-
-		out += i + "/* Interaction state. Focus scales will have domain set on-render. */\n";
-		out += i + "var i = {x:0, dx:200},\n";
-		out += i + "    fx = pv.Scale.linear().range(0, w);\n\n";
-
-		out += i + "/* Root panel. */\n";
-		out += i + "var vis = new pv.Panel()\n";
-		out += i + "    .width(w)\n";
-		out += i + "    .height(h1 + 20 + h2 + hOffset)\n";
-		out += i + "    .bottom(20)\n";
-		out += i + "    .left(30)\n";
-		out += i + "    .right(20)\n";
-		out += i + "    .top(5);\n\n";
-
-		out += i + "/* Legend area. */\n";
-		out += i + "var legend = vis.add(pv.Panel)\n";
-		out += i + "    .left(0)\n";
-		out += i + "    .width(legendOffset)\n";
-		out += i + "    .bottom(function() (3 + this.index * 33))\n";
-		out += i + "    .top(0);\n";
-		out += i + "legend.add(pv.Label)\n";
-		out += i + "    .data(seriesNames)\n";
-		out += i + "    .textAlign(\"right\")\n";
-		out += i + "    .textBaseline(\"middle\")\n";
-		out += i + "    .top(function() 18+((numseries - (1+this.index)) * 33)) \n";
-		out += i + "    .height(10)\n";
-		out += i + "    .right(0)\n";
-		out += i + "    .text(function(d) d);\n\n";
-
-		
-		
-		out += i + "/* Focus panel (zoomed in). */\n";
-		out += i + "var focus = vis.add(pv.Panel)\n";
-		out += i + "    .left(legendOffset)\n";
+        		INDENT + "return {\n" +
+				INDENT + "plot : function() {\n" + 
+				
+				INDENT + "/* Interaction state. Focus scales will have domain set on-render. */\n" + 
+        	    INDENT + "var i = {x:0, dx:100},\n" + 
+        	    INDENT + "    fx = pv.Scale.linear().range(0, w-legendOffset);\n\n" +
+        	    
+        	    INDENT + "/* Legend area. */\n" + 
+        	    INDENT + "var legend = vis.add(pv.Panel)\n" + 
+        	    INDENT + "    .left(0)\n" + 
+        	    INDENT + "    .width(legendOffset)\n" + 
+        	    INDENT + "    .bottom(function() (3 + this.index * 33))\n" + 
+        	    INDENT + "    .top(0);\n" + 
+        	    INDENT + "legend.add(pv.Label)\n" + 
+        	    INDENT + "    .data(seriesNames)\n" + 
+        	    INDENT + "    .textAlign(\"right\")\n" + 
+        	    INDENT + "    .textBaseline(\"middle\")\n" + 
+        	    INDENT + "    .top(function() 18+((numseries - (1+this.index)) * 33)) \n" + 
+        	    INDENT + "    .height(10)\n" + 
+        	    INDENT + "    .right(0)\n" + 
+        	    INDENT + "    .text(function(d) d);\n\n" + 
+        	    
+        	    INDENT + "/* Focus panel (zoomed in). */\n" + 
+        	    INDENT + "var focus = vis.add(pv.Panel)\n" + 
+        	    INDENT + "    .left(legendOffset)\n";
 		
 		for (int s = 0; s< seriesNames.length; s++) {
 			seriesInitMethod[s] = "init_" + seriesVar[s];
-			out += i + "    .def(\"" + seriesInitMethod[s] + "\", function() {\n";
-			out += i + "        var d1 = x.invert(i.x),\n";
-			out += i + "            d2 = x.invert(i.x + i.dx),\n";
-			out += i + "            offsetsearch = pv.search.index("+seriesVar[s]+", d1, function(d) d.offset),\n";
-			out += i + "            firstvisible = offsetsearch >= 0 ? offsetsearch : -(1+offsetsearch),\n";
-			out += i + "            onsetsearch = pv.search.index("+seriesVar[s]+", d2, function(d) d.offset),\n";
-			out += i + "            lastvisible = onsetsearch >= 0 ? onsetsearch : -(1+onsetsearch),\n";
-			out += i + "	        dd = "+seriesVar[s]+".slice(firstvisible,lastvisible+1);\n";
-			out += i + "	    fx.domain(d1, d2);\n";
-			out += i + "	    return dd;\n";
-			out += i + "      })\n";
+			out += INDENT + "    .def(\"" + seriesInitMethod[s] + "\", function() {\n" + 
+        	    INDENT + "        var d1 = x.invert(i.x),\n" + 
+        	    INDENT + "            d2 = x.invert(i.x + i.dx),\n" + 
+        	    INDENT + "            offsetsearch = pv.search.index("+seriesVar[s]+", d1, function(d) d.offset),\n" + 
+        	    INDENT + "            firstvisible = offsetsearch >= 0 ? offsetsearch : -(1+offsetsearch),\n" + 
+        	    INDENT + "            onsetsearch = pv.search.index("+seriesVar[s]+", d2, function(d) d.offset),\n" + 
+        	    INDENT + "            lastvisible = onsetsearch >= 0 ? onsetsearch : -(1+onsetsearch),\n" + 
+        	    INDENT + "	        dd = "+seriesVar[s]+".slice(firstvisible,lastvisible+1);\n" + 
+        	    INDENT + "	    fx.domain(d1, d2);\n" + 
+        	    INDENT + "	    return dd;\n" + 
+        	    INDENT + "      })\n";
 		}
-	    out += i + "    .top(hOffset)\n";
-	    out += i + "    .height(h1);\n\n";
-		
+	    out +=  INDENT + "    .top(hOffset)\n" + 
+        	    INDENT + "    .height(h1);\n\n" + 
 
-		out += i + "/* X-axis ticks. */\n";
-		out += i + "focus.add(pv.Rule)\n";
-		out += i + "    .data(function() fx.ticks())\n";
-		out += i + "    .left(fx)\n";
-		out += i + "    .strokeStyle(\"#eee\")\n";
-		out += i + "  .anchor(\"bottom\").add(pv.Label)\n";
-		out += i + "    .text(fx.tickFormat);\n\n";
-
-		out += i + "/* Focus area chart. */\n";
+        	    INDENT + "/* X-axis ticks. */\n" + 
+        	    INDENT + "focus.add(pv.Rule)\n" + 
+    	    	INDENT + "    .data(function() fx.ticks())\n" + 
+        	    INDENT + "    .left(fx)\n" + 
+        	    INDENT + "    .strokeStyle(\"#eee\")\n" + 
+        	    INDENT + "  .anchor(\"bottom\").add(pv.Label)\n" + 
+        	    INDENT + "    .text(fx.tickFormat);\n\n" + 
+        	    
+        	    INDENT + "/* Focus area chart. */\n";
 		
 		for (int s = 0; s< seriesNames.length; s++) {
-			out += i + "focus.add(pv.Panel)\n";
-			out += i + "    .overflow(\"hidden\")\n";
-			out += i + "    .data(function(d) focus." + seriesInitMethod[s] + "())\n";
-			out += i + "  .add(pv.Bar)\n";
-			out += i + "    .left(function(d) fx(d.onset))\n";
-			out += i + "    .width(function(d) fx(d.offset) - fx(d.onset))\n";
-			out += i + "    .bottom(" + (3 + (33*s)) + ")\n";
-			out += i + "    .height(30)\n";
-			out += i + "    .fillStyle(colors[" + s + "])\n";
-			out += i + "    .strokeStyle(\"black\")\n";
-			out += i + "    .lineWidth(1)\n";
-			out += i + "    .title(function(d) d.label)\n";
-			out += i + "    .anchor(\"center\").add(pv.Label).text(function(d) d.label);\n\n";
+			out += INDENT + "focus.add(pv.Panel)\n" + 
+        	    INDENT + "    .overflow(\"hidden\")\n" + 
+        	    INDENT + "    .data(function(d) focus." + seriesInitMethod[s] + "())\n" + 
+        	    INDENT + "  .add(pv.Bar)\n" +
+        	    INDENT + "    .overflow(\"hidden\")\n" + 
+        	    INDENT + "    .left(function(d) fx(d.onset))\n" + 
+        	    INDENT + "    .width(function(d) fx(d.offset) - fx(d.onset))\n" + 
+        	    INDENT + "    .bottom(" + (3 + (33*s)) + ")\n" + 
+        	    INDENT + "    .height(30)\n" + 
+        	    INDENT + "    .fillStyle(colors[" + s + "])\n" + 
+        	    INDENT + "    .strokeStyle(\"black\")\n" + 
+        	    INDENT + "    .lineWidth(1)\n" + 
+        	    INDENT + "    .title(function(d) d.label)\n" + 
+        	    INDENT + "    .anchor(\"left\").add(pv.Label).text(function(d) d.label);\n\n";
 		}
 		
-		out += i + "/* Context panel (zoomed out). */\n";
-		out += i + "var context = vis.add(pv.Panel)\n";
-		out += i + "    .left(legendOffset)\n";
-		out += i + "    .overflow(\"hidden\")\n";
-	    out += i + "    .bottom(0)\n";
-		out += i + "    .height(h2);\n\n";
+		out += INDENT + "/* Context panel (zoomed out). */\n" + 
+        	    INDENT + "var context = vis.add(pv.Panel)\n" + 
+        	    INDENT + "    .left(legendOffset)\n" + 
+        	    INDENT + "    .overflow(\"hidden\")\n" + 
+        	    INDENT + "    .bottom(0)\n" + 
+        	    INDENT + "    .height(h2);\n\n" + 
 
-		out += i + "/* X-axis ticks. */\n";
-		out += i + "context.add(pv.Rule)\n";
-		out += i + "    .data(x.ticks())\n";
-		out += i + "    .left(x)\n";
-		out += i + "    .strokeStyle(\"#eee\")\n";
-		out += i + "  .anchor(\"bottom\").add(pv.Label)\n";
-		out += i + "    .text(x.tickFormat);\n\n";
-
-		out += i + "/* Y-axis ticks. */\n";
-		out += i + "context.add(pv.Rule)\n";
-		out += i + "    .bottom(0);\n\n";
+    	    	INDENT + "/* X-axis ticks. */\n" + 
+        	    INDENT + "context.add(pv.Rule)\n" + 
+        	    INDENT + "    .data(x.ticks())\n" + 
+        	    INDENT + "    .left(x)\n" + 
+        	    INDENT + "    .strokeStyle(\"#eee\")\n" + 
+        	    INDENT + "  .anchor(\"bottom\").add(pv.Label)\n" + 
+        	    INDENT + "    .text(x.tickFormat);\n\n" + 
+        	    
+        	    INDENT + "/* Y-axis ticks. */\n" + 
+        	    INDENT + "context.add(pv.Rule)\n" + 
+        	    INDENT + "    .bottom(0);\n\n" + 
 		
-		out += i + "/* Context area chart. */\n";
+                INDENT + "/* Context area chart. */\n";
 		for (int s = 0; s< seriesNames.length; s++) {
-			out += i + "context.add(pv.Panel)\n";
-			out += i + "    .data(" + seriesVar[s] + ")\n";
-			out += i + "    .left(function(d) x(d.onset))\n";
-			out += i + "    .bottom(" + (3 + (13*s)) + ")\n";
-			out += i + "    .height(10)\n";
-			out += i + "    .strokeStyle(\"Black\")\n";
-			out += i + "    .fillStyle(colors[" + s + "])\n";
-			out += i + "    .lineWidth(1);\n\n";
+			out += INDENT + "context.add(pv.Panel)\n" + 
+        	    INDENT + "    .data(" + seriesVar[s] + ")\n" + 
+        	    INDENT + "    .left(function(d) x(d.onset))\n" + 
+        	    INDENT + "    .bottom(" + (3 + (13*s)) + ")\n" + 
+        	    INDENT + "    .height(10)\n" + 
+        	    INDENT + "    .strokeStyle(\"Black\")\n" + 
+        	    INDENT + "    .fillStyle(colors[" + s + "])\n" + 
+        	    INDENT + "    .lineWidth(1);\n\n";
 		}
 
-		out += i + "/* The selectable, draggable focus region. */\n";
-		out += i + "context.add(pv.Panel)\n";
-		out += i + "    .data([i])\n";
-		out += i + "    .cursor(\"crosshair\")\n";
-		out += i + "    .events(\"all\")\n";
-		out += i + "    .event(\"mousedown\", pv.Behavior.select())\n";
-		out += i + "    .event(\"select\", focus)\n";
-		out += i + "  .add(pv.Bar)\n";
-		out += i + "    .left(function(d) d.x)\n";
-		out += i + "    .width(function(d) d.dx)\n";
-		out += i + "    .fillStyle(\"rgba(255, 128, 128, .4)\")\n";
-		out += i + "    .cursor(\"move\")\n";
-		out += i + "    .event(\"mousedown\", pv.Behavior.drag())\n";
-		out += i + "    .event(\"drag\", focus);\n\n";
-
-		out += i + "vis.render();\n\n";
-
-		out +=  "\t\t\t};\n";		
-		
-        out +=  "\t\t\t</script>\n" +
-        		"\t\t</div>\n" +
-        		"\t</div>\n";
-
-		out +=  "\t<br><br>\n";
-		System.out.println("done.");
+		out += INDENT + "/* The selectable, draggable focus region. */\n" + 
+        	    INDENT + "context.add(pv.Panel)\n" + 
+        	    INDENT + "    .data([i])\n" + 
+        	    INDENT + "    .cursor(\"crosshair\")\n" + 
+        	    INDENT + "    .events(\"all\")\n" + 
+        	    INDENT + "    .event(\"mousedown\", pv.Behavior.select())\n" + 
+        	    INDENT + "    .event(\"select\", focus)\n" + 
+        	    INDENT + "  .add(pv.Bar)\n" + 
+        	    INDENT + "    .left(function(d) d.x)\n" + 
+        	    INDENT + "    .width(function(d) d.dx)\n" + 
+        	    INDENT + "    .fillStyle(\"rgba(255, 128, 128, .4)\")\n" + 
+        	    INDENT + "    .cursor(\"move\")\n" + 
+        	    INDENT + "    .event(\"mousedown\", pv.Behavior.drag())\n" + 
+        	    INDENT + "    .event(\"drag\", focus);\n\n" + 
+        	    
+        	    INDENT + "vis.render();\n\n" + 
+        	    "\t\t\t\t\t}\n" + 
+        	    "\t\t\t\t};\n" + 
+    	    	"\t\t\t}();\n" + 	
+				"\t\t\t</script>\n\n" +
+				"\t\t\t</div>\n" + 
+				//add button to trigger plot function
+				"\t\t\t<div style=\"text-align:left;padding-left:10px;\">\n" +
+				"\t\t\t\t<input type=\"button\" value=\"Plot\" id=\"run_" + functionName + "\" onClick=\"" + functionName + ".plot();this.disabled=true;\">\n" +
+				"\t\t\t\t<label for=\"srun_" + functionName + "\">Click here to plot the figure</label>\n" +
+				"\t\t\t</div>\n" + 
+				"\t\t</div>\n";
+        
         return out;
     }
 
