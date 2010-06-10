@@ -5,7 +5,7 @@
 <script type="text/javascript">
  var name="";
  function change(){
-	 if ((name!=null)&&(name!="")) $(name).hide();	 
+	 if ((name!=null)&&(name!="")){ $(name).hide();}	 
 	 name="flow"+$('select').value; 
 	 $(name).show();
  }
