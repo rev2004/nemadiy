@@ -6,6 +6,7 @@
 	<var name="plainTemplate" class="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 	<var name="javaTemplate" class="org.imirsel.nema.webapp.model.DiyJavaTemplate" />
 	<var name="matlabTemplate" class="org.imirsel.nema.webapp.model.DiyMatlabTemplate" />
+	<var name="template" class="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 
 	<input name="executableBundleInput" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 	<input name="executableTemplateInput" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
@@ -37,6 +38,7 @@
 		<transition on="review" to="review">
 			<evaluate expression="executableService.prepareCommonTemplate(requestParameters,flowScope.plainTemplate)" />
 			<evaluate expression="executableService.generateExecutableBundle(flowScope.plainTemplate,executable)" />
+			<set name="template" value="plainTemplate"/>
 		</transition>
 	</view-state>
 
@@ -51,6 +53,7 @@
 			<evaluate expression="executableService.prepareCommonTemplate(requestParameters,javaTemplate)" />
 			<evaluate expression="executableService.prepareJavaTemplate(requestParameters,executable,javaTemplate)" />
 			<evaluate expression="executableService.generateExecutableBundle(javaTemplate,flowScope.executable)" />
+			<set name="template" value="javaTemplate"/>
 		</transition>
 	</view-state>
 
@@ -63,6 +66,7 @@
 		<transition on="review" to="review">
 			<evaluate expression="executableService.prepareCommonTemplate(requestParameters,matlabTemplate)" />
 			<evaluate expression="executableService.generateExecutableBundle(matlabTemplate,flowScope.executable)" />
+			<set name="template" value="matlabTemplate"/>
 		</transition>
 	</view-state>
 
@@ -89,7 +93,7 @@
 
 	<end-state id="success">
 		<output name="executableBundle" value="executable" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
-		<output name="executableTemplate" value="executableService.selectTemplate(executable.type,plainTemplate,javaTemplate,matlabTemplate)"
+		<output name="executableTemplate" value="template"
 			type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 	</end-state>
 </flow>

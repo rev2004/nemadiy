@@ -41,6 +41,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.test.MockExternalContext;
@@ -161,6 +162,7 @@ public class TasksServiceTest {
 		context.assertIsSatisfied();
 	}
 
+	
 	@Test
 	public final void testClearBundles() {
 		try {
@@ -305,6 +307,7 @@ public class TasksServiceTest {
 		context.assertIsSatisfied();
 	}
 
+	@DirtiesContext
 	@Test
 	public final void testExtractComponentList() {
 		List<Component> list = tasksService.extractComponentList(datatypeMaps);
