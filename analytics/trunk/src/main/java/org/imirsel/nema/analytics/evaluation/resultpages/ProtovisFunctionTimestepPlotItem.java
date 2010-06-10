@@ -131,11 +131,8 @@ public class ProtovisFunctionTimestepPlotItem extends PageItem{
     	//for javascript debugging use: protovis-d3.2.js
     	//String out = "<script type=\"text/javascript\" src=\"protovis-d3.2.js\"></script>\n" +
 		
-    	String out = "<script type=\"text/javascript\" src=\"protovis-r3.2.js\"></script>\n" +
-		"<style type=\"text/css\">\n" +
-		"\t#fig { width: 860px; height: 416px; }\n" +
-		"</style>\n";
-        return out;
+    	String out = "<script type=\"text/javascript\" src=\"protovis-r3.2.js\"></script>\n";
+		return out;
     }
     
     
@@ -153,7 +150,7 @@ public class ProtovisFunctionTimestepPlotItem extends PageItem{
 		}
 		out += "</h4>\n";
         out += 	"\t<div id=\"center\">\n" +
-        		"\t\t<div id=\"fig\">\n" +
+        		"\t\t<div style=\"width: 860px; height: 416px;\">\n" +
         		"\t\t\t<div style=\"text-align:right;padding-right:20px;\">\n" +
         		"\t\t\t\t<input checked id=\"scale_" + getName() + "\" type=\"checkbox\" onchange=\"vis.render()\">\n" +
         		"\t\t\t\t<label for=\"scale_" + getName() + "\">Scale to fit</label>\n" +
