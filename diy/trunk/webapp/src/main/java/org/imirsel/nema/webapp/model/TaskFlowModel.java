@@ -21,7 +21,6 @@ import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 public class TaskFlowModel implements Serializable {
 	static private Log logger = LogFactory.getLog(TaskFlowModel.class);
 	
-	
 	private static final long serialVersionUID = 1L;
 	private String id;
 	private String name;
@@ -29,6 +28,10 @@ public class TaskFlowModel implements Serializable {
 
 	private UUID uuid;
 	
+	/**
+	 * Map of remote executable {@link Component}s to the address of the
+	 * executable profile stored in the repository service.
+	 */
 	private Map<Component,ResourcePath> executableMap;
 	private Map<Component,VanillaPredefinedCommandTemplate> templateMap;
 	

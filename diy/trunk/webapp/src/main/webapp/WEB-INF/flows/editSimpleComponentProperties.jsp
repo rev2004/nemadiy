@@ -10,7 +10,7 @@
 
 <form:form enctype="multipart/form-data">
   
-  <c:forEach items="${shownMap}" var="entry">
+  <c:forEach items="${formattedProperties}" var="entry">
   	<c:if test="${not fn:startsWith(entry.key,'_') }">
     <fieldset>
     <label for="jobname" class="label" ><render:displayName>${entry.value.name}:</render:displayName> </label>
