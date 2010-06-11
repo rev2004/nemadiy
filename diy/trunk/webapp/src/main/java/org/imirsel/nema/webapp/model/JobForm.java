@@ -18,11 +18,11 @@ import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
  * @since 0.6.0
  * 
  */
-public class TaskFlowModel implements Serializable {
-	static private Log logger = LogFactory.getLog(TaskFlowModel.class);
+public class JobForm implements Serializable {
+	static private Log logger = LogFactory.getLog(JobForm.class);
 	
 	private static final long serialVersionUID = 1L;
-	private String id;
+	private String flowId;
 	private String name;
 	private String description;
 
@@ -35,11 +35,9 @@ public class TaskFlowModel implements Serializable {
 	private Map<Component,ResourcePath> executableMap;
 	private Map<Component,VanillaPredefinedCommandTemplate> templateMap;
 	
-	
-	
-	public TaskFlowModel() {
+	public JobForm() {
 		uuid=UUID.randomUUID();
-		logger.debug("set a new id "+uuid.toString());
+		logger.debug("set a new flowId "+uuid.toString());
 		executableMap=new HashMap<Component,ResourcePath>();
 		templateMap=new HashMap<Component,VanillaPredefinedCommandTemplate>();
 	}
@@ -47,12 +45,12 @@ public class TaskFlowModel implements Serializable {
 	public UUID getUuid(){
 		return uuid;
 	}
-	public String getId() {
-		return id;
+	public String getFlowId() {
+		return flowId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setFlowId(String id) {
+		this.flowId = id;
 	}
 
 	public void setDescription(String description) {
@@ -71,17 +69,9 @@ public class TaskFlowModel implements Serializable {
 		return name;
 	}
 
-
-
-
-
 	public Map<Component,ResourcePath> getExecutableMap() {
 		return executableMap;
 	}
-
-
-	
-
 
 	public Map<Component,VanillaPredefinedCommandTemplate> getTemplateMap() {
 		return templateMap;
