@@ -436,8 +436,6 @@ public class TasksServiceTest {
 		assertEquals(parameters2.get("testField1"), data.get("testField1").getValue());
 		assertEquals(parameters1.get("TestField2"), data.get("TestField2").getValue());
 		assertFalse(data.containsKey("testFieldTHREE"));	
-		
-		
 	}
 
 	@Resource
