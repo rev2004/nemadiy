@@ -30,4 +30,17 @@ public class GroupDataType  implements Serializable{
 	public String getValue() {
 		return value;
 	}
+	public int hashCode(){
+		int hash = 31;
+		hash=hash+ this.name.hashCode() + this.value.hashCode();
+		return hash;
+	}
+	
+	public boolean equals(Object object){
+		if(!(object instanceof GroupDataType)){
+			return false;
+		}
+		GroupDataType fdt = (GroupDataType) object;
+		return this.getName().equals(fdt.name) && this.getValue().equals(fdt.value);
+	}
 }

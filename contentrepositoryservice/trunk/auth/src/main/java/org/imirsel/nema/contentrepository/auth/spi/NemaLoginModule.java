@@ -36,6 +36,7 @@ public class NemaLoginModule extends AbstractLoginModule {
 	private String jdbcPassword;
 	private String userAuthenticationSql;
 	private String passwordEncoderClass;
+	private ShaPasswordEncoder shaEncoder = new ShaPasswordEncoder();
 	boolean debug = false;
 	private PasswordEncoder passwordEncoder;
 	private PreparedStatement preparedStatement;
@@ -101,6 +102,12 @@ public class NemaLoginModule extends AbstractLoginModule {
 				return true;
 			}
 
+			/**
+			 * This is a stupid hack -we assume that the PlainTextPasswordEncoder is being
+			 * used initially since we send password hash through the RMI call. However
+			 * the webdav based interface sends the actual password -so we encode that
+			 * and check again to see if it's a match.
+			 */
 			public boolean authenticate(Credentials credentials)
 			throws RepositoryException {
 				if(credentials instanceof SimpleCredentials){
@@ -121,7 +128,21 @@ public class NemaLoginModule extends AbstractLoginModule {
 						rs=preparedStatement.executeQuery();
 						boolean success = rs.first();
 						log.info("login username: "+userId+" success: " + success);
+						
+						// check if the password was actually unencoded.
+						if(!success){
+							con=DriverManager.getConnection(jdbcUrl, jdbcUsername,jdbcPassword);
+							preparedStatement = con.prepareStatement(userAuthenticationSql);
+							preparedStatement.setString(1,userId);
+							String rencoded=shaEncoder.encodePassword(password);
+							preparedStatement.setString(2,rencoded);
+							rs=preparedStatement.executeQuery();
+							success = rs.first();
+						}
+						
+						
 						return success;
+						
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}finally{
