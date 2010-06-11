@@ -10,7 +10,7 @@
 	    <Menu name="welcomeMenu" title="welcomeMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/welcome.jsp"/>
 		
 		
-		<!--  Add this back later when working... <Menu name="MirexMenu" title="mirexMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/get/task?id=10"/> -->
+		<!--  Add this back later when working... <Menu name="MirexMenu" title="mirexMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/get/task?flowId=10"/> -->
 		
 		
 		<Menu name="JobMenu" title="Jobs" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/JobManager.getUserJobs">

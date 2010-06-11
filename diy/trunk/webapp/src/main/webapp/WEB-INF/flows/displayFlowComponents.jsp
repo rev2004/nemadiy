@@ -26,7 +26,7 @@ ${messageContext.allMessages}
 <br/>
 <div id="formcontainer_job">
   <div class="form_job">
-    <form:form commandName="taskFlowModel" id="myForm">
+    <form:form commandName="jobForm" id="myForm">
       <fieldset id="pt1">
         <label class="label">Enter the Job Name:</label>
         <form:input path="name" cssStyle="width:200px;"/>

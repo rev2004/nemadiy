@@ -12,12 +12,12 @@
 </script>
 </head>
 <body id="jobstype" onload="change()"/>
-<form:form commandName="taskFlowModel">
+<form:form commandName="jobForm">
 <c:choose>
 <c:when test="${not empty flowList}">
   <h2>Select Task</h2>
   <div style="margin-bottom:5px">Please select a task to create your job for:</div>
-  <form:select id="select" path="id" items="${flowList}" itemLabel="name" itemValue="id" onchange="change();" cssStyle="margin-bottom:5px"></form:select>
+  <form:select id="select" path="flowId" items="${flowList}" itemLabel="name" itemValue="id" onchange="change();" cssStyle="margin-bottom:5px"></form:select>
   <c:forEach items="${flowList}" var="flow">
   	<div style="display:none" id="flow${flow.id}">
 	  <fieldset style="padding-bottom:15px">
