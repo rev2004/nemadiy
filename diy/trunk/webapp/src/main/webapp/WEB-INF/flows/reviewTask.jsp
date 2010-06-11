@@ -17,10 +17,10 @@
 						<label class="name">${component.name}:</label>
 					</thead>
 					<c:forEach var="property" items="${componentMap[component]}">
-					<c:if test="${not fn:startsWith(property.key,'_') }">
+					<c:if test="${not fn:startsWith(property.value.name,'_') }">
 						<tr>
 							<td>
-								<label class="label"><render:displayName>${property.key}</render:displayName></label>
+								<label class="label"> ${render:displayName(property.value.name)}</label>
 							</td>
 							<td>:</td>
 							<td>

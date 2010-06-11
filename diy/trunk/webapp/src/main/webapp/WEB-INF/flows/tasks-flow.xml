@@ -20,6 +20,7 @@
 		</on-entry>
 		<transition on="show" to="getTemplate">
 			<set name="flowScope.id" value="taskFlowModel.id" />
+			
 		</transition>
 	</view-state>
 
