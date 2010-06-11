@@ -24,7 +24,7 @@ import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
 import org.imirsel.nema.model.NemaZipFile;
 import org.imirsel.nema.model.OsDataType;
 import org.imirsel.nema.model.Path;
-import org.imirsel.nema.model.ExecutableBundle.ExecutableType;
+import org.imirsel.nema.model.ExecutableType;
 
 public class ContentRepositoryTestUtil {
 	

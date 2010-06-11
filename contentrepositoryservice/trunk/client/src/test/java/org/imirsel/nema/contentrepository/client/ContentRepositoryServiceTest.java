@@ -33,7 +33,7 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 	private SimpleCredentials nemaCredentials;
 	private Repository repository = null;
 	private ClientRepositoryFactory factory = new ClientRepositoryFactory();
-	private static String RMI_URL = "rmi://nema-dev.lis.illinois.edu:2099/jackrabbit.repository";
+	private static String RMI_URL = "rmi://nema.lis.uiuc.edu:2099/jackrabbit.repository";
 	
 
 
@@ -42,7 +42,7 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 	public void setUp() throws Exception {
 		//repository = ContentRepositoryTestUtil.getTempRepository();
 		repository = factory.getRepository(RMI_URL);
-		nemaCredentials = new SimpleCredentials("user", "user".toCharArray());
+		nemaCredentials = new SimpleCredentials("admin", "admin".toCharArray());
 		if (repository == null) {
 			throw new Exception("Repository is null...");
 		}
@@ -116,7 +116,7 @@ public class ContentRepositoryServiceTest extends BaseManagerTestCase {
 	}
 
 	
-	
+	@Test
 	public void registerNodes() throws LoginException, RepositoryException, IOException{
 		Session session = repository.login(nemaCredentials);
 	    NamespaceHelper namespaceHelper = new NamespaceHelper(session);

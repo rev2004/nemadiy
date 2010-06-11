@@ -3,6 +3,10 @@ package org.imirsel.nema.model;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * @author kumaramit01
+ *
+ */
 public class ExecutableBundle implements Serializable, ExecutableMetadata {
 
    /**
@@ -10,66 +14,10 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
 	 */
 	private static final long serialVersionUID = -6672878925392305298L;
 	
-   private static final ExecutableType DEFAULT_EXECUTABLE_TYPE = ExecutableType.JAVA;
-   private static final String DEFAULT_OS = "Unix Like";
+	private static final ExecutableType DEFAULT_EXECUTABLE_TYPE = ExecutableType.JAVA;
+	private static final String DEFAULT_OS = "Unix Like";
    
-	public enum ExecutableType {
-		JAVA("Java",0), MATLAB("MATLAB",1), C("C",2), SHELL("Shell",3);
-
-		private String name;
-      private int code;
-      
-		private ExecutableType(String name,int code) {
-			this.name = name;
-			this.code = code;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public int getCode() {
-		   return code;
-		}
-		
-		@Override
-		public String toString() {
-			return name;
-		}
-
-		public static ExecutableType toExecutableType(String typeName) {
-			if (typeName.equals(JAVA.getName())) {
-				return JAVA;
-			} else if (typeName.equals(C.getName())) {
-				return C;
-			} else if (typeName.equals(SHELL.getName())) {
-				return SHELL;
-			} else if (typeName.equals(MATLAB.getName())) {
-				return MATLAB;
-			} else {
-				return null;
-			}
-		}
-		
-      public static ExecutableType valueOf(int code)
-            throws IllegalArgumentException {
-         switch (code) {
-         case 0:
-            return ExecutableType.JAVA;
-         case 1:
-            return ExecutableType.MATLAB;
-         case 2:
-            return ExecutableType.C;
-         case 3:
-            return ExecutableType.SHELL;
-         default:
-            throw new IllegalArgumentException("Unknown ExecutableType code: "
-                  + code);
-         }
-      }
-	}
-
-	private String id;
+    private String id;
 	private String fileName;
 	private ExecutableType type = DEFAULT_EXECUTABLE_TYPE;
 	private String executableName;
