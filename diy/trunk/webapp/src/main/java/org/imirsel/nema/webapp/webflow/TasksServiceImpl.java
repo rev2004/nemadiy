@@ -517,7 +517,7 @@ public class TasksServiceImpl {
          tmpProps.remove(OS);
       }
       
-      Map<String, Property> formattedProps = new TreeMap<String, Property>();
+      //Map<String, Property> formattedProps = new TreeMap<String, Property>();
       
       // Title case the property names.
 //      for (Map.Entry<String, Property> entry : tmpProps.entrySet()) {
@@ -536,7 +536,7 @@ public class TasksServiceImpl {
 //         }
 //         formattedProps.put(newkey.toString(), entry.getValue());
 //      }
-      return formattedProps;
+      return tmpProps;
    }
 
 	/**
