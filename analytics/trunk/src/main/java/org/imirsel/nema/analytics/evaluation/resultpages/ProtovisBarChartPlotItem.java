@@ -53,7 +53,7 @@ public class ProtovisBarChartPlotItem extends PageItem{
 		}
 		out += "</h4>\n";
         out += 	"\t<div id=\"center\">\n" +
-        		"\t\t<div style=\"width: 500px; height: 415px;\">\n" +
+        		"\t\t<div style=\"width: 500px; height: 470px; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;\">\n" +
         		"\t\t\t<script type=\"text/javascript+protovis\">\n";
         out +=  "\t\t\tvar " + getName() + " = new function() {\n";
         
