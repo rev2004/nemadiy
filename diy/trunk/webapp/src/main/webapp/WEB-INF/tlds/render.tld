@@ -3,7 +3,7 @@
 	<jsp-version>2.0</jsp-version>
 	<short-name>NEMA Tag Library</short-name>
 	<uri>http://www.imirsel.org/tags</uri>
-
+	
 	<tag>
 		<name>componentproperty</name>
 		<tag-class>org.imirsel.nema.webapp.taglib.ComponentPropertyTag</tag-class>
@@ -72,7 +72,7 @@
 		<dynamic-attributes>true</dynamic-attributes>
 
 	</tag>
-	<tag>
+<!-- 	<tag>
 		<name>displayName</name>
 		<tag-class>org.imirsel.nema.webapp.taglib.DisplayNameConverter</tag-class>
 		<body-content>empty</body-content>
@@ -80,5 +80,11 @@
 			This tag convert the name into a nicer display.
     	</description>
     	<body-content>JSP</body-content>
-	</tag>
+	</tag>-->
+	
+	<function>
+		<name>displayName</name>
+		<function-class>org.imirsel.nema.webapp.util.StringUtil</function-class>
+		<function-signature>java.util.String displayNameConvert(java.lang.String)</function-signature>
+	</function>
 </taglib>

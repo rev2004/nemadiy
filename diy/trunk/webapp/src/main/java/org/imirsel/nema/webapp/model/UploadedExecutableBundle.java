@@ -13,6 +13,7 @@ import java.util.zip.ZipFile;
 
 import org.apache.log4j.Logger;
 import org.imirsel.nema.model.ExecutableBundle;
+import org.imirsel.nema.model.ExecutableType;
 import org.imirsel.nema.model.NemaZipFile;
 import org.imirsel.nema.model.Path;
 import org.springframework.web.multipart.MultipartFile;

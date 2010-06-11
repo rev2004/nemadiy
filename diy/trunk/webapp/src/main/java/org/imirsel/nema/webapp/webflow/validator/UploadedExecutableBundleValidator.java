@@ -7,7 +7,7 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
 
-import org.imirsel.nema.model.ExecutableBundle.ExecutableType;
+import org.imirsel.nema.model.ExecutableType;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 
 /**

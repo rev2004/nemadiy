@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.contentrepository.client.CommandLineFormatter;
 import org.imirsel.nema.contentrepository.client.ResourceTypeService;
 import org.imirsel.nema.model.ExecutableBundle;
+import org.imirsel.nema.model.ExecutableType;
 import org.imirsel.nema.model.InvalidCommandLineFlagException;
 import org.imirsel.nema.model.JavaPredefinedCommandTemplate;
 import org.imirsel.nema.model.MatlabPredefinedCommandTemplate;
@@ -45,7 +46,7 @@ public class ExecutableServiceImpl {
 	 * @param scope
 	 */
 	public void setTemplate(VanillaPredefinedCommandTemplate input,
-			ExecutableBundle.ExecutableType type,
+			ExecutableType type,
 			MutableAttributeMap scope) {
 		logger.debug("get input template "+type);
 		if ((type != null)&&(input!=null)) {
