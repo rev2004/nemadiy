@@ -23,6 +23,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 
 	public static final String INDENT = "\t\t\t";
 	public static final DecimalFormat MS_FORMAT = new DecimalFormat("###.# ms");
+	public static final DecimalFormat TIMESTAMP_FORMAT = new DecimalFormat("###.###");
 	
 	private double startTime;
     private double endTime;
@@ -55,7 +56,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 
     @Override
     public String getBodyData(boolean topLink){
-    	System.out.println("generating plot HTML for: " + getName());
+    	System.out.println("generating segmentation plot HTML for: " + getName());
     	String out = "\t<a name=\"" + getName() + "\"></a>\n" +
         "\t<h4>" + getCaption();
 		if (topLink){
@@ -66,7 +67,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		int height = (3 + 33 * series.size()) + (15 * series.size()) + 20 + 2 + 20;
 		
 		out += 	"\t<div id=\"center\">\n" + 
-		       	"\t\t<div style=\"width: 860px; height: " + height + "px;\">\n";
+		       	"\t\t<div style=\"width: 860px; height: " + height + "px;; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;\">\n";
 		
 		String functionName = getName() + "_segment_plot";
 		String[] seriesNames = series.keySet().toArray(new String[series.size()]);
@@ -109,7 +110,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 			NemaSegment seg = null;
 			for (Iterator<NemaSegment> it = data.iterator(); it.hasNext();) {
 				seg = it.next();
-				out += "{onset: " + seg.getOnset() + ", offset: " + seg.getOffset() + ", label: \"" + seg.getLabel() + "\"}";
+				out += "{onset: " + TIMESTAMP_FORMAT.format(seg.getOnset()) + ", offset: " + TIMESTAMP_FORMAT.format(seg.getOffset()) + ", label: \"" + seg.getLabel() + "\"}";
 				if(it.hasNext()){
 					out +=",\n";
 				}else{
@@ -135,7 +136,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
         		INDENT + "var colors = [\"salmon\", \"steelblue\", \"green\", \"pink\", \"navy\"];\n\n" + 
         		
         		INDENT + "return {\n" +
-				INDENT + "plot : function() {\n" + 
+        		INDENT + "plot : function() {\n" + 
 				
 				INDENT + "/* Interaction state. Focus scales will have domain set on-render. */\n" + 
         	    INDENT + "var i = {x:0, dx:100},\n" + 
