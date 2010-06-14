@@ -85,13 +85,14 @@ public class TasksServiceTest {
 	Component component3;
 
 	@Resource
-	Map<String, Property> datatypeMap1;
+	List< Property> properties1;
 
 	@Resource
-	Map<String, Property> datatypeMap2;
+	List<Property> properties2;
 	@Resource
-	Map<String, Property> datatypeMap3;
+	List<Property> properties3;
 
+	
 	@Resource
 	Property propertyTrue;
 	@Resource

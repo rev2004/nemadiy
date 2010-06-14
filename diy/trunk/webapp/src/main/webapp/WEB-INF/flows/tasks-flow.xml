@@ -7,20 +7,20 @@
 	<var name="jobForm" class="org.imirsel.nema.webapp.model.JobForm" />
 	<var name="flow" class="org.imirsel.nema.model.Flow" />
 	<var name="componentList" class="java.util.ArrayList" />
-	
+
 	<input name="flowType" type="java.lang.String" />
 	<input name="flowId" type="java.lang.Integer" />
-	
+
 	<on-start>
 		<evaluate expression="tasksService.buildUploadPath(externalContext,jobForm.uuid)" />
-		<evaluate expression="jobForm.setFlowId(flowId)"/>
+		<evaluate expression="jobForm.setFlowId(flowId)" />
 	</on-start>
 
 	<view-state id="selectTask" model="jobForm">
 		<on-entry>
 			<evaluate expression="tasksService.getFlowTemplates(flowType)" result="flowScope.flowList"></evaluate>
 		</on-entry>
-		<transition on="show" to="getTemplate"/>
+		<transition on="show" to="getTemplate" />
 	</view-state>
 
 	<view-state id="displayFlowComponents" model="jobForm">
@@ -35,31 +35,30 @@
 	</view-state>
 
 	<view-state id="editSimpleComponentProperties">
-		<on-entry>
-			<evaluate expression="tasksService.formatPropertiesForDisplay(propertyMap)" result="viewScope.formattedProperties" />
-		</on-entry>
+		
 		<transition on="save" to="displayFlowComponents">
-			<evaluate expression="tasksService.updateProperties(requestParameters,propertyMap)" />
+			<evaluate expression="tasksService.updateProperties(requestParameters,properties)" />
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
 
 	<view-state id="editRemoteServiceComponentProperties">
 		<on-entry>
-			<evaluate expression="tasksService.formatPropertiesForDisplay(propertyMap)" result="viewScope.formattedProperties" />
+			<evaluate expression="tasksService.removeHiddenPropertiesForRemoteDynamicComponent(properties)" result="viewScope.formattedProperties" />
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
-			<evaluate expression="tasksService.updateProperties(requestParameters,propertyMap)" />
+			<evaluate expression="tasksService.updateProperties(requestParameters,properties)" />
 		</transition>
 		<transition on="next" to="generateExecutable">
-			<evaluate expression="tasksService.updateProperties(requestParameters,propertyMap)" />
+			<evaluate expression="tasksService.updateProperties(requestParameters,properties)" />
 		</transition>
 		<transition on="remove" to="editRemoteServiceComponentProperties">
-			<evaluate expression="tasksService.removeExecutable(flowScope.component,jobForm.executableMap,propertyMap)" />
+			<evaluate expression="tasksService.removeExecutable(flowScope.component,jobForm.executableMap,properties)" />
 			<evaluate expression="jobForm.templateMap.remove(flowScope.component)" />
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
+	
 	<view-state id="addExecutableSuccess">
 		<transition on="next" to="displayFlowComponents" />
 		<transition on="back" to="editRemoteServiceComponentProperties" />
@@ -82,7 +81,7 @@
 	</action-state>
 
 	<subflow-state id="generateExecutable" subflow="task/executable">
-		<input name="executableBundleInput" value="tasksService.findBundle(jobForm.executableMap[flowScope.component],propertyMap)"
+		<input name="executableBundleInput" value="tasksService.findBundle(jobForm.executableMap[flowScope.component],properties)"
 			type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<input name="executableTemplateInput" value="jobForm.templateMap[flowScope.component]" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 
@@ -90,7 +89,7 @@
 		<output name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<transition on="success" to="addExecutableSuccess">
 			<evaluate
-				expression="tasksService.addExecutable(flowScope.component,propertyMap,executableBundle,jobForm.uuid,jobForm.executableMap,messageContext)" />
+				expression="tasksService.addExecutable(flowScope.component,properties,executableBundle,jobForm.uuid,jobForm.executableMap,messageContext)" />
 			<evaluate expression="jobForm.templateMap.put(flowScope.component,executableTemplate)" />
 
 		</transition>
@@ -100,8 +99,8 @@
 	<action-state id="editComponentProperties">
 		<evaluate expression="tasksService.getRoles()" result="flowScope.userRoles" />
 		<evaluate expression="componentList.get(requestParameters.idx)" result="flowScope.component" />
-		<set name="flowScope.propertyMap" value="componentMap[flowScope.component]" />
-		<evaluate expression='tasksService.areFromRemoteComponent(propertyMap)'>
+		<set name="flowScope.properties" value="componentMap[flowScope.component]" />
+		<evaluate expression='tasksService.areFromRemoteComponent(properties)'>
 			<attribute name="name" value="isRemoteService" />
 		</evaluate>
 		<transition on="isRemoteService.yes" to="editRemoteServiceComponentProperties" />
@@ -109,8 +108,7 @@
 	</action-state>
 
 	<action-state id="run">
-		<evaluate expression="tasksService.run(flow,componentMap,jobForm.name,jobForm.description)"
-			result="flowScope.job" />
+		<evaluate expression="tasksService.run(flow,componentMap,jobForm.name,jobForm.description)" result="flowScope.job" />
 		<transition on="success" to="checkRunResult" />
 
 	</action-state>
@@ -136,13 +134,13 @@
 	</decision-state>
 
 	<end-state id="jobdetail" view="externalRedirect:contextRelative:/get/JobManager.jobDetail?id=#{flowScope.job.id}" />
-	
+
 	<global-transitions>
 		<transition on-exception="org.imirsel.nema.flowservice.MeandreServerException" to="runError" />
 		<transition on-exception="org.imirsel.nema.flowservice.ServiceException" to="runError" />
-		<transition on-exception="org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException" to="runError" />	
+		<transition on-exception="org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException" to="runError" />
 	</global-transitions>
-	
+
 	<on-end>
 		<evaluate expression="tasksService.clearBundles(jobForm.executableMap)" />
 	</on-end>

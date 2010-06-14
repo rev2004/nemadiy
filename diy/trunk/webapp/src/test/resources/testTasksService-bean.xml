@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<description>Mock objects for TasksServiceTest</description>
 
@@ -106,6 +106,36 @@
 		<entry key="_remoteDynamicComponent" value-ref="propertyTrue" />
 		<entry key="_credentials" value-ref="property7" />
 	</util:map>
+	<util:list id="properties1">
+		<ref  bean="property1"  />
+		<ref bean="property2" />
+	</util:list>
+
+	<util:list id="properties2">
+		<ref bean="property1" />
+		<ref bean="property2" />
+		<ref bean="property3" />
+		<ref bean="propertyFile" />
+		<ref bean="property5" />
+		<ref bean="property6" />
+		<ref bean="propertyFalse" />
+		<ref bean="property7" />
+	</util:list>
+
+	<util:list id="properties3">
+		<ref bean="property3" />
+		<ref bean="propertyFile" />
+	</util:list>
+	<util:list id="properties4">
+		<ref bean="property1" />
+		<ref bean="property2" />
+		<ref bean="property3" />
+		<ref bean="propertyFile" />
+		<ref bean="property5" />
+		<ref bean="property6" />
+		<ref bean="propertyTrue" />
+		<ref bean="property7" />
+	</util:list>
 
 	<util:map id="parameters1">
 		<description>parameter map for datatypeMap1</description>
@@ -128,9 +158,9 @@
 
 	<util:map id="datatypeMaps">
 		<description>key list is componentLis, must sync with componentList</description>
-		<entry key-ref="component1" value-ref="datatypeMap1" />
-		<entry key-ref="component3" value-ref="datatypeMap3" />
-		<entry key-ref="component2" value-ref="datatypeMap2" />
+		<entry key-ref="component1" value-ref="properties1" />
+		<entry key-ref="component3" value-ref="properties3" />
+		<entry key-ref="component2" value-ref="properties2" />
 	</util:map>
 
 	<util:list id="componentList">
