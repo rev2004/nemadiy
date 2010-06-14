@@ -55,6 +55,12 @@ public class MockResourcePath implements ResourcePath {
 		this.workspace = workspace;
 	}
 
+	@Override
+	public String getURIAsString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 }

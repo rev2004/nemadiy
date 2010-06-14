@@ -52,7 +52,11 @@ public class ExecutableServiceImpl {
 		if ((type != null)&&(input!=null)) {
 			switch (type) {
 			case SHELL:
-			case C:
+			case BIN:
+			case RUBY:
+			case PERL:
+			case PYTHON:
+			case WINE:
 				scope.put("plainTemplate",input);
 				break;
 			case JAVA:

@@ -140,7 +140,7 @@ public class UploadedExecutableBundle extends ExecutableBundle {
 	 */
 	public ExecutableType[] getTypeOptions() {
 		return new ExecutableType[] { ExecutableType.JAVA,
-				ExecutableType.MATLAB, ExecutableType.C, ExecutableType.SHELL };
+				ExecutableType.MATLAB, ExecutableType.BIN, ExecutableType.PERL,ExecutableType.PYTHON,ExecutableType.WINE,ExecutableType.SHELL,ExecutableType.RUBY };
 	}
 
 	/**
