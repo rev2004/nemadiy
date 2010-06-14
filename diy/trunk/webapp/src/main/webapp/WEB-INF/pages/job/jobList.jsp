@@ -2,8 +2,8 @@
 <head>
 <title>
 <fmt:message key="joblist.title"/>
-<meta http-equiv="refresh" content="10" />
 </title>
+<meta http-equiv="refresh" content="10" />
 <meta name="heading" content="${jobs.title}"/>
 </head>
 
@@ -26,7 +26,7 @@ defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10">
   <display:column property="endTimestamp" escapeXml="true" sortable="true" titleKey="job.endTimestamp"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
   <display:column property="host" escapeXml="true" sortable="true" titleKey="job.host"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
+        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id" />
   <display:column property="port" escapeXml="true" sortable="true" titleKey="job.port"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
 </display:table>

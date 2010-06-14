@@ -81,7 +81,11 @@
 		<transition on="JAVA" to="argumentsJava" />
 		<transition on="MATLAB" to="argumentsMatlab" />
 		<transition on="SHELL" to="argumentsPlain" />
-		<transition on="C" to="argumentsPlain" />
+		<transition on="BIN" to="argumentsPlain" />
+		<transition on="RUBY" to="argumentsPlain" />
+		<transition on="PYTHON" to="argumentsPlain" />
+		<transition on="WINE" to="argumentsPlain" />
+		<transition on="PERL" to="argumentsPlain" />
 	</action-state>
 
     <action-state id="cancel">

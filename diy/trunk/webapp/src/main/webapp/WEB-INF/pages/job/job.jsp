@@ -16,7 +16,7 @@
  		    frequency: 5,
  		    decay:2
  		});
-    new Ajax.PeriodicalUpdater('console', "<c:url value='/get/JobManager.getConsole'/>",
+    new Ajax.Updater('console', "<c:url value='/get/JobManager.getConsole'/>",
     		  {
     		    method: 'get',
     		    parameters: {jobId:"${job.id}" },    		    
@@ -31,9 +31,9 @@
         	var json=fillJob.responseText.evalJSON();
         	$('job.jobStatus').innerHTML=statusString(json.job.statusCode-0);
         	$('job.flowname').innerHTML=json.job.flow.name;
-       		$('job.submitTimestamp').innerHTML=json.job.submitTimestamp;
-       		$('job.startTimestamp').innerHTML=json.job.startTimestamp;
-       		$('job.endTimestamp').innerHTML=json.job.endTimestamp;
+       		$('job.submitTimestamp').innerHTML=checkNull(json.job.submitTimestamp);
+       		$('job.startTimestamp').innerHTML=checkNull(json.job.startTimestamp);
+       		$('job.endTimestamp').innerHTML=checkNull(json.job.endTimestamp);
        		$('job.name').innerHTML=json.job.name;
        		$('job.description').innerHTML=json.job.description;
        		if (((json.job.statusCode-0)==3)&&($('resultContent').empty())){
@@ -98,7 +98,13 @@
          }
          return name;
       }
-     
+     function checkNull(str){
+         if (str==null){
+             return "Pending...";
+         }else {
+             return str;
+         }
+     }
 
   </script>
 </head>
@@ -152,17 +158,13 @@
 			</tr>
 		</table>
 		</td>
-
 		
-		<td id="result" style="display:none; margin:5px;">
-		<table style="margin-left:20%">
-			<tr>
-				<td>
-					Explore Results <br />
+		
+		<td id="result" style="display:none; ">
+			<div style="magin-left:10px;">
+					Explore Results 
 					<div id="resultContent" style="text-align:center"></div>
-				</td>
-			</tr>
-		</table>
+			</div>
 		</td>
 	</tr>
 </table>
