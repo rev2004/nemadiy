@@ -17,14 +17,14 @@
 						<label class="name">${component.name}:</label>
 					</thead>
 					<c:forEach var="property" items="${componentMap[component]}">
-					<c:if test="${not fn:startsWith(property.value.name,'_') }">
+					<c:if test="${not fn:startsWith(property.name,'_') }">
 						<tr>
 							<td>
-								<label class="label"> ${render:displayName(property.value.name)}</label>
+								<label class="label"> ${render:displayName(property.name)}</label>
 							</td>
 							<td>:</td>
 							<td>
-								<c:out value="${property.value.value}" />
+								<c:out value="${property.value}" />
 							</td>
 						</tr>
 						</c:if>

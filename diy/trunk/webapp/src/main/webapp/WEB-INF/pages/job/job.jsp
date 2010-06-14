@@ -16,11 +16,7 @@
  		    frequency: 5,
  		    decay:2
  		});
-    new Ajax.Updater('console', "<c:url value='/get/JobManager.getConsole'/>",
-    		  {
-    		    method: 'get',
-    		    parameters: {jobId:"${job.id}" },    		    
-    		});
+    
      
 	function updateJob(pe){
   	  new Ajax.Request("<c:url value='/get/JobManager.jobDetail.json'/>",{
@@ -58,6 +54,11 @@
            		pe.stop();
            		consoleUpdater.stop();
            		$('refresh').hide();
+           		new Ajax.Updater('console', "<c:url value='/get/JobManager.getConsole'/>",
+              		  {
+              		    method: 'get',
+              		    parameters: {jobId:"${job.id}" },    		    
+              		});
            	}
        		 		
     	}//onSuccess

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,9 +45,9 @@ import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action class for the task template flow generation webflow.
- * Notice: that for the DataTypeMap Map<String,Property>, key is strictly for display,
- * while the Property.name should be used as name sent to content repository 
+ * Action class for the task template flow generation webflow. Notice: that for
+ * the DataTypeMap Map<String,Property>, key is strictly for display, while the
+ * Property.name should be used as name sent to content repository
  * 
  * @author gzhu1
  * @since 0.6.0
@@ -54,7 +55,8 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class TasksServiceImpl {
 
-	static private Log logger = LogFactory.getLog(TasksServiceImpl.class);
+	static private Log logger = LogFactory
+			.getLog(TasksServiceImpl.class);
 
 	private FlowService flowService;
 	private UserManager userManager;
@@ -70,15 +72,15 @@ public class TasksServiceImpl {
 	final static String OS = "_os";
 	final static String GROUP = "_group";
 
-	final static Set<String> HIDDEN_PROPERTIES=new HashSet<String>();
+	final static Set<String> HIDDEN_PROPERTIES = new HashSet<String>();
 	{
 		HIDDEN_PROPERTIES.add(REMOTE_COMPONENT);
 		HIDDEN_PROPERTIES.add(CREDENTIALS);
 		HIDDEN_PROPERTIES.add(EXECUTABLE_URL);
 		HIDDEN_PROPERTIES.add(OS);
-		HIDDEN_PROPERTIES.add(GROUP);				
+		HIDDEN_PROPERTIES.add(GROUP);
 	}
-	
+
 	public String getPhysicalDir() {
 		return physicalDir;
 	}
@@ -88,7 +90,7 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Send executable bundle to content repository, replace/add the new 
+	 * Send executable bundle to content repository, replace/add the new
 	 * ResourcePath of executable bundle in the the executableMap.
 	 * 
 	 * @param component
@@ -100,7 +102,7 @@ public class TasksServiceImpl {
 	 * @throws ContentRepositoryServiceException
 	 */
 	public void addExecutable(final Component component,
-			final Map<String, Property> propertyMap,
+			final List<Property> properties,
 			final UploadedExecutableBundle bundle, final UUID uuid,
 			Map<Component, ResourcePath> executableMap,
 			MessageContext messageContext)
@@ -109,17 +111,17 @@ public class TasksServiceImpl {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		String credentialString = credential.getUserID() + ":"
 				+ new String(credential.getPassword());
-		propertyMap.get(CREDENTIALS).setValue(credentialString);
-		propertyMap.get(REMOTE_COMPONENT).setValue("true");
-		propertyMap.get(OS).setValue(bundle.getPreferredOs());
-		propertyMap.get(GROUP).setValue(bundle.getGroup());
-		deleteExecutableFromRepository(executableMap.get(component),
-				credential);
+		findProperty(properties, CREDENTIALS).setValue(credentialString);
+		findProperty(properties, REMOTE_COMPONENT).setValue("true");
+		findProperty(properties, OS).setValue(bundle.getPreferredOs());
+		findProperty(properties, GROUP).setValue(bundle.getGroup());
+		deleteExecutableFromRepository(executableMap.get(component), credential);
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
 				uuid.toString(), bundle);
 		executableMap.put(component, path);
-		String uri = path.getProtocol() +":"+ path.getWorkspace() +"://"+path.getPath();
-		propertyMap.get(EXECUTABLE_URL).setValue(uri);
+		String uri = path.getProtocol() + ":" + path.getWorkspace() + "://"
+				+ path.getPath();
+		findProperty(properties, EXECUTABLE_URL).setValue(uri);
 		if (path != null) {
 			// MessageContext messageContext=requestContext.getMessageContext();
 			messageContext.addMessage(new MessageBuilder().info().defaultText(
@@ -142,14 +144,13 @@ public class TasksServiceImpl {
 	 */
 	public void removeExecutable(Component component,
 			Map<Component, ResourcePath> executableMap,
-			Map<String, Property> propertyMap)
-			throws ContentRepositoryServiceException {
+			List<Property> properties) throws ContentRepositoryServiceException {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		if (executableMap.containsKey(component)) {
 			ResourcePath oldPath = executableMap.get(component);
 			deleteExecutableFromRepository(oldPath, credential);
 			executableMap.remove(component);
-			propertyMap.get(EXECUTABLE_URL).setValue("");
+			findProperty(properties, EXECUTABLE_URL).setValue("");
 		}
 	}
 
@@ -167,8 +168,8 @@ public class TasksServiceImpl {
 		}
 	}
 
-	private void deleteExecutableFromRepository(
-			ResourcePath path, SimpleCredentials credential)
+	private void deleteExecutableFromRepository(ResourcePath path,
+			SimpleCredentials credential)
 			throws ContentRepositoryServiceException {
 		try {
 			if ((path != null) && (artifactService.exists(credential, path))) {
@@ -183,7 +184,6 @@ public class TasksServiceImpl {
 
 	}
 
-	
 	/**
 	 * Retrieve the Executable bundle with resource path {@link path}, and
 	 * populated the extra fields for UploadedExecutableBundle
@@ -193,7 +193,7 @@ public class TasksServiceImpl {
 	 * @return
 	 */
 	public UploadedExecutableBundle findBundle(ResourcePath path,
-			Map<String, Property> propertyMap) {
+			List<Property> properties) {
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		UploadedExecutableBundle bundle = null;
 		try {
@@ -203,8 +203,8 @@ public class TasksServiceImpl {
 				bundle = new UploadedExecutableBundle(oldBundle);
 				if (bundle == null)
 					bundle = new UploadedExecutableBundle();
-				bundle.setPreferredOs(propertyMap.get(OS).getValue());
-				bundle.setGroup(propertyMap.get(GROUP).getValue());
+				bundle.setPreferredOs(findProperty(properties, OS).getValue());
+				bundle.setGroup(findProperty(properties, GROUP).getValue());
 			}
 		} catch (ContentRepositoryServiceException e) {
 			logger.error(e, e);
@@ -213,14 +213,15 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Return the list of flow templates that are of a certain type. All 
+	 * Return the list of flow templates that are of a certain type. All
 	 * templates are returned if type is unknown, invalid, or null.
 	 * 
-	 * @param flowTypeStr String representation of the flow type. 
-	 *            Types are defined in {@link Flow.FlowType}.
-	 *            
+	 * @param flowTypeStr
+	 *            String representation of the flow type. Types are defined in
+	 *            {@link Flow.FlowType}.
+	 * 
 	 * @return List of {@link Flow}s that match the specified type, or all of
-	 * the flows if the type is unrecognized or null.
+	 *         the flows if the type is unrecognized or null.
 	 */
 	public List<Flow> getFlowTemplates(String flowTypeStr) {
 		Flow.FlowType flowType = (flowTypeStr == null ? null : Flow.FlowType
@@ -239,8 +240,8 @@ public class TasksServiceImpl {
 		return list;
 	}
 
-
-	private String getFullyQualifiedPropertyName(String component, String propertyName) {
+	private String getFullyQualifiedPropertyName(String component,
+			String propertyName) {
 		if (component == null) {
 			return propertyName;
 		}
@@ -256,6 +257,7 @@ public class TasksServiceImpl {
 
 	/**
 	 * This method is necessary for render tag
+	 * 
 	 * @return roles from the default user manager
 	 */
 	public String[] getRoles() {
@@ -274,13 +276,14 @@ public class TasksServiceImpl {
 	/**
 	 * Tests whether or not the supplied properties are from a remote component.
 	 * 
-	 * @param properties Map of property names to {@link Property} instances.
+	 * @param properties
+	 *            Map of property names to {@link Property} instances.
 	 * @return True if the properties are from a remote component.
 	 */
-	public boolean areFromRemoteComponent(Map<String, Property> properties) {
-		return properties.keySet().contains(REMOTE_COMPONENT)
-				&& (properties.get(REMOTE_COMPONENT).getDefaultValue()
-						.toString().equalsIgnoreCase("true"));
+	public boolean areFromRemoteComponent(List<Property> properties) {
+		Property remote=findProperty(properties,REMOTE_COMPONENT);
+		return (remote!=null)
+				&& (remote.getDefaultValue().toString().equalsIgnoreCase("true"));
 	}
 
 	/**
@@ -290,23 +293,21 @@ public class TasksServiceImpl {
 	 * @param datatypeMaps
 	 * @param name
 	 * @param description
-	 * @return the job object created with the parameters 
+	 * @return the job object created with the parameters
 	 * @throws MeandreServerException
 	 */
-	public Job run(Flow flow,
-			Map<Component, Map<String, Property>> componentMap, String name,
-			String description) throws MeandreServerException {
+	public Job run(Flow flow, Map<Component, List<Property>> componentMap,
+			String name, String description) throws MeandreServerException {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 
 		Component component;
-		for (Entry<Component, Map<String, Property>> mapsEntry : componentMap
+		for (Entry<Component, List<Property>> mapsEntry : componentMap
 				.entrySet()) {
 			component = mapsEntry.getKey();
-			for (Entry<String, Property> entry : mapsEntry.getValue()
-					.entrySet()) {
-				paramMap.put(
-						getFullyQualifiedPropertyName(component.getInstanceUri(), entry.getValue().getName()),
-						entry.getValue().getValue());
+			for (Property property : mapsEntry.getValue()) {
+				paramMap.put(getFullyQualifiedPropertyName(
+						component.getInstanceUri(), property.getName()), 
+						property.getValue());
 			}
 
 		}
@@ -350,20 +351,22 @@ public class TasksServiceImpl {
 		instance.setType(flow.getType());
 		instance.setTypeName(flow.getTypeName());
 
-		SimpleCredentials credential=userManager.getCurrentUserCredentials();
-		instance = this.flowService.createNewFlow(credential, instance, paramMap, flowUri, user
-				.getId());
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		instance = this.flowService.createNewFlow(credential, instance,
+				paramMap, flowUri, user.getId());
 		long instanceId = instance.getId();
 
-		Job job = this.flowService.executeJob(credential,token, name, description,
-				instanceId, user.getId(), user.getEmail());
+		Job job = this.flowService.executeJob(credential, token, name,
+				description, instanceId, user.getId(), user.getEmail());
 		return job;
 
 	}
 
-	public void test(){
-		throw new org.imirsel.nema.flowservice.ServiceException("custom exception");
+	public void test() {
+		throw new org.imirsel.nema.flowservice.ServiceException(
+				"custom exception");
 	}
+
 	public void setArtifactService(ArtifactService artifactService) {
 		this.artifactService = artifactService;
 	}
@@ -372,11 +375,12 @@ public class TasksServiceImpl {
 	 * Extract a {@code List} of {@link Component}s from the given {@code Map}
 	 * of {@link Components}. The order of the list should not be changed.
 	 * 
-	 * @param componentMap Map of {@link Component}s to component properties.
+	 * @param componentMap
+	 *            Map of {@link Component}s to component properties.
 	 * @return List of just {@link Component}s extracted from the supplied map.
 	 */
 	public List<Component> extractComponentList(
-			Map<Component, Map<String, Property>> componentMap) {
+			Map<Component, List< Property>> componentMap) {
 		List<Component> list = new ArrayList<Component>(componentMap.keySet());
 		Collections.sort(list);
 		return list;
@@ -385,29 +389,27 @@ public class TasksServiceImpl {
 	/**
 	 * Load the {@link Components} for the given {@link Flow}.
 	 * 
-	 * @param flow The {@link Flow} for which the properties should be loaded.
+	 * @param flow
+	 *            The {@link Flow} for which the properties should be loaded.
 	 * @return Map containing {@link Component}s to {@link Properties}.
 	 */
-	public Map<Component, Map<String, Property>> loadFlowComponents(Flow flow) {
-		Map<Component, List<Property>> componentsToPropertyLists = 
-		   flowService.getAllComponentsAndPropertyDataTypes(flow.getUri());
-		Map<Component, Map<String, Property>> componentsToPropertyMaps = 
-		   new HashMap<Component, Map<String, Property>>();
+	public Map<Component, List< Property>> loadFlowComponents(Flow flow) {
+		Map<Component, List<Property>> componentsToPropertyLists = flowService
+				.getAllComponentsAndPropertyDataTypes(flow.getUri());
 		
-		for (Entry<Component, List<Property>> entry:componentsToPropertyLists.entrySet()) {
-			Component component=entry.getKey();
-			if (!component.isHidden()) {
-				Map<String,Property> properties=new TreeMap<String,Property>( );
-				for (Property property:entry.getValue()){
-					properties.put(property.getName(), property);
-				}
-				
-				componentsToPropertyMaps.put(component,properties);
+		Iterator<Entry<Component,List<Property>>> it=componentsToPropertyLists
+				.entrySet().iterator();
+		while (it.hasNext()){
+			Entry<Component,List<Property>> entry=it.next();
+			Component component = entry.getKey();
+			if (component.isHidden()){
+				it.remove();
 			}
-
-		}
-
-		return componentsToPropertyMaps;
+			else{
+				Collections.sort(entry.getValue());
+			}
+		}//while loop
+		return componentsToPropertyLists;
 	}
 
 	public void setFlowService(FlowService flowService) {
@@ -474,8 +476,7 @@ public class TasksServiceImpl {
 			webDir = "http://" + req.getServerName() + ":"
 					+ req.getServerPort() + req.getContextPath() + subDir;
 
-			logger.info("Built the upload path: " + physicalDir + ","
-							+ webDir);
+			logger.info("Built the upload path: " + physicalDir + "," + webDir);
 		}
 	}
 
@@ -495,40 +496,43 @@ public class TasksServiceImpl {
 		this.webDir = webDir;
 	}
 
-   /**
-    * Format the provided properties for display to the user.
-    * 
-    * @param properties Map from property names to {@link Properties}.
-    * @return Map of {@link Properties} that have been formatted for display
-    * purposes.
-    */
-   public Map<String, Property> formatPropertiesForDisplay(
-         Map<String, Property> properties) {
-      Map<String, Property> tmpProps = new HashMap<String, Property>(properties);
-      
-      // For properties of remote components, remove properties that 
-      // should be hidden.
-      if (areFromRemoteComponent(properties)) {
-        
-         tmpProps.remove(REMOTE_COMPONENT);
-         tmpProps.remove(CREDENTIALS);
-         tmpProps.remove(EXECUTABLE_URL);
-         tmpProps.remove(GROUP);
-         tmpProps.remove(OS);
-      }
-      return tmpProps;
-   }
+	/**
+	 * Format the provided properties for display to the user.
+	 * 
+	 * @param properties
+	 *            Map from property names to {@link Properties}.
+	 * @return Map of {@link Properties} that have been formatted for display
+	 *         purposes.
+	 */
+//	public Map<String, Property> formatPropertiesForDisplay(
+//			Map<String, Property> properties) {
+//		Map<String, Property> tmpProps = new HashMap<String, Property>(
+//				properties);
+//
+//		// For properties of remote components, remove properties that
+//		// should be hidden.
+//		if (areFromRemoteComponent(properties)) {
+//
+//			tmpProps.remove(REMOTE_COMPONENT);
+//			tmpProps.remove(CREDENTIALS);
+//			tmpProps.remove(EXECUTABLE_URL);
+//			tmpProps.remove(GROUP);
+//			tmpProps.remove(OS);
+//		}
+//		return tmpProps;
+//	}
 
 	/**
 	 * Update the property values using the user-submitted parameters.
 	 * 
-	 * @param parameters HTTP request parameters.
-	 * @param properties Properties to be updated.
+	 * @param parameters
+	 *            HTTP request parameters.
+	 * @param properties
+	 *            Properties to be updated.
 	 */
 	public void updateProperties(ParameterMap parameters,
-			Map<String, Property> properties) {
-		for (String key : properties.keySet()) {
-			Property property = properties.get(key);
+			List< Property> properties) {
+		for (Property property : properties) {
 			if (parameters.contains(property.getName())) {
 				List<DataTypeBean> ltb = property.getDataTypeBeanList();
 				if ((ltb != null) && (!ltb.isEmpty())
@@ -547,10 +551,8 @@ public class TasksServiceImpl {
 						try {
 							file.transferTo(uploadedFile);
 						} catch (IllegalStateException e) {
-
 							logger.error(e, e);
 						} catch (IOException e) {
-
 							logger.error(e, e);
 						}
 						property.setValue(webDir + filename);
@@ -559,8 +561,28 @@ public class TasksServiceImpl {
 					property.setValue(parameters.get(property.getName()));
 				}
 			}
-			
+
 		}// for loop
 	}
-	
+
+	private Property findProperty(Collection<Property> properties, String name) {
+		if (name != null) {
+			for (Property property : properties) {
+				if (name.equals(property.getName()))
+					return property;
+			}
+		}
+		return null;
+	}
+
+	public List<Property> removeHiddenPropertiesForRemoteDynamicComponent(List<Property> properties) {
+		List<Property> list = new ArrayList<Property>();
+		for (Property property : properties) {
+			if (!HIDDEN_PROPERTIES.contains(property.getName())) {
+				list.add(property);
+			}
+		}
+
+		return list;
+	}
 }

@@ -10,14 +10,14 @@
 
 <form:form enctype="multipart/form-data">
   
-  <c:forEach items="${formattedProperties}" var="entry">
-  	<c:if test="${not fn:startsWith(entry.key,'_') }">
+  <c:forEach items="${properties}" var="property">
+  	<c:if test="${not fn:startsWith(property.name,'_') }">
     <fieldset>
-    <label for="jobname" class="label" > ${render:displayName(entry.value.name)}:</label>
+    <label for="jobname" class="label" > ${render:displayName(property.name)}:</label>
     <render:property roles="${userRoles}"
-            component="${component.instanceUri}" value="${entry.value}"
+            component="${component.instanceUri}" value="${property}"
             class="cssClass" />
-    <font color="green">${entry.value.description}</font>
+    <font color="green">${property.description}</font>
     </fieldset>
     </c:if>
   </c:forEach>
