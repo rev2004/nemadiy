@@ -213,18 +213,18 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * return the list of flow templates belong to type, all templates are
-	 * returned if type is not valid. used a very lenient criteria, check both
-	 * flowtype and keywords
+	 * Return the list of flow templates that are of a certain type. All 
+	 * templates are returned if type is unknown, invalid, or null.
 	 * 
-	 * @param type
-	 *            controlled by {@link Flow.FlowType}, first letter needs
-	 *            capitalize.
-	 * @return
+	 * @param flowTypeStr String representation of the flow type. 
+	 *            Types are defined in {@link Flow.FlowType}.
+	 *            
+	 * @return List of {@link Flow}s that match the specified type, or all of
+	 * the flows if the type is unrecognized or null.
 	 */
-	public List<Flow> getFlowTemplates(String type) {
-		Flow.FlowType flowType = (type == null ? null : Flow.FlowType
-				.toFlowType(type));
+	public List<Flow> getFlowTemplates(String flowTypeStr) {
+		Flow.FlowType flowType = (flowTypeStr == null ? null : Flow.FlowType
+				.toFlowType(flowTypeStr));
 
 		Set<Flow> flowSet = this.flowService.getFlowTemplates();
 		List<Flow> list = new ArrayList<Flow>();
