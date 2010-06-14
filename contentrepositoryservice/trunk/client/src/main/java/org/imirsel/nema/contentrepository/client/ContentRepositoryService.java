@@ -1,5 +1,6 @@
 package org.imirsel.nema.contentrepository.client;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -23,6 +24,7 @@ import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.InvalidBundleException;
+import org.imirsel.nema.model.NemaResult;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 
@@ -34,7 +36,7 @@ import sun.net.www.MimeTable;
  * @since 0.0.1
  * 
  */
-final public class ContentRepositoryService implements ArtifactService {
+final public class ContentRepositoryService implements ArtifactService, ResultStorageService{
 
 	private final Logger logger = Logger.getLogger(ContentRepositoryService.class.getName());
 	private Repository repository;
@@ -169,6 +171,17 @@ final public class ContentRepositoryService implements ArtifactService {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * @param credentials
+	 * @param name result file {@link NemaResult}
+	 */
+	public ResourcePath saveResultFile(final SimpleCredentials credentials,
+			NemaResult nemaResult)
+			throws ContentRepositoryServiceException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
@@ -562,8 +575,6 @@ final public class ContentRepositoryService implements ArtifactService {
 	}
 
 
-
-
 	/**
 	 * Set the repository to be used by the service
 	 * @param repository
@@ -657,8 +668,6 @@ final public class ContentRepositoryService implements ArtifactService {
 		bundle.setId(fileNode.getIdentifier());
 		return bundle;
 	}
-	
-
 
 
 }

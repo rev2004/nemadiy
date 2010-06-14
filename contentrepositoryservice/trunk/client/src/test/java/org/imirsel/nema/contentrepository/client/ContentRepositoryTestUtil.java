@@ -43,7 +43,7 @@ public class ContentRepositoryTestUtil {
 		bundle.setExecutableName("./printlarge/printlarge");
 		bundle.setCommandLineFlags("-o -pp");
 		bundle.setId("printlargedata");
-		bundle.setTypeName(ExecutableType.C.getName());
+		bundle.setTypeName(ExecutableType.BIN.getName());
 		bundle.setEnvironmentVariables(map);
 		byte[] fileContent = null;
 
@@ -72,7 +72,7 @@ public class ContentRepositoryTestUtil {
 		bundle.setExecutableName("./c1/a.out");
 		bundle.setCommandLineFlags("-o -pp");
 		bundle.setId("c1");
-		bundle.setTypeName(ExecutableType.C.getName());
+		bundle.setTypeName(ExecutableType.BIN.getName());
 		bundle.setEnvironmentVariables(map);
 		byte[] fileContent = null;
 

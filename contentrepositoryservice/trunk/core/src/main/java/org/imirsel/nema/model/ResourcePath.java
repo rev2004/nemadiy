@@ -16,6 +16,8 @@ public interface ResourcePath extends Serializable {
 	
 	// returns the protocol jcr/http etc.
 	public String getProtocol();
+	
+	public String getURIAsString();
 
 
 }

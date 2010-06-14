@@ -1,5 +1,7 @@
 package org.imirsel.nema.contentrepository.client;
 
+import java.io.File;
+
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
@@ -140,5 +142,7 @@ public interface ArtifactService {
 			final SimpleCredentials credentials,
 			final ResourcePath resourcePath)
 			throws ContentRepositoryServiceException;
-
+	
+	
+	
 }

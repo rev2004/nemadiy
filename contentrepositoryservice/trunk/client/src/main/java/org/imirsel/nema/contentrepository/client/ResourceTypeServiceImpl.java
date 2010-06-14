@@ -9,7 +9,7 @@ import org.imirsel.nema.model.GroupDataType;
 import org.imirsel.nema.model.OsDataType;
 
 
-/**Returns various resource typess
+/**Returns various resource types
  * 
  * @author kumaramit01
  * @since 0.3.0
@@ -24,6 +24,9 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 	private final List<OsDataType> supportedOsList  = new ArrayList<OsDataType>();
 	private final List<GroupDataType> groupList = new ArrayList<GroupDataType>();
 	
+	/**
+	 * 
+	 */
 	public ResourceTypeServiceImpl(){
 		fileDataTypeList.add( new FileDataType("Chord Interval Text File",
 				"org.imirsel.nema.analytics.evaluation.chord.ChordIntervalTextFile"));
@@ -45,12 +48,21 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 		
 	}
 	
+	/**
+	 * 
+	 */
 	public final List<FileDataType> getSupportedFileDataTypes(){
 		return Collections.unmodifiableList(fileDataTypeList);
 	}
+	/**
+	 * 
+	 */
 	public final List<OsDataType> getSupportedOperatingSystems(){
 		return Collections.unmodifiableList(this.supportedOsList);
 	}
+	/**
+	 * 
+	 */
 	public final List<GroupDataType> getSupportedGroups(){
 		return Collections.unmodifiableList(this.groupList);
 	}
