@@ -94,6 +94,7 @@ public class ExecutableBundle implements Serializable, ExecutableMetadata {
       bundleContent = null;
       commandLineFlags = null;
       environmentVariables = null;
+      bundleContent=null;
    }
 
 }

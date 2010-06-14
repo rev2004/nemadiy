@@ -58,6 +58,12 @@ public class RepositoryResourcePath implements Serializable, ResourcePath{
 	public String getProtocol() {
 		return protocol;
 	}
+	
+	public String getURIAsString() {
+		return this.getProtocol()+":"+ this.getWorkspace()+"://"+ this.getPath();
+	}
+
+	
 
 
 
@@ -87,7 +93,7 @@ public class RepositoryResourcePath implements Serializable, ResourcePath{
 	    return hash;
 	 }
 
-	
+
 	
 
 }
