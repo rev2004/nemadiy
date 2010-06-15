@@ -16,3 +16,5 @@ disp('segmentRetrievalEval2-3 DONE')
 
 evalreport = [overSegScore, underSegScore, pwF, pwPrecision, pwRecall, R, Fmeasure05, precRate05, recRate05, Fmeasure3, precRate3, recRate3, medianTrue2claim3, medianClaim2true3];
 dlmwrite(outFile, evalreport);
+
+exit;
