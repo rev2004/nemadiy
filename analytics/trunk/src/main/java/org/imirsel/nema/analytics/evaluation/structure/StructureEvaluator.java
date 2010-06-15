@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
 import org.imirsel.nema.analytics.util.io.CopyFileFromClassPathToDisk;
@@ -335,25 +336,8 @@ public class StructureEvaluator extends EvaluatorImpl {
 	{
 		File sysTempDir = new File(System.getProperty("java.io.tmpdir"));
 		String evalTempDirName;
-		long randId = Math.round(10000000.0*Math.random());
-		evalTempDirName = prefix + randId;
+		evalTempDirName = prefix + UUID.randomUUID().toString();
 		File evalTempDir = new File(sysTempDir, evalTempDirName);
-
-		int attemptCount = 0;
-		int maxAttempts = 10;
-		while (evalTempDir.exists()){
-			attemptCount++;
-			if(attemptCount > maxAttempts)
-			{
-				throw new IOException(
-						"The highly improbable has occurred! Failed to " +
-						"create a unique temporary directory after " +
-						maxAttempts + " attempts.");
-			}
-			randId = Math.round(10000000.0*Math.random());
-			evalTempDirName = prefix + randId;
-			evalTempDir = new File(sysTempDir, evalTempDirName);
-		}
 
 		if(evalTempDir.mkdirs())
 		{
