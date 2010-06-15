@@ -135,6 +135,10 @@ public class NemaDataConstants {
     public static final String MELODY_OVERALL_ACCURACY = "Overall Accuracy";
     public static final double MELODY_TIME_INC = 0.01;		// MIREX-spec 10ms time-increment
     
+    // Multi-F0 Estimation Evaluator Constants
+    public static final double MULTI_F0_EST_TIME_INC = 0.01; // 10ms time-increment
+    public static final String MULTI_F0_EST_DATA = "Raw multi-F0 estimation data with timestamps and F0 in Hz";
+
     // Key Detection Evaluator Constants
     public static final String KEY_DETECTION_DATA = "The musical key (tonic/mode)";
     public static final String KEY_DETECTION_WEIGHTED_SCORE ="Weighted Key Score";
