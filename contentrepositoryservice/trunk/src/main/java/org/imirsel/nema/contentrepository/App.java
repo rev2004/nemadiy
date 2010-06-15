@@ -29,8 +29,8 @@ public class App {
 		ClientRepositoryFactory factory = new ClientRepositoryFactory();
 		Repository repository = getRepository();
 		//Repository repository = factory.getRepository(RMI_URL);
-		String username = "user";
-		String password = "user";
+		String username = "admin";
+		String password = "admin";
 	    Session session = repository.login(new SimpleCredentials(username,password.toCharArray()));
 	    if(session==null){
 	    	System.out.println("session is null");

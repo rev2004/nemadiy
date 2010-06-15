@@ -27,6 +27,7 @@ import org.imirsel.nema.model.InvalidBundleException;
 import org.imirsel.nema.model.NemaResult;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
+import org.imirsel.nema.model.NemaResult.ResultType;
 
 import sun.net.www.MimeTable;
 
@@ -34,6 +35,7 @@ import sun.net.www.MimeTable;
  * 
  * @author kumaramit01
  * @since 0.0.1
+ * @version 0.0.2 -added check for the presence of result:file node
  * 
  */
 final public class ContentRepositoryService implements ArtifactService, ResultStorageService{
@@ -43,6 +45,7 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 	private final String USERS_DIR ="users";
 	private final String FLOWS_DIR ="flows";
 	private final String EXECUTOR_BUNDLE_DIR ="executables";
+	private final String RESULT_DIR ="results";
 	private final String DEFAULT_WORKSPACE="default";
 	private final String DEFAULT_PROTOCOL ="jcr";
 
@@ -66,6 +69,7 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 			namespaceHelper.registerNamespace("imirsel","http://www.imirsel.org/jcr");
 			namespaceHelper.registerNamespace("exec","http://www.imirsel.org/jcr/exec");
 			namespaceHelper.registerNamespace("flow","http://www.imirsel.org/jcr/flow");
+			namespaceHelper.registerNamespace("result","http://www.imirsel.org/jcr/result");
 			NodeTypeManager nodeTypeManager=session.getWorkspace().getNodeTypeManager();
 			NodeType nodeType=nodeTypeManager.getNodeType("exec:file");
 			if(nodeType==null){
@@ -83,7 +87,15 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 					exists=true;
 				}
 			}
-
+			if(exists){
+			nodeType=nodeTypeManager.getNodeType("result:file");
+			if(nodeType==null){
+				logger.severe("result:file node type is missing");
+				exists=false;
+			}else{
+				exists=true;
+			}
+			}
 
 		}catch (LoginException e){
 			throw new ContentRepositoryServiceException(e);
@@ -180,8 +192,127 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 	public ResourcePath saveResultFile(final SimpleCredentials credentials,
 			NemaResult nemaResult)
 			throws ContentRepositoryServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		if(repository==null){
+			throw new ContentRepositoryServiceException("Repository not set");
+		}
+		BundleUtils.validateResult(nemaResult);
+		if(nemaResult.getName().contains(":")){
+			throw new ContentRepositoryServiceException("Illegal Character in the Filename ':' ");	
+		}
+		String resourcePath = null;
+		Session session = null;
+		try {
+			logger.info("Logging in with credentials ");
+			session = repository.login(credentials);
+			logger.info("Success Logging in");
+			Node root = session.getRootNode();
+			Node executableDirNode = null;
+			Node userNode=null;
+			Node flowNode=null;
+			Node executionInstanceDirNode=null;
+			Node resultDirNode=null;
+			String userDirPath ="/"+USERS_DIR+"/"+credentials.getUserID();
+			String flowDirPath = userDirPath +"/"+FLOWS_DIR;
+			String executableDirPath=flowDirPath+"/"+EXECUTOR_BUNDLE_DIR;
+			String executionInstanceDirPath = executableDirPath +"/"+ nemaResult.getExecutionId();
+			String dirName =nemaResult.getExecutionId();
+			String resultDir = executionInstanceDirPath +"/"+ RESULT_DIR;
+			
+			boolean exists=session.itemExists(executableDirPath);
+			if(!session.itemExists("/"+USERS_DIR)){
+				root.addNode(USERS_DIR,"nt:folder");
+				session.save();
+			}
+			
+
+			if(!exists){
+				logger.info("dir path does not exist -creating the directory path " + executableDirPath);
+
+
+				if(session.itemExists(userDirPath)==false){
+					Node usersNode=root.getNode(USERS_DIR);
+					userNode=usersNode.addNode(credentials.getUserID(), "nt:folder");
+					session.save();
+					flowNode=userNode.addNode(FLOWS_DIR,"nt:folder");
+					session.save();
+					executableDirNode= flowNode.addNode(EXECUTOR_BUNDLE_DIR,"nt:folder");
+					session.save();
+					executionInstanceDirNode=executableDirNode.addNode(dirName, "nt:folder");
+					session.save();
+
+				}else if(session.itemExists(flowDirPath)==false){
+					userNode= session.getNode(userDirPath);
+					flowNode=userNode.addNode(FLOWS_DIR,"nt:folder");
+					session.save();
+					executableDirNode= flowNode.addNode(EXECUTOR_BUNDLE_DIR,"nt:folder");
+					session.save();
+					executionInstanceDirNode=executableDirNode.addNode(dirName, "nt:folder");
+					session.save();
+				}else if(session.itemExists(executableDirPath)==false){
+					flowNode=session.getNode(flowDirPath);
+					executableDirNode= flowNode.addNode(EXECUTOR_BUNDLE_DIR,"nt:folder");
+					session.save();
+					executionInstanceDirNode=executableDirNode.addNode(dirName, "nt:folder");
+					session.save();
+				}
+				
+				
+			}else{
+				logger.info("dir path exists using the existing directory");
+				executableDirNode=session.getNode(executableDirPath);
+				if(session.itemExists(executionInstanceDirPath)){
+					executionInstanceDirNode=session.getNode(executionInstanceDirPath);
+				}else{
+					executionInstanceDirNode=executableDirNode.addNode(dirName, "nt:folder");
+				}
+			}
+			
+			if(session.itemExists(resultDir)){
+				resultDirNode=session.getNode(resultDir);
+			}else{
+				resultDirNode=executionInstanceDirNode.addNode(RESULT_DIR,"nt:folder");
+			}
+			
+			MimeTable mt = MimeTable.getDefaultTable();
+			String mimeType = mt.getContentTypeFor(nemaResult.getName());
+
+			if (mimeType == null) {
+				mimeType = "application/octet-stream";
+			}
+			Node fileNode = resultDirNode.addNode (nemaResult.getName(), "result:file");
+			fileNode.setProperty("fileName", nemaResult.getFileName());
+			fileNode.setProperty("typeName", nemaResult.getResultType().toString());
+			fileNode.setProperty("execId", nemaResult.getExecutionId());
+			fileNode.setProperty("modelClass", nemaResult.getModelClass());
+			
+			long currentTime= System.currentTimeMillis();
+			logger.info("creating new result file node: " + nemaResult.getName() );
+			Node resNode = fileNode.addNode ("jcr:content", "nt:resource");
+			resNode.setProperty ("jcr:mimeType", mimeType);
+			resNode.setProperty ("jcr:encoding", "");
+			resNode.setProperty ("jcr:data", new BinaryValue(nemaResult.getFileContent()));
+			resNode.setProperty ("jcr:lastModified", currentTime);
+			Node resultPropertiesNode =  resultDirNode.addNode(nemaResult.getName()+".properties","nt:file");
+			mimeType = mt.getContentTypeFor(nemaResult.getName()+".properties");
+			Node eresNode = resultPropertiesNode.addNode ("jcr:content", "nt:resource");
+			eresNode.setProperty ("jcr:mimeType", mimeType);
+			eresNode.setProperty ("jcr:encoding", "");
+			eresNode.setProperty ("jcr:data", new BinaryValue(BundleUtils.getPropertyFileAsBytes(nemaResult)));
+			eresNode.setProperty ("jcr:lastModified", currentTime);
+			resourcePath = fileNode.getPath();
+			logger.info("saving session: " + resNode.getPath());
+			session.save();
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}finally{
+			if(session!=null){
+				logger.info("logging out of the session");
+				session.logout();
+			}
+		}
+		return new RepositoryResourcePath(DEFAULT_PROTOCOL,DEFAULT_WORKSPACE,resourcePath);
+		
+		
 	}
 
 
@@ -461,9 +592,39 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 			if(session!=null)
 				session.logout();
 		}
+	}
+	
+	/** Returns the nema result from the content repository
+	 * 
+	 * @param credentials
+	 * @param resourcePath
+	 * @return NemaResult 
+	 * @throws ContentRepositoryServiceException
+	 */
+	public final NemaResult getNemaResult(final SimpleCredentials credentials, final ResourcePath resourcePath) throws ContentRepositoryServiceException{
+		if(repository==null){
+			throw new ContentRepositoryServiceException("Repository not set");
+		}
+		Session session = null;
 
-
-
+		try {
+			session = repository.login(credentials);
+			boolean exists=session.itemExists(resourcePath.getPath());
+			if(!exists){
+				throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
+			}
+			Node node=session.getNode(resourcePath.getPath());
+			NemaResult nemaResult = retrieveNemaResultFromNode(node, true);
+			return nemaResult;
+		} catch (RepositoryException e) {
+			throw new ContentRepositoryServiceException(e);
+		}finally{
+			if(session!=null)
+				session.logout();
+		}
+		
+		
+		
 	}
 
 	/**
@@ -581,6 +742,76 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 	 */
 	public void setRepository(Repository repository) {
 		this.repository = repository;
+	}
+	
+
+	private NemaResult retrieveNemaResultFromNode(final Node fileNode, boolean copyContent) throws RepositoryException, ContentRepositoryServiceException {
+		NemaResult nemaResult = new NemaResult();
+		Property fileNameProperty=null;
+		Property nameProperty=null;
+		Property execIdProperty = null;
+		Property typeNameProperty = null;
+		Property modelClassProperty = null;
+		
+		boolean propExists = fileNode.hasProperty("typeName");
+		if(propExists){
+			typeNameProperty = fileNode.getProperty("typeName");
+			String typeVal = typeNameProperty.getString();
+			if(typeVal.equalsIgnoreCase("dir"))
+				nemaResult.setResultType(ResultType.DIR);
+			else if(typeVal.equalsIgnoreCase("file"))
+				nemaResult.setResultType(ResultType.FILE);
+			else
+				throw new ContentRepositoryServiceException("Error invalid Result type: " + typeVal);
+		}
+		
+		propExists = fileNode.hasProperty("fileName");
+		if(propExists){
+			fileNameProperty = fileNode.getProperty("fileName");
+			nemaResult.setFileName(fileNameProperty.getString());
+		}
+		
+		propExists = fileNode.hasProperty("execId");
+		if(propExists){
+			execIdProperty = fileNode.getProperty("execId");
+			nemaResult.setExecutionId(execIdProperty.getString());
+		}
+		
+		propExists = fileNode.hasProperty("name");
+		if(propExists){
+			nameProperty = fileNode.getProperty("name");
+			nemaResult.setName(nameProperty.getString());
+		}
+		
+		propExists = fileNode.hasProperty("modelClass");
+		if(propExists){
+			modelClassProperty = fileNode.getProperty("modelClass");
+			nemaResult.setModelClass(modelClassProperty.getString());
+		}
+		
+		Node resNode = fileNode.getNode ("jcr:content");
+		Property mimeTypeProperty = resNode.getProperty("jcr:mimeType");
+		Property encodingProperty = resNode.getProperty("jcr:encoding");
+		Property dataProperty = resNode.getProperty("jcr:data");
+		String fileName = fileNode.getName();
+		nemaResult.setName(fileName);
+		
+		String mimeType=mimeTypeProperty.getString();
+		String encodingType = encodingProperty.getString();
+		if(copyContent){
+			InputStream is = dataProperty.getBinary().getStream();
+			long length =dataProperty.getBinary().getSize();
+			byte[] data;
+			try {
+				data =BundleUtils.readByteDataFromStream(is,length);
+			} catch (IOException e) {
+				throw new ContentRepositoryServiceException(e);
+			}
+			nemaResult.setFileContent(data);
+		}
+		
+		
+		return nemaResult;
 	}
 
 	private ExecutableBundle retrieveExecutableBundleFromNode(final Node fileNode, boolean copyContent) 

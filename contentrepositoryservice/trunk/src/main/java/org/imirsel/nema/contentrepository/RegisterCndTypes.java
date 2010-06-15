@@ -17,22 +17,24 @@ import org.apache.jackrabbit.api.JackrabbitNodeTypeManager;
 import org.apache.jackrabbit.commons.NamespaceHelper;
 import org.apache.jackrabbit.core.jndi.RegistryHelper;
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
+import org.apache.jackrabbit.rmi.jackrabbit.JackrabbitClientAdapterFactory;
 
 
 /** Registers custom node types
  * 
  * @author kumaramit01
  * @since 0.0.1
+ * @version 0.0.5 -Added result:file type to support storing result file
  */
 public class RegisterCndTypes {
 	
 	public static void main(String args[]) throws Exception{
-		String RMI_URL = "rmi://localhost:2099/jackrabbit.repository";
+		String RMI_URL = "rmi://nema.lis.uiuc.edu:2099/jackrabbit.repository";
 		ClientRepositoryFactory factory = new ClientRepositoryFactory();
-		Repository repository = getRepository();
-		//Repository repository = factory.getRepository(RMI_URL);
-		String username = "user";
-		String password = "user";
+		//Repository repository = getRepository();
+		Repository repository = factory.getRepository(RMI_URL);
+		String username = "admin";
+		String password = "b2cebd873228d3e6753d9b39195730694e3d1bbc";
 	    Session session = repository.login(new SimpleCredentials(username,password.toCharArray()));
 	    if(session==null){
 	    	System.out.println("session is null");
@@ -71,6 +73,24 @@ public class RegisterCndTypes {
 	        byteArrayInputStream.close();
 		  }
 	    }	  
+	    
+	    if(!manager.hasNodeType("result:file")){
+		   	   if (!manager.hasNodeType("ns:file")){
+		        String cnd = "<result = 'http://www.imirsel.org/jcr/result'>\n";
+		        cnd += "[result:file] > nt:file\n";
+		        cnd += "- execId (STRING) mandatory\n";
+		        cnd += "- typeName (STRING) mandatory\n";
+		        cnd += "- fileName (STRING) mandatory\n";
+		        cnd += "- modelClass (STRING) modelClass\n";
+		       
+		        
+		        byte cndArray[] = cnd.getBytes();
+		        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(cndArray);
+		        manager.registerNodeTypes(byteArrayInputStream,JackrabbitNodeTypeManager.TEXT_X_JCR_CND); 
+		        byteArrayInputStream.close();
+			  }
+		    }	
+	    
          session.save();
          session.logout();
          
