@@ -194,12 +194,18 @@ public class StructureEvaluator extends EvaluatorImpl {
 				structResultsStrArray = DeliminatedTextFileUtilities.loadDelimTextData(resultFile, ",", -1);
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
+				getLogger().warning("Failed to write structure files and evaluate them using MATLAB");
+				getLogger().throwing("org.imirsel.nema.analytics.evaluation.structure.StructureEvaluator", "evaluateResultFold", e);
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
+				getLogger().warning("Failed to write structure files and evaluate them using MATLAB");
+				getLogger().throwing("org.imirsel.nema.analytics.evaluation.structure.StructureEvaluator", "evaluateResultFold", e);
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				getLogger().warning("Failed to write structure files and evaluate them using MATLAB");
+				getLogger().throwing("org.imirsel.nema.analytics.evaluation.structure.StructureEvaluator", "evaluateResultFold", e);
 				e.printStackTrace();
 			}
 			
