@@ -86,12 +86,11 @@ public class StructureEvaluator extends EvaluatorImpl {
 
 	@Override
 	public NemaData evaluateResultFold(String jobID, NemaTrackList testSet,
-			List<NemaData> theData) {
-		// TODO Auto-generated method stub
+			List<NemaData> dataList) {
 
-		int numExamples = checkFoldResultsAreComplete(jobID, testSet, theData);
+
+		int numExamples = checkFoldResultsAreComplete(jobID, testSet, dataList);
 		NemaData outObj = new NemaData(jobID);
-		NemaData data;
 		NemaData gtData;
 
 		// Set up temporary directory for the evaluation to take place in
@@ -168,9 +167,9 @@ public class StructureEvaluator extends EvaluatorImpl {
 		double recRate3Avg = 0.0;
 		double medianTrue2ClaimAvg = 0.0;
 		double medianClaim2TrueAvg = 0.0;
-		for (int x = 0; x < theData.size(); x++) {
-			
-			data = theData.get(x);
+		
+		for(NemaData data:dataList){
+
 			gtData = trackIDToGT.get(data.getId());
 			randId = Math.round(10000000.0*Math.random());
 			algFileName = evalTempDir.getAbsolutePath() + File.pathSeparator + "alg" + randId + ".txt";
@@ -180,49 +179,21 @@ public class StructureEvaluator extends EvaluatorImpl {
 			gtFile = new File(gtFileName);
 			resultFile = new File(resultFileName);
 			StructureTextFile structFileWriter = new StructureTextFile();
-			try {
-				structFileWriter.writeFile(algFile, data);
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				structFileWriter.writeFile(gtFile, gtData);
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			
 			String commandString = "('" + gtFile.getAbsolutePath() + "','" + algFile.getAbsolutePath() + "','" + resultFile.getAbsolutePath() + "')";
 			MatlabExecutorImpl matlabIntegrator = new MatlabExecutorImpl(evalTempDir,true,evalTempDir,evalTempDir,evalTempDir,commandString,evalCommand,null);
 	        matlabIntegrator.setMatlabBin(matlabPath);
 	        
-	        try {
+	        String[][] structResultsStrArray = null;
+	        
+			try {
+				structFileWriter.writeFile(algFile, data);
+				structFileWriter.writeFile(gtFile, gtData);
 				matlabIntegrator.runCommand(null);
+				structResultsStrArray = DeliminatedTextFileUtilities.loadDelimTextData(resultFile, ",", -1);
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			String[][] structResultsStrArray = null;
-			try {
-				structResultsStrArray = DeliminatedTextFileUtilities.loadDelimTextData(resultFile, ",", -1);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
