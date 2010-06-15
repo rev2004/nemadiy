@@ -21,5 +21,17 @@ public interface ResultStorageService {
 	 */
 	public ResourcePath saveResultFile(final SimpleCredentials credentials,final NemaResult nemaResultFile) 
 		   throws ContentRepositoryServiceException;
+	
+	
+	/**
+	 * Returns the NemaResult
+	 * @param credentials
+	 * @param resourcePath
+	 * @return nema result {@code NemaResult}
+	 * @throws ContentRepositoryServiceException
+	 */
+	public NemaResult getNemaResult(final SimpleCredentials credentials, final ResourcePath resourcePath) 
+			throws ContentRepositoryServiceException;
+	
 
 }

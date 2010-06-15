@@ -89,7 +89,7 @@ public class RepositoryResourcePath implements Serializable, ResourcePath{
 	
 	public int hashCode() { 
 	    int hash = 1;
-	    hash = hash * 31 + this.path.hashCode() + this.workspace.hashCode();
+	    hash = hash * 31 + this.path.hashCode() + this.workspace.hashCode() + this.protocol.hashCode();
 	    return hash;
 	 }
 

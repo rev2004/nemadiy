@@ -5,6 +5,7 @@ package org.imirsel.nema.contentrepository.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.zip.ZipException;
@@ -17,9 +18,11 @@ import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.InvalidCommandLineFlagException;
+import org.imirsel.nema.model.NemaResult;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.Flow.FlowType;
+import org.imirsel.nema.model.NemaResult.ResultType;
 import org.imirsel.nema.test.BaseManagerTestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -32,12 +35,12 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	private SimpleCredentials nemaCredentials;
 	private Repository repository = null;
 	private ClientRepositoryFactory factory = new ClientRepositoryFactory();
-	private static String RMI_URL = "rmi://nema-dev.lis.illinois.edu:2099/jackrabbit.repository";
+	private static String RMI_URL = "rmi://nema.lis.uiuc.edu:2099/jackrabbit.repository";
 	
 	@Before
 	public void setUp() throws Exception {
 		repository = factory.getRepository(RMI_URL);
-		nemaCredentials = new SimpleCredentials("user", "12dea96fec20593566ab75692c9949596833adc9".toCharArray());
+		nemaCredentials = new SimpleCredentials("admin", "b2cebd873228d3e6753d9b39195730694e3d1bbc".toCharArray());
 	}
 
 
@@ -55,8 +58,55 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		assertEquals(isValid,true);
 	}
 	
+	@Ignore
+	@Test
+	public void testSaveResult() throws ContentRepositoryServiceException{
+		ContentRepositoryService crs = new ContentRepositoryService();
+		crs.setRepository(repository);
+		NemaResult nemaResult = null;
+		try {
+			nemaResult = getSampleNemaResult("/tmp");
+		} catch (IOException e) {
+			fail("Error creating the nema result file");
+		}
+		ResourcePath rpath=crs.saveResultFile(nemaCredentials, nemaResult);
+		System.out.println(rpath.getURIAsString());
+		
+	}
+	
+	@Test
+	public void testGetResult() throws ContentRepositoryServiceException{
+		ContentRepositoryService crs = new ContentRepositoryService();
+		crs.setRepository(repository);
+		RepositoryResourcePath rrp = new RepositoryResourcePath("jcr", "default", "/users/admin/flows/executables/1276626294392/results/tmp");
+		NemaResult nresult=crs.getNemaResult(nemaCredentials, rrp);
+		System.out.println(nresult.getExecutionId()+  " " + nresult.getFileName() + " "+ nresult.getModelClass() + " " + nresult.getName() + " " + nresult.getFileContent().length);
+	}
 	
 	
+	private NemaResult getSampleNemaResult(String path) throws IOException {
+		NemaResult nemaResult = new NemaResult();
+		byte[] fileContent= null;
+		CompressionUtils cutils = new CompressionUtils();
+		fileContent = cutils.compress(path);
+		
+		if(fileContent==null){
+			throw new RuntimeException("file byte contents size is null " + path);
+		}
+		
+		nemaResult.setExecutionId(System.currentTimeMillis()+"");
+		nemaResult.setFileContent(fileContent);
+		File file = new File(path);
+		nemaResult.setModelClass("org.test.TestModel.class");
+		nemaResult.setName(file.getName());
+		nemaResult.setFileName(path);
+		nemaResult.setResultType(ResultType.DIR);
+		return nemaResult;
+	}
+
+
+	
+	@Ignore
 	@Test
 	public void testSaveFlow() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();

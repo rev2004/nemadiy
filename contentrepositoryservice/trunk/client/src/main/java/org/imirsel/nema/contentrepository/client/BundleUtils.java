@@ -13,6 +13,7 @@ import javax.jcr.ValueFormatException;
 
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.InvalidBundleException;
+import org.imirsel.nema.model.NemaResult;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
@@ -62,6 +63,24 @@ public class BundleUtils {
 		}
 		return baos.toByteArray();
 	}
+	
+	protected static byte[] getPropertyFileAsBytes(NemaResult nemaResult) {
+		Properties properties = new Properties();
+		properties.setProperty("typeName",nemaResult.getResultType().toString());
+		properties.setProperty("name",nemaResult.getName());
+		properties.setProperty("fileName",nemaResult.getFileName());
+		properties.setProperty("execId", nemaResult.getExecutionId());
+		properties.setProperty("modelClass", nemaResult.getModelClass());
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			properties.storeToXML(baos, "serialized properties for name" );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return baos.toByteArray();
+	}
+
 	
 	
 	protected static String convertToJSONString(Map<String, String> environmentVariables) {
@@ -124,6 +143,25 @@ public class BundleUtils {
 		}
 		
 	}
+	
+	protected static void validateResult(NemaResult nemaResult) throws ContentRepositoryServiceException{
+		if(nemaResult.getExecutionId()==null){
+			throw new ContentRepositoryServiceException("The result file's execution id is null");
+		}
+		if(nemaResult.getName() == null){
+			throw new ContentRepositoryServiceException("The result file name is null");
+		}
+		if(nemaResult.getFileContent() == null){
+			throw new ContentRepositoryServiceException("The content of the result file is null");	
+		}
+		if(nemaResult.getFileContent().length==0){
+			throw new ContentRepositoryServiceException("The content of the result file is 0 bytes");
+		}
+		
+		
+	}
+
+
 
 
 

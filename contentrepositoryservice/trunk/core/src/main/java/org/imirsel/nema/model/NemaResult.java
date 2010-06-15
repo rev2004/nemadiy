@@ -14,6 +14,8 @@ public class NemaResult  implements NemaResultMetadata,  Serializable{
 	 */
 	private static final long serialVersionUID = -7037081933712410409L;
 	private byte fileContent[];
+	private String fileName;
+	private String modelClass;
 	private String name;
 	private String executionId;
 	private ResultType resultType;
@@ -46,6 +48,8 @@ public class NemaResult  implements NemaResultMetadata,  Serializable{
 	         return name;
 	      }
 	
+	 
+	    
 	      static public ResultType toResultType(int code) {
 	    	  ResultType status = null;
 	         switch (code) {
@@ -102,6 +106,42 @@ public class NemaResult  implements NemaResultMetadata,  Serializable{
 	}
 	public String getExecutionId() {
 		return executionId;
+	}
+	
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	public String getFileName() {
+		return fileName;
+	}
+	public String getModelClass() {
+		return modelClass;
+	}
+	public void setModelClass(String modelClass) {
+		this.modelClass = modelClass;
+	}
+	public boolean equals(Object object){
+		if(!(object instanceof NemaResult)){
+			return false;
+		}
+		NemaResult result = (NemaResult)object;
+		
+		if(result.executionId.equals(executionId)  && result.fileContent.equals(fileContent)
+				&& result.name.equals(name) && result.resourcePath.equals(resourcePath)
+				&& result.resultType== this.resultType) {
+			return true;
+		}
+		return false;
+	}
+	
+	public int hashCode(){
+		int hash = 31;
+		hash = hash + executionId.hashCode()+ fileContent.hashCode() + name.hashCode() + resourcePath.hashCode() + resultType.code;
+		return hash;
+	}
+	
+	public String toString(){
+		return this.name + ": " + this.executionId + ": " + this.resourcePath + ": " + this.resultType.toString();
 	}
 	
 
