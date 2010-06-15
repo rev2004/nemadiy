@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,6 +92,8 @@ public class TasksServiceTest {
 	List<Property> properties2;
 	@Resource
 	List<Property> properties3;
+	@Resource
+	List<Property> properties4;
 
 	
 	@Resource
@@ -100,7 +103,7 @@ public class TasksServiceTest {
 	@Resource
 	Property propertyFile;
 	@Resource
-	Map<Component, Map<String, Property>> datatypeMaps;
+	Map<Component, List<Property>> datatypeMaps;
 
 	@Resource
 	List<Component> componentList;
@@ -138,23 +141,23 @@ public class TasksServiceTest {
 			});
 			MessageContext messageContext=new DefaultMessageContext();
 			Map<Component, ResourcePath> map = new HashMap<Component, ResourcePath>(executableMap);
-			Map<String,Property> data=new HashMap<String,Property>(datatypeMap2);
+			List<Property> data=new ArrayList<Property>(properties2);
 			tasksService.addExecutable(component2,data,uploadBundle,uuid,map,messageContext);
-			assertEquals(path3.getProtocol()+":"+ path3.getWorkspace() +"://"+path3.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
-			assertEquals("true", data.get(tasksService.REMOTE_COMPONENT).getValue());
-			assertEquals(uploadBundle.getPreferredOs(), data.get(tasksService.OS).getValue());
-			assertEquals(uploadBundle.getGroup(), data.get(tasksService.GROUP).getValue());
+			assertEquals(path3.getProtocol()+":"+ path3.getWorkspace() +"://"+path3.getPath(),findProperty(data, tasksService.EXECUTABLE_URL).getValue());
+			assertEquals("true", findProperty(data, tasksService.REMOTE_COMPONENT).getValue());
+			assertEquals(uploadBundle.getPreferredOs(),findProperty(data, tasksService.OS).getValue());
+			assertEquals(uploadBundle.getGroup(), findProperty(data, tasksService.GROUP).getValue());
 			assertEquals(credentials.getUserID() + ":"+ new String(credentials.getPassword()),
-					data.get(tasksService.CREDENTIALS).getValue());
+					findProperty(data, tasksService.CREDENTIALS).getValue());
 			assertEquals(path3,map.get(component2));
 
 			tasksService.addExecutable(component3,data,uploadBundle,uuid,map,messageContext);
-			assertEquals(path4.getProtocol()+":"+ path4.getWorkspace() +"://"+path4.getPath(),data.get(tasksService.EXECUTABLE_URL).getValue());
-			assertEquals("true", data.get(tasksService.REMOTE_COMPONENT).getValue());
-			assertEquals(uploadBundle.getPreferredOs(), data.get(tasksService.OS).getValue());
-			assertEquals(uploadBundle.getGroup(), data.get(tasksService.GROUP).getValue());
+			assertEquals(path4.getProtocol()+":"+ path4.getWorkspace() +"://"+path4.getPath(),findProperty(data, tasksService.EXECUTABLE_URL).getValue());
+			assertEquals("true", findProperty(data, tasksService.REMOTE_COMPONENT).getValue());
+			assertEquals(uploadBundle.getPreferredOs(), findProperty(data, tasksService.OS).getValue());
+			assertEquals(uploadBundle.getGroup(), findProperty(data, tasksService.GROUP).getValue());
 			assertEquals(credentials.getUserID() + ":"+ new String(credentials.getPassword()),
-					data.get(tasksService.CREDENTIALS).getValue());
+					findProperty(data, tasksService.CREDENTIALS).getValue());
 			assertEquals(path4,map.get(component3));
 
 		} catch (ContentRepositoryServiceException e) {
@@ -226,12 +229,12 @@ public class TasksServiceTest {
 							path2);
 				}
 			});
-			assertNull(tasksService.findBundle(path1, datatypeMap2));
+			assertNull(tasksService.findBundle(path1, properties2));
 			UploadedExecutableBundle foundBundle = tasksService.findBundle(
-					path2, datatypeMap2);
-			assertEquals(datatypeMap2.get(tasksService.OS).getValue(),
+					path2, properties2);
+			assertEquals(findProperty(properties2, tasksService.OS).getValue(),
 					foundBundle.getPreferredOs());
-			assertEquals(datatypeMap2.get(tasksService.GROUP).getValue(),
+			assertEquals(findProperty(properties2,tasksService.GROUP).getValue(),
 					foundBundle.getGroup());
 		} catch (ContentRepositoryServiceException e) {
 			logger.error(e, e);
@@ -257,17 +260,17 @@ public class TasksServiceTest {
 			});
 			Map<Component, ResourcePath> map = new HashMap<Component, ResourcePath>(
 					executableMap);
-			Map<String, Property> data3 = new HashMap<String, Property>(
-					datatypeMap3);
-			Map<String, Property> data2 = new HashMap<String, Property>(
-					datatypeMap2);
+			List<Property> data3 = new ArrayList<Property>(
+					properties3);
+			List<Property> data2 = new ArrayList<Property>(
+					properties2);
 			tasksService.removeExecutable(component3, map, data3);
-			assertEquals("", data3.get(tasksService.EXECUTABLE_URL).getValue());
+			assertEquals("", findProperty(data3,tasksService.EXECUTABLE_URL).getValue());
 			assertFalse(map.containsKey(component3));
 			logger.debug(map.get(component2) == path2);
 			logger.debug(data2);
 			tasksService.removeExecutable(component2, map, data2);
-			assertEquals("", data3.get(tasksService.EXECUTABLE_URL).getValue());
+			assertEquals("", findProperty(data3,tasksService.EXECUTABLE_URL).getValue());
 			assertFalse(map.containsKey(component2));
 
 		} catch (ContentRepositoryServiceException e) {
@@ -285,13 +288,14 @@ public class TasksServiceTest {
 	@Resource 
 	Set<Flow> flowSet;
 
+	@DirtiesContext
 	@Test
 	public final void testLoadDatatypeMaps() {
 
 		
 		final Map<Component,List<Property> > fullMaps=new HashMap<Component,List<Property>>();
 		for (Component component:datatypeMaps.keySet()){
-			fullMaps.put(component, new ArrayList<Property>(datatypeMaps.get(component).values()));
+			fullMaps.put(component, new ArrayList<Property>(datatypeMaps.get(component)));
 		}
 		context.checking(new Expectations() {
 			{
@@ -300,10 +304,12 @@ public class TasksServiceTest {
 				
 			}
 		});
-		Map<Component, Map<String, Property>> map = tasksService
+		Map<Component, List<Property>> map = tasksService
 				.loadFlowComponents(flow1);
-		Map<Component, Map<String, Property>> expected=new HashMap<Component, Map<String, Property>>(datatypeMaps);
+		Map<Component, List< Property>> expected=new HashMap<Component, List<Property>>(datatypeMaps);
 		expected.remove(component3);
+		Collections.sort(expected.get(component1));
+		Collections.sort(expected.get(component2));
 		assertEquals(expected, map);
 		context.assertIsSatisfied();
 	}
@@ -366,46 +372,29 @@ public class TasksServiceTest {
 
 	@DirtiesContext
 	@Test
-	public final void testFormatPropertiesForDisplay() {
-		Map<String, Property> map1 = new HashMap<String, Property>(datatypeMap1);
-		map1.put(tasksService.REMOTE_COMPONENT, propertyFalse);
-		Map<String, Property> shown = tasksService.formatPropertiesForDisplay(map1);
+	public final void testRemoveHiddenPropertiesForRemoteDynamicComponent() {
+		List<Property> list = new ArrayList<Property>(properties4);
+		
+		List<Property> shown = tasksService.removeHiddenPropertiesForRemoteDynamicComponent(list);
 		String[] niceKeys = { "testField1", "TestField2",
-				"_remoteDynamicComponent" };
-		Set<String> niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys));
-		assertEquals(niceKeysSet, shown.keySet());
-
-		map1 = new HashMap<String, Property>(datatypeMap2);
-		shown = tasksService.formatPropertiesForDisplay(map1);
-		String[] niceKeys2 = { "testField1", "TestField2", "testFieldTHREE",
-				"profileName", "_os", "_group", "_remoteDynamicComponent","_credentials" };
-		niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys2));
-		assertEquals(niceKeysSet, shown.keySet());
-
-	
-		map1 = new HashMap<String, Property>(datatypeMap2);
-		map1.put(tasksService.REMOTE_COMPONENT, propertyTrue);
-		shown = tasksService.formatPropertiesForDisplay(map1);
-		String[] niceKeys3 = { "testField1", "TestField2" ,"testFieldTHREE"};
-		niceKeysSet = new HashSet<String>(Arrays.asList(niceKeys3));
-		assertEquals(niceKeysSet, shown.keySet());
+				"testFieldTHREE"};
+		
+		assertEquals(niceKeys.length, shown.size());
+		for (String key:niceKeys){
+			assertTrue("missing key:"+key,findProperty(shown, key)!=null);
+		}
 
 		
-
 	}
 
 	@DirtiesContext
 	@Test
-	public final void testIsRemoteServiceComponent() {
-		Map<String, Property> map1 = new HashMap<String, Property>(datatypeMap1);
-		map1.put(tasksService.REMOTE_COMPONENT, propertyFalse);
-		assertFalse(tasksService.areFromRemoteComponent(map1));
-		assertFalse(tasksService.areFromRemoteComponent(datatypeMap1));
-		Map<String, Property> map2 = new HashMap<String, Property>(datatypeMap2);
-		map2.put(tasksService.REMOTE_COMPONENT, propertyTrue);
-		assertTrue(tasksService.areFromRemoteComponent(map2));
-		assertFalse(tasksService.areFromRemoteComponent(datatypeMap2));
-
+	public final void testAreFromRemoteComponent() {
+		List<Property> list1 = new ArrayList<Property>(properties1);
+		list1.add( propertyFalse);
+		assertFalse(tasksService.areFromRemoteComponent(list1));
+		assertFalse(tasksService.areFromRemoteComponent(properties1));
+		assertTrue(tasksService.areFromRemoteComponent(properties4));
 	}
 
 	@Resource
@@ -422,21 +411,23 @@ public class TasksServiceTest {
 		for (Map.Entry<String,String> entry:parameters1.entrySet()){
 			parameterMap.put(entry.getKey(),entry.getValue());
 		}
-		Map<String,Property> data=new HashMap<String,Property>(datatypeMap1);
+		List<Property> data=new ArrayList<Property>(properties1);
 		tasksService.updateProperties(parameterMap, data);
-		assertEquals(parameters1.get("testField1"), data.get("testField1").getValue());
-		assertEquals(parameters1.get("TestField2"), data.get("TestField2").getValue());
-		assertFalse(data.containsKey("testFieldTHREE"));
+		assertEquals(parameters1.get("testField1"), findProperty(data,"testField1").getValue());
+		assertEquals(parameters1.get("TestField2"), findProperty(data, "TestField2").getValue());
+		assertNull(findProperty(data,"testFieldTHREE"));
 		
 		parameterMap=new MockParameterMap();
 		for (Map.Entry<String,String> entry:parameters2.entrySet()){
 			parameterMap.put(entry.getKey(),entry.getValue());
 		}
-		data=new HashMap<String,Property>(datatypeMap1);
+		data=new ArrayList<Property>(properties1);
 		tasksService.updateProperties(parameterMap, data);
-		assertEquals(parameters2.get("testField1"), data.get("testField1").getValue());
-		assertEquals(parameters1.get("TestField2"), data.get("TestField2").getValue());
-		assertFalse(data.containsKey("testFieldTHREE"));	
+		assertEquals(parameters2.get("testField1"), findProperty(data,"testField1").getValue());
+		assertEquals(parameters1.get("TestField2"), findProperty(data, "TestField2").getValue());
+		assertNull(findProperty(data,"testFieldTHREE"));
+		
+		
 	}
 
 	@Resource
@@ -462,6 +453,16 @@ public class TasksServiceTest {
 		}catch (MeandreServerException e) {
 			logger.error(e,e);
 		}
+	}
+
+	private Property findProperty(Collection<Property> properties, String name) {
+		if (name != null) {
+			for (Property property : properties) {
+				if (name.equals(property.getName()))
+					return property;
+			}
+		}
+		return null;
 	}
 
 }
