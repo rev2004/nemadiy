@@ -77,9 +77,9 @@ public class Page {
 
         int idx = 0;
         Iterator<Page> it = pages.iterator();
-        //make first page index.htm
+        //make first page html
         Page aPage = it.next();
-        filenames[idx] = "index.htm";
+        filenames[idx] = "index.html";
         idx++;
         
         //add subsequent pages
