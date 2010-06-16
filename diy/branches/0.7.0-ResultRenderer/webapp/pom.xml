@@ -657,7 +657,12 @@
 			<version>1.5.3</version>
 		</dependency>
 
-
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<!-- Latest 2.3.x (not 2.4.x), at least 2.3.16 -->
+			<version>2.3.16</version>
+		</dependency>
 	</dependencies>
 
 
@@ -851,6 +856,6 @@
 	</profiles>
 	<properties>
 		<spring.webflow.version>2.1.0.M2</spring.webflow.version>
-		
+
 	</properties>
 </project>

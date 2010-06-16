@@ -45,7 +45,7 @@ import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action class for the task template flow generation webflow. 
+ * Action class for the task template flow generation webflow.
  * 
  * @author gzhu1
  * @since 0.6.0
@@ -90,10 +90,15 @@ public class TasksServiceImpl {
 	 * Send executable bundle to content repository, replace/add the new
 	 * ResourcePath of executable bundle in the the executableMap.
 	 * 
-	 * @param component  Remote dynamic component. 
-	 * @param properties Properties of the component. Values are modified in the method. 
-	 * @param bundle Bundle to send over to content repository
-	 * @param uuid Unique ID for the webflow
+	 * @param component
+	 *            Remote dynamic component.
+	 * @param properties
+	 *            Properties of the component. Values are modified in the
+	 *            method.
+	 * @param bundle
+	 *            Bundle to send over to content repository
+	 * @param uuid
+	 *            Unique ID for the webflow
 	 * @param executableMap
 	 *            Note that this map is going to be modified, old path is
 	 *            replaced by new path.
@@ -136,9 +141,14 @@ public class TasksServiceImpl {
 	/**
 	 * Remove the executable bundle from the content repository.
 	 * 
-	 * @param component Remote dynamic component
-	 * @param executableMap Maps with all existing executableBundle's {@link ResourcePath}s. Values are modified in the method. 
-	 * @param properties Properties of remote dynamic component. Values are modified in the method. 
+	 * @param component
+	 *            Remote dynamic component
+	 * @param executableMap
+	 *            Maps with all existing executableBundle's {@link ResourcePath}
+	 *            s. Values are modified in the method.
+	 * @param properties
+	 *            Properties of remote dynamic component. Values are modified in
+	 *            the method.
 	 */
 	public void removeExecutable(Component component,
 			Map<Component, ResourcePath> executableMap,
@@ -155,7 +165,8 @@ public class TasksServiceImpl {
 	/**
 	 * clear all executable bundles sent over to content repository
 	 * 
-	 * @param executableMap Maps with all existing executableBundle's {@link ResourcePath}
+	 * @param executableMap
+	 *            Maps with all existing executableBundle's {@link ResourcePath}
 	 */
 	public void clearBundles(Map<Component, ResourcePath> executableMap)
 			throws ContentRepositoryServiceException {
@@ -183,12 +194,15 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Retrieve the Executable bundle with resource path {@link ResourcePath}, and
-	 * populated the extra fields for UploadedExecutableBundle
+	 * Retrieve the Executable bundle with resource path {@link ResourcePath},
+	 * and populated the extra fields for UploadedExecutableBundle
 	 * 
-	 * @param path {@link ResourcePath} to the executable bundle
-	 * @param properties Properties of the remote dynamic component, necessary to build 
-	 * {@link UploadedExecutableBundle} object because it has extra info from {@linkplain properties}
+	 * @param path
+	 *            {@link ResourcePath} to the executable bundle
+	 * @param properties
+	 *            Properties of the remote dynamic component, necessary to build
+	 *            {@link UploadedExecutableBundle} object because it has extra
+	 *            info from {@linkplain properties}
 	 * @return
 	 */
 	public UploadedExecutableBundle findBundle(ResourcePath path,
@@ -275,7 +289,8 @@ public class TasksServiceImpl {
 	/**
 	 * Tests whether or not the supplied properties are from a remote component.
 	 * 
-	 * @param properties  Properties of one component         
+	 * @param properties
+	 *            Properties of one component
 	 * @return True if the properties are from a remote component.
 	 */
 	public boolean areFromRemoteComponent(List<Property> properties) {
@@ -288,10 +303,14 @@ public class TasksServiceImpl {
 	/**
 	 * Create a job with all the properties in datatypeMaps.
 	 * 
-	 * @param flow Flow that the job is based on. 
-	 * @param componentMap All parameters. 
-	 * @param name  Job name
-	 * @param description Job description
+	 * @param flow
+	 *            Flow that the job is based on.
+	 * @param componentMap
+	 *            All parameters.
+	 * @param name
+	 *            Job name
+	 * @param description
+	 *            Job description
 	 * @return the job object created with the parameters
 	 * @throws MeandreServerException
 	 */
@@ -304,6 +323,7 @@ public class TasksServiceImpl {
 				.entrySet()) {
 			component = mapsEntry.getKey();
 			for (Property property : mapsEntry.getValue()) {
+				
 				paramMap.put(getFullyQualifiedPropertyName(component
 						.getInstanceUri(), property.getName()), property
 						.getValue());
@@ -349,22 +369,24 @@ public class TasksServiceImpl {
 		instance.setDescription(description);
 		instance.setType(flow.getType());
 		instance.setTypeName(flow.getTypeName());
-		logger.info("Getting current user's credentials to send them to the flowservice");
+		logger
+				.info("Getting current user's credentials to send them to the flowservice");
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		instance = this.flowService.createNewFlow(credential, instance,
 				paramMap, flowUri, user.getId());
 		long instanceId = instance.getId();
-		logger.info("created new flow: " +instance.getUri() + " Now ready to run." );
+		logger.info("created new flow: " + instance.getUri()
+				+ " Now ready to run.");
 		Job job = this.flowService.executeJob(credential, token, name,
 				description, instanceId, user.getId(), user.getEmail());
-		
+
 		logger.info("After calling execute Job");
 		return job;
 
 	}
 
 	/**
-	 * Only for testing. Not called in the production code. 
+	 * Only for testing. Not called in the production code.
 	 */
 	public void test() {
 		throw new org.springframework.remoting.RemoteAccessException(
@@ -410,6 +432,14 @@ public class TasksServiceImpl {
 				it.remove();
 			} else {
 				Collections.sort(entry.getValue());
+				Property credentialProp=findProperty(entry.getValue(), CREDENTIALS);
+				if (credentialProp!=null){
+					SimpleCredentials credential = userManager
+							.getCurrentUserCredentials();
+					String credentialString = credential.getUserID() + ":"
+							+ new String(credential.getPassword());
+					credentialProp.setValue(credentialString);
+				}
 			}
 		}// while loop
 		return componentsToPropertyLists;
@@ -456,12 +486,13 @@ public class TasksServiceImpl {
 	/**
 	 * set the real physical/web path from the servlet context/request for
 	 * uploading, default behavior, when webDir has value (set by outside), skip
-	 * this step.  The path is unique for one webflow.   
-	 * TODO this is a bad implementation of file upload, it needs
-	 * more robust implementation
+	 * this step. The path is unique for one webflow. TODO this is a bad
+	 * implementation of file upload, it needs more robust implementation
 	 * 
-	 * @param externalContext {@link ExternalContext} with all the server info.
-	 * @param uuid UUID of the flow to build the upload path.  
+	 * @param externalContext
+	 *            {@link ExternalContext} with all the server info.
+	 * @param uuid
+	 *            UUID of the flow to build the upload path.
 	 * 
 	 */
 	public void buildUploadPath(ExternalContext externalContext, UUID uuid) {
@@ -507,47 +538,40 @@ public class TasksServiceImpl {
 	 * @param parameters
 	 *            HTTP request parameters.
 	 * @param properties
-	 *            Properties to be updated. Values are modified in the method. 
+	 *            Properties to be updated. Values are modified in the method.
 	 */
 	public void updateProperties(ParameterMap parameters,
 			List<Property> properties) {
 		for (Property property : properties) {
-			if (CREDENTIALS.equals(property.getName())) {
-				SimpleCredentials credential = userManager.getCurrentUserCredentials();
-				String credentialString = credential.getUserID() + ":"
-						+ new String(credential.getPassword());
-				property.setValue(credentialString);
-			} else {
-				if (parameters.contains(property.getName())) {
-					List<DataTypeBean> ltb = property.getDataTypeBeanList();
-					if ((ltb != null)
-							&& (!ltb.isEmpty())
-							&& (ltb.get(0).getRenderer() != null)
-							&& (ltb.get(0).getRenderer()
-									.endsWith("FileRenderer"))) {
-						MultipartFile file = parameters
-								.getMultipartFile(property.getName());
-						if ((file != null) && (!file.isEmpty())) {
-							File dirPath = new File(physicalDir);
 
-							if (!dirPath.exists()) {
-								dirPath.mkdirs();
-							}
-							String filename = file.getOriginalFilename();
-							File uploadedFile = new File(physicalDir + filename);
-							try {
-								file.transferTo(uploadedFile);
-							} catch (IllegalStateException e) {
-								logger.error(e, e);
-							} catch (IOException e) {
-								logger.error(e, e);
-							}
-							property.setValue(webDir + filename);
+			if (parameters.contains(property.getName())) {
+				List<DataTypeBean> ltb = property.getDataTypeBeanList();
+				if ((ltb != null) && (!ltb.isEmpty())
+						&& (ltb.get(0).getRenderer() != null)
+						&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
+					MultipartFile file = parameters.getMultipartFile(property
+							.getName());
+					if ((file != null) && (!file.isEmpty())) {
+						File dirPath = new File(physicalDir);
+
+						if (!dirPath.exists()) {
+							dirPath.mkdirs();
 						}
-					} else {
-						property.setValue(parameters.get(property.getName()));
+						String filename = file.getOriginalFilename();
+						File uploadedFile = new File(physicalDir + filename);
+						try {
+							file.transferTo(uploadedFile);
+						} catch (IllegalStateException e) {
+							logger.error(e, e);
+						} catch (IOException e) {
+							logger.error(e, e);
+						}
+						property.setValue(webDir + filename);
 					}
+				} else {
+					property.setValue(parameters.get(property.getName()));
 				}
+
 			}
 		}// for loop
 	}

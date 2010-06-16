@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context" 
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/aop 
        http://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springframework.org/schema/context 
        http://www.springframework.org/schema/context/spring-context.xsd"
-      
+
 	default-lazy-init="false">
 
 	<import resource="nema-webflow.xml" />
-	
-    <context:property-placeholder location="classpath:contentrepositoryservice.properties,classpath:flowservice.properties" />
-	
 
-	<bean id="exceptionResolver"
-		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+	<context:property-placeholder location="classpath:contentrepositoryservice.properties,classpath:flowservice.properties" />
+
+
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
 			<props>
 				<prop key="org.springframework.dao.DataAccessException">
@@ -42,55 +40,47 @@
 		</property>
 	</bean>
 
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
+	</bean>
 
-	<bean id="repositoryClientConnectionPool"
-		class="org.imirsel.nema.repository.RepositoryClientConnectionPool">
+
+	<bean id="repositoryClientConnectionPool" class="org.imirsel.nema.repository.RepositoryClientConnectionPool">
 
 	</bean>
-	
-	
-	 <!-- content repository to store the executable bundle -->
-    <bean id="contentRepositoryClient" 
-    	class="org.imirsel.nema.contentrepository.client.ContentRepositoryService">
-    	<property name="repository" ref="remoteContentRepository"/>
-    </bean>
-    
-    <bean id="remoteContentRepository" factory-bean="clientRepositoryFactory" 
-     factory-method="getRepository">
-     	<constructor-arg value="${contentrepository.url}"/>
-     </bean>
-    
-    <bean id="clientRepositoryFactory" 
-    class="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory"/>
-    <!-- End of content repository beans -->
-    
+
+
+	<!-- content repository to store the executable bundle -->
+	<bean id="contentRepositoryClient" class="org.imirsel.nema.contentrepository.client.ContentRepositoryService">
+		<property name="repository" ref="remoteContentRepository" />
+	</bean>
+
+	<bean id="remoteContentRepository" factory-bean="clientRepositoryFactory" factory-method="getRepository">
+		<constructor-arg value="${contentrepository.url}" />
+	</bean>
+
+	<bean id="clientRepositoryFactory" class="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory" />
+	<!-- End of content repository beans -->
+
 
 
 	<!--  Job Scheduler for checking the validity of MeandreProxy -->
 	<!--
-		<bean id="checkMeandreProxyAvailability"
-		class="org.imirsel.nema.webapp.jobs.CheckMeandreProxyAvailability">
-		<property name="meandreProxyWrapper" ref="meandreProxy"/> </bean>
-
-
-		<bean id="jobDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="checkMeandreProxyAvailability"/>
-		<property name="targetMethod" value="checkAvailability"/> <property
+		<bean id="checkMeandreProxyAvailability" class="org.imirsel.nema.webapp.jobs.CheckMeandreProxyAvailability"> <property
+		name="meandreProxyWrapper" ref="meandreProxy"/> </bean> <bean id="jobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> <property name="targetObject"
+		ref="checkMeandreProxyAvailability"/> <property name="targetMethod" value="checkAvailability"/> <property
 		name="concurrent" value="false"/> </bean> <bean id="trigger"
-		class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail" ref="jobDetail"/> <property
+		class="org.springframework.scheduling.quartz.CronTriggerBean"> <property name="jobDetail" ref="jobDetail"/> <property
 		name="cronExpression" value="*/20 * * * * ?"/> </bean> <bean
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
-		lazy-init="false"> <property name="triggers"> <ref bean="trigger" />
-		</property> </bean>
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false"> <property name="triggers"> <ref
+		bean="trigger" /> </property> </bean>
 	-->
 	<!--  job scheduler end -->
 	<bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
 
 		<!--<property name="serviceUrl" value="${diy.flowservice.location}"/>-->
-		<property name="serviceUrl"
-			value="${flowservice.location}" />
+		<property name="serviceUrl" value="${flowservice.location}" />
 
 		<property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService" />
 		<property name="refreshStubOnConnectFailure" value="true" />
@@ -105,8 +95,7 @@
 
 	</bean>
 
-	<bean id="flowFormMethodResolver"
-		class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+	<bean id="flowFormMethodResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
 		<property name="mappings">
 			<value>
 				/FlowFormManager.saveFlow=saveflow
@@ -118,17 +107,15 @@
 
 
 	<!-- flow controller -->
-	<bean id="flowController"
-		class="org.imirsel.nema.webapp.controller.FlowServiceController">
+	<bean id="flowController" class="org.imirsel.nema.webapp.controller.FlowServiceController">
 		<property name="flowService" ref="realFlowService" />
-		<property name="artifactService" ref="contentRepositoryClient"/>
+		<property name="artifactService" ref="contentRepositoryClient" />
 		<property name="methodNameResolver" ref="flowMethodResolver" />
 	</bean>
 
 
 
-	<bean id="flowMethodResolver"
-		class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+	<bean id="flowMethodResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
 		<property name="mappings">
 			<value>
 				/FlowManager.getFlowList=getTemplateFlows
@@ -141,7 +128,7 @@
 				/FlowManager.getAllServerStatus.json =getAllMeandreServerStatus
 				/FlowManager.getComponentDataType.json=getComponentDataType
 				/FlowManager.getComponentList.json=getComponentList
-            </value>
+			</value>
 		</property>
 	</bean>
 
@@ -155,8 +142,7 @@
 	</bean>
 
 
-	<bean id="jobMethodResolver"
-		class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+	<bean id="jobMethodResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
 		<property name="mappings">
 			<value>
 				/JobManager.getConsole=getConsole
@@ -178,12 +164,10 @@
 		</property>
 	</bean>
 
-	<bean id="filenameController"
-		class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />
+	<bean id="filenameController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />
 
 
-	<bean id="passwordHintController"
-		class="org.imirsel.nema.webapp.controller.PasswordHintController">
+	<bean id="passwordHintController" class="org.imirsel.nema.webapp.controller.PasswordHintController">
 		<property name="userManager" ref="userManager" />
 		<property name="messageSource" ref="messageSource" />
 		<property name="mailEngine" ref="mailEngine" />
@@ -214,8 +198,7 @@
 		<property name="passwordEncoder" ref="passwordEncoder" />
 	</bean>
 
-	<bean id="usersMethodResolver"
-		class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+	<bean id="usersMethodResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
 		<property name="mappings">
 			<value>
 				/UserManager.login.json=login
@@ -237,17 +220,15 @@
 
 	<!--
 		Add additional controller beans here <bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="maxUploadSize" value="2097152"/> </bean>
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> <property name="maxUploadSize"
+		value="2097152"/> </bean>
 	-->
-	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="ApplicationResources" />
 		<property name="useCodeAsDefaultMessage" value="true" />
 	</bean>
 
-	<bean id="urlMapping"
-		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
 			<value>
 				/UserManager.*=userControllerAction
@@ -269,10 +250,8 @@
 		org.springframework.web.servlet.mvc.Controller implementations
 	-->
 
-	<bean
-		class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
-	<bean
-		class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
+	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
 		<property name="order" value="1" />
 	</bean>
 
@@ -286,29 +265,40 @@
 
 	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping">
 		<property name="flowRegistry" ref="flowRegistry" />
-		<property name="order" value="2" />
+		<property name="order" value="1" />
 	</bean>
+
+
+
 
 
 	<!-- View Resolver for json and other stuff -->
 
 	<bean id="xmlResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
-		<property name="order" value="1" />
+		<property name="order" value="2" />
 	</bean>
+	
+	<!-- View Resolver for Freemarker template -->
+	<bean id="freeMarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="cache" value="true" />
+		<property name="prefix" value="" />
+		<property name="suffix" value=".ftl" />
+		<property name="order" value="5" />
+	</bean>	
+	
 	<!-- Vuew ?Resolver for multipart -->
-	<bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 
 		<!-- one of the properties available; the maximum file size in bytes -->
 		<property name="maxUploadSize" value="10000000" />
+		
 	</bean>
 	<!-- View Resolver for JSPs -->
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="requestContextAttribute" value="rc" />
-		<property name="viewClass"
-			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
 		<property name="prefix" value="/WEB-INF/pages/" />
 		<property name="suffix" value=".jsp" />
+		<property name="order" value="4" />
 	</bean>
 </beans>
