@@ -1,8 +1,6 @@
 package org.imirsel.nema.components.process;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,9 +48,6 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 	@ComponentInput(description = "NemaTask Object defining the task.", name = "NemaTask")
 	public final static String DATA_INPUT_NEMATASK = "NemaTask";
 
-//	@ComponentInput(description = "NemaDataset Object defining the task.", name = "NemaDataset")
-//	public final static String DATA_INPUT_DATASET = "NemaDataset";
-
 	@ComponentInput(description = "Map of NemaTrackList to List of NemaData Objects defining each track list (encoding any required metadata).", name = "DataToProcess")
 	public final static String DATA_INPUT_DATA = "DataToProcess";
 
@@ -76,7 +71,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 	@Override
 	public void execute(ComponentContext cc)
 			throws ComponentExecutionException, ComponentContextException {
-		
+	
 		Map<NemaTrackList,List<File>> inputFiles = null;
 		Map<NemaTrackList,List<File>> outputFiles = null;
 		NemaTask task = null;
@@ -94,11 +89,9 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			try {
 				pTemplate = this.getProcessTemplate();
 			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				throw new ComponentExecutionException(e1);
 			} catch (InvalidProcessTemplateException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				throw new ComponentExecutionException(e1);
 			}
 			CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
 			String commandlineFormat = cTemplate.getCommandLineFormatter();
@@ -177,11 +170,9 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			try {
 				outputTypeInstance = outputType1.newInstance();
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new ComponentExecutionException(e);
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new ComponentExecutionException(e);
 			}
 			if(outputType1.equals(ClassificationTextFile.class)) {
 				((ClassificationTextFile)outputTypeInstance).setMetadataType(task.getSubjectTrackMetadataName());
