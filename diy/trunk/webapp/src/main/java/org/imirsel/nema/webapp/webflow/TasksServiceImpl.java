@@ -349,14 +349,16 @@ public class TasksServiceImpl {
 		instance.setDescription(description);
 		instance.setType(flow.getType());
 		instance.setTypeName(flow.getTypeName());
-
+		logger.info("Getting current user's credentials to send them to the flowservice");
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		instance = this.flowService.createNewFlow(credential, instance,
 				paramMap, flowUri, user.getId());
 		long instanceId = instance.getId();
-
+		logger.info("created new flow: " +instance.getUri() + " Now ready to run." );
 		Job job = this.flowService.executeJob(credential, token, name,
 				description, instanceId, user.getId(), user.getEmail());
+		
+		logger.info("After calling execute Job");
 		return job;
 
 	}
