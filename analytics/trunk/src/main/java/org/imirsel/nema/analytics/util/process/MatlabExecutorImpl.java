@@ -111,14 +111,14 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
 			envp = envVar.split("\n");
 		}
 		
-		if (!matlabBin.exists()) {
-			isRunning = false;
-			throw new IllegalArgumentException(
-					"Unable to locate the matlab executable!\n"
-					+ "Matlab path: "
-					+ matlabBin.getCanonicalPath()			
-				);
-		}
+//		if (!matlabBin.exists()) {
+//			isRunning = false;
+//			throw new IllegalArgumentException(
+//					"Unable to locate the matlab executable!\n"
+//					+ "Matlab path: "
+//					+ matlabBin.getCanonicalPath()			
+//				);
+//		}
 
 		// Create command
         String[] argArray = matlabArgs.split(" ");
@@ -127,7 +127,7 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
         String[] components = commandFormattingStr.split("[$]");
 		
 		String[] cmdArray = new String[commandLength];
-        cmdArray[0] = this.matlabBin.getAbsolutePath();
+        cmdArray[0] = this.matlabBin.getPath();//.getAbsolutePath();
         for (int i = 0; i < argArray.length; i++) {
         	cmdArray[i + 1] = argArray[i];
         }
@@ -186,7 +186,7 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
 		msg += "\n";
 		msg += "In directory:       " + processWorkingDir.getCanonicalPath() + "\n";
 		msg += "Sending results to: " + processResultsDir.getCanonicalPath() + "\n";
-		_logger.info(msg);
+		getLogger().info(msg);
 		
 		ProcessBuilder pb = new ProcessBuilder(cmdArray);
 		Map<String, String> env = pb.environment();
@@ -196,10 +196,10 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
 					String[] envPair = envp[i].split("=");
 					if (envPair.length == 2) {
 						env.put(envPair[0], envPair[1]);
-						_logger.info("Environment variable " + envPair[0] + "="
+						getLogger().info("Environment variable " + envPair[0] + "="
 								+ envPair[1] + " succesfully set.");
 					} else {
-						_logger.info("The environment variable " + envVar
+						getLogger().info("The environment variable " + envVar
 								+ " can not be parsed !!!");
 					}
 				}
@@ -212,7 +212,7 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
 		try{
 			process = pb.start();
 			is = process.getInputStream();
-			_logger.info("*******************************************\n" +
+			getLogger().info("*******************************************\n" +
 			"MATLAB STDOUT AND STDERR:");
 			
 			procOutputReceiverThread = new ProcessOutputReceiver( is, _logger );
@@ -220,11 +220,11 @@ public class MatlabExecutorImpl extends ProcessExecutorImpl {
 			int exitStatus;
 			try {
 				exitStatus = process.waitFor();
-				_logger.info("MATLAB EXIT STATUS: " + exitStatus + "\n" +
+				getLogger().info("MATLAB EXIT STATUS: " + exitStatus + "\n" +
 				"*******************************************");
 				return exitStatus;
 			} catch (InterruptedException e) {
-				_logger.log(Level.WARNING, "Interupted while waiting for process to exit", e);
+				getLogger().log(Level.WARNING, "Interupted while waiting for process to exit", e);
 			}
 		}finally{
 			if(procOutputReceiverThread != null){
