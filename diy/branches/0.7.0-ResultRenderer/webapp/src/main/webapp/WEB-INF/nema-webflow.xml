@@ -17,6 +17,7 @@
 			id="task" />
 		<webflow:flow-location path="/WEB-INF/flows/executable/executable-flow.xml"
 			id="task/executable" />
+		<webflow:flow-location path="/WEB-INF/flows/result/result-flow.xml" id="result"></webflow:flow-location>
 	</webflow:flow-registry>
 
 	<bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
@@ -31,5 +32,7 @@
 		class="org.imirsel.nema.contentrepository.client.CommandLineFormatter" />
 	<bean id="executableValidator"
 		class="org.imirsel.nema.webapp.webflow.validator.UploadedExecutableBundleValidator" />
+	
+	<bean id="melodyResultAction" class="org.imirsel.nema.webapp.webflow.MelodyResultAction"/>
 
 </beans>

@@ -14,25 +14,13 @@
 <wb-resource deploy-path="/" source-path="/core/src/test/java"/>
 <wb-resource deploy-path="/" source-path="/webapp/src/test/resources"/>
 <wb-resource deploy-path="/" source-path="/probes/src/test/java"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-annotations-trunk/nema-annotations-trunk">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-flowservice-api/nema-flowservice-api">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-flowservice-api-trunk/nema-flowservice-api-trunk">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/repositoryservice/repositoryservice">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/flowservice/flowservice">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/repositoryservice-trunk/repositoryservice-trunk">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-repositoryservice-api-trunk/nema-repositoryservice-api-trunk">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-executorservice-api-trunk/nema-executorservice-api-trunk">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/rmiio/rmiio">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-repositoryservice-api/nema-repositoryservice-api">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 </wb-module>

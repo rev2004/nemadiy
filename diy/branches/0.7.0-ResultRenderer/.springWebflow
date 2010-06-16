@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <webflow-project-description>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.3.0.200912170948-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.3.2.201003220227-RELEASE]]></pluginVersion>
 	<configs>
 		<config>
-			<file>webapp/src/main/webapp/WEB-INF/flows/executable-flow.xml</file>
-			<name><![CDATA[executable-flow]]></name>
-			<beans-config><![CDATA[1:BeansModel|2:diy|3:webapp/src/main/webapp/WEB-INF/dispatcher-servlet.xml]]></beans-config>
-			<beans-config><![CDATA[1:BeansModel|2:diy|3:core/src/main/resources/applicationContext-dao.xml]]></beans-config>
-			<beans-config><![CDATA[1:BeansModel|2:diy|3:core/src/main/resources/applicationContext-service.xml]]></beans-config>
-			<beans-config><![CDATA[1:BeansModel|2:diy|3:webapp/src/main/resources/applicationContext-resources.xml]]></beans-config>
-			<beans-config><![CDATA[1:BeansModel|2:diy|3:core/src/main/resources/applicationContext.xml]]></beans-config>
-			<beans-config><![CDATA[1:BeansModel|2:diy|3:webapp/src/main/webapp/WEB-INF/applicationContext-validation.xml]]></beans-config>
-			<beans-config><![CDATA[1:BeansModel|2:diy|3:webapp/src/main/webapp/WEB-INF/applicationContext.xml]]></beans-config>
-			<beans-config><![CDATA[1:BeansModel|2:diy|3:webapp/src/main/webapp/WEB-INF/nema-webflow.xml]]></beans-config>
+			<file>webapp/src/main/webapp/WEB-INF/flows/result/result-flow.xml</file>
+			<name><![CDATA[result-flow]]></name>
 		</config>
 	</configs>
 </webflow-project-description>
