@@ -1,0 +1,21 @@
+                                    ------------------
+                                    Installation Guide
+                                    ------------------
+                                    Amit Kumar
+                                    ------------------
+                                       2010-04-11
+                                    ------------------
+
+Installation Guide
+
+
+
+* Running the web application
+
+	Follow the tutorial here <http://code.google.com/p/nemadiy/wiki/Setting_Up_NEMA_DIY_for_Development> 
+	
+	
+
+** Prerequisites
+	
+	Mysql database server, the flowservice, the content repository should be running.

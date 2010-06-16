@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="plainTemplate" class="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
+	<var name="javaTemplate" class="org.imirsel.nema.webapp.model.DiyJavaTemplate" />
+	<var name="matlabTemplate" class="org.imirsel.nema.model.MatlabPredefinedCommandTemplate" />
+	<var name="template" class="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
+
+	<input name="executableBundleInput" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
+	<input name="executableTemplateInput" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
+
+	<on-start>
+		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
+		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
+		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
+		<set name="flowScope.executable" value="executableService.setExecutable(executableBundleInput)" />
+		<evaluate
+			expression="executableService.setTemplate(executableTemplateInput,executable.type,flowScope)" />
+	</on-start>
+
+
+	<view-state id="upload" model="executable">
+		<transition on="upload" to="arguments" />
+		<transition on="clearArchive" to="upload" validate="false">
+		    <evaluate expression="executable.clear()"></evaluate>
+		</transition>
+		<transition on="cancel" to="cancel" validate="false"/>
+	</view-state>
+
+	<view-state id="argumentsPlain">
+	    <on-entry>
+			<set name="flashScope.niceParams" value="executableService.getNiceParams(plainTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
+		</on-entry>
+        <transition on="cancel" to="cancel" validate="false"/>
+		<transition on="back" to="upload" />
+		<transition on="review" to="review">
+			<evaluate expression="executableService.prepareCommonTemplate(requestParameters,flowScope.plainTemplate)" />
+			<evaluate expression="executableService.generateExecutableBundle(flowScope.plainTemplate,executable)" />
+			<set name="template" value="plainTemplate"/>
+		</transition>
+	</view-state>
+
+	<view-state id="argumentsJava" model="javaTemplate">
+		<on-render>
+			<set name="flashScope.niceParams" value="executableService.getNiceParams(javaTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
+		</on-render>
+
+        <transition on="cancel" to="cancel" validate="false"/>
+		<transition on="back" to="upload" />
+		<transition on="review" to="review">
+			<evaluate expression="executableService.prepareCommonTemplate(requestParameters,javaTemplate)" />
+			<evaluate expression="executableService.prepareJavaTemplate(requestParameters,executable,javaTemplate)" />
+			<evaluate expression="executableService.generateExecutableBundle(javaTemplate,flowScope.executable)" />
+			<set name="template" value="javaTemplate"/>
+		</transition>
+	</view-state>
+
+	<view-state id="argumentsMatlab" model="matlabTemplate">
+		<on-render>
+			<set name="flashScope.niceParams" value="executableService.getNiceParams(matlabTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
+		</on-render>
+        <transition on="cancel" to="cancel" validate="false"/>
+		<transition on="back" to="upload" />
+		<transition on="review" to="review">
+			<evaluate expression="executableService.prepareCommonTemplate(requestParameters,matlabTemplate)" />
+			<evaluate expression="executableService.generateExecutableBundle(matlabTemplate,flowScope.executable)" />
+			<set name="template" value="matlabTemplate"/>
+		</transition>
+	</view-state>
+
+	<view-state id="review">
+        <transition on="cancel" to="cancel" validate="false"/>
+		<transition on="back" to="arguments" />
+		<transition on="save" to="success"/>
+	</view-state>
+
+	<action-state id="arguments">
+		<evaluate expression="executable.type" />
+		<transition on="JAVA" to="argumentsJava" />
+		<transition on="MATLAB" to="argumentsMatlab" />
+		<transition on="SHELL" to="argumentsPlain" />
+		<transition on="BIN" to="argumentsPlain" />
+		<transition on="RUBY" to="argumentsPlain" />
+		<transition on="PYTHON" to="argumentsPlain" />
+		<transition on="WINE" to="argumentsPlain" />
+		<transition on="PERL" to="argumentsPlain" />
+	</action-state>
+
+    <action-state id="cancel">
+          <evaluate expression="executable.clear()"/>
+          <transition to="done"/>
+    </action-state>
+    
+	<end-state id="done"/>
+
+	<end-state id="success">
+		<output name="executableBundle" value="executable" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
+		<output name="executableTemplate" value="template"
+			type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
+	</end-state>
+</flow>

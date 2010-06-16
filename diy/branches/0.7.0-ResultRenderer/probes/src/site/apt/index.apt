@@ -1,0 +1,17 @@
+												----------
+												Overview
+												----------
+												Amit Kumar
+												----------
+												2010-05-21
+												-----------
+												
+												
+Introduction
+
+	DIY probes and plugins are used in the Meandre Server <http://nema-dev.lis.illinois.edu/development/Meandre/> for following functions:
+	
+	[[1]] Make certain datasources available in the JNDI context.
+	
+	[[2]] Provide notifications for Nema flow start/stop/abort etc.
+												
