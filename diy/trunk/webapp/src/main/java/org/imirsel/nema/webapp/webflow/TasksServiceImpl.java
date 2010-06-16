@@ -45,9 +45,7 @@ import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action class for the task template flow generation webflow. Notice: that for
- * the DataTypeMap Map<String,Property>, key is strictly for display, while the
- * Property.name should be used as name sent to content repository
+ * Action class for the task template flow generation webflow. 
  * 
  * @author gzhu1
  * @since 0.6.0
@@ -92,9 +90,10 @@ public class TasksServiceImpl {
 	 * Send executable bundle to content repository, replace/add the new
 	 * ResourcePath of executable bundle in the the executableMap.
 	 * 
-	 * @param component
-	 * @param bundle
-	 * @param uuid
+	 * @param component  Remote dynamic component. 
+	 * @param properties Properties of the component. Values are modified in the method. 
+	 * @param bundle Bundle to send over to content repository
+	 * @param uuid Unique ID for the webflow
 	 * @param executableMap
 	 *            Note that this map is going to be modified, old path is
 	 *            replaced by new path.
@@ -137,9 +136,9 @@ public class TasksServiceImpl {
 	/**
 	 * Remove the executable bundle from the content repository.
 	 * 
-	 * @param component
-	 * @param executableMap
-	 * @param datatypeMap
+	 * @param component Remote dynamic component
+	 * @param executableMap Maps with all existing executableBundle's {@link ResourcePath}s. Values are modified in the method. 
+	 * @param properties Properties of remote dynamic component. Values are modified in the method. 
 	 */
 	public void removeExecutable(Component component,
 			Map<Component, ResourcePath> executableMap,
@@ -156,7 +155,7 @@ public class TasksServiceImpl {
 	/**
 	 * clear all executable bundles sent over to content repository
 	 * 
-	 * @param executableMap
+	 * @param executableMap Maps with all existing executableBundle's {@link ResourcePath}
 	 */
 	public void clearBundles(Map<Component, ResourcePath> executableMap)
 			throws ContentRepositoryServiceException {
@@ -184,11 +183,12 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Retrieve the Executable bundle with resource path {@link path}, and
+	 * Retrieve the Executable bundle with resource path {@link ResourcePath}, and
 	 * populated the extra fields for UploadedExecutableBundle
 	 * 
-	 * @param path
-	 * @param datatypeMap
+	 * @param path {@link ResourcePath} to the executable bundle
+	 * @param properties Properties of the remote dynamic component, necessary to build 
+	 * {@link UploadedExecutableBundle} object because it has extra info from {@linkplain properties}
 	 * @return
 	 */
 	public UploadedExecutableBundle findBundle(ResourcePath path,
@@ -275,8 +275,7 @@ public class TasksServiceImpl {
 	/**
 	 * Tests whether or not the supplied properties are from a remote component.
 	 * 
-	 * @param properties
-	 *            Map of property names to {@link Property} instances.
+	 * @param properties  Properties of one component         
 	 * @return True if the properties are from a remote component.
 	 */
 	public boolean areFromRemoteComponent(List<Property> properties) {
@@ -289,10 +288,10 @@ public class TasksServiceImpl {
 	/**
 	 * Create a job with all the properties in datatypeMaps.
 	 * 
-	 * @param flow
-	 * @param datatypeMaps
-	 * @param name
-	 * @param description
+	 * @param flow Flow that the job is based on. 
+	 * @param componentMap All parameters. 
+	 * @param name  Job name
+	 * @param description Job description
 	 * @return the job object created with the parameters
 	 * @throws MeandreServerException
 	 */
@@ -362,6 +361,9 @@ public class TasksServiceImpl {
 
 	}
 
+	/**
+	 * Only for testing. Not called in the production code. 
+	 */
 	public void test() {
 		throw new org.springframework.remoting.RemoteAccessException(
 				"custom exception");
@@ -452,11 +454,13 @@ public class TasksServiceImpl {
 	/**
 	 * set the real physical/web path from the servlet context/request for
 	 * uploading, default behavior, when webDir has value (set by outside), skip
-	 * this step. TODO this is a bad implementation of file upload, it needs
+	 * this step.  The path is unique for one webflow.   
+	 * TODO this is a bad implementation of file upload, it needs
 	 * more robust implementation
 	 * 
-	 * @param externalContext
-	 * @param httpServletRequest
+	 * @param externalContext {@link ExternalContext} with all the server info.
+	 * @param uuid UUID of the flow to build the upload path.  
+	 * 
 	 */
 	public void buildUploadPath(ExternalContext externalContext, UUID uuid) {
 		if ((webDir == null) || (webDir.isEmpty())) {
@@ -501,7 +505,7 @@ public class TasksServiceImpl {
 	 * @param parameters
 	 *            HTTP request parameters.
 	 * @param properties
-	 *            Properties to be updated.
+	 *            Properties to be updated. Values are modified in the method. 
 	 */
 	public void updateProperties(ParameterMap parameters,
 			List<Property> properties) {
