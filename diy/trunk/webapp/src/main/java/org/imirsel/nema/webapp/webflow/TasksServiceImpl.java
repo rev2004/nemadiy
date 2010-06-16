@@ -55,8 +55,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class TasksServiceImpl {
 
-	static private Log logger = LogFactory
-			.getLog(TasksServiceImpl.class);
+	static private Log logger = LogFactory.getLog(TasksServiceImpl.class);
 
 	private FlowService flowService;
 	private UserManager userManager;
@@ -281,9 +280,10 @@ public class TasksServiceImpl {
 	 * @return True if the properties are from a remote component.
 	 */
 	public boolean areFromRemoteComponent(List<Property> properties) {
-		Property remote=findProperty(properties,REMOTE_COMPONENT);
-		return (remote!=null)
-				&& (remote.getDefaultValue().toString().equalsIgnoreCase("true"));
+		Property remote = findProperty(properties, REMOTE_COMPONENT);
+		return (remote != null)
+				&& (remote.getDefaultValue().toString()
+						.equalsIgnoreCase("true"));
 	}
 
 	/**
@@ -305,9 +305,9 @@ public class TasksServiceImpl {
 				.entrySet()) {
 			component = mapsEntry.getKey();
 			for (Property property : mapsEntry.getValue()) {
-				paramMap.put(getFullyQualifiedPropertyName(
-						component.getInstanceUri(), property.getName()), 
-						property.getValue());
+				paramMap.put(getFullyQualifiedPropertyName(component
+						.getInstanceUri(), property.getName()), property
+						.getValue());
 			}
 
 		}
@@ -363,7 +363,7 @@ public class TasksServiceImpl {
 	}
 
 	public void test() {
-		throw new org.imirsel.nema.flowservice.ServiceException(
+		throw new org.springframework.remoting.RemoteAccessException(
 				"custom exception");
 	}
 
@@ -380,7 +380,7 @@ public class TasksServiceImpl {
 	 * @return List of just {@link Component}s extracted from the supplied map.
 	 */
 	public List<Component> extractComponentList(
-			Map<Component, List< Property>> componentMap) {
+			Map<Component, List<Property>> componentMap) {
 		List<Component> list = new ArrayList<Component>(componentMap.keySet());
 		Collections.sort(list);
 		return list;
@@ -393,22 +393,21 @@ public class TasksServiceImpl {
 	 *            The {@link Flow} for which the properties should be loaded.
 	 * @return Map containing {@link Component}s to {@link Properties}.
 	 */
-	public Map<Component, List< Property>> loadFlowComponents(Flow flow) {
+	public Map<Component, List<Property>> loadFlowComponents(Flow flow) {
 		Map<Component, List<Property>> componentsToPropertyLists = flowService
 				.getAllComponentsAndPropertyDataTypes(flow.getUri());
-		
-		Iterator<Entry<Component,List<Property>>> it=componentsToPropertyLists
+
+		Iterator<Entry<Component, List<Property>>> it = componentsToPropertyLists
 				.entrySet().iterator();
-		while (it.hasNext()){
-			Entry<Component,List<Property>> entry=it.next();
+		while (it.hasNext()) {
+			Entry<Component, List<Property>> entry = it.next();
 			Component component = entry.getKey();
-			if (component.isHidden()){
+			if (component.isHidden()) {
 				it.remove();
-			}
-			else{
+			} else {
 				Collections.sort(entry.getValue());
 			}
-		}//while loop
+		}// while loop
 		return componentsToPropertyLists;
 	}
 
@@ -497,32 +496,6 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Format the provided properties for display to the user.
-	 * 
-	 * @param properties
-	 *            Map from property names to {@link Properties}.
-	 * @return Map of {@link Properties} that have been formatted for display
-	 *         purposes.
-	 */
-//	public Map<String, Property> formatPropertiesForDisplay(
-//			Map<String, Property> properties) {
-//		Map<String, Property> tmpProps = new HashMap<String, Property>(
-//				properties);
-//
-//		// For properties of remote components, remove properties that
-//		// should be hidden.
-//		if (areFromRemoteComponent(properties)) {
-//
-//			tmpProps.remove(REMOTE_COMPONENT);
-//			tmpProps.remove(CREDENTIALS);
-//			tmpProps.remove(EXECUTABLE_URL);
-//			tmpProps.remove(GROUP);
-//			tmpProps.remove(OS);
-//		}
-//		return tmpProps;
-//	}
-
-	/**
 	 * Update the property values using the user-submitted parameters.
 	 * 
 	 * @param parameters
@@ -531,37 +504,45 @@ public class TasksServiceImpl {
 	 *            Properties to be updated.
 	 */
 	public void updateProperties(ParameterMap parameters,
-			List< Property> properties) {
+			List<Property> properties) {
 		for (Property property : properties) {
-			if (parameters.contains(property.getName())) {
-				List<DataTypeBean> ltb = property.getDataTypeBeanList();
-				if ((ltb != null) && (!ltb.isEmpty())
-						&& (ltb.get(0).getRenderer() != null)
-						&& (ltb.get(0).getRenderer().endsWith("FileRenderer"))) {
-					MultipartFile file = parameters.getMultipartFile(property
-							.getName());
-					if ((file != null) && (!file.isEmpty())) {
-						File dirPath = new File(physicalDir);
+			if (CREDENTIALS.equals(property.getName())) {
+				SimpleCredentials credential = userManager.getCurrentUserCredentials();
+				String credentialString = credential.getUserID() + ":"
+						+ new String(credential.getPassword());
+				property.setValue(credentialString);
+			} else {
+				if (parameters.contains(property.getName())) {
+					List<DataTypeBean> ltb = property.getDataTypeBeanList();
+					if ((ltb != null)
+							&& (!ltb.isEmpty())
+							&& (ltb.get(0).getRenderer() != null)
+							&& (ltb.get(0).getRenderer()
+									.endsWith("FileRenderer"))) {
+						MultipartFile file = parameters
+								.getMultipartFile(property.getName());
+						if ((file != null) && (!file.isEmpty())) {
+							File dirPath = new File(physicalDir);
 
-						if (!dirPath.exists()) {
-							dirPath.mkdirs();
+							if (!dirPath.exists()) {
+								dirPath.mkdirs();
+							}
+							String filename = file.getOriginalFilename();
+							File uploadedFile = new File(physicalDir + filename);
+							try {
+								file.transferTo(uploadedFile);
+							} catch (IllegalStateException e) {
+								logger.error(e, e);
+							} catch (IOException e) {
+								logger.error(e, e);
+							}
+							property.setValue(webDir + filename);
 						}
-						String filename = file.getOriginalFilename();
-						File uploadedFile = new File(physicalDir + filename);
-						try {
-							file.transferTo(uploadedFile);
-						} catch (IllegalStateException e) {
-							logger.error(e, e);
-						} catch (IOException e) {
-							logger.error(e, e);
-						}
-						property.setValue(webDir + filename);
+					} else {
+						property.setValue(parameters.get(property.getName()));
 					}
-				} else {
-					property.setValue(parameters.get(property.getName()));
 				}
 			}
-
 		}// for loop
 	}
 
@@ -575,7 +556,8 @@ public class TasksServiceImpl {
 		return null;
 	}
 
-	public List<Property> removeHiddenPropertiesForRemoteDynamicComponent(List<Property> properties) {
+	public List<Property> removeHiddenPropertiesForRemoteDynamicComponent(
+			List<Property> properties) {
 		List<Property> list = new ArrayList<Property>();
 		for (Property property : properties) {
 			if (!HIDDEN_PROPERTIES.contains(property.getName())) {
