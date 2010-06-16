@@ -160,7 +160,7 @@ public class NemaDataConstants {
     public static final String CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO = "Chord weighted average overlap ratio";
 	
     // Structure Segmentation Evaluator Constants
-    public static final String STRUCTURE_SEGMENTATION_DATA = "Onset, offset, and segment label data";
+    public static final String STRUCTURE_SEGMENTATION_DATA = "Structural segmentation";
     public static final String STRUCTURE_SEGMENTATION_OVERSEGSCORE = "Normalised conditional entropy based over-segmentation score";
     public static final String STRUCTURE_SEGMENTATION_UNDERSEGSCORE = "Normalised conditional entropy based under-segmentation score";
     public static final String STRUCTURE_SEGMENTATION_PWF = "Frame pair clustering F-measure";
