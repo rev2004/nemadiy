@@ -305,6 +305,7 @@ public class JobController extends MultiActionController {
 	 */
 	public ModelAndView getJobDetail(HttpServletRequest req,
 			HttpServletResponse res) {
+		String hostName="http://" + req.getServerName() + ":"	+ req.getServerPort() ;
 		String _jobId = req.getParameter("id");
 		long jobId = Long.parseLong(_jobId);
 		Job job = flowService.getJob(jobId);
@@ -315,7 +316,7 @@ public class JobController extends MultiActionController {
 		
 		for(JobResult result:job.getResults()){
 			logger.debug("RESULT: " + result.getUrl() + "  "+ result.getId());
-			result.setUrl(processUrl(result.getUrl()));
+			result.setUrl(processUrl(result.getUrl(),hostName));
 			
 		}
 		ModelAndView mav;
@@ -471,11 +472,11 @@ public class JobController extends MultiActionController {
 	
 
 	
-	private String processUrl(String url) {
+	private String processUrl(String url,String hostName) {
 		String identifier="published_resources/nema";
 		int index = url.indexOf(identifier);
 		String resultFolder = url.substring(index+identifier.length());
-		return "http://nema.lis.uiuc.edu/nema_out"+resultFolder;
+		return hostName+"/nema_out"+resultFolder;
 		
 	}
 	private RepositoryClientInterface getRepositoryClient() {
