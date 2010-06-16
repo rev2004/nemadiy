@@ -65,15 +65,33 @@ public class MultiF0EstEvaluationIntegrationTest extends BaseManagerTestCase{
 		
 		/* Convert the 2D string data to a 2D double array */
 		int nrows = multiF0EstDataStrArray.length;
-		int ncols = multiF0EstDataStrArray[0].length;
-		double[][] multiF0EstRaw = new double[nrows][ncols];
+	//	int ncols = multiF0EstDataStrArray[0].length;
+		
+		double[][] multiF0EstRaw = new double[nrows][];
+		
+
 		for(int r = 0; r < nrows; r++) {
 			try{
 				System.out.println("Number of Cols: " + multiF0EstDataStrArray[r].length);
-				for(int c = 0; c < multiF0EstDataStrArray[r].length; c++) {
-					//multiF0EstRaw[r][c] = Double.valueOf(multiF0EstDataStrArray[r][c]);
-					System.out.print(multiF0EstDataStrArray[r][c]+"\t");
+				int ctr = 0;
+//				for(int c = 0; c < multiF0EstDataStrArray[r].length; c++) {
+//					//multiF0EstRaw[r][c] = Double.valueOf(multiF0EstDataStrArray[r][c]);
+//					//Determine the column length
+//					if (multiF0EstDataStrArray[r][c]!=null){
+//						ctr++;
+//					}					
+//					System.out.print(multiF0EstDataStrArray[r][c]+"\t");
+//				}
+				while (multiF0EstDataStrArray[r][ctr]!=null){
+					ctr++;
 				}
+				
+				double[] tmpCol = new double[ctr];
+				for(int c = 0; c < ctr; c++) {
+					tmpCol[c] = Double.valueOf(multiF0EstDataStrArray[r][c]);
+				}
+				multiF0EstRaw[r]=tmpCol;
+				
 				System.out.println("\n");
 			}catch(Exception e){
 				String msg = "Failed to parse line " + r + " of file " + theFile.getAbsolutePath() + "\n" +
