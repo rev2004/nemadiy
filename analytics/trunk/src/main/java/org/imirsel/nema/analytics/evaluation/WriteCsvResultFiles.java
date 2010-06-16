@@ -95,7 +95,7 @@ public class WriteCsvResultFiles {
         	jobId = it.next();
         	jobName = jobIdToName.get(jobId);
         	eval = jobIdToOverallEval.get(jobId);
-        	String[] row = new String[6];
+        	String[] row = new String[numMetrics+1];
         	row[0] = jobName;
         	for (int i = 0; i < numMetrics; i++) {
         		row[i+1] = DEC.format(eval.getDoubleMetadata(metricKeys.get(i)));
