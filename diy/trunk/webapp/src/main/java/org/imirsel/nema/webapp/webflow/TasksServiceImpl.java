@@ -391,7 +391,7 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Load the {@link Components} for the given {@link Flow}.
+	 * Load the {@link Components} for the given {@link Flow}. Set the _credential property to current user. 
 	 * 
 	 * @param flow
 	 *            The {@link Flow} for which the properties should be loaded.
@@ -410,6 +410,15 @@ public class TasksServiceImpl {
 				it.remove();
 			} else {
 				Collections.sort(entry.getValue());
+				Property credentialProp=findProperty(entry.getValue(), CREDENTIALS);
+				if (credentialProp!=null){
+					SimpleCredentials credential = userManager
+							.getCurrentUserCredentials();
+					String credentialString = credential.getUserID() + ":"
+							+ new String(credential.getPassword());
+					credentialProp.setValue(credentialString);
+				}
+
 			}
 		}// while loop
 		return componentsToPropertyLists;
