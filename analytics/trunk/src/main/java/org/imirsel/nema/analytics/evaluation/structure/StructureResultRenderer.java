@@ -24,16 +24,16 @@ import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTrackList;
 
-public class StructureResultsRenderer extends ResultRendererImpl {
+public class StructureResultRenderer extends ResultRendererImpl {
 
 	public static final String STRUCTURE_PLOT_EXT = ".structure.png";
 	public static final double TARGET_PLOT_RESOLUTION = 0.05;
 	
-	public StructureResultsRenderer() {
+	public StructureResultRenderer() {
 		super();
 	}
 
-	public StructureResultsRenderer(File workingDir, File outputDir) {
+	public StructureResultRenderer(File workingDir, File outputDir) {
 		super(workingDir, outputDir);
 	}
 	
