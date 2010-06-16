@@ -105,25 +105,26 @@ public class StructureEvaluator extends EvaluatorImpl {
 
 		// Copy necessary matlab .m file resources to evalTempDir; initialize matlab properties
 		File destFile;
-		destFile = new File(evalTempDir.getAbsolutePath() + File.pathSeparator + "condEntropyEval.m");
+		destFile = new File(evalTempDir.getAbsolutePath() + File.separator + "condEntropyEval.m");
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/structure/resources/condEntropyEval.m", destFile);
-		destFile = new File(evalTempDir.getAbsolutePath() + File.pathSeparator + "desc2seq.m");
+		destFile = new File(evalTempDir.getAbsolutePath() + File.separator + "desc2seq.m");
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/structure/resources/desc2seq.m", destFile);
-		destFile = new File(evalTempDir.getAbsolutePath() + File.pathSeparator + "evaluateStructure.m");
+		destFile = new File(evalTempDir.getAbsolutePath() + File.separator + "evaluateStructure.m");
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/structure/resources/evaluateStructure.m", destFile);
-		destFile = new File(evalTempDir.getAbsolutePath() + File.pathSeparator + "findUniqueMapping.m");
+		destFile = new File(evalTempDir.getAbsolutePath() + File.separator + "findUniqueMapping.m");
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/structure/resources/findUniqueMapping.m", destFile);
-		destFile = new File(evalTempDir.getAbsolutePath() + File.pathSeparator + "pairwiseF.m");
+		destFile = new File(evalTempDir.getAbsolutePath() + File.separator + "pairwiseF.m");
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/structure/resources/pairwiseF.m", destFile);
-		destFile = new File(evalTempDir.getAbsolutePath() + File.pathSeparator + "randClusteringIndex.m");
+		destFile = new File(evalTempDir.getAbsolutePath() + File.separator + "randClusteringIndex.m");
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/structure/resources/randClusteringIndex.m", destFile);
-		destFile = new File(evalTempDir.getAbsolutePath() + File.pathSeparator + "readStructureFromLab.m");
+		destFile = new File(evalTempDir.getAbsolutePath() + File.separator + "readStructureFromLab.m");
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/structure/resources/readStructureFromLab.m", destFile);
-		destFile = new File(evalTempDir.getAbsolutePath() + File.pathSeparator + "segmentRetrievalEval2");
+		destFile = new File(evalTempDir.getAbsolutePath() + File.separator + "segmentRetrievalEval2.m");
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/structure/resources/segmentRetrievalEval2.m", destFile);
-		destFile = new File(evalTempDir.getAbsolutePath() + File.pathSeparator + "seqAssignEval.m");
+		destFile = new File(evalTempDir.getAbsolutePath() + File.separator + "seqAssignEval.m");
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/structure/resources/seqAssignEval.m", destFile);
 
+		// File matlabPath = new File("C:\\MATLAB\\R2009b\\bin\\win64\\MATLAB.exe");
 		File matlabPath = new File("matlab");
 		String evalCommand = "evaluateStructure";
 		
