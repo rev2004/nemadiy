@@ -17,7 +17,8 @@
 						<label class="name">${component.name}:</label>
 					</thead>
 					<c:forEach var="property" items="${componentMap[component]}">
-					<c:if test="${not fn:startsWith(property.name,'_') }">
+					<c:if test="true">
+					<!-- c:if test="${not fn:startsWith(property.name,'_') }"-->
 						<tr>
 							<td>
 								<label class="label"> ${render:displayName(property.name)}</label>
