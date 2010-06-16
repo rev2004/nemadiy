@@ -173,9 +173,9 @@ public class StructureEvaluator extends EvaluatorImpl {
 
 			gtData = trackIDToGT.get(data.getId());
 			randId = Math.round(10000000.0*Math.random());
-			algFileName = evalTempDir.getAbsolutePath() + File.pathSeparator + "alg" + randId + ".txt";
-			gtFileName = evalTempDir.getAbsolutePath() + File.pathSeparator + "gt" + randId + ".txt";
-			resultFileName = evalTempDir.getAbsolutePath() + File.pathSeparator + "res" + randId + ".txt";
+			algFileName = evalTempDir.getAbsolutePath() + File.separator + "alg" + randId + ".txt";
+			gtFileName = evalTempDir.getAbsolutePath() + File.separator + "gt" + randId + ".txt";
+			resultFileName = evalTempDir.getAbsolutePath() + File.separator + "res" + randId + ".txt";
 			algFile = new File(algFileName);
 			gtFile = new File(gtFileName);
 			resultFile = new File(resultFileName);
