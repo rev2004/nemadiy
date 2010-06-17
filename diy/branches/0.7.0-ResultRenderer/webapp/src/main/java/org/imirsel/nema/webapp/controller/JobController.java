@@ -483,4 +483,8 @@ public class JobController extends MultiActionController {
 		return repositoryClientConnectionPool.getFromPool();
 	}
 	
+	public ModelAndView test(HttpServletRequest request, HttpServletResponse response){
+		return new ModelAndView("melodyResultIntro1","a",100);
+	}
+	
 }
