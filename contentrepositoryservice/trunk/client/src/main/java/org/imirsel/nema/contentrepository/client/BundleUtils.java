@@ -66,18 +66,35 @@ public class BundleUtils {
 	
 	protected static byte[] getPropertyFileAsBytes(NemaResult nemaResult) {
 		Properties properties = new Properties();
+		System.out.println("14-1");
+		if(nemaResult.getResultType()!=null)
 		properties.setProperty("typeName",nemaResult.getResultType().toString());
+		System.out.println("14-2");
+		if(nemaResult.getName()!=null)
 		properties.setProperty("name",nemaResult.getName());
+		System.out.println("14-3");
+		if(nemaResult.getFileName()!=null)
 		properties.setProperty("fileName",nemaResult.getFileName());
+		
+		System.out.println("14-4");
+		if(nemaResult.getExecutionId()!=null)
 		properties.setProperty("execId", nemaResult.getExecutionId());
-		properties.setProperty("modelClass", nemaResult.getModelClass());
+		
+		
+		System.out.println("14-5");
+		if(nemaResult.getModelClass()!=null){
+			properties.setProperty("modelClass", nemaResult.getModelClass());
+		}
+		System.out.println("14-6");
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			properties.storeToXML(baos, "serialized properties for name" );
+			System.out.println("14-7");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("14-8");
 		return baos.toByteArray();
 	}
 
