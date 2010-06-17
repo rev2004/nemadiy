@@ -59,8 +59,7 @@ public class ArtifactManagerImpl implements ArtifactManager {
  * 
  */
 	public synchronized String getProcessWorkingDirectory(String jobId) throws IOException {
-		jobId=jobId.replaceAll(":", "");
-		jobId = jobId.replaceAll("/","_");
+		jobId = getJobId(jobId);
 		String directoryLocation =publicResourceDirectory+ File.separator+"nema"+File.separator+jobId;
 		File dir=new File(directoryLocation);
 		boolean success = false;
@@ -74,12 +73,20 @@ public class ArtifactManagerImpl implements ArtifactManager {
 		}
 		return dir.getPath();
 	}
+
+private String getJobId(String jobId) {
+	String[] splits = jobId.split("/");
+	if(splits.length>0){
+		int len = splits.length;
+		jobId = splits[len-1];
+	}
+	return jobId;
+}
 /**Returns the process result directory
  * 
  */
 	public synchronized String getResultLocationForJob(String jobId) throws IOException {
-		jobId=jobId.replaceAll(":", "");
-		jobId = jobId.replaceAll("/","_");
+		jobId = getJobId(jobId);
 		String directoryLocation =publicResourceDirectory + File.separator+"nema"+File.separator+jobId+File.separator+"results";
 		File dir=new File(directoryLocation);
 		boolean success = false;
@@ -117,8 +124,7 @@ public synchronized String getCommonStorageLocation() throws IOException {
  */
 public synchronized String getAbsoluteProcessWorkingDirectory(String jobId)
 		throws IOException {
-	jobId=jobId.replaceAll(":", "");
-	jobId = jobId.replaceAll("/","_");
+	jobId = getJobId(jobId);
 	String directoryLocation =publicResourceDirectory + File.separator+"nema"+File.separator+jobId;
 	File dir=new File(directoryLocation);
 	boolean success = false;
