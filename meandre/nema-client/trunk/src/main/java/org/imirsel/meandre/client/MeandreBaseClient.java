@@ -250,9 +250,7 @@ public class MeandreBaseClient{
 	        return httpCode;
 		
 	}
-
-    
-
+	
 
     /** Does an authenticated GET request against the server using the
 	 * input url suffix and params. 

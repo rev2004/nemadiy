@@ -1129,8 +1129,10 @@ public class MeandreClient extends MeandreBaseClient{
 		}
 	
 		int httpCode= 200; 	
-		byte[] res=	executePostRequestBytes(sRestCommand, nvps, postParts);
-		System.out.println(new String(res));
+		int res=	executePostRequestNoWait(sRestCommand, nvps, postParts);
+		System.out.println(res);
+		httpCode=res;
+		
 		if(httpCode==200){
 			return true;
 		}else{
