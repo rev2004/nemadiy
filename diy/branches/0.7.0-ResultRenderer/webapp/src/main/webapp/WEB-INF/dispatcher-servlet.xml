@@ -155,6 +155,7 @@
 				/JobManager.jobAction=doJobAction
 				/JobManager.selectJobForSubmission=selectJobForSubmission
 				/JobManager.getNotification=getNotification
+				/JobManager.test=test
 
 				/JobManager.jobDetail.json=getJobDetail
 				/JobManager.getUserJobs.json=getUserJobs
@@ -283,7 +284,7 @@
 		<property name="cache" value="true" />
 		<property name="prefix" value="" />
 		<property name="suffix" value=".ftl" />
-		<property name="order" value="5" />
+		<property name="order" value="3" />
 	</bean>	
 	
 	<!-- Vuew ?Resolver for multipart -->

@@ -6,7 +6,7 @@
 </head>
 <body>
   <h1>Welcome Big Joe!</h1>
-  <p>Our latest product:
-  <a href="products/greenmouse.html">green mouse ${1.5}</a>!
+  <p>Our latest product: melody
+  <a href="products/greenmouse.html">green mouse ${1.5} </a>!
 </body>
 </html>

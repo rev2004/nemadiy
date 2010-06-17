@@ -12,7 +12,7 @@
 	<webflow:flow-executor id="flowExecutor">
 
 	</webflow:flow-executor>
-	<webflow:flow-registry id="flowRegistry">
+	<webflow:flow-registry id="flowRegistry" flow-builder-services="builder">
 		<webflow:flow-location path="/WEB-INF/flows/tasks-flow.xml"
 			id="task" />
 		<webflow:flow-location path="/WEB-INF/flows/executable/executable-flow.xml"
@@ -20,6 +20,16 @@
 		<webflow:flow-location path="/WEB-INF/flows/result/result-flow.xml" id="result"></webflow:flow-location>
 	</webflow:flow-registry>
 
+   <webflow:flow-builder-services view-factory-creator="viewFactoryCreator" development="true" id="builder"/>
+   <bean id="viewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
+     <property name="viewResolvers" >
+        <list>
+         <ref bean="freeMarkerViewResolver"/>
+         <ref bean="viewResolver"/>
+        </list>
+     </property>
+     
+   </bean>
 	<bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
 		p:flowService-ref="flowService" p:userManager-ref="userManager"
 		p:uploadDirectory="/resources" p:artifactService-ref="contentRepositoryClient"
