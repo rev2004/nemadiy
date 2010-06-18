@@ -192,14 +192,11 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 	public ResourcePath saveResultFile(final SimpleCredentials credentials,
 			NemaResult nemaResult)
 			throws ContentRepositoryServiceException {
-		System.out.println("0");
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
-		System.out.println("1");
 		logger.info("Validating results: ");
 		BundleUtils.validateResult(nemaResult);
-		System.out.println("2");
 		if(nemaResult.getName().contains(":")){
 			throw new ContentRepositoryServiceException("Illegal Character in the Filename ':' ");	
 		}
@@ -218,7 +215,7 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 			Node resultDirNode=null;
 			String userDirPath ="/"+USERS_DIR+"/"+credentials.getUserID();
 			String flowDirPath = userDirPath +"/"+FLOWS_DIR;
-			String executableDirPath=flowDirPath+"/"+EXECUTOR_BUNDLE_DIR;
+			String executableDirPath=flowDirPath;
 			String executionInstanceDirPath = executableDirPath +"/"+ nemaResult.getExecutionId();
 			String dirName =nemaResult.getExecutionId();
 			String resultDir = executionInstanceDirPath +"/"+ RESULT_DIR;
@@ -240,25 +237,19 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 					session.save();
 					flowNode=userNode.addNode(FLOWS_DIR,"nt:folder");
 					session.save();
-					executableDirNode= flowNode.addNode(EXECUTOR_BUNDLE_DIR,"nt:folder");
-					session.save();
-					executionInstanceDirNode=executableDirNode.addNode(dirName, "nt:folder");
+					executionInstanceDirNode=flowNode.addNode(dirName, "nt:folder");
 					session.save();
 					System.out.println("7");
 				}else if(session.itemExists(flowDirPath)==false){
 					userNode= session.getNode(userDirPath);
 					flowNode=userNode.addNode(FLOWS_DIR,"nt:folder");
 					session.save();
-					executableDirNode= flowNode.addNode(EXECUTOR_BUNDLE_DIR,"nt:folder");
-					session.save();
-					executionInstanceDirNode=executableDirNode.addNode(dirName, "nt:folder");
+					executionInstanceDirNode=flowNode.addNode(dirName, "nt:folder");
 					session.save();
 					System.out.println("8");
 				}else if(session.itemExists(executableDirPath)==false){
 					flowNode=session.getNode(flowDirPath);
-					executableDirNode= flowNode.addNode(EXECUTOR_BUNDLE_DIR,"nt:folder");
-					session.save();
-					executionInstanceDirNode=executableDirNode.addNode(dirName, "nt:folder");
+					executionInstanceDirNode=flowNode.addNode(dirName, "nt:folder");
 					session.save();
 					System.out.println("9");
 				}
