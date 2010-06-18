@@ -139,6 +139,7 @@ public class Job implements Serializable, Cloneable {
 	private String host;
 	private Integer port;
 	private Integer execPort;
+   private Date scheduleTimestamp;
 	private Date submitTimestamp;
 	private Date startTimestamp;
 	private Date endTimestamp;
@@ -182,6 +183,13 @@ public class Job implements Serializable, Cloneable {
 	public void setPort(Integer port) {
 		this.port = port;
 	}
+   @Column(name="scheduleTimestamp")
+   public Date getScheduleTimestamp() {
+      return scheduleTimestamp;
+   }
+   public void setScheduleTimestamp(Date scheduleTimestamp) {
+      this.scheduleTimestamp = scheduleTimestamp;
+   }
 	@Column(name="submitTimestamp")
 	public Date getSubmitTimestamp() {
 		return submitTimestamp;
