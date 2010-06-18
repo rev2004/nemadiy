@@ -22,6 +22,7 @@ import org.meandre.core.ExecutableComponent;
  * @author kriswest
  * @author kumaramit01
  * @since 0.5.0
+ * @version 0.6.0 -changed the job id to be a uuid string based on the flow execution instance
  */
 public abstract class NemaComponent implements ExecutableComponent {
 
@@ -116,8 +117,11 @@ public abstract class NemaComponent implements ExecutableComponent {
 	}
 	
 	private String getJobId(String flowExecutionInstanceID) {
-		String jobId=flowExecutionInstanceID.replaceAll(":", "");
-		jobId = jobId.replaceAll("/","_");
+		String jobId= "uuid";
+		String[] splits = flowExecutionInstanceID.split("/");
+		if(splits.length>0){
+			jobId = splits[splits.length-1];
+		}
 		return jobId;
 	}
 

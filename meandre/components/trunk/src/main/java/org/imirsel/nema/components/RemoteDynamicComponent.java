@@ -21,7 +21,7 @@ import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
-import net.jini.lookup.entry.Name;
+
 
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.model.DynamicType;
@@ -126,12 +126,12 @@ public abstract class RemoteDynamicComponent extends NemaComponent {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		Name name = new Name(profileName);
+		//Name name = new Name(profileName);
 		DynamicType dynamicType = new DynamicType();
 		OsType osType = new OsType(_os);
 		ResourceGroupEntry rgt = new ResourceGroupEntry(_group);
 		
-		Entry[] attrList = new Entry[]{name,osType,rgt,dynamicType};
+		Entry[] attrList = new Entry[]{osType,rgt,dynamicType};
 		Class<ProcessExecutorService>[] classes = new Class[1]; 
 		classes[0] = ProcessExecutorService.class;
 		ServiceTemplate template = new ServiceTemplate(null,classes,attrList);
@@ -140,9 +140,10 @@ public abstract class RemoteDynamicComponent extends NemaComponent {
 				ProcessExecutorService serviceFound=null;
 				
 				if(serviceMatches.totalMatches>0){
+					getLogger().info("Found:  " + serviceMatches.totalMatches);
 					int min = Integer.MAX_VALUE;
 					for(ServiceItem item:serviceMatches.items){
-						ProcessExecutorService pes = (ProcessExecutorService)item;
+						ProcessExecutorService pes = (ProcessExecutorService)item.service;
 						System.out.println("Number of processes running: "+pes.numProcesses());
 						if(min> pes.numProcesses()){
 							serviceFound =  pes;
@@ -201,8 +202,7 @@ public abstract class RemoteDynamicComponent extends NemaComponent {
 	 * @throws InvalidProcessTemplateException
 	 */
 	public final ProcessTemplate getProcessTemplate() throws  RemoteException, InvalidProcessTemplateException{
-		ProcessTemplate processTemplate= executorService.getProcessTemplate(profileName);
-		
+		ProcessTemplate processTemplate= executorService.getDynamicProcessTemplate(_credentials, profileName);
 		if(processTemplate==null){
 			throw new InvalidProcessTemplateException("Profile: " + profileName + "  not found");
 		}
