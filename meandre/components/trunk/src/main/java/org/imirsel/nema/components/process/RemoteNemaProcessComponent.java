@@ -71,7 +71,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 	@Override
 	public void execute(ComponentContext cc)
 			throws ComponentExecutionException, ComponentContextException {
-	
+		
 		Map<NemaTrackList,List<File>> inputFiles = null;
 		Map<NemaTrackList,List<File>> outputFiles = null;
 		NemaTask task = null;
@@ -233,7 +233,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 					outputs.add(paOutputs);
 					
 					ProcessExecutionProperties pep = new ProcessExecutionProperties();
-					pep.setId(cc.getExecutionInstanceID());
+					pep.setId(cc.getFlowExecutionInstanceID());
 					pep.setOutputs(outputs);
 					pep.setInputs(inputs);
 					

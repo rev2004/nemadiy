@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.jcr.SimpleCredentials;
+
 
 import net.jini.core.discovery.LookupLocator;
 import net.jini.core.entry.Entry;
@@ -19,6 +21,7 @@ import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
 
+import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
@@ -42,16 +45,19 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
  * @since 0.2.0
  */
 public abstract class RemoteProcessExecutorComponent extends NemaComponent {
-	//private Logger logger = Logger.getLogger(this.getClass().getName());
-
-	@ComponentProperty(defaultValue = "nema.lis.uiuc.edu", description = "Service Discovery Host", name = "host")
+	
+	@ComponentProperty(defaultValue = "nema-dev.lis.illinois.edu", description = "Host that discovers compatiable execution servers that support the profile.", name = "host")
 	private static final String PROPERTY_1 = "host";
 	
-	@ComponentProperty(defaultValue = "exampleRun", description = "Profile Name", name = "profileName")
+	@ComponentProperty(defaultValue = "exampleRun", description = "Unique identifier for the executable", name = "profileName")
 	private static final String PROPERTY_2 ="profileName";
 	
-	@ComponentProperty(defaultValue = "true", description = "indicates to the UI that this is a remote component", name = "_remoteComponent")
+	@ComponentProperty(defaultValue = "true", description = "Indicates to the UI that this is a remote component", name = "_remoteComponent")
 	private static final String PROPERTY_3 ="_remoteComponent";
+	
+	@StringDataType(hide=true)
+	@ComponentProperty(defaultValue = "test:test", description = "", name = "_credentials")
+	private static final String PROPERTY_4 ="_credentials";
 	
 	
 	private ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor> processMonitorMap = 
@@ -60,6 +66,8 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent {
 	private ComponentContextProperties componentContextProperties;
 	private ProcessExecutorService  executorService;
 	private String profileName = null;
+	private SimpleCredentials _credentials=null;
+	private String _flowInstanceId=null;
 
 	
 	public void initialize(ComponentContextProperties ccp)
@@ -68,6 +76,19 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent {
 		this.componentContextProperties=ccp;
 		String host = ccp.getProperty(PROPERTY_1);
 		profileName = ccp.getProperty(PROPERTY_2);
+		_flowInstanceId = ccp.getFlowExecutionInstanceID();
+		
+		String credentialString = ccp.getProperty(PROPERTY_4);
+		
+		String[] splits = credentialString.split(":");
+		if(splits.length<2){
+			throw new ComponentExecutionException("Error could not get credentials");
+		}
+		_credentials = new SimpleCredentials(splits[0], splits[1].toCharArray());
+
+		System.out.println("IN THE REMOTE COMPONENT: CREDENTIALS ARE: " + credentialString);
+		
+		
 		LookupLocator locator=null;
 		try {
 			locator = new LookupLocator("jini://"+host);
@@ -191,6 +212,10 @@ public abstract class RemoteProcessExecutorComponent extends NemaComponent {
 			throw new IllegalArgumentException("ProcessExecutionProperties -id is not set");
 		}
 		synchronized(this){
+			processExecutionProperties.setCredentials(_credentials);
+			System.out.println("SETTING CREDENTIALS: " + _credentials);
+			processExecutionProperties.setProfileId(getProfileName());
+			processExecutionProperties.setFlowInstanceId(this._flowInstanceId);
 			RecordStreamProcessMonitor rpm=createRemoteProcessMonitor();
 			ProcessTemplate pt=this.getProcessTemplate();
 			processExecutionProperties.setProcessTemplate(pt);

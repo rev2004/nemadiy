@@ -1,7 +1,11 @@
 package org.imirsel.nema.test;
 
+import java.rmi.RemoteException;
+
 import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.components.InvalidProcessTemplateException;
 import org.imirsel.nema.components.RemoteDynamicComponent;
+import org.imirsel.nema.model.ProcessTemplate;
 import org.imirsel.nema.renderers.FileRenderer;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
@@ -34,6 +38,16 @@ public class TestDynamicComponent extends RemoteDynamicComponent {
 		String in = (String) cc.getDataComponentFromInput(DATA_IN_1);
 		System.out.println("--> credentials are: " + this.getContentRepositoryCredentials());
 		System.out.println("--> Profile name is: "+ this.getProfileName());
+		ProcessTemplate processTemplate;
+		try {
+			processTemplate = this.getProcessTemplate();
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InvalidProcessTemplateException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		String fileName =cc.getProperty(fvFile);
 		System.out.println("file name: " + fileName);
