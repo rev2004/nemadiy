@@ -52,6 +52,7 @@ public class JobDao extends SQLDao{
 			String description=rs.getString("description");
 			String host=rs.getString("host");
 			int port=rs.getInt("port");
+			long sct=rs.getDate("scheduleTimestamp").getTime();
 			long su=rs.getDate("submitTimestamp").getTime();
 			long st=rs.getDate("startTimestamp").getTime();
 			long et=rs.getDate("endTimestamp").getTime();
@@ -72,7 +73,7 @@ public class JobDao extends SQLDao{
 			job.setOwnerId(ownerId);
 			job.setStatusCode(statusCode);
 			job.setToken(token);
-			
+			job.setScheduleTimestamp(new Date(sct));
 			job.setSubmitTimestamp(new Date(su));
 			job.setStartTimestamp(new Date(st));
 			job.setEndTimestamp(new Date(et));
@@ -201,12 +202,17 @@ public class JobDao extends SQLDao{
 			createSelect.setString(7,job.getStatusCode()+"");
 			createSelect.setLong(8,job.getOwnerId());
 			createSelect.setString(9,job.getOwnerEmail());
-			if(job.getSubmitTimestamp()!=null){
-				createSelect.setDate(10,new java.sql.Date(job.getSubmitTimestamp().getTime()));
+			if(job.getScheduleTimestamp()!=null){
+				createSelect.setDate(10,new java.sql.Date(job.getScheduleTimestamp().getTime()));
 			}
-			createSelect.setString(11,job.getPort()+"");
-			createSelect.setInt(12,0);
+			if(job.getSubmitTimestamp()!=null){
+				createSelect.setDate(11,new java.sql.Date(job.getSubmitTimestamp().getTime()));
+			}
+		
+		
+			createSelect.setString(12,job.getPort()+"");
 			createSelect.setInt(13,0);
+			createSelect.setInt(14,0);
 			System.out.println("Executing: "+ createSelect.toString());
 			success=createSelect.execute();
 			

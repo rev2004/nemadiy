@@ -22,6 +22,7 @@ import org.imirsel.annotations.SqlPersistence;
 		" statusCode int (11) NOT NULL," + 
 		" ownerId bigint(20) NOT NULL,"+  
 		" ownerEmail text,"+ 
+		" scheduleTimestamp TIMESTAMP,"+
 		" submitTimestamp TIMESTAMP," + 
 		" endTimestamp TIMESTAMP," + 
 		" startTimestamp TIMESTAMP," +
@@ -30,8 +31,8 @@ import org.imirsel.annotations.SqlPersistence;
 		" numTries int(11) NOT NULL," +
 		" flowInstanceId bigint(20) NOT NULL"+
 		") engine=innodb",
-	store="insert into job(name,description,token,host,port,executionInstanceId,statusCode,ownerId,ownerEmail,submitTimestamp,execPort,numTries,flowInstanceId ) " +
-			"values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+	store="insert into job(name,description,token,host,port,executionInstanceId,statusCode,ownerId,ownerEmail,scheduleTimestamp,submitTimestamp,execPort,numTries,flowInstanceId ) " +
+			"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 	start="update job set statusCode=?, executionInstanceId=?,updateTimestamp = now(), startTimestamp = now() where token=?",
 	finish="update job set statusCode=?,updateTimestamp = now(), endTimestamp=now() wh" +
 			"ere executionInstanceId=?",
@@ -147,6 +148,7 @@ public class Job implements Serializable, Cloneable{
 	private String host;
 	private Integer port;
 	private Integer execPort;
+	private Date scheduleTimestamp;
 	private Date submitTimestamp;
 	private Date startTimestamp;
 	private Date endTimestamp;
@@ -182,6 +184,12 @@ public class Job implements Serializable, Cloneable{
 	}
 	public void setPort(Integer port) {
 		this.port = port;
+	}
+	public Date getScheduleTimestamp() {
+		return scheduleTimestamp;
+	}
+	public void setScheduleTimestamp(Date scheduleTimestamp) {
+		this.scheduleTimestamp = scheduleTimestamp;
 	}
 	public Date getSubmitTimestamp() {
 		return submitTimestamp;
@@ -313,6 +321,7 @@ public class Job implements Serializable, Cloneable{
 		clone.setId(this.getId());
 		clone.setName(this.getName());
 		clone.setDescription(this.getDescription());
+		clone.setScheduleTimestamp(this.getScheduleTimestamp());
 		clone.setSubmitTimestamp(this.getSubmitTimestamp());
 		clone.setStartTimestamp(this.getStartTimestamp());
 		clone.setEndTimestamp(this.getEndTimestamp());
