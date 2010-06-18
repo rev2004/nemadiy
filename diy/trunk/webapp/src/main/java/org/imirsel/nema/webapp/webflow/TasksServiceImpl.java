@@ -310,12 +310,11 @@ public class TasksServiceImpl {
 			}
 
 		}
-		String token = System.currentTimeMillis() + "-token";
-		String flowId = flow.getId().toString();
-		String flowUri = flow.getUri();
+		String templateFlowId = flow.getId().toString();
+		String templateFlowUri = flow.getUri();
 
 		logger.debug("start to test run");
-		if (flowId == null || flowUri == null) {
+		if (templateFlowId == null || templateFlowUri == null) {
 			logger
 					.error("flowId or flowUri is null -some severe error happened...");
 			throw new MeandreServerException("flowId or flowUri is null");
@@ -329,13 +328,13 @@ public class TasksServiceImpl {
 		if (name == null) {
 			name = paramMap.get("name");
 			if (name == null) {
-				name = flow.getName() + File.separator + token;
+				name = flow.getName();
 			}
 		}
 		if (description == null) {
 			description = paramMap.get("description");
 			if (description == null) {
-				description = flow.getDescription() + " for flow: " + token;
+				description = flow.getDescription();
 			}
 		}
 		long userId = user.getId();
@@ -351,8 +350,21 @@ public class TasksServiceImpl {
 		instance.setTypeName(flow.getTypeName());
 		logger.info("Getting current user's credentials to send them to the flowservice");
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		
+		
+		
 		instance = this.flowService.createNewFlow(credential, instance,
-				paramMap, flowUri, user.getId());
+				paramMap, templateFlowUri, user.getId());
+		
+		
+		
+		String[] splits=instance.getUri().split("/");
+		String token = "token";
+		
+		if(splits.length>0){
+			token = splits[splits.length-1];
+		}
+		
 		long instanceId = instance.getId();
 		logger.info("created new flow: " +instance.getUri() + " Now ready to run." );
 		Job job = this.flowService.executeJob(credential, token, name,
