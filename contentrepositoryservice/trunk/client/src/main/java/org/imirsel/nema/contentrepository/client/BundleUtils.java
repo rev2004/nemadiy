@@ -28,25 +28,17 @@ public class BundleUtils {
 
 	protected static byte[] getPropertyFileAsBytes(ExecutableBundle bundle) throws InvalidBundleException {
 		Properties properties = new Properties();
-		
 		if(bundle.getTypeName()==null){
 			throw new InvalidBundleException("Missing bundle type");
 		}
-		
 		if(bundle.getId()==null){
 			throw new InvalidBundleException("Missing id");
 		}
-		
-		
 		if(bundle.getExecutableName()!=null){
 			properties.setProperty("executableName",  bundle.getExecutableName());
 		}
-		
-		
 		properties.setProperty("typeName", bundle.getTypeName());
-		
 		properties.setProperty("execId", bundle.getId());
-		
 		
 		if(bundle.getCommandLineFlags()!=null)
 		properties.setProperty("commandLineFlags", bundle.getCommandLineFlags());
@@ -168,13 +160,15 @@ public class BundleUtils {
 		if(nemaResult.getName() == null){
 			throw new ContentRepositoryServiceException("The result file name is null");
 		}
-		if(nemaResult.getFileContent() == null){
-			throw new ContentRepositoryServiceException("The content of the result file is null");	
+		if(nemaResult.getResultType()==null){
+			throw new ContentRepositoryServiceException("The result type cannot be null");
+		}
+		if(nemaResult.getFileContent()==null){
+			throw new ContentRepositoryServiceException("The file content is null");
 		}
 		if(nemaResult.getFileContent().length==0){
-			throw new ContentRepositoryServiceException("The content of the result file is 0 bytes");
+			throw new ContentRepositoryServiceException("The file content is null");
 		}
-		
 		
 	}
 
