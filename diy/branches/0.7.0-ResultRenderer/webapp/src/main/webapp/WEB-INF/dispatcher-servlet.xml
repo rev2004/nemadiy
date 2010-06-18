@@ -77,7 +77,7 @@
 		bean="trigger" /> </property> </bean>
 	-->
 	<!--  job scheduler end -->
-	<bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
+	<bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean" >
 
 		<!--<property name="serviceUrl" value="${diy.flowservice.location}"/>-->
 		<property name="serviceUrl" value="${flowservice.location}" />
