@@ -7,6 +7,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,8 @@ import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
+import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
+import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.JobResult;
@@ -470,6 +473,26 @@ public class JobController extends MultiActionController {
 		return null;
 	}
 	
+	/**
+	 * Query for the satus of servers
+	 * 
+	 */
+	public ModelAndView getServerStatus(HttpServletRequest req, HttpServletResponse res){
+		ModelAndView mav;
+		String uri = (req!=null)?req.getRequestURI():""; 
+		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
+			mav = new ModelAndView("jsonView");
+		} else {
+			mav =new ModelAndView("job/serverStatus");
+		}
+		Map<MeandreServerProxyConfig,MeandreServerProxyStatus> workers=flowService.getWorkerStatus();
+		MeandreServerProxyConfig head=flowService.getHeadConfig();
+		List<Job> scheduledJobs=flowService.getScheduledJobs();
+		mav.addObject(workers);
+		mav.addObject(head);
+		mav.addObject(scheduledJobs);
+		return mav;
+	}
 
 	
 	private String processUrl(String url,String hostName) {
