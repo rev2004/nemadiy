@@ -72,6 +72,13 @@ public interface FlowService {
 	  final Credentials credentials, String token, String name, String description, long flowInstanceId,
       long userId,String userEmail);
 
+   /**
+    * Return all jobs from all users that are scheduled for execution.
+    * 
+    * @return Jobs that are scheduled for execution.
+    */
+   public List<Job> getScheduledJobs();
+   
 	/**
 	 * Return all {@link Flow}s that are templates. Template {@link Flow}s are
 	 * never changed.
