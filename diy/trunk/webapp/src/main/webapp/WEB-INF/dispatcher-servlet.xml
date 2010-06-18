@@ -169,11 +169,12 @@
 				/JobManager.jobAction=doJobAction
 				/JobManager.selectJobForSubmission=selectJobForSubmission
 				/JobManager.getNotification=getNotification
+				/JobManager.getServerStatus=getServerStatus
 
 				/JobManager.jobDetail.json=getJobDetail
 				/JobManager.getUserJobs.json=getUserJobs
 				/JobManager.getSubmissions.json=getSubmissions
-            
+                /JobManager.getServerStatus.json=getServerStatus
             </value>
 		</property>
 	</bean>
