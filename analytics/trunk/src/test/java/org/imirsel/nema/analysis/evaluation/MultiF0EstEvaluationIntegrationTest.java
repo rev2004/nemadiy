@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,79 +62,12 @@ public class MultiF0EstEvaluationIntegrationTest extends BaseManagerTestCase{
 	public void testEvaluateKDTwoFolds()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		MultiF0EstTextFile multiF0Est = new MultiF0EstTextFile();
 		File theFile = new File("src/test/resources/multiF0Est/NEOS1/part1_hn_cl.wav.task1.txt");
-		String[][] multiF0EstDataStrArray = multiF0Est.readFile(theFile);
-		
-		/* Convert the 2D string data to a 2D double array */
-		int nrows = multiF0EstDataStrArray.length;
-		int ncols = multiF0EstDataStrArray[0].length;
-		
-		double[][] multiF0EstRaw = new double[nrows][];
-		for(int r = 0; r < nrows; r++) {
-			try{
-				int ctr = 0;
-				while ((ctr < ncols )&&(multiF0EstDataStrArray[r][ctr]!=null)){
-					ctr++;
-				}
-				double[] tmpRow = new double[ctr];
-				for(int c = 0; c < ctr; c++) {
-					tmpRow[c] = Double.valueOf(multiF0EstDataStrArray[r][c]);
-			//		System.out.print(tmpCol[c] + "\t");
-					
-				}
-		//		System.out.println("\n");
-				multiF0EstRaw[r]=tmpRow;
-				
-			}catch(Exception e){
-				String msg = "Failed to parse line " + r + " of file " + theFile.getAbsolutePath() + "\n" +
-				"Content: \n";
-				for (int i = 0; i < multiF0EstDataStrArray[r].length; i++) {
-					msg += "'" + multiF0EstDataStrArray[r][i] + "'";
-					if (i<multiF0EstDataStrArray[r].length-1){
-						msg += ",";
-					}
-					
-				}
-				msg += "\n";
-				throw new IllegalArgumentException(msg,e);
-			}
-		}
-		System.out.println("rows:" + nrows);
-		
-		for(int r = 0; r < nrows; r++) {
-			
-			try{
-				
-				int ctr = multiF0EstRaw[r].length;
-				System.out.println("row:" + r + "\tcol:" + ctr);
-				for(int c = 0; c < ctr; c++) {
-					System.out.print(multiF0EstRaw[r][c] + "\t");
-				}
-				System.out.println("\n");
 
-				
-			}catch(Exception e){
-				String msg = "Failed to parse line " + r + " of file " + theFile.getAbsolutePath() + "\n" +
-				"Content: \n";
-				for (int i = 0; i < multiF0EstDataStrArray[r].length; i++) {
-					msg += "'" + multiF0EstDataStrArray[r][i] + "'";
-					if (i<multiF0EstDataStrArray[r].length-1){
-						msg += ",";
-					}
-					
-				}
-				msg += "\n";
-				throw new IllegalArgumentException(msg,e);
-			}
-			
-			
+//		NemaData obj =  MultiF0EstTextFile.readFile(theFile);
 		
-			
-		}
-
+	
 	
 	}
-	
-
 	
 	
 	
