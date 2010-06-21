@@ -73,6 +73,7 @@ public class Flow implements Serializable {
 	private String typeName;
 	private String uri;
 	private Long creatorId;
+	private String submissionCode;
 	private Flow instanceOf = null;
 
 	@Id
@@ -163,6 +164,15 @@ public class Flow implements Serializable {
 
 	public void setCreatorId(Long creatorId) {
 		this.creatorId = creatorId;
+	}
+
+	public void setSubmissionCode(String submissionCode) {
+		this.submissionCode = submissionCode;
+	}
+
+	@Column(name = "submissionCode", nullable = true)
+	public String getSubmissionCode() {
+		return submissionCode;
 	}
 
 	@JoinColumn(name = "instanceOf", nullable = true)
