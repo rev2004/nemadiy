@@ -22,8 +22,7 @@ public class MultiF0EstTextFile extends SingleTrackEvalFileTypeImpl {
 
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";
-	public static final DecimalFormat TIMESTAMP_DEC = new DecimalFormat("0.0000");
-	public static final DecimalFormat F0_DEC = new DecimalFormat("0.00");
+	public static final DecimalFormat FORMAT_DEC = new DecimalFormat("0.0000");
 	public static final String TYPE_NAME = "Melody (single F0) text file";
 	
 	/**
@@ -95,13 +94,13 @@ public class MultiF0EstTextFile extends SingleTrackEvalFileTypeImpl {
 
 		String[][] multiF0EstDataStrArray = new String[nrows][];
 		try{
-			for(int r = 0; r < nrows; r++) {		
-				multiF0EstDataStrArray[r][0] = TIMESTAMP_DEC.format(multiF0EstData[r][0]);
+			for(int r = 0; r < nrows; r++) {						
 				int ncols = multiF0EstData[r].length;
+				String[] row = new String[ncols];
 				for (int c = 0; c < ncols; c++){
-					multiF0EstDataStrArray[r][c] = F0_DEC.format(multiF0EstData[r][c]);
+					row[c] = FORMAT_DEC.format(multiF0EstData[r][c]);
 				}
-				
+				multiF0EstDataStrArray[r] = row;
 			}
 		}catch(Exception e){
 			throw new IllegalArgumentException("Failed to write F0s for Track " + data.getId()  +
