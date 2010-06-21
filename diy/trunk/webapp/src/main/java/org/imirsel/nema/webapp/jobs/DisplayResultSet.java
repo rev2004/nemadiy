@@ -87,8 +87,8 @@ public class DisplayResultSet {
 					((strip(url).equalsIgnoreCase("evaluation")))    ||  
 					((strip(url).equalsIgnoreCase("overall")))		
 			){
-				if (url.charAt(url.length()-1)=='/') return url+"index.htm";
-				else return url+"/index.htm";
+				if (url.charAt(url.length()-1)=='/') return url;
+				else return url;
 			}
 		}
 		return null;
