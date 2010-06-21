@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -475,7 +476,7 @@ public class JobController extends MultiActionController {
 	
 	/**
 	 * Query for the satus of servers
-	 * 
+	 * TODO Json call does not work yet. 
 	 */
 	public ModelAndView getServerStatus(HttpServletRequest req, HttpServletResponse res){
 		ModelAndView mav;
@@ -488,9 +489,32 @@ public class JobController extends MultiActionController {
 		Map<MeandreServerProxyConfig,MeandreServerProxyStatus> workers=flowService.getWorkerStatus();
 		MeandreServerProxyConfig head=flowService.getHeadConfig();
 		List<Job> scheduledJobs=flowService.getScheduledJobs();
-		mav.addObject(workers);
-		mav.addObject(head);
-		mav.addObject(scheduledJobs);
+		mav.addObject("workers",workers.entrySet());
+		mav.addObject("head",head);
+		mav.addObject("scheduledJobs",scheduledJobs);
+		return mav;
+	}
+	
+	/**
+	 * return the status of nema for the status bar, only Json interface. 
+	 * @param req
+	 * @param res
+	 * @return
+	 */
+	public ModelAndView getNemaStatus(HttpServletRequest req, HttpServletResponse res){
+		ModelAndView mav=new ModelAndView("jsonView");;
+		
+		Map<MeandreServerProxyConfig,MeandreServerProxyStatus> workers=flowService.getWorkerStatus();
+		
+		List<Job> scheduledJobs=flowService.getScheduledJobs();
+		int availableSlots=0, 
+			runningNum=0;
+		for (Entry<MeandreServerProxyConfig,MeandreServerProxyStatus> entry:workers.entrySet()){
+			availableSlots+=entry.getKey().getMaxConcurrentJobs();
+			runningNum+=entry.getValue().getNumRunning();
+		}
+		mav.addObject("load", runningNum*1.0/availableSlots);
+		mav.addObject("jobsInQuene",scheduledJobs.size());
 		return mav;
 	}
 

@@ -175,6 +175,7 @@
 				/JobManager.getUserJobs.json=getUserJobs
 				/JobManager.getSubmissions.json=getSubmissions
                 /JobManager.getServerStatus.json=getServerStatus
+                /JobManager.getNemaStatus.json=getNemaStatus
             </value>
 		</property>
 	</bean>

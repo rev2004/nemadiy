@@ -2,18 +2,35 @@
 <head>
 <title><fmt:message key="serverStatus.title" /></title>
 
-
-
-
+<meta name="heading" content="${serverStatus.title}"/>
+<meta http-equiv="refresh" content="10" />
 </head>
 <body  onload="">
 <h4 id="refresh">This page autorefreshes every 10 seconds</h4>
  <label class="label">Header Server</label>: ${head.host}:${head.port}
-<display:table name="workers" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="4" 
-defaultorder="descending" id="workers"  class="table" export="false" pagesize="10">
-  
-</display:table>
-
+ <c:if test="${not empty workers}">
+<table border="1">
+	<thead>
+		<tr>
+			<th>server</th>
+			<th>Max Concurrent Jobs</th>
+			<th>Running Job #</th>
+			<th>Aborted Job #</th>
+		</tr>
+	</thead>
+	<c:forEach items="${workers}" var="worker">
+		
+		<tr>
+			<td>${worker.key.host}:${worker.key.port}</td>
+			<td>${worker.key.maxConcurrentJobs}</td>
+			<td>${worker.value.numRunning}</td>
+			<td>${worker.value.numAborting}</td>
+		</tr>
+	</c:forEach>
+</table>
+</c:if>
+<c:choose>
+<c:when test="${not empty scheduledJobs}">
 <display:table name="scheduledJobs" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="4" 
 defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10">
   <display:column property="name" escapeXml="true" sortable="true" titleKey="job.name"
@@ -28,5 +45,8 @@ defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10">
   <display:column property="port" escapeXml="true" sortable="true" titleKey="job.port"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
 </display:table>
+</c:when>
+<c:otherwise><label class="label">No jobs in queue.</label></c:otherwise>
+</c:choose>
 </body>
 

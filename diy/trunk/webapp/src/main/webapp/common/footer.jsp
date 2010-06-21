@@ -9,6 +9,12 @@
         <c:if test="${pageContext.request.remoteUser != null}">
         | <fmt:message key="user.status"/> ${pageContext.request.remoteUser}
         </c:if>
+        <span id="nemaStatus">
+        	<a href="<c:url value='/get/JobManager.getServerStatus'/>">
+        	<label>Nema load:</label><span id="nemaload"></span>%; 
+        	<label>Jobs in Quene</label><span id="jobsInQueue"></span>
+        	</a>
+        </span>
     </span>
     <span class="right">
         &copy; <fmt:message key="copyright.year"/> <a href="<fmt:message key="company.url"/>"><fmt:message key="company.name"/></a>
