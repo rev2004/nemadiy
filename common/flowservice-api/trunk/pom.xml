@@ -4,7 +4,7 @@
 	<groupId>org.imirsel</groupId>
 	<artifactId>nema-flowservice-api</artifactId>
 	<name>NEMA Flowservice Interface</name>
-	<version>0.8.0-SNAPSHOT</version>
+	<version>0.9.0-SNAPSHOT</version>
 	<description>Flow service interface</description>
 	
 	<distributionManagement>
