@@ -88,22 +88,26 @@ public class MultiF0EstTextFile extends SingleTrackEvalFileTypeImpl {
 	public void writeFile(File theFile, NemaData data)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
 		
-		double[][] melodyData = data.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
+		double[][] multiF0EstData = data.get2dDoubleArrayMetadata(NemaDataConstants.MULTI_F0_EST_DATA);
 		
 		/* Convert the data to a 2D double array */
-		int nrows = melodyData.length;
+		int nrows = multiF0EstData.length;
 
-		String[][] melodyDataStrArray = new String[nrows][2];
+		String[][] multiF0EstDataStrArray = new String[nrows][];
 		try{
 			for(int r = 0; r < nrows; r++) {		
-				melodyDataStrArray[r][0] = TIMESTAMP_DEC.format(melodyData[r][0]);
-				melodyDataStrArray[r][1] = F0_DEC.format(melodyData[r][1]);
+				multiF0EstDataStrArray[r][0] = TIMESTAMP_DEC.format(multiF0EstData[r][0]);
+				int ncols = multiF0EstData[r].length;
+				for (int c = 0; c < ncols; c++){
+					multiF0EstDataStrArray[r][c] = F0_DEC.format(multiF0EstData[r][c]);
+				}
+				
 			}
-		}catch(ArrayIndexOutOfBoundsException e){
-			throw new IllegalArgumentException("Track " + data.getId() + " should have a double[N][2] array for metadata" +
-					" type '" + NemaDataConstants.MELODY_EXTRACTION_DATA + "', number of columns is wrong" ,e);
+		}catch(Exception e){
+			throw new IllegalArgumentException("Failed to write F0s for Track " + data.getId()  +
+					" type '" + NemaDataConstants.MULTI_F0_EST_DATA + "'," ,e);
 		}
-		DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(theFile, WRITE_DELIMITER, melodyDataStrArray);
+		DeliminatedTextFileUtilities.writeStringDataToDelimTextFile(theFile, WRITE_DELIMITER, multiF0EstDataStrArray);
 	}
 
 }
