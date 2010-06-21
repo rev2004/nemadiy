@@ -74,13 +74,14 @@ public class MultiF0EstEvaluationIntegrationTest extends BaseManagerTestCase{
 				while ((ctr < ncols )&&(multiF0EstDataStrArray[r][ctr]!=null)){
 					ctr++;
 				}
-				double[] tmpCol = new double[ctr];
+				double[] tmpRow = new double[ctr];
 				for(int c = 0; c < ctr; c++) {
-					tmpCol[c] = Double.valueOf(multiF0EstDataStrArray[r][c]);
+					tmpRow[c] = Double.valueOf(multiF0EstDataStrArray[r][c]);
+			//		System.out.print(tmpCol[c] + "\t");
 					
 				}
-				
-				multiF0EstRaw[r]=tmpCol;
+		//		System.out.println("\n");
+				multiF0EstRaw[r]=tmpRow;
 				
 			}catch(Exception e){
 				String msg = "Failed to parse line " + r + " of file " + theFile.getAbsolutePath() + "\n" +
@@ -96,7 +97,38 @@ public class MultiF0EstEvaluationIntegrationTest extends BaseManagerTestCase{
 				throw new IllegalArgumentException(msg,e);
 			}
 		}
+		System.out.println("rows:" + nrows);
+		
+		for(int r = 0; r < nrows; r++) {
+			
+			try{
+				
+				int ctr = multiF0EstRaw[r].length;
+				System.out.println("row:" + r + "\tcol:" + ctr);
+				for(int c = 0; c < ctr; c++) {
+					System.out.print(multiF0EstRaw[r][c] + "\t");
+				}
+				System.out.println("\n");
 
+				
+			}catch(Exception e){
+				String msg = "Failed to parse line " + r + " of file " + theFile.getAbsolutePath() + "\n" +
+				"Content: \n";
+				for (int i = 0; i < multiF0EstDataStrArray[r].length; i++) {
+					msg += "'" + multiF0EstDataStrArray[r][i] + "'";
+					if (i<multiF0EstDataStrArray[r].length-1){
+						msg += ",";
+					}
+					
+				}
+				msg += "\n";
+				throw new IllegalArgumentException(msg,e);
+			}
+			
+			
+		
+			
+		}
 
 	
 	}
