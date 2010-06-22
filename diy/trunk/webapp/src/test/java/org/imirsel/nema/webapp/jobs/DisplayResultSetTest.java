@@ -123,7 +123,7 @@ public class DisplayResultSetTest {
 			push(results, id++, new Job(), "file", PATH2 + s);
 		}
 		indexSet=new DisplayResultSet(results);
-		assertEquals(PATH2+"index.htm",indexSet.getRoot().getUrl());
+		assertEquals(PATH2,indexSet.getRoot().getUrl());
 		assertEquals("results",indexSet.getRoot().getDisplayString());
 		assertNotNull(indexSet.getChildren());
 		assertTrue(0==indexSet.getChildren().size());

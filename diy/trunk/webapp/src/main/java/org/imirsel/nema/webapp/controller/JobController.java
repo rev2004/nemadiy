@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,8 @@ import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.JobResult;
-import org.imirsel.nema.model.Notification;
 import org.imirsel.nema.model.NemaPublishedResult;
+import org.imirsel.nema.model.Notification;
 import org.imirsel.nema.model.Submission;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
@@ -432,7 +433,6 @@ public class JobController extends MultiActionController {
 		return mav;
 	}
 
-	
 	/**Returns list of notifications for the user
 	 * 
 	 * @param req
@@ -443,7 +443,22 @@ public class JobController extends MultiActionController {
 		User user=this.userManager.getCurrentUser();
 		List<Notification> notifications=this.flowService.getUserNotifications(user.getId());
 		ModelAndView mav=new ModelAndView("jsonView");
-		mav.addObject(notifications);
+		
+		//Testing Set 
+		//TODO remove when the real notification service is there
+		Notification notification=new Notification();
+		notification.setMessage("message 1");
+		notifications=new ArrayList<Notification>();
+		notifications.add(notification);
+		notification=new Notification();
+		notification.setMessage("message 2");
+		notifications.add(notification);
+		
+		
+		
+		if (System.currentTimeMillis()%2==0) mav.addObject("notifications",notifications);
+		else mav.addObject("notifications",null);
+		
 		return mav;
 	}
 	
@@ -502,7 +517,7 @@ public class JobController extends MultiActionController {
 	 * @return
 	 */
 	public ModelAndView getNemaStatus(HttpServletRequest req, HttpServletResponse res){
-		ModelAndView mav=new ModelAndView("jsonView");;
+		ModelAndView mav=new ModelAndView("jsonView");
 		
 		Map<MeandreServerProxyConfig,MeandreServerProxyStatus> workers=flowService.getWorkerStatus();
 		
@@ -514,10 +529,11 @@ public class JobController extends MultiActionController {
 			runningNum+=entry.getValue().getNumRunning();
 		}
 		mav.addObject("load", runningNum*1.0/availableSlots);
-		mav.addObject("jobsInQuene",scheduledJobs.size());
+		mav.addObject("jobsInQueue",scheduledJobs.size());
 		return mav;
 	}
-
+	
+	
 	
 	private String processUrl(String url,String hostName) {
 		String identifier="published_resources/nema";
