@@ -7,3 +7,11 @@ label.name {
 .surround{
 	margin:5px;
 }
+
+.notification{
+	right:5px;
+	bottom:5px;
+	width:200px;
+	max-height:150px;
+	
+}

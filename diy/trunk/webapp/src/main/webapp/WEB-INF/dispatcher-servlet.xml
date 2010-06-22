@@ -168,7 +168,7 @@
 				/JobManager.jobDetail=getJobDetail
 				/JobManager.jobAction=doJobAction
 				/JobManager.selectJobForSubmission=selectJobForSubmission
-				/JobManager.getNotification=getNotification
+				
 				/JobManager.getServerStatus=getServerStatus
 
 				/JobManager.jobDetail.json=getJobDetail
@@ -176,6 +176,7 @@
 				/JobManager.getSubmissions.json=getSubmissions
                 /JobManager.getServerStatus.json=getServerStatus
                 /JobManager.getNemaStatus.json=getNemaStatus
+                /JobManager.getNotification.json=getNotification
             </value>
 		</property>
 	</bean>

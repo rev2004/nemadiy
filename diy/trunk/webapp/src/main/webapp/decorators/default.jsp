@@ -9,19 +9,20 @@
 
         <link rel="stylesheet" type="text/css" media="all" href="<c:url value='/styles/${appConfig["csstheme"]}/theme.css'/>" />
         <link rel="stylesheet" type="text/css" media="print" href="<c:url value='/styles/${appConfig["csstheme"]}/print.css'/>" />
-
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js"></script>
+		<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dijit/themes/tundra/tundra.css"/>
+		<script  djConfig="parseOnLoad:true, isDebug:true" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js"></script>
         <script type="text/javascript" src="<c:url value='/scripts/prototype.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/scriptaculous.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/global.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/nemaStatus.js'/>"></script>
          <script type="text/javascript">
         	dojo.addOnLoad(loadNemaStatus("<c:url value='/get/JobManager.getNemaStatus.json'/>"));
+        	dojo.addOnLoad(loadNotification("<c:url value='/get/JobManager.getNotification.json'/>"));
         </script>
         <decorator:head/>
     </head>
     
-<body<decorator:getProperty property="body.id" writeEntireProperty="true"/><decorator:getProperty property="body.class" writeEntireProperty="true"/><decorator:getProperty property="body.onload" writeEntireProperty="true" />>
+<body<decorator:getProperty property="body.id" writeEntireProperty="true"/><decorator:getProperty property="body.class" default="tundra" writeEntireProperty="true"/><decorator:getProperty property="body.onload" writeEntireProperty="true" />>
 
     <div id="page">
         <div id="header" class="clearfix">
