@@ -70,13 +70,12 @@ public class RepositoryManagementUtils {
     
     static final Logger logger = Logger.getLogger(RepositoryManagementUtils.class.getName());
 	
-    public static void insertDirOfAudioFiles(File root, List<String[]> fileMetadataTags, int collection_id) {
-    	insertDirOfAudioFiles(root, fileMetadataTags, collection_id, null);
+    public static void insertDirOfAudioFiles(File root, List<String[]> fileMetadataTags, int collection_id, String site) {
+    	insertDirOfAudioFiles(root, fileMetadataTags, collection_id, null, site);
     }
     
-	public static void insertDirOfAudioFiles(File root, List<String[]> fileMetadataTags, int collection_id, Map<File,File> newFileToOldFile) {
+	public static void insertDirOfAudioFiles(File root, List<String[]> fileMetadataTags, int collection_id, Map<File,File> newFileToOldFile, String site) throws IllegalArgumentException{
         try{
-            logger.info("");
             logger.info("Collection id: " + collection_id);
             logger.info("Directory: " + root.getAbsolutePath());
             logger.info("File metadata tags:");
@@ -84,10 +83,19 @@ public class RepositoryManagementUtils {
                 String[] strings = it.next();
                 logger.info("\t" + strings[0] + ":\t" + strings[1]);
             }
-            logger.info("");
+            
+            
 
             RepositoryUpdateClientImpl client = new RepositoryUpdateClientImpl();
 
+
+            int siteId = client.getSiteId(site);
+            logger.info("Site: " + siteId + " (" + site + ")");
+            
+            if (siteId == -1){
+            	throw new IllegalArgumentException("Site name '" + site + "' could not be resolved to a site ID!");
+            }
+            
             client.startTransation();
 
             //get list of all audio files path
@@ -215,7 +223,7 @@ public class RepositoryManagementUtils {
                 try{
                     //insert file against track
                 	File toInsert = idMap.get(track);
-                    int file_id = client.insertFile(track, toInsert.getAbsolutePath());
+                    int file_id = client.insertFile(track, toInsert.getAbsolutePath(),siteId);
                     if (file_id == -1){
                         numFilesFailed++;
                     }else{
@@ -285,21 +293,23 @@ public class RepositoryManagementUtils {
             }catch(NumberFormatException e){
                 throw new RuntimeException("Failed to parse collection id: " + args[2] + "\n" + USAGE);
             }
+            
+            String site = args[3];
 
             List<String[]> meta = new ArrayList<String[]>();
-            if (args.length % 2 != 1){
+            if (args.length % 2 != 0){
                 throw new RuntimeException("Wrong number of arguments received!\n" + USAGE);
             }
-            if(args.length <= 3){
+            if(args.length <= 4){
                 logger.info("WARNING: No metadata arguments received!");
             }
-            for (int i = 3; i < args.length; i+=2){
+            for (int i = 4; i < args.length; i+=2){
                 String key = args[i];
                 String val = args[i+1];
                 meta.add(new String[]{key,val});
             }
 
-            insertDirOfAudioFiles(new File(dir), meta, collection_id);
+            insertDirOfAudioFiles(new File(dir), meta, collection_id, site);
         }else if (args[0].equals("-m")){
             migrate_metadata();
         }else if (args[0].equals("-dtt")){

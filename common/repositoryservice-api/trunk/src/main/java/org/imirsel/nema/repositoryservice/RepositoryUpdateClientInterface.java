@@ -93,10 +93,11 @@ public interface RepositoryUpdateClientInterface extends
      * Inserts a new file path, relating to a track ID, into the repository DB.
      * @param track_id The track ID to insert the file path against.
      * @param path The filesystem path to insert against the track ID.
+     * @param site The NEMA site ID at which the path is valid.
      * @return The int ID generated for the inserted file.
      * @throws SQLException Thrown if a problem with the update occurs.
      */
-    public int insertFile(String track_id, String path) throws SQLException;
+    public int insertFile(String track_id, String path, int site) throws SQLException;
 
     /**
 	 * Add a new file metadata type definition to the repository DB.

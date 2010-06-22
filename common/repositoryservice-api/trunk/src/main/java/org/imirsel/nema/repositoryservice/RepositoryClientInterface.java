@@ -629,6 +629,13 @@ public interface RepositoryClientInterface {
     public String getTrackListTypeName(int typeId);
 
     /**
+     * Returns the name for a site ID.
+     * @param siteId site ID to retrieve name for.
+     * @return site name.
+     */
+    public String getSiteName(int siteId);
+
+    /**
      * Returns the integer ID for the specified Track metadata type name.
      * @param typeName metadata type name to retrieve ID for.
      * @return metadata type ID.
@@ -648,6 +655,13 @@ public interface RepositoryClientInterface {
      * @return metadata type ID.
      */
     public int getTrackListTypeID(String typeName);
+
+    /**
+     * Returns the integer ID for the specified site name.
+     * @param siteName siet name to retrieve ID for.
+     * @return site ID.
+     */
+    public int getSiteId(String siteName);
 
 
 }

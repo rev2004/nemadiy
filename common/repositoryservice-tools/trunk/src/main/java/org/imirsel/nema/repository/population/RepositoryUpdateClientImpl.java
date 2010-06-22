@@ -27,7 +27,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
     public static final String INSERT_TRACK_COLLECTION_LINK = "INSERT IGNORE INTO collection_track_link(collection_id,track_id) VALUES(?,?)";
     private PreparedStatement insertTrackCollectionLink;
 
-    public static final String INSERT_FILE = "INSERT INTO file(track_id,path) VALUES(?,?)";
+    public static final String INSERT_FILE = "INSERT INTO file(track_id,path,site) VALUES(?,?,?)";
     private PreparedStatement insertFile;
 
     public static final String INSERT_LEGACY_FILE_PATH = "INSERT INTO legacy_file_paths(file_id,old_path) VALUES(?,?)";
@@ -134,9 +134,10 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         insertTrackCollectionLink.executeUpdate();
     }
 
-    public int insertFile(String track_id, String path) throws SQLException{
+    public int insertFile(String track_id, String path, int site) throws SQLException{
         insertFile.setString(1, track_id);
         insertFile.setString(2, path);
+        insertFile.setInt(3, site);
         insertFile.executeUpdate();
         ResultSet rs = insertFile.getGeneratedKeys();
         if (rs.next()) {
