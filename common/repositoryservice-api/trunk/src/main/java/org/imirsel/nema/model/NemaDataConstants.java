@@ -176,4 +176,11 @@ public class NemaDataConstants {
     public static final String STRUCTURE_SEGMENTATION_MEDCLAIM2TRUE = "Median distance from an annotated segment boundary to the closest found boundary";
     public static final String STRUCTURE_SEGMENTATION_MEDTRUE2CLAIM = "Median distance from a found segment boundary to the closest annotated one";
     
+    //Onset Detection Evaluator Constants
+    public static final String ONSET_DETECTION_DATA = "List of onset times";
+    public static final String ONSET_DETECTION_CLASS = "Instrumentation class";
+    public static final String ONSET_DETECTION_ANNOTATORS = "Annotators";
+    public static final String ONSET_DETECTION_AVG_PRECISION ="Average Precision";
+    public static final String ONSET_DETECTION_AVG_RECALL = "Average Recall";
+    public static final String ONSET_DETECTION_AVG_FMEASURE = "Average F-Measure";
 }
