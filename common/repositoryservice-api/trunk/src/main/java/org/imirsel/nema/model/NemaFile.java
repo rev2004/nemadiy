@@ -12,7 +12,8 @@ import java.io.Serializable;
  * A class representing a file referred to by the NEMA repository that is linked to
  * a trackID. The <code>NemaFile</code> has a unique ID assigned by the repository DB
  * and a filesystem path.
- * @author kriswest
+ * @author kris.west@gmail.com
+ * @since 0.1.0
  */
 public class NemaFile implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -20,6 +21,7 @@ public class NemaFile implements Serializable {
     private int id;
     private String trackId;
     private String path;
+    private String site;
 
     /**
      * No arg constructor. All fields must be set manually.
@@ -28,7 +30,7 @@ public class NemaFile implements Serializable {
     }
 
     /**
-     * Constructor. Sets the ID field but not the trackID or path.
+     * Constructor. Sets the ID field but not the trackID, path or site.
      * @param id the ID to set.
      */
     public NemaFile(int id){
@@ -41,10 +43,11 @@ public class NemaFile implements Serializable {
      * @param trackId the trackID to set.
      * @param path the filesystem path to set.
      */
-    public NemaFile(int id, String trackId, String path){
+    public NemaFile(int id, String trackId, String path, String site){
         this.id = id;
         this.trackId = trackId;
         this.path = path;
+        this.site = site;
     }
 
     /**
@@ -102,6 +105,22 @@ public class NemaFile implements Serializable {
     public void setPath(String path){
         this.path = path;
     }
+    
+    /**
+     * Sets the site label (denoting at which site the path is valid).
+     * @param site
+     */
+	public void setSite(String site) {
+		this.site = site;
+	}
+
+	/**
+	 * Returns the site label (denoting at which site the path is valid).
+	 * @return
+	 */
+	public String getSite() {
+		return site;
+	}
 
     @Override
     /**
@@ -131,10 +150,10 @@ public class NemaFile implements Serializable {
 
 	@Override
 	public String toString() {
-		return "org.imirsel.nema.model.NemaFile [id=" + id + ", path=" + path + ", trackId=" + trackId
+		return "org.imirsel.nema.model.NemaFile [id=" + id + ", path=" + path + 
+				", trackId=" + trackId + ",site=" + site
 				+ "]";
 	}
-
 
 
 }
