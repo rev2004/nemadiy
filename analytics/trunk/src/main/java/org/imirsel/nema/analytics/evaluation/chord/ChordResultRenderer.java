@@ -54,52 +54,6 @@ public class ChordResultRenderer extends ResultRendererImpl {
 		
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
-		
-//		getLogger().info("Creating per-fold result directories...");
-//		Map<String, List<File>> jobIDToFoldResultDirs = makePerFoldSystemResultDirs(
-//				jobIDToResultDir, numFolds);
-//		
-//
-//		// plot chords for each track in each fold
-//		Map<String, List<File[]>> jobIDToResultPlotFileList = new HashMap<String, List<File[]>>();
-//		// iterate over systems
-//		for (Iterator<String> it_systems = results.getJobIds().iterator(); it_systems
-//				.hasNext();) {
-//			String jobId = it_systems.next();
-//			getLogger().info("Plotting Chord transcriptions for: " + jobId);
-//			Map<NemaTrackList,List<NemaData>> sysResults = results.getPerTrackEvaluationAndResults(jobId);
-//
-//			// iterate over folds
-//			List<File> foldDirs = jobIDToFoldResultDirs.get(jobId);
-//			List<File[]> plotFolds = new ArrayList<File[]>();
-//			Iterator<File> it_foldResDir = foldDirs.iterator();
-//
-//			for (Iterator<NemaTrackList> it_folds = sysResults.keySet()
-//					.iterator(); it_folds.hasNext();) {
-//				NemaTrackList testSet = it_folds.next();
-//				List<NemaData> list = sysResults.get(testSet);
-//
-//				File[] plots = new File[list.size()];
-//				File foldDir = it_foldResDir.next();
-//
-//				// iterate over tracks
-//				int plotCount = 0;
-//				for (Iterator<NemaData> it_tracks = list.iterator(); it_tracks
-//						.hasNext();) {
-//					NemaData nemaData = it_tracks.next();
-//
-//					File plotFile = new File(foldDir.getAbsolutePath()
-//							+ File.separator + jobId + "-" + "fold"
-//							+ testSet.getFoldNumber() + PLOT_EXT);
-//					plots[plotCount++] = plotFile;
-//
-//					// TODO: actually plot the chords
-//
-//				}
-//				plotFolds.add(plots);
-//			}
-//			jobIDToResultPlotFileList.put(jobId, plotFolds);
-//		}
 
 		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");

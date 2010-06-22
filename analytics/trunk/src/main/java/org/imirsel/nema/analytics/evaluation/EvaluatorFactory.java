@@ -26,7 +26,7 @@ import org.imirsel.nema.model.NemaTrackList;
  */
 public class EvaluatorFactory {
 	
-	private static final Map<String,Class<? extends Evaluator>> EVALUATOR_REGISTRY = new HashMap<String, Class<? extends Evaluator>>();;
+	private static final Map<String,Class<? extends Evaluator>> EVALUATOR_REGISTRY = new HashMap<String, Class<? extends Evaluator>>();
 	static{
 		//register all the known evaluators for known metadata keys
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, ChordEvaluator.class);
