@@ -26,8 +26,11 @@ public class JobForm implements Serializable {
 	private String name;
 	private String description;
 
+	private String mirexSubmissionCode;
+
 	private UUID uuid;
-	
+
+	public final static String IMPOSSIBLE="9999999";
 	/**
 	 * Map of remote executable {@link Component}s to the address of the
 	 * executable profile stored in the repository service.
@@ -40,6 +43,7 @@ public class JobForm implements Serializable {
 		logger.debug("set a new flowId "+uuid.toString());
 		executableMap=new HashMap<Component,ResourcePath>();
 		templateMap=new HashMap<Component,VanillaPredefinedCommandTemplate>();
+		mirexSubmissionCode=IMPOSSIBLE;
 	}
 
 	public UUID getUuid(){
@@ -75,6 +79,14 @@ public class JobForm implements Serializable {
 
 	public Map<Component,VanillaPredefinedCommandTemplate> getTemplateMap() {
 		return templateMap;
+	}
+
+	public void setMirexSubmissionCode(String mirexSubmissionCode) {
+		this.mirexSubmissionCode = mirexSubmissionCode;
+	}
+
+	public String getMirexSubmissionCode() {
+		return mirexSubmissionCode;
 	}
 
 }

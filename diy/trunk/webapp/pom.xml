@@ -351,11 +351,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jboss.seam</groupId>
-			<artifactId>jboss-el</artifactId>
-			<version>2.0.0.GA</version>
-		</dependency>
-		<dependency>
 			<groupId>org.subethamail</groupId>
 			<artifactId>subethasmtp-wiser</artifactId>
 			<version>${wiser.version}</version>
@@ -850,7 +845,7 @@
 		</profile>
 	</profiles>
 	<properties>
-		<spring.webflow.version>2.1.0.M2</spring.webflow.version>
+		<spring.webflow.version>2.1.0.RELEASE</spring.webflow.version>
 		
 	</properties>
 </project>

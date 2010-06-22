@@ -7,6 +7,7 @@
 	<var name="jobForm" class="org.imirsel.nema.webapp.model.JobForm" />
 	<var name="flow" class="org.imirsel.nema.model.Flow" />
 	<var name="componentList" class="java.util.ArrayList" />
+	
 
 	<input name="flowType" type="java.lang.String" />
 	<input name="flowId" type="java.lang.Integer" />
@@ -14,9 +15,11 @@
 	<on-start>
 		<evaluate expression="tasksService.buildUploadPath(externalContext,jobForm.uuid)" />
 		<evaluate expression="jobForm.setFlowId(flowId)" />
+		<set name="flowScope.mirexSubmissions" value="tasksService.getAllMirexSubmissions()"/>
+		<set name="flowScope.MIREX_SUBMISSION_CODE" value="tasksService.getMirexSubmissionCodeStr()" type="java.lang.String"/>
 	</on-start>
 
-	<view-state id="selectTask" model="jobForm">
+	<view-state id="selectTask" model="jobForm"  >
 		<on-entry>
 			<evaluate expression="tasksService.getFlowTemplates(flowType)" result="flowScope.flowList"></evaluate>
 		</on-entry>
@@ -24,8 +27,12 @@
 	</view-state>
 
 	<view-state id="displayFlowComponents" model="jobForm">
-		<transition on="edit" to="editComponentProperties" />
-		<transition on="review" to="reviewTask" />
+		<transition on="edit" to="editComponentProperties" >
+			<evaluate expression="tasksService.replacePropertyValue(componentMap,MIREX_SUBMISSION_CODE,jobForm.mirexSubmissionCode)"/>
+		</transition>
+		<transition on="review" to="reviewTask" >
+			<evaluate expression="tasksService.replacePropertyValue(componentMap,MIREX_SUBMISSION_CODE,jobForm.mirexSubmissionCode)"/>
+		</transition>
 		<transition on="cancel" to="cleanUp" />
 	</view-state>
 
@@ -108,7 +115,7 @@
 	</action-state>
 
 	<action-state id="run">
-		<evaluate expression="tasksService.run(flow,componentMap,jobForm.name,jobForm.description)" result="flowScope.job" />
+		<evaluate expression="tasksService.run(flow,componentMap,jobForm.name,jobForm.description,jobForm.mirexSubmissionCode)" result="flowScope.job" />
 		<transition on="success" to="checkRunResult" />
 
 	</action-state>

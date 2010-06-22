@@ -446,13 +446,18 @@ public class JobController extends MultiActionController {
 		
 		//Testing Set 
 		//TODO remove when the real notification service is there
-		Notification notification=new Notification();
-		notification.setMessage("message 1");
-		notifications=new ArrayList<Notification>();
-		notifications.add(notification);
-		notification=new Notification();
-		notification.setMessage("message 2");
-		notifications.add(notification);
+//		Notification notification = new Notification();
+//		notification.setMessage("Your job XXX Failed miserably!");
+//		notifications = new ArrayList<Notification>();
+//		notifications.add(notification);
+//		notification = new Notification();
+//		notification
+//				.setMessage("Server x-1-y-2-z-3 amd server fjdskfjdskfjsdljfdslkjf  both died");
+//		notifications.add(notification);
+//		notification = new Notification();
+//		notification.setMessage("You suck badly!");
+//		notifications.add(notification);
+		
 		
 		
 		
