@@ -46,7 +46,7 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.ParameterMap;
 
 /**
- * Action class for the task template flow generation webflow. 
+ * Action class for the task template flow generation webflow.
  * 
  * @author gzhu1
  * @since 0.6.0
@@ -70,7 +70,7 @@ public class TasksServiceImpl {
 	final static String EXECUTABLE_URL = "profileName";
 	final static String OS = "_os";
 	final static String GROUP = "_group";
-	final static String MIREX_SUBMISSION_CODE="_submissionCode";
+	// final static String MIREX_SUBMISSION_CODE="_submissionCode";
 
 	final static Set<String> HIDDEN_PROPERTIES = new HashSet<String>();
 	{
@@ -79,18 +79,13 @@ public class TasksServiceImpl {
 		HIDDEN_PROPERTIES.add(EXECUTABLE_URL);
 		HIDDEN_PROPERTIES.add(OS);
 		HIDDEN_PROPERTIES.add(GROUP);
-		//HIDDEN_PROPERTIES.add(MIREX_SUBMISSION_CODE);
+		// HIDDEN_PROPERTIES.add(MIREX_SUBMISSION_CODE);
 	}
-	
-	public String getMirexSubmissionCodeStr(){
-		return MIREX_SUBMISSION_CODE;
-	}
-	
 
 	public String getPhysicalDir() {
 		return physicalDir;
 	}
-     
+
 	public String getWebDir() {
 		return webDir;
 	}
@@ -99,10 +94,15 @@ public class TasksServiceImpl {
 	 * Send executable bundle to content repository, replace/add the new
 	 * ResourcePath of executable bundle in the the executableMap.
 	 * 
-	 * @param component  Remote dynamic component. 
-	 * @param properties Properties of the component. Values are modified in the method. 
-	 * @param bundle Bundle to send over to content repository
-	 * @param uuid Unique ID for the webflow
+	 * @param component
+	 *            Remote dynamic component.
+	 * @param properties
+	 *            Properties of the component. Values are modified in the
+	 *            method.
+	 * @param bundle
+	 *            Bundle to send over to content repository
+	 * @param uuid
+	 *            Unique ID for the webflow
 	 * @param executableMap
 	 *            Note that this map is going to be modified, old path is
 	 *            replaced by new path.
@@ -145,9 +145,14 @@ public class TasksServiceImpl {
 	/**
 	 * Remove the executable bundle from the content repository.
 	 * 
-	 * @param component Remote dynamic component
-	 * @param executableMap Maps with all existing executableBundle's {@link ResourcePath}s. Values are modified in the method. 
-	 * @param properties Properties of remote dynamic component. Values are modified in the method. 
+	 * @param component
+	 *            Remote dynamic component
+	 * @param executableMap
+	 *            Maps with all existing executableBundle's {@link ResourcePath}
+	 *            s. Values are modified in the method.
+	 * @param properties
+	 *            Properties of remote dynamic component. Values are modified in
+	 *            the method.
 	 */
 	public void removeExecutable(Component component,
 			Map<Component, ResourcePath> executableMap,
@@ -161,11 +166,11 @@ public class TasksServiceImpl {
 		}
 	}
 
-	
 	/**
 	 * clear all executable bundles sent over to content repository
 	 * 
-	 * @param executableMap Maps with all existing executableBundle's {@link ResourcePath}
+	 * @param executableMap
+	 *            Maps with all existing executableBundle's {@link ResourcePath}
 	 */
 	public void clearBundles(Map<Component, ResourcePath> executableMap)
 			throws ContentRepositoryServiceException {
@@ -193,12 +198,15 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Retrieve the Executable bundle with resource path {@link ResourcePath}, and
-	 * populated the extra fields for UploadedExecutableBundle
+	 * Retrieve the Executable bundle with resource path {@link ResourcePath},
+	 * and populated the extra fields for UploadedExecutableBundle
 	 * 
-	 * @param path {@link ResourcePath} to the executable bundle
-	 * @param properties Properties of the remote dynamic component, necessary to build 
-	 * {@link UploadedExecutableBundle} object because it has extra info from {@linkplain properties}
+	 * @param path
+	 *            {@link ResourcePath} to the executable bundle
+	 * @param properties
+	 *            Properties of the remote dynamic component, necessary to build
+	 *            {@link UploadedExecutableBundle} object because it has extra
+	 *            info from {@linkplain properties}
 	 * @return
 	 */
 	public UploadedExecutableBundle findBundle(ResourcePath path,
@@ -248,7 +256,6 @@ public class TasksServiceImpl {
 		}
 		return list;
 	}
-	
 
 	private String getFullyQualifiedPropertyName(String component,
 			String propertyName) {
@@ -266,17 +273,20 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Get all mirex submissions from Mirex 2010 records and 
-	 * append an extra for non-submission
+	 * Get all mirex submissions from Mirex 2010 records and append an extra for
+	 * non-submission
+	 * 
 	 * @return
 	 */
-	public List<MirexSubmission> getAllMirexSubmissions(){
-		MirexSubmission nonSubmission=new MirexSubmission(-999999, JobForm.IMPOSSIBLE,"not a mirex submission");
-		List<MirexSubmission> submissions=mirexSubmissionDao.getAllSubmissions();
+	public List<MirexSubmission> getAllMirexSubmissions() {
+		MirexSubmission nonSubmission = new MirexSubmission(-999999,
+				JobForm.IMPOSSIBLE, "not a mirex submission");
+		List<MirexSubmission> submissions = mirexSubmissionDao
+				.getAllSubmissions();
 		submissions.add(nonSubmission);
-		return submissions;	
+		return submissions;
 	}
-	
+
 	/**
 	 * This method is necessary for render tag
 	 * 
@@ -298,7 +308,8 @@ public class TasksServiceImpl {
 	/**
 	 * Tests whether or not the supplied properties are from a remote component.
 	 * 
-	 * @param properties  Properties of one component         
+	 * @param properties
+	 *            Properties of one component
 	 * @return True if the properties are from a remote component.
 	 */
 	public boolean areFromRemoteComponent(List<Property> properties) {
@@ -309,32 +320,45 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Go through all the properties from all components, change the value of the specific name. 
-	 * @param componentMap properties from all component
-	 * @param name 		Property name
-	 * @param value		Property value
+	 * Go through all the properties from all components, change the value of
+	 * the specific name.
+	 * 
+	 * @param componentMap
+	 *            properties from all component
+	 * @param name
+	 *            Property name
+	 * @param value
+	 *            Property value
 	 */
-	public void replacePropertyValue(Map<Component,List<Property>> componentMap,String name,String value){
-		for (List<Property> list:componentMap.values()){
-			for (Property property:list){
-				if (name.equals(property.getName())){
+	public void replacePropertyValue(
+			Map<Component, List<Property>> componentMap, String name,
+			String value) {
+		for (List<Property> list : componentMap.values()) {
+			for (Property property : list) {
+				if (name.equals(property.getName())) {
 					property.setValue(value);
 				}
 			}
 		}
 	}
+
 	/**
 	 * Create a job with all the properties in datatypeMaps.
 	 * 
-	 * @param flow Flow that the job is based on. 
-	 * @param componentMap All parameters. 
-	 * @param name  Job name
-	 * @param description Job description
+	 * @param flow
+	 *            Flow that the job is based on.
+	 * @param componentMap
+	 *            All parameters.
+	 * @param name
+	 *            Job name
+	 * @param description
+	 *            Job description
 	 * @return the job object created with the parameters
 	 * @throws MeandreServerException
 	 */
 	public Job run(Flow flow, Map<Component, List<Property>> componentMap,
-			String name, String description,String mirexSubmissionCode) throws MeandreServerException {
+			String name, String description, String mirexSubmissionCode)
+			throws MeandreServerException {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 
 		Component component;
@@ -387,35 +411,33 @@ public class TasksServiceImpl {
 		instance.setType(flow.getType());
 		instance.setTypeName(flow.getTypeName());
 		instance.setSubmissionCode(mirexSubmissionCode);
-		logger.info("Getting current user's credentials to send them to the flowservice");
+		logger
+				.info("Getting current user's credentials to send them to the flowservice");
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-		
-		
-		
+
 		instance = this.flowService.createNewFlow(credential, instance,
 				paramMap, templateFlowUri, user.getId());
-		
-		
-		
-		String[] splits=instance.getUri().split("/");
+
+		String[] splits = instance.getUri().split("/");
 		String token = "token";
-		
-		if(splits.length>0){
-			token = splits[splits.length-1];
+
+		if (splits.length > 0) {
+			token = splits[splits.length - 1];
 		}
-		
+
 		long instanceId = instance.getId();
-		logger.info("created new flow: " +instance.getUri() + " Now ready to run." );
+		logger.info("created new flow: " + instance.getUri()
+				+ " Now ready to run.");
 		Job job = this.flowService.executeJob(credential, token, name,
 				description, instanceId, user.getId(), user.getEmail());
-		
+
 		logger.info("After calling execute Job");
 		return job;
 
 	}
 
 	/**
-	 * Only for testing. Not called in the production code. 
+	 * Only for testing. Not called in the production code.
 	 */
 	public void test() {
 		throw new org.springframework.remoting.RemoteAccessException(
@@ -442,7 +464,8 @@ public class TasksServiceImpl {
 	}
 
 	/**
-	 * Load the {@link Components} for the given {@link Flow}. Set the _credential property to current user. 
+	 * Load the {@link Components} for the given {@link Flow}. Set the
+	 * _credential property to current user.
 	 * 
 	 * @param flow
 	 *            The {@link Flow} for which the properties should be loaded.
@@ -452,26 +475,16 @@ public class TasksServiceImpl {
 		Map<Component, List<Property>> componentsToPropertyLists = flowService
 				.getAllComponentsAndPropertyDataTypes(flow.getUri());
 
-		Iterator<Entry<Component, List<Property>>> it = componentsToPropertyLists
-				.entrySet().iterator();
-		while (it.hasNext()) {
-			Entry<Component, List<Property>> entry = it.next();
-			Component component = entry.getKey();
-			if (component.isHidden()) {
-				//it.remove();
-			} else {
-				Collections.sort(entry.getValue());
-				Property credentialProp=findProperty(entry.getValue(), CREDENTIALS);
-				if (credentialProp!=null){
-					SimpleCredentials credential = userManager
-							.getCurrentUserCredentials();
-					String credentialString = credential.getUserID() + ":"
-							+ new String(credential.getPassword());
-					credentialProp.setValue(credentialString);
-				}
-
-			}
-		}// while loop
+		for (List<Property> properties : componentsToPropertyLists.values()) {
+			Collections.sort(properties);
+		}
+		
+		//prepopulate the credential field
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		String credentialString = credential.getUserID() + ":"
+				+ new String(credential.getPassword());
+		replacePropertyValue(componentsToPropertyLists, CREDENTIALS, credentialString);
+		
 		return componentsToPropertyLists;
 	}
 
@@ -516,12 +529,13 @@ public class TasksServiceImpl {
 	/**
 	 * set the real physical/web path from the servlet context/request for
 	 * uploading, default behavior, when webDir has value (set by outside), skip
-	 * this step.  The path is unique for one webflow.   
-	 * TODO this is a bad implementation of file upload, it needs
-	 * more robust implementation
+	 * this step. The path is unique for one webflow. TODO this is a bad
+	 * implementation of file upload, it needs more robust implementation
 	 * 
-	 * @param externalContext {@link ExternalContext} with all the server info.
-	 * @param uuid UUID of the flow to build the upload path.  
+	 * @param externalContext
+	 *            {@link ExternalContext} with all the server info.
+	 * @param uuid
+	 *            UUID of the flow to build the upload path.
 	 * 
 	 */
 	public void buildUploadPath(ExternalContext externalContext, UUID uuid) {
@@ -567,13 +581,14 @@ public class TasksServiceImpl {
 	 * @param parameters
 	 *            HTTP request parameters.
 	 * @param properties
-	 *            Properties to be updated. Values are modified in the method. 
+	 *            Properties to be updated. Values are modified in the method.
 	 */
 	public void updateProperties(ParameterMap parameters,
 			List<Property> properties) {
 		for (Property property : properties) {
 			if (CREDENTIALS.equals(property.getName())) {
-				SimpleCredentials credential = userManager.getCurrentUserCredentials();
+				SimpleCredentials credential = userManager
+						.getCurrentUserCredentials();
 				String credentialString = credential.getUserID() + ":"
 						+ new String(credential.getPassword());
 				property.setValue(credentialString);

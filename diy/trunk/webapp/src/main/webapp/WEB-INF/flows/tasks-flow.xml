@@ -16,7 +16,7 @@
 		<evaluate expression="tasksService.buildUploadPath(externalContext,jobForm.uuid)" />
 		<evaluate expression="jobForm.setFlowId(flowId)" />
 		<set name="flowScope.mirexSubmissions" value="tasksService.getAllMirexSubmissions()"/>
-		<set name="flowScope.MIREX_SUBMISSION_CODE" value="tasksService.getMirexSubmissionCodeStr()" type="java.lang.String"/>
+		<set name="flowScope.MIREX_SUBMISSION_CODE" value="'_submissionCode'" type="java.lang.String"/>
 	</on-start>
 
 	<view-state id="selectTask" model="jobForm"  >

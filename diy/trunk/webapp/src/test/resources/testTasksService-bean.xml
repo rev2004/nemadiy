@@ -59,9 +59,9 @@
 	<bean id="property1" class="org.imirsel.nema.model.Property" p:name="testField1" p:dataTypeBeanList-ref="dataTypeList1"
 		p:defaultValue="property1" p:description="property #1" scope="prototype" />
 	<bean id="property2" class="org.imirsel.nema.model.Property" p:name="TestField2" p:dataTypeBeanList-ref="dataTypeList2"
-		p:defaultValue="property2" p:description="property #2" scope="prototype" />
+		p:defaultValue="property2" p:description="property #2" scope="prototype" p:value="field2"/>
 	<bean id="property3" class="org.imirsel.nema.model.Property" p:name="testFieldTHREE" p:dataTypeBeanList-ref="dataTypeList3"
-		p:defaultValue="property3" p:description="property #3" scope="prototype" />
+		p:defaultValue="property3" p:description="property #3" scope="prototype" p:value="field3"/>
 	<bean id="propertyFile" class="org.imirsel.nema.model.Property" p:name="profileName" p:dataTypeBeanList-ref="dataTypeList4"
 		p:defaultValue="property4" p:description="property #4" p:value="http://nema.lis.uiuc.edu/executable" scope="prototype" />
 	<bean id="property5" class="org.imirsel.nema.model.Property" p:name="_os" p:dataTypeBeanList-ref="dataTypeList5"

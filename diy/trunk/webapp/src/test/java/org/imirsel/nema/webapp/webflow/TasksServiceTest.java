@@ -280,6 +280,8 @@ public class TasksServiceTest {
 		context.assertIsSatisfied();
 	}
 
+	
+	
 	@Resource
 	Flow flow1;
 	@Resource
@@ -290,7 +292,7 @@ public class TasksServiceTest {
 
 	@DirtiesContext
 	@Test
-	public final void testLoadDatatypeMaps() {
+	public final void testLoadFlowComponents() {
 
 		
 		final Map<Component,List<Property> > fullMaps=new HashMap<Component,List<Property>>();
@@ -314,6 +316,26 @@ public class TasksServiceTest {
 		context.assertIsSatisfied();
 	}
 
+	@DirtiesContext
+	@Test
+	public final void testReplacePropertyValue(){
+		assertEquals("field2",datatypeMaps.get(component1).get(1).getValue());
+		tasksService.replacePropertyValue(datatypeMaps, "TestField2", "200");
+		assertEquals("200",datatypeMaps.get(component1).get(1).getValue());
+		assertEquals("200",datatypeMaps.get(component2).get(1).getValue());
+		
+		//wrong field name
+		tasksService.replacePropertyValue(datatypeMaps, "testFieldThree", "300");
+		assertEquals("field3",datatypeMaps.get(component3).get(0).getValue());
+		assertEquals("field3",datatypeMaps.get(component2).get(2).getValue());
+		
+		//correct field name
+		tasksService.replacePropertyValue(datatypeMaps, "testFieldTHREE", "300");
+		assertEquals("300",datatypeMaps.get(component3).get(0).getValue());
+		assertEquals("300",datatypeMaps.get(component2).get(2).getValue());
+	}
+	
+	
 	@DirtiesContext
 	@Test
 	public final void testExtractComponentList() {
