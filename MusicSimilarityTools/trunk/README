@@ -1,0 +1,161 @@
+--------------------------------------------------------------------------------
+Music Similarity Tools README File
+Date:    15th June 2010
+Version: 0.0.1-snapshot
+Contact: kris.west@gmail.com
+--------------------------------------------------------------------------------
+
+--- INTRODUCTION ---
+The Music Similarity Tools package is a temporary release of IMIRSEL's legacy
+system for processing distance matrix files for the Audio Music Similarity (AMS)
+task at MIREX.
+
+This tool set supports the following functions:
+- the import of collection metadata from a delimited text file (e.g. TAB or CSV)
+- the selection of a stratified random list of queries from the collection (i.e.
+  an equal number of queries are chosen for each class of a particular metadata
+  field, such as genre).
+- the generation of results from distance matrices based on a list of pre-chosen
+  queries.
+- (pseudo-)objective statistical evaluation of distance matrices by comparing
+  query metadata to the metadata of the top N results retrieved. Supports
+  artist, album, genre and artist-filtered genre (where results form the same 
+  artist as query are skipped). Additionally, the number tracks never returned
+  as results for all possible queries (orphans) and the largest hub (track 
+  similar to the most other tracks) are measured. Finally, the number of cases
+  where the triangular inequality holds.
+- preparation and post processing of results for the IMIRSEL Evalutron 6k 
+  human evaluation interface.
+
+Please see: 
+http://www.music-ir.org/mirex/wiki/Audio_Music_Similarity_and_Retrieval
+for links to past AMS evaluations at MIREX.
+
+The tools support operations over distance matrices in one of the MIREX distance
+matrix formats, which are defined on the MIREX wiki at: 
+http://www.music-ir.org/mirex/wiki/2010:Audio_Music_Similarity_and_Retrieval#Distance_matrix_output_files
+
+
+--- REQUIREMENTS AND CAVEATS ---
+To use these tools, you need to have Java 5 installed, a CSV or TAB file
+containing the metadata for the collection you want to work with and a 
+distance matrix in one of the supported formats.
+
+Most functions require a serialized metadata object describing the collection.
+This can be created by importing and saving a CSV file containing the metadata
+using the 'importMetadataFile' function. The metadata file should contain a
+single header row defining columns containing the artist, album, genre/class,
+and path to each file. When importing the CSV file you will be asked to map
+CSV headers to metaadata fields including the filelocation (path to audio file).
+
+The collection should contain files named such that the characters before the 
+first period in the filename form a unique ID. This is a legacy feature of the 
+tools used to deal with the fact that the file paths in the distance matrices 
+are often computed on different machines or different versions / encodings of 
+the collection to that used in the evaluation and are therefore different from 
+those in the metadata. Further, some mirex participants have used their feature 
+file names in the distance matrices, rather than the original audio file names. 
+Future versions of the tools will be based on a track ID approach instead. 
+
+
+--- USAGE ---
+The tools may be launched on the command line or terminal form the distribution
+folder as follows:
+
+Linux/OS X:
+java -cp lib/MusicSimilarityTools-0.0.1-SNAPSHOT.jar:lib/swing-layout-1.0.4.jar 
+org.imirsel.m2k.util.retrieval.MIREXMatrixQueryUtil MODE ARGS
+
+Windows:
+java -cp lib/MusicSimilarityTools-0.0.1-SNAPSHOT.jar;lib/swing-layout-1.0.4.jar 
+org.imirsel.m2k.util.retrieval.MIREXMatrixQueryUtil MODE ARGS
+
+Where MODE is one of the following keys and has the given arguments:
+
+    importMetadataFile - Launches GUI frame to import CSV metadata files
+        1: path/to/save/imported/data/to.ser
+        
+    genQueries - Generate stratified (same number form each metadata class) 
+                 random queries from the metadata.
+        1: path/to/MetadataDB 
+        2: numQueries(Integer) 
+        3: randomSeed(Integer) 
+        4: metadatakey(genre/artist/mood)
+        5: path/and/file/to/save/to
+        
+    queryDistMatrix - Perform queries on a distance matrix, returning one row
+                      of the top N results, filtered to remove the query track 
+                      and (if the metadata indexes artist) results by the same 
+                      artist. 
+        1: path/to/DistMatrix 
+        2: path/to/MetadataDB 
+        3: path/to/query/file 
+        4: numResults(5)
+        5: path/to/save/results/to
+        
+    evaluate - Performs pseudo objective statistical evaluation of a distance
+               matrix based on the metadata and measurements of the distance 
+               space described. 
+        1: path/to/DistMatrix 
+        2: path/to/MetadataDB 
+        4: path/to/directory/to/save/report/in 
+        
+    timesSimilar - Counts the maximum number of times a track was similar to
+                   other tracks at 5, 10, 20 and 50 results.
+        1: path/to/DistMatrix 
+        2: path/to/MetadataDB 
+        3: path/to/directory/to/save/report/in 
+        
+    triIneq - Performs 300,000 traingular inequality tests and reports the 
+              percentage of tests that passed.
+        1: path/to/DistMatrix 
+        2: path/to/directory/to/save/report/in 
+        
+    filtgenre - Counts the % of result tracks at 5, 10, 20 and 50 results that
+                have the same genre as the query.
+        1: path/to/DistMatrix 
+        2: path/to/MetadataDB 
+        4: path/to/directory/to/save/report/in 
+         
+    results - Displays the results from a single query.
+        1: path/to/DistMatrix 
+        2: path/to/MetadataDB 
+        4: queryID 
+        5: numResult 
+        6: filterCoverSongs(y/n) 
+        
+    evalutronPrep - Produce datafiles for the Evaluatron 6k human evaluation 
+                    system from multiple distance matrices and a query file.
+        1: path/DistMatrix/folder 
+        2: path/to/MetadataDB 
+        3: path/to/query/file 
+        4: numResults(5) 
+        5: path/to/local/dir/of/audio/files 
+        6: path/to/save/queryCandidateFile/to 
+        7: path/to/save/teamNameFile/to 
+        8: [dir/to/re-encode/audio/files/to]
+        
+    evalutronResults - Post processes evaluatron results and produces summary 
+                       reports.
+        1: path/to/team/table/file 
+        2: path/to/result/table/file 
+        3: path/to/task/table/file 
+        4: path/to/query/table 
+        5: path/to/metadata/musicDB/file 
+        6: path/to/output/dir
+
+
+--- EXAMPLES ---
+
+Import metadata:
+java -Xmx512M -cp lib/MusicSimilarityTools-0.0.1-SNAPSHOT.jar:lib/swing-layout-1.0.4.jar org.imirsel.m2k.util.retrieval.MIREXMatrixQueryUtil importMetadataFile audiosim.metadata.ser 
+
+Perform statistical eval:
+java -Xmx512M -cp lib/MusicSimilarityTools-0.0.1-SNAPSHOT.jar:lib/swing-layout-1.0.4.jar org.imirsel.m2k.util.retrieval.MIREXMatrixQueryUtil evaluate lidy_distmtx.txt audiosim.metadata.ser lidy_report.txt
+
+Generate 100 queries stratified by genre::
+java -Xmx512M -cp lib/MusicSimilarityTools-0.0.1-SNAPSHOT.jar:lib/swing-layout-1.0.4.jar org.imirsel.m2k.util.retrieval.MIREXMatrixQueryUtil genQueries audiosim.metadata.ser 100 91 genre 100_genre_queries_91.txt
+
+Perform queries from a query file and write out top N artist-filtered results:
+java -Xmx512M -cp lib/MusicSimilarityTools-0.0.1-SNAPSHOT.jar:lib/swing-layout-1.0.4.jar org.imirsel.m2k.util.retrieval.MIREXMatrixQueryUtil queryDistMatrix lidy_distmtx.txt audiosim.metadata.ser 100_genre_queries_91.txt 5 lidy_results.txt
+
