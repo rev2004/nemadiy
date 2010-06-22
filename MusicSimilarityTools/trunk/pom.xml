@@ -15,6 +15,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<scm>
+		<connection>scm:svn:https://nemadiy.googlecode.com/MusicSimilarityTools/trunk</connection>
+		<url>https://nemadiy.googlecode.com/MusicSimilarityTools/trunk</url>
+	</scm>
 	<organization>
 		<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
 		<url>http://www.lis.illinois.edu</url>
