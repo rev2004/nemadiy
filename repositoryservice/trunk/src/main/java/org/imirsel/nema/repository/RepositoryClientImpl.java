@@ -115,12 +115,15 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String GET_TRACK_METADATA_TYPES = "SELECT * FROM track_metadata_definitions";
     public static final String GET_FILE_METADATA_TYPES = "SELECT * FROM file_metadata_definitions";
     public static final String GET_TRACKLIST_TYPES = "SELECT * FROM trackList_type_definitions";
+    public static final String GET_SITES = "SELECT * FROM site";
     private Map<Integer,String> trackMetadataTypeMap;
     private Map<Integer,String> fileMetadataTypeMap;
     private Map<Integer,String> trackListTypeMap;
     private Map<String,Integer> trackMetadataTypeMapRev;
     private Map<String,Integer> fileMetadataTypeMapRev;
     private Map<String,Integer> trackListTypeMapRev;
+    private Map<Integer,String> siteNameMap;
+    private Map<String,Integer> siteNameMapRev;
 
     protected DatabaseConnector dbCon;
 
@@ -202,9 +205,11 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         trackMetadataTypeMap = populateTypesMap(GET_TRACK_METADATA_TYPES);
         fileMetadataTypeMap = populateTypesMap(GET_FILE_METADATA_TYPES);
         trackListTypeMap = populateTypesMap(GET_TRACKLIST_TYPES);
+        siteNameMap = populateTypesMap(GET_SITES);
         trackMetadataTypeMapRev = reverseTypesMap(trackMetadataTypeMap);
         fileMetadataTypeMapRev = reverseTypesMap(fileMetadataTypeMap);
         trackListTypeMapRev = reverseTypesMap(trackListTypeMap);
+        siteNameMapRev = reverseTypesMap(siteNameMap);
     }
 
     public List<String> getAllTracks() throws SQLException{
@@ -251,6 +256,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     	return Collections.unmodifiableMap(trackListTypeMapRev);
     }
     
+    public Map<String,Integer> getSiteNameMap(){
+    	return Collections.unmodifiableMap(siteNameMapRev);
+    }
+    
     
 
     public String getTrackMetadataName(int typeId){
@@ -263,6 +272,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public String getTrackListTypeName(int typeId){
         return trackListTypeMap.get(typeId);
+    }
+
+    public String getSiteName(int siteId){
+        return siteNameMap.get(siteId);
     }
 
     public int getTrackMetadataID(String typeName){
@@ -285,6 +298,15 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public int getTrackListTypeID(String typeName){
     	Integer out = trackListTypeMapRev.get(typeName);
+        if (out == null){
+        	return -1;
+        }else{
+        	return out;
+        }
+    }
+
+    public int getSiteId(String siteName){
+    	Integer out = siteNameMapRev.get(siteName);
         if (out == null){
         	return -1;
         }else{

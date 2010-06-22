@@ -36,18 +36,19 @@ public class ImirselDatasetIngestor {
 	public static void main(String[] args) {
 		try {
 		File rootAudioDir = new File(args[0]); 
-		String audioFileExtension = args[1];
-		int collection_id = Integer.parseInt(args[2]); 
-		File audioDirectory = new File(args[3]); 
-		String seriesName = args[4];
-		String datasetName = args[5];
-		String datasetDescription = args[6];
-		String metadataType = args[7];
+		String site = args[1]; 
+		String audioFileExtension = args[2];
+		int collection_id = Integer.parseInt(args[3]); 
+		File audioDirectory = new File(args[4]); 
+		String seriesName = args[5];
+		String datasetName = args[6];
+		String datasetDescription = args[7];
+		String metadataType = args[8];
 		Class<? extends SingleTrackEvalFileType> readerFileType;
 		Class<? extends SingleTrackEvalFileType> writerFileType;
 		try {
-			readerFileType = (Class<? extends SingleTrackEvalFileType>) ImirselDatasetIngestor.class.getClassLoader().loadClass(args[8]);
-			writerFileType = (Class<? extends SingleTrackEvalFileType>) ImirselDatasetIngestor.class.getClassLoader().loadClass(args[9]);
+			readerFileType = (Class<? extends SingleTrackEvalFileType>) ImirselDatasetIngestor.class.getClassLoader().loadClass(args[9]);
+			writerFileType = (Class<? extends SingleTrackEvalFileType>) ImirselDatasetIngestor.class.getClassLoader().loadClass(args[10]);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
@@ -56,7 +57,7 @@ public class ImirselDatasetIngestor {
 		boolean doingFoldDirs = false;
 		List<File> foldDirs = new ArrayList<File>();
 		List<String[]> fileMetadataTags = new ArrayList<String[]>();
-		for(int i = 10; i < args.length; i++) {
+		for(int i = 11; i < args.length; i++) {
 			if(args[i].equals("-m")) {
 				doingFileMeta = true;
 				doingFoldDirs = false;
@@ -80,7 +81,7 @@ public class ImirselDatasetIngestor {
 			}
 		}
 		
-		moveRenameAndInsertDataset(rootAudioDir, audioFileExtension, foldDirs, fileMetadataTags, collection_id, audioDirectory, seriesName, datasetName, datasetDescription, metadataType, readerFileType, writerFileType);
+		moveRenameAndInsertDataset(rootAudioDir, site, audioFileExtension, foldDirs, fileMetadataTags, collection_id, audioDirectory, seriesName, datasetName, datasetDescription, metadataType, readerFileType, writerFileType);
 		}catch(Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -111,6 +112,7 @@ public class ImirselDatasetIngestor {
 	 */
 	public static void moveRenameAndInsertDataset(
 			File rootAudioDir, 
+			String site,
 			String audioFileExtension,
 			List<File> foldDirs, 
 			List<String[]> fileMetadataTags, 
@@ -126,8 +128,9 @@ public class ImirselDatasetIngestor {
 		
 		System.out.println("Ingesting dataset, moving/renaming files and inserting metadata/paths into DB...");
 		System.out.println("Arguments:");
-		
+
 		System.out.println("rootAudioDir:       " +  rootAudioDir.getAbsolutePath());
+		System.out.println("site:               " +  site);
 		System.out.println("audioFileExtension: " +  audioFileExtension);
 		System.out.println("collection_id:      " +  collection_id);
 		System.out.println("newAudioDirectory:  " + newAudioDirectory.getAbsolutePath());
@@ -273,7 +276,7 @@ public class ImirselDatasetIngestor {
 		}
 		
 		//insert renamed audio files and file metadata
-		RepositoryManagementUtils.insertDirOfAudioFiles(newHome, fileMetadataTags, collection_id, newFileToOldFile);
+		RepositoryManagementUtils.insertDirOfAudioFiles(newHome, fileMetadataTags, collection_id, newFileToOldFile, site);
 		
 		//insert track metadata
 		RepositoryManagementUtils.insertMetadataFromSingleTrackEvalFileType(idToMetadata.values(), metadataType, writerFileType);
