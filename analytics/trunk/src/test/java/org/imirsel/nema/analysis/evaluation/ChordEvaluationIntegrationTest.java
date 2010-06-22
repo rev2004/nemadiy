@@ -67,7 +67,7 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
         dataset.setDescription("some description");
         
         //read ground-truth here as we'll use it a few times
-        File groundTruthDirectory = new File("src/test/resources/chord/groundtruth");
+        File groundTruthDirectory = new File("src/test/resources/chord/short/groundtruth");
         SingleTrackEvalFileType reader = new ChordShortHandTextFile();
         groundTruth = reader.readDirectory(groundTruthDirectory, null);
         
@@ -111,7 +111,7 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 	@Test
 	public void testEvaluateShortHandBasedSystem() throws FileNotFoundException, IOException, IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		
-		File resultsDirectory = new File("src/test/resources/chord/CH");
+		File resultsDirectory = new File("src/test/resources/chord/short/CH");
 		String	systemName = "CH-System";
 		Evaluator evaluator = null;
 		ResultRenderer renderer = null;
@@ -138,8 +138,8 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 
 	@Test
 	public void testEvaluateTwoShortHandBasedSystems() throws FileNotFoundException, IOException, IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
-		File resultsDirectory1 = new File("src/test/resources/chord/CH");
-		File resultsDirectory2 = new File("src/test/resources/chord/MD");
+		File resultsDirectory1 = new File("src/test/resources/chord/short/CH");
+		File resultsDirectory2 = new File("src/test/resources/chord/short/MD");
 		String	systemName1 = "CH-System";
 		String	systemName2 = "MD-System";
 		Evaluator evaluator = null;
