@@ -137,8 +137,14 @@ public class NemaDataConstants {
     
     // Multi-F0 Estimation Evaluator Constants
     public static final double MULTI_F0_EST_TIME_INC = 0.01; // 10ms time-increment
-    public static final String MULTI_F0_EST_DATA = "Raw multi-F0 estimation data with timestamps and F0 in Hz";
-
+    public static final String MULTI_F0_EST_DATA = "Raw multi-F0 Estimation data with timestamps and F0 in Hz";
+    public static final String MULTI_F0_EST_ACCURACY = "Multi-F0 Estimation Accuracy";
+    public static final String MULTI_F0_EST_CHROMA_ACCURACY= "Multi-F0 Estimation Chroma Accuracy";
+    public static final String MULTI_F0_EST_PRECISION = "Multi-F0 Estimation Precision";
+    public static final String MULTI_F0_EST_E_TOT = "Multi-F0 Estimation Total Error";
+    public static final String MULTI_F0_EST_E_MISS = "Multi-F0 Estimation Missed Error";
+    public static final String MULTI_F0_EST_E_FA = "Multi-F0 Estimation False Alarm Error";
+    
     // Key Detection Evaluator Constants
     public static final String KEY_DETECTION_DATA = "The musical key (tonic/mode)";
     public static final String KEY_DETECTION_WEIGHTED_SCORE ="Weighted Key Score";
