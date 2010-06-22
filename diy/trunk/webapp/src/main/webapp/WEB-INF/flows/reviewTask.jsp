@@ -8,6 +8,7 @@
 	    <fieldset>
 	        <div style="margin-bottom:5px;"><label class="label">Job Name:</label> <label class="name">${jobForm.name}</label></div>
 	    	<div style="margin-bottom:5px;"><label class="label">Job Description:</label> ${jobForm.description}</div>
+	    	<div style="margin-bottom:5px;"><label class="label">Submission Code:</label> ${jobForm.mirexSubmissionCode}</div>
 	    </fieldset>
 		<c:forEach var="component" items="${componentList}">
 		 <c:if test="${(!component.hidden)&&(not empty componentMap[component])}">

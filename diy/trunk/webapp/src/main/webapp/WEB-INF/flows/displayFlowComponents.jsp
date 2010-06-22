@@ -27,6 +27,11 @@ ${messageContext.allMessages}
 <div id="formcontainer_job">
   <div class="form_job">
     <form:form commandName="jobForm" id="myForm">
+    <fieldset id="pt1">
+        <label class="label">Mirex Submission Code:</label>
+        <form:select id="select" path="mirexSubmissionCode" items="${mirexSubmissions}" itemLabel="hashcode" itemValue="hashcode"  cssStyle="margin-bottom:5px"/>
+ 
+      </fieldset>
       <fieldset id="pt1">
         <label class="label">Enter the Job Name:</label>
         <form:input path="name" cssStyle="width:200px;"/>

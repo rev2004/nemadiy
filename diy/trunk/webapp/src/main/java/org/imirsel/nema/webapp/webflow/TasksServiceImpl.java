@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -25,6 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
 import org.imirsel.nema.contentrepository.client.ArtifactService;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
+import org.imirsel.nema.dao.MirexSubmission;
+import org.imirsel.nema.dao.MirexSubmissionDao;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
@@ -36,13 +37,13 @@ import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
+import org.imirsel.nema.webapp.model.JobForm;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.core.collection.ParameterMap;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action class for the task template flow generation webflow. 
@@ -61,6 +62,7 @@ public class TasksServiceImpl {
 	private String uploadDirectory;
 	private String physicalDir;
 	private String webDir;
+	private MirexSubmissionDao mirexSubmissionDao;
 
 	// Component properties that should be hidden.
 	final static String REMOTE_COMPONENT = "_remoteDynamicComponent";
@@ -68,6 +70,7 @@ public class TasksServiceImpl {
 	final static String EXECUTABLE_URL = "profileName";
 	final static String OS = "_os";
 	final static String GROUP = "_group";
+	final static String MIREX_SUBMISSION_CODE="_submissionCode";
 
 	final static Set<String> HIDDEN_PROPERTIES = new HashSet<String>();
 	{
@@ -76,12 +79,18 @@ public class TasksServiceImpl {
 		HIDDEN_PROPERTIES.add(EXECUTABLE_URL);
 		HIDDEN_PROPERTIES.add(OS);
 		HIDDEN_PROPERTIES.add(GROUP);
+		//HIDDEN_PROPERTIES.add(MIREX_SUBMISSION_CODE);
 	}
+	
+	public String getMirexSubmissionCodeStr(){
+		return MIREX_SUBMISSION_CODE;
+	}
+	
 
 	public String getPhysicalDir() {
 		return physicalDir;
 	}
-
+     
 	public String getWebDir() {
 		return webDir;
 	}
@@ -152,6 +161,7 @@ public class TasksServiceImpl {
 		}
 	}
 
+	
 	/**
 	 * clear all executable bundles sent over to content repository
 	 * 
@@ -238,6 +248,7 @@ public class TasksServiceImpl {
 		}
 		return list;
 	}
+	
 
 	private String getFullyQualifiedPropertyName(String component,
 			String propertyName) {
@@ -254,6 +265,18 @@ public class TasksServiceImpl {
 		return cname + "_" + count + "_" + propertyName;
 	}
 
+	/**
+	 * Get all mirex submissions from Mirex 2010 records and 
+	 * append an extra for non-submission
+	 * @return
+	 */
+	public List<MirexSubmission> getAllMirexSubmissions(){
+		MirexSubmission nonSubmission=new MirexSubmission(-999999, JobForm.IMPOSSIBLE,"not a mirex submission");
+		List<MirexSubmission> submissions=mirexSubmissionDao.getAllSubmissions();
+		submissions.add(nonSubmission);
+		return submissions;	
+	}
+	
 	/**
 	 * This method is necessary for render tag
 	 * 
@@ -286,6 +309,21 @@ public class TasksServiceImpl {
 	}
 
 	/**
+	 * Go through all the properties from all components, change the value of the specific name. 
+	 * @param componentMap properties from all component
+	 * @param name 		Property name
+	 * @param value		Property value
+	 */
+	public void replacePropertyValue(Map<Component,List<Property>> componentMap,String name,String value){
+		for (List<Property> list:componentMap.values()){
+			for (Property property:list){
+				if (name.equals(property.getName())){
+					property.setValue(value);
+				}
+			}
+		}
+	}
+	/**
 	 * Create a job with all the properties in datatypeMaps.
 	 * 
 	 * @param flow Flow that the job is based on. 
@@ -296,7 +334,7 @@ public class TasksServiceImpl {
 	 * @throws MeandreServerException
 	 */
 	public Job run(Flow flow, Map<Component, List<Property>> componentMap,
-			String name, String description) throws MeandreServerException {
+			String name, String description,String mirexSubmissionCode) throws MeandreServerException {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 
 		Component component;
@@ -348,6 +386,7 @@ public class TasksServiceImpl {
 		instance.setDescription(description);
 		instance.setType(flow.getType());
 		instance.setTypeName(flow.getTypeName());
+		instance.setSubmissionCode(mirexSubmissionCode);
 		logger.info("Getting current user's credentials to send them to the flowservice");
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		
@@ -419,7 +458,7 @@ public class TasksServiceImpl {
 			Entry<Component, List<Property>> entry = it.next();
 			Component component = entry.getKey();
 			if (component.isHidden()) {
-				it.remove();
+				//it.remove();
 			} else {
 				Collections.sort(entry.getValue());
 				Property credentialProp=findProperty(entry.getValue(), CREDENTIALS);
@@ -593,5 +632,9 @@ public class TasksServiceImpl {
 		}
 
 		return list;
+	}
+
+	public void setMirexSubmissionDao(MirexSubmissionDao mirexSubmissionDao) {
+		this.mirexSubmissionDao = mirexSubmissionDao;
 	}
 }

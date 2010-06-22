@@ -36,31 +36,43 @@ function loadNotification(sourceUrl) {
 			url : sourceUrl,
 			handleAs : "json",
 			load : function(data) {
-				var old=dijit.byId("notification");
-				if (old!=null){
-					old.destroyRecursive();
+//				var old=dijit.byId("notification");
+//				if (old!=null){
+//					old.destroyRecursive();
+//				}
+				
+				var foo=dijit.byId("notification");
+				if (foo!=null) {
+					foo.hide();
 				}
+				
 				if (data.notifications!=null){
-					var div=dojo.create("div", { style: { width:"120px",maxHeight:"160px",overflow:"auto" } });
-					var ul = dojo.create("ul", null,div);
+//					var div=dojo.create("div", { style: { width:"120px",maxHeight:"160px",overflow:"auto" } });
+				
+					var div=dojo.byId("notificationContent");
+					dojo.empty(div);
+					
+					var ul = dojo.create("ul", {style:{padding:"0px",margin:"0px",listStylePosition:"inside",textAlign:"left"}},div);
 					dojo.forEach(data.notifications, function(notification){
 					  dojo.create("li", { innerHTML: notification.message }, ul);
 					});
 					
-					var	foo = new dijit.Dialog(
-							{ 
-								title: "Notification", 
-								//autofocus:false,
-								draggable:true,
-								refocus:true,
-								closable:true,
-								content: div,
-								class:"notification",
-								id:"notification"
-							});
-					//dojo.byId("content").appendChild(foo.domNode);
-					//foo.startup();
-					foo.placeAt("copyright","before");
+//					var	foo = new dijit.Dialog(
+//							{ 
+//								title: "Notification", 
+//								//autofocus:false,
+//								draggable:true,
+//								refocus:true,
+//								closable:true,
+//								content: div,
+//								class:"notification",
+//								id:"notification"
+//							});
+//					//dojo.byId("content").appendChild(foo.domNode);
+//					//foo.startup();
+//					foo.placeAt("copyright","before");
+					
+					
 					foo.show();
 				}
 			}

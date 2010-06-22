@@ -307,7 +307,7 @@ public class TasksServiceTest {
 		Map<Component, List<Property>> map = tasksService
 				.loadFlowComponents(flow1);
 		Map<Component, List< Property>> expected=new HashMap<Component, List<Property>>(datatypeMaps);
-		expected.remove(component3);
+		//expected.remove(component3);
 		Collections.sort(expected.get(component1));
 		Collections.sort(expected.get(component2));
 		assertEquals(expected, map);
@@ -449,7 +449,7 @@ public class TasksServiceTest {
 								with(same(user.getId())),with(same(user.getEmail())));
 			}
 		});
-		 tasksService.run(flow1,datatypeMaps,name,description);
+		 tasksService.run(flow1,datatypeMaps,name,description,"name");
 		}catch (MeandreServerException e) {
 			logger.error(e,e);
 		}

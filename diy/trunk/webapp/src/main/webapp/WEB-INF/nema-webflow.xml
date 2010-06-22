@@ -12,18 +12,20 @@
 	<webflow:flow-executor id="flowExecutor">
 
 	</webflow:flow-executor>
-	<webflow:flow-registry id="flowRegistry">
+	<webflow:flow-registry id="flowRegistry" flow-builder-services="builder">
 		<webflow:flow-location path="/WEB-INF/flows/tasks-flow.xml"
 			id="task" />
 		<webflow:flow-location path="/WEB-INF/flows/executable/executable-flow.xml"
 			id="task/executable" />
 	</webflow:flow-registry>
 
+ <webflow:flow-builder-services development="true" id="builder"/>
 	<bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
 		p:flowService-ref="flowService" p:userManager-ref="userManager"
 		p:uploadDirectory="/resources" p:artifactService-ref="contentRepositoryClient"
+		p:mirexSubmissionDao-ref="mirexSubmissionDao"
 		 />
-		<bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
+	<bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
 		p:commandLineFormatter-ref="commandLineFormatter" p:resourceServiceType-ref="resource" />
 	<bean id="resource"
 		class="org.imirsel.nema.contentrepository.client.ResourceTypeServiceImpl" />
