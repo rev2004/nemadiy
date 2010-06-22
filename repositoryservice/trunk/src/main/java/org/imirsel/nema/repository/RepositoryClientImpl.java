@@ -76,15 +76,15 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
 //    public static final String GET_FILE_FOR_TRACK = "SELECT file.* FROM file WHERE file.track_id=? AND ";
     public static final String GET_CONSTRAINED_FILE_FOR_TRACK = 
-            "SELECT file.*, site.site_name from file,site WHERE file.id IN (\n" +
+            "SELECT file.*, site.name AS site_name from file,site WHERE file.id IN (\n" +
             "SELECT file_id from file,file_metadata,file_file_metadata_link WHERE file.track_id=? AND file.id=file_file_metadata_link.file_id AND file.site=site.id\n";
 
     public static final String GET_CONSTRAINED_FILES =
-        "SELECT file.*, site.site_name from file,site WHERE file.id IN (\n" +
+        "SELECT file.*, site.name AS site_name from file,site WHERE file.id IN (\n" +
         "SELECT file_id from file,file_metadata,file_file_metadata_link WHERE file.id=file_file_metadata_link.file_id AND file.site=site.id\n";
 
     public static final String GET_TRACKLIST_FILES =
-        "SELECT file.*, site.site_name from file,site WHERE file.track_id IN (SELECT track_id from trackList_track_link WHERE set_id=?) AND file.site=site.id";
+        "SELECT file.*, site.name AS site_name from file,site WHERE file.track_id IN (SELECT track_id from trackList_track_link WHERE set_id=?) AND file.site=site.id";
     private PreparedStatement getTracklistFiles;
     
 //    public static final String GET_CONSTRAINED_TRACKLIST_FILES =
