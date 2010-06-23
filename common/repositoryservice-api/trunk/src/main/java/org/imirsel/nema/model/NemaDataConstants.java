@@ -192,7 +192,6 @@ public class NemaDataConstants {
     
     //Beat Tracking Evaluator Constants
     public static final String BEAT_TRACKING_DATA = "List of beat times";
-    public static final String BEAT_TRACKING_CLASS = "Instrumentation class";
     public static final String BEAT_TRACKING_ANNOTATORS = "Annotators";
     public static final String BEAT_TRACKING_CEMGIL ="Cemgil";
     public static final String BEAT_TRACKING_GOTO = "Goto";
