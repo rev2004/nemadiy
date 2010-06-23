@@ -30,7 +30,7 @@ public class JobForm implements Serializable {
 
 	private UUID uuid;
 
-	public final static String IMPOSSIBLE="9999999";
+	public final static String IMPOSSIBLE="NON-SUBMISSION";
 	/**
 	 * Map of remote executable {@link Component}s to the address of the
 	 * executable profile stored in the repository service.
@@ -81,6 +81,7 @@ public class JobForm implements Serializable {
 		return templateMap;
 	}
 
+	
 	public void setMirexSubmissionCode(String mirexSubmissionCode) {
 		this.mirexSubmissionCode = mirexSubmissionCode;
 	}

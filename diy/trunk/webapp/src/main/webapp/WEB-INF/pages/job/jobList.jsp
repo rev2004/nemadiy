@@ -1,5 +1,14 @@
 <%@ include file="/common/taglibs.jsp"%>
 <head>
+<style type="text/css">
+ @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojox/grid/resources/Grid.css";
+  @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojox/grid/resources/tundraGrid.css";
+
+  .dojoxGrid table {
+    margin: 0;
+  }
+</style>
+
 <title>
 <fmt:message key="joblist.title"/>
 </title>
@@ -33,45 +42,52 @@ defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10">
 <script type="text/javascript">
     highlightTableRows("jobs");
 </script>
+<div id="gridNode" style="height:400px;"></div>
 <script type="text/javascript">
-dojo.require("dojo.data");
+dojo.require("dojo.data.ItemFileReadStore");
 dojo.require("dojox.grid.DataGrid");
 function addGrid(){
 dojo.xhrGet( {
-			url : "<c:url value='/get/JobManager.getUserJobs.json'/>"
+			url : "<c:url value='/get/JobManager.getUserJobs.json'/>",
 			handleAs : "json",
 			load : function(data) {
 					var storeData={
 						identifier:'id',
 						label:'name',
-						items:data.jobList
+						//items:data.jobList
+						items:[{id:3,name:'name1',scheduleTimestamp:"12-3",submitTimeStamp:'4:55',endTimeStamp:'3:20',statusCode:'5'},
+						       {id:4,name:'name1',scheduleTimestamp:"12-3",submitTimeStamp:'4:55',endTimeStamp:'3:20',statusCode:'5'}]
 					};
 					var layout = [
-				        {
-                			cells: [[
-                        { field: "name", name: "Name", width: "auto" },
+				      
+                        { field: "name", name: "Name", width: "25em" },
                         { field: "scheduleTimestamp", name: "Schedule", 
-                                width: "50px" },
+                                width: "auto" },
                         { field: "submitTimestamp", name: "submit", 
                                 width: "50px" },
                         { field: "endTimestamp", name: "End Time", width: "50px" },
                         { field: "statusCode", name: "Status", width: "6em" }
-                			]]
-        				}
+                			
 						];
+					
 					var jsonStore = new dojo.data.ItemFileReadStore({ data:storeData });
 					var grid = new dojox.grid.DataGrid({
      						   	id: 'grid',
         						query: { id: '*' },
         						store: jsonStore,
         						structure: layout
-							}, 'gridNode');
-					dojo.byId("gridNode").appendChild(grid.domNode);
-					grid.startup();
+							},
+							document.createElement('div'));
+
+				            // append the new grid to the div "gridNode":
+				            dojo.byId("gridNode").appendChild(grid.domNode); 
+				            
+							grid.startup();
 					}
 			});
-}
+};
 dojo.addOnLoad(addGrid);
 </script>
-<div id="gridNode" style="height:400px;"/>
+
+
 </body>
