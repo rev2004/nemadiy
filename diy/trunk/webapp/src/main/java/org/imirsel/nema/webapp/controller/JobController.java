@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,10 @@ import org.imirsel.nema.webapp.jobs.DisplayResultSet;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 
 /**
@@ -416,22 +419,31 @@ public class JobController extends MultiActionController {
 	 * @return
 	 */
 	public ModelAndView getUserJobs(HttpServletRequest req,
-			HttpServletResponse res) {
-		ModelAndView mav;
-		String uri = (req!=null)?req.getRequestURI():""; 
-		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
-			mav = new ModelAndView("jsonView");
-		} else {
-			mav =new ModelAndView("job/jobList");
-		}
+			HttpServletResponse res) throws IOException {
 		User user = userManager.getCurrentUser();
 		logger.debug("getting user " + user.getUsername());
     	long userId = user.getId();
 		logger.debug("start to list the jobs of   " + user.getUsername());
 		List<Job> jobs = flowService.getUserJobs(userId);
-		mav.addObject(Constants.JOBLIST,jobs);
+
+		ModelAndView mav;
+		String uri = (req!=null)?req.getRequestURI():""; 
+		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
+			XStream xstream = new XStream(new JsonHierarchicalStreamDriver());
+			xstream.setMode(XStream.NO_REFERENCES);
+			xstream.omitField(Job.class,"flow" );
+			xstream.omitField(Job.class, "results");
+			xstream.alias(Constants.JOBLIST, List.class);
+			
+			res.getWriter().write(xstream.toXML(jobs));
+			return null;
+		} else {
+			mav =new ModelAndView("job/jobList",Constants.JOBLIST,jobs);
+		}
+		
 		return mav;
 	}
+
 
 	/**Returns list of notifications for the user
 	 * 

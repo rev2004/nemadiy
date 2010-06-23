@@ -55,17 +55,15 @@ dojo.xhrGet( {
 						identifier:'id',
 						label:'name',
 						//items:data.jobList
-						items:[{id:3,name:'name1',scheduleTimestamp:"12-3",submitTimeStamp:'4:55',endTimeStamp:'3:20',statusCode:'5'},
-						       {id:4,name:'name1',scheduleTimestamp:"12-3",submitTimeStamp:'4:55',endTimeStamp:'3:20',statusCode:'5'}]
+						items:[{id:"3",name:'name1',flow:{name1:"name",id1:"32"},scheduleTimestamp:"12-3",submitTimestamp:"4-5",endTimestamp:'12 -3 3:20',statusCode:'5'},
+						      {id:"4",name:'name2',flow:{name1:"name",id1:"32"},scheduleTimestamp:"12-3",submitTimestamp:"4-2",endTimestamp:'3:20',statusCode:'5'}]
 					};
 					var layout = [
 				      
                         { field: "name", name: "Name", width: "25em" },
-                        { field: "scheduleTimestamp", name: "Schedule", 
-                                width: "auto" },
-                        { field: "submitTimestamp", name: "submit", 
-                                width: "50px" },
-                        { field: "endTimestamp", name: "End Time", width: "50px" },
+                        { field: "scheduleTimestamp", name: "Schedule", width: "10em" },
+                        //{ field: "submitTimestamp", name: "Submit", width: "12em" },
+                        //{ field: "endTimestamp", name: "End Time", width: "10em" },
                         { field: "statusCode", name: "Status", width: "6em" }
                 			
 						];
