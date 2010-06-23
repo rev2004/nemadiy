@@ -16,7 +16,6 @@
 		<evaluate expression="tasksService.buildUploadPath(externalContext,jobForm.uuid)" />
 		<evaluate expression="jobForm.setFlowId(flowId)" />
 		<set name="flowScope.mirexSubmissions" value="tasksService.getAllMirexSubmissions()"/>
-		<set name="flowScope.MIREX_SUBMISSION_CODE" value="'_submissionCode'" type="java.lang.String"/>
 	</on-start>
 
 	<view-state id="selectTask" model="jobForm"  >
@@ -28,10 +27,10 @@
 
 	<view-state id="displayFlowComponents" model="jobForm">
 		<transition on="edit" to="editComponentProperties" >
-			<evaluate expression="tasksService.replacePropertyValue(componentMap,MIREX_SUBMISSION_CODE,jobForm.mirexSubmissionCode)"/>
+			<evaluate expression="tasksService.updateMirexSubmission(componentMap,jobForm,jobForm.mirexSubmissionCode,mirexSubmissions)"/>
 		</transition>
 		<transition on="review" to="reviewTask" >
-			<evaluate expression="tasksService.replacePropertyValue(componentMap,MIREX_SUBMISSION_CODE,jobForm.mirexSubmissionCode)"/>
+			<evaluate expression="tasksService.updateMirexSubmission(componentMap,jobForm,jobForm.mirexSubmissionCode,mirexSubmissions)"/>
 		</transition>
 		<transition on="cancel" to="cleanUp" />
 	</view-state>

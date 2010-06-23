@@ -27,7 +27,7 @@
         	var json=fillJob.responseText.evalJSON();
         	$('job.jobStatus').innerHTML=statusString(json.job.statusCode-0);
         	$('job.flowname').innerHTML=json.job.flow.name;
-        	
+        	$('job.scheduleTimestamp').innerHTML=checkNull(json.job.scheduleTimestamp);
        		$('job.submitTimestamp').innerHTML=checkNull(json.job.submitTimestamp);
        		$('job.startTimestamp').innerHTML=checkNull(json.job.startTimestamp);
        		$('job.endTimestamp').innerHTML=checkNull(json.job.endTimestamp);
@@ -148,7 +148,7 @@
 			</tr>
 			<tr>
 				<td><label class="label">Schedule Time</label></td><td>:</td>
-				<td id="job.submitTimestamp">${job.scheduleTimestamp}</td>
+				<td id="job.scheduldeTimestamp">${job.scheduleTimestamp}</td>
 			</tr>
 			<tr>
 				<td><label class="label">Submit to Meandre Server</label></td><td>:</td>
