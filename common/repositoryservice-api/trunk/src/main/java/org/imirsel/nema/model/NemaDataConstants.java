@@ -189,4 +189,18 @@ public class NemaDataConstants {
     public static final String ONSET_DETECTION_AVG_PRECISION ="Average Precision";
     public static final String ONSET_DETECTION_AVG_RECALL = "Average Recall";
     public static final String ONSET_DETECTION_AVG_FMEASURE = "Average F-Measure";
+    
+    //Beat Tracking Evaluator Constants
+    public static final String BEAT_TRACKING_DATA = "List of beat times";
+    public static final String BEAT_TRACKING_CLASS = "Instrumentation class";
+    public static final String BEAT_TRACKING_ANNOTATORS = "Annotators";
+    public static final String BEAT_TRACKING_CEMGIL ="Cemgil";
+    public static final String BEAT_TRACKING_GOTO = "Goto";
+    public static final String BEAT_TRACKING_MCKINNEY = "McKinney P-score";
+    public static final String BEAT_TRACKING_CMLC = "CMLc";
+    public static final String BEAT_TRACKING_CMLT ="CMLt";
+    public static final String BEAT_TRACKING_AMLC = "AMLc";
+    public static final String BEAT_TRACKING_AMLT = "AMLt";
+    public static final String BEAT_TRACKING_D = "D (bits)";
+    public static final String BEAT_TRACKING_DG = "Dg (bits)";
 }
