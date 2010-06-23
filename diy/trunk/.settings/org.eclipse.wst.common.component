@@ -14,14 +14,5 @@
 <wb-resource deploy-path="/" source-path="/core/src/test/java"/>
 <wb-resource deploy-path="/" source-path="/webapp/src/test/resources"/>
 <wb-resource deploy-path="/" source-path="/probes/src/test/java"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-flowservice-api/nema-flowservice-api">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/repositoryservice/repositoryservice">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-repositoryservice-api/nema-repositoryservice-api">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
 </wb-module>
 </project-modules>
