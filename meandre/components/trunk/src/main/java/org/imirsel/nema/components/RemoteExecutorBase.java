@@ -49,7 +49,7 @@ import org.meandre.core.ComponentExecutionException;
 import com.healthmarketscience.rmiio.RemoteOutputStream;
 import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 
-public abstract class RemoteExecutorBase extends NemaComponent {
+public abstract class RemoteExecutorBase extends NemaComponent implements RemoteExecutableComponent{
 
 	@StringDataType(valueList={"imirsel","mcgill"}, labelList={"imirsel","mcgill"})
 	@ComponentProperty(defaultValue = "imirsel", description = "execution group", name = "_group")
@@ -68,7 +68,7 @@ public abstract class RemoteExecutorBase extends NemaComponent {
 	private static final String PROPERTY_4="_credentials";
 
 	
-	@ComponentProperty(defaultValue = "test:test", description = "Content Repository URI", name = "contentRepositoryUri")
+	@ComponentProperty(defaultValue = "rmi://nema-dev.lis.illinois.edu:/..", description = "Content Repository URI", name = "contentRepositoryUri")
 	private static final String PROPERTY_5="contentRepositoryUri";
 
 	
@@ -88,11 +88,13 @@ public abstract class RemoteExecutorBase extends NemaComponent {
 	private String lookupHost;
 	private ProcessTemplate processTemplate;
 	private ComponentContextProperties componentContextProperties;
+	private ProcessExecutorService processExecutorService;
 	
 	
 	public void initialize(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
+		try{
 		String group= ccp.getProperty(PROPERTY_1);
 		String os= ccp.getProperty(PROPERTY_2);
 		String _credentials = ccp.getProperty(PROPERTY_4);
@@ -123,30 +125,48 @@ public abstract class RemoteExecutorBase extends NemaComponent {
 		}
 		
 		
+		}}finally{
+			this.initializeNema(ccp);	
 		}
 	}
+	
+
+
+
+	public void execute(ComponentContext context) throws ComponentExecutionException,ComponentContextException{
+		try{
+		lookupHost = (String)context.getDataComponentFromInput(DATA_IN_1);
+		processTemplate = (ProcessTemplate)context.getDataComponentFromInput(DATA_IN_2);
+		try {
+			this.processExecutorService = findExecutorService();
+		} catch (RemoteException e) {
+			throw new ComponentExecutionException(e);
+		}}finally{
+		this.executeNema(context);
+		}
+	}
+	
+	
+	public void dispose(ComponentContextProperties componentContextProperties) 
+	throws ComponentContextException{
+		super.dispose(componentContextProperties);
+		this.disposeNema(componentContextProperties);
+	}
+	
+	
 	
 	private SimpleCredentials parseCredentials(String credentialsString) throws ComponentExecutionException {
 		String[] splits = credentialsString.split(":");
 		String username = splits[0];
 		String password = splits[1];
-		
 		if(splits.length!=2){
 			throw new ComponentExecutionException("Invalid credentials");
 		}
 		return new SimpleCredentials(username,password.toCharArray());
-		
-	}
-
-	public void execute(ComponentContext context) throws ComponentContextException,ComponentContextException{
-		lookupHost = (String)context.getDataComponentFromInput(DATA_IN_1);
-		processTemplate = (ProcessTemplate)context.getDataComponentFromInput(DATA_IN_2);
-	
-	
-	
 	}
 	
-	private ProcessExecutorService getExecutorService() throws RemoteException{
+	
+	private ProcessExecutorService findExecutorService() throws RemoteException{
 		LookupLocator locator=null;
 		try {
 			locator = new LookupLocator("jini://"+lookupHost);
@@ -243,7 +263,7 @@ public abstract class RemoteExecutorBase extends NemaComponent {
 	 * @return NemaProcess -reference to remote process
 	 * @throws RemoteException
 	 */
-	public final NemaProcess executeProcess(ProcessExecutionProperties processExecutionProperties,ComponentContext cc) throws RemoteException{
+	public final NemaProcess executeProcess(ProcessExecutionProperties processExecutionProperties) throws RemoteException{
 		if(processExecutionProperties.getId()==null){
 			throw new IllegalArgumentException("ProcessExecutionProperties -id is not set");
 		}
@@ -251,7 +271,7 @@ public abstract class RemoteExecutorBase extends NemaComponent {
 			RecordStreamProcessMonitor rpm=createRemoteProcessMonitor();
 			ProcessTemplate pt=this.getProcessTemplate();
 			processExecutionProperties.setProcessTemplate(pt);
-			NemaProcess np = this.getExecutorService().executeProcess(processExecutionProperties, rpm);	
+			NemaProcess np = this.getProcessExecutorService().executeProcess(processExecutionProperties, rpm);	
 			this.processMonitorMap.put(np, rpm);
 			return np;
 		}
@@ -272,13 +292,13 @@ public abstract class RemoteExecutorBase extends NemaComponent {
 	 * @return success or failure result
 	 * @throws RemoteException
 	 */
-	public final boolean abortProcess(NemaProcess process, ComponentContext cc) throws RemoteException{
+	public final boolean abortProcess(NemaProcess process) throws RemoteException{
 		if(process == null){
 			throw new IllegalArgumentException("Invalid process");
 		}
 		RemoteProcessMonitor processMonitor = this.getProcessMonitor(process);
 		getLogger().info("Aborting: " + process.getId());
-		boolean success=this.getExecutorService().abort(process, processMonitor);
+		boolean success=this.getProcessExecutorService().abort(process, processMonitor);
 		this.processMonitorMap.remove(process);
 		getLogger().info("Abort success: " + success);
 		return success;
@@ -298,7 +318,7 @@ public abstract class RemoteExecutorBase extends NemaComponent {
 				try{
 					RemoteProcessMonitor processMonitor = this.getProcessMonitor(process);
 					getLogger().info("Aborting: " + process.getId());
-					boolean success=this.getExecutorService().abort(process, processMonitor);
+					boolean success=this.getProcessExecutorService().abort(process, processMonitor);
 					getLogger().info("Abort success: " + success);
 				}catch(Exception ex){
 					System.err.println("Error dispatching abort command to the process: " + process.getId()+ " It might have already finished.");
@@ -367,6 +387,11 @@ public abstract class RemoteExecutorBase extends NemaComponent {
 
 	public void setLookupHost(String lookupHost) {
 		this.lookupHost = lookupHost;
+	}
+
+
+	private ProcessExecutorService getProcessExecutorService() {
+		return processExecutorService;
 	}
 
 
