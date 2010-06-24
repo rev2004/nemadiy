@@ -118,8 +118,12 @@ public class OnsetTextFile extends SingleTrackEvalFileTypeImpl {
                 textBuffer.close();
                 NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
                 obj.setMetadata(NemaDataConstants.ONSET_DETECTION_DATA, outputData);
-                obj.setMetadata(NemaDataConstants.ONSET_DETECTION_CLASS, className);
-                obj.setMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS, annotators);                
+                if (className != null) {
+                	obj.setMetadata(NemaDataConstants.ONSET_DETECTION_CLASS, className);
+                }
+                if (annotators != null) {
+                	obj.setMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS, annotators);                
+                }
                 return obj;
                 
             }else{
