@@ -22,7 +22,11 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
-
+/**
+ * 
+ * @author kris.west@gmail.com
+ * @since 0.3.0
+ */
 @Component(creator = "Kris West", description = "Receives a datastructure that " +
 		"defines a list of expected output file locations and then receives " +
 		"a stream of ProcessArtifacts that represent entries in that datastructure " +
@@ -88,32 +92,34 @@ public class OmenOutputReader extends NemaComponent {
 		//when we are configured start receiving process artifacts
 		if(task != null && fileType != null && expectedPaths != null){
 			while(cc.isInputAvailable(DATA_IN_PROCESS_ARTIFACTS)){
-				ProcessArtifact in = (ProcessArtifact)cc.getDataComponentFromInput(DATA_IN_PROCESS_ARTIFACTS);
-				File path = new File(in.getResourcePath());
-				
-				toReceive.remove(path);
-				getLogger().info("Received file: "  + ", waiting on " + toReceive.size() + " files.");
-				
-				if (toReceive.isEmpty()){
-					//we have all the files expected read and output
-					Map<NemaTrackList, List<NemaData>> outputData = null;
-					try {
-						outputData = FileConversionUtil.readProcessOutput(expectedPaths, task, fileType);
-					}catch(Exception e) {
-					 throw new ComponentExecutionException(e);
-					}
+				List<ProcessArtifact> in = (List<ProcessArtifact>)cc.getDataComponentFromInput(DATA_IN_PROCESS_ARTIFACTS);
+				for(Iterator<ProcessArtifact> it = in.iterator();it.hasNext();){
+					File path = new File(it.next().getResourcePath());
 					
-					if(outputData==null){
-						throw new ComponentExecutionException("Process result is null");
-					}else{
-						cc.pushDataComponentToOutput(DATA_OUTPUT, outputData);
-					}
+					toReceive.remove(path);
+					getLogger().info("Received file: "  + ", waiting on " + toReceive.size() + " files.");
 					
-					//reset
-					task = null;
-					fileType = null;
-					expectedPaths = null;
-					toReceive = null;
+					if (toReceive.isEmpty()){
+						//we have all the files expected read and output
+						Map<NemaTrackList, List<NemaData>> outputData = null;
+						try {
+							outputData = FileConversionUtil.readProcessOutput(expectedPaths, task, fileType);
+						}catch(Exception e) {
+						 throw new ComponentExecutionException(e);
+						}
+						
+						if(outputData==null){
+							throw new ComponentExecutionException("Process result is null");
+						}else{
+							cc.pushDataComponentToOutput(DATA_OUTPUT, outputData);
+						}
+						
+						//reset
+						task = null;
+						fileType = null;
+						expectedPaths = null;
+						toReceive = null;
+					}
 				}
 			}
 		}
