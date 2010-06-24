@@ -22,6 +22,7 @@ import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
 import org.imirsel.nema.monitor.process.NemaProcess;
+import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.core.ComponentContext;
@@ -34,6 +35,10 @@ import org.meandre.core.ComponentExecutionException;
  * @author kris.west@gmail.com
  * @since 0.3.0
  */
+@Component(creator = "Kris West", description = "This component performs " +
+		"multiple remote executions of a binary using a process template, " +
+		"sets of input files to feed it and output files for it to produce.",
+		name = "OmenRemoteExecutor", tags = "profile process execution")
 public class OmenRemoteExecutor extends RemoteExecutorBase {
 
 	@ComponentInput(description = "Map of NemaTrackList to List of File Objects representing audio file paths to process.", name = "InputAudioFiles")
