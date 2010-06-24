@@ -85,32 +85,36 @@ public class OmenOutputReader extends NemaComponent {
 				toReceive.addAll(it.next());
 			}
 		}
-		while(cc.isInputAvailable(DATA_IN_PROCESS_ARTIFACTS)){
-			ProcessArtifact in = (ProcessArtifact)cc.getDataComponentFromInput(DATA_IN_PROCESS_ARTIFACTS);
-			File path = new File(in.getResourcePath());
-			
-			toReceive.remove(path);
-			getLogger().info("Received file: "  + ", waiting on " + toReceive.size() + " files.");
-			
-			if (toReceive.isEmpty()){
+		//when we are configured start receiving process artifacts
+		if(task != null && fileType != null && expectedPaths != null){
+			while(cc.isInputAvailable(DATA_IN_PROCESS_ARTIFACTS)){
+				ProcessArtifact in = (ProcessArtifact)cc.getDataComponentFromInput(DATA_IN_PROCESS_ARTIFACTS);
+				File path = new File(in.getResourcePath());
 				
-				//if we have all the files expected read and output
-				Map<NemaTrackList, List<NemaData>> outputData = null;
-				try {
-					outputData = FileConversionUtil.readProcessOutput(expectedPaths, task, fileType);
-				}catch(Exception e) {
-				 throw new ComponentExecutionException(e);
-				}
+				toReceive.remove(path);
+				getLogger().info("Received file: "  + ", waiting on " + toReceive.size() + " files.");
 				
-				if(outputData==null){
-					throw new ComponentExecutionException("Process result is null");
-				}else{
-					cc.pushDataComponentToOutput(DATA_OUTPUT, outputData);
+				if (toReceive.isEmpty()){
+					//we have all the files expected read and output
+					Map<NemaTrackList, List<NemaData>> outputData = null;
+					try {
+						outputData = FileConversionUtil.readProcessOutput(expectedPaths, task, fileType);
+					}catch(Exception e) {
+					 throw new ComponentExecutionException(e);
+					}
+					
+					if(outputData==null){
+						throw new ComponentExecutionException("Process result is null");
+					}else{
+						cc.pushDataComponentToOutput(DATA_OUTPUT, outputData);
+					}
+					
+					//reset
+					task = null;
+					fileType = null;
+					expectedPaths = null;
+					toReceive = null;
 				}
-				task = null;
-				fileType = null;
-				expectedPaths = null;
-				toReceive = null;
 			}
 		}
 	}
