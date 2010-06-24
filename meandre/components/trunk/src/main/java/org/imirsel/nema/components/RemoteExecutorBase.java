@@ -64,10 +64,6 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	@ComponentProperty(defaultValue = "Unix Like", description = "operating system", name = "_os")
 	private static final String PROPERTY_2 ="_os";
 
-	@StringDataType(hide=true)
-	@ComponentProperty(defaultValue = "true", description = "indicates to the UI that this is a remote component", name = "_remoteDynamicComponent")
-	private static final String PROPERTY_3 ="_remoteDynamicComponent";
-	
 	
 	@ComponentProperty(defaultValue = "test:test", description = "Credentials to Login to the content repository", name = "_credentials")
 	private static final String PROPERTY_4="_credentials";
