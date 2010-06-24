@@ -55,6 +55,9 @@ public class OmenInputOutputSplitter extends NemaComponent{
 	@ComponentOutput(description = "Process template to be used to perform executions.", name = "processTemplate")
 	private static final String DATA_OUT_PROCESS_TEMPLATE ="processTemplate";
 
+	@ComponentOutput(description = "Class representing the output file type that is to be read.", name = "FileType")
+	private static final String DATA_OUT_OUTPUT_TYPE ="FileType";
+
 	@ComponentOutput(description = "Input files map", name = "inputFilesMap")
 	private static final String DATA_OUT_INPUT_FILES_MAP ="inputFilesMap";
 
@@ -202,6 +205,8 @@ public class OmenInputOutputSplitter extends NemaComponent{
 		}
 		
 		cc.pushDataComponentToOutput(DATA_OUT_PROCESS_TEMPLATE, pTemplate);
+		
+		cc.pushDataComponentToOutput(DATA_OUT_OUTPUT_TYPE, outputType1);
 		
 		cc.pushDataComponentToOutput(DATA_OUT_INPUT_FILES_MAP, siteToInputFiles);
 		
