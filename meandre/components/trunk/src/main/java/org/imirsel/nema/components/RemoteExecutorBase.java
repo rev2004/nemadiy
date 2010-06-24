@@ -49,6 +49,11 @@ import org.meandre.core.ComponentExecutionException;
 import com.healthmarketscience.rmiio.RemoteOutputStream;
 import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 
+/** Base Class for Remote Nema Components
+ * 
+ * @author kumaramit01
+ * @since 0.6.0
+ */
 public abstract class RemoteExecutorBase extends NemaComponent implements RemoteExecutableComponent{
 
 	@StringDataType(valueList={"imirsel","mcgill"}, labelList={"imirsel","mcgill"})
@@ -152,6 +157,18 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		super.dispose(componentContextProperties);
 		this.disposeNema(componentContextProperties);
 	}
+	
+	
+	public abstract void initializeNema(ComponentContextProperties ccp)
+	throws ComponentExecutionException, ComponentContextException;
+	
+	
+	public abstract void executeNema(ComponentContext componentContext) 
+	throws ComponentExecutionException, ComponentContextException;
+	
+	
+	public abstract void disposeNema(ComponentContextProperties componentContextProperties) 
+	throws ComponentContextException;
 	
 	
 	
