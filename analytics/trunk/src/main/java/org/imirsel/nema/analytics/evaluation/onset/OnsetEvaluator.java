@@ -1,0 +1,387 @@
+package org.imirsel.nema.analytics.evaluation.onset;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
+import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaDataConstants;
+import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.NemaTrackList;
+
+public class OnsetEvaluator extends EvaluatorImpl {
+
+	private static final double TOLERANCE = 0.05;
+
+	/**
+	 * Constructor (no arg - task, dataset, output and working dirs, training
+	 * and test sets must be set manually).
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public OnsetEvaluator() {
+		super();
+	}
+
+	@Override
+	public NemaEvaluationResultSet evaluate() throws IllegalArgumentException,
+	IOException {
+		String jobId;
+		String jobName;
+		int numJobs = jobIDToFoldResults.size();
+
+		/* Check all systems have just one result set */
+		Map<NemaTrackList,List<NemaData>> sysResults;
+
+		/* 
+		 * Make sure we only have one set of results per jobId (i.e. system), 
+		 * as this is not a cross-fold validated experiment */
+		checkFolds();
+
+		/* prepare NemaEvaluationResultSet*/
+		NemaEvaluationResultSet results = getEmptyEvaluationResultSet();
+
+		{
+			/* Perform the evaluations on all jobIds (systems) */
+			Map<String, Map<NemaTrackList,NemaData>> jobIdToFoldEvaluation = new HashMap<String, Map<NemaTrackList,NemaData>>(numJobs);
+			for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();) {
+				jobId = it.next();
+				getLogger().info("Evaluating experiment for jobID: " + jobId);
+				sysResults = jobIDToFoldResults.get(jobId);
+				Map<NemaTrackList,NemaData> foldEvals = new HashMap<NemaTrackList,NemaData>(testSets.size());
+				for (Iterator<NemaTrackList> trackIt = sysResults.keySet().iterator(); trackIt.hasNext();) {
+					//make sure we use the evaluators copy of the track list
+					NemaTrackList trackList = testSets.get(testSets.indexOf(trackIt.next()));
+					NemaData result = evaluateResultFold(jobId, trackList, sysResults.get(trackList));
+					foldEvals.put(trackList, result);
+				}
+				jobIdToFoldEvaluation.put(jobId, foldEvals);
+			}
+
+			/* Aggregated evaluation to produce overall results */
+			Map<String, NemaData> jobIdToOverallEvaluation = new HashMap<String, NemaData>(numJobs);
+			for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();) {
+				jobId = it.next();
+				getLogger().info("Aggregating results for jobID: " + jobId);
+				Map<NemaTrackList,NemaData> foldEvals = jobIdToFoldEvaluation.get(jobId);
+				NemaData overall = averageFoldMetrics(jobId, foldEvals.values());
+				jobIdToOverallEvaluation.put(jobId, overall);
+			}
+
+			/* Populate NemaEvaluationResultSet */
+			for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
+				jobId = it.next();
+				jobName = jobIDToName.get(jobId);
+				results.addCompleteResultSet(jobId, jobName, jobIdToOverallEvaluation.get(jobId), jobIdToFoldEvaluation.get(jobId), jobIDToFoldResults.get(jobId));
+			}
+		}			
+		return results;
+	}
+
+	@Override
+	public NemaData evaluateResultFold(String jobID, NemaTrackList testSet,
+			List<NemaData> dataList) {
+
+		int numExamples = checkFoldResultsAreComplete(jobID, testSet, dataList);
+
+		ArrayList<String> classList = new ArrayList<String>();
+		NemaData gtData;
+		// First determine number of unique classes/instrumentations
+		for(NemaData data:dataList){
+			gtData = trackIDToGT.get(data.getId());
+			if (gtData.hasMetadata(NemaDataConstants.ONSET_DETECTION_CLASS)) {
+				String className = gtData.getStringMetadata(NemaDataConstants.ONSET_DETECTION_CLASS);
+				if (!classList.contains(className)) {
+					classList.add(className);
+				}	
+			}
+		}
+		
+		// Compute number of classes. We will create also a class "Total" hence the +1 if there are no distinct classes
+		int numClasses = 1;
+		if (!classList.isEmpty()) {
+			numClasses = classList.size() + 1;
+		}
+
+		double totalFMeasure = 0.0;
+		int totalCorrect = 0;
+		int totalFalsePositives = 0;
+		int totalFalseNegatives = 0;
+		int totalDoubled = 0;
+		int totalMerged = 0;
+		double FPsum = 0.0;
+		double CDsum = 0.0;
+		double qsum = 0.0;
+
+		int[] classTotalCorrect = new int[numClasses];
+		int[] classFalsePositives = new int[numClasses];
+		int[] classFalseNegatives = new int[numClasses];
+		int[] classDoubled = new int[numClasses];
+		int[] classMerged = new int[numClasses];
+		int[] classCounts = new int[numClasses];
+
+		double[] classAvgCorrect = new double[numClasses];
+		double[] classAvgFalsePositives = new double[numClasses];
+		double[] classAvgFalseNegatives = new double[numClasses];
+		double[] classAvgDoubled = new double[numClasses];
+		double[] classAvgMerged = new double[numClasses];
+
+		double[] classFPsum = new double[numClasses];
+		double[] classCDsum = new double[numClasses];
+		double[] classQsum = new double[numClasses];
+		double[] classFMeasures = new double[numClasses];
+		double[] classRecalls = new double[numClasses];
+		double[] classPrecisions = new double[numClasses];
+
+		int numInDetFiles = 0;
+		int numInGTFiles = 0;
+
+		double meanAbsDistance = 0.0;
+		double meanDistance = 0.0;
+
+
+		for(NemaData data:dataList){
+			gtData = trackIDToGT.get(data.getId());
+			double[][] rawGtData2D = gtData.get2dDoubleArrayMetadata(NemaDataConstants.ONSET_DETECTION_DATA);
+			double[][] rawData2D = data.get2dDoubleArrayMetadata(NemaDataConstants.ONSET_DETECTION_DATA);
+			double[] rawData = new double[rawData2D.length];
+			for(int i = 0; i < rawData.length; i++) {
+				rawData[i] = rawData2D[i][0];
+			}
+			int numAnnotators = rawGtData2D[0].length;
+			
+			//Check which class it is if they exist. Find it in the classList and get the index. 
+			// We are reserving the 0th element for the total, overall, hence the + 1
+			int classNum = 0;
+			if (gtData.hasMetadata(NemaDataConstants.ONSET_DETECTION_CLASS)) {
+				classNum = classList.indexOf(gtData.getStringMetadata(NemaDataConstants.ONSET_DETECTION_CLASS)) + 1;
+			}
+			double avgFMeasureForFile = 0.0;
+            double avgCorrectForFile = 0.0;
+            double avgFPForFile = 0.0;
+            double avgFNForFile = 0.0;
+            double avgRecForFile = 0.0;
+            double avgPrecForFile = 0.0;
+            double avgMergedForFile = 0.0;
+            double avgDoubledForFile = 0.0;
+            int totCorrectForFile = 0;
+            int totFPForFile = 0;
+            int totFNForFile = 0;
+            int totMergedForFile = 0;
+            int totDoubledForFile = 0;
+            
+			for (int curGT = 0; curGT < numAnnotators; curGT++) {
+				ArrayList<Double> gtDataArr = new ArrayList<Double>();
+				for (int t=0; t<rawGtData2D.length; t++) {
+					double onTime = rawGtData2D[t][curGT];
+					if (!Double.isNaN(onTime)) {
+						gtDataArr.add(new Double(rawGtData2D[t][curGT]));
+					}
+				}
+				double[] rawGtData = new double[gtDataArr.size()];
+				for(int i = 0; i < rawGtData.length; i++) {
+					rawGtData[i] = gtDataArr.get(i).doubleValue();
+				}
+
+				int correct = 0;
+				int doubled = 0;
+				int merged = 0;
+				int falsePositives = 0;
+				int falseNegatives = 0;
+
+				int count = 0;
+				for (int t=0; t<rawGtData.length; t++) {
+					double onTime = rawGtData[t];
+					{
+						// if we've allocated scores for everything in the detection, but there's more to go in the ground truth
+						// they will be falseNegatives
+						if(count > rawData.length - 1) {
+							falseNegatives++;
+						}
+						// main loop
+						for (int c=count;c<rawData.length;c++) {
+							if (Math.abs(rawData[c] - onTime) < TOLERANCE) {
+								correct++;
+								meanAbsDistance += Math.abs(rawData[c] - onTime);
+								meanDistance += onTime - rawData[c];
+								count = c+1;
+								for (int c1=count;c1<rawData.length;c1++) {
+									if (t < rawGtData.length - 1) {
+										double onTime2 = rawGtData[t+1];
+										// we're checking for doubles in the next predicted value in regards to the current ground truth.
+										// first though, we check that the next prediction doesn't lie in the tolerance of the next truth.
+										if (Math.abs(rawData[c1] - onTime2) < TOLERANCE) {
+											break;
+										}
+										if (Math.abs(rawData[c1] - onTime) < TOLERANCE) {
+											doubled++;
+										}
+									}
+								}
+								break;
+							} else if (rawData[c] > (onTime + TOLERANCE)) {
+								//System.out.println("false neg c: " + c + " t: " + t + " truth time: " + onTime + " test time: " + testSig.getData()[testOnsetCol][c]);
+								falseNegatives++;
+								count = c;
+								break;
+							}
+							// if we've allocated scores for everything in the detection, but there's more to go in the ground truth
+							// they will be falseNegatives
+							if(c == rawData.length - 1){
+								falseNegatives++;
+							}
+
+						}
+					}
+				}
+				int count2 = 0;
+				for (int c=0;c<rawData.length;c++) {
+					double onTime = rawData[c];
+					for (int t=count2; t<rawGtData.length; t++) {					
+						if (Math.abs(rawGtData[t] - onTime) < TOLERANCE) {
+							count2 = t+1;
+							for (int c1=count2;c1<rawGtData.length;c1++) {
+								if(c < rawData.length - 1) {
+									double onTime2 = rawData[c+1];
+
+									if (Math.abs(rawGtData[c1] - onTime2) < TOLERANCE) {
+										break;
+									}
+								}
+								if (Math.abs(rawGtData[c1] - onTime) < TOLERANCE) {
+									merged++;
+								}
+							}
+							break;
+						}
+					}
+				} 
+
+				falsePositives = rawData.length - correct;
+				totalCorrect += correct;
+				totalFalseNegatives += falseNegatives;
+				totalFalsePositives += falsePositives;
+				totalDoubled += doubled;
+				totalMerged += merged;
+
+				numInDetFiles += rawData.length;
+				numInGTFiles += rawGtData.length;
+
+				double precision = (((double)correct/(double)rawData.length));
+				double recall = (((double)correct/(double)rawGtData.length));
+				double fmeasure = 0.0;
+				if (recall != 0.0 && precision != 0.0) {
+					fmeasure = (2 * recall * precision)/(recall + precision);
+				}
+
+				double FPRate = (double)falsePositives/(double)correct * 100.0;
+				double CDRate = (double)(correct - falseNegatives)/(double)correct * 100.0;
+				double q = (double)(correct + falseNegatives - (falseNegatives + falsePositives))/(double)(correct + falseNegatives + falsePositives);
+				avgFMeasureForFile += fmeasure;
+				avgRecForFile += recall;
+				avgPrecForFile += precision;
+				FPsum += FPRate;
+				CDsum += CDRate;
+				qsum += q;
+				totCorrectForFile += correct;
+				totFPForFile += falsePositives;
+				totFNForFile += falseNegatives;
+				totMergedForFile += merged;
+				totDoubledForFile += doubled;
+
+			}
+			avgFMeasureForFile = avgFMeasureForFile/(double)numAnnotators;
+			avgRecForFile = avgRecForFile/(double)numAnnotators;
+			avgPrecForFile = avgPrecForFile/(double)numAnnotators;
+			avgCorrectForFile = (double)totCorrectForFile/(double)numAnnotators;
+			avgFPForFile = (double)totFPForFile/(double)numAnnotators;
+			avgFNForFile = (double)totFNForFile/(double)numAnnotators;
+			avgMergedForFile = (double)totMergedForFile/(double)numAnnotators;
+			avgDoubledForFile = (double)totDoubledForFile/(double)numAnnotators;
+
+			classTotalCorrect[classNum] += totCorrectForFile;
+			classFalsePositives[classNum] += totFPForFile;
+			classFalseNegatives[classNum] += totFNForFile;
+			classDoubled[classNum] += totDoubledForFile;
+			classMerged[classNum] += totMergedForFile;
+			classCounts[classNum]++;
+			classFMeasures[classNum] = classFMeasures[classNum] + avgFMeasureForFile;
+			classRecalls[classNum] = classRecalls[classNum] + avgRecForFile;
+			classPrecisions[classNum] = classPrecisions[classNum] + avgPrecForFile;
+
+			classAvgCorrect[classNum] += avgCorrectForFile;
+			classAvgFalsePositives[classNum] += avgFPForFile;
+			classAvgFalseNegatives[classNum] += avgFNForFile;
+			classAvgDoubled[classNum] += avgDoubledForFile;
+			classAvgMerged[classNum]  += avgMergedForFile;
+			
+			// If the gtData had a class, we can't forget to add their results to the "Total" (class indx 0)
+			if (classNum != 0) {
+				classTotalCorrect[0] += totCorrectForFile;
+				classFalsePositives[0] += totFPForFile;
+				classFalseNegatives[0] += totFNForFile;
+				classDoubled[0] += totDoubledForFile;
+				classMerged[0] += totMergedForFile;
+				classCounts[0]++;
+				classFMeasures[0] = classFMeasures[0] + avgFMeasureForFile;
+				classRecalls[0] = classRecalls[0] + avgRecForFile;
+				classPrecisions[0] = classPrecisions[0] + avgPrecForFile;
+
+				classAvgCorrect[0] += avgCorrectForFile;
+				classAvgFalsePositives[0] += avgFPForFile;
+				classAvgFalseNegatives[0] += avgFNForFile;
+				classAvgDoubled[0] += avgDoubledForFile;
+				classAvgMerged[0]  += avgMergedForFile;
+				
+			}
+			
+			data.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE, avgFMeasureForFile);
+			data.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_RECALL, avgRecForFile);
+			data.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION, avgPrecForFile);
+
+		}
+		
+		for (int i = 0; i < classCounts.length; i ++) {
+			classFMeasures[i] = classFMeasures[i]/classCounts[i];
+			classRecalls[i] = classRecalls[i]/classCounts[i];
+			classPrecisions[i] = classPrecisions[i]/classCounts[i];
+		}
+		String[] classNames = new String[numClasses];
+		classNames[0] = "Total";
+		for (int i = 1; i < numClasses; i++) {
+			classNames[i] = classList.get(i-1);
+		}
+
+		NemaData outObj = new NemaData(jobID);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_CLASS, classNames);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE, classFMeasures);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_RECALL, classRecalls);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION, classPrecisions);
+		return outObj;
+	}
+
+
+	@Override
+	protected void setupEvalMetrics() {
+		this.trackEvalMetrics.clear();
+		this.trackEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE);
+		this.trackEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION);
+		this.trackEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_RECALL);
+
+		this.overallEvalMetrics.clear();
+		this.overallEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE);
+		this.overallEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION);
+		this.overallEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_RECALL);
+
+		//same as overall metrics - single fold experiment format
+		this.foldEvalMetrics = this.overallEvalMetrics;
+
+	}
+
+}
