@@ -4,8 +4,22 @@
        default-lazy-init="true">
 
     <bean name="jsonView" class="org.springframework.web.servlet.view.json.JsonView">
-        
+        <property name="jsonViewFilter"><ref bean="jsonViewFilter"/></property>
     </bean>
+    
+    <bean name="jsonViewFilter" 
+          class="org.springframework.web.servlet.view.json.filter.SimplePropertyFilter">
+        <property name="excludeBeforePropNames">
+              <list>
+                    <!--ComandBean Values-->
+                    <value>name</value>
+                    <value>address.name</value>
+                    <!--ModelMap Values-->
+                    <value>(Job).flow</value>
+                    <value>(countries).short</value>
+              </list>
+        </property>
+        </bean>
     
   
    </beans>

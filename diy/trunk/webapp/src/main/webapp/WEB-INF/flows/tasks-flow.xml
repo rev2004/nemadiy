@@ -27,10 +27,10 @@
 
 	<view-state id="displayFlowComponents" model="jobForm">
 		<transition on="edit" to="editComponentProperties" >
-			<evaluate expression="tasksService.updateMirexSubmission(componentMap,jobForm,jobForm.mirexSubmissionCode,mirexSubmissions)"/>
+			<evaluate expression="tasksService.updateMirexSubmission(componentMap,jobForm.mirexSubmissionCode,mirexSubmissions)"/>
 		</transition>
 		<transition on="review" to="reviewTask" >
-			<evaluate expression="tasksService.updateMirexSubmission(componentMap,jobForm,jobForm.mirexSubmissionCode,mirexSubmissions)"/>
+			<evaluate expression="tasksService.updateMirexSubmission(componentMap,jobForm.mirexSubmissionCode,mirexSubmissions)"/>
 		</transition>
 		<transition on="cancel" to="cleanUp" />
 	</view-state>

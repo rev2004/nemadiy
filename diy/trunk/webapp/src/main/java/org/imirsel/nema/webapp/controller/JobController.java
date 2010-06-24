@@ -38,7 +38,7 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
+import com.thoughtworks.xstream.converters.basic.DateConverter;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 
@@ -426,17 +426,18 @@ public class JobController extends MultiActionController {
 		logger.debug("start to list the jobs of   " + user.getUsername());
 		List<Job> jobs = flowService.getUserJobs(userId);
 
-		ModelAndView mav;
+		ModelAndView mav=null;
 		String uri = (req!=null)?req.getRequestURI():""; 
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
-			XStream xstream = new XStream(new JsonHierarchicalStreamDriver());
+			XStream xstream = new XStream(new JsonHierarchicalStreamDriver());//JettisonMappedXmlDriver());
+			xstream.registerConverter(new DateConverter(),XStream.PRIORITY_VERY_HIGH);
 			xstream.setMode(XStream.NO_REFERENCES);
 			xstream.omitField(Job.class,"flow" );
 			xstream.omitField(Job.class, "results");
 			xstream.alias(Constants.JOBLIST, List.class);
-			
+			res.setContentType("application/json");
 			res.getWriter().write(xstream.toXML(jobs));
-			return null;
+			//mav =new ModelAndView("jsonView",Constants.JOBLIST,jobs);
 		} else {
 			mav =new ModelAndView("job/jobList",Constants.JOBLIST,jobs);
 		}

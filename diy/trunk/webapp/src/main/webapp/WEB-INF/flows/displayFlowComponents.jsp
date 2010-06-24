@@ -7,6 +7,29 @@ function setIdx(idx)
 {   
 	$('idx').value=idx;
 }
+</script>
+<script type="text/javascript">
+ 	var DELINEATOR="--";
+	function appendSuffix( name, suffix){
+		if (name==null) {
+			return DELINEATOR+suffix;
+		}else{
+			var position=name.lastIndexOf(DELINEATOR);
+			if ((position<0)||(name.length-position>8)){
+				return name+" "+DELINEATOR+suffix;
+			}else{
+				return name.substring(0,position)+DELINEATOR+suffix;
+			}
+		}
+	};
+	function modifyNameDesc(){
+		var submissionCodeNode=dojo.byId("submissionCode");
+		var suffix=submissionCodeNode.options[submissionCodeNode.selectedIndex].value;
+		var nameNode=dojo.byId("name");
+		nameNode.value=appendSuffix(nameNode.value,suffix);
+		descNode=dojo.byId("description");
+		descNode.value=appendSuffix(descNode.value,suffix);
+	}
 </script> 
 <meta name="heading" content="Edit Task Properties: ${flow.name}" />
 </head>
@@ -29,16 +52,16 @@ ${messageContext.allMessages}
     <form:form commandName="jobForm" id="myForm">
     <fieldset id="pt1">
         <label class="label">Mirex Submission Code:</label>
-        <form:select id="select" path="mirexSubmissionCode" items="${mirexSubmissions}" itemLabel="hashcode" itemValue="hashcode"  cssStyle="margin-bottom:5px"/>
+        <form:select id="submissionCode" path="mirexSubmissionCode" onchange="modifyNameDesc();" items="${mirexSubmissions}" itemLabel="hashcode" itemValue="hashcode"  cssStyle="margin-bottom:5px"/>
  
       </fieldset>
       <fieldset id="pt1">
         <label class="label">Enter the Job Name:</label>
-        <form:input path="name" cssStyle="width:200px;"/>
+        <form:input id="name" path="name" cssStyle="width:200px;"/>
       </fieldset>
       <fieldset id="pt1">
         <label class="label">Enter the Job Description:</label>
-        <form:input path="description" cssStyle="width:300px;"/>
+        <form:input id="description" path="description" cssStyle="width:300px;"/>
       </fieldset>
       <c:forEach items="${componentList}" var="component" varStatus="status">
         <c:if test="${(!component.hidden)&&(not empty componentMap[component])}">

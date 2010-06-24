@@ -346,37 +346,20 @@ public class TasksServiceImpl {
 	/**
 	 * update properties (_submissionCode, _submissionName) from componentMap with the submissions code
 	 * @param componentMap  Properties of all components, Note: corresponding properties are modified
-	 * @param jobForm  job model, name and description to be modified according to submission code 
 	 * @param submissionCode 
 	 * @param submissions	list of all Mirex submissions, to find the name for submission code
 	 */
 	public void updateMirexSubmission(
 			Map<Component, List<Property>> componentMap,
-			JobForm jobForm,
 			String submissionCode,List<MirexSubmission> submissions){
 	 String submissionName=findMirexSubmissionName(submissions,submissionCode);
 	 replacePropertyValue(componentMap,MIREX_SUBMISSION_CODE,submissionCode);
 	 replacePropertyValue(componentMap,MIREX_SUBMISSION_NAME,submissionName);
-	 jobForm.setName(appendSuffix(jobForm.getName(),submissionCode));
-	 jobForm.setDescription(appendSuffix(jobForm.getDescription(),submissionCode));
+	 //jobForm.setName(appendSuffix(jobForm.getName(),submissionCode));
+	 //jobForm.setDescription(appendSuffix(jobForm.getDescription(),submissionCode));
 	}
 	
-	final static String DELINEATOR="--";
-	private String appendSuffix(String name,String suffix){
-		
 	
-		if (name==null) {
-			return DELINEATOR+suffix;
-		}else{
-			int position=name.lastIndexOf(DELINEATOR);
-			if ((position<0)||(name.length()-position>8)){
-				return name+DELINEATOR+suffix;
-			}else{
-				return name.substring(0,position)+DELINEATOR+suffix;
-			}
-		}
-	}
-
 	private String findMirexSubmissionName(List<MirexSubmission> list,String submissionCode){
 		if (submissionCode!=null){
 		for (MirexSubmission submission:list){
