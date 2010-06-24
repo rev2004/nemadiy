@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipException;
 
 import javax.jcr.Repository;
@@ -42,11 +44,11 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 	@ComponentProperty(defaultValue = "test:test", description = "Content Repository Credential", name = "_credential")
 	private static final String PROPERTY_2 = "_credential";
 	
-	@ComponentInput(description = "The process artifact with the jcr uri.", name = "processArtifactIn")
-	private static final String DATA_IN_1 ="processArtifactIn";
+	@ComponentInput(description = "The process artifact list with the jcr uri.", name = "listProcessArtifactIn")
+	private static final String DATA_IN_1 ="listProcessArtifactIn";
 	
-	@ComponentOutput(description = "The process artifact with the file uri.", name = "processArtifactOut")
-	private static final String DATA_OUT_1 ="processArtifactOut";
+	@ComponentOutput(description = "The process artifact list with the file uri.", name = "listProcessArtifactOut")
+	private static final String DATA_OUT_1 ="listProcessArtifactOut";
 	
 	
 	private SimpleCredentials credentials;
@@ -94,17 +96,25 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 	@Override
 	public void execute(ComponentContext componentContext)
 			throws ComponentExecutionException, ComponentContextException {
-		ProcessArtifact processArtifact=(ProcessArtifact)componentContext.getDataComponentFromInput(DATA_IN_1);
+		List<ProcessArtifact> processArtifactList=(List<ProcessArtifact>)componentContext.getDataComponentFromInput(DATA_IN_1);
+		List<ProcessArtifact> processArtifactListOutput = new ArrayList<ProcessArtifact>(10);
+		for(ProcessArtifact processArtifact:processArtifactList){
 		if(!processArtifact.getResourcePath().startsWith("jcr://")){
+			
 			throw new ComponentExecutionException("Error the processArtifact does not have jcr uri: " + processArtifact.getResourcePath());
 		}else{
 			try {
 				ProcessArtifact processArtifactModified = provisionArtifact(processArtifact);
-				componentContext.pushDataComponentToOutput(DATA_OUT_1, processArtifactModified);
+				processArtifactListOutput.add(processArtifactModified);
 			} catch (ContentRepositoryServiceException e) {
 				throw new ComponentExecutionException(e);
 			}
+		
 		}
+		}
+		
+		componentContext.pushDataComponentToOutput(DATA_OUT_1, processArtifactListOutput);
+		
 	}
 	
 	
