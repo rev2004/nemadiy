@@ -10,6 +10,7 @@ import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
 
+import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.ProcessTemplate;
 import org.imirsel.nema.service.executor.ProcessExecutorService;
@@ -25,12 +26,17 @@ import org.meandre.core.ComponentExecutionException;
 			name = "ProfileToProcessTemplateComponent", tags = "profile process execution")
 public class ProfileToProcessTemplateComponent extends NemaComponent {
 
-	@ComponentProperty(defaultValue = "nema.lis.uiuc.edu", description = "Host that discovers compatiable execution servers that support the profile.", name = "_host")
-	private static final String PROPERTY_1 = "_host";
+	@ComponentProperty(defaultValue = "nema.lis.uiuc.edu", description = "Host that discovers compatiable execution servers that support the profile.", name = "_lookupHost")
+	private static final String PROPERTY_1 = "_lookupHost";
 
 	@ComponentProperty(defaultValue = "exampleRun", description = "Unique identifier for the executable", name = "profileName")
 	private static final String PROPERTY_2 ="profileName";
 	
+	@StringDataType(hide=true)
+	@ComponentProperty(defaultValue = "true", description = "indicates to the UI that this is a remote component", name = "_remoteDynamicComponent")
+	private static final String PROPERTY_3 ="_remoteDynamicComponent";
+	
+
 	@ComponentOutput(description = "Process Template", name = "processTemplate")
 	private static final String DATA_OUT_1 ="processTemplate";
 
