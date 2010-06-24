@@ -26,9 +26,9 @@ import org.meandre.core.ComponentExecutionException;
 @Component(creator = "Kris West", description = "Receives a datastructure that " +
 		"defines a list of expected output file locations and then receives " +
 		"a stream of ProcessArtifacts that represent entries in that datastructure " +
-		"(files) being fulfilled by a process execution retireval to the desired " +
-		"local path. When all of the files have been received, they are read and " +
-		"the resulting models output.",
+		"(files) being fulfilled by a process execution and retrieval of the " +
+		"result to the desired local path. When all of the files have been " +
+		"received, they are read and the resulting models output.",
 		name = "OmenOutputReader", tags = "profile process execution", 
 		firingPolicy = Component.FiringPolicy.any)
 public class OmenOutputReader extends NemaComponent {
