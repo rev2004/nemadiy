@@ -22,6 +22,10 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
+/**
+ * 
+ * @since 0.3.0
+ */
 @Component(creator = "Amit Kumar", description = "This component takes the profile name and returns the process template.",
 			name = "ProfileToProcessTemplateComponent", tags = "profile process execution")
 public class ProfileToProcessTemplateComponent extends NemaComponent {

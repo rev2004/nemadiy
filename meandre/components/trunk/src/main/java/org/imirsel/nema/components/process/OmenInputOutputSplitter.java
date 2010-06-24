@@ -30,6 +30,11 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
+/**
+ * 
+ * @author kris.west@gmail.com
+ * @since 0.3.0
+ */
 @Component(creator = "Kris West", description = "This component takes a process template and " +
 		"models representing the data to process with it, resolves the data to file system " +
 		"paths at NEMA sites and prepares individual sets of input and output files for " +
