@@ -134,8 +134,7 @@ public class FileConversionUtil {
 	 * NemaTrackList to a List of NemaData Objects encoding the data relating
 	 * to each fold of an experiment this method will prepare files necessary
 	 * to encode the input data and return a List of File Objects to required 
-	 * to perform each fold of the execution of an external process that works 
-	 * with the specified file type.
+	 * to perform each fold of the execution of an external process.
 	 * 
 	 * Note: NemaData Objects must have been resolved to audio files prior to
 	 * executing this method on them. This can be done using a
@@ -202,6 +201,123 @@ public class FileConversionUtil {
 				out.put(testSet, list);
 			}
 		}
+		return out;
+	}
+	
+	/**
+	 * Given a task file format, output directory path, file type and a Map of 
+	 * NemaTrackList to a List of NemaData Objects encoding the data relating
+	 * to each fold of an experiment this method will prepare files necessary
+	 * to encode the input data and return a List of File Objects required 
+	 * to perform each fold of the execution of an external process.
+	 * 
+     *
+	 * Note: NemaData Objects must have been resolved to audio files prior to
+	 * executing this method on them. This can be done using a
+	 * <code>org.imirsel.nema.repository.RepositoryClientImpl</code> instance
+	 * (from the nema-repository project) and the 
+	 * <code>resolveTracksToFiles(List<NemaData> trackDataList, 
+	 * Set<NemaMetadataEntry> constraint)</code> method. This resolution will
+	 * append the file path and site name to the Object.
+	 * 
+	 * @param outputDirectory Path to write any files created to.
+	 * @param task The NemaTask to be performed on the data.
+	 * @param executionData Map of NemaTrackList to a List of NemaData Objects
+	 * encoding the data to be worked on.
+	 * @param fileType The file type to be used to prepare the data. Note that 
+	 * the RawAudioFile type will cause the list of audio files to be written.
+	 * @param defaultSite Where files are created from the DB, mark them as
+	 * available at this default site.
+	 * @return Map of site name to a Map of NemaTrackList to a list of File 
+	 * Objects representing the files to be used as inputs to the process.
+	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
+	 * NemaFileType is received.
+	 * @throws InstantiationException Thrown if the file writer can't be 
+	 * instantiated (for example if there is no zero-arg constructor).
+	 * @throws IllegalAccessException Thrown if we do not have access to the 
+	 * definition of the specified file type class.
+	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
+	 * found or created.
+	 * @throws IOException Thrown if there is a problem writing the files to
+	 * disk.
+	 */
+	public static Map<String,Map<NemaTrackList,List<File>>> prepareOmenProcessInput(
+			File outputDirectory, 
+			NemaTask task,
+			Map<NemaTrackList,List<NemaData>> executionData, 
+			Class<? extends NemaFileType> fileType,
+			String defaultSite
+			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
+		
+		Map<String,Map<NemaTrackList,List<File>>> out = null;
+		
+	
+		if(fileType.equals(RawAudioFile.class)) {
+			//use raw audio files
+			out = getOmenResourceFilesList(executionData,task,outputDirectory);
+			return out;
+		}else {
+			
+			//Nothing else supported currently as the file created would have to be marshalled over to the remote site
+			throw new IllegalArgumentException("Files of type '" + fileType.getName() + "' are not currently supported for remote execution. " +
+					"Only processes taking '" + RawAudioFile.class.getName() + "' as input are supported.");
+//			boolean isSingleTrackType = false;
+//			if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+//				isSingleTrackType = true;
+//			}
+//			
+//			//write directory of metadata files
+//			out = new HashMap<String,Map<NemaTrackList,List<File>>>();
+//			for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator.hasNext();) {
+//				NemaTrackList testSet = iterator.next();
+//				List<NemaData> data = executionData.get(testSet);
+//				
+//				//filter by site
+//				Map<String,List<NemaData>> siteDataMap = partitionBySite(data,defaultSite);
+//				
+//				//create data files separately for each site
+//				for (Iterator<String> it2 = siteDataMap.keySet().iterator(); it2.hasNext();) {
+//					String site = it2.next();
+//					List<NemaData> siteData = siteDataMap.get(site);
+//					
+//					//TODO: will need to send these files to or create them at remote site...
+//					File fileOrDir = writeGroundTruthDataFileOrDirectory(testSet, data, task, fileType, outputDirectory);
+//					List<File> files;
+//					if(isSingleTrackType){
+//						files = Arrays.asList(fileOrDir.listFiles());
+//					}else{ //MultipleTrackEvalFileType.class.isAssignableFrom(fileType) == true
+//						files = new ArrayList<File>(1);
+//						files.add(fileOrDir);
+//					}
+//					Map<NemaTrackList,List<File>> siteOut = out.get(site);
+//					if(siteOut == null){
+//						siteOut = new HashMap<NemaTrackList,List<File>>();
+//						out.put(site,siteOut);
+//					}
+//					siteOut.put(testSet, files);
+//				}
+//			}
+		}
+		
+//		return out;
+	}
+	
+	private static Map<String,List<NemaData>> partitionBySite(List<NemaData> list, String defaultSite){
+		Map<String,List<NemaData>> out = new HashMap<String,List<NemaData>>();
+		for (Iterator<NemaData> iterator = list.iterator(); iterator.hasNext();) {
+			NemaData nemaData = iterator.next();
+			String site = nemaData.getStringMetadata(NemaDataConstants.PROP_FILE_SITE);
+			if (site == null){
+				site = defaultSite;
+			}
+			List<NemaData> siteList = out.get(site);
+			if (siteList == null){
+				siteList = new ArrayList<NemaData>();
+				out.put(site, siteList);
+			}
+			siteList.add(nemaData);
+		}
+		
 		return out;
 	}
 	
@@ -282,6 +398,75 @@ public class FileConversionUtil {
 			out.put(testSet, list);
 		}
 		
+		return out;
+	}
+	
+	/**
+	 * Based on a set of inputs that will be used to execute a process, a chosen
+	 * output file format, an output directory and a file name extension to use,
+	 * this method constructs output file or directory names to use to execute 
+	 * the process. The paths a divided into maps according to the site that
+	 * the execution will be performed at.
+	 * 
+	 * The data-structure returned is the same as that used by the 
+	 * <code>readProcessOutput</code> method and hence after being used to 
+	 * execute the process, this structure maybe used to read the data files
+	 * produced back in.
+	 * 
+	 * @param executionData The inputs that will be sent to the process (e.g.
+	 * audio files to process, IDs of the test sets etc.).
+	 * @param outputFileTypeInstance The file type to use to read the files or 
+	 * directories.
+	 * @param outputFileExt The extension to append to filenames created.
+	 * @param outputDirectory The directory to create the output files in.
+	 * @return Map of site name to a Map of NemaTrackList to a list of File
+	 * Objects representing the files to be created.
+	 */
+	public static Map<String,Map<NemaTrackList,List<File>>> createOMENOutputFileNames(
+			Map<NemaTrackList,List<NemaData>> executionData, 
+			Class<? extends NemaFileType> inputType,
+			NemaFileType outputFileTypeInstance,
+			String outputFileExt,
+			File outputDirectory
+			) {
+		
+		if(!SingleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) || 
+				!SingleTrackEvalFileType.class.isAssignableFrom(inputType)){
+			throw new IllegalArgumentException("Multiple track file types are not supported for OMEN execution");
+		}
+		
+		Map<String,Map<NemaTrackList,List<File>>> out = new HashMap<String,Map<NemaTrackList,List<File>>>(5);
+		
+		for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator.hasNext();) {
+			NemaTrackList testSet = iterator.next();
+			Map<NemaTrackList,List<File>> aMap;
+			List<File> fileList;
+			
+			//files
+			List<NemaData> data = executionData.get(testSet);
+			
+			//create directory of metadata or new raw audio files
+			File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
+			//TODO: this directory will need to be created...
+			
+			for (Iterator<NemaData> nemaDataIt = data.iterator(); nemaDataIt.hasNext();) {
+				NemaData anItem = nemaDataIt.next();
+				File fileLoc = new File(anItem.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
+				String name = fileLoc.getName();
+				File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+				String site = anItem.getStringMetadata(NemaDataConstants.PROP_FILE_SITE);
+				aMap = out.get(site);
+				if(aMap == null){
+					aMap = new HashMap<NemaTrackList, List<File>>();
+					out.put(site, aMap);
+				}
+				fileList = aMap.get(testSet);
+				if (fileList == null){
+					fileList = new ArrayList<File>();
+				}
+				fileList.add(newPath);
+			}
+		}
 		return out;
 	}
 
@@ -444,10 +629,10 @@ public class FileConversionUtil {
 		}
 	}
 	
-
 	/**
 	 * Retrieves a A Map of NemaTrackList to a List of File Objects representing
-	 * the resources.
+	 * the resources referred to in the lists of NemaData Objects in the input 
+	 * data-structure.
 	 * 
 	 * Note: most, perhaps all, tasks which use file formats encoding data about
 	 * a single track take a file at a time as input (i.e. they don't use a list 
@@ -485,6 +670,65 @@ public class FileConversionUtil {
 				paths.add(new File(iterator2.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION)));
 			}
 			out.put(testSet,paths);
+		}
+	
+		return out;
+	}
+
+	/**
+	 * Retrieves a Map of site name to a Map of NemaTrackList to a List of File 
+	 * Objects representing the resources referred to in the lists of NemaData 
+	 * Objects in the input data-structure.
+	 * 
+	 * Note: most, perhaps all, tasks which use file formats encoding data about
+	 * a single track take a file at a time as input (i.e. they don't use a list 
+	 * file). 
+	 * 
+	 * @param testData A Map of NemaTrackList to a List of NemaData Objects 
+	 * encoding the data to write to each file or directory.
+	 * @param task The task that the data relates (only required for 
+	 * classification file types).
+	 * @param outputDirectory The directory to write the data files to.
+	 * @return a Map of site name to a Map of NemaTrackList to a List of File 
+	 * Objects representing the resources.
+	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
+	 * NemaFileType is received.
+	 * @throws InstantiationException Thrown if the file writer can't be 
+	 * instantiated (for example if there is no zero-arg constructor).
+	 * @throws IllegalAccessException Thrown if we do not have access to the 
+	 * definition of the specified file type class.
+	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
+	 * found or created.
+	 */
+	public static Map<String,Map<NemaTrackList,List<File>>> getOmenResourceFilesList(
+			Map<NemaTrackList,List<NemaData>> testData, 
+			NemaTask task, 
+			File outputDirectory
+			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
+		
+		Map<String,Map<NemaTrackList,List<File>>> out = new HashMap<String,Map<NemaTrackList,List<File>>>();
+		
+		for (Iterator<NemaTrackList> iterator = testData.keySet().iterator(); iterator.hasNext();) {
+			NemaTrackList testSet = iterator.next();
+			List<NemaData> data = testData.get(testSet);
+			
+			for (Iterator<NemaData> iterator2 = data.iterator(); iterator2
+					.hasNext();) {
+				NemaData anItem = iterator2.next();
+				String site = anItem.getStringMetadata(NemaDataConstants.PROP_FILE_SITE);
+				Map<NemaTrackList,List<File>> siteMap = out.get(site);
+				if(siteMap == null){
+					siteMap = new HashMap<NemaTrackList, List<File>>();
+					out.put(site, siteMap);
+				}
+				
+				List<File> paths = siteMap.get(testSet);
+				if (paths == null){
+					paths = new ArrayList<File>();
+					siteMap.put(testSet, paths);
+				}
+				paths.add(new File(anItem.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION)));
+			}
 		}
 	
 		return out;
