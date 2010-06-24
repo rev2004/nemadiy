@@ -2,6 +2,8 @@ package org.imirsel.nema.webapp.controller;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.ModelAndViewAssert.*;
+
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -89,7 +91,7 @@ public class JobControllerTest {
 	}
 	
 	@Test
-	public void testGetUserJobs() {
+	public void testGetUserJobs() throws IOException {
 		final UserManager userManager=context.mock(UserManager.class);
 		 context.checking(new Expectations() {{
 			    oneOf(userManager).getCurrentUser(); will(returnValue(user));
