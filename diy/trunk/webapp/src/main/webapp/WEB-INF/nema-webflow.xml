@@ -27,6 +27,14 @@
 		 />
 	<bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
 		p:commandLineFormatter-ref="commandLineFormatter" p:resourceServiceType-ref="resource" />
+	<bean id="jiniService"
+		class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl">
+		<constructor-arg value="nema.lis.uiuc.edu"/>
+	</bean>
+	<bean id="jcrService"
+		class="org.imirsel.nema.webapp.service.impl.JcrServiceImpl">
+		<constructor-arg value="rmi://nema.lis.uiuc.edu:2099/jackrabbit.repository"/>
+	</bean>
 	<bean id="resource"
 		class="org.imirsel.nema.contentrepository.client.ResourceTypeServiceImpl" />
 	<bean id="commandLineFormatter"
