@@ -32,9 +32,9 @@ import org.meandre.core.ComponentExecutionException;
 
 @Component(creator = "Kris West", description = "This component takes a process template and " +
 		"models representing the data to process with it, resolves the data to file system " +
-		"paths at NEMA sites and prepares individual process execution using the process " +
-		"template for each of the sites that will be used.",
-		name = "PrepareProcessExecutions", tags = "profile process execution")
+		"paths at NEMA sites and prepares individual sets of input and output files for " +
+		"each of the sites that will be used.",
+		name = "OmenInputOutputSplitter", tags = "profile process execution")
 public class OmenInputOutputSplitter extends NemaComponent{
 	
 	private static String DEFAULT_SITE = "imirsel";
