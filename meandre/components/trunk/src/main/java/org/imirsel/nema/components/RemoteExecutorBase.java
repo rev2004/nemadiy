@@ -73,15 +73,17 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	private static final String PROPERTY_4="_credentials";
 
 	
-	@ComponentProperty(defaultValue = "rmi://nema-dev.lis.illinois.edu:/..", description = "Content Repository URI", name = "contentRepositoryUri")
-	private static final String PROPERTY_5="contentRepositoryUri";
+	@ComponentProperty(defaultValue = "rmi://nema-dev.lis.illinois.edu:/..", description = "Content Repository URI", name = "_contentRepositoryUri")
+	private static final String PROPERTY_5="_contentRepositoryUri";
 
+	@ComponentProperty(description="lookupHost", name="_lookupHost", defaultValue = "nema.lis.uiuc.edu")
+	private static final String PROPERTY_6 ="_lookupHost";
+	
+	
 	
 	@ComponentInput(description="process template", name="processTemplate")
 	private static final String DATA_IN_1 ="processTemplate";
 	
-	@ComponentInput(description="lookupHost", name="lookupHost")
-	private static final String DATA_IN_2 ="lookupHost";
 	
 	private ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor> processMonitorMap = 
 		new ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor>();
@@ -104,9 +106,12 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		String os= ccp.getProperty(PROPERTY_2);
 		String _credentials = ccp.getProperty(PROPERTY_4);
 		String contentRepositoryUri = ccp.getProperty(PROPERTY_5);
+		String lookupHost = ccp.getProperty(PROPERTY_6);
+		
 		this.componentContextProperties = ccp;
 		this.setGroup(group);
 		this.setOS(os);
+		this.setLookupHost(lookupHost);
 		setCredentials(parseCredentials(_credentials));
 		
 		synchronized(RemoteExecutorBase.class){
@@ -140,8 +145,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 
 	public void execute(ComponentContext context) throws ComponentExecutionException,ComponentContextException{
 		try{
-		lookupHost = (String)context.getDataComponentFromInput(DATA_IN_1);
-		processTemplate = (ProcessTemplate)context.getDataComponentFromInput(DATA_IN_2);
+		processTemplate = (ProcessTemplate)context.getDataComponentFromInput(DATA_IN_1);
 		try {
 			this.processExecutorService = findExecutorService();
 		} catch (RemoteException e) {
