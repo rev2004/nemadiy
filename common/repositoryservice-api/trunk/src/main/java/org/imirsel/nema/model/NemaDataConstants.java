@@ -9,6 +9,8 @@ public class NemaDataConstants {
     public final static String PROP_ID  = "id";
     /** Constant definition for metadata key: file location     */
     public final static String PROP_FILE_LOCATION  = "file location";
+    /** Constant definition for metadata key: file site     */
+    public final static String PROP_FILE_SITE  = "file site";
     
     /** Constant definition for metadata key: Raw audio file data. */
     public static final String FILE_DATA = "Raw file byte data";
