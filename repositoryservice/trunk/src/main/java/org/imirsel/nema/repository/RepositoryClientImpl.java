@@ -743,6 +743,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             tmp = trackMap.get(trackID);
             if(tmp != null){
             	tmp.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, map.get("path"));
+            	tmp.setMetadata(NemaDataConstants.PROP_FILE_SITE, map.get("site_name"));
                 done++;
             }
         }
@@ -754,40 +755,6 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public Map<NemaTrackList,List<NemaData>> resolveTracksToFiles(Map<NemaTrackList,List<NemaData>> trackDataMap, Set<NemaMetadataEntry> constraint) throws SQLException, IllegalArgumentException{
     	logger.info("Resolving files for " + trackDataMap.size() + " lists of tracks");
-//        Map<String,NemaData> trackMap = new HashMap<String,NemaData>();
-//        NemaData tmp;
-//        for (Iterator<NemaTrackList> trackListIt = trackDataMap.keySet().iterator(); trackListIt
-//				.hasNext();) {
-//			NemaTrackList trackList = trackListIt.next();
-//			List<NemaData> list = trackDataMap.get(trackList);
-//			logger.info("\ttrack list '" + trackList.getId() + "' has " + list.size() + " tracks");
-//			String trackStr = "";
-//			for (Iterator<NemaData> nemaDataIt = list.iterator(); nemaDataIt.hasNext();) {
-//				tmp = nemaDataIt.next();
-//				trackStr += "\t\t" + tmp.getId() + "\n";
-//	        	trackMap.put(tmp.getId(),tmp);
-//			}
-//			logger.info(trackStr);
-//		}
-//        
-//        int setSize = trackMap.size();
-//        logger.info("total num tracks in set: " + setSize);
-//        List<Map<String, String>> data = getFileData(constraint);
-//        logger.info("Query returned data on " + data.size() + " files, filtering");
-//        Map<String, String> map;
-//        String trackID;
-//        int done = 0;
-//        for (Iterator<Map<String, String>> fileDataIt = data.iterator(); fileDataIt.hasNext() && done < setSize;){
-//            map = fileDataIt.next();
-//            trackID = map.get("track_id");
-//            tmp = trackMap.get(trackID);
-//            if(tmp != null){
-//            	tmp.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, map.get("path"));
-//                done++;
-//            }
-//        }
-//
-//        logger.info("mapped " + done + " / " + setSize + " files to tracks");
     	int resolved = 0;
     	int failed = 0;
     	for (Iterator<NemaTrackList> trackListIt = trackDataMap.keySet().iterator(); trackListIt.hasNext();) {
@@ -808,6 +775,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 					failed++;
 				}else{
 					data.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, file.getPath());
+					data.setMetadata(NemaDataConstants.PROP_FILE_SITE, file.getSite());
 					resolved++;
 				}
 				
