@@ -49,16 +49,12 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 	@Override
 	public void initializeNema(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void disposeNema(
 			ComponentContextProperties componentContextProperties)
 			throws ComponentContextException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -176,7 +172,6 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				List<ProcessArtifact> inputs = new ArrayList<ProcessArtifact>();
 				inputs.add(paInputs);
 				
-				//TODO actually set the process artifacts here...
 				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getAbsolutePath(),"File");
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
 				outputs.add(paOutputs);
@@ -201,7 +196,6 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				try {
 					this.waitForProcess(nemaProcess);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				getLogger().info("Done Waiting..." +i +"\n");
@@ -210,7 +204,6 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				//We may not need to do this as we already know the paths to outputTypes on shared storage
 				List<ProcessArtifact> list = this.getResult(nemaProcess);
 				
-				//TODO: output the process artifacts
 				cc.pushDataComponentToOutput(DATA_OUT_PROCESS_ARTIFACT, list);
 				
 				// cleanup the process
