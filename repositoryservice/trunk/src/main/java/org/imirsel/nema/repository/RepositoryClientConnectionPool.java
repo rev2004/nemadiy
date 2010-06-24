@@ -20,7 +20,7 @@ import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
  */
 public class RepositoryClientConnectionPool {
     private static final int DEFAULT_POOL_SIZE = 2;
-    private static final String LOG_CLASS_NAME = RepositoryClientConnectionPool.class.getName();
+    private static Logger logger = Logger.getLogger(RepositoryClientConnectionPool.class.getName());
     private int poolSize = DEFAULT_POOL_SIZE;
     private LinkedBlockingQueue<RepositoryClientInterface> pool;
     
@@ -38,7 +38,7 @@ public class RepositoryClientConnectionPool {
         try{
             initPool();
         }catch(SQLException e){
-            Logger.getLogger(LOG_CLASS_NAME).log(Level.SEVERE, "Failed to initialise RepositoryClientConnectionPool!",e);
+        	logger.log(Level.SEVERE, "Failed to initialise RepositoryClientConnectionPool!",e);
         }
     }
     
@@ -82,6 +82,7 @@ public class RepositoryClientConnectionPool {
     private void initPool() throws SQLException{
         pool = new LinkedBlockingQueue<RepositoryClientInterface>();
         for (int i = 0; i < poolSize; i++) {
+        	logger.info("Initialializing:  client interface pool: " + i);
             pool.add(new RepositoryClientImpl());
         }
     }
@@ -95,7 +96,7 @@ public class RepositoryClientConnectionPool {
         try {
             util = pool.poll(30, TimeUnit.SECONDS);
         } catch (InterruptedException ex) {
-            Logger.getLogger(LOG_CLASS_NAME).log(Level.WARNING, null, ex);
+        	logger.log(Level.WARNING, null, ex);
         }
         return util;
     }
