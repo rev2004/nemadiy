@@ -146,9 +146,9 @@ public class MultiF0EstEvaluator extends EvaluatorImpl {
 			data = theData.get(x);
 			gtData = trackIDToGT.get(data.getId());
 			rawData = data
-					.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
+					.get2dDoubleArrayMetadata(NemaDataConstants.MULTI_F0_EST_DATA);
 			rawGtData = gtData
-					.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
+					.get2dDoubleArrayMetadata(NemaDataConstants.MULTI_F0_EST_DATA);
 
 			/* Initialize frame-by-frame counters for the evaluation measures */
 			int correct = 0;
