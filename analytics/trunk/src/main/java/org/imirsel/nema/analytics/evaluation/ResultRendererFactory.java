@@ -9,6 +9,7 @@ import java.util.Map;
 import org.imirsel.nema.analytics.evaluation.chord.ChordEvaluator;
 import org.imirsel.nema.analytics.evaluation.chord.ChordResultRenderer;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
+import org.imirsel.nema.analytics.evaluation.classification.ClassificationResultRenderer;
 import org.imirsel.nema.analytics.evaluation.key.KeyEvaluator;
 import org.imirsel.nema.analytics.evaluation.key.KeyResultRenderer;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyEvaluator;
@@ -39,11 +40,11 @@ public class ResultRendererFactory {
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, StructureResultRenderer.class);
 		
 			//classification tasks
-//		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, ClassificationResultRenderer.class);
-//		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ARTIST, ClassificationResultRenderer.class);
-//		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, ClassificationResultRenderer.class);
-//		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, ClassificationResultRenderer.class);
-//		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, ClassificationResultRenderer.class);
+		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, ClassificationResultRenderer.class);
+		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ARTIST, ClassificationResultRenderer.class);
+		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, ClassificationResultRenderer.class);
+		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, ClassificationResultRenderer.class);
+		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, ClassificationResultRenderer.class);
 	}
 	
 	public static ResultRenderer getRenderer(String metadataKey,

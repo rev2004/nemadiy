@@ -406,8 +406,8 @@ public class WriteCsvResultFiles {
     }
 
     /**
-     * Prepares a Table Object representing the specified evaluation metadata, where the systems are the columns
-     * of the table and the rows are the different classes of data in the evaluation.
+     * Prepares a Table Object representing the specified evaluation metadata, 
+     * where the systems are the columns of the table and the rows are the different classes of data in the evaluation.
      * 
      * @param jobIDToAggregateEval Map linking jobID to its overall evaluation data Object.
      * @param jobIDToName Map linking jobID to the Job name to use in the Table for each set of results.

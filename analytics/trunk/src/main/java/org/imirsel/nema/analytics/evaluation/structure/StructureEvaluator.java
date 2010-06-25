@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
 import org.imirsel.nema.analytics.util.io.CopyFileFromClassPathToDisk;
@@ -87,7 +88,7 @@ public class StructureEvaluator extends EvaluatorImpl {
 
 	@Override
 	public NemaData evaluateResultFold(String jobID, NemaTrackList testSet,
-			List<NemaData> dataList) {
+			List<NemaData> dataList) throws IllegalArgumentException{
 
 
 		int numExamples = checkFoldResultsAreComplete(jobID, testSet, dataList);
@@ -193,21 +194,9 @@ public class StructureEvaluator extends EvaluatorImpl {
 				structFileWriter.writeFile(gtFile, gtData);
 				matlabIntegrator.runCommand(null);
 				structResultsStrArray = DeliminatedTextFileUtilities.loadDelimTextData(resultFile, ",", -1);
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				getLogger().warning("Failed to write structure files and evaluate them using MATLAB");
-				getLogger().throwing("org.imirsel.nema.analytics.evaluation.structure.StructureEvaluator", "evaluateResultFold", e);
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				getLogger().warning("Failed to write structure files and evaluate them using MATLAB");
-				getLogger().throwing("org.imirsel.nema.analytics.evaluation.structure.StructureEvaluator", "evaluateResultFold", e);
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				getLogger().warning("Failed to write structure files and evaluate them using MATLAB");
-				getLogger().throwing("org.imirsel.nema.analytics.evaluation.structure.StructureEvaluator", "evaluateResultFold", e);
-				e.printStackTrace();
+			} catch (Exception e) {
+				getLogger().log(Level.SEVERE, "Failed to write structure files and evaluate them using MATLAB",e);
+				throw new IllegalArgumentException(e);
 			}
 			
 			overSegScore = Double.valueOf(structResultsStrArray[0][0]);
