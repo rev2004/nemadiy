@@ -186,7 +186,8 @@ public class NemaDataConstants {
     
     //Onset Detection Evaluator Constants
     public static final String ONSET_DETECTION_DATA = "List of onset times";
-    public static final String ONSET_DETECTION_CLASS = "Instrumentation class";
+    public static final String ONSET_DETECTION_CLASS = "Instrumentation class for single file";
+    public static final String ONSET_DETECTION_CLASSES = "Instrumentation class list for overall evaluation";
     public static final String ONSET_DETECTION_ANNOTATORS = "Annotators";
     public static final String ONSET_DETECTION_AVG_PRECISION ="Average Precision";
     public static final String ONSET_DETECTION_AVG_RECALL = "Average Recall";
