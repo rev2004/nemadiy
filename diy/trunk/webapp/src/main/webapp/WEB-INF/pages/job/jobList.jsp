@@ -46,31 +46,35 @@ defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10">
 <script type="text/javascript">
 dojo.require("dojo.data.ItemFileReadStore");
 dojo.require("dojox.grid.DataGrid");
-function addGrid(){
-dojo.xhrGet( {
+dojo.require("dojox.timing._base");
+function showJobList(){
+
+var layout = [
+			      
+                  { field: "name", name: "Name", width: "25em"},
+                  { field: "scheduleTimestamp", name: "Schedule Time", width: "10em" },
+                  { field: "submitTimestamp", name: "Submit Time", width: "12em" },
+                  { field: "endTimestamp", name: "End Time", width: "10em" },
+                  { field: "statusCode", name: "Status", width: "6em" }
+          			
+					];
+function updateJobList(){	
+	dojo.xhrGet( {
 			url : "<c:url value='/get/JobManager.getUserJobs.json'/>",
 			handleAs : "json",
 			load : function(data) {
 					var storeData={
 						identifier:'id',
 						label:'name',
-						//items:data.jobList
-						items:[{id:"3",name:'name1',flow:{name1:"name",id1:"32"},scheduleTimestamp:"12-3",submitTimestamp:"4-5",endTimestamp:'12 -3 3:20',statusCode:'5'},
-						      {id:"4",name:'name2',flow:{name1:"name",id1:"32"},scheduleTimestamp:"12-3",submitTimestamp:"4-2",endTimestamp:'3:20',statusCode:'5'}]
+						items:data.jobList
+						//items:[{id:3,name:'name1',scheduleTimestamp:"12-3",submitTimestamp:"4-5",endTimestamp:'12 -3 3:20',statusCode:'5'},
+						 //     {id:4,name:'name2',another:3,scheduleTimestamp:"12-3",submitTimestamp:"4-2",endTimestamp:'3:20',statusCode:'5'}]
 					};
-					var layout = [
-				      
-                        { field: "name", name: "Name", width: "25em" },
-                        { field: "scheduleTimestamp", name: "Schedule", width: "10em" },
-                        //{ field: "submitTimestamp", name: "Submit", width: "12em" },
-                        //{ field: "endTimestamp", name: "End Time", width: "10em" },
-                        { field: "statusCode", name: "Status", width: "6em" }
-                			
-						];
 					
 					var jsonStore = new dojo.data.ItemFileReadStore({ data:storeData });
 					var grid = new dojox.grid.DataGrid({
-     						   	id: 'grid',
+								autoheight:20,
+     						   	'id': 'grid',
         						query: { id: '*' },
         						store: jsonStore,
         						structure: layout
@@ -83,8 +87,18 @@ dojo.xhrGet( {
 							grid.startup();
 					}
 			});
-};
-dojo.addOnLoad(addGrid);
+	};
+	
+	var	t = new dojox.timing.Timer(10000);
+		
+	t.onTick = updateJobList;
+	t.start();
+	
+	updateJobList();
+	
+
+}
+dojo.addOnLoad(showJobList);
 </script>
 
 
