@@ -29,15 +29,17 @@ public class ProtovisOnsetPlotItem extends PageItem{
 	private double startTime;
     private double endTime;
     private Map<String,double[]> series; //indices are 0=x, 1=y
+    private List<String> seriesNames; //indices are 0=x, 1=y
     
     public ProtovisOnsetPlotItem(String name, String caption, 
     		double startTime, double endTime, 
-    		Map<String,double[]> series){
+    		Map<String,double[]> series, List<String> seriesNames){
     	
         super(name,caption);
         setStartTime(startTime);
         setEndTime(endTime);
         setSeries(series);
+        setSeriesNames(seriesNames);
     }
     
 
@@ -71,7 +73,7 @@ public class ProtovisOnsetPlotItem extends PageItem{
 		       	"\t\t<div style=\"width: 860px; height: " + height + "px; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;\">\n";
 		
 		String functionName = getName() + "_onset_plot";
-		String[] seriesNames = series.keySet().toArray(new String[series.size()]);
+		String[] seriesNames = this.seriesNames.toArray(new String[series.size()]);
 
         
 		out +=  "\t\t<script type=\"text/javascript+protovis\">\n" +
@@ -304,6 +306,16 @@ public class ProtovisOnsetPlotItem extends PageItem{
 
 	public Map<String,double[]> getSeries() {
 		return series;
+	}
+
+
+	public void setSeriesNames(List<String> seriesNames) {
+		this.seriesNames = seriesNames;
+	}
+
+
+	public List<String> getSeriesNames() {
+		return seriesNames;
 	}
 
 }
