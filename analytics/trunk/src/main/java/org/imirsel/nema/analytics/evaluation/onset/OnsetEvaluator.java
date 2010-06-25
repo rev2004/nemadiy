@@ -363,7 +363,7 @@ public class OnsetEvaluator extends EvaluatorImpl {
 		}
 
 		NemaData outObj = new NemaData(jobID);
-		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_CLASS, classNames);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_CLASSES, classList);
 		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE, totalFMeasure);
 		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_RECALL, totalRecall);
 		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION, totalPrecision);
@@ -385,6 +385,9 @@ public class OnsetEvaluator extends EvaluatorImpl {
 		this.overallEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE);
 		this.overallEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION);
 		this.overallEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_RECALL);
+		this.overallEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE_BY_CLASS);
+		this.overallEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION_BY_CLASS);
+		this.overallEvalMetrics.add(NemaDataConstants.ONSET_DETECTION_AVG_RECALL_BY_CLASS);
 
 		//same as overall metrics - single fold experiment format
 		this.foldEvalMetrics = this.overallEvalMetrics;
