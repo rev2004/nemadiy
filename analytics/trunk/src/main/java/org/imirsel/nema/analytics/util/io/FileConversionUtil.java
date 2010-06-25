@@ -427,7 +427,7 @@ public class FileConversionUtil {
 			Class<? extends NemaFileType> inputType,
 			NemaFileType outputFileTypeInstance,
 			String outputFileExt,
-			File outputDirectory
+			String outputDirectory
 			) {
 		
 		if(!SingleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) || 
@@ -446,14 +446,14 @@ public class FileConversionUtil {
 			List<NemaData> data = executionData.get(testSet);
 			
 			//create directory of metadata or new raw audio files
-			File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
+			File foldDir = new File(outputDirectory + File.separator +"set-" + testSet.getId());
 			//TODO: this directory will need to be created...
 			
 			for (Iterator<NemaData> nemaDataIt = data.iterator(); nemaDataIt.hasNext();) {
 				NemaData anItem = nemaDataIt.next();
 				File fileLoc = new File(anItem.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
 				String name = fileLoc.getName();
-				File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+				File newPath = new File(foldDir.getPath() + File.separator + name + outputFileExt + outputFileTypeInstance.getFilenameExtension());
 				String site = anItem.getStringMetadata(NemaDataConstants.PROP_FILE_SITE);
 				aMap = out.get(site);
 				if(aMap == null){
