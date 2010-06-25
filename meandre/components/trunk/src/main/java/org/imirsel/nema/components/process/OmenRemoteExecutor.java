@@ -81,6 +81,10 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 			return;
 		}
 		
+		if(outputPaths == null){
+			getLogger().warning("No output paths found for site '" + group + "'");
+		}
+		
 		getLogger().info("Getting command formatting string...");
 		//get command formatting string and parse
 		CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
@@ -145,6 +149,25 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 			getLogger().info("Performing executions for test set " + testSet.getFoldNumber() + ", id: " + testSet.getId());
 			List<File> inputs1ForFold = inputPaths.get(testSet);
 			List<File> outputs1ForFold = outputPaths.get(testSet);
+			if(outputs1ForFold == null){
+				String msg = "\n\nNo output paths were found for test set " + testSet.getId() + " however inputs were available. " +
+				"\nSets that had inputs: ";
+				for(Iterator<NemaTrackList> it = inputPaths.keySet().iterator(); it.hasNext();){
+					msg += "" + it.next().getId();
+					if (it.hasNext()){
+						msg += ", ";
+					}
+				}
+				msg += "\nSets that had outputs: ";
+				for(Iterator<NemaTrackList> it = outputPaths.keySet().iterator(); it.hasNext();){
+					msg += "" + it.next().getId();
+					if (it.hasNext()){
+						msg += ", ";
+					}
+				}
+				msg += "\n";
+				getLogger().severe(msg);
+			}
 			
 			//check inputs and outputTypes are matched if we are doing a 1 in 1 out process
 			if (SingleTrackEvalFileType.class.isAssignableFrom(inputType1.getClass()) &&
