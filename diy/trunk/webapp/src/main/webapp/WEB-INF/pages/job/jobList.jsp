@@ -53,12 +53,12 @@ function showJobList(){
               
 				  { field: "id", name: "ID", width: "4em"},    
                   { field: "name", name: "Name", width: "15em"},
-                  { field: "scheduleTimestamp", name: "Schedule Time", width: "10em" },
-                  { field: "submitTimestamp", name: "Submit Time", width: "10em" },
-                  { field: "endTimestamp", name: "End Time", width: "10em" },
-                  { field: "host", name: "Host", width: "9em" },
-                  { field: "port", name: "port", width: "4em" },
-                  { field: "statusCode", name: "Status", width: "5em" }
+                  { field: "scheduleTimestamp", name: "Schedule Time", width: "8em" },
+                  { field: "submitTimestamp", name: "Submit Time", width: "8em" },
+                  { field: "endTimestamp", name: "End Time", width: "8em" },
+                  { field: "host", name: "Host", width: "7em" },
+                  { field: "port", name: "port", width: "3em" },
+                  { field: "status", name: "Status", width: "5em" }
           			
 					];
 	var storeData={

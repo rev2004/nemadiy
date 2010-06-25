@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-       default-lazy-init="true">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">
 
     <bean name="jsonView" class="org.springframework.web.servlet.view.json.JsonView">
-        <property name="jsonViewFilter"><ref bean="jsonViewFilter"/></property>
+       
     </bean>
     
+
     <bean name="jsonViewFilter" 
           class="org.springframework.web.servlet.view.json.filter.SimplePropertyFilter">
         <property name="excludeBeforePropNames">
               <list>
-                    <!--ComandBean Values-->
-                    <value>name</value>
-                    <value>address.name</value>
+					
                     <!--ModelMap Values-->
-                    <value>(Job).flow</value>
-                    <value>(countries).short</value>
+                    <value>(org.imirsel.nema.model.Job).flow</value>
+                    <value>(job).ownerId</value>
+                    <value>(job).flow</value>
+                     <value>(job).jobStatus</value>
+                     <value>(job).results</value>
+                    
               </list>
         </property>
-        </bean>
-    
+       
+    </bean>
+</beans>
+
   
-   </beans>
+ 
