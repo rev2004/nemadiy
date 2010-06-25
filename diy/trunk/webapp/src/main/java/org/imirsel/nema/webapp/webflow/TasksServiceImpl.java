@@ -39,6 +39,8 @@ import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.model.JobForm;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
+import org.imirsel.nema.webapp.service.JcrService;
+import org.imirsel.nema.webapp.service.JiniService;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,6 +61,10 @@ public class TasksServiceImpl {
 	private FlowService flowService;
 	private UserManager userManager;
 	private ArtifactService artifactService;
+	private JcrService jcrService;
+	private JiniService jiniService;
+	
+
 	private String uploadDirectory;
 	private String physicalDir;
 	private String webDir;
@@ -72,6 +78,9 @@ public class TasksServiceImpl {
 	final static String GROUP = "_group";
 	 final static String MIREX_SUBMISSION_CODE="_submissionCode";
 	 final static String MIREX_SUBMISSION_NAME="_submissionName";
+	 final static String LOOKUP_HOST="_lookupHost";
+	 final static String CONTENT_REPOSITORY_URI="_contentRepositoryUri";
+	 final static String NEMA_USER="_user";
 
 	final static Set<String> HIDDEN_PROPERTIES = new HashSet<String>();
 	{
@@ -512,6 +521,11 @@ public class TasksServiceImpl {
 		String credentialString = credential.getUserID() + ":"
 				+ new String(credential.getPassword());
 		replacePropertyValue(componentsToPropertyLists, CREDENTIALS, credentialString);
+		replacePropertyValue(componentsToPropertyLists,NEMA_USER, userManager.getCurrentUser().getUsername());
+		replacePropertyValue(componentsToPropertyLists,LOOKUP_HOST,jiniService.getLookupServiceHost());
+		replacePropertyValue(componentsToPropertyLists,CONTENT_REPOSITORY_URI,jcrService.getContentRepositoryUri());
+		
+		
 		
 		return componentsToPropertyLists;
 	}
@@ -679,5 +693,12 @@ public class TasksServiceImpl {
 
 	public void setMirexSubmissionDao(MirexSubmissionDao mirexSubmissionDao) {
 		this.mirexSubmissionDao = mirexSubmissionDao;
+	}
+	public void setJcrService(JcrService jcrService) {
+		this.jcrService = jcrService;
+	}
+
+	public void setJiniService(JiniService jiniService) {
+		this.jiniService = jiniService;
 	}
 }

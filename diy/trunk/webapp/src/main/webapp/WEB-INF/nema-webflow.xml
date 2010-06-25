@@ -24,6 +24,7 @@
 		p:flowService-ref="flowService" p:userManager-ref="userManager"
 		p:uploadDirectory="/resources" p:artifactService-ref="contentRepositoryClient"
 		p:mirexSubmissionDao-ref="mirexSubmissionDao"
+		p:jiniService-ref="jiniService" p:jcrService-ref="jcrService"
 		 />
 	<bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
 		p:commandLineFormatter-ref="commandLineFormatter" p:resourceServiceType-ref="resource" />
@@ -41,5 +42,9 @@
 		class="org.imirsel.nema.contentrepository.client.CommandLineFormatter" />
 	<bean id="executableValidator"
 		class="org.imirsel.nema.webapp.webflow.validator.UploadedExecutableBundleValidator" />
+	<bean id="jcrService"
+		 class="org.imirsel.nema.webapp.service.impl.JcrServiceImpl"/>
+	<bean id="jiniService" 
+		  class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl"/>
 
 </beans>
