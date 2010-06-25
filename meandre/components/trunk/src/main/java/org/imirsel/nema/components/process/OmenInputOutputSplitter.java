@@ -22,6 +22,7 @@ import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.ProcessTemplate;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
+import org.imirsel.nema.service.executor.ExecutorConstants;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentInput;
@@ -191,7 +192,7 @@ public class OmenInputOutputSplitter extends NemaComponent{
 			((ClassificationTextFile)outputTypeInstance).setMetadataType(task.getSubjectTrackMetadataName());
 		}
 		
-		Map<String,Map<NemaTrackList,List<File>>> siteToOutputFiles = FileConversionUtil.createOMENOutputFileNames(dataToProcess, inputType1, outputTypeInstance, ".out", new File(getAbsoluteResultLocationForJob()));
+		Map<String,Map<NemaTrackList,List<File>>> siteToOutputFiles = FileConversionUtil.createOMENOutputFileNames(dataToProcess, inputType1, outputTypeInstance, ".out", ExecutorConstants.REMOTE_PATH_TOKEN);
 		getLogger().info("got process output files spanning " + siteToOutputFiles.size() + " sites");
 		
 		//merge into overall output files
@@ -205,7 +206,14 @@ public class OmenInputOutputSplitter extends NemaComponent{
 			Map<NemaTrackList,List<File>> siteData = siteIt.next();
 			for (Iterator<NemaTrackList> setIt = siteData.keySet().iterator(); setIt.hasNext();) {
 				NemaTrackList set = setIt.next();
-				overallOutputFiles.get(set).addAll(siteData.get(set));
+				List<File> setRemoteFiles = siteData.get(set);
+				List<File> setLocalFiles = overallOutputFiles.get(set);
+				for (Iterator<File> it = setRemoteFiles.iterator();it.hasNext();)
+				{
+					File file = it.next();
+					File localFile = new File(file.getPath().replaceFirst(ExecutorConstants.REMOTE_PATH_TOKEN, getAbsoluteResultLocationForJob()));
+					setLocalFiles.add(localFile);
+				}
 			}
 		}
 		
