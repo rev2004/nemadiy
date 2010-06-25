@@ -189,18 +189,18 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				}
 				this.getLogger().info("Running for the output file: " + outputFile);
 				formatModel.clearPreparedPaths();
-				formatModel.setPreparedPathForInput(1, inputFile.getAbsolutePath());
-				formatModel.setPreparedPathForOutput(1, outputFile.getAbsolutePath());
+				formatModel.setPreparedPathForInput(1, inputFile.getPath());
+				formatModel.setPreparedPathForOutput(1, outputFile.getPath());
 				
 				//set scratch dir path
 				formatModel.setPreparedPathForScratchDir(scratch);
 				
 
-				ProcessArtifact paInputs = new ProcessArtifact(inputFile.getAbsolutePath(),"File");
+				ProcessArtifact paInputs = new ProcessArtifact(inputFile.getPath(),"File");
 				List<ProcessArtifact> inputs = new ArrayList<ProcessArtifact>();
 				inputs.add(paInputs);
 				
-				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getAbsolutePath(),"File");
+				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(),"File");
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
 				outputs.add(paOutputs);
 				
