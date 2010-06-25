@@ -56,8 +56,6 @@ public class UploadedExecutableBundle extends ExecutableBundle {
 	 */
 	private List<Path> jarPaths;
 
-	/** Nobody knows what this is for */
-	private String group;
 
 	public MultipartFile getUploadedFile() {
 		return uploadedFile;
@@ -143,24 +141,6 @@ public class UploadedExecutableBundle extends ExecutableBundle {
 				ExecutableType.MATLAB, ExecutableType.BIN, ExecutableType.PERL,ExecutableType.PYTHON,ExecutableType.WINE,ExecutableType.SHELL,ExecutableType.RUBY };
 	}
 
-	/**
-	 * It's a mystery.
-	 * 
-	 * @return String of characters.
-	 */
-	public String getGroup() {
-		return group;
-	}
-
-	/**
-	 * Don't know.
-	 * 
-	 * @param group
-	 *            Some characters.
-	 */
-	public void setGroup(String group) {
-		this.group = group;
-	}
 
 	/**
 	 * Validate the uploaded file contains the specified executable.

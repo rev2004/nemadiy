@@ -11,7 +11,7 @@
 <form:form enctype="multipart/form-data">
   
   <c:forEach items="${formattedProperties}" var="property">
-  	<c:if test="${not fn:startsWith(property.name,'_') }">
+  	<c:if test="${true}"> <%--c:if test="${not fn:startsWith(property.name,'_') }"> --%>
     <fieldset id="pt1">
     <label for="jobname" class="label">  ${render:displayName(property.name)}: </label>
     <render:property roles="${userRoles}"

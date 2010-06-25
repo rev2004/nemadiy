@@ -75,7 +75,7 @@ public class TasksServiceImpl {
 	final static String CREDENTIALS = "_credentials";
 	final static String EXECUTABLE_URL = "profileName";
 	final static String OS = "_os";
-	final static String GROUP = "_group";
+	//final static String GROUP = "_group";
 	 final static String MIREX_SUBMISSION_CODE="_submissionCode";
 	 final static String MIREX_SUBMISSION_NAME="_submissionName";
 	 final static String LOOKUP_HOST="_lookupHost";
@@ -85,10 +85,9 @@ public class TasksServiceImpl {
 	final static Set<String> HIDDEN_PROPERTIES = new HashSet<String>();
 	{
 		HIDDEN_PROPERTIES.add(REMOTE_COMPONENT);
-		HIDDEN_PROPERTIES.add(CREDENTIALS);
 		HIDDEN_PROPERTIES.add(EXECUTABLE_URL);
 		HIDDEN_PROPERTIES.add(OS);
-		HIDDEN_PROPERTIES.add(GROUP);
+		//HIDDEN_PROPERTIES.add(GROUP);
 		// HIDDEN_PROPERTIES.add(MIREX_SUBMISSION_CODE);
 	}
 
@@ -124,14 +123,9 @@ public class TasksServiceImpl {
 			Map<Component, ResourcePath> executableMap,
 			MessageContext messageContext)
 			throws ContentRepositoryServiceException {
-
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-		String credentialString = credential.getUserID() + ":"
-				+ new String(credential.getPassword());
-		findProperty(properties, CREDENTIALS).setValue(credentialString);
-		findProperty(properties, REMOTE_COMPONENT).setValue("true");
-		findProperty(properties, OS).setValue(bundle.getPreferredOs());
-		findProperty(properties, GROUP).setValue(bundle.getGroup());
+		Property os=findProperty(properties, OS);
+		if (os!=null) { os.setValue(bundle.getPreferredOs());}
 		deleteExecutableFromRepository(executableMap.get(component), credential);
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
 				uuid.toString(), bundle);
@@ -230,8 +224,11 @@ public class TasksServiceImpl {
 				bundle = new UploadedExecutableBundle(oldBundle);
 				if (bundle == null)
 					bundle = new UploadedExecutableBundle();
-				bundle.setPreferredOs(findProperty(properties, OS).getValue());
-				bundle.setGroup(findProperty(properties, GROUP).getValue());
+				Property os=findProperty(properties, OS);
+				
+				if (os==null) {bundle.setPreferredOs("Unix");}
+				else {bundle.setPreferredOs(os.getValue());
+				}
 			}
 		} catch (ContentRepositoryServiceException e) {
 			logger.error(e, e);
@@ -529,6 +526,8 @@ public class TasksServiceImpl {
 		
 		return componentsToPropertyLists;
 	}
+	
+	
 
 	public void setFlowService(FlowService flowService) {
 		this.flowService = flowService;
