@@ -36,16 +36,12 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 	/** Command line harness usage statement. */
     public static final String USAGE = "args: taskID(int) taskName taskDescription datasetID(int) datasetName datasetDescription subjectMetadata /path/to/GT/file /path/to/output/dir [-h /path/to/hierarchy/file] /path/to/system1/results/dir system1Name ... /path/to/systemN/results/dir systemNName";
     
-    private static final DecimalFormat dec = new DecimalFormat("0.00");
-    
     private File hierarchyFile = null;
     private List<String[]> hierarchies = null;
     private List<String> hierachiesKey = null;
     private List<String> classNames = null;
     
-    private static final String BIG_DIVIDER =    "================================================================================\n";
-    private static final String SMALL_DIVIDER = "--------------------------------------------------------------------------------\n";
-    private static final int COL_WIDTH = 7;
+
     
     /**
 	 * Constructor (no arg - task, dataset, output and working dirs, training
@@ -329,6 +325,9 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 		NemaData aggregateEval = new NemaData(jobId);
 		int[][][] confFolds = new int[numFolds][][];
 		int f = 0;
+		
+        //Store class names
+		aggregateEval.setMetadata(NemaDataConstants.CLASSIFICATION_EXPERIMENT_CLASSNAMES, classNames);
 		
 		if(perFoldEvaluations.size() != numFolds){
 			throw new IllegalArgumentException("Job ID " + jobId + 
@@ -617,261 +616,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 
         return outObj;
     }
-    
-    /**
-     * Writes a textual evaluation report on the results of one system to an UTF-8 text file. Includes 
-     * the confusion matrices, accuracy, discounted accuracy and normalised versions of each for each 
-     * iteration of the experiment and overall.
-     * 
-     * @param aggregateEval An Object representing the combined evaluation of all iterations.
-     * @param testSets A list of the NemaTrackList Objects representing the test sets.
-     * @param foldEvals A map of objects representing the evaluation of each fold/iteration of the 
-     * experiment.
-     * @param classNames An ordered list of the class names used in the experiment.
-     * @param jobID The jobID of the system being evaluated.
-     * @param jobName The name of the job being evaluated.
-     * @param usingAHierarchy Flag indicating whether the evaluation used a hierarchy to discount confusions
-     * (meaning we need to retrieve and report on the extra discounted results).
-     * @param outputFile The File to write the report to.
-     * @throws IOException Thrown if there is a problem writing to the report file.
-     * @throws FileNotFoundException Thrown if the report file cannot be created.
-     */
-    public void writeSystemTextReport(NemaData aggregateEval, List<NemaTrackList> testSets, Map<NemaTrackList,NemaData> foldEvals, List<String> classNames, String jobID, String jobName, boolean usingAHierarchy, File outputFile) throws IOException, FileNotFoundException{
-        
-    	//Write output for each fold
-    	String bufferString = BIG_DIVIDER + "Classification Evaluation Report\n";
-    	bufferString += "Job ID:                  " + jobID + "\n";
-    	bufferString += "Job Name:                " + jobName + "\n";
-    	bufferString += "Number of iterations:    " + foldEvals.size() + "\n";
-    	bufferString += "Task ID:                 " + task.getId() + "\n";
-    	bufferString += "Task Name:               " + task.getName() + "\n";
-    	bufferString += "Task Description:        " + task.getDescription() + "\n";
-    	bufferString += "Metadata predicted id:   " + task.getSubjectTrackMetadataId() + "\n";
-    	bufferString += "Metadata predicted name: " + task.getSubjectTrackMetadataName() + "\n";
-    	bufferString += "Dataset ID:              " + dataset.getId() + "\n";
-    	bufferString += "Dataset Name:            " + dataset.getName() + "\n";
-    	bufferString += "Dataset Description:     " + dataset.getDescription() + "\n\n";
-    	bufferString += SMALL_DIVIDER;
-    	
-	    for(Iterator<NemaTrackList> foldIt = testSets.iterator();foldIt.hasNext();){
-	    	NemaTrackList fold = foldIt.next();
-	    	NemaData foldData = foldEvals.get(fold);
-	    	
-	    	bufferString += "Fold " + fold.getFoldNumber() + " (" + fold.getId() + ")\n";
-		    bufferString += "Accuracy: " + dec.format(foldData.getDoubleMetadata(NemaDataConstants.CLASSIFICATION_ACCURACY) * 100) + "%\n";
-		    bufferString += "Accuracy (normalised for class sizes): " + dec.format(foldData.getDoubleMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY) * 100) + "%\n";
-	    	
-		    if(usingAHierarchy) {
-		        bufferString += "Hierachically Discounted Accuracy: " + dec.format(foldData.getDoubleMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY) * 100) + "%\n";
-		        bufferString += "Hierachically Discounted Accuracy (normalised for class sizes): " + dec.format(foldData.getDoubleMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY) * 100) + "%\n";
-		    }
-		    
-		    bufferString += "Raw Confusion Matrix:\n";
-		    bufferString += writeIntConfusionMatrix(foldData.get2dIntArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW), classNames);
-		    bufferString += "\nConfusion Matrix percentage:\n";
-		    bufferString += writePercentageConfusionMatrix(foldData.get2dDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT), classNames);
-		    bufferString += writeMatrixKey(classNames);
-		    
-		    if (usingAHierarchy)
-		    {
-		        bufferString += "\nHierachically Discounted Confusion Vector:\n";
-		        bufferString += writeDoubleConfusionVector(foldData.getDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW), classNames);
-		        bufferString += "\nHierachically Discounted Confusion Matrix percentage:\n";
-		        bufferString += writePercentageConfusionVector(foldData.getDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT), classNames);
-		    }
-		    if(foldIt.hasNext()){
-		    	bufferString += SMALL_DIVIDER;
-		    }
-	    }
-	    
-	    bufferString += "\n" + BIG_DIVIDER;
-	    bufferString += "Overall Evaluation\n";
-	    bufferString += "Accuracy: " + dec.format(aggregateEval.getDoubleMetadata(NemaDataConstants.CLASSIFICATION_ACCURACY) * 100) + "%\n";
-	    bufferString += "Accuracy (normalised for class sizes): " + dec.format(aggregateEval.getDoubleMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY) * 100) + "%\n";
-    	
-	    if(usingAHierarchy) {
-	        bufferString += "Hierachically Discounted Accuracy: " + dec.format(aggregateEval.getDoubleMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY) * 100) + "%\n";
-	        bufferString += "Hierachically Discounted Accuracy (normalised for class sizes): " + dec.format(aggregateEval.getDoubleMetadata(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY) * 100) + "%\n";
-	    }
-	    
-	    bufferString += "Raw Confusion Matrix:\n";
-	    bufferString += writeIntConfusionMatrix(aggregateEval.get2dIntArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW), classNames);
-	    bufferString += "\nConfusion Matrix percentage:\n";
-	    bufferString += writePercentageConfusionMatrix(aggregateEval.get2dDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT), classNames);
-	    bufferString += writeMatrixKey(this.classNames);
-	        
-	    if (usingAHierarchy)
-	    {
-	        bufferString += "\nHierachically Discounted Confusion Vector:\n";
-	        bufferString += writeDoubleConfusionVector(aggregateEval.getDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_RAW), classNames);
-	        bufferString += "\nHierachically Discounted Confusion Matrix percentage:\n";
-	        bufferString += writePercentageConfusionVector(aggregateEval.getDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT), classNames);
-	    }
-	    
-	    bufferString += BIG_DIVIDER;
-	    
-	    FileUtils.writeStringToFile(outputFile, bufferString, "UTF-8");
-    }
-
-    /**
-     * Writes an integer confusion matrix to a file.
-     * @param matrix The matrix to be written.
-     * @param classNames The class names.
-     * @return
-     */
-    public String writeIntConfusionMatrix(int[][] matrix, List<String> classNames) {
-        String bufferString = "Truth\t\t";
-        for(int x=0; x<classNames.size(); x++) {
-            bufferString += getKey(x) + "\t";
-        }
-        bufferString += "\nClassification\n";
-        for(int x=0; x<classNames.size(); x++) {
-            bufferString += getKey(x) + "\t\t";
-            for(int y=0; y<classNames.size(); y++) {
-                bufferString += fmtInt(matrix[x][y]) + "\t";
-            }
-            bufferString += "\n";
-        }
-        return bufferString;
-    }
-    
-    /**
-     * Writes a double confusion matrix to a file.
-     * @param vector The matrix to be written.
-     * @param classNames The class names.
-     * @return
-     */
-    public String writeDoubleConfusionVector(double[] vector, List<String> classNames) {
-        String bufferString = "Truth\t\t";
-        for(int x=0; x<classNames.size(); x++) {
-            bufferString += getKey(x) + "\t";
-        }
-        
-        for(int x=0; x<classNames.size(); x++) {
-            bufferString += fmtDec(vector[x]) + "\t";
-        }
-        bufferString += "\n";
-        return bufferString;
-    }
-    
-    /**
-     * Writes a double confusion matrix to a file.
-     * @param vector The matrix to be written.
-     * @param classNames The class names.
-     * @return
-     */
-    public String writePercentageConfusionVector(double[] vector, List<String> classNames) {
-        String bufferString = "Truth\t\t";
-        for(int x=0; x<classNames.size(); x++) {
-            bufferString += getKey(x) + "\t";
-        }
-        
-        for(int x=0; x<classNames.size(); x++) {
-            bufferString += fmtPercent(vector[x] * 100.0) + "\t";
-        }
-        bufferString += "\n";
-        return bufferString;
-    }
-    
-    /**
-     * Writes a double confusion matrix to a file.
-     * @param matrix The matrix to be written.
-     * @param classNames The class names.
-     * @return 
-     */
-    public String writePercentageConfusionMatrix(double[][] matrix, List<String> classNames) {
-        String bufferString = "Truth\t\t";
-        for(int x=0; x<classNames.size(); x++) {
-            bufferString += getKey(x) + "\t";
-        }
-        bufferString += "\nClassification\n";
-        for(int x=0; x<classNames.size(); x++) {
-            //bufferString += (String)classNames.get(x) + "\t\t";
-            bufferString += getKey(x) + "\t\t";
-            for(int y=0; y<classNames.size(); y++) {
-                bufferString += fmtPercent(matrix[x][y] * 100.0) + "\t";
-            }
-            bufferString += "\n";
-        }
-        return bufferString;
-    }
-
-
-    /** 
-     * Outputs the confusion matrix key
-     * @param classNames
-     * @return the key
-     */
-    public String writeMatrixKey(List<String> classNames) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("Matrix Key:\n");
-        for(int x=0; x<classNames.size(); x++) {
-            sb.append("   ");
-            sb.append(getKey(x));
-            sb.append(": "); 
-            sb.append(classNames.get(x));
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
-    
-        /** 
-     *  Returns a two character key for a classname based upon
-     * its index
-     * @param keyIndex  the class name index
-     * @return  a two character key
-     */
-    private String getKey(int keyIndex) {
-        StringBuffer label = new StringBuffer(); 
-        if (keyIndex >= 26) {
-            label.append((char) ('A' + (keyIndex / 26) - 1));
-            keyIndex = keyIndex % 26;
-        } else {
-            label.append(' ');
-        }
-        label.append((char) ('A' + keyIndex));
-        return pad(label.toString() + "  ", COL_WIDTH);
-    }
-
-    /** 
-     * Format a decimal number for column output
-     * @param val the value to format
-     * @return the formatted value
-     */
-    private String fmtDec(double val) {
-        return pad(dec.format(val), COL_WIDTH);
-    }
-
-    /** 
-     * Format an int for column output
-     * @param val the value to format
-     * @return the formatted output
-     */
-    private String fmtInt(int val) {
-        return pad(Integer.toString(val), COL_WIDTH);
-    }
-
-    /** 
-     * Format a percentage value for output
-     * @param val the value to format
-     * @return the formatted value
-     */
-    private String fmtPercent(double val) {
-        return pad(dec.format(val) + "%", COL_WIDTH);
-    }
-
-    /** 
-     *  Pad the given string to the given length
-     * @param v  the string to pad
-     * @param padLength  the length to pad
-     * @return the padded string
-     */
-    private String pad(String v, int padLength) {
-        String paddedString = "                                                    " + v;
-        return paddedString.substring(
-            paddedString.length() - padLength);
-    }
-
 
 	public void setHierarchyFile(File hierarchyFile) {
 		this.hierarchyFile = hierarchyFile;

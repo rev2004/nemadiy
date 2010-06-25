@@ -15,6 +15,8 @@ import java.util.Map;
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileType;
+import org.imirsel.nema.analytics.evaluation.ResultRenderer;
+import org.imirsel.nema.analytics.evaluation.ResultRendererFactory;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.model.NemaData;
@@ -99,9 +101,11 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 		File resultsDirectory = new File("src/test/resources/classification/GT1");
 		String	systemName = "GT1-System";
 		Evaluator evaluator = null;
-
+		ResultRenderer renderer = null;
+		
 		//evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
 		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
+		renderer = ResultRendererFactory.getRenderer(task.getSubjectTrackMetadataName(), outputDirectory, workingDirectory, false, null);
 		
 		MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
 		List<NemaData> groundTruth = reader.readFile(groundTruthFile);
@@ -117,6 +121,9 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 		
 		NemaEvaluationResultSet results = evaluator.evaluate();
 		assertTrue(results != null);
+		
+		//test rendering
+		renderer.renderResults(results);
 		
 			
 		//File resultFile = new File("src/test/resources/classification/evaluation/GT1/report.txt");
@@ -134,9 +141,11 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 		File resultsDirectory2 = new File("src/test/resources/classification/HNOS1");
 		String	systemName2 = "HNOS1-System";
 		Evaluator evaluator = null;
+		ResultRenderer renderer = null;
 		
 		//evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
 		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
+		renderer = ResultRendererFactory.getRenderer(task.getSubjectTrackMetadataName(), outputDirectory, workingDirectory, false, null);
 		
 		MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
 		List<NemaData> groundTruth = reader.readFile(groundTruthFile);
@@ -162,6 +171,9 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 		NemaEvaluationResultSet results = evaluator.evaluate();
 		assertTrue(results != null);
 		
+
+		//test rendering
+		renderer.renderResults(results);
 		
 		 //File resultFile = new File("src/test/resources/classification/evaluation/HNOS1/report.txt");
 		 //File outputFile = new File(outputDirectory,systemName+System.getProperty("file.separator")+"report.txt");

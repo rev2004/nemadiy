@@ -344,7 +344,6 @@ public class OnsetEvaluator extends EvaluatorImpl {
 			data.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE, avgFMeasureForFile);
 			data.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_RECALL, avgRecForFile);
 			data.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION, avgPrecForFile);
-
 		}
 		
 		for (int i = 0; i < classCounts.length; i ++) {
