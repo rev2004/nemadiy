@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +34,14 @@ import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.imirsel.nema.service.SubmissionManager;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
+import org.imirsel.nema.webapp.xstream.LenientDateConverter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.DateConverter;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 
@@ -429,13 +432,32 @@ public class JobController extends MultiActionController {
 		ModelAndView mav=null;
 		String uri = (req!=null)?req.getRequestURI():""; 
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
-			XStream xstream = new XStream(new JsonHierarchicalStreamDriver());//JettisonMappedXmlDriver());
-			xstream.registerConverter(new DateConverter(),XStream.PRIORITY_VERY_HIGH);
+			XStream xstream = new XStream(new JsonHierarchicalStreamDriver());
+			 //XStream xstream = new XStream();//new JettisonMappedXmlDriver());
+			//xstream.registerLocalConverter(Job.class,"submitTimestamp",new LenientDateConverter());
+			//xstream.registerLocalConverter(Job.class,"startTimestamp",new LenientDateConverter());
+			//xstream.registerConverter(new LenientDateConverter(),XStream.PRIORITY_VERY_HIGH);
+			xstream.addDefaultImplementation(Date.class,java.sql.Timestamp.class);
 			xstream.setMode(XStream.NO_REFERENCES);
 			xstream.omitField(Job.class,"flow" );
 			xstream.omitField(Job.class, "results");
 			xstream.alias(Constants.JOBLIST, List.class);
+			
+			//fake test
+			Date  date=new Date(System.currentTimeMillis());
+			Date date2=new java.sql.Timestamp(System.currentTimeMillis());
+			Job job=new Job();
+			job.setName("test job");job.setId(100L);job.setFlow(new Flow());
+			job.setScheduleTimestamp(date);job.setEndTimestamp(date2);
+			job.setStartTimestamp(date);job.setSubmitTimestamp(date2);
+			job.setResults(null);
+			List<Job> list=new ArrayList<Job> ();
+			Job job2=jobs.get(1);
+			list.add(job);list.add(job); list.add(jobs.get(1));
+			
+			
 			res.setContentType("application/json");
+			logger.debug("job's submit timestamp is type:"+job2.getSubmitTimestamp().getClass());
 			res.getWriter().write(xstream.toXML(jobs));
 			//mav =new ModelAndView("jsonView",Constants.JOBLIST,jobs);
 		} else {
