@@ -12,53 +12,21 @@
 <title>
 <fmt:message key="joblist.title"/>
 </title>
-<!-- meta http-equiv="refresh" content="10" /-->
 <meta name="heading" content="${jobs.title}"/>
 </head>
 <body>
 <h4>
- This page is refreshes every 10 seconds.   <input type="button" value="Click to Refresh Now" onClick="window.location.reload()">
+ This page is refreshes every 10 seconds.   <input type="button" value="Click to Refresh Now" onClick="updateJobList();">
 </h4>	
 
-<display:table name="jobList" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="4" 
-defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10">
-  <display:column property="name" escapeXml="true" sortable="true" titleKey="job.name"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
-  <display:column property="description" escapeXml="true" sortable="true" titleKey="job.description"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id" maxLength="25"/>
-  <display:column property="jobStatus" escapeXml="true" sortable="true" titleKey="job.jobStatus"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
-  <display:column property="scheduleTimestamp" escapeXml="true" sortable="true" titleKey="job.scheduleTimestamp"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
-  <display:column property="submitTimestamp" escapeXml="true" sortable="true" titleKey="job.submitTimestamp"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
-  <display:column property="endTimestamp" escapeXml="true" sortable="true" titleKey="job.endTimestamp"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
-  <display:column property="host" escapeXml="true" sortable="true" titleKey="job.host"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id" />
-  <display:column property="port" escapeXml="true" sortable="true" titleKey="job.port"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
-</display:table>
-<script type="text/javascript">
-    highlightTableRows("jobs");
-</script>
 <div id="gridNode" style="height:400px;"></div>
 <script type="text/javascript">
 dojo.require("dojo.data.ItemFileReadStore");
 dojo.require("dojox.grid.DataGrid");
 dojo.require("dojox.timing._base");
-function showJobList(){
-
-var layout = [
-			      
-                  { field: "name", name: "Name", width: "25em"},
-                  { field: "scheduleTimestamp", name: "Schedule Time", width: "10em" },
-                  { field: "submitTimestamp", name: "Submit Time", width: "12em" },
-                  { field: "endTimestamp", name: "End Time", width: "10em" },
-                  { field: "statusCode", name: "Status", width: "6em" }
-          			
-					];
-function updateJobList(){	
+dojo.require("dojox.grid._Events");
+function updateJobList(){
+	
 	dojo.xhrGet( {
 			url : "<c:url value='/get/JobManager.getUserJobs.json'/>",
 			handleAs : "json",
@@ -72,22 +40,49 @@ function updateJobList(){
 					};
 					
 					var jsonStore = new dojo.data.ItemFileReadStore({ data:storeData });
-					var grid = new dojox.grid.DataGrid({
-								autoheight:20,
-     						   	'id': 'grid',
-        						query: { id: '*' },
-        						store: jsonStore,
-        						structure: layout
-							},
-							document.createElement('div'));
-
-				            // append the new grid to the div "gridNode":
-				            dojo.byId("gridNode").appendChild(grid.domNode); 
-				            
-							grid.startup();
+					var grid=dijit.byId("grid");
+					grid.setStore(jsonStore);
+					grid.update();
+					
 					}
 			});
 	};
+function showJobList(){
+
+	var layout = [
+              
+				  { field: "id", name: "ID", width: "4em"},    
+                  { field: "name", name: "Name", width: "15em"},
+                  { field: "scheduleTimestamp", name: "Schedule Time", width: "10em" },
+                  { field: "submitTimestamp", name: "Submit Time", width: "10em" },
+                  { field: "endTimestamp", name: "End Time", width: "10em" },
+                  { field: "host", name: "Host", width: "9em" },
+                  { field: "port", name: "port", width: "4em" },
+                  { field: "statusCode", name: "Status", width: "5em" }
+          			
+					];
+	var storeData={
+		identifier:'id',
+		label:'name',
+		
+		items:[
+		      {id:''}]
+	};
+	
+	var jsonStore = new dojo.data.ItemFileReadStore({ data:storeData });
+	var grid = new dojox.grid.DataGrid({
+						autoheight:20,
+	 				  	id: 'grid',
+						query: { id: '*' },
+						store: jsonStore,
+						structure: layout
+							},
+					document.createElement('div'));
+
+	// append the new grid to the div "gridNode":
+	dojo.byId("gridNode").appendChild(grid.domNode); 
+
+	grid.startup();
 	
 	var	t = new dojox.timing.Timer(10000);
 		
@@ -95,7 +90,11 @@ function updateJobList(){
 	t.start();
 	
 	updateJobList();
-	
+	dojo.connect(grid,"onRowClick", grid, function(e){
+		var jobId=grid.store.getValue(grid.getItem(e.rowIndex), 'id');
+		var href="<c:url value='/get/JobManager.jobDetail?id='/>"+jobId;
+		window.location=href;
+	});
 
 }
 dojo.addOnLoad(showJobList);
