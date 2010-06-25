@@ -14,6 +14,7 @@ import org.imirsel.nema.analytics.evaluation.key.KeyEvaluator;
 import org.imirsel.nema.analytics.evaluation.key.KeyResultRenderer;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyEvaluator;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyResultRenderer;
+import org.imirsel.nema.analytics.evaluation.onset.OnsetResultRenderer;
 import org.imirsel.nema.analytics.evaluation.structure.StructureResultRenderer;
 import org.imirsel.nema.analytics.evaluation.tempo.TempoResultRenderer;
 import org.imirsel.nema.model.NemaDataConstants;
@@ -38,6 +39,7 @@ public class ResultRendererFactory {
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, KeyResultRenderer.class);
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.TEMPO_EXTRACTION_DATA, TempoResultRenderer.class);
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, StructureResultRenderer.class);
+		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.ONSET_DETECTION_DATA, OnsetResultRenderer.class);
 		
 			//classification tasks
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, ClassificationResultRenderer.class);
