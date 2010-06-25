@@ -64,7 +64,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 		this.overallEvalMetrics.clear();
 		this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_ACCURACY);
 		this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY);
-		//TODO think again what to do about matrix based eval metrics...
 		this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_RAW);
 		this.overallEvalMetrics.add(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
 		if(this.hierarchyFile != null){
