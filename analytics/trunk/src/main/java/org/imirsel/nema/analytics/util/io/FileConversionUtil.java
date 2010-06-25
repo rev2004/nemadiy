@@ -463,6 +463,7 @@ public class FileConversionUtil {
 				fileList = aMap.get(testSet);
 				if (fileList == null){
 					fileList = new ArrayList<File>();
+					aMap.put(testSet, fileList);
 				}
 				fileList.add(newPath);
 			}
