@@ -109,7 +109,14 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
 		
 		//write out results summary CSV
 		File summaryCSV = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),results.getOverallEvalMetricsKeys()),summaryCSV);
+		List<String> metrics = new ArrayList<String>();
+		metrics.add(NemaDataConstants.CLASSIFICATION_ACCURACY);
+		metrics.add(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY);
+		if (results.getOverallEvalMetricsKeys().contains(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY)){
+			metrics.add(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
+			metrics.add(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY);
+		}
+		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),metrics),summaryCSV);
 		
 		
 		//perform statistical tests
@@ -204,7 +211,14 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
         //do summary page
         {
 	        items = new ArrayList<PageItem>();
-	        Table summaryTable = WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),results.getOverallEvalMetricsKeys());
+	        List<String> metrics = new ArrayList<String>();
+			metrics.add(NemaDataConstants.CLASSIFICATION_ACCURACY);
+			metrics.add(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY);
+			if (results.getOverallEvalMetricsKeys().contains(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY)){
+				metrics.add(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
+				metrics.add(NemaDataConstants.CLASSIFICATION_NORMALISED_DISCOUNTED_ACCURACY);
+			}
+	        Table summaryTable = WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),metrics);
 	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
 	        aPage = new Page("summary", "Summary", items, false);
 	        resultPages.add(aPage);
