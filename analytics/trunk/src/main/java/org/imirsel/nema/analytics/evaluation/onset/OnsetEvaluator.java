@@ -3,6 +3,7 @@ package org.imirsel.nema.analytics.evaluation.onset;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -102,14 +103,17 @@ public class OnsetEvaluator extends EvaluatorImpl {
 				}	
 			}
 		}
+		Collections.sort(classList);
 		
 		// Compute number of classes. We will create also a class "Total" hence the +1 if there are no distinct classes
-		int numClasses = 1;
+		int numClasses = 0;
 		if (!classList.isEmpty()) {
-			numClasses = classList.size() + 1;
+			numClasses = classList.size();
 		}
 
 		double totalFMeasure = 0.0;
+		double totalRecall = 0.0;
+		double totalPrecision = 0.0;
 		int totalCorrect = 0;
 		int totalFalsePositives = 0;
 		int totalFalseNegatives = 0;
@@ -118,26 +122,38 @@ public class OnsetEvaluator extends EvaluatorImpl {
 		double FPsum = 0.0;
 		double CDsum = 0.0;
 		double qsum = 0.0;
+		
+		int[] classTotalCorrect = null;
+		int[] classFalsePositives = null;
+		int[] classFalseNegatives = null;
+		int[] classDoubled = null;
+		int[] classMerged = null;
+		int[] classCounts = null;
+		double[] classAvgCorrect = null;
+		double[] classAvgFalsePositives = null;
+		double[] classAvgFalseNegatives = null;
+		double[] classAvgDoubled = null;
+		double[] classAvgMerged = null;
+		double[] classFMeasures = null;
+		double[] classRecalls = null;
+		double[] classPrecisions = null;
 
-		int[] classTotalCorrect = new int[numClasses];
-		int[] classFalsePositives = new int[numClasses];
-		int[] classFalseNegatives = new int[numClasses];
-		int[] classDoubled = new int[numClasses];
-		int[] classMerged = new int[numClasses];
-		int[] classCounts = new int[numClasses];
-
-		double[] classAvgCorrect = new double[numClasses];
-		double[] classAvgFalsePositives = new double[numClasses];
-		double[] classAvgFalseNegatives = new double[numClasses];
-		double[] classAvgDoubled = new double[numClasses];
-		double[] classAvgMerged = new double[numClasses];
-
-		double[] classFPsum = new double[numClasses];
-		double[] classCDsum = new double[numClasses];
-		double[] classQsum = new double[numClasses];
-		double[] classFMeasures = new double[numClasses];
-		double[] classRecalls = new double[numClasses];
-		double[] classPrecisions = new double[numClasses];
+		if (!classList.isEmpty()) {
+			classTotalCorrect = new int[numClasses];
+			classFalsePositives = new int[numClasses];
+			classFalseNegatives = new int[numClasses];
+			classDoubled = new int[numClasses];
+			classMerged = new int[numClasses];
+			classCounts = new int[numClasses];
+			classAvgCorrect = new double[numClasses];
+			classAvgFalsePositives = new double[numClasses];
+			classAvgFalseNegatives = new double[numClasses];
+			classAvgDoubled = new double[numClasses];
+			classAvgMerged = new double[numClasses];
+			classFMeasures = new double[numClasses];
+			classRecalls = new double[numClasses];
+			classPrecisions = new double[numClasses];
+		}
 
 		int numInDetFiles = 0;
 		int numInGTFiles = 0;
@@ -305,42 +321,28 @@ public class OnsetEvaluator extends EvaluatorImpl {
 			avgMergedForFile = (double)totMergedForFile/(double)numAnnotators;
 			avgDoubledForFile = (double)totDoubledForFile/(double)numAnnotators;
 
-			classTotalCorrect[classNum] += totCorrectForFile;
-			classFalsePositives[classNum] += totFPForFile;
-			classFalseNegatives[classNum] += totFNForFile;
-			classDoubled[classNum] += totDoubledForFile;
-			classMerged[classNum] += totMergedForFile;
-			classCounts[classNum]++;
-			classFMeasures[classNum] = classFMeasures[classNum] + avgFMeasureForFile;
-			classRecalls[classNum] = classRecalls[classNum] + avgRecForFile;
-			classPrecisions[classNum] = classPrecisions[classNum] + avgPrecForFile;
+			if (!classList.isEmpty()) {
+				classTotalCorrect[classNum] += totCorrectForFile;
+				classFalsePositives[classNum] += totFPForFile;
+				classFalseNegatives[classNum] += totFNForFile;
+				classDoubled[classNum] += totDoubledForFile;
+				classMerged[classNum] += totMergedForFile;
+				classCounts[classNum]++;
+				classFMeasures[classNum] = classFMeasures[classNum] + avgFMeasureForFile;
+				classRecalls[classNum] = classRecalls[classNum] + avgRecForFile;
+				classPrecisions[classNum] = classPrecisions[classNum] + avgPrecForFile;
 
-			classAvgCorrect[classNum] += avgCorrectForFile;
-			classAvgFalsePositives[classNum] += avgFPForFile;
-			classAvgFalseNegatives[classNum] += avgFNForFile;
-			classAvgDoubled[classNum] += avgDoubledForFile;
-			classAvgMerged[classNum]  += avgMergedForFile;
-			
-			// If the gtData had a class, we can't forget to add their results to the "Total" (class indx 0)
-			if (classNum != 0) {
-				classTotalCorrect[0] += totCorrectForFile;
-				classFalsePositives[0] += totFPForFile;
-				classFalseNegatives[0] += totFNForFile;
-				classDoubled[0] += totDoubledForFile;
-				classMerged[0] += totMergedForFile;
-				classCounts[0]++;
-				classFMeasures[0] = classFMeasures[0] + avgFMeasureForFile;
-				classRecalls[0] = classRecalls[0] + avgRecForFile;
-				classPrecisions[0] = classPrecisions[0] + avgPrecForFile;
-
-				classAvgCorrect[0] += avgCorrectForFile;
-				classAvgFalsePositives[0] += avgFPForFile;
-				classAvgFalseNegatives[0] += avgFNForFile;
-				classAvgDoubled[0] += avgDoubledForFile;
-				classAvgMerged[0]  += avgMergedForFile;
-				
+				classAvgCorrect[classNum] += avgCorrectForFile;
+				classAvgFalsePositives[classNum] += avgFPForFile;
+				classAvgFalseNegatives[classNum] += avgFNForFile;
+				classAvgDoubled[classNum] += avgDoubledForFile;
+				classAvgMerged[classNum]  += avgMergedForFile;
 			}
-			
+
+			totalFMeasure += avgFMeasureForFile;
+			totalRecall += avgRecForFile;
+			totalPrecision += avgPrecForFile;
+
 			data.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE, avgFMeasureForFile);
 			data.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_RECALL, avgRecForFile);
 			data.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION, avgPrecForFile);
@@ -351,17 +353,23 @@ public class OnsetEvaluator extends EvaluatorImpl {
 			classRecalls[i] = classRecalls[i]/classCounts[i];
 			classPrecisions[i] = classPrecisions[i]/classCounts[i];
 		}
+		totalFMeasure /= numExamples;
+		totalRecall /= numExamples;
+		totalPrecision /= numExamples;
+		
 		String[] classNames = new String[numClasses];
-		classNames[0] = "Total";
-		for (int i = 1; i < numClasses; i++) {
-			classNames[i] = classList.get(i-1);
+		for (int i = 0; i < numClasses; i++) {
+			classNames[i] = classList.get(i);
 		}
 
 		NemaData outObj = new NemaData(jobID);
 		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_CLASS, classNames);
-		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE, classFMeasures);
-		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_RECALL, classRecalls);
-		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION, classPrecisions);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE, totalFMeasure);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_RECALL, totalRecall);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION, totalPrecision);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE_BY_CLASS, classFMeasures);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_RECALL_BY_CLASS, classRecalls);
+		outObj.setMetadata(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION_BY_CLASS, classPrecisions);
 		return outObj;
 	}
 
