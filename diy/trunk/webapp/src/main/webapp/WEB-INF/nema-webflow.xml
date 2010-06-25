@@ -42,9 +42,6 @@
 		class="org.imirsel.nema.contentrepository.client.CommandLineFormatter" />
 	<bean id="executableValidator"
 		class="org.imirsel.nema.webapp.webflow.validator.UploadedExecutableBundleValidator" />
-	<bean id="jcrService"
-		 class="org.imirsel.nema.webapp.service.impl.JcrServiceImpl"/>
-	<bean id="jiniService" 
-		  class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl"/>
+	
 
 </beans>
