@@ -7,22 +7,20 @@
 <meta name="heading" content="Executable Profile Saved" />
 </head>
 <body>
-
 <c:forEach items="${flowRequestContext.messageContext.allMessages}" var="message">
-  <c:if test="${message.severity eq 'Info'}">
+  
     <div class="message">
       ${message.text}
     </div>
-  </c:if>
+  
 </c:forEach>
 
 <form:form>
     
 	<fieldset >
 	Preferred OS: ${executableBundle.preferredOs}<br />
-	Group: ${executableBundle.group }<br />
 	Component: ${component.name}<br />
-
+	
 	</fieldset>
 	<fieldset ><label class="label">
 	${executableBundle.typeName}  Executable:</label> ${executableBundle.fileName} </fieldset>

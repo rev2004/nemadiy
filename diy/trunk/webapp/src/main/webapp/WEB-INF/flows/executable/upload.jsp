@@ -85,11 +85,7 @@ function fixLabels(){
     <fieldset id="preferredOsLabel" >
         <label class="label">Operating system required to run the executable:</label>
         <form:select path="preferredOs" items="${supportedOs}" itemLabel="name" itemValue="value" />
-    </fieldset>
-    <fieldset>
-        <label id="groupLabel" class="label">Select the group:</label>
-        <form:select path="group" items="${supportedGroups}" itemLabel="name" itemValue="value" />
-    </fieldset>        
+    </fieldset>      
     <fieldset id="button">
         <input type="submit" name="_eventId_upload" value="Next" />
         <input type="submit" name="_eventId_cancel" value="Cancel" style="float:right"/>

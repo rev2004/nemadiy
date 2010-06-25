@@ -7,15 +7,15 @@
 </head>
 <body >
 <h4 id="refresh">This page autorefreshes every 10 seconds</h4>
- <label class="label">Header Server</label>: ${head.host}:${head.port}
+ <label class="label">Head Server</label>: ${head.host}:${head.port}
  <c:if test="${not empty workers}">
 <table border="1">
 	<thead>
 		<tr>
-			<th>server</th>
+			<th>Server</th>
 			<th>Max Concurrent Jobs</th>
-			<th>Running Job #</th>
-			<th>Aborted Job #</th>
+			<th>Running Jobs</th>
+			<th>Aborting Jobs</th>
 		</tr>
 	</thead>
 	<c:forEach items="${workers}" var="worker">

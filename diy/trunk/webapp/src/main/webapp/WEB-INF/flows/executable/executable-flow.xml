@@ -14,7 +14,6 @@
 	<on-start>
 		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
 		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
-		<set name="flowScope.supportedGroups" value="resource.getSupportedGroups()" />
 		<set name="flowScope.executable" value="executableService.setExecutable(executableBundleInput)" />
 		<evaluate
 			expression="executableService.setTemplate(executableTemplateInput,executable.type,flowScope)" />
