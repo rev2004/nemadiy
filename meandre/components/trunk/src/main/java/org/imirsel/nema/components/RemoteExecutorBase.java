@@ -49,8 +49,11 @@ import org.meandre.core.ComponentExecutionException;
 import com.healthmarketscience.rmiio.RemoteOutputStream;
 import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 
+// TODO: Move to org.imirsel.components.process package
+
 /** Base Class for Remote Nema Components
  * 
+ *
  * @author kumaramit01
  * @since 0.6.0
  */
