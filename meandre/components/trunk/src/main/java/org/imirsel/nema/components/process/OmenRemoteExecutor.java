@@ -15,12 +15,15 @@ import org.imirsel.nema.analytics.util.process.CommandLineFormatParser;
 import org.imirsel.nema.components.InvalidProcessMonitorException;
 import org.imirsel.nema.components.InvalidProcessTemplateException;
 import org.imirsel.nema.components.RemoteExecutorBase;
+import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
 import org.imirsel.nema.model.CommandLineTemplate;
 import org.imirsel.nema.model.NemaMetadataEntry;
+import org.imirsel.nema.model.NemaResult;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
+import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.monitor.process.NemaProcess;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
@@ -226,13 +229,32 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				getLogger().info("Done Waiting..." +i +"\n");
-				
+				getLogger().info("Done Waiting..." +i +"\n Now wait to get the result");
 				
 				//We may not need to do this as we already know the paths to outputTypes on shared storage
 				List<ProcessArtifact> list = this.getResult(nemaProcess);
 				
+				getLogger().info("GOT RESULTS PUSHING RESULT: " + list.get(0).getResourcePath());
+				
 				cc.pushDataComponentToOutput(DATA_OUT_PROCESS_ARTIFACT, list);
+				
+				/*ProcessArtifact processArtifact= list.get(0);
+				System.out.println("PROCESS ARTIFACT IN OMEN REMOTE EXECUTOR: " + processArtifact.getResourcePath());
+				String path=processArtifact.getResourcePath();
+				int loc=path.indexOf("://");
+				path = path.substring(loc+"://".length());
+				String workspaceName="default";
+				String pcol ="jcr";
+				
+				System.out.println("PROTOCOL: " + pcol + " workspaceName: " + workspaceName + " path: " + path);
+				RepositoryResourcePath rrp = new RepositoryResourcePath(pcol, workspaceName, path);
+				try {
+					NemaResult result=this.getResultStorageService().getNemaResult(this.getCredentials(), rrp);
+					System.out.println("====> IN OMEN EXECUTOR " + result.getFileContent().length);
+				} catch (ContentRepositoryServiceException e) {
+					System.out.println("ERROR "+ e);
+				}*/
+				
 				
 				// cleanup the process
 				this.cleanProcess(nemaProcess);
