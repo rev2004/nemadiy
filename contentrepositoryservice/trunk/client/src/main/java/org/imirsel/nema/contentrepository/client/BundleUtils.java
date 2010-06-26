@@ -72,6 +72,8 @@ public class BundleUtils {
 		if(nemaResult.getExecutionId()!=null)
 		properties.setProperty("execId", nemaResult.getExecutionId());
 		
+		if(nemaResult.getResultPath()!=null)
+		properties.setProperty("resultPath", nemaResult.getResultPath());
 		
 		System.out.println("14-5");
 		if(nemaResult.getModelClass()!=null){
@@ -80,7 +82,7 @@ public class BundleUtils {
 		System.out.println("14-6");
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
-			properties.storeToXML(baos, "serialized properties for name" );
+			properties.storeToXML(baos, "serialized properties for "+ nemaResult.getFileName() );
 			System.out.println("14-7");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

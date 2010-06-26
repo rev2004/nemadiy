@@ -50,6 +50,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	
 	
 	
+	@Ignore
 	@Test
 	public void testImirselNodes() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();
@@ -58,14 +59,14 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		assertEquals(isValid,true);
 	}
 	
-	@Ignore
+	
 	@Test
 	public void testSaveResult() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		NemaResult nemaResult = null;
 		try {
-			nemaResult = getSampleNemaResult("/tmp");
+			nemaResult = getSampleNemaResult("/tmp/testme/javaProcess.properties", "/tmp/");
 		} catch (IOException e) {
 			fail("Error creating the nema result file");
 		}
@@ -73,7 +74,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		System.out.println(rpath.getURIAsString());
 		
 	}
-	
+	@Ignore
 	@Test
 	public void testGetResult() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();
@@ -84,11 +85,11 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	}
 	
 	
-	private NemaResult getSampleNemaResult(String path) throws IOException {
+	private NemaResult getSampleNemaResult(String path, String relativeLoc) throws IOException {
 		NemaResult nemaResult = new NemaResult();
 		byte[] fileContent= null;
-		CompressionUtils cutils = new CompressionUtils();
-		fileContent = cutils.compress(path);
+		CompressionUtils cutils= CompressionUtils.getInstanceOf();
+		fileContent = cutils.compress(path,relativeLoc);
 		
 		if(fileContent==null){
 			throw new RuntimeException("file byte contents size is null " + path);
@@ -97,10 +98,12 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		nemaResult.setExecutionId(System.currentTimeMillis()+"");
 		nemaResult.setFileContent(fileContent);
 		File file = new File(path);
+		String parentPath=file.getParent();
 		nemaResult.setModelClass("org.test.TestModel.class");
 		nemaResult.setName(file.getName());
 		nemaResult.setFileName(path);
 		nemaResult.setResultType(ResultType.DIR);
+		nemaResult.setResultPath(parentPath);
 		return nemaResult;
 	}
 

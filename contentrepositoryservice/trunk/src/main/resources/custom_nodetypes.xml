@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<nodeTypes 
-    xmlns:exec="http://www.imirsel.org/jcr/exec"
+<nodeTypes xmlns:exec="http://www.imirsel.org/jcr/exec"
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
     xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-    xmlns:imirsel="http://www.imirsel.org/jcr"  
-    xmlns:flow="http://www.imirsel.org/jcr/flow" 
+    xmlns:imirsel="http://www.imirsel.org/jcr" 
+    xmlns:flow="http://www.imirsel.org/jcr/flow"
+    xmlns:result="http://www.imirsel.org/jcr/result"
     xmlns:jcr="http://www.jcp.org/jcr/1.0"
     xmlns:mix="http://www.jcp.org/jcr/mix/1.0" 
     xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-    xmlns:rep="internal" 
-    xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+    xmlns:rep="internal" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <nodeType hasOrderableChildNodes="false" isAbstract="false" isMixin="false" isQueryable="true"
         name="exec:file" primaryItemName="">
@@ -37,6 +36,29 @@
         
     </nodeType>
     
+    <nodeType hasOrderableChildNodes="false" isAbstract="false" isMixin="false" isQueryable="true"
+        name="result:file" primaryItemName="">
+        <supertypes>
+            <supertype>nt:file</supertype>
+        </supertypes>
+        <propertyDefinition autoCreated="false" isFullTextSearchable="true" isQueryOrderable="true"
+            mandatory="false" multiple="false" name="modelClass" onParentVersion="COPY"
+            protected="false" requiredType="String"/>
+        <propertyDefinition autoCreated="false" isFullTextSearchable="true" isQueryOrderable="true"
+            mandatory="false" multiple="false" name="resultPath" onParentVersion="COPY"
+            protected="false" requiredType="String"/>
+        <propertyDefinition autoCreated="false" isFullTextSearchable="true" isQueryOrderable="true"
+            mandatory="true" multiple="false" name="typeName" onParentVersion="COPY"
+            protected="false" requiredType="String"/>
+        <propertyDefinition autoCreated="false" isFullTextSearchable="true" isQueryOrderable="true"
+            mandatory="true" multiple="false" name="execId" onParentVersion="COPY" protected="false"
+            requiredType="String"/>
+         <propertyDefinition autoCreated="false" isFullTextSearchable="true" isQueryOrderable="true"
+            mandatory="false" multiple="false" name="fileName" onParentVersion="COPY"
+            protected="false" requiredType="String"/>
+      
+    </nodeType>
+    
     
     
     <nodeType hasOrderableChildNodes="false" isAbstract="false" isMixin="false" isQueryable="true"
@@ -47,18 +69,24 @@
         <propertyDefinition autoCreated="false" isFullTextSearchable="true" isQueryOrderable="true"
             mandatory="true" multiple="false" name="flowName" onParentVersion="IGNORE"
             protected="false" requiredType="String"/>
+        
         <propertyDefinition autoCreated="false" isFullTextSearchable="true" isQueryOrderable="true"
             mandatory="true" multiple="false" name="typeName" onParentVersion="COPY"
             protected="false" requiredType="String"/>
+        
         <propertyDefinition autoCreated="false" isFullTextSearchable="true" isQueryOrderable="true"
             mandatory="false" multiple="false" name="description" onParentVersion="COPY" protected="false"
             requiredType="String"/>
+        
         <propertyDefinition autoCreated="false" isFullTextSearchable="true" isQueryOrderable="true"
             mandatory="false" multiple="false" name="keyWords" onParentVersion="COPY"
             protected="false" requiredType="String"/>
+        
+        
         <propertyDefinition autoCreated="false" isFullTextSearchable="true" isQueryOrderable="true"
             mandatory="true" multiple="false" name="template" onParentVersion="IGNORE"
             protected="false" requiredType="Boolean"/>
+
     </nodeType>
     
     

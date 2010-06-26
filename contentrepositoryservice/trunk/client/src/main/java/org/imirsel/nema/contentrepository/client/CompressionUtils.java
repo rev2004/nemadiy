@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -23,21 +25,35 @@ import java.util.zip.ZipOutputStream;
  */
 public class CompressionUtils {
 
+	private static Logger logger = Logger.getLogger(CompressionUtils.class.getName());
 	private final String tempLocation;
+	
+	static{
+		logger.setLevel(Level.ALL);
+	}
 
 	/** Constructor that takes temporary file location for creating
 	 * zip files
 	 * @param tempLocation
 	 */
-	public CompressionUtils(final String tempLocation) {
+	private CompressionUtils(final String tempLocation) {
 		this.tempLocation = tempLocation;
 	}
 
 	/** default constructor
 	 * 
 	 */
-	public CompressionUtils() {
+	private CompressionUtils() {
 		this.tempLocation = System.getProperty("java.io.tmpdir");
+	}
+	
+	private static  CompressionUtils instance = new CompressionUtils();
+
+	/**
+	 * @return the static CompressionUtils class
+	 */
+	public static CompressionUtils getInstanceOf(){
+		return instance;
 	}
 	
 	
@@ -51,8 +67,9 @@ public class CompressionUtils {
 	 * @throws IOException
 	 */
 	public List<String> decompress(byte[] fileContents, final String decompressLocation, final String fileName) throws ZipException, IOException{
+		String tmpLoc = System.getProperty("java.io.tmpdir");
 		List<String> fileList = new ArrayList<String>();
-		File tempFile = new File(decompressLocation,fileName);
+		File tempFile = new File(tmpLoc,fileName);
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(tempFile);
@@ -82,18 +99,18 @@ public class CompressionUtils {
 		        String processedName = decompressLocation + entry.getName();
 		        if(entry.isDirectory()) {
 		          // Assume directories are stored parents first then children.
-		          System.err.println("Extracting directory: " + processedName);
+		          logger.fine("Extracting directory: " + processedName);
 		          // This is not robust, just for demonstration purposes.
 		          File directoryFile = new File(processedName);
 		          boolean success=directoryFile.mkdirs();
 		          if(!success){
-		        	  System.out.println("Error -creating new directory " + directoryFile.getCanonicalPath());
+		        	  logger.severe("Error -creating new directory " + directoryFile.getCanonicalPath());
 		          }
 		          continue;
 		        }
 
-		        System.out.println("Extracting file: " +processedName);
-		        copyInputStream(zipFile.getInputStream(entry),processedName);
+		       logger.info("Extracting file: " +processedName);
+		       copyInputStream(zipFile.getInputStream(entry),processedName);
 		         
 		         fileList.add(processedName);
 		      }
@@ -104,7 +121,7 @@ public class CompressionUtils {
 			
 			boolean successDelete=tempFile.delete();
 			if(!successDelete){
-				System.out.println("Error -could not delete the temp file: " + tempFile);
+				logger.severe("Error -could not delete the temp file: " + tempFile);
 			}
 			
 		}
@@ -113,8 +130,12 @@ public class CompressionUtils {
 	}
 	
 	 private static final void copyInputStream(InputStream in, String fileName) throws FileNotFoundException{
-	    byte[] buffer = new byte[1024];
-	    FileOutputStream fos=new FileOutputStream(fileName);
+	    File file = new File(fileName);
+	    File parentFile = file.getParentFile();
+	    parentFile.mkdirs();
+	    System.out.println("Creating parent directory... " + parentFile.getAbsolutePath());
+		byte[] buffer = new byte[1024];
+	    FileOutputStream fos=new FileOutputStream(file);
 	    BufferedOutputStream out= new BufferedOutputStream(fos);
 	    int len;
 	    try{
@@ -143,31 +164,41 @@ public class CompressionUtils {
 
 	/**Returns the byte array of the compressed contents
 	 * 
-	 * @param fileLocation
+	 * @param fileLocation -location of the file
+	 * @param relativeTo -The paths in the zip file are relative to this
 	 * @return byte array of zipped fileLocation
 	 * @throws IOException
 	 */
-	public byte[] compress(String fileLocation) throws IOException {
+	public byte[] compress(final String fileLocation, final String relativeTo) throws IOException {
 		List<String> fileList = new ArrayList<String>();
 		File sourceFile = new File(fileLocation);
 		getFileList(fileLocation, fileList);
-		System.out.println("Files: " + fileList.size());
+		logger.info("Files: " + fileList.size());
 		byte[] buffer = new byte[1024];
 		String zipfileName = sourceFile.getName() + ".zip";
 		File zipFilePath = new File(tempLocation, zipfileName);
+		ZipOutputStream zos=null;
 		try {
 			FileOutputStream fos = new FileOutputStream(zipFilePath);
-			ZipOutputStream zos = new ZipOutputStream(fos);
-			System.out.println("Output to Zip : " + zipFilePath);
+			zos = new ZipOutputStream(fos);
+			logger.info("Output to Zip : " + zipFilePath);
 			for (String file : fileList) {
 				File currentFile = new File(file);
+				String entryName = currentFile.getAbsolutePath();
+				if(relativeTo!=null){
+					int indexRelativePath = entryName.indexOf(relativeTo);
+					if(indexRelativePath!=-1){
+						entryName= entryName.substring(indexRelativePath+relativeTo.length());
+					}
+				}
+				logger.info("entry name is: " + entryName);
 				if (currentFile.isDirectory()) {
-					System.out.println("File Added : " + file);
-					ZipEntry ze = new ZipEntry(file + "/");
+					logger.fine("File Added : " + file);
+					ZipEntry ze = new ZipEntry(entryName + "/");
 					zos.putNextEntry(ze);
 				} else if (currentFile.isFile()) {
-					System.out.println("File Added : " + file);
-					ZipEntry ze = new ZipEntry(file);
+					logger.fine("File Added : " + file);
+					ZipEntry ze = new ZipEntry(entryName);
 					zos.putNextEntry(ze);
 					FileInputStream in = new FileInputStream(file);
 					int len;
@@ -177,10 +208,14 @@ public class CompressionUtils {
 					in.close();
 				}
 			}
-			zos.closeEntry();
-			zos.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
+		}finally{
+			if(zos!=null){
+			zos.closeEntry();
+			zos.close();
+			}
+			
 		}
 		return readFile(zipFilePath);
 	}
@@ -220,15 +255,15 @@ public class CompressionUtils {
 	 */
 	public static void main(String args[]) throws IOException {
 		CompressionUtils cu = new CompressionUtils();
-		byte[] fcontent=cu.compress("/tmp");
+		byte[] fcontent=cu.compress("/tmp/testme","/tmp/");
 
-		/*FileOutputStream fos = new FileOutputStream(new File("one.zip"));
+		FileOutputStream fos = new FileOutputStream(new File("one.zip"));
 		fos.write(fcontent);
 		fos.flush();
 		fos.close();
-		*/
 		
-		cu.decompress(fcontent,"/Users/amitku/tmp","tmp");
+		
+		//cu.decompress(fcontent,"/Users/amitku/tmp","tmp");
 		
 		
 	}
