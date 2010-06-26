@@ -9,6 +9,7 @@ import java.util.Map;
 import org.imirsel.nema.model.Job;
 
 /**
+ * Converter for a  {@link Job} to (key, value) pairs for Json rendering. 
  * @author gzhu1
  * 
  */

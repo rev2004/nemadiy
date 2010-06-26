@@ -43,8 +43,8 @@ function updateJobList(){
 					var grid=dijit.byId("grid");
 					grid.setStore(jsonStore);
 					grid.update();
-					grid.render();
-					grid.startup();
+					
+					dojo.byId("status").innerHTML="Total Count: <i>"+data.jobList.length+"</i>";
 					}
 			});
 	};
@@ -73,13 +73,15 @@ function showJobList(){
 	 				  	id: 'grid',
 						query: { id: '*' },
 						store: jsonStore,
-						structure: layout
+						structure: layout,
+						style:{
+							borderStyle:'groove'}
 							},
 					document.createElement('div'));
 
 	// append the new grid to the div "gridNode":
-	dojo.byId("gridNode").appendChild(grid.domNode); 
-
+	//dojo.byId("gridNode").appendChild(grid.domNode); 
+	grid.placeAt("queueStatus","before");
 	grid.startup();
 	
 	var	t = new dojox.timing.Timer(10000);
@@ -99,7 +101,12 @@ function showJobList(){
 dojo.addOnLoad(showJobList);
 </script>
 <div id="gridNode" style="height:400px;">
- 
+ <div id="queueStatus"  class="myright"	>
+		<p></p><label class="label" id="status"></label>
+		<p style="clear:both;"> </p>
+	</div>
 </div>
+
+	
 
 </body>

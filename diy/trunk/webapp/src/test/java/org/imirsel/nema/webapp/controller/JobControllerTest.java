@@ -110,7 +110,8 @@ public class JobControllerTest {
 		 
 		 request.setRequestURI("http://test.com/get/getUserJobs.json");
 		 mav=jobController.getUserJobs(request, null);
-		 assertModelAttributeValue(mav,Constants.JOBLIST,jobList);	
+		 //assertModelAttributeValue(mav,Constants.JOBLIST,jobList);	
+		 assertModelAttributeAvailable(mav, Constants.JOBLIST);
 		 assertViewName(mav,"jsonView");
 
 	}

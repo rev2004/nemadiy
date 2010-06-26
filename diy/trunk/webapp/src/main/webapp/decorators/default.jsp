@@ -30,30 +30,34 @@
         </div>
 
         <div id="content" class="clearfix">
-            <div id="main">
-                <%@ include file="/common/messages.jsp" %>
-                <h1><decorator:getProperty property="meta.heading"/></h1>
-                <decorator:body/>
-            </div>
+           
 
-            <c:set var="currentMenu" scope="request"><decorator:getProperty property="meta.menu"/></c:set>
-            <c:if test="${currentMenu == 'AdminMenu'}">
-            <div id="sub">
-                <menu:useMenuDisplayer name="Velocity" config="cssVerticalMenu.vm" permissions="rolesAdapter">
-                    <menu:displayMenu name="AdminMenu"/>
-                </menu:useMenuDisplayer>
-            </div>
-            </c:if>
-            
+           
         
 
-            <div id="nav">
+            <div id="nav" style="z-index:9999;">
+             <c:set var="currentMenu" scope="request"><decorator:getProperty property="meta.menu"/></c:set>
+<!--            <c:if test="${currentMenu == 'AdminMenu'}">-->
+<!--            <div id="sub">-->
+<!--                <menu:useMenuDisplayer name="Velocity" config="cssVerticalMenu.vm" permissions="rolesAdapter">-->
+<!--                    <menu:displayMenu name="AdminMenu"/>-->
+<!--                </menu:useMenuDisplayer>-->
+<!--            </div>-->
+<!--            </c:if>-->
+            
                 <div class="wrapper">
                     <h2 class="accessibility">Navigation</h2>
                     <jsp:include page="/common/menu.jsp"/>
                 </div>
                 <hr/>
             </div><!-- end nav -->
+            
+            
+             <div id="main">
+                <%@ include file="/common/messages.jsp" %>
+                <h1><decorator:getProperty property="meta.heading"/></h1>
+                <decorator:body/>
+            </div>
             <div id="notification" dojoType="dijit.Dialog" title="Notice">
             	<div style="width: 160px; max-height: 100px; overflow: auto;font-size:0.8em;" id="notificationContent">	</div>
             </div>
