@@ -395,34 +395,7 @@
 			<artifactId>json</artifactId>
 			<version>20090211</version>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.spring-json</groupId>
-			<artifactId>spring-json</artifactId>
-			<version>1.3.1</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>cglib-full</artifactId>
-					<groupId>cglib</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-mock</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-webmvc</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
 
-				<exclusion>
-					<artifactId>xstream</artifactId>
-					<groupId>com.thoughtworks.xstream</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<!--  Needed by the meandre -->
 		<dependency>
@@ -653,12 +626,6 @@
 			<version>1.5.3</version>
 		</dependency>
 
-
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-core-asl</artifactId>
-			<version>1.5.3</version>
-		</dependency>
 
 
 	</dependencies>

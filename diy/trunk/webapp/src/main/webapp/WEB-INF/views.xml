@@ -3,27 +3,12 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	default-lazy-init="true">
 
-    <bean name="jsonView" class="org.springframework.web.servlet.view.json.JsonView">
-       
-    </bean>
     
-
-    <bean name="jsonViewFilter" 
-          class="org.springframework.web.servlet.view.json.filter.SimplePropertyFilter">
-        <property name="excludeBeforePropNames">
-              <list>
-					
-                    <!--ModelMap Values-->
-                    <value>(org.imirsel.nema.model.Job).flow</value>
-                    <value>(job).ownerId</value>
-                    <value>(job).flow</value>
-                     <value>(job).jobStatus</value>
-                     <value>(job).results</value>
-                    
-              </list>
-        </property>
+     <bean name="jsonView" class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
        
     </bean>
+
+  
 </beans>
 
   
