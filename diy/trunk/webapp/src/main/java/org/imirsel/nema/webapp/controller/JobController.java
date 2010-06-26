@@ -35,14 +35,17 @@ import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.imirsel.nema.service.SubmissionManager;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
-import org.imirsel.nema.webapp.xstream.ModelMapConverter;
+import org.imirsel.nema.webapp.json.ConverterToList;
+import org.imirsel.nema.webapp.json.ConverterToMapJob;
+import org.imirsel.nema.webapp.json.ConverterToMapServer;
+import org.imirsel.nema.webapp.json.ConverterToMapServerConfig;
+import org.imirsel.nema.webapp.json.JsonHelper;
 import org.imirsel.nema.webapp.xstream.ShortJobConverter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 /**
@@ -344,24 +347,11 @@ public class JobController extends MultiActionController {
 		String uri = req.getRequestURI();
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
 			mav = new ModelAndView("jsonView");
-//			//XStream xstream=provideXstream();
-//			 XStream xstream = new XStream();//new JettisonMappedXmlDriver());
-//			xstream.addDefaultImplementation(Date.class,java.sql.Timestamp.class);
-//			//xstream.setMode(XStream.NO_REFERENCES);
-//			xstream.alias(Constants.JOB, Job.class);
-//			//xstream.registerConverter(new ModelMapConverter(),XStream.PRIORITY_VERY_HIGH);
-//			xstream.alias("resultSet", DisplayResultSet.class);
-//
-//			Map<String,Object> model=new HashMap<String,Object>();
-//			model.put("jobtest", job);
-//			model.put("resultTest",resultSet);
-//			//List model=new ArrayList();
-//			//model.add(job);model.add(resultSet);
-//			res.setContentType("application/json");
-//			res.getWriter().write(xstream.toXML(model));
-//			//res.getWriter().write(xstream.toXML(resultSet));
 			mav.addObject(Constants.JOB, job);
 			mav.addObject("resultSet", resultSet);
+
+			
+
 		} else {
 			mav = new ModelAndView("job/job");
 			mav.addObject(Constants.JOB, job);
@@ -508,10 +498,13 @@ public class JobController extends MultiActionController {
 		return mav;
 	}
 
-	private XStream lazyXstream=null;
-	private XStream provideXstream(){
-		return (lazyXstream==null)?new XStream(new JsonHierarchicalStreamDriver()):this.lazyXstream;
+	private XStream lazyXstream = null;
+
+	private XStream provideXstream() {
+		return (lazyXstream == null) ? new XStream(
+				new JsonHierarchicalStreamDriver()) : this.lazyXstream;
 	}
+
 	/**
 	 * Returns list of notifications for the user
 	 * 
@@ -582,20 +575,38 @@ public class JobController extends MultiActionController {
 	 */
 	public ModelAndView getServerStatus(HttpServletRequest req,
 			HttpServletResponse res) {
-		ModelAndView mav;
-		String uri = (req != null) ? req.getRequestURI() : "";
-		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
-			mav = new ModelAndView("jsonView");
-		} else {
-			mav = new ModelAndView("job/serverStatus");
-		}
 		Map<MeandreServerProxyConfig, MeandreServerProxyStatus> workers = flowService
 				.getWorkerStatus();
 		MeandreServerProxyConfig head = flowService.getHeadConfig();
 		List<Job> scheduledJobs = flowService.getScheduledJobs();
-		mav.addObject("workers", workers.entrySet());
-		mav.addObject("head", head);
-		mav.addObject("scheduledJobs", scheduledJobs);
+		
+		ModelAndView mav;
+		String uri = (req != null) ? req.getRequestURI() : "";
+		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
+			mav = new ModelAndView("jsonView");
+			
+			List<Map<String,String>> jobs=new ArrayList<Map<String,String>>();
+			for (Job job:scheduledJobs){
+				jobs.add(jobToSimpleMap(job));
+			}
+			//mav.addObject("scheduledJobs",jobs);
+			ConverterToList<Job> converter1=new ConverterToList<Job>();
+			mav.addObject("scheduleJobs",converter1.convertToList(scheduledJobs, new ConverterToMapJob()));
+			
+			ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>> converter2
+				=new ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>>();
+			mav.addObject("workers",converter2.convertToList(workers.entrySet(), new ConverterToMapServer()));
+		
+			ConverterToMapServerConfig converter3=new ConverterToMapServerConfig();
+			mav.addObject("head",converter3.convertToMap(head));
+			
+		} else {
+			mav = new ModelAndView("job/serverStatus");
+			mav.addObject("workers", workers.entrySet());
+			mav.addObject("head", head);
+			mav.addObject("scheduledJobs", scheduledJobs);
+		}
+	
 		return mav;
 	}
 
@@ -637,4 +648,38 @@ public class JobController extends MultiActionController {
 		return repositoryClientConnectionPool.getFromPool();
 	}
 
+	
+	private Map<String,String> jobToSimpleMap(Job job){
+		Map<String,String> map=new HashMap<String,String>();
+		
+		JsonHelper helper=new JsonHelper(map);
+		
+		helper.addCheckNull(job.getId(), "id");
+		
+		helper.addCheckNull(job.getSubmitTimestamp(),"submitTimestamp");
+		helper.addCheckNull(job.getScheduleTimestamp(),"scheduleTimestamp");
+		helper.addCheckNull(job.getEndTimestamp(),"endTimestamp");
+		helper.addCheckNull(job.getUpdateTimestamp(),"updateTimestamp");
+		helper.addCheckNull(job.getHost(), "host");
+		helper.addCheckNull(job.getName(), "name");
+		helper.addCheckNull(job.getPort(), "port");
+		helper.addCheckNull(job.getJobStatus().toString(), "status");
+		return map;
+	}
+	
+	private Map<String,String> serverToMap(Entry<MeandreServerProxyConfig,MeandreServerProxyStatus> entry){
+		Map<String,String> map=new HashMap<String,String>();
+		
+		JsonHelper helper=new JsonHelper(map);
+		
+		helper.addCheckNull(entry.getKey().getHost(), "host");
+		helper.addCheckNull(entry.getKey().getPort(), "port");
+		helper.addCheckNull(entry.getKey().getMaxConcurrentJobs(), "maxConcocurrentJobs");
+		helper.addCheckNull(entry.getValue().getNumAborting(), "numAborting");
+		helper.addCheckNull(entry.getValue().getNumRunning(), "numRunning");
+
+		return map;
+	}
+	
+	
 }
