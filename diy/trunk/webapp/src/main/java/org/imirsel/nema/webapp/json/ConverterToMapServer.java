@@ -12,6 +12,8 @@ import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
 import org.imirsel.nema.model.Job;
 
 /**
+ *  Converter for a  {@link Entry} of <{@link MeandreServerProxyConfig},{@link MeandreServerProxyStatus}> 
+ *  to (key, value) pairs for Json rendering. 
  * @author gzhu1
  * 
  */

@@ -55,7 +55,7 @@ function updateServerStatus(){
 						var jobGrid=dijit.byId("jobGrid");
 						jobGrid.setStore(jobJsonStore);
 						jobGrid.update();
-						dojo.byId("queueText").innerHTML="Total <i>"+data.scheduledJobs.length+"</i> jobs.";
+						dojo.byId("queueText").innerHTML="Total Count: <i>"+data.scheduledJobs.length+"</i>";
 					};
 					}
 			});
@@ -87,7 +87,8 @@ function startGrids(){
 						query: { id: '*' },
 						store: jobJsonStore,
 						structure: layout,
-						style:{height:'auto'}
+						style:{height:'auto',
+								borderStyle:'groove'}
 							},
 						
 					dojo.create('div',{style:{height:'80%'}}));
@@ -112,10 +113,10 @@ dojo.addOnLoad(startGrids);
 <h4 id="refresh">This page autorefreshes every 10 seconds</h4>
  <label class="label">Head Server</label>: ${head.host}:${head.port}
 <p></p>
-<div style="height:450px;">
-<div id="serverGridNode" style="height:150px;width:46em;text-align:center;" class="mycenter">
+
+<div id="serverGridNode" style="height:150px;width:45em;text-align:center;" class="mycenter">
 <label class="label center">Computation Nodes</label><p></p>
- <table dojoType="dojox.grid.DataGrid"  id="workerGrid" style="width: 100%;height:70%;  border:1;" rowSelector="20px">
+ <table dojoType="dojox.grid.DataGrid"  id="workerGrid" style="width: 100%;height:70%;  border-style:groove;" >
             <thead>
                 <tr>
                     <th width="10em" field="host">
@@ -125,7 +126,7 @@ dojo.addOnLoad(startGrids);
                         Port
                     </th>
                 
-                    <th field="maxConcocurrentJobs" width="18em">
+                    <th field="maxConcocurrentJobs" width="16em">
                         Max Concurrent Jobs
                     </th>
                     <th field="numRunning" width="10em">Running Jobs</th>
@@ -135,12 +136,12 @@ dojo.addOnLoad(startGrids);
         </table>
  </div>
 <div style="height:100px;"><p>        </p>
- <div id="noJobInQueue">No Jobs are in Queue.</div>
+ <div id="noJobInQueue" style="width:70%;right-margin:auto;left-margin:auto;">No Jobs are in Queue.</div>
 <div id="jobGridNode" style="height:100px;width:45em;text-align:center;" class="mycenter">
 
 	<label class="label ">Jobs in Queue</label>
 	<p>   </p>
-	<div id="queueStatus" style="" class="right"	>
+	<div id="queueStatus"  class="myright"	>
 		<p></p><label class="label" id="queueText"></label>
 		<p style="clear:both;"> </p>
 	</div>

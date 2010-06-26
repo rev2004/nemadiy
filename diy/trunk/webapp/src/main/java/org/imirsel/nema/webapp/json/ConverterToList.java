@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Converter for a {@link Collection} to a list of (key, value) pair for Json rendering.  
  * @author gzhu1
  *
  */
