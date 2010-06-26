@@ -16,10 +16,12 @@ public class NemaResult  implements NemaResultMetadata,  Serializable{
 	private byte fileContent[];
 	private String fileName;
 	private String modelClass;
+	private String resultPath;
 	private String name;
 	private String executionId;
 	private ResultType resultType;
 	private ResourcePath resourcePath;
+	private String fileSeparator = System.getProperty("file.separator");
 
 	static public enum ResultType {
 	      FILE(-1), DIR(0);
@@ -32,7 +34,7 @@ public class NemaResult  implements NemaResultMetadata,  Serializable{
 	
 	    @Override
 		public String toString() {
-	         String name = null;
+	         String name = "file";
 	         switch (code) {
 	
 	            case -1: {
@@ -51,7 +53,7 @@ public class NemaResult  implements NemaResultMetadata,  Serializable{
 	 
 	    
 	      static public ResultType toResultType(int code) {
-	    	  ResultType status = null;
+	    	  ResultType status = ResultType.FILE;
 	         switch (code) {
 	            case -1: {
 	               status = ResultType.FILE;
@@ -119,6 +121,18 @@ public class NemaResult  implements NemaResultMetadata,  Serializable{
 	}
 	public void setModelClass(String modelClass) {
 		this.modelClass = modelClass;
+	}
+	public String getResultPath() {
+		return resultPath;
+	}
+	public void setResultPath(String resultPath) {
+		this.resultPath = resultPath;
+	}
+	public void setFileSeparator(String fileSeparator) {
+		this.fileSeparator = fileSeparator;
+	}
+	public String getFileSeparator() {
+		return fileSeparator;
 	}
 	public boolean equals(Object object){
 		if(!(object instanceof NemaResult)){
