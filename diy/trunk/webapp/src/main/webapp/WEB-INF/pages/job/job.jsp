@@ -25,8 +25,8 @@
         onSuccess: function(fillJob){
                
         	var json=fillJob.responseText.evalJSON();
-        	$('job.jobStatus').innerHTML=statusString(json.job.statusCode-0);
-        	$('job.flowname').innerHTML=json.job.flow.name;
+        	$('job.jobStatus').innerHTML=json.job.status;
+        	$('job.flowname').innerHTML=json.job.flowName;
         	$('job.scheduleTimestamp').innerHTML=checkNull(json.job.scheduleTimestamp);
        		$('job.submitTimestamp').innerHTML=checkNull(json.job.submitTimestamp);
        		$('job.startTimestamp').innerHTML=checkNull(json.job.startTimestamp);

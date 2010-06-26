@@ -34,15 +34,14 @@ import org.imirsel.nema.service.SubmissionManager;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
 import org.imirsel.nema.webapp.json.ConverterToList;
+import org.imirsel.nema.webapp.json.ConverterToMap;
 import org.imirsel.nema.webapp.json.ConverterToMapJob;
+import org.imirsel.nema.webapp.json.ConverterToMapJobLong;
 import org.imirsel.nema.webapp.json.ConverterToMapServer;
 import org.imirsel.nema.webapp.json.ConverterToMapServerConfig;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 /**
  * 
@@ -343,7 +342,8 @@ public class JobController extends MultiActionController {
 		String uri = req.getRequestURI();
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
 			mav = new ModelAndView("jsonView");
-			mav.addObject(Constants.JOB, job);
+			ConverterToMap<Job> converter= new ConverterToMapJobLong();
+			mav.addObject(Constants.JOB,converter.convertToMap(job));
 			mav.addObject("resultSet", resultSet);
 
 			
@@ -496,12 +496,7 @@ public class JobController extends MultiActionController {
 		return mav;
 	}
 
-	private XStream lazyXstream = null;
 
-	private XStream provideXstream() {
-		return (lazyXstream == null) ? new XStream(
-				new JsonHierarchicalStreamDriver()) : this.lazyXstream;
-	}
 
 	/**
 	 * Returns list of notifications for the user
