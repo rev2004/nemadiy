@@ -99,12 +99,14 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 		List<ProcessArtifact> processArtifactList=(List<ProcessArtifact>)componentContext.getDataComponentFromInput(DATA_IN_1);
 		List<ProcessArtifact> processArtifactListOutput = new ArrayList<ProcessArtifact>(10);
 		for(ProcessArtifact processArtifact:processArtifactList){
-		if(!processArtifact.getResourcePath().startsWith("jcr://")){
-			
-			throw new ComponentExecutionException("Error the processArtifact does not have jcr uri: " + processArtifact.getResourcePath());
+			System.out.println("=====> IN Process Artifact: " + processArtifact.getResourcePath());
+		if(!processArtifact.getResourcePath().startsWith("jcr:")){
+			processArtifactListOutput.add(processArtifact);
 		}else{
 			try {
 				ProcessArtifact processArtifactModified = provisionArtifact(processArtifact);
+			
+				System.out.println("OUT Process Artifact: " + processArtifactModified.getResourcePath());
 				processArtifactListOutput.add(processArtifactModified);
 			} catch (ContentRepositoryServiceException e) {
 				throw new ComponentExecutionException(e);
@@ -112,7 +114,7 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 		
 		}
 		}
-		
+		System.out.println("SIZE OF THE ARRAY BEFORE PUSH: "+processArtifactListOutput.size() );
 		componentContext.pushDataComponentToOutput(DATA_OUT_1, processArtifactListOutput);
 		
 	}
@@ -120,31 +122,52 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 	
 	
 	private ProcessArtifact provisionArtifact(ProcessArtifact processArtifact) throws ContentRepositoryServiceException {
+		System.out.println("CAME HERE TO PROVISION");
 		String resultLoc=this.getAbsoluteResultLocationForJob();
-		String path=processArtifact.getResourcePath();
-		int loc=path.indexOf("jcr://");
-		path = path.substring(loc+"jcr://".length());
-		String workspaceName="workspace";
-		String pcol ="jcr://";
-		RepositoryResourcePath rrp = new RepositoryResourcePath(pcol, workspaceName, resultLoc);
-		CompressionUtils cutils= CompressionUtils.getInstanceOf();
-		NemaResult result=this.resultStorageService.getNemaResult(credentials, rrp);
 		
+		System.out.println("RESULT LOCATION: "+resultLoc);
+		String path=processArtifact.getResourcePath();
+		int loc=path.indexOf("://");
+		path = path.substring(loc+"://".length());
+		String workspaceName="default";
+		String pcol ="jcr";
+		
+		System.out.println("PROTOCOL: " + pcol + " workspaceName: " + workspaceName + " path: " + path);
+		RepositoryResourcePath rrp = new RepositoryResourcePath(pcol, workspaceName, path);
+		System.out.println("ProcessArtifact0");
+		CompressionUtils cutils= CompressionUtils.getInstanceOf();
+		System.out.println("ProcessArtifact1");
+		if(this.resultStorageService==null){
+			System.out.println("RESULT STORAGE SERVICE IS NULL");
+		}else{
+			System.out.println("RESULT STORAGE SERVICE IS NOT NULL");
+		}
+		NemaResult result=this.resultStorageService.getNemaResult(credentials, rrp);
+		System.out.println("ProcessArtifact2");
+
 		byte[] content=result.getFileContent();
 		//String modelClass=result.getModelClass();
 		//String fileName=result.getFileName();
+		System.out.println("3");
 		String name=result.getName();
-	
+		System.out.println("DECOMPRESSING: " + name + " size: " + content.length);
+		List<String> fileList=null;
 		try {
-			cutils.decompress(content, resultLoc, name);
+			fileList=cutils.decompress(content, resultLoc, name);
 		} catch (ZipException e1) {
 			throw new ContentRepositoryServiceException(e1);
 		} catch (IOException e1) {
 			throw new ContentRepositoryServiceException(e1);
 		}
 		
+		System.out.println("number of files after decompressing: " + fileList.size());
 		
-		File file = new File(resultLoc,name);
+		for(String fname:fileList){
+			System.out.println("FILE NAME: "+fname);
+		}
+		
+		/*File file = new File(resultLoc,name);
+		System.out.println("WRITING: " + file.getAbsolutePath());
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(file);
@@ -163,8 +186,16 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 			}
 			}
 		}
-		
-		ProcessArtifact pa = new ProcessArtifact(file.getAbsolutePath(), processArtifact.getResourceType(), result.getModelClass());
+		*/
+		String jcrPath = processArtifact.getResourcePath();
+		int resultIndex = jcrPath.indexOf("results");
+		String resultPath = jcrPath;
+		if(resultIndex!=-1){
+			resultPath = jcrPath.substring(resultIndex+"results".length());
+		}
+		File localResult = new File(resultLoc,resultPath);
+		System.out.println("LOCAL RESULT LOCATION: " + localResult.getAbsolutePath());
+		ProcessArtifact pa = new ProcessArtifact(localResult.getAbsolutePath(), processArtifact.getResourceType(), result.getModelClass());
 		return pa;
 	}
 

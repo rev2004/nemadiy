@@ -41,8 +41,16 @@ public class ProfileToProcessTemplateComponent extends NemaComponent {
 	private static final String PROPERTY_3 ="_remoteDynamicComponent";
 	
 
+	@StringDataType(valueList={"Unix Like","Windows Like"}, labelList={"Unix","Windows"})
+	@ComponentProperty(defaultValue = "Unix Like", description = "operating system", name = "_os")
+	private static final String PROPERTY_4 ="_os";
+
+
 	@ComponentOutput(description = "Process Template", name = "processTemplate")
 	private static final String DATA_OUT_1 ="processTemplate";
+
+	@ComponentOutput(description = "Preferred OS", name = "preferredOS")
+	private static final String DATA_OUT_2 ="preferredOS";
 
 
 	public void initialize(ComponentContextProperties ccp)
@@ -56,6 +64,7 @@ public class ProfileToProcessTemplateComponent extends NemaComponent {
 	throws ComponentExecutionException, ComponentContextException {
 		String host = componentContext.getProperty(PROPERTY_1);
 		String profileName = componentContext.getProperty(PROPERTY_2);
+		String preferredOS = componentContext.getProperty(PROPERTY_4);
 		LookupLocator locator=null;
 		try {
 			locator = new LookupLocator("jini://"+host);
@@ -97,6 +106,8 @@ public class ProfileToProcessTemplateComponent extends NemaComponent {
 		}
 		componentContext.getOutputConsole().println("process template: "+processTemplate.getName());
 		componentContext.pushDataComponentToOutput(DATA_OUT_1, processTemplate);
+		componentContext.pushDataComponentToOutput(DATA_OUT_2, preferredOS);
+		
 	}
 
 }

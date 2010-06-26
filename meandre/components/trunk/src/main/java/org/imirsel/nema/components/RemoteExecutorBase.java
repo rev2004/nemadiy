@@ -92,6 +92,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	private ProcessTemplate processTemplate;
 	private ComponentContextProperties componentContextProperties;
 	private ProcessExecutorService processExecutorService;
+	private String flowInstanceId;
 	
 	
 	public void initialize(ComponentContextProperties ccp)
@@ -105,6 +106,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		String lookupHost = ccp.getProperty(PROPERTY_6);
 		
 		this.componentContextProperties = ccp;
+		this.flowInstanceId = ccp.getFlowExecutionInstanceID();
 		this.setGroup(group);
 		this.setOS(os);
 		this.setLookupHost(lookupHost);
@@ -144,6 +146,11 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		processTemplate = (ProcessTemplate)context.getDataComponentFromInput(DATA_IN_1);
 		try {
 			this.processExecutorService = findExecutorService();
+			if(this.processExecutorService==null){
+				context.getLogger().info("Error could not find the executor service");
+			}else{
+				context.getLogger().info("====> PROCESS EXECUTION ID"+this.processExecutorService.getId());
+			}
 		} catch (RemoteException e) {
 			throw new ComponentExecutionException(e);
 		}}finally{
@@ -200,6 +207,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		System.out.println("PROCESS TEMPLATE: " + this.getProcessTemplate().getName() + "  " + this.getProcessTemplate().getId());
 		Name name = new Name(this.getProcessTemplate().getName());
 		getLogger().info("Profile Name is: " + this.getProcessTemplate().getName());
 		
@@ -209,7 +217,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		
 		ProcessExecutorService executorService=null;
 		
-		Entry[] attrList = new Entry[]{osType,rgt,dynamicType};
+		Entry[] attrList = new Entry[]{name};
 		Class<ProcessExecutorService>[] classes = new Class[1]; 
 		classes[0] = ProcessExecutorService.class;
 		ServiceTemplate template = new ServiceTemplate(null,classes,attrList);
@@ -229,6 +237,8 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 					}
 					
 					
+				}else{
+					getLogger().info("NO PROCESS EXECUTOR SERVICE FOUND: "  + name);
 				}
 				
 				if(serviceFound==null){
@@ -288,6 +298,11 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 			RecordStreamProcessMonitor rpm=createRemoteProcessMonitor();
 			ProcessTemplate pt=this.getProcessTemplate();
 			processExecutionProperties.setProcessTemplate(pt);
+			processExecutionProperties.setCredentials(getCredentials());
+			processExecutionProperties.setFlowInstanceId(this.flowInstanceId);
+			if(this.getProcessExecutorService()==null){
+				System.out.println("ERROR: EXECUTOR SERVICE IS NULL");
+			}
 			NemaProcess np = this.getProcessExecutorService().executeProcess(processExecutionProperties, rpm);	
 			this.processMonitorMap.put(np, rpm);
 			return np;
@@ -409,6 +424,17 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 
 	private ProcessExecutorService getProcessExecutorService() {
 		return processExecutorService;
+	}
+
+
+
+
+	/**Return the ResultStorageService
+	 * 
+	 * @return resultStorageService -returns the result storage service
+	 */
+	public static ResultStorageService getResultStorageService() {
+		return resultStorageService;
 	}
 
 
