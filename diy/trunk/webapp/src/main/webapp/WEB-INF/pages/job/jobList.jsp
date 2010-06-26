@@ -19,14 +19,14 @@
  This page is refreshes every 10 seconds.   <input type="button" value="Click to Refresh Now" onClick="updateJobList();">
 </h4>	
 
-<div id="gridNode" style="height:400px;"></div>
+
 <script type="text/javascript">
 dojo.require("dojo.data.ItemFileReadStore");
 dojo.require("dojox.grid.DataGrid");
 dojo.require("dojox.timing._base");
 dojo.require("dojox.grid._Events");
 function updateJobList(){
-	
+	console.log('update the list');
 	dojo.xhrGet( {
 			url : "<c:url value='/get/JobManager.getUserJobs.json'/>",
 			handleAs : "json",
@@ -43,24 +43,22 @@ function updateJobList(){
 					var grid=dijit.byId("grid");
 					grid.setStore(jsonStore);
 					grid.update();
-					
+					grid.render();
+					grid.startup();
 					}
 			});
 	};
 function showJobList(){
 
-	var layout = [
-              
+	var layout =[
 				  { field: "id", name: "ID", width: "4em"},    
                   { field: "name", name: "Name", width: "15em"},
                   { field: "scheduleTimestamp", name: "Schedule Time", width: "8em" },
                   { field: "submitTimestamp", name: "Submit Time", width: "8em" },
                   { field: "endTimestamp", name: "End Time", width: "8em" },
                   { field: "host", name: "Host", width: "7em" },
-                  { field: "port", name: "port", width: "3em" },
-                  { field: "status", name: "Status", width: "5em" }
-          			
-					];
+                  { field: "port", name: "port", width: "5em" },
+                  { field: "status", name: "Status", width: "5em" }];
 	var storeData={
 		identifier:'id',
 		label:'name',
@@ -90,6 +88,7 @@ function showJobList(){
 	t.start();
 	
 	updateJobList();
+	grid=dijit.byId('grid');
 	dojo.connect(grid,"onRowClick", grid, function(e){
 		var jobId=grid.store.getValue(grid.getItem(e.rowIndex), 'id');
 		var href="<c:url value='/get/JobManager.jobDetail?id='/>"+jobId;
@@ -99,6 +98,8 @@ function showJobList(){
 }
 dojo.addOnLoad(showJobList);
 </script>
-
+<div id="gridNode" style="height:400px;">
+ 
+</div>
 
 </body>

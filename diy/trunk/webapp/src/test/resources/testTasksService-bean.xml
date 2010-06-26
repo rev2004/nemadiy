@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
@@ -69,11 +71,11 @@
 	<bean id="property6" class="org.imirsel.nema.model.Property" p:name="_group" p:dataTypeBeanList-ref="dataTypeList5"
 		p:defaultValue="property6" p:description="property #6 datatypelist 5" scope="prototype" />
 	<bean id="propertyTrue" class="org.imirsel.nema.model.Property" p:name="_remoteDynamicComponent"
-		p:dataTypeBeanList-ref="dataTypeList6" p:defaultValue="true" scope="prototype" />
+		p:dataTypeBeanList-ref="dataTypeList6" p:defaultValue="true" scope="prototype" p:value="true"/>
 	<bean id="propertyFalse" class="org.imirsel.nema.model.Property" p:name="_remoteDynamicComponent"
-		p:dataTypeBeanList-ref="dataTypeList6" p:defaultValue="False" scope="prototype" />
+		p:dataTypeBeanList-ref="dataTypeList6" p:defaultValue="False" scope="prototype" p:value="False"/>
 	<bean id="property7" class="org.imirsel.nema.model.Property" p:name="_credentials" p:defaultValue="property1"
-		p:description="property #1" scope="prototype" />
+		p:description="property #1" scope="prototype" p:value="my:credential"/>
 
 
 	<util:map id="datatypeMap1">
@@ -189,9 +191,16 @@
 		<entry key-ref="component2" value-ref="path2" />
 	</util:map>
 
-	<bean id="uploadBundle" class="org.imirsel.nema.webapp.model.UploadedExecutableBundle" p:group="group"
+	<bean id="uploadBundle" class="org.imirsel.nema.webapp.model.UploadedExecutableBundle" 
 		p:preferredOs="unix" />
 
 	<bean id="userManager" class="org.imirsel.nema.webapp.mock.MockUserManager" p:currentUserCredentials-ref="credentials"
 		p:currentUser-ref="user" />
+
+	<bean id="mockJiniService"
+		class="org.imirsel.nema.webapp.mock.MockJiniService">
+	</bean>
+	<bean id="mockJcrService"
+		class="org.imirsel.nema.webapp.mock.MockJcrService">
+	</bean>
 </beans>

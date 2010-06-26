@@ -469,26 +469,25 @@ public class JobController extends MultiActionController {
 					XStream.PRIORITY_VERY_HIGH);
 
 			// fake test
-			Date date = new Date(System.currentTimeMillis());
-			Date date2 = new java.sql.Timestamp(System.currentTimeMillis());
-			Job job = new Job();
-			job.setName("test job");
-			job.setId(100L);
-			job.setFlow(new Flow());
-			job.setScheduleTimestamp(date);
-			job.setEndTimestamp(date2);
-			job.setStartTimestamp(date);
-			job.setSubmitTimestamp(date2);
-			job.setResults(null);
-			List<Job> list = new ArrayList<Job>();
-			Job job2 = jobs.get(1);
-			list.add(job);
-			list.add(job);
-			list.add(jobs.get(1));
+//			Date date = new Date(System.currentTimeMillis());
+//			Date date2 = new java.sql.Timestamp(System.currentTimeMillis());
+//			Job job = new Job();
+//			job.setName("test job");
+//			job.setId(100L);
+//			job.setFlow(new Flow());
+//			job.setScheduleTimestamp(date);
+//			job.setEndTimestamp(date2);
+//			job.setStartTimestamp(date);
+//			job.setSubmitTimestamp(date2);
+//			job.setResults(null);
+//			List<Job> list = new ArrayList<Job>();
+//			Job job2 = jobs.get(1);
+//			list.add(job);
+//			list.add(job);
+//			list.add(jobs.get(1));
 
 			res.setContentType("application/json");
-			logger.debug("job's submit timestamp is type:"
-					+ job2.getSubmitTimestamp().getClass());
+			
 			res.getWriter().write(xstream.toXML(jobs));
 			// mav =new ModelAndView("jsonView",Constants.JOBLIST,jobs);
 		} else {
@@ -564,14 +563,13 @@ public class JobController extends MultiActionController {
 			response.setContentType("text/plain");
 			response.getOutputStream().println(text);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
 
 	/**
-	 * Query for the satus of servers TODO Json call does not work yet.
+	 * Query for the satus of servers 
 	 */
 	public ModelAndView getServerStatus(HttpServletRequest req,
 			HttpServletResponse res) {
@@ -580,18 +578,30 @@ public class JobController extends MultiActionController {
 		MeandreServerProxyConfig head = flowService.getHeadConfig();
 		List<Job> scheduledJobs = flowService.getScheduledJobs();
 		
+		Date date = new Date(System.currentTimeMillis());
+		Date date2 = new java.sql.Timestamp(System.currentTimeMillis());
+		Job job = new Job();
+		job.setName("test job");
+		job.setId(100L);
+		job.setFlow(new Flow());
+		job.setScheduleTimestamp(date);
+		job.setEndTimestamp(date2);
+		job.setStartTimestamp(date);
+		job.setSubmitTimestamp(date2);
+		job.setResults(null);
+		List<Job> list = new ArrayList<Job>();
+		
+		list.add(job);
+		//job.setId(2000L);list.add(job);
+		scheduledJobs=list;
+		
 		ModelAndView mav;
 		String uri = (req != null) ? req.getRequestURI() : "";
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
 			mav = new ModelAndView("jsonView");
 			
-			List<Map<String,String>> jobs=new ArrayList<Map<String,String>>();
-			for (Job job:scheduledJobs){
-				jobs.add(jobToSimpleMap(job));
-			}
-			//mav.addObject("scheduledJobs",jobs);
 			ConverterToList<Job> converter1=new ConverterToList<Job>();
-			mav.addObject("scheduleJobs",converter1.convertToList(scheduledJobs, new ConverterToMapJob()));
+			mav.addObject("scheduledJobs",converter1.convertToList(scheduledJobs, new ConverterToMapJob()));
 			
 			ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>> converter2
 				=new ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>>();
@@ -648,38 +658,7 @@ public class JobController extends MultiActionController {
 		return repositoryClientConnectionPool.getFromPool();
 	}
 
-	
-	private Map<String,String> jobToSimpleMap(Job job){
-		Map<String,String> map=new HashMap<String,String>();
-		
-		JsonHelper helper=new JsonHelper(map);
-		
-		helper.addCheckNull(job.getId(), "id");
-		
-		helper.addCheckNull(job.getSubmitTimestamp(),"submitTimestamp");
-		helper.addCheckNull(job.getScheduleTimestamp(),"scheduleTimestamp");
-		helper.addCheckNull(job.getEndTimestamp(),"endTimestamp");
-		helper.addCheckNull(job.getUpdateTimestamp(),"updateTimestamp");
-		helper.addCheckNull(job.getHost(), "host");
-		helper.addCheckNull(job.getName(), "name");
-		helper.addCheckNull(job.getPort(), "port");
-		helper.addCheckNull(job.getJobStatus().toString(), "status");
-		return map;
-	}
-	
-	private Map<String,String> serverToMap(Entry<MeandreServerProxyConfig,MeandreServerProxyStatus> entry){
-		Map<String,String> map=new HashMap<String,String>();
-		
-		JsonHelper helper=new JsonHelper(map);
-		
-		helper.addCheckNull(entry.getKey().getHost(), "host");
-		helper.addCheckNull(entry.getKey().getPort(), "port");
-		helper.addCheckNull(entry.getKey().getMaxConcurrentJobs(), "maxConcocurrentJobs");
-		helper.addCheckNull(entry.getValue().getNumAborting(), "numAborting");
-		helper.addCheckNull(entry.getValue().getNumRunning(), "numRunning");
 
-		return map;
-	}
 	
 	
 }

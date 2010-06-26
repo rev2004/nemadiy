@@ -33,6 +33,8 @@ import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
+import org.imirsel.nema.webapp.service.JcrService;
+import org.imirsel.nema.webapp.service.JiniService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
@@ -60,6 +62,10 @@ public class TasksServiceTest {
 
 	@Resource
 	private UserManager userManager;
+	@Resource
+	private JcrService mockJcrService;
+	@Resource
+	private JiniService mockJiniService;
 	private String uploadDirectory = "/upload";
 	private ArtifactService artifactService = context
 			.mock(ArtifactService.class);
@@ -73,6 +79,9 @@ public class TasksServiceTest {
 		tasksService.setFlowService(flowService);
 		tasksService.setUserManager(userManager);
 		tasksService.setUploadDirectory(uploadDirectory);
+		tasksService.setJiniService(mockJiniService);
+		tasksService.setJcrService(mockJcrService);
+
 		uuid = UUID.randomUUID();
 	}
 
@@ -144,20 +153,12 @@ public class TasksServiceTest {
 			List<Property> data=new ArrayList<Property>(properties2);
 			tasksService.addExecutable(component2,data,uploadBundle,uuid,map,messageContext);
 			assertEquals(path3.getProtocol()+":"+ path3.getWorkspace() +"://"+path3.getPath(),findProperty(data, tasksService.EXECUTABLE_URL).getValue());
-			assertEquals("true", findProperty(data, tasksService.REMOTE_COMPONENT).getValue());
 			assertEquals(uploadBundle.getPreferredOs(),findProperty(data, tasksService.OS).getValue());
-			assertEquals(uploadBundle.getGroup(), findProperty(data, tasksService.GROUP).getValue());
-			assertEquals(credentials.getUserID() + ":"+ new String(credentials.getPassword()),
-					findProperty(data, tasksService.CREDENTIALS).getValue());
 			assertEquals(path3,map.get(component2));
 
 			tasksService.addExecutable(component3,data,uploadBundle,uuid,map,messageContext);
 			assertEquals(path4.getProtocol()+":"+ path4.getWorkspace() +"://"+path4.getPath(),findProperty(data, tasksService.EXECUTABLE_URL).getValue());
-			assertEquals("true", findProperty(data, tasksService.REMOTE_COMPONENT).getValue());
 			assertEquals(uploadBundle.getPreferredOs(), findProperty(data, tasksService.OS).getValue());
-			assertEquals(uploadBundle.getGroup(), findProperty(data, tasksService.GROUP).getValue());
-			assertEquals(credentials.getUserID() + ":"+ new String(credentials.getPassword()),
-					findProperty(data, tasksService.CREDENTIALS).getValue());
 			assertEquals(path4,map.get(component3));
 
 		} catch (ContentRepositoryServiceException e) {
@@ -234,8 +235,6 @@ public class TasksServiceTest {
 					path2, properties2);
 			assertEquals(findProperty(properties2, tasksService.OS).getValue(),
 					foundBundle.getPreferredOs());
-			assertEquals(findProperty(properties2,tasksService.GROUP).getValue(),
-					foundBundle.getGroup());
 		} catch (ContentRepositoryServiceException e) {
 			logger.error(e, e);
 		}
@@ -312,7 +311,10 @@ public class TasksServiceTest {
 		//expected.remove(component3);
 		Collections.sort(expected.get(component1));
 		Collections.sort(expected.get(component2));
+		Collections.sort(expected.get(component3));
+		
 		assertEquals(expected, map);
+		assertEquals("user:pass",findProperty(map.get(component2),tasksService.CREDENTIALS ).getValue());
 		context.assertIsSatisfied();
 	}
 
@@ -399,7 +401,7 @@ public class TasksServiceTest {
 		
 		List<Property> shown = tasksService.removeHiddenPropertiesForRemoteDynamicComponent(list);
 		String[] niceKeys = { "testField1", "TestField2",
-				"testFieldTHREE"};
+				"testFieldTHREE","_group"};
 		
 		assertEquals(niceKeys.length, shown.size());
 		for (String key:niceKeys){
