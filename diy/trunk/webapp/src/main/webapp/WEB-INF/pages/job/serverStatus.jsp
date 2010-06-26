@@ -1,51 +1,150 @@
 <%@ include file="/common/taglibs.jsp"%>
 <head>
-<title><fmt:message key="serverStatus.title" /></title>
+<style type="text/css">
+ @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojox/grid/resources/Grid.css";
+  @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojox/grid/resources/tundraGrid.css";
 
+  .dojoxGrid table {
+    margin: 0;
+  }
+  </style>
+<title><fmt:message key="serverStatus.title" /></title>
 <meta name="heading" content="${serverStatus.title}"/>
-<meta http-equiv="refresh" content="10" />
+<script type="text/javascript"> 
+console.log('start the grid from the begining');
+dojo.require("dojo.data.ItemFileReadStore");
+dojo.require("dojox.grid.DataGrid");
+dojo.require("dojox.timing._base");
+dojo.require("dojox.grid._Events");
+//dojo.require("dojo.style");
+console.log('here comes the sciprt');
+function updateServerStatus(){
+	console.log("update server status");
+	dojo.xhrGet( {
+			url : "<c:url value='/get/JobManager.getServerStatus.json'/>",
+			handleAs : "json",
+			load : function(data) {
+					
+
+					var serverStoreData={
+							items:data.workers
+						};
+						
+					var workersJsonStore = new dojo.data.ItemFileReadStore({ data:serverStoreData });
+					var workerGrid=dijit.byId("workerGrid");
+					workerGrid.setStore(workersJsonStore);
+					workerGrid.update();
+
+
+
+					jobGridContainer=dojo.byId('jobGridNode');
+					if (data.scheduledJobs.length==0){
+						dojo.style('noJobInQueue','display',"" );
+						dojo.style('jobGridNode','display',"none" );
+					} else {
+						dojo.style('noJobInQueue','display',"none" );
+						dojo.style('jobGridNode','display',"" );
+						var jobStoreData={
+							identifier:'id',
+							label:'name',
+							items:data.scheduledJobs
+							};
+					
+						var jobJsonStore = new dojo.data.ItemFileReadStore({ data:jobStoreData });
+
+						var jobGrid=dijit.byId("jobGrid");
+						jobGrid.setStore(jobJsonStore);
+						jobGrid.update();
+						dojo.byId("queueText").innerHTML="Total <i>"+data.scheduledJobs.length+"</i> jobs.";
+					};
+					}
+			});
+	};
+var serverStoredata={items:[{host:"..."}]};	
+//var workersJsonStore = new dojo.data.ItemFileReadStore({ data:serverStoreData });
+function startGrids(){
+    console.log("start the dojo script");
+     var layout=[
+				  { field: "id", name: "ID", width: "4em"},    
+                  { field: "name", name: "Name", width: "20em"},
+                  { field: "scheduleTimestamp", name: "Schedule Time", width: "18em" },
+                  { field: "host", name: "Host", width: "8em" },
+                  { field: "port", name: "Port", width: "4em" }
+                  //,{field:"description",name:"description", width:"10em"}
+          			
+					];
+	var jobStoreData={
+		identifier:'id',
+		label:'name',
+		items:[{id:''}]
+	};
+	
+	var jobJsonStore = new dojo.data.ItemFileReadStore({ data:jobStoreData });
+	var jobGrid = new dojox.grid.DataGrid({
+						title:'Jobs in Queue',
+						autoheight:10,
+	 				  	id: 'jobGrid',
+						query: { id: '*' },
+						store: jobJsonStore,
+						structure: layout,
+						style:{height:'auto'}
+							},
+						
+					dojo.create('div',{style:{height:'80%'}}));
+	
+	// append the new grid to the div "gridNode":
+	//dojo.byId("jobGridNode").appendChild(jobGrid.domNode); 
+	jobGrid.placeAt("queueStatus","before");
+	jobGrid.startup();
+	
+	var	t = new dojox.timing.Timer(10000);
+		
+	t.onTick = updateServerStatus;
+	t.start();
+	console.log("set up the timer");
+	updateServerStatus();
+
+}
+dojo.addOnLoad(startGrids);
+</script>
 </head>
 <body >
 <h4 id="refresh">This page autorefreshes every 10 seconds</h4>
  <label class="label">Head Server</label>: ${head.host}:${head.port}
- <c:if test="${not empty workers}">
-<table border="1">
-	<thead>
-		<tr>
-			<th>Server</th>
-			<th>Max Concurrent Jobs</th>
-			<th>Running Jobs</th>
-			<th>Aborting Jobs</th>
-		</tr>
-	</thead>
-	<c:forEach items="${workers}" var="worker">
-		
-		<tr>
-			<td>${worker.key.host}:${worker.key.port}</td>
-			<td>${worker.key.maxConcurrentJobs}</td>
-			<td>${worker.value.numRunning}</td>
-			<td>${worker.value.numAborting}</td>
-		</tr>
-	</c:forEach>
-</table>
-</c:if>
-<c:choose>
-<c:when test="${not empty scheduledJobs}">
-<display:table name="scheduledJobs" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="3" 
-defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10">
-  <display:column property="name" escapeXml="true" sortable="true" titleKey="job.name"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
-  <display:column property="description" escapeXml="true" sortable="true" titleKey="job.description"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id" maxLength="25"/>
-  <display:column property="scheduleTimestamp" escapeXml="true" sortable="true" titleKey="job.scheduleTimestamp"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
-  <display:column property="host" escapeXml="true" sortable="true" titleKey="job.host"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id" />
-  <display:column property="port" escapeXml="true" sortable="true" titleKey="job.port"
-        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
-</display:table>
-</c:when>
-<c:otherwise><label class="label">No jobs in queue.</label></c:otherwise>
-</c:choose>
+<p></p>
+<div style="height:450px;">
+<div id="serverGridNode" style="height:150px;width:46em;text-align:center;" class="mycenter">
+<label class="label center">Computation Nodes</label><p></p>
+ <table dojoType="dojox.grid.DataGrid"  id="workerGrid" style="width: 100%;height:70%;  border:1;" rowSelector="20px">
+            <thead>
+                <tr>
+                    <th width="10em" field="host">
+                        host
+                    </th>
+                    <th width="5em" field="port" >
+                        Port
+                    </th>
+                
+                    <th field="maxConcocurrentJobs" width="18em">
+                        Max Concurrent Jobs
+                    </th>
+                    <th field="numRunning" width="10em">Running Jobs</th>
+					<th field="numAborting" width="10em">Aborting Jobs</th>
+                </tr>
+            </thead>
+        </table>
+ </div>
+<div style="height:100px;"><p>        </p>
+ <div id="noJobInQueue">No Jobs are in Queue.</div>
+<div id="jobGridNode" style="height:100px;width:45em;text-align:center;" class="mycenter">
+
+	<label class="label ">Jobs in Queue</label>
+	<p>   </p>
+	<div id="queueStatus" style="" class="right"	>
+		<p></p><label class="label" id="queueText"></label>
+		<p style="clear:both;"> </p>
+	</div>
+</div>
+</div>
 </body>
 

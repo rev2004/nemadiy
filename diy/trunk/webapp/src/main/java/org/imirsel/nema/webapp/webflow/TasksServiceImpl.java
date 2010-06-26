@@ -87,8 +87,7 @@ public class TasksServiceImpl {
 		HIDDEN_PROPERTIES.add(REMOTE_COMPONENT);
 		HIDDEN_PROPERTIES.add(EXECUTABLE_URL);
 		HIDDEN_PROPERTIES.add(OS);
-		//HIDDEN_PROPERTIES.add(GROUP);
-		// HIDDEN_PROPERTIES.add(MIREX_SUBMISSION_CODE);
+		HIDDEN_PROPERTIES.add(CREDENTIALS);
 	}
 
 	public String getPhysicalDir() {
@@ -521,8 +520,6 @@ public class TasksServiceImpl {
 		replacePropertyValue(componentsToPropertyLists,NEMA_USER, userManager.getCurrentUser().getUsername());
 		replacePropertyValue(componentsToPropertyLists,LOOKUP_HOST,jiniService.getLookupServiceHost());
 		replacePropertyValue(componentsToPropertyLists,CONTENT_REPOSITORY_URI,jcrService.getContentRepositoryUri());
-		
-		
 		
 		return componentsToPropertyLists;
 	}
