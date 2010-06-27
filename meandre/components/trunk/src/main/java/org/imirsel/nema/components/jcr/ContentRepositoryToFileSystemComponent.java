@@ -23,6 +23,7 @@ import org.imirsel.nema.contentrepository.client.ResultStorageService;
 import org.imirsel.nema.model.NemaResult;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.RepositoryResourcePath;
+import org.imirsel.nema.model.NemaResult.ResultType;
 
 
 import org.meandre.annotations.Component;
@@ -99,14 +100,14 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 		List<ProcessArtifact> processArtifactList=(List<ProcessArtifact>)componentContext.getDataComponentFromInput(DATA_IN_1);
 		List<ProcessArtifact> processArtifactListOutput = new ArrayList<ProcessArtifact>(10);
 		for(ProcessArtifact processArtifact:processArtifactList){
-			System.out.println("=====> IN Process Artifact: " + processArtifact.getResourcePath());
+			componentContext.getLogger().info("=====> IN Process Artifact: " + processArtifact.getResourcePath());
 		if(!processArtifact.getResourcePath().startsWith("jcr:")){
 			processArtifactListOutput.add(processArtifact);
 		}else{
 			try {
 				ProcessArtifact processArtifactModified = provisionArtifact(processArtifact);
 			
-				System.out.println("OUT Process Artifact: " + processArtifactModified.getResourcePath());
+				componentContext.getLogger().info("OUT Process Artifact: " + processArtifactModified.getResourcePath());
 				processArtifactListOutput.add(processArtifactModified);
 			} catch (ContentRepositoryServiceException e) {
 				throw new ComponentExecutionException(e);
@@ -114,7 +115,8 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 		
 		}
 		}
-		System.out.println("SIZE OF THE ARRAY BEFORE PUSH: "+processArtifactListOutput.size() );
+		componentContext.getLogger().info("SIZE OF THE LIST BEFORE PUSH: "+processArtifactListOutput.size() );
+		componentContext.getLogger().info("pushing: " + processArtifactListOutput.get(0).getResourcePath()+"\n\n");
 		componentContext.pushDataComponentToOutput(DATA_OUT_1, processArtifactListOutput);
 		
 	}
@@ -165,28 +167,7 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 		for(String fname:fileList){
 			System.out.println("FILE NAME: "+fname);
 		}
-		
-		/*File file = new File(resultLoc,name);
-		System.out.println("WRITING: " + file.getAbsolutePath());
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(file);
-			fos.write(content);
-		} catch (FileNotFoundException e) {
-			throw new ContentRepositoryServiceException(e);
-		} catch (IOException e) {
-			throw new ContentRepositoryServiceException(e);
-		}finally{
-			if(fos!=null){
-			try {
-				fos.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			}
-		}
-		*/
+
 		String jcrPath = processArtifact.getResourcePath();
 		int resultIndex = jcrPath.indexOf("results");
 		String resultPath = jcrPath;
@@ -195,7 +176,14 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 		}
 		File localResult = new File(resultLoc,resultPath);
 		System.out.println("LOCAL RESULT LOCATION: " + localResult.getAbsolutePath());
-		ProcessArtifact pa = new ProcessArtifact(localResult.getAbsolutePath(), processArtifact.getResourceType(), result.getModelClass());
+		String type="file";
+		if(result.getResultType() == ResultType.DIR){
+			type= "dir";	
+		}else if(result.getResultType() == ResultType.FILE){
+			type="file";
+		}
+		
+		ProcessArtifact pa = new ProcessArtifact(localResult.getAbsolutePath(), type, result.getModelClass());
 		return pa;
 	}
 

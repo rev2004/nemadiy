@@ -75,24 +75,32 @@ public class OmenOutputReader extends NemaComponent {
 	@Override
 	public void execute(ComponentContext cc)
 			throws ComponentExecutionException, ComponentContextException {
-		
+		cc.getOutputConsole().println("In output reader -execute");
 		if(task == null && cc.isInputAvailable(DATA_IN_NEMATASK)){
 			task = (NemaTask)cc.getDataComponentFromInput(DATA_IN_NEMATASK);
+			cc.getOutputConsole().println("In output reader -got task");
+				
 		}
 		if(fileType == null && cc.isInputAvailable(DATA_IN_OUTPUT_TYPE)){
 			fileType = (Class<NemaFileType>)cc.getDataComponentFromInput(DATA_IN_OUTPUT_TYPE);
+			cc.getOutputConsole().println("In output reader -got output type");
 		}
 		if(expectedPaths == null && cc.isInputAvailable(DATA_IN_EXPECTED_OUTPUTS)){
 			expectedPaths = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_IN_EXPECTED_OUTPUTS);
 			toReceive = new HashSet<File>();
+			cc.getOutputConsole().println("In output reader -got  expected output " + toReceive.size());
 			for (Iterator<List<File>> it = expectedPaths.values().iterator(); it.hasNext();) {
 				toReceive.addAll(it.next());
 			}
+			cc.getOutputConsole().println("The output expected size: " + toReceive.size());
 		}
 		//when we are configured start receiving process artifacts
 		if(task != null && fileType != null && expectedPaths != null){
-			while(cc.isInputAvailable(DATA_IN_PROCESS_ARTIFACTS)){
+			cc.getOutputConsole().println("Now get the process artifact list being sent in");
+		
+			if(cc.isInputAvailable(DATA_IN_PROCESS_ARTIFACTS)){
 				List<ProcessArtifact> in = (List<ProcessArtifact>)cc.getDataComponentFromInput(DATA_IN_PROCESS_ARTIFACTS);
+				cc.getOutputConsole().println("The process artifact: " + in.size() + "  " + in.get(0).getResourcePath());
 				for(Iterator<ProcessArtifact> it = in.iterator();it.hasNext();){
 					File path = new File(it.next().getResourcePath());
 					
@@ -127,8 +135,18 @@ public class OmenOutputReader extends NemaComponent {
 						toReceive = null;
 					}
 				}
+			}else{
+				cc.getOutputConsole().println("Process Artifact input is not available yet.");
 			}
+			
+			
+		}else{
+			cc.getOutputConsole().println("Waiting on getting the process artifact list to read -rest of the parameters are all good.");
 		}
+		
+		
+		
+		
 	}
 
 }
