@@ -66,40 +66,8 @@
 		
     });
 }
-    function statusString(code) {
-         var name = null;
-         switch (code) {
-            case -1: {
-               name = "Unknown";
-               break;
-            }
-            case 0: {
-               name = "Scheduled";
-               break;
-            }
-            case 1: {
-               name = "Submitted";
-               break;
-            }
-            case 2: {
-               name = "Started";
-               break;
-            }
-            case 3: {
-               name = "Finished";
-               break;
-            }
-            case 4: {
-                name = "Failed";
-                break;
-             }
-            case 5: {
-                name = "Aborted";
-                break;
-             }
-         }
-         return name;
-      }
+  
+
      function checkNull(str){
          if (str==null){
              return "Pending...";
