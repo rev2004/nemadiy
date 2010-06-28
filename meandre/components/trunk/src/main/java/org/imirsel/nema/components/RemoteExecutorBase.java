@@ -152,7 +152,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 			if(this.processExecutorService==null){
 				context.getLogger().info("Error could not find the executor service");
 			}else{
-				context.getLogger().info("====> PROCESS EXECUTION ID"+this.processExecutorService.getId());
+				context.getLogger().info("process executor id: "+this.processExecutorService.getId() + " " + this.processExecutorService.getIpAddress());
 			}
 		} catch (RemoteException e) {
 			throw new ComponentExecutionException(e);
