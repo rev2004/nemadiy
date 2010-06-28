@@ -6,9 +6,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.Repository;
@@ -16,12 +14,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
-import javax.jcr.version.VersionException;
 import javax.jcr.LoginException;
 
 import org.apache.jackrabbit.commons.NamespaceHelper;
@@ -233,7 +228,6 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 
 			if(!exists){
 				logger.info("dir path does not exist -creating the directory path " + executableDirPath);
-				
 				if(session.itemExists(userDirPath)==false){
 					Node usersNode=root.getNode(USERS_DIR);
 					userNode=usersNode.addNode(credentials.getUserID(), "nt:folder");
@@ -242,19 +236,16 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 					session.save();
 					executionInstanceDirNode=flowNode.addNode(dirName, "nt:folder");
 					session.save();
-					System.out.println("7");
 				}else if(session.itemExists(flowDirPath)==false){
 					userNode= session.getNode(userDirPath);
 					flowNode=userNode.addNode(FLOWS_DIR,"nt:folder");
 					session.save();
 					executionInstanceDirNode=flowNode.addNode(dirName, "nt:folder");
 					session.save();
-					System.out.println("8");
 				}else if(session.itemExists(executableDirPath)==false){
 					flowNode=session.getNode(flowDirPath);
 					executionInstanceDirNode=flowNode.addNode(dirName, "nt:folder");
 					session.save();
-					System.out.println("9");
 				}
 				
 				
@@ -266,7 +257,6 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 				}else{
 					executionInstanceDirNode=executableDirNode.addNode(dirName, "nt:folder");
 				}
-				System.out.println("10");
 			}
 			
 			if(session.itemExists(resultDir)){
@@ -274,33 +264,23 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 			}else{
 				resultDirNode=executionInstanceDirNode.addNode(RESULT_DIR,"nt:folder");
 			}
-			System.out.println("11-0");
 			
 			MimeTable mt = MimeTable.getDefaultTable();
 			String mimeType = mt.getContentTypeFor(nemaResult.getName());
-			System.out.println("11-1");
 			if (mimeType == null) {
 				mimeType = "application/octet-stream";
 			}
-			System.out.println("11-2");
 			
 			//set the resultpath node to the resultDirNode
 			resultPathNode = resultDirNode;
 			// create the directory paths from the resultPath
 			
 			resultPathNode = createResultPathNodes(nemaResult,resultDirNode);
-			
-			
 			Node fileNode = resultPathNode.addNode (nemaResult.getName(), "result:file");
-			System.out.println("11-3");
 			fileNode.setProperty("fileName", nemaResult.getFileName());
-			System.out.println("11-4");
 			fileNode.setProperty("typeName", nemaResult.getResultType().toString());
-			System.out.println("11-5");
 			fileNode.setProperty("execId", nemaResult.getExecutionId());
-			System.out.println("11-6");
 			fileNode.setProperty("modelClass", nemaResult.getModelClass());
-			System.out.println("12");
 			
 			if(nemaResult.getResultPath()!=null){
 				fileNode.setProperty("resultPath", nemaResult.getResultPath());
@@ -313,23 +293,14 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 			resNode.setProperty ("jcr:encoding", "");
 			resNode.setProperty ("jcr:data", new BinaryValue(nemaResult.getFileContent()));
 			resNode.setProperty ("jcr:lastModified", currentTime);
-			System.out.println("13-0");
 			Node resultPropertiesNode =  resultPathNode.addNode(nemaResult.getName()+".properties","nt:file");
-			System.out.println("13-1");
 			mimeType = mt.getContentTypeFor(nemaResult.getName()+".properties");
-			System.out.println("13-2");
 			Node eresNode = resultPropertiesNode.addNode ("jcr:content", "nt:resource");
-			System.out.println("13-3");
 			eresNode.setProperty ("jcr:mimeType", mimeType);
-			System.out.println("13-4");
 			eresNode.setProperty ("jcr:encoding", "");
-			System.out.println("13-5");
 			eresNode.setProperty ("jcr:data", new BinaryValue(BundleUtils.getPropertyFileAsBytes(nemaResult)));
-			System.out.println("13-6");
 			eresNode.setProperty ("jcr:lastModified", currentTime);
-			System.out.println("13-7");
 			resourcePath = fileNode.getPath();
-			System.out.println("15");
 			logger.info("saving session: " + resNode.getPath());
 			session.save();
 		} catch (RepositoryException e) {
@@ -339,23 +310,20 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 				logger.info("logging out of the session");
 				session.logout();
 			}
+			logger.info("after saving result file");
 		}
-		System.out.println("16");
 		return new RepositoryResourcePath(DEFAULT_PROTOCOL,DEFAULT_WORKSPACE,resourcePath);
-		
-		
 	}
 
 
 	private Node createResultPathNodes(NemaResult nemaResult, Node resultDirNode) {
 		String resultPath = nemaResult.getResultPath();
-		System.out.println("RESULT PATH BEFORE: " + resultPath);
 		// get rid of the filename
 		int fileNameIndex=resultPath.lastIndexOf("/");
 		if(fileNameIndex!=-1){
 			resultPath = resultPath.substring(0,fileNameIndex);
 		}
-		System.out.println("RESULT PATH AFTER: " + resultPath);
+		logger.info("result path is: " + resultPath);
 		if(resultPath==null){
 			return resultDirNode;
 		}
@@ -365,10 +333,10 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 			String nodename = stok.nextToken();
 			try {
 				if(!resultDirNode.hasNode(nodename)){
-					System.out.println("CREATING folder: " + nodename );
+					logger.info("creating folder: " + nodename );
 					resultDirNode = resultDirNode.addNode(nodename, "nt:folder");
 				}else{
-					System.out.println("set folder as the resultDirNode: " + nodename );
+					logger.info("set folder as the resultDirNode: " + nodename );
 					resultDirNode= resultDirNode.getNode(nodename);
 				}
 			} catch (Exception e) {
@@ -632,6 +600,7 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 	 */
 	public final ExecutableBundle getExecutableBundle(final SimpleCredentials credentials,
 			final ResourcePath resourcePath) throws ContentRepositoryServiceException {
+		logger.info("get executable bundle");
 		if(repository==null){
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
@@ -639,7 +608,6 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 
 		try {
 			session = repository.login(credentials);
-			System.out.println("HERE 1" + resourcePath.getPath());
 			boolean exists=session.itemExists(resourcePath.getPath());
 			if(!exists){
 				throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
@@ -648,10 +616,12 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 			ExecutableBundle bundle = retrieveExecutableBundleFromNode(node,true);
 			return bundle;
 		} catch (RepositoryException e) {
+			logger.severe("error: " + e.getMessage());
 			throw new ContentRepositoryServiceException(e);
 		}finally{
 			if(session!=null)
 				session.logout();
+			logger.info("returning from the get executable bundle function");
 		}
 	}
 	
@@ -663,29 +633,22 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 	 * @throws ContentRepositoryServiceException
 	 */
 	public final NemaResult getNemaResult(final SimpleCredentials credentials, final ResourcePath resourcePath) throws ContentRepositoryServiceException{
-		System.out.println("HERE IN GET NEMA RESULT");
+		logger.info("get nema result");
 		if(repository==null){
-			System.out.println("CONTENT REP -REP NOT SET");
 			throw new ContentRepositoryServiceException("Repository not set");
 		}
 		Session session = null;
 
 		try {
-			System.out.println("CONTENT REP -LOGIN ");
-			System.out.println("Credentials are: " + credentials.getUserID()+ " password: " +new String(credentials.getPassword()));
 			session = repository.login(credentials);
-			System.out.println("CONTENT AFTER  REP -LOGIN");
 			boolean exists=session.itemExists(resourcePath.getPath());
-			System.out.println("CONTENT REP CHECK PATH "+resourcePath.getPath());
 			if(!exists){
-				System.out.println("CONTENT REP CHECK PATH NOT EXIST");
+				logger.severe("Repository path " + resourcePath.getPath() + " does not exist.");
 				throw new ContentRepositoryServiceException("Path: " + resourcePath.getPath() + " does not exist.");
 			}
-			System.out.println("C1");
 			Node node=session.getNode(resourcePath.getPath());
-			System.out.println("C2");
+			logger.info("getting nema result");
 			NemaResult nemaResult = retrieveNemaResultFromNode(node, true);
-			System.out.println("C3");
 			return nemaResult;
 		} catch (RepositoryException e) {
 			throw new ContentRepositoryServiceException(e);
@@ -825,8 +788,6 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 		Property modelClassProperty = null;
 		Property resultPathProperty=null;
 		
-		System.out.println("A1");
-		
 		boolean propExists = fileNode.hasProperty("typeName");
 		if(propExists){
 			typeNameProperty = fileNode.getProperty("typeName");
@@ -838,48 +799,32 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 			else
 				throw new ContentRepositoryServiceException("Error invalid Result type: " + typeVal);
 		}
-		System.out.println("A2");
 		propExists = fileNode.hasProperty("fileName");
 		if(propExists){
 			fileNameProperty = fileNode.getProperty("fileName");
 			nemaResult.setFileName(fileNameProperty.getString());
 		}
-		System.out.println("A3");
-		
 		
 		propExists = fileNode.hasProperty("execId");
 		if(propExists){
 			execIdProperty = fileNode.getProperty("execId");
 			nemaResult.setExecutionId(execIdProperty.getString());
 		}
-		System.out.println("A4");
-		
 		propExists = fileNode.hasProperty("name");
 		if(propExists){
 			nameProperty = fileNode.getProperty("name");
 			nemaResult.setName(nameProperty.getString());
 		}
-		System.out.println("A5");
 		propExists = fileNode.hasProperty("modelClass");
 		if(propExists){
 			modelClassProperty = fileNode.getProperty("modelClass");
 			nemaResult.setModelClass(modelClassProperty.getString());
 		}
-		System.out.println("A6");
 		propExists = fileNode.hasProperty("resultPath");
 		if(propExists){
 			resultPathProperty = fileNode.getProperty("resultPath");
 			nemaResult.setModelClass(resultPathProperty.getString());
 		}
-		System.out.println("A7");
-		
-		NodeIterator nit=fileNode.getNodes();
-		
-		while(nit.hasNext()){
-			Node node=nit.nextNode();
-			System.out.println(node.getPath());
-		}
-		
 		
 		Node resNode = fileNode.getNode ("jcr:content");
 		//Property mimeTypeProperty = resNode.getProperty("jcr:mimeType");
@@ -887,25 +832,23 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 		Property dataProperty = resNode.getProperty("jcr:data");
 		String fileName = fileNode.getName();
 		nemaResult.setName(fileName);
-		System.out.println("A8");
 		//String mimeType=mimeTypeProperty.getString();
 		//String encodingType = encodingProperty.getString();
 		if(copyContent){
-			System.out.println("A9");
+			logger.info("copying the byte contents");
 			InputStream is = dataProperty.getBinary().getStream();
 			long length =dataProperty.getBinary().getSize();
-			System.out.println("A10");
 			byte[] data;
 			try {
 				data =BundleUtils.readByteDataFromStream(is,length);
 			} catch (IOException e) {
+				logger.severe("error -could not copy content " + e.getMessage());
 				throw new ContentRepositoryServiceException(e);
 			}
-			System.out.println("A11");
 			nemaResult.setFileContent(data);
 		}
-		
-		System.out.println("A12");
+	
+		logger.info("returning nemaresult");
 		return nemaResult;
 	}
 
@@ -933,11 +876,9 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 		}
 
 		propExists=fileNode.hasProperty("typeName");
-		System.out.println("filenode has the property typeName: " + propExists);
 		if(propExists){
 			typeNameProperty=fileNode.getProperty("typeName");
 			typeName = typeNameProperty.getString();
-			System.out.println("typeName is: " + typeName);
 		}
 
 		propExists=fileNode.hasProperty("execId");
