@@ -41,8 +41,10 @@ function updateJobList(){
 					
 					var jsonStore = new dojo.data.ItemFileReadStore({ data:storeData });
 					var grid=dijit.byId("grid");
+					var scrollPosition=grid.lastScrollTop;
 					grid.setStore(jsonStore);
 					grid.update();
+					grid.scrollTo(scrollPosition);
 					
 					dojo.byId("status").innerHTML="Total Count: <i>"+data.jobList.length+"</i>";
 					}
