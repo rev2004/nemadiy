@@ -2,8 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 	<bean id="job1" name="job1" class="org.imirsel.nema.model.Job"
 		p:id="100" p:name="job1" p:description="this is the first mock job"
 		p:statusCode="1" p:flow-ref="flow1" />
@@ -14,6 +14,8 @@
 		<property name="name" value="job2" />
 		<property name="description" value="second mock job" />
 		<property name="statusCode" value="4" />
+		<property name="host" value="nema-c-1" />
+		<property name="port" value="11714" />
 		<property name="flow" ref="flow2" />
 	</bean>
 

@@ -30,7 +30,7 @@ public class ConverterToMapServerConfig
 		helper.addCheckNull(config.getHost(), "host");
 		helper.addCheckNull(config.getPort(), "port");
 		helper.addCheckNull(config.getMaxConcurrentJobs(),
-				"maxConcocurrentJobs");
+				"maxConcurrentJobs");
 		
 
 		return map;

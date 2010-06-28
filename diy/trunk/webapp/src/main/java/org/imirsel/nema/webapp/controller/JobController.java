@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +43,9 @@ import org.imirsel.nema.webapp.json.ConverterToMapServerConfig;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 
 /**
  * 
@@ -566,7 +570,7 @@ public class JobController extends MultiActionController {
 	 * Query for the satus of servers 
 	 */
 	public ModelAndView getServerStatus(HttpServletRequest req,
-			HttpServletResponse res) {
+			HttpServletResponse res) throws IOException {
 		Map<MeandreServerProxyConfig, MeandreServerProxyStatus> workers = flowService
 				.getWorkerStatus();
 		MeandreServerProxyConfig head = flowService.getHeadConfig();
@@ -592,6 +596,8 @@ public class JobController extends MultiActionController {
 		ModelAndView mav;
 		String uri = (req != null) ? req.getRequestURI() : "";
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
+			
+			
 			mav = new ModelAndView("jsonView");
 			
 			ConverterToList<Job> converter1=new ConverterToList<Job>();
@@ -600,9 +606,20 @@ public class JobController extends MultiActionController {
 			ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>> converter2
 				=new ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>>();
 			mav.addObject("workers",converter2.convertToList(workers.entrySet(), new ConverterToMapServer()));
+			mav.addObject("anotherWorkers",workers);
 		
 			ConverterToMapServerConfig converter3=new ConverterToMapServerConfig();
 			mav.addObject("head",converter3.convertToMap(head));
+			
+//			Map<String,Object> model=new HashMap<String,Object>();
+//			model.put("workers", workers);
+//			model.put("head", head);
+//			model.put("jobs", scheduledJobs);
+//			XStream xstream = new XStream(new JettisonMappedXmlDriver());
+//			res.setContentType("application/json");
+//			res.getWriter().write(xstream.toXML(model));
+//			return null;
+			
 			
 		} else {
 			mav = new ModelAndView("job/serverStatus");
