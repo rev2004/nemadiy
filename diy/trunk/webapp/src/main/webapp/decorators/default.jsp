@@ -16,7 +16,7 @@
         <script type="text/javascript" src="<c:url value='/scripts/global.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/nemaStatus.js'/>"></script>
          <script type="text/javascript">
-        	dojo.addOnLoad(loadNemaStatus("<c:url value='/get/JobManager.getNemaStatus.json'/>"));
+        	//dojo.addOnLoad(loadNemaStatus("<c:url value='/get/JobManager.getNemaStatus.json'/>"));
         	//dojo.addOnLoad(loadNotification("<c:url value='/get/JobManager.getNotification.json'/>"));
         </script>
         <decorator:head/>

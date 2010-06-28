@@ -29,14 +29,13 @@
    
    	
         <Menu name="AdminMenu" title="menu.admin" description="Admin Menu" roles="ROLE_ADMIN" width="120" page="/admin/users.html">
+         	<Item name="ServerStatus" title="menu.serverStatus" page="/get/JobManager.getServerStatus"  width="120" />
             <Item name="ViewUsers" title="menu.admin.users" page="/admin/users.html"  width="120" />
             <Item name="ViewSubmissions" title="menu.admin.submissions" page="/get/JobManager.getAllSubmissions"  width="120" />
             <Item name="ActiveUsers" title="mainMenu.activeUsers" page="/admin/activeUsers.html"  width="120" />
             <Item name="ReloadContext" title="menu.admin.reload" page="/admin/reload.html"  width="120" />
             <Item name="FlushCache" title="menu.flushCache" page="/admin/flushCache.html"  width="120" />
             <Item name="Clickstream" title="menu.clickstream" page="/admin/clickstreams.jsp"  width="120" />
-            <Item name="ServerStatus" title="menu.serverStatus" page="/get/JobManager.getServerStatus"  width="120" />
-            
         </Menu>
 
 		
