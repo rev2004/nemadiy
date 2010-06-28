@@ -1,7 +1,7 @@
 <%@ include file="/common/taglibs.jsp"%>
 
 <menu:useMenuDisplayer name="Velocity" config="cssHorizontalMenu.vm" permissions="rolesAdapter">
-<ul id="primary-nav" class="menuList">
+<ul id="primary-nav" class="menuList" style="z-index:20000;">
     <li class="pad">&nbsp;</li>
    <c:if test="${pageContext.request.remoteUser == null}">
  	<menu:displayMenu name="MainMenu"/>
