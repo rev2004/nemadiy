@@ -101,6 +101,12 @@ public class OnsetEvaluator extends EvaluatorImpl {
 				if (!classList.contains(className)) {
 					classList.add(className);
 				}	
+			} else {
+				String className = "Unclassified";
+				if (!classList.contains(className)) {
+					classList.add(className);
+				}
+				
 			}
 		}
 		Collections.sort(classList);
@@ -177,6 +183,8 @@ public class OnsetEvaluator extends EvaluatorImpl {
 			int classNum = 0;
 			if (gtData.hasMetadata(NemaDataConstants.ONSET_DETECTION_CLASS)) {
 				classNum = classList.indexOf(gtData.getStringMetadata(NemaDataConstants.ONSET_DETECTION_CLASS)) + 1;
+			} else {
+				classNum = classList.indexOf("Unclassified");
 			}
 			double avgFMeasureForFile = 0.0;
             double avgCorrectForFile = 0.0;
