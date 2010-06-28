@@ -126,7 +126,7 @@ dojo.addOnLoad(startGrids);
                         Port
                     </th>
                 
-                    <th field="maxConcocurrentJobs" width="16em">
+                    <th field="maxConcurrentJobs" width="16em">
                         Max Concurrent Jobs
                     </th>
                     <th field="numRunning" width="10em">Running Jobs</th>

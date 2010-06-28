@@ -25,6 +25,7 @@ public class ConverterToMapJob implements ConverterToMap<Job> {
 
 		helper.addCheckNull(job.getSubmitTimestamp(), "submitTimestamp");
 		helper.addCheckNull(job.getScheduleTimestamp(), "scheduleTimestamp");
+		helper.addCheckNull(job.getStartTimestamp(), "startTimestamp");
 		helper.addCheckNull(job.getEndTimestamp(), "endTimestamp");
 		helper.addCheckNull(job.getUpdateTimestamp(), "updateTimestamp");
 		helper.addCheckNull(job.getHost(), "host");
