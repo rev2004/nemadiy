@@ -14,6 +14,7 @@ import org.imirsel.nema.analytics.evaluation.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisFunctionTimestepPlotItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisOnsetPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
 import org.imirsel.nema.analytics.util.io.IOUtil;
@@ -198,7 +199,7 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));
 
-				/* Plot melody transcription against GT for each track result for each system */
+				/* Plot onset transcription against GT for each track result for each system */
 				PageItem[] plots = plotTranscriptionForJob(jobId, results);
 				for (int i = 0; i < plots.length; i++) {
 					items.add(plots[i]);
@@ -262,7 +263,7 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 	
 
 	/**
-	 * Plots the melody transcriptions for each job, for each file
+	 * Plots the onset transcriptions for each job, for each file
 	 * 
 	 * @param jobId    the jobId we wish to plot results for.
 	 * @param results  The results Object containing the data to plot.
@@ -291,35 +292,72 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 //						+ File.separator + "track_" + result.getId() + MELODY_PLOT_EXT);
 //				plotItems.add(plotFile);
 	
-				double[][] rawData = result.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
-				double[][] rawGtData = groundtruth.get2dDoubleArrayMetadata(NemaDataConstants.MELODY_EXTRACTION_DATA);
+				double[][] rawData2D = result.get2dDoubleArrayMetadata(NemaDataConstants.ONSET_DETECTION_DATA);
+				double[][] rawGtData2D = groundtruth.get2dDoubleArrayMetadata(NemaDataConstants.ONSET_DETECTION_DATA);
 				
-				int tot = rawGtData.length;
-				
+				String[] annotators = null;
+				if (groundtruth.hasMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS)) {
+					annotators = groundtruth.getStringArrayMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS);
+				}
 				//setup time line for for X-axis
 				double startTimeSecs = 0.0;
-				double endTimeSecs = tot * NemaDataConstants.MELODY_TIME_INC;
+				double endTimeSecs = 0.0;
 				
-				//setup data-series to plot
-				Map<String,double[][]> series = new HashMap<String, double[][]>(2);
-				series.put("Prediction", rawData);
-				series.put("Ground-truth", rawGtData);
+				// Load in the prediction data
+				double[] rawData = new double[rawData2D.length];
+				for (int i = 0; i < rawData.length; i++) {
+					rawData[i] = rawData2D[i][0];
+					if (rawData2D[i][0] > endTimeSecs) {
+						endTimeSecs = rawData2D[i][0];
+					}
+				}
+					
+				//setup hash map for to plot
+				Map<String,double[]> series = new HashMap<String, double[]>(rawGtData2D[0].length + 1);
+				ArrayList<String> seriesNames = new ArrayList<String>(rawGtData2D[0].length + 1);
+				series.put(results.getJobName(jobId), rawData);
+				seriesNames.add(results.getJobName(jobId));
+				for (int curGT = 0; curGT < rawGtData2D[0].length; curGT++) {
+					ArrayList<Double> gtDataArr = new ArrayList<Double>();
+					for (int t=0; t<rawGtData2D.length; t++) {
+						double onTime = rawGtData2D[t][curGT];
+						if (!Double.isNaN(onTime)) {
+							gtDataArr.add(new Double(onTime));
+							if (onTime > endTimeSecs) {
+								endTimeSecs = onTime;
+							}
+						}
+					}
+					double[] rawGtData = new double[gtDataArr.size()];
+					for(int t = 0; t < rawGtData.length; t++) {
+						rawGtData[t] = gtDataArr.get(t).doubleValue();
+					}
+					if (groundtruth.hasMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS)) {
+						String annotator = annotators[curGT];
+						series.put(annotator, rawGtData);
+						seriesNames.add(annotator);
+					} else {
+						series.put("Ground-truth " + curGT, rawGtData);
+						seriesNames.add("Ground-truth " + curGT);
+					}
+						
+					
+				}
 				
-				ProtovisFunctionTimestepPlotItem plot = new ProtovisFunctionTimestepPlotItem(
+				
+				ProtovisOnsetPlotItem plot = new ProtovisOnsetPlotItem(
 						//plotname
 						results.getJobName(jobId) + "_transcription_" + result.getId(), 
 						//plot caption
-						results.getJobName(jobId) + ": Melody transcription for track " + result.getId(), 
+						results.getJobName(jobId) + ": Onset transcription for track " + result.getId(), 
 						//start time for x axis
 						startTimeSecs, 
 						//end time for x axis
 						endTimeSecs, 
-						//current resolution of data
-						NemaDataConstants.MELODY_TIME_INC,
-						//resolution to downsample to for plotting (too many values and current plot grinds to a halt)
-						TARGET_PLOT_RESOLUTION,
-						//series to plot
-						series);
+						//map of annotator/system names to the data
+						series,
+						//ordered list of annotator/system names
+						seriesNames);
 				plotItems.add(plot);
 			}
 		}
