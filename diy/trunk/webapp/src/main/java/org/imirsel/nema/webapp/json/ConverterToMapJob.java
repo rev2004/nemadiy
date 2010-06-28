@@ -30,7 +30,8 @@ public class ConverterToMapJob implements ConverterToMap<Job> {
 		helper.addCheckNull(job.getHost(), "host");
 		helper.addCheckNull(job.getName(), "name");
 		helper.addCheckNull(job.getPort(), "port");
-		helper.addCheckNull(job.getJobStatus().toString(), "status");
+		//now I am free to put any bean. Even not a bean. 
+		helper.addCheckNull(job.getJobStatus(), "status");
 		return map;
 	}
 
