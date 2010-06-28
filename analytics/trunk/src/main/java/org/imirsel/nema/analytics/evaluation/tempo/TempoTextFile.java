@@ -80,13 +80,15 @@ public class TempoTextFile extends SingleTrackEvalFileTypeImpl {
 		double[] tempoData = data.getDoubleArrayMetadata(NemaDataConstants.TEMPO_EXTRACTION_DATA);
 		
 		/* Construct output 2d String array for writing */
-		String[][] tempoDataStrArray = new String[1][3];
+		String[][] tempoDataStrArray = new String[1][tempoData.length];
 		try{		
 			tempoDataStrArray[0][0] = TEMPO_DEC.format(tempoData[0]);
 			tempoDataStrArray[0][1] = TEMPO_DEC.format(tempoData[1]);
-			tempoDataStrArray[0][2] = TEMPO_DEC.format(tempoData[2]);
+			if (tempoData.length == 3) {
+				tempoDataStrArray[0][2] = TEMPO_DEC.format(tempoData[2]);
+			}
 		}catch(ArrayIndexOutOfBoundsException e){
-			throw new IllegalArgumentException("Track " + data.getId() + " should have a double[3] array for metadata" +
+			throw new IllegalArgumentException("Track " + data.getId() + " should have a double[2] or double[3] array for metadata" +
 					" type '" + NemaDataConstants.TEMPO_EXTRACTION_DATA + "', number of columns is wrong" ,e);
 		}
 		
