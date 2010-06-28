@@ -46,7 +46,7 @@ import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
  */
 public abstract class RemoteProcessExecutorComponent extends NemaComponent {
 	
-	@ComponentProperty(defaultValue = "nema-dev.lis.illinois.edu", description = "Host that discovers compatiable execution servers that support the profile.", name = "host")
+	@ComponentProperty(defaultValue = "nema-dev.lis.illinois.edu", description = "Host that discovers compatible execution servers that support the profile.", name = "host")
 	private static final String PROPERTY_1 = "host";
 	
 	@ComponentProperty(defaultValue = "exampleRun", description = "Unique identifier for the executable", name = "profileName")
