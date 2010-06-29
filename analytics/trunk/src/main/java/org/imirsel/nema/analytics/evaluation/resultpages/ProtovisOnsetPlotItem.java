@@ -6,11 +6,8 @@
 package org.imirsel.nema.analytics.evaluation.resultpages;
 
 import java.text.DecimalFormat;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.imirsel.nema.analytics.evaluation.structure.NemaSegment;
 
 /**
  * A PageItem implementation for plotting one or more sequences of onset times
@@ -19,6 +16,7 @@ import org.imirsel.nema.analytics.evaluation.structure.NemaSegment;
  * Implements Javascript rendering using Protovis.
  * 
  * @author kris.west@gmail.com
+ * @since 0.3.0
  */
 public class ProtovisOnsetPlotItem extends PageItem{
 
@@ -101,7 +99,7 @@ public class ProtovisOnsetPlotItem extends PageItem{
 			    INDENT + "    .left(30)\n" + 
 			    INDENT + "    .right(20)\n" + 
 			    INDENT + "    .top(5);\n\n" +
-			    INDENT + "vis.render();";
+			    INDENT + "vis.render();\n\n";
         
         	out += INDENT + "var data = [\n";
         	for (int s = 0; s < seriesNames.length; s++) {
@@ -113,7 +111,11 @@ public class ProtovisOnsetPlotItem extends PageItem{
 						out +=", ";
 					}
 				}
-				out += "],\n";
+				if(s<seriesNames.length-1){
+					out +="],\n";
+				}else{
+					out +="]\n";
+				}
         	}
         	out += "];\n\n" + 
         
@@ -130,6 +132,14 @@ public class ProtovisOnsetPlotItem extends PageItem{
 				INDENT + "var predictionColor = \"salmon\";\n" + 
 				INDENT + "var gtColor = \"steelblue\";\n\n" + 
         		
+				INDENT + "function get_color(i){\n" + 
+				INDENT + "    if(i==0){\n" + 
+				INDENT + "        return predictionColor;\n" + 
+				INDENT + "    }else{\n" + 
+				INDENT + "        return gtColor;\n" + 
+				INDENT + "    }\n" + 
+				INDENT + "}\n\n" + 
+				
         		INDENT + "return {\n" +
         		INDENT + "plot : function() {\n" + 
         		
@@ -138,13 +148,7 @@ public class ProtovisOnsetPlotItem extends PageItem{
         	    INDENT + "    i = {x:0, dx:100},\n" + 
         	    INDENT + "    fx = pv.Scale.linear().range(0, w-legendOffset);\n\n" +
         	    
-        	    INDENT + "function get_color(i){\n" + 
-        	    INDENT + "    if(i==0){\n" + 
-        	    INDENT + "        return predictionColor;\n" + 
-        	    INDENT + "    }else{\n" + 
-        	    INDENT + "        return gtColor;\n" + 
-        	    INDENT + "    }\n" + 
-        	    INDENT + "}\n\n" + 
+        	  
 
         	    INDENT + "/* Legend area. */\n" + 
         	    INDENT + "var legend = vis.add(pv.Panel)\n" + 
@@ -180,11 +184,11 @@ public class ProtovisOnsetPlotItem extends PageItem{
         	    INDENT + "var focus = vis.add(pv.Panel)\n" + 
         	    INDENT + "    .left(legendOffset)\n" +
         	    INDENT + "    .top(hOffset)\n" +
-        	    INDENT + "    .height(h1);\n\n" +
+        	    INDENT + "    .height(h1)\n" +
         	    INDENT + "    .def(\"init_data\", function() {\n" + 
         	    INDENT + "        var out = new Array(numseries);\n" + 
         	    INDENT + "        var d1 = x.invert(i.x),\n" + 
-        	    INDENT + "            d2 = x.invert(i.x + i.dx),\n" + 
+        	    INDENT + "            d2 = x.invert(i.x + i.dx);\n" + 
         	    INDENT + "        for(s=0;s<numseries;s=s+1){\n" + 
         	    INDENT + "            offsetsearch = pv.search.index(data[s], d1, function(d) d),\n" + 
         	    INDENT + "            firstvisible = offsetsearch >= 0 ? offsetsearch : -(1+offsetsearch),\n" + 
@@ -194,7 +198,7 @@ public class ProtovisOnsetPlotItem extends PageItem{
         	    INDENT + "	      }\n" + 
         	    INDENT + "	      fx.domain(d1, d2);\n" + 
         	    INDENT + "	      return out;\n" + 
-        	    INDENT + "    })\n" + 
+        	    INDENT + "    });\n" + 
 		
         
         	    INDENT + "/* X-axis ticks. */\n" + 
@@ -219,7 +223,7 @@ public class ProtovisOnsetPlotItem extends PageItem{
         	    INDENT + "    .size(3)\n" + 
         	    INDENT + "    .strokeStyle(function() get_color(this.parent.index))\n" + 
         	    INDENT + "    .fillStyle(function() this.strokeStyle().alpha(.2))\n" + 
-        	    INDENT + "    .title(function(d) d.toFixed(2))\n\n" + 
+        	    INDENT + "    .title(function(d) d.toFixed(2));\n\n" + 
 		
 		
         	    INDENT + "/* Context panel (zoomed out). */\n" + 
