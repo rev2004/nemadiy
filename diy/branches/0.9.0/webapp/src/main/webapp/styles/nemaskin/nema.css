@@ -1,0 +1,47 @@
+
+
+/*
+ #breadcrumbs {
+ font-size: .8em;
+ font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+ font-weight: 600;
+ margin-top: .5em;
+ }
+ 
+ #breadcrumbs a{
+ font-size: .7em;
+ color: #0000ff;
+ }
+ */
+div.actionBox {
+    background-color: #dddddd;
+    margin: 0 auto;
+    margin-top: 2em;
+    text-align: justify;
+    padding: 1em;
+    padding-left: 1.5em;
+    text-align: left;
+    border: solid 1px;
+}
+
+#actionbutton, #GoForm1, #GoForm2, #GoForm3 {
+
+   float:left;
+    display:block;
+    margin-left: 585px;
+    margin-right: 5em;
+	margin-top:.5em;
+	clear:right;
+}
+
+h2.actionBox {
+	font-size:1.5em;
+    position:absolute;
+    width: auto;
+}
+
+p.actionBox {
+    text-align: justify;
+}
+
+
