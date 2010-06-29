@@ -189,7 +189,7 @@ public class NemaDataConstants {
     public static final String ONSET_DETECTION_CLASS = "Instrumentation class for single file";
     public static final String ONSET_DETECTION_CLASSES = "Instrumentation class list for overall evaluation";
     public static final String ONSET_DETECTION_ANNOTATORS = "Annotators";
-    public static final String ONSET_DETECTION_AVG_PRECISION ="Average rrecision";
+    public static final String ONSET_DETECTION_AVG_PRECISION ="Average precision";
     public static final String ONSET_DETECTION_AVG_RECALL = "Average recall";
     public static final String ONSET_DETECTION_AVG_FMEASURE = "Average F-measure";
     public static final String ONSET_DETECTION_AVG_PRECISION_BY_CLASS ="Average precision by class";
