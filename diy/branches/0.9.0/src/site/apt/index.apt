@@ -1,0 +1,38 @@
+												----------
+												Overview
+												----------
+												Amit Kumar
+												----------
+												2010-04-11
+												-----------
+												
+												
+Nema DIY application
+
+	This documentation is related to the diy application <<0.5.1-SNAPSHOT>> release ({{{changes-report.html}changelog}}).												
+
+Introduction
+	
+  The DIY web application provides the users with following functions:
+
+	[[1]] Provides access to:
+			
+			[[A]] Diverse music collections,
+			
+			[[B]] Quality ground-truth sets,
+			
+			[[C]] Pre-extracted feature sets, and
+			
+			[[D]] Pre-built models.
+
+	[[2]]	Resource discovery. Discovery of the appropriate music-specific location and discovery tools so that individual items or 
+			resource can use them.
+
+	[[3]]	Resource sharing/re-use. Mechanisms to make it easy for researchers to store or make their own sets available to others.
+
+	[[4]]	Resource customization. Will ultimately allows users to create virtual collections comprising of resources from different 
+			geographic locations and run data mining algorithms on them
+	
+	[[5]]	Code mobility. In the case of music collections where items from the music collections will not be able to move about,
+			ability to move the code to the dataset and extract features for use/reuse.
+ 

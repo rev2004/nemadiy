@@ -1,0 +1,10 @@
+<properties>
+   <comment>Meandre default probes configuration file (1.4.5)</comment>
+   <entry key="console">org.meandre.core.engine.probes.ToPrintStreamProbeImpl</entry>
+   <entry key="null">org.meandre.core.engine.probes.NullProbeImpl</entry>
+   <entry key="rdf">org.meandre.core.engine.probes.MeandreRDFDialectProbeImpl</entry>
+   <entry key="statistics">org.meandre.core.engine.probes.StatisticsProbeImpl</entry>
+   <entry key="nemaFlowMonitor">org.imirsel.probes.NEMAFlowNotification</entry>
+</properties>
+
+
