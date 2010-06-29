@@ -17,7 +17,7 @@ public class PreferenceValueDaoTest extends BaseDaoTestCase {
 	
 	public void testInvalidPreferenceValue(){
 		 try {
-			 dao.get(2l);
+			 dao.get(20l);
 			 fail("should not reach here..");
 		 }catch(DataAccessException ex){
 			 

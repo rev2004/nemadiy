@@ -156,16 +156,16 @@ public class UserDaoTest extends BaseDaoTestCase {
     
     public void testAddRemoveAndUpdateUserPreference(){
     	 User user = dao.get(-1L);
-    	 assertEquals(1, user.getPreferences().size());
+    	 assertEquals(4, user.getPreferences().size());
     	 user.addPreference("testPreference","value of Preference");
     	 user = dao.saveUser(user);
          flush();
-         assertEquals(2, user.getPreferences().size());
+         assertEquals(5, user.getPreferences().size());
          // saving the preference again -should keep the count same
          user.addPreference("testPreference","value of Preference");
     	 user = dao.saveUser(user);
          flush();
-         assertEquals(2, user.getPreferences().size());
+         assertEquals(5, user.getPreferences().size());
          
          
          
@@ -173,7 +173,7 @@ public class UserDaoTest extends BaseDaoTestCase {
          user= dao.saveUser(user);
          flush();
          assertTrue(success);
-         assertEquals(1, user.getPreferences().size());
+         assertEquals(4, user.getPreferences().size());
       
          user.addPreference("testPreference","changed value of Preference");
          dao.saveUser(user);
@@ -183,7 +183,7 @@ public class UserDaoTest extends BaseDaoTestCase {
          user.updatePreference("testPreference", "new value");
          user = dao.saveUser(user);
          flush();
-         assertEquals(2, user.getPreferences().size());
+         assertEquals(5, user.getPreferences().size());
          assertEquals("new value",user.getPreference("testPreference"));
       
          
