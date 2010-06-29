@@ -306,8 +306,14 @@ public class OnsetEvaluator extends EvaluatorImpl {
 				numInDetFiles += rawData.length;
 				numInGTFiles += rawGtData.length;
 
-				double precision = (((double)correct/(double)rawData.length));
-				double recall = (((double)correct/(double)rawGtData.length));
+				double precision = 0.0;
+				double recall = 0.0;
+				if (rawData.length > 0) {
+					precision = (((double)correct/(double)rawData.length));
+				}
+				if (rawGtData.length > 0) {
+					recall = (((double)correct/(double)rawGtData.length));
+				}
 				double fmeasure = 0.0;
 				if (recall != 0.0 && precision != 0.0) {
 					fmeasure = (2 * recall * precision)/(recall + precision);
