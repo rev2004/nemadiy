@@ -20,10 +20,11 @@ import org.imirsel.nema.contentrepository.client.CompressionUtils;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryService;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
 import org.imirsel.nema.contentrepository.client.ResultStorageService;
-import org.imirsel.nema.model.NemaResult;
+
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.RepositoryResourcePath;
-import org.imirsel.nema.model.NemaResult.ResultType;
+import org.imirsel.nema.model.ResultType;
+import org.imirsel.nema.model.NemaContentRepositoryFile;
 
 
 import org.meandre.annotations.Component;
@@ -144,7 +145,7 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 		}else{
 			System.out.println("RESULT STORAGE SERVICE IS NOT NULL");
 		}
-		NemaResult result=this.resultStorageService.getNemaResult(credentials, rrp);
+		NemaContentRepositoryFile result=this.resultStorageService.getNemaContentRepositoryFile(credentials, rrp);
 		System.out.println("ProcessArtifact2");
 
 		byte[] content=result.getFileContent();

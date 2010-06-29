@@ -11,7 +11,7 @@ import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryService;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
 import org.imirsel.nema.contentrepository.client.ResultStorageService;
-import org.imirsel.nema.model.NemaResult;
+import org.imirsel.nema.model.NemaContentRepositoryFile;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentOutput;
@@ -45,9 +45,9 @@ public class TestContentRepositoryDownload implements ExecutableComponent{
 		RepositoryResourcePath resourcePath = new RepositoryResourcePath("jcr", "default", "/users/admin/flows/admin_1277528709278/results/set-90/mel_adc_04000000.wav.out.txt");
 		SimpleCredentials credentials = new SimpleCredentials("admin","b2cebd873228d3e6753d9b39195730694e3d1bbc".toCharArray());
 		try {
-			NemaResult result=this.resultStorageService.getNemaResult(credentials, resourcePath);
+			NemaContentRepositoryFile result=this.resultStorageService.getNemaContentRepositoryFile(credentials, resourcePath);
 			int len=result.getFileContent().length;
-			String fname = result.getResultPath();
+			String fname = result.getPath();
 			cc.pushDataComponentToOutput(DATA_OUT_1, fname+"="+len);
 		} catch (ContentRepositoryServiceException e) {
 			throw new ComponentExecutionException(e);
@@ -101,9 +101,9 @@ public class TestContentRepositoryDownload implements ExecutableComponent{
 		System.out.println("====> ResultStorageService inited. "+  crs.toString());
 		RepositoryResourcePath resourcePath = new RepositoryResourcePath("jcr", "default", "/users/admin/flows/admin_1277528709278/results/set-90/mel_adc_04000000.wav.out.txt");
 		SimpleCredentials credentials = new SimpleCredentials("admin","b2cebd873228d3e6753d9b39195730694e3d1bbc".toCharArray());
-		NemaResult result=crs.getNemaResult(credentials, resourcePath);
+		NemaContentRepositoryFile result=crs.getNemaContentRepositoryFile(credentials, resourcePath);
 		int len=result.getFileContent().length;
-		String fname = result.getResultPath();
+		String fname = result.getPath();
 		System.out.println("===> "+fname+"="+len);
 	
 	}

@@ -1,6 +1,8 @@
-package org.imirsel.nema.components;
+package org.imirsel.nema.components.process;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
@@ -27,14 +29,21 @@ import net.jini.lookup.entry.Name;
 
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.annotations.StringDataType;
+import org.imirsel.nema.components.NemaComponent;
+import org.imirsel.nema.components.RemoteExecutableComponent;
+import org.imirsel.nema.contentrepository.client.CompressionUtils;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryService;
+import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
 import org.imirsel.nema.contentrepository.client.ResultStorageService;
 import org.imirsel.nema.model.DynamicType;
+import org.imirsel.nema.model.NemaContentRepositoryFile;
 import org.imirsel.nema.model.OsType;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
 import org.imirsel.nema.model.ResourceGroupEntry;
+import org.imirsel.nema.model.ResourcePath;
+import org.imirsel.nema.model.ResultType;
 import org.imirsel.nema.monitor.process.NemaProcess;
 import org.imirsel.nema.monitor.process.RecordStreamProcessMonitor;
 import org.imirsel.nema.service.executor.ProcessExecutorService;
@@ -427,6 +436,47 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 
 	private ProcessExecutorService getProcessExecutorService() {
 		return processExecutorService;
+	}
+
+	
+	public ResourcePath saveFileToContentRepository(final File file, final String model) throws IOException, ContentRepositoryServiceException{
+		if(!file.exists()){
+			throw new FileNotFoundException("File " + file.getAbsolutePath() + " does not exist");
+		}
+		if(!file.canRead()){
+			throw new IOException("File " + file.getAbsolutePath() + " could not be read.");
+		}
+		NemaContentRepositoryFile nemaResult = createNemaContentRepositoryFile(file, this.getAbsoluteProcessWorkingDirectory(),model);
+		ResourcePath rrp=this.getResultStorageService().saveResultFile(this.getCredentials(), nemaResult);
+		return rrp;
+	}
+
+
+
+	private NemaContentRepositoryFile createNemaContentRepositoryFile(File file, String relativeLoc, String model) throws IOException {
+		NemaContentRepositoryFile nemaResult = new NemaContentRepositoryFile();
+		String path = file.getCanonicalPath();
+		byte[] fileContent= null;
+		CompressionUtils cutils= CompressionUtils.getInstanceOf();
+		fileContent = cutils.compress(path,relativeLoc);
+		
+		if(fileContent==null){
+			throw new RuntimeException("file byte contents size is null " + path);
+		}
+		
+		nemaResult.setExecutionId(this.flowInstanceId);
+		nemaResult.setFileContent(fileContent);
+		String parentPath=file.getParent();
+		nemaResult.setModelClass(model);
+		nemaResult.setName(file.getName());
+		nemaResult.setFileName(path);
+		if(file.isDirectory()){
+			nemaResult.setResultType(ResultType.DIR);
+		}else{
+			nemaResult.setResultType(ResultType.FILE);
+		}
+		nemaResult.setPath(parentPath);
+		return nemaResult;
 	}
 
 
