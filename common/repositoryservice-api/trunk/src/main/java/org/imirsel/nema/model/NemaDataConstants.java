@@ -189,12 +189,12 @@ public class NemaDataConstants {
     public static final String ONSET_DETECTION_CLASS = "Instrumentation class for single file";
     public static final String ONSET_DETECTION_CLASSES = "Instrumentation class list for overall evaluation";
     public static final String ONSET_DETECTION_ANNOTATORS = "Annotators";
-    public static final String ONSET_DETECTION_AVG_PRECISION ="Average Precision";
-    public static final String ONSET_DETECTION_AVG_RECALL = "Average Recall";
-    public static final String ONSET_DETECTION_AVG_FMEASURE = "Average F-Measure";
+    public static final String ONSET_DETECTION_AVG_PRECISION ="Average rrecision";
+    public static final String ONSET_DETECTION_AVG_RECALL = "Average recall";
+    public static final String ONSET_DETECTION_AVG_FMEASURE = "Average F-measure";
     public static final String ONSET_DETECTION_AVG_PRECISION_BY_CLASS ="Average precision by class";
-    public static final String ONSET_DETECTION_AVG_RECALL_BY_CLASS = "Average recall";
-    public static final String ONSET_DETECTION_AVG_FMEASURE_BY_CLASS = "Average F-Measure by class";
+    public static final String ONSET_DETECTION_AVG_RECALL_BY_CLASS = "Average recall by class";
+    public static final String ONSET_DETECTION_AVG_FMEASURE_BY_CLASS = "Average F-measure by class";
     
     //Beat Tracking Evaluator Constants
     public static final String BEAT_TRACKING_DATA = "List of beat times";
