@@ -3,6 +3,7 @@ package org.imirsel.nema.analytics.evaluation.onset;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -71,7 +72,15 @@ public class OnsetEvaluator extends EvaluatorImpl {
 				jobId = it.next();
 				getLogger().info("Aggregating results for jobID: " + jobId);
 				Map<NemaTrackList,NemaData> foldEvals = jobIdToFoldEvaluation.get(jobId);
-				NemaData overall = averageFoldMetrics(jobId, foldEvals.values());
+				List<String> metricsSingle = new ArrayList<String>();
+				metricsSingle.add(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE);
+				metricsSingle.add(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION);
+				metricsSingle.add(NemaDataConstants.ONSET_DETECTION_AVG_RECALL);
+				List<String> metricsArray = new ArrayList<String>();
+				metricsArray.add(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE_BY_CLASS);
+				metricsArray.add(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION_BY_CLASS);
+				metricsArray.add(NemaDataConstants.ONSET_DETECTION_AVG_RECALL_BY_CLASS);
+				NemaData overall = averageFoldMetrics(jobId, foldEvals.values(), metricsSingle, metricsArray, NemaDataConstants.ONSET_DETECTION_CLASSES);
 				jobIdToOverallEvaluation.put(jobId, overall);
 			}
 
@@ -182,7 +191,7 @@ public class OnsetEvaluator extends EvaluatorImpl {
 			// We are reserving the 0th element for the total, overall, hence the + 1
 			int classNum = 0;
 			if (gtData.hasMetadata(NemaDataConstants.ONSET_DETECTION_CLASS)) {
-				classNum = classList.indexOf(gtData.getStringMetadata(NemaDataConstants.ONSET_DETECTION_CLASS)) + 1;
+				classNum = classList.indexOf(gtData.getStringMetadata(NemaDataConstants.ONSET_DETECTION_CLASS));
 			} else {
 				classNum = classList.indexOf("Unclassified");
 			}
@@ -400,6 +409,42 @@ public class OnsetEvaluator extends EvaluatorImpl {
 		//same as overall metrics - single fold experiment format
 		this.foldEvalMetrics = this.overallEvalMetrics;
 
+	}
+	
+	public NemaData averageFoldMetrics(String jobId, Collection<NemaData> perFoldEvaluations, List<String> metricsSingle, List<String> metricsArray, String classesKey){
+		NemaData[] foldData = perFoldEvaluations.toArray(new NemaData[perFoldEvaluations.size()]);
+		NemaData overall = new NemaData(jobId);
+		ArrayList<String> classes = new ArrayList<String>();
+		for (Iterator<String> metricIt = metricsSingle.iterator(); metricIt.hasNext();) {
+			String metric = metricIt.next();
+			double accum = 0.0;
+			for (int i = 0; i < foldData.length; i++) {
+				accum += foldData[i].getDoubleMetadata(metric);
+			}
+			overall.setMetadata(metric, accum / foldData.length);
+		}
+		
+		for (Iterator<String> metricIt = metricsArray.iterator(); metricIt.hasNext();) {
+			String metric = metricIt.next();
+			double[] accum = null;
+			for (int i = 0; i < foldData.length; i++) {
+				double[] metricArr = foldData[i].getDoubleArrayMetadata(metric);
+				classes = (ArrayList<String>)foldData[i].getMetadata(classesKey);
+				if (accum == null) {
+					accum = metricArr;
+				} else {
+					for(int k = 0; k < accum.length; k++) {
+						accum[k] += metricArr[k];
+					}
+				}
+			}
+			for(int k = 0; k < accum.length; k++) {
+				accum[k] /= foldData.length;
+			}
+			overall.setMetadata(metric, accum);
+		}
+		overall.setMetadata(classesKey, classes);
+		return overall;
 	}
 
 }
