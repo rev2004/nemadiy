@@ -5,12 +5,12 @@
   <parent>
     <artifactId>nema-contentrepository-service</artifactId>
     <groupId>org.imirsel</groupId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <groupId>org.imirsel</groupId>
   <artifactId>nema-contentrepository-service-client</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.4-SNAPSHOT</version>
   <name>nema-contentrepository-service-client</name>
   <packaging>jar</packaging>
 <mailingLists>

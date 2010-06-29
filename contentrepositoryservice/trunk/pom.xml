@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.imirsel</groupId>
   <artifactId>nema-contentrepository-service</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>nema-contentrepository-service</name>
   <url>http://nema-dev.lis.illinois.edu/development/nema-contentrepositoy-service</url>
