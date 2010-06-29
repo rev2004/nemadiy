@@ -5,7 +5,7 @@
  
   <groupId>org.imirsel</groupId>
   <artifactId>nema-contentrepository-service-core</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.4-SNAPSHOT</version>
   <name>nema-contentrepository-service-core</name>
   <packaging>jar</packaging>
 <mailingLists>

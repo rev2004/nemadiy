@@ -18,11 +18,11 @@ import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.InvalidCommandLineFlagException;
-import org.imirsel.nema.model.NemaResult;
+import org.imirsel.nema.model.NemaContentRepositoryFile;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.Flow.FlowType;
-import org.imirsel.nema.model.NemaResult.ResultType;
+import org.imirsel.nema.model.ResultType;
 import org.imirsel.nema.test.BaseManagerTestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -64,7 +64,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 	public void testSaveResult() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
-		NemaResult nemaResult = null;
+		NemaContentRepositoryFile nemaResult = null;
 		try {
 			nemaResult = getSampleNemaResult("/tmp/testme/javaProcess.properties", "/tmp/");
 		} catch (IOException e) {
@@ -80,13 +80,13 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
 		RepositoryResourcePath rrp = new RepositoryResourcePath("jcr", "default", "/users/admin/flows/executables/1276626294392/results/tmp");
-		NemaResult nresult=crs.getNemaResult(nemaCredentials, rrp);
+		NemaContentRepositoryFile nresult=crs.getNemaContentRepositoryFile(nemaCredentials, rrp);
 		System.out.println(nresult.getExecutionId()+  " " + nresult.getFileName() + " "+ nresult.getModelClass() + " " + nresult.getName() + " " + nresult.getFileContent().length);
 	}
 	
 	
-	private NemaResult getSampleNemaResult(String path, String relativeLoc) throws IOException {
-		NemaResult nemaResult = new NemaResult();
+	private NemaContentRepositoryFile getSampleNemaResult(String path, String relativeLoc) throws IOException {
+		NemaContentRepositoryFile nemaResult = new NemaContentRepositoryFile();
 		byte[] fileContent= null;
 		CompressionUtils cutils= CompressionUtils.getInstanceOf();
 		fileContent = cutils.compress(path,relativeLoc);
@@ -103,7 +103,7 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		nemaResult.setName(file.getName());
 		nemaResult.setFileName(path);
 		nemaResult.setResultType(ResultType.DIR);
-		nemaResult.setResultPath(parentPath);
+		nemaResult.setPath(parentPath);
 		return nemaResult;
 	}
 

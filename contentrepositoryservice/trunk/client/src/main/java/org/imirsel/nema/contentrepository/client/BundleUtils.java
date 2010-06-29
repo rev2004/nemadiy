@@ -13,7 +13,7 @@ import javax.jcr.ValueFormatException;
 
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.InvalidBundleException;
-import org.imirsel.nema.model.NemaResult;
+import org.imirsel.nema.model.NemaContentRepositoryFile;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
@@ -56,7 +56,7 @@ public class BundleUtils {
 		return baos.toByteArray();
 	}
 	
-	protected static byte[] getPropertyFileAsBytes(NemaResult nemaResult) {
+	protected static byte[] getPropertyFileAsBytes(NemaContentRepositoryFile nemaResult) {
 		Properties properties = new Properties();
 		System.out.println("14-1");
 		if(nemaResult.getResultType()!=null)
@@ -72,8 +72,8 @@ public class BundleUtils {
 		if(nemaResult.getExecutionId()!=null)
 		properties.setProperty("execId", nemaResult.getExecutionId());
 		
-		if(nemaResult.getResultPath()!=null)
-		properties.setProperty("resultPath", nemaResult.getResultPath());
+		if(nemaResult.getPath()!=null)
+		properties.setProperty("resultPath", nemaResult.getPath());
 		
 		System.out.println("14-5");
 		if(nemaResult.getModelClass()!=null){
@@ -155,7 +155,7 @@ public class BundleUtils {
 		
 	}
 	
-	protected static void validateResult(NemaResult nemaResult) throws ContentRepositoryServiceException{
+	protected static void validateResult(NemaContentRepositoryFile nemaResult) throws ContentRepositoryServiceException{
 		if(nemaResult.getExecutionId()==null){
 			throw new ContentRepositoryServiceException("The result file's execution id is null");
 		}
