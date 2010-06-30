@@ -46,7 +46,7 @@ public class BeatTextFile extends SingleTrackEvalFileTypeImpl {
 	                }
 	                catch(java.io.FileNotFoundException fnfe)
 	                {
-	                    throw new RuntimeException("The specified file does not exist, this exception should never be thrown and indicates a serious bug.\n\tFile: " + theFile.getPath());
+	                    throw new IllegalArgumentException("The specified file does not exist.\n\tFile: " + theFile.getPath());
 	                }
 	                String line = null; 
 	                
@@ -102,7 +102,6 @@ public class BeatTextFile extends SingleTrackEvalFileTypeImpl {
                         outputData[i][j] = Double.valueOf(row[j].trim());
                     }
                 }
-                textBuffer.close();
                 NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
                 obj.setMetadata(NemaDataConstants.BEAT_TRACKING_DATA, outputData);
                 obj.setMetadata(NemaDataConstants.BEAT_TRACKING_ANNOTATORS, annotators);                

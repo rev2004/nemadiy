@@ -78,26 +78,36 @@ public class StructureTextFile extends SingleTrackEvalFileTypeImpl {
 	FileNotFoundException, IOException {
 
 		BufferedReader textBuffer = new BufferedReader( new FileReader(theFile) );
-		ArrayList<NemaSegment> segments = new ArrayList<NemaSegment>();
-
-        String line = null; 
-    
-        //read data
-        line = textBuffer.readLine();
-        while (line != null)
-        {
-        	line = line.trim();
-        	if (!line.equals("")){
-                segments.add(parseStructureLine(line));
-            }
-            line = textBuffer.readLine();
-        }
-        segments.trimToSize();
-        
-		/* Fill the NemaData object with the proper data and return it*/
-		NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
-		obj.setMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, segments);
-		return obj;
+		try{
+			ArrayList<NemaSegment> segments = new ArrayList<NemaSegment>();
+	
+	        String line = null; 
+	    
+	        //read data
+	        line = textBuffer.readLine();
+	        while (line != null)
+	        {
+	        	line = line.trim();
+	        	if (!line.equals("")){
+	                segments.add(parseStructureLine(line));
+	            }
+	            line = textBuffer.readLine();
+	        }
+	        segments.trimToSize();
+	        
+			/* Fill the NemaData object with the proper data and return it*/
+			NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
+			obj.setMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, segments);
+			return obj;
+		}finally{
+			if(textBuffer != null){
+				try {
+					textBuffer.close();
+				} catch (IOException ex) {
+					getLogger().log(Level.SEVERE, null, ex);
+				}
+			}
+		}
 	}
 
 	@Override
