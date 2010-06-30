@@ -3,10 +3,13 @@ package org.imirsel.nema.analytics.evaluation.chord;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+
 
 import org.imirsel.nema.analytics.evaluation.FriedmansAnovaTkHsd;
 import org.imirsel.nema.analytics.evaluation.ResultRendererImpl;
@@ -15,16 +18,15 @@ import org.imirsel.nema.analytics.evaluation.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.ImageItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
-import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisFunctionTimestepPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisSegmentationPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
-import org.imirsel.nema.analytics.evaluation.structure.NemaSegment;
-import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.NemaSegment;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imirsel.nema.model.util.IOUtil;
 
 /**
  * Chord estimation results rendering.
@@ -217,40 +219,54 @@ public class ChordResultRenderer extends ResultRendererImpl {
 				items = new ArrayList<PageItem>();
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				systemFoldResults = results.getPerFoldEvaluation(jobId);
-
-				Table systemFoldTable = WriteCsvResultFiles
-						.prepTableDataOverFolds(results.getTestSetTrackLists(),
-								systemFoldResults, results
-										.getFoldEvalMetricsKeys());
-				items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_per_fold", results
-						.getJobIdToJobName().get(jobId)
-						+ " per fold results", systemFoldTable.getColHeaders(),
-						systemFoldTable.getRows()));
-
-				Table systemTrackTable = WriteCsvResultFiles
-						.prepTableDataOverTracks(
-								results.getTestSetTrackLists(), sysResults,
-								results.getTrackEvalMetricsAndResultsKeys());
-				items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_per_track", results
-						.getJobIdToJobName().get(jobId)
-						+ " per track results", systemTrackTable
-						.getColHeaders(), systemTrackTable.getRows()));
-
-				/* Plot chord transcription against GT for each track result for each system */
-				getLogger().info("\tplotting chords for " + results.getJobIdToJobName().get(jobId) +"...");
-				PageItem[] plots = plotTranscriptionForJob(jobId, results);
-				for (int i = 0; i < plots.length; i++) {
-					items.add(plots[i]);
+				{
+					Table systemFoldTable = WriteCsvResultFiles
+							.prepTableDataOverFolds(results.getTestSetTrackLists(),
+									systemFoldResults, results
+											.getFoldEvalMetricsKeys());
+					items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_per_fold", results
+							.getJobIdToJobName().get(jobId)
+							+ " per fold results", systemFoldTable.getColHeaders(),
+							systemFoldTable.getRows()));
 				}
-				getLogger().info("\tdone.");
+				{
+					Table systemTrackTable = WriteCsvResultFiles
+							.prepTableDataOverTracks(
+									results.getTestSetTrackLists(), sysResults,
+									results.getTrackEvalMetricsAndResultsKeys());
+					items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_per_track", results
+							.getJobIdToJobName().get(jobId)
+							+ " per track results", systemTrackTable
+							.getColHeaders(), systemTrackTable.getRows()));
+				}
 				
+//				/* Plot chord transcription against GT for each track result for each system */
+//				getLogger().info("\tplotting chords for " + results.getJobIdToJobName().get(jobId) +"...");
+//				PageItem[] plots = plotTranscriptionForJob(jobId, results);
+//				for (int i = 0; i < plots.length; i++) {
+//					items.add(plots[i]);
+//				}
+//				getLogger().info("\tdone.");
 				
 				aPage = new Page(results.getJobIdToJobName().get(jobId), results.getJobIdToJobName().get(jobId),
 						items, true);
 				resultPages.add(aPage);
 			}
 		}
-
+		
+		// do comparative plot page
+		{
+			getLogger().info("Creating comparison plots page...");
+			items = new ArrayList<PageItem>();
+			PageItem[] plots = plotTranscriptionForAllJobs(results);
+			for (int i = 0; i < plots.length; i++) {
+				items.add(plots[i]);
+			}
+			getLogger().info("\tdone.");
+			aPage = new Page("comparisonPlots", "Comparative plots", items, true);
+			resultPages.add(aPage);
+		}
+		
 		// do significance tests
 		if (getPerformMatlabStatSigTests() && performStatSigTests) {
 			getLogger().info("Performing significance tests...");
@@ -349,6 +365,7 @@ public class ChordResultRenderer extends ResultRendererImpl {
 	 * @param results  The results Object containing the data to plot.
 	 * @return         an array of page items that will produce the plots.
 	 */
+	@SuppressWarnings("unchecked")
 	private PageItem[] plotTranscriptionForJob(String jobId,
 			NemaEvaluationResultSet results) {
 		NemaData result, groundtruth;
@@ -375,8 +392,8 @@ public class ChordResultRenderer extends ResultRendererImpl {
 //						+ File.separator + "track_" + result.getId() + MELODY_PLOT_EXT);
 //				plotItems.add(plotFile);
 	
-				List<NemaChord> rawGtData = (List<NemaChord>)groundtruth.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
-				List<NemaChord> rawData = (List<NemaChord>)result.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+				List<NemaSegment> rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+				List<NemaSegment> rawData = (List<NemaSegment>)result.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
 				
 				//setup time line for for X-axis
 				double startTimeSecs = 0.0;
@@ -385,35 +402,146 @@ public class ChordResultRenderer extends ResultRendererImpl {
 				
 				//setup data-series to plot
 				Map<String,List<NemaSegment>> series = new HashMap<String, List<NemaSegment>>(2);
-				series.put("Prediction", convertChordsToSegments(rawData));
-				series.put("Ground-truth", convertChordsToSegments(rawGtData));
+//				series.put("Prediction", convertChordsToSegments(rawData));
+//				series.put("Ground-truth", convertChordsToSegments(rawGtData));
+				series.put("Prediction", (List<NemaSegment>) rawData);
+				series.put("Ground-truth", (List<NemaSegment>) rawGtData);
+				List<String> seriesNames = new ArrayList<String>(2);
+				seriesNames.add("Prediction");
+				seriesNames.add("Ground-truth");
 				
-				ProtovisSegmentationPlotItem plot = new ProtovisSegmentationPlotItem(
-						//plotname
-						results.getJobName(jobId) + "_chords_" + result.getId(), 
-						//plot caption
-						results.getJobName(jobId) + ": Chord transcription for track " + result.getId(), 
-						//start time for x axis
-						startTimeSecs, 
-						//end time for x axis
-						endTimeSecs, 
-						//series to plot
-						series);
-				plotItems.add(plot);
+				try{
+					ProtovisSegmentationPlotItem plot = new ProtovisSegmentationPlotItem(
+							//plotname
+							results.getJobName(jobId) + "_chords_" + result.getId(), 
+							//plot caption
+							results.getJobName(jobId) + ": Chord transcription for track " + result.getId(), 
+							//start time for x axis
+							startTimeSecs, 
+							//end time for x axis
+							endTimeSecs, 
+							//series to plot
+							series,
+							//series names in order to plot
+							seriesNames,
+							//output dir
+							outputDir);
+					plotItems.add(plot);
+				}catch(IOException e){
+					getLogger().log(Level.SEVERE, "Failed to plot results for job " + results.getJobName(jobId) + " (" + jobId + ") for track " + result.getId(), e);
+				}
 			}
 		}
 		return plotItems.toArray(new PageItem[plotItems.size()]);
 	}
 	
-	private static List<NemaSegment> convertChordsToSegments(List<NemaChord> chords){
-		List<NemaSegment> segs = new ArrayList<NemaSegment>(chords.size());
-		ChordConversionUtil util = ChordConversionUtil.getInstance();
-		NemaChord chord;
-		for (Iterator<NemaChord> iterator = chords.iterator(); iterator.hasNext();) {
-			chord = iterator.next();
-			segs.add(new NemaSegment(chord.onset,chord.offset,util.convertNoteNumbersToShorthand(chord.notes)));
+	/**
+	 * Plots the chord transcriptions for all jobs, for each file.
+	 * 
+	 * @param testSets    the list of test sets.
+	 * @param results  The results Object containing the data to plot.
+	 * @return         an array of page items that will produce the plots.
+	 */
+	@SuppressWarnings("unchecked")
+	private PageItem[] plotTranscriptionForAllJobs(NemaEvaluationResultSet results) {
+		NemaData groundtruth;
+
+		/* Plot each result */
+		Map<String,Map<NemaTrackList, List<NemaData>>> perTrackResults = results.getJobIdToPerTrackEvaluationAndResults();
+		List<PageItem> plotItems = new ArrayList<PageItem>();
+		Map<String,NemaData[]> trackIDToTranscripts = new HashMap<String,NemaData[]>();
+		//get job names and sort
+		List<String> jobNames = new ArrayList<String>(perTrackResults.keySet());
+		Collections.sort(jobNames);
+		
+		for (Iterator<NemaTrackList> foldIt = results.getTestSetTrackLists().iterator(); foldIt.hasNext();){
+			NemaTrackList testSet = foldIt.next();
+			
+			//map IDs for tracks to an array of NemaData Objects for each system, use nulls in case of missing results
+			for (Iterator<String> systemIt = perTrackResults.keySet().iterator(); systemIt.hasNext();){
+				String system = systemIt.next();
+				int systemIdx = jobNames.indexOf(system);
+				Map<NemaTrackList,List<NemaData>> sysResults = perTrackResults.get(system);
+				List<NemaData> sysSetResults = sysResults.get(testSet);
+				for(Iterator<NemaData> trackIt = sysSetResults.iterator(); trackIt.hasNext();){
+					NemaData track = trackIt.next();
+					NemaData[] transcripts = trackIDToTranscripts.get(track.getId());
+					if(transcripts == null){
+						transcripts = new NemaData[jobNames.size()];
+						trackIDToTranscripts.put(track.getId(), transcripts);
+					}
+					transcripts[systemIdx] = track;
+				}
+			}
 		}
-		return segs;
+		
+		//iterate over tracks (in alphabetical order) and produce each plot
+		List<String> trackIds = new ArrayList<String>(trackIDToTranscripts.keySet());
+		Collections.sort(trackIds);	
+		
+		for(Iterator<String> trackIt = trackIds.iterator(); trackIt.hasNext();){
+			String trackId = trackIt.next();
+			NemaData[] transcripts = trackIDToTranscripts.get(trackId);
+			getLogger().info("\t\tplotting track " + trackId +"...");
+			groundtruth = results.getTrackIDToGT().get(trackId);
+			if(groundtruth == null){
+				getLogger().warning("No ground-truth found for '" + trackId + "' to be used in plotting");
+			}
+			
+			//setup data-series to plot
+			Map<String,List<NemaSegment>> series = new HashMap<String, List<NemaSegment>>(2);			
+			List<String> seriesNames = new ArrayList<String>(2);
+			double startTimeSecs = 0.0;
+			List<NemaSegment> rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+			series.put("Ground-truth", rawGtData);
+			seriesNames.add("Ground-truth");
+			
+			//end at last offset from GT or predictions
+			double endTimeSecs = rawGtData.get(rawGtData.size()-1).getOffset();
+			for (int i = 0; i < transcripts.length; i++) {
+				NemaData nemaData = transcripts[i];
+				Object rawData = nemaData.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+				if(rawData != null){
+					List<NemaSegment> rawDataList = (List<NemaSegment>) rawData;
+					endTimeSecs = Math.max(endTimeSecs, rawDataList.get(rawDataList.size()-1).getOffset());
+					series.put(jobNames.get(i), rawDataList);
+					seriesNames.add(jobNames.get(i));
+				}
+			}
+			
+			try{
+				ProtovisSegmentationPlotItem plot = new ProtovisSegmentationPlotItem(
+						//plotname
+						"chords_" + trackId, 
+						//plot caption
+						" Chord transcriptions for track " + trackId, 
+						//start time for x axis
+						startTimeSecs, 
+						//end time for x axis
+						endTimeSecs, 
+						//series to plot
+						series,
+						//series names in order to plot
+						seriesNames,
+						//output dir
+						outputDir);
+				plotItems.add(plot);
+			}catch(IOException e){
+				getLogger().log(Level.SEVERE, "Failed to plot results for track " + trackId, e);
+			}
+		}
+		return plotItems.toArray(new PageItem[plotItems.size()]);
 	}
+
+//	private static List<NemaSegment> convertChordsToSegments(List<NemaChord> chords){
+//		List<NemaSegment> segs = new ArrayList<NemaSegment>(chords.size());
+//		ChordConversionUtil util = ChordConversionUtil.getInstance();
+//		NemaChord chord;
+//		for (Iterator<NemaChord> iterator = chords.iterator(); iterator.hasNext();) {
+//			chord = iterator.next();
+//			segs.add(new NemaSegment(chord.onset,chord.offset,util.convertNoteNumbersToShorthand(chord.notes)));
+//		}
+//		return segs;
+//	}
 	
 }

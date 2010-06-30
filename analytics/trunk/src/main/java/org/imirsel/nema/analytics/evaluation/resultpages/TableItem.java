@@ -110,7 +110,7 @@ public class TableItem extends PageItem{
         out += "]\n";
         out += "\t\t};\n\n";
         out += "\t\tvar myDataTable = new YAHOO.widget.DataTable(\"" + getName() + "\"," +
-                "myColumnDefs, myDataSource, {caption:\"" + getCaption() + "\"});\n\n";
+                "myColumnDefs, myDataSource, {});\n\n";
         out += "\t\treturn {\n" +
                 "\t\t\toDS: myDataSource,\n" +
                 "\t\t\toDT: myDataTable\n" +
@@ -123,8 +123,12 @@ public class TableItem extends PageItem{
 
     @Override
     public String getBodyData(boolean topLink){
-        String out = "\t<a name=\"" + getName() + "\"></a>\n" +
-                "\t<div id=\"" + getName() + "\"></div>\n";
+    	String out = "\t<a name=\"" + getName() + "\"></a>\n" +
+        "\t<h4>" + getCaption();
+		if (topLink){
+		    out += "&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"toplink\"><a href=\"#top\">[top]</a></span>\n";
+		}
+        out += "\t<div id=\"" + getName() + "\"></div>\n";
         if (topLink){
             out += "<span class=\"toplink\"><a href=\"#top\">[top]</a></span>\n";
         }

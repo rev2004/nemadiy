@@ -16,12 +16,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
-import org.imirsel.nema.analytics.evaluation.chord.ChordConversionUtil;
-import org.imirsel.nema.analytics.evaluation.chord.NemaChord;
+import org.imirsel.nema.model.NemaChord;
 import org.imirsel.nema.model.NemaData;
-import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
+import org.imirsel.nema.model.NemaSegment;
 import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaDataConstants;
+import org.imirsel.nema.model.util.ChordConversionUtil;
+import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
 
 public class StructureTextFile extends SingleTrackEvalFileTypeImpl {
 

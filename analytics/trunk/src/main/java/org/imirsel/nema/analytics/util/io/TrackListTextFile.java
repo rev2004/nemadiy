@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.imirsel.nema.model.*;
+import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
 import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.*;
 

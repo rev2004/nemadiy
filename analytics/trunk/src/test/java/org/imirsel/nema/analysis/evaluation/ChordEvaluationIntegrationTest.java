@@ -36,10 +36,8 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 
 	private NemaTask task;
 	private NemaDataset dataset;
-	List<NemaTrackList> testSets;
 	private static File workingDirectory;
 	private static File outputDirectory;
-	List<NemaData> groundTruth;
 	
 
 	@BeforeClass
@@ -54,22 +52,26 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 	@Before
 	public void setUp() throws Exception {
 		task = new NemaTask();
-        task.setId(-1);
-        task.setName("test name");
-        task.setDescription("test description");
-        task.setDatasetId(-1);
-        task.setSubjectTrackMetadataId(-1);
+        task.setId(17);
+        task.setName("Chord MIREX09");
+        task.setDescription("Chord transcription task requiring participants to annotate and segment the chord events in the MIREX09chord transcription dataset.");
+        task.setDatasetId(33);
+        task.setSubjectTrackMetadataId(13);
         task.setSubjectTrackMetadataName(NemaDataConstants.CHORD_LABEL_SEQUENCE);
         
         dataset = new NemaDataset();
         dataset.setId(task.getDatasetId());
-        dataset.setName("dataset name");
-        dataset.setDescription("some description");
+        dataset.setName("MIREX09 Chord");
+        dataset.setDescription("MIREX 2009 Chord transcription dataset composed of Christopher Harte's Beatles dataset (C4DM, Queen Mary's University of London) and Matthias Mauch's Queen and Zweieck dataset (C4DM, Queen Mary's University of London)");
         
-        //read ground-truth here as we'll use it a few times
-        File groundTruthDirectory = new File("src/test/resources/chord/short/groundtruth");
+    }
+	
+	@Test
+	public void testEvaluateShortHandBasedSystem() throws FileNotFoundException, IOException, IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
+		List<NemaTrackList> testSets;
+		File groundTruthDirectory = new File("src/test/resources/chord/short/groundtruth");
         SingleTrackEvalFileType reader = new ChordShortHandTextFile();
-        groundTruth = reader.readDirectory(groundTruthDirectory, null);
+        List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, null);
         
         ArrayList<NemaTrack> trackList = new ArrayList<NemaTrack>(groundTruth.size());
         for (Iterator<NemaData> iterator = groundTruth.iterator(); iterator.hasNext();) {
@@ -80,37 +82,8 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
         int id = 0;
         testSets.add(new NemaTrackList(id, task.getDatasetId(), 3, "test", id, trackList));
         id++;
-    }
+        
 
-//	@Test
-//	public void testConvertGtToNumberFormat() throws Exception{
-//		ChordNumberTextFile writer = new ChordNumberTextFile();
-//		for (Iterator<NemaData> iterator = groundTruth.iterator(); iterator.hasNext();) {
-//			NemaData data = iterator.next();
-//			
-//			File tmp = File.createTempFile(data.getId(), ".chordNumber.txt");
-//			writer.writeFile(tmp, data);
-//			tmp.deleteOnExit();
-//		}
-//	}
-//	
-//
-//	@Test
-//	public void testConvertGtToIntervalFormat() throws Exception{
-//		ChordIntervalTextFile writer = new ChordIntervalTextFile();
-//		for (Iterator<NemaData> iterator = groundTruth.iterator(); iterator.hasNext();) {
-//			NemaData data = iterator.next();
-//			
-//			File tmp = File.createTempFile(data.getId(), ".chordNumber.txt");
-//			writer.writeFile(tmp, data);
-//			tmp.deleteOnExit();
-//		}
-//	}
-	
-	
-	@Test
-	public void testEvaluateShortHandBasedSystem() throws FileNotFoundException, IOException, IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
-		
 		File resultsDirectory = new File("src/test/resources/chord/short/CH");
 		String	systemName = "CH-System";
 		Evaluator evaluator = null;
@@ -120,7 +93,6 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 //		evaluator = new ChordEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, false, null);
 		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
 		renderer = ResultRendererFactory.getRenderer(task.getSubjectTrackMetadataName(), outputDirectory, workingDirectory, false, null);
-		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
 		evaluator.setGroundTruth(groundTruth);
 	
@@ -136,29 +108,54 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 		renderer.renderResults(results);
 	}
 
-	@Test
-	public void testEvaluateTwoShortHandBasedSystems() throws FileNotFoundException, IOException, IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
-		File resultsDirectory1 = new File("src/test/resources/chord/short/CH");
-		File resultsDirectory2 = new File("src/test/resources/chord/short/MD");
-		String	systemName1 = "CH-System";
-		String	systemName2 = "MD-System";
+	
+	public void testEvaluateManyShortHandBasedSystems() throws FileNotFoundException, IOException, IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
+		List<NemaTrackList> testSets;
+		File groundTruthDirectory = new File("src/test/resources/chord/long/groundtruth");
+        SingleTrackEvalFileType reader = new ChordShortHandTextFile();
+        List<NemaData> groundTruth = reader.readDirectory(groundTruthDirectory, null);
+        
+        ArrayList<NemaTrack> trackList = new ArrayList<NemaTrack>(groundTruth.size());
+        for (Iterator<NemaData> iterator = groundTruth.iterator(); iterator.hasNext();) {
+        	trackList.add(new NemaTrack(iterator.next().getId()));
+		}
+        
+        testSets = new ArrayList<NemaTrackList>(1);
+        int id = 0;
+        testSets.add(new NemaTrackList(id, task.getDatasetId(), 3, "test", id, trackList));
+        id++;
+        
+        
+		File resultsDirectory = new File("src/test/resources/chord/long/results");
+		
+		List<File> systemDirs = new ArrayList<File>();
+		List<String> systemNames = new ArrayList<String>();
+		File [] files = resultsDirectory.listFiles();
+        for (int i = 0; i < files.length; i++) {
+			if(files[i].isDirectory() && !(files[i].getName().equals(".svn"))){
+				String systemName = files[i].getName();
+				
+				System.out.println("got system: " + systemName);
+				systemDirs.add(files[i]);
+				systemNames.add(systemName);
+			}
+		}
+		
+
 		Evaluator evaluator = null;
 		ResultRenderer renderer = null;
 		
 		//test reader and setup for evaluation
 		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
 		renderer = ResultRendererFactory.getRenderer(task.getSubjectTrackMetadataName(), outputDirectory, workingDirectory, false, null);
-		SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 		
 		evaluator.setGroundTruth(groundTruth);
 	
-		//read system 1 results
-		List<NemaData> resultsForAllTracks = reader.readDirectory(resultsDirectory1, null);
-		evaluator.addResults(systemName1, systemName1, testSets.get(0), resultsForAllTracks);
-		
-		//read system 2 results
-		resultsForAllTracks = reader.readDirectory(resultsDirectory2, null);
-		evaluator.addResults(systemName2, systemName2, testSets.get(0), resultsForAllTracks);
+		//read system results
+		for (int i = 0; i < systemNames.size(); i++) {
+			List<NemaData> resultsForAllTracks = reader.readDirectory(systemDirs.get(i), null);
+			evaluator.addResults(systemNames.get(i), systemNames.get(i), testSets.get(0), resultsForAllTracks);
+		}
 		
 		//test evaluation
 		//test evaluation

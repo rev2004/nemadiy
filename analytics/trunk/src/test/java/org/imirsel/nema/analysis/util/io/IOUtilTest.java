@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.imirsel.nema.analytics.util.io.IOUtil;
+import org.imirsel.nema.model.util.IOUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

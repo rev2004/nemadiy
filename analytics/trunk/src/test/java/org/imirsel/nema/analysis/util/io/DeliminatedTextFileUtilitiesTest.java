@@ -1,7 +1,7 @@
 package org.imirsel.nema.analysis.util.io;
 import static org.junit.Assert.*;
 
-import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
+import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
 import org.imirsel.nema.test.BaseManagerTestCase;
 import org.junit.Test;
 

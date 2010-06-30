@@ -13,15 +13,14 @@ import org.imirsel.nema.analytics.evaluation.WriteCsvResultFiles;
 import org.imirsel.nema.analytics.evaluation.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
-import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisFunctionTimestepPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisOnsetPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
-import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imirsel.nema.model.util.IOUtil;
 
 public class OnsetResultRenderer extends ResultRendererImpl {
 	

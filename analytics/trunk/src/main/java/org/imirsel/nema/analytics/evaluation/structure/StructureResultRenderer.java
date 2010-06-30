@@ -3,14 +3,15 @@ package org.imirsel.nema.analytics.evaluation.structure;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.imirsel.nema.analytics.evaluation.ResultRendererImpl;
 import org.imirsel.nema.analytics.evaluation.WriteCsvResultFiles;
-import org.imirsel.nema.analytics.evaluation.chord.NemaChord;
 import org.imirsel.nema.analytics.evaluation.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
@@ -18,11 +19,13 @@ import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisFunctionTimeste
 import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisSegmentationPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
-import org.imirsel.nema.analytics.util.io.IOUtil;
+import org.imirsel.nema.model.NemaChord;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.NemaSegment;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imirsel.nema.model.util.IOUtil;
 
 public class StructureResultRenderer extends ResultRendererImpl {
 
@@ -136,6 +139,19 @@ public class StructureResultRenderer extends ResultRendererImpl {
 				resultPages.add(aPage);
 			}
 		}
+		
+		// do comparative plot page
+		{
+			getLogger().info("Creating comparison plots page...");
+			items = new ArrayList<PageItem>();
+			PageItem[] plots = plotTranscriptionForAllJobs(results);
+			for (int i = 0; i < plots.length; i++) {
+				items.add(plots[i]);
+			}
+			getLogger().info("\tdone.");
+			aPage = new Page("comparisonPlots", "Comparative plots", items, true);
+			resultPages.add(aPage);
+		}
 
 		/* Do files page */
 		{
@@ -214,22 +230,130 @@ public class StructureResultRenderer extends ResultRendererImpl {
 				Map<String,List<NemaSegment>> series = new HashMap<String, List<NemaSegment>>(2);
 				series.put("Prediction", rawData);
 				series.put("Ground-truth", rawGtData);
+				List<String> seriesNames = new ArrayList<String>(2);
+				seriesNames.add("Prediction");
+				seriesNames.add("Ground-truth");
 				
-				ProtovisSegmentationPlotItem plot = new ProtovisSegmentationPlotItem(
-						//plotname
-						results.getJobName(jobId) + "_segments_" + result.getId(), 
-						//plot caption
-						results.getJobName(jobId) + ": Structural segmentation for track " + result.getId(), 
-						//start time for x axis
-						startTimeSecs, 
-						//end time for x axis
-						endTimeSecs, 
-						//series to plot
-						series);
-				plotItems.add(plot);
+				try{
+					ProtovisSegmentationPlotItem plot = new ProtovisSegmentationPlotItem(
+							//plotname
+							results.getJobName(jobId) + "_segments_" + result.getId(), 
+							//plot caption
+							results.getJobName(jobId) + ": Structural segmentation for track " + result.getId(), 
+							//start time for x axis
+							startTimeSecs, 
+							//end time for x axis
+							endTimeSecs, 
+							//series to plot
+							series,
+							//series names in order to plot
+							seriesNames,
+							//output dir
+							outputDir);
+					plotItems.add(plot);
+				}catch(IOException e){
+					getLogger().log(Level.SEVERE, "Failed to plot results for job " + results.getJobName(jobId) + " (" + jobId + ") for track " + result.getId(), e);
+				}
 			}
 		}
 		return plotItems.toArray(new PageItem[plotItems.size()]);
 	}
 
+	/**
+	 * Plots the chord transcriptions for all jobs, for each file.
+	 * 
+	 * @param testSets    the list of test sets.
+	 * @param results  The results Object containing the data to plot.
+	 * @return         an array of page items that will produce the plots.
+	 */
+	@SuppressWarnings("unchecked")
+	private PageItem[] plotTranscriptionForAllJobs(NemaEvaluationResultSet results) {
+		NemaData groundtruth;
+
+		/* Plot each result */
+		Map<String,Map<NemaTrackList, List<NemaData>>> perTrackResults = results.getJobIdToPerTrackEvaluationAndResults();
+		List<PageItem> plotItems = new ArrayList<PageItem>();
+		Map<String,NemaData[]> trackIDToTranscripts = new HashMap<String,NemaData[]>();
+		//get job names and sort
+		List<String> jobNames = new ArrayList<String>(perTrackResults.keySet());
+		Collections.sort(jobNames);
+		
+		for (Iterator<NemaTrackList> foldIt = results.getTestSetTrackLists().iterator(); foldIt.hasNext();){
+			NemaTrackList testSet = foldIt.next();
+			
+			//map IDs for tracks to an array of NemaData Objects for each system, use nulls in case of missing results
+			for (Iterator<String> systemIt = perTrackResults.keySet().iterator(); systemIt.hasNext();){
+				String system = systemIt.next();
+				int systemIdx = jobNames.indexOf(system);
+				Map<NemaTrackList,List<NemaData>> sysResults = perTrackResults.get(system);
+				List<NemaData> sysSetResults = sysResults.get(testSet);
+				for(Iterator<NemaData> trackIt = sysSetResults.iterator(); trackIt.hasNext();){
+					NemaData track = trackIt.next();
+					NemaData[] transcripts = trackIDToTranscripts.get(track.getId());
+					if(transcripts == null){
+						transcripts = new NemaData[jobNames.size()];
+						trackIDToTranscripts.put(track.getId(), transcripts);
+					}
+					transcripts[systemIdx] = track;
+				}
+			}
+		}
+		
+		//iterate over tracks (in alphabetical order) and produce each plot
+		List<String> trackIds = new ArrayList<String>(trackIDToTranscripts.keySet());
+		Collections.sort(trackIds);	
+		
+		for(Iterator<String> trackIt = trackIds.iterator(); trackIt.hasNext();){
+			String trackId = trackIt.next();
+			NemaData[] transcripts = trackIDToTranscripts.get(trackId);
+			getLogger().info("\t\tplotting track " + trackId +"...");
+			groundtruth = results.getTrackIDToGT().get(trackId);
+			if(groundtruth == null){
+				getLogger().warning("No ground-truth found for '" + trackId + "' to be used in plotting");
+			}
+			
+			//setup data-series to plot
+			Map<String,List<NemaSegment>> series = new HashMap<String, List<NemaSegment>>(2);			
+			List<String> seriesNames = new ArrayList<String>(2);
+			double startTimeSecs = 0.0;
+			List<NemaSegment> rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
+			series.put("Ground-truth", rawGtData);
+			seriesNames.add("Ground-truth");
+			
+			//end at last offset from GT or predictions
+			double endTimeSecs = rawGtData.get(rawGtData.size()-1).getOffset();
+			for (int i = 0; i < transcripts.length; i++) {
+				NemaData nemaData = transcripts[i];
+				Object rawData = nemaData.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
+				if(rawData != null){
+					List<NemaSegment> rawDataList = (List<NemaSegment>) rawData;
+					endTimeSecs = Math.max(endTimeSecs, rawDataList.get(rawDataList.size()-1).getOffset());
+					series.put(jobNames.get(i), rawDataList);
+					seriesNames.add(jobNames.get(i));
+				}
+			}
+			
+			try{
+				ProtovisSegmentationPlotItem plot = new ProtovisSegmentationPlotItem(
+						//plotname
+						"segments_" + trackId, 
+						//plot caption
+						" Structural segmentation for track " + trackId, 
+						//start time for x axis
+						startTimeSecs, 
+						//end time for x axis
+						endTimeSecs, 
+						//series to plot
+						series,
+						//series names in order to plot
+						seriesNames,
+						//output dir
+						outputDir);
+				plotItems.add(plot);
+			}catch(IOException e){
+				getLogger().log(Level.SEVERE, "Failed to plot results for track " + trackId, e);
+			}
+		}
+		return plotItems.toArray(new PageItem[plotItems.size()]);
+	}
 }
