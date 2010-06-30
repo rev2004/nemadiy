@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="nema-diy">
+  <publishDate position="right" format="MM-dd-yyyy hh:mm" />
+  <version position="right"/>
+  <bannerLeft>
+    <name>NEMA Core</name>
+    <src>http://code.google.com/p/nemadiy/logo?logo_id=1262666177</src>
+    <href>http://code.google.com/p/nemadiy</href>
+  </bannerLeft>
+  <bannerRight>
+    <name>NEMA DIY Webapp</name>
+    <src>images/diy-webapp.png</src>
+    <href>index.html</href>
+  </bannerRight>
+
+  <body>
+  
+  
+    <breadcrumbs>
+     <item name="Webapp" href="http://nema-dev.lis.illinois.edu/development/diy/nema-webapp"/>
+    </breadcrumbs>
+  <links>
+      <item name="NEMA" href="http://nema.lis.illinois.edu/"/>
+       <item name="NEMA DIY@Googlecode" href="http://code.google.com/p/nemadiy/"/>
+  </links>
+  
+  
+  
+  <menu name="Home">
+  	<item name="Index" href="index.html"/>
+  	<item name="Architecture" href="architecture.html"/>
+  </menu>
+  <menu ref="reports" />
+	
+	<menu name="Parent Project">
+	<item name="Nema Modular Application" href="http://nema-dev.lis.illinois.edu/development/diy/"/>
+	</menu>
+
+  </body>
+  
+</project>
+
