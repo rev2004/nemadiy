@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.imirsel.nema.model.*;
+import org.imirsel.nema.model.util.IOUtil;
 import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
 import org.imirsel.nema.analytics.util.*;

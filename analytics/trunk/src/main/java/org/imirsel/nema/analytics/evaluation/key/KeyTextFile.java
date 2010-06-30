@@ -5,10 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
-import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
+import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
 
 /**
  * Key text file type.

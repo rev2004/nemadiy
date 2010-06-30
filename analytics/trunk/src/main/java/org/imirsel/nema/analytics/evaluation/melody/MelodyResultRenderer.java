@@ -16,11 +16,11 @@ import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisFunctionTimestepPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
-import org.imirsel.nema.analytics.util.io.IOUtil;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imirsel.nema.model.util.IOUtil;
 
 public class MelodyResultRenderer extends ResultRendererImpl {
 

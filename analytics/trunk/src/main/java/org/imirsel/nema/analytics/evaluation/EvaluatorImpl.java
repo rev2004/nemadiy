@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -145,9 +146,9 @@ public abstract class EvaluatorImpl implements Evaluator {
 		return testSets.size();
 	}
 	
-	/** Checks that results are returned for all tracks in the test set and 
-	 * returns the number of results that should be present for use in the 
-	 * evaluation statistics.
+	/** Checks that results are returned for all tracks in the test set,
+	 * sorts the results into trackID order and returns the number of results 
+	 * that should be present for use in the evaluation statistics. 
 	 * 
 	 * @param jobID The job ID being tested.
 	 * @param testSet The test set to compare to.
@@ -200,6 +201,7 @@ public abstract class EvaluatorImpl implements Evaluator {
     			}
     		}
     	}
+    	Collections.sort(theData);
 		return numExamples;
 	}
 

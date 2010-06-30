@@ -12,12 +12,12 @@ import java.util.logging.Level;
 
 import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
 import org.imirsel.nema.analytics.util.io.CopyFileFromClassPathToDisk;
-import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 import org.imirsel.nema.analytics.util.process.MatlabExecutorImpl;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
 
 public class StructureEvaluator extends EvaluatorImpl {
 

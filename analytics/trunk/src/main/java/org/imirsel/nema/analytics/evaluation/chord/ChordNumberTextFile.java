@@ -11,16 +11,19 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
-import org.imirsel.nema.analytics.util.io.DeliminatedTextFileUtilities;
 import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
+import org.imirsel.nema.model.NemaChord;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
+import org.imirsel.nema.model.util.ChordConversionUtil;
+import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
 
 
 /**
@@ -64,6 +67,7 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 			}
 			chords.add(new NemaChord(onset, offset, notes));
 		}
+		Collections.sort(chords);
 		
 		NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
 		obj.setMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE, chords);
@@ -89,7 +93,7 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 			NemaChord nemaChord;
 			for (Iterator<NemaChord> it = chords.iterator(); it.hasNext();) {
 				nemaChord = it.next();
-				writer.write(nemaChord.onset + WRITE_DELIMITER + nemaChord.offset + WRITE_DELIMITER + ChordConversionUtil.getInstance().convertNotenumbersToChordnumbers(nemaChord.notes) + "\n");
+				writer.write(nemaChord.getOnset() + WRITE_DELIMITER + nemaChord.getOffset() + WRITE_DELIMITER + ChordConversionUtil.getInstance().convertNotenumbersToChordnumbers(nemaChord.getNotes()) + "\n");
 			}
 			getLogger().info(NemaDataConstants.CHORD_LABEL_SEQUENCE + " metadata for " + data.getId() + " written to file: " + theFile.getAbsolutePath());
 		} finally {

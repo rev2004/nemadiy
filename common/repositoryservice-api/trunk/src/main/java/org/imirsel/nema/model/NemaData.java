@@ -28,7 +28,7 @@ import java.util.Set;
  * 
  * @author kris.west@gmail.com
  */
-public class NemaData implements Serializable{
+public class NemaData implements Serializable, Comparable<NemaData>{
 
     public static final long serialVersionUID = -1234567894463456789L;
     
@@ -75,20 +75,6 @@ public class NemaData implements Serializable{
      */
     public boolean hasMetadata(String key){
         return metadata.containsKey(key);
-    }
-    
-    /**
-     *  Compares two NemaData Objects for equality based on their 
-     *  file location metadata.
-     *  @param otherObj The NemaData to compare this Object with.
-     *  @return An integer indicating equality or ordering.
-     */
-    public int compareTo(Object otherObj) {
-        try {
-            return this.getStringMetadata(NemaDataConstants.PROP_ID).compareTo(((NemaData)otherObj).getStringMetadata(NemaDataConstants.PROP_ID));
-        } catch (IllegalArgumentException ex) {
-            throw new IllegalArgumentException("Unable to compare NemaData Objects with filelocation metadata",ex);
-        }
     }
     
     /**
@@ -470,4 +456,15 @@ public class NemaData implements Serializable{
         textBuffer.flush();
         textBuffer.close();
     }
+
+    /**
+     *  Compares two NemaData Objects for equality and sorting based on their 
+     *  file location metadata.
+     *  @param o The NemaData to compare this Object with.
+     *  @return An integer indicating equality or ordering.
+     */
+	@Override
+	public int compareTo(NemaData o) {
+		return this.getId().compareTo(o.getId());
+	}
 }

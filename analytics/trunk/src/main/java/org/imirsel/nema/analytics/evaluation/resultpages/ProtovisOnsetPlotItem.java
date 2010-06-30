@@ -26,8 +26,8 @@ public class ProtovisOnsetPlotItem extends PageItem{
 	
 	private double startTime;
     private double endTime;
-    private Map<String,double[]> series; //indices are 0=x, 1=y
-    private List<String> seriesNames; //indices are 0=x, 1=y
+    private Map<String,double[]> series;
+    private List<String> seriesNames; 
     
     public ProtovisOnsetPlotItem(String name, String caption, 
     		double startTime, double endTime, 

@@ -151,6 +151,7 @@ public class ChordEvaluator extends EvaluatorImpl{
         for(int x=0; x < theData.size(); x++) {
             //Do simple evaluation
         	data = theData.get(x);
+        	getLogger().info("Evaluating " + data.getId());
         	gtData = trackIDToGT.get(data.getId());
 
         	systemChords = (List<NemaChord>)data.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
@@ -174,7 +175,7 @@ public class ChordEvaluator extends EvaluatorImpl{
 			}
         
         	// Create grid for the system
-        	int lnSys = (int)(GRID_RESOLUTION*systemChords.get(systemChords.size()-1).getOffset());
+        	int lnSys = (int)(Math.ceil(GRID_RESOLUTION*systemChords.get(systemChords.size()-1).getOffset()));
         	double overlap_score;
         	if (lnSys == 0 ){
         		//they get nothing for this file!
@@ -199,7 +200,6 @@ public class ChordEvaluator extends EvaluatorImpl{
 	        			if (gridSys[j] == null){
 	        				getLogger().warning("Returned null notes for track: " + data.getId() + ", chord " + i + ", onset index: " + onset_index + ", offset index: " + offset_index);
 	        			}
-	        				
 	        		}
 				}
 	        	
