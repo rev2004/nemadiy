@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<util:map id="shortJob1">
+		<entry key="id" value="100"/>
+		<entry key="name" value="job1"/>
+		<entry key="status" value="Submitted"/>
+	</util:map>
+
+	<util:map id="shortJob2">
+		<entry key="id" value="5000"/>
+		<entry key="name" value="job2"/>
+		<entry key="host" value="nema-c-1"/>
+		<entry key="port" value="11714"/>
+		<entry key="status" value="Failed"/>
+	</util:map>
+	
+	
+	<util:map id="shortJob3">
+		<entry key="id" value="5001"/>
+		<entry key="name" value="job3"/>
+		<entry key="status" value="Finished"/>
+	</util:map>
+	
+	<util:map id="extraJob1">
+		<entry key="description" value="this is the first mock job"/>
+		<entry key="flowName" value="flow 1"/>
+	</util:map>
+
+	<util:map id="extraJob2">
+		<entry key="description" value="second mock job"/>
+		<entry key="flowName" value="flow two"/>
+	</util:map>
+	
+	<util:map id="extraJob3">
+		<entry key="description" value=" mock job #3"/>
+		<entry key="flowName" value="flow THREE"/>
+	</util:map>
+	
+
+
+	<bean id="mockMeandreServerProxyConfig" class="MockMeandreServerProxyConfig" scope="prototype">
+		<property name="username" value="user1"></property>
+		<property name="password" value="password1"></property>
+		<property name="port" value="12345"></property>
+		<property name="host" value="nema-c-1"></property>
+		<property name="maxConcurrentJobs" value="2"></property>
+	</bean>
+<bean id="mockMeandreServerProxyConfig2" class="MockMeandreServerProxyConfig" scope="prototype">
+		<property name="username" value="user3"></property>
+		<property name="password" value="password1"></property>
+		<property name="port" value="10000"></property>
+		<property name="host" value="126.128.1.1"></property>
+		<property name="maxConcurrentJobs" value="20"></property>
+	</bean>
+
+	<util:map id="expectedMeandreServerProxyConfig"  >
+		<entry key="port" value="12345"/>
+		<entry key="host" value="nema-c-1"/>
+		<entry key="maxConcurrentJobs" value="2"/>
+	</util:map>
+	<util:map id="expectedMeandreServerProxyConfig2"  >
+		<entry key="port" value="10000"/>
+		<entry key="host" value="126.128.1.1"/>
+		<entry key="maxConcurrentJobs" value="20"/>
+	</util:map>
+	
+	<bean id="mockMeandreServerProxyStatus1" class="org.imirsel.nema.flowservice.config.MeandreServerProxyStatus">
+		<property name="numAborting" value="1"></property>
+		<property name="numRunning" value="2"></property>
+	</bean>
+	<util:map id="expectedMeandreServer1" >
+		<entry key="port" value="12345"/>
+		<entry key="host" value="nema-c-1"/>
+		<entry key="maxConcurrentJobs" value="2"/>
+		<entry key="numAborting" value="1"/>
+		<entry key="numRunning" value="2"/>
+	</util:map>
+	
+	<bean id="mockMeandreServerProxyStatus2" class="org.imirsel.nema.flowservice.config.MeandreServerProxyStatus">
+		<property name="numAborting" value="0"></property>
+		<property name="numRunning" value="0"></property>
+	</bean>
+	<util:map id="expectedMeandreServer2" >
+	<entry key="port" value="10000"/>
+		<entry key="host" value="126.128.1.1"/>
+		<entry key="maxConcurrentJobs" value="20"/>
+		<entry key="numAborting" value="0"/>
+		<entry key="numRunning" value="0"/>
+	</util:map>
+	
+	<util:map id="serverMap">
+		<entry key-ref="mockMeandreServerProxyConfig" value-ref="mockMeandreServerProxyStatus1"/>
+		<entry key-ref="mockMeandreServerProxyConfig2" value-ref="mockMeandreServerProxyStatus2"/>
+	</util:map>
+	
+	<util:list id="expectedServerList">
+		<ref bean="expectedMeandreServer1"/>
+		<ref bean="expectedMeandreServer2"/>
+	</util:list>
+
+
+</beans>
