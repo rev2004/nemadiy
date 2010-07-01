@@ -141,7 +141,7 @@ public class MultiF0EstEvaluator extends EvaluatorImpl {
 		double accuracyOverall = 0.0;
 
 		for (int x = 0; x < theData.size(); x++) {
-			
+			System.out.println("ID is "+ theData.get(x).getId());
 			/* Pull the algorithm and ground-truth raw data */
 			data = theData.get(x);
 			gtData = trackIDToGT.get(data.getId());
