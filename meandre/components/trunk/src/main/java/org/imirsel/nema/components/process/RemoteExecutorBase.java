@@ -87,6 +87,9 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	@ComponentProperty(description="lookupHost", name="_lookupHost", defaultValue = "nema.lis.uiuc.edu")
 	private static final String PROPERTY_6 ="_lookupHost";
 	
+	@StringDataType(valueList={"any","small","medium","large","largest"}, labelList={"any","small ~ 2GB shared","medium ~3GB shared","large ~6GB Shared","largest ~14 GB Shared"})
+	@ComponentProperty(description="Memory usage pattern suggested for the binary", name="_preferredMemoryProfile", defaultValue = "medium")
+	private static final String PROPERTY_7 ="_preferredMemoryProfile";
 	
 	
 	@ComponentInput(description="process template", name="processTemplate")
@@ -105,6 +108,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	private ComponentContextProperties componentContextProperties;
 	private ProcessExecutorService processExecutorService;
 	private String flowInstanceId;
+	private String memoryProfile;
 	
 	
 	public void initialize(ComponentContextProperties ccp)
@@ -116,40 +120,42 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		String _credentials = ccp.getProperty(PROPERTY_4);
 		String contentRepositoryUri = ccp.getProperty(PROPERTY_5);
 		String lookupHost = ccp.getProperty(PROPERTY_6);
+		String _memoryProfile = ccp.getProperty(PROPERTY_7);
 		
 		this.componentContextProperties = ccp;
 		this.flowInstanceId = ccp.getFlowExecutionInstanceID();
 		this.setGroup(group);
 		this.setOS(os);
 		this.setLookupHost(lookupHost);
+		this.setMemoryProfile(_memoryProfile);
 		setCredentials(parseCredentials(_credentials));
 		
 		synchronized(RemoteExecutorBase.class){
 		if(resultStorageService==null){
 			ClientRepositoryFactory factory = new ClientRepositoryFactory();
 			Repository repository;
-			try {
-				repository = factory.getRepository(contentRepositoryUri);
-			} catch (MalformedURLException e) {
-				throw new ComponentExecutionException(e);
-			} catch (ClassCastException e) {
-				throw new ComponentExecutionException(e);
-			} catch (RemoteException e) {
-				throw new ComponentExecutionException(e);
-			} catch (NotBoundException e) {
-				throw new ComponentExecutionException(e);
-			}
+			repository = factory.getRepository(contentRepositoryUri);
 			ContentRepositoryService crs = new ContentRepositoryService();
 			crs.setRepository(repository);
 			resultStorageService = crs;
 		}
-		
-		
-		}}finally{
-			this.initializeNema(ccp);	
 		}
+		}catch(Exception ex){
+			throw new ComponentExecutionException(ex);
+		}
+		
+		
+			this.initializeNema(ccp);	
+		
 	}
 	
+
+
+
+	private void setMemoryProfile(String _memoryProfile) {
+		this.memoryProfile = _memoryProfile;
+	}
+
 
 
 
@@ -372,6 +378,27 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		this.processMonitorMap.clear();
 	}
 	
+	/**Save the file to the content repository
+	 * 
+	 * @param file
+	 * @param model
+	 * @return The repository resource path to the file in the content repository
+	 * @throws IOException
+	 * @throws ContentRepositoryServiceException
+	 */
+	public ResourcePath saveFileToContentRepository(final File file, final String model) throws IOException, ContentRepositoryServiceException{
+		if(!file.exists()){
+			throw new FileNotFoundException("File " + file.getAbsolutePath() + " does not exist");
+		}
+		if(!file.canRead()){
+			throw new IOException("File " + file.getAbsolutePath() + " could not be read.");
+		}
+		NemaContentRepositoryFile nemaResult = createNemaContentRepositoryFile(file, this.getAbsoluteProcessWorkingDirectory(),model);
+		ResourcePath rrp=this.resultStorageService.saveResultFile(this.getCredentials(), nemaResult);
+		return rrp;
+	}
+
+	
 
 
 	
@@ -439,18 +466,6 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	}
 
 	
-	public ResourcePath saveFileToContentRepository(final File file, final String model) throws IOException, ContentRepositoryServiceException{
-		if(!file.exists()){
-			throw new FileNotFoundException("File " + file.getAbsolutePath() + " does not exist");
-		}
-		if(!file.canRead()){
-			throw new IOException("File " + file.getAbsolutePath() + " could not be read.");
-		}
-		NemaContentRepositoryFile nemaResult = createNemaContentRepositoryFile(file, this.getAbsoluteProcessWorkingDirectory(),model);
-		ResourcePath rrp=this.getResultStorageService().saveResultFile(this.getCredentials(), nemaResult);
-		return rrp;
-	}
-
 
 
 	private NemaContentRepositoryFile createNemaContentRepositoryFile(File file, String relativeLoc, String model) throws IOException {
@@ -481,14 +496,6 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 
 
 
-
-	/**Return the ResultStorageService
-	 * 
-	 * @return resultStorageService -returns the result storage service
-	 */
-	public static ResultStorageService getResultStorageService() {
-		return resultStorageService;
-	}
 
 
 }
