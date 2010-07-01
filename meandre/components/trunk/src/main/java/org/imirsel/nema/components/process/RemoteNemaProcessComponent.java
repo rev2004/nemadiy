@@ -35,7 +35,11 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
-
+/**
+ * @deprecated
+ * @author kris.west@gmail.com
+ * @since 0.1.0
+ */
 @Component(creator = "kris.west@gmail.com", description = "Remote execution component that converts input NEMA models" +
 		" into file formats (specified in the command formatting template of the chosen process), using file paths that" +
 		" will be valid on the remote machine, transfers the input files to the remote machine and executes the process." +

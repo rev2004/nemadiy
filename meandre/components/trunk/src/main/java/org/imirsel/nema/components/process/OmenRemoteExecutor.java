@@ -12,17 +12,12 @@ import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.util.io.NemaFileType;
 import org.imirsel.nema.analytics.util.process.CommandArgument;
 import org.imirsel.nema.analytics.util.process.CommandLineFormatParser;
-import org.imirsel.nema.components.InvalidProcessMonitorException;
-import org.imirsel.nema.components.InvalidProcessTemplateException;
-import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
 import org.imirsel.nema.model.CommandLineTemplate;
 import org.imirsel.nema.model.NemaMetadataEntry;
-import org.imirsel.nema.model.NemaContentRepositoryFile;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
-import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.monitor.process.NemaProcess;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
@@ -142,8 +137,8 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 		for (Iterator<NemaTrackList> setIt = inputPaths.keySet().iterator(); setIt.hasNext();) {
 			NemaTrackList testSet = setIt.next();
 			
-			//create scratch dir
-			String scratch = this.getAbsoluteProcessWorkingDirectory() + File.separator + "testSet" + testSet.getId();
+			//scratch dir
+			String scratch = "testSet" + testSet.getId();
 			if(!new File(scratch).mkdirs()){
 				throw new ComponentExecutionException("Failed to create scratch dir for a process execution at: " + scratch);
 			}
@@ -197,9 +192,11 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				//set scratch dir path
 				formatModel.setPreparedPathForScratchDir(scratch);
 				
-
+				//add input file as process artifact (if its is a JCR URI rather than path it will be resolved at remote site)
 				ProcessArtifact paInputs = new ProcessArtifact(inputFile.getPath(),"File");
 				List<ProcessArtifact> inputs = new ArrayList<ProcessArtifact>();
+				
+				
 				inputs.add(paInputs);
 				
 				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(),"File");

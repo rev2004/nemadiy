@@ -23,6 +23,11 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentExecutionException;
 
+/**
+ * @deprecated
+ * @author Amit Kumar
+ * @since 0.2.0
+ */
 @Component(creator = "Amit Kumar", 
 		description = "This component takes input string array of files and pushes " +
 				"the string array of files produced by the execution of binary code.",
