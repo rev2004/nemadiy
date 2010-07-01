@@ -223,7 +223,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		"				    .strokeStyle(\"black\")\n" +
 		"				    .lineWidth(1)\n" +
 		"				    .title(function(d) d.l)\n" +
-		"				    .anchor(\"left\").add(pv.Label).text(function(d) d.l);\n" +
+		"				    .anchor(\"left\").add(pv.Label).overflow(\"hidden\").text(function(d) d.l);\n" +
 		"\n" + 
 		"				/* Context panel (zoomed out). */\n" +
 		"				var context = vis.add(pv.Panel)\n" +
