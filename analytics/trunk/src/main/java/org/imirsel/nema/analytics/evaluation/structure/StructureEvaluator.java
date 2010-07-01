@@ -23,6 +23,15 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
 
+/**
+ * 
+ * Wraps Paulus' matlab structure eval script.
+ * 
+ * @author Andreas Ehmann
+ * @author kris.west@gmail.com
+ * @since 0.3.0
+ *
+ */
 public class StructureEvaluator extends EvaluatorImpl {
 
 	/**
@@ -199,8 +208,10 @@ public class StructureEvaluator extends EvaluatorImpl {
 			}
 			evalMFileContent += evalCommand + "('" + gtFile.getAbsolutePath() + "','" + algFile.getAbsolutePath() + "','" + resultFile.getAbsolutePath() + "');\n";		
 		}
+		evalMFileContent += "exit;\n";
 			
-		File evalMFile = new File(evalTempDir.getAbsolutePath() + File.separator + "evaluateJob" + jobID + "Set" + testSet.getId() + ".m");
+		String evalFunction = "evaluateJob" + jobID + "Set" + testSet.getId();
+		File evalMFile = new File(evalTempDir.getAbsolutePath() + File.separator + evalFunction + ".m");
 		
 		//write out m file
 		try{
@@ -215,7 +226,7 @@ public class StructureEvaluator extends EvaluatorImpl {
 			getLogger().log(Level.SEVERE,"Failed to write out data files for evaluation in matlab!",e);
 		}
 		
-		MatlabExecutorImpl matlabIntegrator = new MatlabExecutorImpl(evalTempDir,true,evalTempDir,evalTempDir,evalTempDir,"()",evalMFile.getName(),null);
+		MatlabExecutorImpl matlabIntegrator = new MatlabExecutorImpl(evalTempDir,true,evalTempDir,evalTempDir,evalTempDir,"",evalFunction,null);
         matlabIntegrator.setMatlabBin(matlabPath);
         try {
 			matlabIntegrator.runCommand(null);
