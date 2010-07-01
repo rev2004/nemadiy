@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.jcr.SimpleCredentials;
+
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
@@ -47,6 +49,14 @@ public class RemoteTimeComponent implements ExecutableComponent{
 	@ComponentProperty(defaultValue = "ExecutorService", description = "Executor Service Name", name = "serviceName")
 	private static final String PROPERTY_4 = "serviceName";
 	
+	
+
+	@ComponentProperty(defaultValue = "test:test", description = "Credentials to Login to the content repository", name = "_credentials")
+	private static final String PROPERTY_5="_credentials";
+
+
+	
+	
 	@ComponentOutput(description = "This is the process artifact data",
 			name = "processResult")
 	private static final String DATA_OUTPUT_1="processResult";
@@ -71,7 +81,9 @@ public class RemoteTimeComponent implements ExecutableComponent{
 		String _port = cc.getProperty(PROPERTY_3);	
 		int port = Integer.parseInt(_port);
 		String serviceName = cc.getProperty(PROPERTY_4);
+		String _credentials = cc.getProperty(PROPERTY_5);	
 		
+		SimpleCredentials sc = parseCredentials(_credentials);
 		
 		Registry registry;
 		try {
@@ -109,7 +121,7 @@ public class RemoteTimeComponent implements ExecutableComponent{
 			RemoteProcessMonitor processMonitor = new RecordStreamProcessMonitor(latch, ros,resultQueue,processList);
 			// start the process
 			@SuppressWarnings("unused")
-			NemaProcess process=service.executeProcess(pep, processMonitor);
+			NemaProcess process=service.executeProcess(sc,pep, processMonitor);
 			System.out.println("Now waiting for the process to finish...");
 			try {
 				latch.await();
@@ -146,6 +158,18 @@ public class RemoteTimeComponent implements ExecutableComponent{
 		
 		
 	}
+
+	private SimpleCredentials parseCredentials(String credentialsString) throws ComponentExecutionException {
+		String[] splits = credentialsString.split(":");
+		String username = splits[0];
+		String password = splits[1];
+		if(splits.length!=2){
+			throw new ComponentExecutionException("Invalid credentials");
+		}
+		return new SimpleCredentials(username,password.toCharArray());
+	}
+	
+
 
 	public void dispose(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
