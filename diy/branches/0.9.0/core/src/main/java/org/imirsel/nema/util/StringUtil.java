@@ -1,7 +1,4 @@
-/**
- * 
- */
-package org.imirsel.nema.webapp.util;
+package org.imirsel.nema.util;
 
 /**
  * Helper class for String converting
