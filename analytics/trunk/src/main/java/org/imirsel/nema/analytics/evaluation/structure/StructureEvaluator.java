@@ -243,7 +243,6 @@ public class StructureEvaluator extends EvaluatorImpl {
 	        String[][] structResultsStrArray = null;
 	        
 			try {
-				matlabIntegrator.runCommand(null);
 				structResultsStrArray = DeliminatedTextFileUtilities.loadDelimTextData(resultFile, ",", -1);
 			} catch (Exception e) {
 				getLogger().log(Level.SEVERE, "Failed to write structure files and evaluate them using MATLAB",e);
