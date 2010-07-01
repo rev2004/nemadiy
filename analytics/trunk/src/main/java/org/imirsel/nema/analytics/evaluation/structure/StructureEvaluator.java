@@ -183,7 +183,7 @@ public class StructureEvaluator extends EvaluatorImpl {
 		double medianClaim2TrueAvg = 0.0;
 		
 		ArrayList<File> resultFiles = new ArrayList<File>();
-		String evalMFileContent = "";
+		String evalMFileContent = "echo on\n";
 		StructureTextFile structFileWriter = new StructureTextFile();
 		
 		String filePrefix;
@@ -207,7 +207,8 @@ public class StructureEvaluator extends EvaluatorImpl {
 			}catch(IOException e){
 				getLogger().log(Level.SEVERE,"Failed to write out data files for evaluation in matlab!",e);
 			}
-			evalMFileContent += "echo 'evaluating track " + data.getId() + " for job " + jobID + "';\n" + evalCommand + "('" + gtFile.getAbsolutePath() + "','" + algFile.getAbsolutePath() + "','" + resultFile.getAbsolutePath() + "');\n";		
+			evalMFileContent += evalCommand + "('" + gtFile.getAbsolutePath() + "','" + algFile.getAbsolutePath() + "','" + resultFile.getAbsolutePath() + "');\n";		
+			//"echo 'evaluating track " + data.getId() + " for job " + jobID + "';\n" + 
 		}
 		evalMFileContent += "exit;\n";
 			
