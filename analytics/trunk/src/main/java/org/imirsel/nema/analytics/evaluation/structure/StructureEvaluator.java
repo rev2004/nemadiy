@@ -150,7 +150,6 @@ public class StructureEvaluator extends EvaluatorImpl {
 		String algFileName;
 		String gtFileName;
 		String resultFileName;
-		long randId;
 		
 		// Initialize the per-track and aggregated/averaged results storage variables
 		double overSegScore = 0.0;
@@ -187,13 +186,15 @@ public class StructureEvaluator extends EvaluatorImpl {
 		String evalMFileContent = "";
 		StructureTextFile structFileWriter = new StructureTextFile();
 		
+		String filePrefix;
+		
 		for(NemaData data:dataList){
-
 			gtData = trackIDToGT.get(data.getId());
-			randId = Math.round(10000000.0*Math.random());
-			algFileName = evalTempDir.getAbsolutePath() + File.separator + "alg" + randId + ".txt";
-			gtFileName = evalTempDir.getAbsolutePath() + File.separator + "gt" + randId + ".txt";
-			resultFileName = evalTempDir.getAbsolutePath() + File.separator + "res" + randId + ".txt";
+			filePrefix = jobID + "_" + testSet.getId() + "_" + data.getId();
+			
+			algFileName = evalTempDir.getAbsolutePath() + File.separator + "alg_" + filePrefix + ".txt";
+			gtFileName = evalTempDir.getAbsolutePath() + File.separator + "gt_" + filePrefix + ".txt";
+			resultFileName = evalTempDir.getAbsolutePath() + File.separator + "res_" + filePrefix + ".txt";
 			algFile = new File(algFileName);
 			gtFile = new File(gtFileName);
 			
@@ -206,7 +207,7 @@ public class StructureEvaluator extends EvaluatorImpl {
 			}catch(IOException e){
 				getLogger().log(Level.SEVERE,"Failed to write out data files for evaluation in matlab!",e);
 			}
-			evalMFileContent += evalCommand + "('" + gtFile.getAbsolutePath() + "','" + algFile.getAbsolutePath() + "','" + resultFile.getAbsolutePath() + "');\n";		
+			evalMFileContent += "echo 'evaluating track " + data.getId() + " for job " + jobID + "';\n" + evalCommand + "('" + gtFile.getAbsolutePath() + "','" + algFile.getAbsolutePath() + "','" + resultFile.getAbsolutePath() + "');\n";		
 		}
 		evalMFileContent += "exit;\n";
 			
@@ -241,7 +242,6 @@ public class StructureEvaluator extends EvaluatorImpl {
 	        String[][] structResultsStrArray = null;
 	        
 			try {
-				structResultsStrArray = DeliminatedTextFileUtilities.loadDelimTextData(resultFile, ",", -1);
 				matlabIntegrator.runCommand(null);
 				structResultsStrArray = DeliminatedTextFileUtilities.loadDelimTextData(resultFile, ",", -1);
 			} catch (Exception e) {
