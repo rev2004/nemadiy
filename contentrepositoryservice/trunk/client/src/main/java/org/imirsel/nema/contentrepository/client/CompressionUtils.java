@@ -67,9 +67,8 @@ public class CompressionUtils {
 	 * @throws IOException
 	 */
 	public List<String> decompress(byte[] fileContents, final String decompressLocation, final String fileName) throws ZipException, IOException{
-		String tmpLoc = System.getProperty("java.io.tmpdir");
 		List<String> fileList = new ArrayList<String>();
-		File tempFile = new File(tmpLoc,fileName);
+		File tempFile = new File(this.tempLocation,fileName);
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(tempFile);
@@ -96,12 +95,12 @@ public class CompressionUtils {
 		Enumeration<? extends ZipEntry> entries= zipFile.entries();
 		  while(entries.hasMoreElements()) {
 		        ZipEntry entry = (ZipEntry)entries.nextElement();
-		        String processedName = decompressLocation + entry.getName();
+		        String processedName = decompressLocation + File.separator+entry.getName();
 		        if(entry.isDirectory()) {
 		          // Assume directories are stored parents first then children.
 		          logger.fine("Extracting directory: " + processedName);
 		          // This is not robust, just for demonstration purposes.
-		          File directoryFile = new File(processedName);
+		          File directoryFile = new File(decompressLocation,entry.getName());
 		          boolean success=directoryFile.mkdirs();
 		          if(!success){
 		        	  logger.severe("Error -creating new directory " + directoryFile.getCanonicalPath());
@@ -262,6 +261,7 @@ public class CompressionUtils {
 		fos.flush();
 		fos.close();
 		
+		cu.decompress(fcontent, "/tmp/delme", "one.zip");
 		
 		//cu.decompress(fcontent,"/Users/amitku/tmp","tmp");
 		

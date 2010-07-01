@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.zip.ZipException;
@@ -59,14 +60,28 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		assertEquals(isValid,true);
 	}
 	
-	
+	@Ignore
 	@Test
-	public void testSaveResult() throws ContentRepositoryServiceException{
+	public void testSaveContentRepositoryFile() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
+		String tmpDir = System.getProperty("java.io.tmpdir");
+		File resDir = new File(tmpDir,"one");
+		resDir.mkdir();
+		File file = new File(resDir,"test.data");
+		try {
+			FileWriter writer = new FileWriter(file);
+			writer.write(new Date().toString());
+			writer.flush();
+			writer.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		NemaContentRepositoryFile nemaResult = null;
 		try {
-			nemaResult = getSampleNemaResult("/tmp/testme/javaProcess.properties", "/tmp/");
+			nemaResult = createNemaContentRepositoryFile(file, tmpDir,"org.model.tmp");
 		} catch (IOException e) {
 			fail("Error creating the nema result file");
 		}
@@ -74,19 +89,56 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		System.out.println(rpath.getURIAsString());
 		
 	}
+	
+	
+	
 	@Ignore
 	@Test
-	public void testGetResult() throws ContentRepositoryServiceException{
+	public void testSaveContentRepositoryDirectory() throws ContentRepositoryServiceException{
 		ContentRepositoryService crs = new ContentRepositoryService();
 		crs.setRepository(repository);
-		RepositoryResourcePath rrp = new RepositoryResourcePath("jcr", "default", "/users/admin/flows/executables/1276626294392/results/tmp");
-		NemaContentRepositoryFile nresult=crs.getNemaContentRepositoryFile(nemaCredentials, rrp);
-		System.out.println(nresult.getExecutionId()+  " " + nresult.getFileName() + " "+ nresult.getModelClass() + " " + nresult.getName() + " " + nresult.getFileContent().length);
+		String tmpDir = System.getProperty("java.io.tmpdir");
+		File resDir0 = new File(tmpDir,"zero");
+		File resDir = new File(resDir0,"one");
+		resDir.mkdirs();
+		File file = new File(resDir,"test.data");
+		try {
+			FileWriter writer = new FileWriter(file);
+			writer.write(new Date().toString());
+			writer.flush();
+			writer.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		File file1 = new File(resDir0,"test0.data");
+		try {
+			FileWriter writer = new FileWriter(file);
+			writer.write(new Date().toString());
+			writer.flush();
+			writer.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		NemaContentRepositoryFile nemaResult = null;
+		try {
+			nemaResult = createNemaContentRepositoryFile(resDir0, tmpDir,"org.model.tmp");
+		} catch (IOException e) {
+			fail("Error creating the nema result file");
+		}
+		ResourcePath rpath=crs.saveResultFile(nemaCredentials, nemaResult);
+		System.out.println(rpath.getURIAsString());
+		
 	}
 	
 	
-	private NemaContentRepositoryFile getSampleNemaResult(String path, String relativeLoc) throws IOException {
+	private NemaContentRepositoryFile createNemaContentRepositoryFile(File file, String relativeLoc, String model) throws IOException {
 		NemaContentRepositoryFile nemaResult = new NemaContentRepositoryFile();
+		String path = file.getCanonicalPath();
 		byte[] fileContent= null;
 		CompressionUtils cutils= CompressionUtils.getInstanceOf();
 		fileContent = cutils.compress(path,relativeLoc);
@@ -97,15 +149,36 @@ public class RemoteContentRepositoryServiceTest extends BaseManagerTestCase{
 		
 		nemaResult.setExecutionId(System.currentTimeMillis()+"");
 		nemaResult.setFileContent(fileContent);
-		File file = new File(path);
-		String parentPath=file.getParent();
-		nemaResult.setModelClass("org.test.TestModel.class");
+		String parentPath=file.getParent() + File.separator;
+		nemaResult.setModelClass(model);
 		nemaResult.setName(file.getName());
 		nemaResult.setFileName(path);
-		nemaResult.setResultType(ResultType.DIR);
+		if(file.isDirectory()){
+			nemaResult.setResultType(ResultType.DIR);
+		}else{
+			nemaResult.setResultType(ResultType.FILE);
+		}
+		String resultLoc =parentPath;
+		int loc=resultLoc.indexOf(relativeLoc);
+		
+		if(loc!=-1){
+			if(relativeLoc!=null){
+				parentPath = resultLoc.substring(loc+relativeLoc.length());
+			}
+		}
 		nemaResult.setPath(parentPath);
 		return nemaResult;
 	}
+	
+	@Test
+	public void testGetResult() throws ContentRepositoryServiceException{
+		ContentRepositoryService crs = new ContentRepositoryService();
+		crs.setRepository(repository);
+		RepositoryResourcePath rrp = new RepositoryResourcePath("jcr", "default", "/users/admin/flows/1278016989084/results/zero");
+		NemaContentRepositoryFile nresult=crs.getNemaContentRepositoryFile(nemaCredentials, rrp);
+		System.out.println(nresult.getExecutionId()+  " " + nresult.getFileName() + " "+ nresult.getModelClass() + " " + nresult.getName() + " " + nresult.getFileContent().length);
+	}
+	
 
 
 	

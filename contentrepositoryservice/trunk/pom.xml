@@ -337,7 +337,7 @@
   
   <properties>
   	<flowservice.version>0.8.0-SNAPSHOT</flowservice.version>
-  	 <contentrepository-client.version>0.0.3-SNAPSHOT</contentrepository-client.version>
+  	 <contentrepository-client.version>0.0.4-SNAPSHOT</contentrepository-client.version>
   	 <executorservice.version>0.6.0-SNAPSHOT</executorservice.version>
   </properties>
   

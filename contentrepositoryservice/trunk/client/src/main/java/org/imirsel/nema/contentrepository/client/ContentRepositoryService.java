@@ -705,7 +705,7 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 		propExists = fileNode.hasProperty("resultPath");
 		if(propExists){
 			resultPathProperty = fileNode.getProperty("resultPath");
-			nemaResult.setModelClass(resultPathProperty.getString());
+			nemaResult.setPath(resultPathProperty.getString());
 		}
 		
 		Node resNode = fileNode.getNode ("jcr:content");
