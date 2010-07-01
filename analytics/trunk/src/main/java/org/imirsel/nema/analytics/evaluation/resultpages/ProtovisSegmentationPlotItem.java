@@ -96,7 +96,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		
     	String out = "<script type=\"text/javascript\" src=\"protovis-r3.2.js\"></script>\n\n" +
 		"<script type=\"text/javascript+protovis\">\n" +
-		"	var segmentation_colors = [\"salmon\", \"steelblue\", \"green\", \"pink\", \"navy\"];\n" +
+		"	var segmentation_colors = [\"lightsalmon\", \"lightblue\", \"lightgoldenrodyellow\", \"lightgreen\", \"lightgrey\", \"beige\"];\n" +
 		"	 \n" +
 		"	function loadScript(url, plot){\n" +
 		"		var loadedscript = document.createElement('script');\n" +

@@ -1,8 +1,12 @@
 package org.imirsel.nema.analytics.evaluation.structure;
 
+import java.awt.datatransfer.DataFlavor;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -134,7 +138,6 @@ public class StructureEvaluator extends EvaluatorImpl {
 		// Initialize the file parameters for passing to matlab
 		File algFile = null;
 		File gtFile = null;
-		File resultFile = null;
 		String algFileName;
 		String gtFileName;
 		String resultFileName;
@@ -171,6 +174,10 @@ public class StructureEvaluator extends EvaluatorImpl {
 		double medianTrue2ClaimAvg = 0.0;
 		double medianClaim2TrueAvg = 0.0;
 		
+		ArrayList<File> resultFiles = new ArrayList<File>();
+		String evalMFileContent = "";
+		StructureTextFile structFileWriter = new StructureTextFile();
+		
 		for(NemaData data:dataList){
 
 			gtData = trackIDToGT.get(data.getId());
@@ -180,18 +187,50 @@ public class StructureEvaluator extends EvaluatorImpl {
 			resultFileName = evalTempDir.getAbsolutePath() + File.separator + "res" + randId + ".txt";
 			algFile = new File(algFileName);
 			gtFile = new File(gtFileName);
-			resultFile = new File(resultFileName);
-			StructureTextFile structFileWriter = new StructureTextFile();
 			
-			String commandString = "('" + gtFile.getAbsolutePath() + "','" + algFile.getAbsolutePath() + "','" + resultFile.getAbsolutePath() + "')";
-			MatlabExecutorImpl matlabIntegrator = new MatlabExecutorImpl(evalTempDir,true,evalTempDir,evalTempDir,evalTempDir,commandString,evalCommand,null);
-	        matlabIntegrator.setMatlabBin(matlabPath);
-	        
+			File resultFile = new File(resultFileName);
+			resultFiles.add(resultFile);
+			
+			try{
+				structFileWriter.writeFile(algFile, data);
+				structFileWriter.writeFile(gtFile, gtData);
+			}catch(IOException e){
+				getLogger().log(Level.SEVERE,"Failed to write out data files for evaluation in matlab!",e);
+			}
+			evalMFileContent += evalCommand + "('" + gtFile.getAbsolutePath() + "','" + algFile.getAbsolutePath() + "','" + resultFile.getAbsolutePath() + "');\n";		
+		}
+			
+		File evalMFile = new File(evalTempDir.getAbsolutePath() + File.separator + "evaluateJob" + jobID + "Set" + testSet.getId() + ".m");
+		
+		//write out m file
+		try{
+			BufferedWriter out= new BufferedWriter(new FileWriter(evalMFile));
+			try{
+				out.write(evalMFileContent);
+			}finally{
+				out.flush();
+				out.close();
+			}
+		}catch(IOException e){
+			getLogger().log(Level.SEVERE,"Failed to write out data files for evaluation in matlab!",e);
+		}
+		
+		MatlabExecutorImpl matlabIntegrator = new MatlabExecutorImpl(evalTempDir,true,evalTempDir,evalTempDir,evalTempDir,"()",evalMFile.getName(),null);
+        matlabIntegrator.setMatlabBin(matlabPath);
+        try {
+			matlabIntegrator.runCommand(null);
+		} catch (Exception e) {
+			getLogger().log(Level.SEVERE, "Failed to write structure files and evaluate them using MATLAB",e);
+			throw new IllegalArgumentException(e);
+		}
+        
+        for(int i=0;i<resultFiles.size();i++){
+        	NemaData data = dataList.get(i);
+        	File resultFile = resultFiles.get(i);
 	        String[][] structResultsStrArray = null;
 	        
 			try {
-				structFileWriter.writeFile(algFile, data);
-				structFileWriter.writeFile(gtFile, gtData);
+				structResultsStrArray = DeliminatedTextFileUtilities.loadDelimTextData(resultFile, ",", -1);
 				matlabIntegrator.runCommand(null);
 				structResultsStrArray = DeliminatedTextFileUtilities.loadDelimTextData(resultFile, ",", -1);
 			} catch (Exception e) {
