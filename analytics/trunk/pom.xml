@@ -80,8 +80,8 @@
 	</reporting>
 	
 	<scm>
-		<connection>scm:svn:https://nemadiy.googlecode.com/analytics/trunk</connection>
-		<url>https://nemadiy.googlecode.com/analytics/trunk</url>
+		<connection>scm:svn:https://nemadiy.googlecode.com/svn/analytics/trunk</connection>
+		<url>https://nemadiy.googlecode.com/svn/analytics/trunk</url>
 	</scm>
 	<organization>
 		<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
