@@ -490,6 +490,14 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		}else{
 			nemaResult.setResultType(ResultType.FILE);
 		}
+		String resultLoc = file.getCanonicalPath();
+		int loc=resultLoc.indexOf(relativeLoc);
+		
+		if(loc!=-1){
+			if(relativeLoc!=null){
+				parentPath = resultLoc.substring(loc+relativeLoc.length());
+			}
+		}
 		nemaResult.setPath(parentPath);
 		return nemaResult;
 	}

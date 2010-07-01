@@ -161,7 +161,6 @@ public abstract class ContentRepositoryBase extends NemaComponent implements Rem
 		if(fileContent==null){
 			throw new RuntimeException("file byte contents size is null " + path);
 		}
-		
 		nemaResult.setExecutionId(this.flowInstanceId);
 		nemaResult.setFileContent(fileContent);
 		String parentPath=file.getParent();
@@ -173,10 +172,17 @@ public abstract class ContentRepositoryBase extends NemaComponent implements Rem
 		}else{
 			nemaResult.setResultType(ResultType.FILE);
 		}
+		String resultLoc =parentPath;
+		int loc=resultLoc.indexOf(relativeLoc);
+		
+		if(loc!=-1){
+			if(relativeLoc!=null){
+				parentPath = resultLoc.substring(loc+relativeLoc.length());
+			}
+		}
 		nemaResult.setPath(parentPath);
 		return nemaResult;
 	}
-
 
 
 
