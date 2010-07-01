@@ -32,7 +32,7 @@ import org.meandre.core.ComponentExecutionException;
 /** This executable component executes an external binary using the process builder.
  *
  * @author Andreas F. Ehmann and Kris West
- *
+ * @deprecated
  */
 @Component(creator="Andreas F. Ehmann", description="Runs external code " +
 		"using the process builder. This module accepts one File input.", 

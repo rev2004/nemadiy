@@ -228,8 +228,8 @@ public class FileConversionUtil {
 	 * the RawAudioFile type will cause the list of audio files to be written.
 	 * @param defaultSite Where files are created from the DB, mark them as
 	 * available at this default site.
-	 * @return Map of site name to a Map of NemaTrackList to a list of File 
-	 * Objects representing the files to be used as inputs to the process.
+	 * @return Map of site name to a Map of NemaTrackList to a list of paths 
+	 * representing the files to be used as inputs to the process.
 	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
 	 * NemaFileType is received.
 	 * @throws InstantiationException Thrown if the file writer can't be 
@@ -241,7 +241,7 @@ public class FileConversionUtil {
 	 * @throws IOException Thrown if there is a problem writing the files to
 	 * disk.
 	 */
-	public static Map<String,Map<NemaTrackList,List<File>>> prepareOmenProcessInput(
+	public static Map<String,Map<NemaTrackList,List<String>>> prepareOmenProcessInput(
 			File outputDirectory, 
 			NemaTask task,
 			Map<NemaTrackList,List<NemaData>> executionData, 
@@ -249,7 +249,7 @@ public class FileConversionUtil {
 			String defaultSite
 			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
 		
-		Map<String,Map<NemaTrackList,List<File>>> out = null;
+		Map<String,Map<NemaTrackList,List<String>>> out = null;
 		
 	
 		if(fileType.equals(RawAudioFile.class)) {
@@ -258,48 +258,51 @@ public class FileConversionUtil {
 			return out;
 		}else {
 			
-			//Nothing else supported currently as the file created would have to be marshalled over to the remote site
-			throw new IllegalArgumentException("Files of type '" + fileType.getName() + "' are not currently supported for remote execution. " +
-					"Only processes taking '" + RawAudioFile.class.getName() + "' as input are supported.");
-//			boolean isSingleTrackType = false;
-//			if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
-//				isSingleTrackType = true;
-//			}
-//			
-//			//write directory of metadata files
-//			out = new HashMap<String,Map<NemaTrackList,List<File>>>();
-//			for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator.hasNext();) {
-//				NemaTrackList testSet = iterator.next();
-//				List<NemaData> data = executionData.get(testSet);
-//				
-//				//filter by site
-//				Map<String,List<NemaData>> siteDataMap = partitionBySite(data,defaultSite);
-//				
-//				//create data files separately for each site
-//				for (Iterator<String> it2 = siteDataMap.keySet().iterator(); it2.hasNext();) {
-//					String site = it2.next();
-//					List<NemaData> siteData = siteDataMap.get(site);
-//					
-//					//TODO: will need to send these files to or create them at remote site...
-//					File fileOrDir = writeGroundTruthDataFileOrDirectory(testSet, data, task, fileType, outputDirectory);
-//					List<File> files;
-//					if(isSingleTrackType){
-//						files = Arrays.asList(fileOrDir.listFiles());
-//					}else{ //MultipleTrackEvalFileType.class.isAssignableFrom(fileType) == true
-//						files = new ArrayList<File>(1);
-//						files.add(fileOrDir);
-//					}
-//					Map<NemaTrackList,List<File>> siteOut = out.get(site);
-//					if(siteOut == null){
-//						siteOut = new HashMap<NemaTrackList,List<File>>();
-//						out.put(site,siteOut);
-//					}
-//					siteOut.put(testSet, files);
-//				}
-//			}
+//			//Nothing else supported currently as the file created would have to be marshalled over to the remote site
+//			throw new IllegalArgumentException("Files of type '" + fileType.getName() + "' are not currently supported for remote execution. " +
+//					"Only processes taking '" + RawAudioFile.class.getName() + "' as input are supported.");
+			boolean isSingleTrackType = false;
+			if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
+				isSingleTrackType = true;
+			}
+			
+			//write directory of metadata files
+			out = new HashMap<String,Map<NemaTrackList,List<String>>>();
+			for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator.hasNext();) {
+				NemaTrackList testSet = iterator.next();
+				List<NemaData> data = executionData.get(testSet);
+				
+				//filter by site
+				Map<String,List<NemaData>> siteDataMap = partitionBySite(data,defaultSite);
+				
+				//create data files separately for each site
+				for (Iterator<String> it2 = siteDataMap.keySet().iterator(); it2.hasNext();) {
+					String site = it2.next();
+					
+					//NB: will need to send these files to remote site...
+					File fileOrDir = writeGroundTruthDataFileOrDirectory(testSet, data, task, fileType, outputDirectory);
+					List<String> filePaths;
+					if(isSingleTrackType){
+						File[] fileArr = fileOrDir.listFiles();
+						filePaths = new ArrayList<String>(fileArr.length);
+						for (int i = 0; i < fileArr.length; i++) {
+							filePaths.add(fileArr[i].getAbsolutePath());
+						}
+					}else{ //MultipleTrackEvalFileType.class.isAssignableFrom(fileType) == true
+						filePaths = new ArrayList<String>(1);
+						filePaths.add(fileOrDir.getAbsolutePath());
+					}
+					Map<NemaTrackList,List<String>> siteOut = out.get(site);
+					if(siteOut == null){
+						siteOut = new HashMap<NemaTrackList,List<String>>();
+						out.put(site,siteOut);
+					}
+					siteOut.put(testSet, filePaths);
+				}
+			}
 		}
 		
-//		return out;
+		return out;
 	}
 	
 	private static Map<String,List<NemaData>> partitionBySite(List<NemaData> list, String defaultSite){
@@ -701,13 +704,13 @@ public class FileConversionUtil {
 	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
 	 * found or created.
 	 */
-	public static Map<String,Map<NemaTrackList,List<File>>> getOmenResourceFilesList(
+	public static Map<String,Map<NemaTrackList,List<String>>> getOmenResourceFilesList(
 			Map<NemaTrackList,List<NemaData>> testData, 
 			NemaTask task, 
 			File outputDirectory
 			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
 		
-		Map<String,Map<NemaTrackList,List<File>>> out = new HashMap<String,Map<NemaTrackList,List<File>>>();
+		Map<String,Map<NemaTrackList,List<String>>> out = new HashMap<String,Map<NemaTrackList,List<String>>>();
 		
 		for (Iterator<NemaTrackList> iterator = testData.keySet().iterator(); iterator.hasNext();) {
 			NemaTrackList testSet = iterator.next();
@@ -717,18 +720,18 @@ public class FileConversionUtil {
 					.hasNext();) {
 				NemaData anItem = iterator2.next();
 				String site = anItem.getStringMetadata(NemaDataConstants.PROP_FILE_SITE);
-				Map<NemaTrackList,List<File>> siteMap = out.get(site);
+				Map<NemaTrackList,List<String>> siteMap = out.get(site);
 				if(siteMap == null){
-					siteMap = new HashMap<NemaTrackList, List<File>>();
+					siteMap = new HashMap<NemaTrackList, List<String>>();
 					out.put(site, siteMap);
 				}
 				
-				List<File> paths = siteMap.get(testSet);
+				List<String> paths = siteMap.get(testSet);
 				if (paths == null){
-					paths = new ArrayList<File>();
+					paths = new ArrayList<String>();
 					siteMap.put(testSet, paths);
 				}
-				paths.add(new File(anItem.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION)));
+				paths.add(anItem.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
 			}
 		}
 	

@@ -1,6 +1,7 @@
 package org.imirsel.nema.components.process;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,15 +12,18 @@ import java.util.Map;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.analytics.util.io.FileConversionUtil;
 import org.imirsel.nema.analytics.util.io.NemaFileType;
+import org.imirsel.nema.analytics.util.io.RawAudioFile;
 import org.imirsel.nema.analytics.util.process.CommandArgument;
 import org.imirsel.nema.analytics.util.process.CommandLineFormatParser;
 import org.imirsel.nema.components.NemaComponent;
+import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
 import org.imirsel.nema.model.CommandLineTemplate;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.ProcessTemplate;
+import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.imirsel.nema.service.executor.ExecutorConstants;
@@ -41,7 +45,7 @@ import org.meandre.core.ComponentExecutionException;
 		"paths at NEMA sites and prepares individual sets of input and output files for " +
 		"each of the sites that will be used.",
 		name = "OmenInputOutputSplitter", tags = "profile process execution")
-public class OmenInputOutputSplitter extends NemaComponent{
+public class OmenInputOutputSplitter extends ContentRepositoryBase{
 	
 	private static String DEFAULT_SITE = "imirsel";
 	
@@ -70,25 +74,19 @@ public class OmenInputOutputSplitter extends NemaComponent{
 	@ComponentOutput(description = "Output files map", name = "outputFilesMap")
 	private static final String DATA_OUT_OUTPUT_FILES_MAP ="outputFilesMap";
 
-	
-	
-	
-	
 	@Override
-	public void initialize(ComponentContextProperties ccp)
-	throws ComponentExecutionException, ComponentContextException {
-		super.initialize(ccp);
+	public void initializeNema(ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException {
+
 	}
 
 	@Override
-	public void dispose(ComponentContextProperties ccp)
-	throws ComponentContextException {
-		super.dispose(ccp);
+	public void disposeNema(ComponentContextProperties ccp) throws ComponentContextException {
+
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void execute(ComponentContext cc)
+	public void executeNema(ComponentContext cc)
 			throws ComponentExecutionException, ComponentContextException {
 		
 		
@@ -166,15 +164,48 @@ public class OmenInputOutputSplitter extends NemaComponent{
 		getLogger().info("Preparing process input files...");
 		//retrieve list of audio files to process - other types not currently supported (as they have to written and marshalled over)
 		  //subdivided by site
-		Map<String,Map<NemaTrackList,List<File>>> siteToInputFiles = null;
+		Map<String,Map<NemaTrackList,List<String>>> siteToInputPaths = null;
 		try {
-			siteToInputFiles = FileConversionUtil.prepareOmenProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, dataToProcess, inputType1, DEFAULT_SITE);
+			siteToInputPaths = FileConversionUtil.prepareOmenProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, dataToProcess, inputType1, DEFAULT_SITE);
 		} catch (Exception e) {
 			throw new ComponentExecutionException(e);
 		}
-		getLogger().info("got process input files spanning " + siteToInputFiles.size() + " sites");
+		getLogger().info("got process input files spanning " + siteToInputPaths.size() + " sites");
 		
 		
+		if(!inputType1.equals(RawAudioFile.class)) { // audio files are never distributed and don't go into JCR
+			getLogger().info("Saving locally created input files to JCR...");
+			//save to JCR and replace path with JCR URI.
+			for(Iterator<String> siteIt = siteToInputPaths.keySet().iterator(); siteIt.hasNext();){
+				String site = siteIt.next();
+				int JcrForSite = 0;
+				int totalForSite = 0;
+				Map<NemaTrackList,List<String>> siteMap = siteToInputPaths.get(site);
+				for(Iterator<List<String>> listIt = siteMap.values().iterator(); listIt.hasNext();){
+					List<String> pathList = listIt.next();
+					totalForSite += pathList.size();
+					for(int i = 0;i<pathList.size();i++){
+						String path = pathList.get(i);
+						File aFile = new File(path);
+						if (aFile.exists()){
+							//is a local file that can go into JCR
+							try {
+								ResourcePath URI = saveFileToContentRepository(aFile, inputType1.getName());
+								pathList.set(i, URI.getURIAsString());
+								JcrForSite++;
+							} catch (IOException e) {
+								throw new ComponentExecutionException("Failed to save file: " + aFile.getAbsolutePath() + " to the JCR", e);
+							} catch (ContentRepositoryServiceException e) {
+								throw new ComponentExecutionException("Failed to save file: " + aFile.getAbsolutePath() + " to the JCR", e);
+							}
+						}else{
+							getLogger().warning("Path '" + path + "' did not exist, assuming it is a path available at remote site");
+						}
+					}
+				}
+				getLogger().info("Saved " + JcrForSite + " of " + totalForSite + " input files for site '" + site + "' to the JCR");
+			}
+		}
 		
 		getLogger().info("Preparing process output file names...");
 		//prepare per site output file names
@@ -192,7 +223,8 @@ public class OmenInputOutputSplitter extends NemaComponent{
 			((ClassificationTextFile)outputTypeInstance).setMetadataType(task.getSubjectTrackMetadataName());
 		}
 		
-		Map<String,Map<NemaTrackList,List<File>>> siteToOutputFiles = FileConversionUtil.createOMENOutputFileNames(dataToProcess, inputType1, outputTypeInstance, ".out", ExecutorConstants.REMOTE_PATH_TOKEN);
+		Map<String,Map<NemaTrackList,List<File>>> siteToOutputFiles = FileConversionUtil.createOMENOutputFileNames(
+				dataToProcess, inputType1, outputTypeInstance, outputTypeInstance.getFilenameExtension(), ExecutorConstants.REMOTE_PATH_TOKEN);
 		getLogger().info("got process output files spanning " + siteToOutputFiles.size() + " sites");
 		
 		//merge into overall output files
@@ -221,7 +253,7 @@ public class OmenInputOutputSplitter extends NemaComponent{
 		
 		cc.pushDataComponentToOutput(DATA_OUT_OUTPUT_TYPE, outputType1);
 		
-		cc.pushDataComponentToOutput(DATA_OUT_INPUT_FILES_MAP, siteToInputFiles);
+		cc.pushDataComponentToOutput(DATA_OUT_INPUT_FILES_MAP, siteToInputPaths);
 		
 		cc.pushDataComponentToOutput(DATA_OUT_OUTPUT_FILES_MAP, siteToOutputFiles);
 		
