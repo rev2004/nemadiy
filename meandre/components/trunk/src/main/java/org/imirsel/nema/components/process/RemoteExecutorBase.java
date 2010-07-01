@@ -321,7 +321,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 			if(this.getProcessExecutorService()==null){
 				System.out.println("ERROR: EXECUTOR SERVICE IS NULL");
 			}
-			NemaProcess np = this.getProcessExecutorService().executeProcess(processExecutionProperties, rpm);	
+			NemaProcess np = this.getProcessExecutorService().executeProcess(this.credentials,processExecutionProperties, rpm);	
 			this.processMonitorMap.put(np, rpm);
 			return np;
 		}
@@ -348,7 +348,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		}
 		RemoteProcessMonitor processMonitor = this.getProcessMonitor(process);
 		getLogger().info("Aborting: " + process.getId());
-		boolean success=this.getProcessExecutorService().abort(process, processMonitor);
+		boolean success=this.getProcessExecutorService().abort(this.credentials,process, processMonitor);
 		this.processMonitorMap.remove(process);
 		getLogger().info("Abort success: " + success);
 		return success;
@@ -368,7 +368,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 				try{
 					RemoteProcessMonitor processMonitor = this.getProcessMonitor(process);
 					getLogger().info("Aborting: " + process.getId());
-					boolean success=this.getProcessExecutorService().abort(process, processMonitor);
+					boolean success=this.getProcessExecutorService().abort(this.credentials,process, processMonitor);
 					getLogger().info("Abort success: " + success);
 				}catch(Exception ex){
 					System.err.println("Error dispatching abort command to the process: " + process.getId()+ " It might have already finished.");

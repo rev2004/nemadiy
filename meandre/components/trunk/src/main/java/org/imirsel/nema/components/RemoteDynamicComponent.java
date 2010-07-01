@@ -256,7 +256,7 @@ public abstract class RemoteDynamicComponent extends NemaComponent {
 			RecordStreamProcessMonitor rpm=createRemoteProcessMonitor();
 			ProcessTemplate pt=this.getProcessTemplate();
 			processExecutionProperties.setProcessTemplate(pt);
-			NemaProcess np = this.getExecutorService().executeProcess(processExecutionProperties, rpm);	
+			NemaProcess np = this.getExecutorService().executeProcess(this.getContentRepositoryCredentials(),processExecutionProperties, rpm);	
 			this.processMonitorMap.put(np, rpm);
 			return np;
 		}
@@ -283,7 +283,7 @@ public abstract class RemoteDynamicComponent extends NemaComponent {
 		}
 		RemoteProcessMonitor processMonitor = this.getProcessMonitor(process);
 		getLogger().info("Aborting: " + process.getId());
-		boolean success=this.getExecutorService().abort(process, processMonitor);
+		boolean success=this.getExecutorService().abort(this.getContentRepositoryCredentials(),process, processMonitor);
 		this.processMonitorMap.remove(process);
 		getLogger().info("Abort success: " + success);
 		return success;
@@ -303,7 +303,7 @@ public abstract class RemoteDynamicComponent extends NemaComponent {
 				try{
 					RemoteProcessMonitor processMonitor = this.getProcessMonitor(process);
 					getLogger().info("Aborting: " + process.getId());
-					boolean success=this.getExecutorService().abort(process, processMonitor);
+					boolean success=this.getExecutorService().abort(this.getContentRepositoryCredentials(),process, processMonitor);
 					getLogger().info("Abort success: " + success);
 				}catch(Exception ex){
 					System.err.println("Error dispatching abort command to the process: " + process.getId()+ " It might have already finished.");
