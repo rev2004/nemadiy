@@ -9,8 +9,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.imirsel.nema.dao.MirexSubmission;
 import org.imirsel.nema.dao.MirexSubmissionDao;
+import org.imirsel.nema.model.MirexSubmission;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 

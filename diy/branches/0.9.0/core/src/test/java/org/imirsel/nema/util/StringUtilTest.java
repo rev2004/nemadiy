@@ -1,7 +1,8 @@
-package org.imirsel.nema.webapp.util;
+package org.imirsel.nema.util;
 
 import static org.junit.Assert.*;
 
+import org.imirsel.nema.util.StringUtil;
 import org.junit.Test;
 
 public class StringUtilTest {
