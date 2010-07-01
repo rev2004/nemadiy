@@ -16,8 +16,8 @@
 	</properties>
 
 	<scm>
-		<connection>scm:svn:https://nemadiy.googlecode.com/MusicSimilarityTools/trunk</connection>
-		<url>https://nemadiy.googlecode.com/MusicSimilarityTools/trunk</url>
+		<connection>scm:svn:https://nemadiy.googlecode.com/svn/MusicSimilarityTools/trunk</connection>
+		<url>https://nemadiy.googlecode.com/svn/MusicSimilarityTools/trunk</url>
 	</scm>
 	<organization>
 		<name>IMIRSEL Lab Graduate School Library information Science University of Illinois @Urbana Champaign</name>
