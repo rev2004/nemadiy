@@ -166,6 +166,6 @@
 </form>
 
 
- <textarea id="console" cols='89' rows='100'>(getting console...)</textarea></div>
+ <textarea readonly id="console" cols='89' rows='100'>(getting console...)</textarea></div>
 </body>
 

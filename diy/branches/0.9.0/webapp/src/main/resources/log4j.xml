@@ -56,7 +56,7 @@
 		<level value="DEBUG" />
 	</logger>
 	<logger name="org.imirsel.nema.webapp.webflow">
-		<level value="DEBUG" />
+		<level value="TRACE" />
 	</logger>
 	<logger name="org.imirsel.nema.webapp.taglib"><level value="INFO"/></logger>
 	<logger name="org.imirsel.nema.webapp.filter.StaticFilter">

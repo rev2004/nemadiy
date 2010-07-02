@@ -68,7 +68,7 @@ public class MirexSubmission  implements Serializable {
 	private String privateNote;
 	private SubmissionStatus status=SubmissionStatus.UNKOWN;
 	private Date updateTime;
-	private List<ParticipantProfile> contributors;
+	private List<Contributor> contributors;
 	private User user;
 
 	public MirexSubmission() {
@@ -143,6 +143,9 @@ public class MirexSubmission  implements Serializable {
 	public void setStatus(SubmissionStatus status) {
 		this.status = status;
 	}
+	public void setStatus(String statusStr){
+		this.status=SubmissionStatus.valueOf(statusStr);
+	}
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
@@ -152,15 +155,15 @@ public class MirexSubmission  implements Serializable {
 	public Date getUpdateTime() {
 		return updateTime;
 	}
-	public void setContributors(List<ParticipantProfile> contributors) {
+	public void setContributors(List<Contributor> contributors) {
 		this.contributors = contributors;
 	}
 	@ManyToMany(cascade=CascadeType.ALL)
-	public List<ParticipantProfile> getContributors() {
+	public List<Contributor> getContributors() {
 		return contributors;
 	}
-	public void addContributor(ParticipantProfile contributor){
-		if (contributors==null) {contributors=new ArrayList<ParticipantProfile>();}
+	public void addContributor(Contributor contributor){
+		if (contributors==null) {contributors=new ArrayList<Contributor>();}
 		contributors.add(contributor);
 	}
 	
