@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -68,6 +69,7 @@ public class MirexSubmission  implements Serializable {
 	private SubmissionStatus status=SubmissionStatus.UNKOWN;
 	private Date updateTime;
 	private List<ParticipantProfile> contributors;
+	private User user;
 
 	public MirexSubmission() {
 		super();
@@ -162,7 +164,13 @@ public class MirexSubmission  implements Serializable {
 		contributors.add(contributor);
 	}
 	
-	
+	public void setUser(User user) {
+		this.user = user;
+	}
+	@ManyToOne
+	public User getUser() {
+		return user;
+	}
 	
 	
 	
@@ -187,6 +195,7 @@ public class MirexSubmission  implements Serializable {
     		.append("Hashcode:",hashcode);
 		return sb.toString();
 	}
+	
 	
 
 }
