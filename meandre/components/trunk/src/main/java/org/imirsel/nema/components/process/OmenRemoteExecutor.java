@@ -67,8 +67,8 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 		ProcessTemplate pTemplate = this.getProcessTemplate();
 		String group = this.getGroup();
 		
-		Map<String,Map<NemaTrackList,List<File>>> perSiteInputPaths = (Map<String,Map<NemaTrackList,List<File>>>)cc.getDataComponentFromInput(DATA_IN_INPUT_PATHS);
-		Map<NemaTrackList,List<File>> inputPaths = perSiteInputPaths.get(group);
+		Map<String,Map<NemaTrackList,List<String>>> perSiteInputPaths = (Map<String,Map<NemaTrackList,List<String>>>)cc.getDataComponentFromInput(DATA_IN_INPUT_PATHS);
+		Map<NemaTrackList,List<String>> inputPaths = perSiteInputPaths.get(group);
 		
 		Map<String,Map<NemaTrackList,List<File>>> perSiteOutputPaths = (Map<String,Map<NemaTrackList,List<File>>>)cc.getDataComponentFromInput(DATA_IN_OUTPUT_PATHS);
 		Map<NemaTrackList,List<File>> outputPaths = perSiteOutputPaths.get(group);
@@ -144,7 +144,7 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 			}
 			
 			getLogger().info("Performing executions for test set " + testSet.getFoldNumber() + ", id: " + testSet.getId());
-			List<File> inputs1ForFold = inputPaths.get(testSet);
+			List<String> inputs1ForFold = inputPaths.get(testSet);
 			List<File> outputs1ForFold = outputPaths.get(testSet);
 			if(outputs1ForFold == null){
 				String msg = "\n\nNo output paths were found for test set " + testSet.getId() + " however inputs were available. " +
@@ -175,9 +175,10 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 			}
 			
 			//execute for this fold, once per input file
-			File inputFile,outputFile;
+			String inputPath;
+			File outputFile;
 			for (int i=0;i<inputs1ForFold.size();i++) {
-				inputFile = inputs1ForFold.get(i);
+				inputPath = inputs1ForFold.get(i);
 				if (outputs1ForFold.size() == 1) {
 					//output is always the same file
 					outputFile = outputs1ForFold.get(0);
@@ -186,20 +187,20 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				}
 				this.getLogger().info("Running for the output file: " + outputFile);
 				formatModel.clearPreparedPaths();
-				formatModel.setPreparedPathForInput(1, inputFile.getPath());
+				formatModel.setPreparedPathForInput(1, inputPath);
 				formatModel.setPreparedPathForOutput(1, outputFile.getPath());
 				
 				//set scratch dir path
 				formatModel.setPreparedPathForScratchDir(scratch);
 				
 				//add input file as process artifact (if its is a JCR URI rather than path it will be resolved at remote site)
-				ProcessArtifact paInputs = new ProcessArtifact(inputFile.getPath(),"File");
+				ProcessArtifact paInputs = new ProcessArtifact(inputPath, "String", inputType1.getClass().getName());
 				List<ProcessArtifact> inputs = new ArrayList<ProcessArtifact>();
 				
 				
 				inputs.add(paInputs);
 				
-				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(),"File");
+				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(),"File", outputType1.getClass().getName());
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
 				outputs.add(paOutputs);
 				
