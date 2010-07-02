@@ -194,13 +194,13 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				formatModel.setPreparedPathForScratchDir(scratch);
 				
 				//add input file as process artifact (if its is a JCR URI rather than path it will be resolved at remote site)
-				ProcessArtifact paInputs = new ProcessArtifact(inputPath, "String", inputType1.getClass().getName());
+				ProcessArtifact paInputs = new ProcessArtifact(inputPath, "File", inputType1.getClass().getName());
 				List<ProcessArtifact> inputs = new ArrayList<ProcessArtifact>();
 				
 				
 				inputs.add(paInputs);
 				
-				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(),"File", outputType1.getClass().getName());
+				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getAbsolutePath(), "File", outputType1.getClass().getName());
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
 				outputs.add(paOutputs);
 				
