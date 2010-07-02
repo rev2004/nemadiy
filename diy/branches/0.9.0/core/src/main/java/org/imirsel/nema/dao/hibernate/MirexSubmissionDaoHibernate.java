@@ -20,6 +20,7 @@ public class MirexSubmissionDaoHibernate extends GenericDaoHibernate<MirexSubmis
 	}
 
 	public List<MirexSubmission> getSubmissions(User user){
-		return getHibernateTemplate().find("find MirexSubmission");
+		 List submissionList = getHibernateTemplate().find("from MirexSubmission where userId=?", user.getId());
+		  return submissionList;
 	}
 }
