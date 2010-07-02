@@ -4,8 +4,11 @@
 package org.imirsel.nema.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,6 +16,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,7 +35,7 @@ import org.hibernate.annotations.GenerationTime;
 @Table(name="mirex_submission")
 public class MirexSubmission  implements Serializable {
 
-	enum SubmissionStatus {
+	public static enum SubmissionStatus {
 		UNKOWN(-1,"unkown"),STARTED(0,"started"),READY_FOR_RUN(1,"ready for run"),RUNNING(2,"running"),ERROR(3,"error in running"),
 		FINISHED(4,"finished running"),REVIEWED(5,"reviewed"),DELETED(6,"deleted");
 		final private int code;
@@ -61,9 +65,9 @@ public class MirexSubmission  implements Serializable {
 	private String readme;
 	private String publicNote;
 	private String privateNote;
-	private SubmissionStatus status;
+	private SubmissionStatus status=SubmissionStatus.UNKOWN;
 	private Date updateTime;
-	
+	private List<ParticipantProfile> contributors;
 
 	public MirexSubmission() {
 		super();
@@ -141,10 +145,27 @@ public class MirexSubmission  implements Serializable {
 		this.updateTime = updateTime;
 	}
 	@org.hibernate.annotations.Generated(GenerationTime.ALWAYS)
-	@Column(name="updateTime")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="updateTime",insertable=false,updatable=false)
 	public Date getUpdateTime() {
 		return updateTime;
 	}
+	public void setContributors(List<ParticipantProfile> contributors) {
+		this.contributors = contributors;
+	}
+	@ManyToMany(cascade=CascadeType.ALL)
+	public List<ParticipantProfile> getContributors() {
+		return contributors;
+	}
+	public void addContributor(ParticipantProfile contributor){
+		if (contributors==null) {contributors=new ArrayList<ParticipantProfile>();}
+		contributors.add(contributor);
+	}
+	
+	
+	
+	
+	
 	@Override
 	public boolean equals(Object o) {
 		if (this==o) {return true;}

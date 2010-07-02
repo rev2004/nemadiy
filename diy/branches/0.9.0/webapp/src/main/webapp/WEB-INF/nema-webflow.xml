@@ -23,7 +23,7 @@
 	<bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
 		p:flowService-ref="flowService" p:userManager-ref="userManager"
 		p:uploadDirectory="/resources" p:artifactService-ref="contentRepositoryClient"
-		p:mirexSubmissionDao-ref="mirexSubmissionDao"
+		p:mirexSubmissionDao-ref="externalMirexSubmissionDao"
 		p:jiniService-ref="jiniService" p:jcrService-ref="jcrService"
 		 />
 	<bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
