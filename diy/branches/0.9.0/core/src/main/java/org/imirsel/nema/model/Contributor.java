@@ -23,7 +23,7 @@ import org.imirsel.nema.util.StringUtil;
  */
 @Entity
 @Table(name="mirex_profile")
-public class ParticipantProfile implements Serializable {
+public class Contributor implements Serializable {
 
 	/**
 	 * 
@@ -138,9 +138,9 @@ public class ParticipantProfile implements Serializable {
 	@Override
 	public	boolean equals(Object o){
 		if (this==o) {return true;}
-		else if ((o==null) || (!(o instanceof ParticipantProfile))) {return false;}
+		else if ((o==null) || (!(o instanceof Contributor))) {return false;}
 		else {
-			final ParticipantProfile that=(ParticipantProfile)o;
+			final Contributor that=(Contributor)o;
 			return (
 				StringUtil.same(lastname,that.getLastname())&&
 				StringUtil.same(firstname,that.getFirstname())&&

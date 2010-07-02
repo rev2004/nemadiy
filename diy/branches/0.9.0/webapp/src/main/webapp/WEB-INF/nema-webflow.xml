@@ -17,9 +17,12 @@
 			id="task" />
 		<webflow:flow-location path="/WEB-INF/flows/executable/executable-flow.xml"
 			id="task/executable" />
+		<webflow:flow-location path="/WEB-INF/flows/mirex/mirexSubmission-flow.xml"
+			id="mirex" />
 	</webflow:flow-registry>
 
  <webflow:flow-builder-services development="true" id="builder"/>
+ 
 	<bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
 		p:flowService-ref="flowService" p:userManager-ref="userManager"
 		p:uploadDirectory="/resources" p:artifactService-ref="contentRepositoryClient"
@@ -28,6 +31,10 @@
 		 />
 	<bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
 		p:commandLineFormatter-ref="commandLineFormatter" p:resourceServiceType-ref="resource" />
+	<bean id="mirexSubmissionService" class="org.imirsel.nema.webapp.webflow.MirexSubmissionServiceImpl"/>
+		
+		
+		
 	<bean id="jiniService"
 		class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl">
 		<constructor-arg value="nema.lis.uiuc.edu"/>

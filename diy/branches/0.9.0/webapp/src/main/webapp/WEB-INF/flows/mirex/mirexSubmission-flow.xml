@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="submission" class="org.imirsel.nema.model.MirexSubmission" />
+	<on-start>
+		<set name="flowScope.submissionStatusSet" value="mirexSubmissionService.statusList()" />
+	</on-start>
+
+	<view-state id="submission" model="submission">
+		<binder >
+			<binding property="name" required="false" />
+			<binding property="status" required="true"/>
+			<binding property="readme" required="false"/>
+		</binder>
+		<transition on="review" to="reviewSubmission"></transition>
+		<transition on="clear" to="submission"></transition>
+	</view-state>
+	<view-state id="reviewSubmission" >
+		
+		<transition on="review" to="submission"></transition>
+		<transition on="edit" to="submission"></transition>
+	</view-state>
+
+</flow>

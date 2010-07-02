@@ -8,28 +8,27 @@ import java.util.Map;
 
 import org.imirsel.nema.dao.ContributorDao;
 import org.imirsel.nema.model.MirexSubmission;
-import org.imirsel.nema.model.ParticipantProfile;
+import org.imirsel.nema.model.Contributor;
 
 /**
  * @author gzhu1
  *
  */
-public class ContributorDaoHibernate extends GenericDaoHibernate<ParticipantProfile, Long>
+public class ContributorDaoHibernate extends GenericDaoHibernate<Contributor, Long>
 		implements ContributorDao {
 	
 
 	public ContributorDaoHibernate() {
-		super(ParticipantProfile.class);
+		super(Contributor.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.imirsel.nema.dao.ContributorDao#getContributors(org.imirsel.nema.model.MirexSubmission)
-	 */
-	@Override
-	public List<ParticipantProfile> getContributors(MirexSubmission submission) {
-		 List list = getHibernateTemplate().find("from ParticipantProfile where Id=?", submission.getId());
+	
+	public List<Contributor> getContributors(MirexSubmission submission) {
+		List list = getHibernateTemplate().find("from Contributor where Id=?", submission.getId());
 		  return list;
 	}
+
+	
 
 	
 

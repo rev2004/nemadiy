@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.imirsel.nema.dao.MirexSubmissionDao;
 import org.imirsel.nema.model.MirexSubmission;
+import org.imirsel.nema.model.Contributor;
 import org.imirsel.nema.model.User;
 
 /**
@@ -20,7 +21,11 @@ public class MirexSubmissionDaoHibernate extends GenericDaoHibernate<MirexSubmis
 	}
 
 	public List<MirexSubmission> getSubmissions(User user){
-		 List submissionList = getHibernateTemplate().find("from MirexSubmission where userId=?", user.getId());
+		 List<MirexSubmission> submissionList = getHibernateTemplate().find("from MirexSubmission sub where sub.user=?", user);
 		  return submissionList;
+	}
+	
+	public List<MirexSubmission> getSubmissions(Contributor contributor){
+		return getHibernateTemplate().find("find MirexSubmission submission where ? member of submission.contributors",contributor);
 	}
 }
