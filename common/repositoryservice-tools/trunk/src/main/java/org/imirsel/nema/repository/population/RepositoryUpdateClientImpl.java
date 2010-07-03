@@ -36,7 +36,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
     public static final String INSERT_FILE_METADATA_DEFINITIONS = "INSERT IGNORE INTO file_metadata_definitions(name) VALUES(?)";
     private PreparedStatement insertFileMetaDef;
 
-    public static final String INSERT_FILE_METADATA = "INSERT IGNORE INTO file_metadata(metadata_type_id,value) VALUES(?,?)";
+    public static final String INSERT_FILE_METADATA = "INSERT INTO file_metadata(metadata_type_id,value) VALUES(?,?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)";
     private PreparedStatement insertFileMeta;
 
     public static final String INSERT_FILE_METADATA_LINK = "INSERT INTO file_file_metadata_link(file_id,file_metadata_id) VALUES(?,?)";
@@ -161,11 +161,18 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         initTypesMaps();
     }
 
-    public void insertFileMeta(int metadata_type_id, String value) throws SQLException{
+    public int insertFileMeta(int metadata_type_id, String value) throws SQLException{
         logger.info("Inserting file metadata value: " + metadata_type_id + "=" + value);
         insertFileMeta.setInt(1, metadata_type_id);
         insertFileMeta.setString(2, value);
         insertFileMeta.executeUpdate();
+        ResultSet rs = insertFileMeta.getGeneratedKeys();
+        if (rs.next()) {
+            return rs.getInt(1);
+        }else{
+            logger.log(Level.SEVERE, "Failed to get id for inserted file metadata " + metadata_type_id + "=" + value);
+            return -1;
+        }
     }
 
     public void insertFileMetaLink(int file_id, int file_metadata_id) throws SQLException{
