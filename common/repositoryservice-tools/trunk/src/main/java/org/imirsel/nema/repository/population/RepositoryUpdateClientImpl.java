@@ -82,7 +82,7 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
         insertFile = getDbCon().con.prepareStatement(INSERT_FILE, Statement.RETURN_GENERATED_KEYS);
         insertLegacyFilePath = getDbCon().con.prepareStatement(INSERT_LEGACY_FILE_PATH);
         insertFileMetaDef = getDbCon().con.prepareStatement(INSERT_FILE_METADATA_DEFINITIONS);
-        insertFileMeta = getDbCon().con.prepareStatement(INSERT_FILE_METADATA);
+        insertFileMeta = getDbCon().con.prepareStatement(INSERT_FILE_METADATA, Statement.RETURN_GENERATED_KEYS);
         insertFileMetaLink = getDbCon().con.prepareStatement(INSERT_FILE_METADATA_LINK);
         insertTrackMetaDef = getDbCon().con.prepareStatement(INSERT_TRACK_METADATA_DEFINITIONS);
         insertTrackMeta = getDbCon().con.prepareStatement(INSERT_TRACK_METADATA, Statement.RETURN_GENERATED_KEYS);

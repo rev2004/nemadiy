@@ -1,4 +1,4 @@
-package org.imirsel.nema.analysis.util.io;
+package org.imirsel.nema.model.util;
 
 import static org.junit.Assert.*;
 import static org.imirsel.nema.test.matchers.NemaMatchers.*;
