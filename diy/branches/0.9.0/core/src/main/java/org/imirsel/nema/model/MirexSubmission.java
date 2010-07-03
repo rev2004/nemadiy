@@ -24,6 +24,7 @@ import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenerationTime;
 
 /**
@@ -70,6 +71,7 @@ public class MirexSubmission  implements Serializable {
 	private Date updateTime;
 	private List<Contributor> contributors;
 	private User user;
+	private MirexTask mirexTask;
 
 	public MirexSubmission() {
 		super();
@@ -143,9 +145,6 @@ public class MirexSubmission  implements Serializable {
 	public void setStatus(SubmissionStatus status) {
 		this.status = status;
 	}
-	public void setStatus(String statusStr){
-		this.status=SubmissionStatus.valueOf(statusStr);
-	}
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
@@ -170,13 +169,20 @@ public class MirexSubmission  implements Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	public User getUser() {
 		return user;
 	}
 	
 	
 	
+	public void setMirexTask(MirexTask mirexTask) {
+		this.mirexTask = mirexTask;
+	}
+	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	public MirexTask getMirexTask() {
+		return mirexTask;
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this==o) {return true;}

@@ -9,5 +9,7 @@
         <mapping class="org.imirsel.nema.model.Submission"/>
         <mapping class="org.imirsel.nema.model.MirexSubmission"/>
         <mapping class="org.imirsel.nema.model.Contributor"/>
+        <mapping class="org.imirsel.nema.model.MirexTask"/>
+        
     </session-factory>
 </hibernate-configuration>
