@@ -6,7 +6,13 @@
 <body>
 	<form:form modelAttribute="submission" >
 	    <fieldset>
-	        <label class="label">Name:</label><form:input path="name"/>
+	        <div>
+	        	<label class="label">Name:</label><form:input path="name"/>
+	        </div>
+	        <div > 
+	        	<label class="label">Mirex Tasks: </label>
+	        	<form:select path="mirexTask" items="${mirexTaskSet}" itemLabel="fullname" itemValue="id"/>
+	        </div>
 	    </fieldset>
 		<fieldset>
 			<label class="label">Status:</label>

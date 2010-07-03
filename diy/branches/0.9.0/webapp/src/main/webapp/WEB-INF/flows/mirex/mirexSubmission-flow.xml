@@ -7,6 +7,7 @@
 	<var name="submission" class="org.imirsel.nema.model.MirexSubmission" />
 	<on-start>
 		<set name="flowScope.submissionStatusSet" value="mirexSubmissionService.statusList()" />
+		<set name="flowScope.mirexTaskSet" value="mirexSubmissionService.mirexTaskSet()"/>
 	</on-start>
 
 	<view-state id="submission" model="submission">
