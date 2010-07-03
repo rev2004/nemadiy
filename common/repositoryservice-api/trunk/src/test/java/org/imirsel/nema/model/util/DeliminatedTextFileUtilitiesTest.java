@@ -1,4 +1,4 @@
-package org.imirsel.nema.analysis.util.io;
+package org.imirsel.nema.model.util;
 import static org.junit.Assert.*;
 
 import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
@@ -26,7 +26,6 @@ public class DeliminatedTextFileUtilitiesTest extends BaseManagerTestCase{
 		}
 	}
 	
-
 	@Test
 	public void testParseCommaDelimTextLineWithQuotes() {
 
@@ -101,5 +100,37 @@ public class DeliminatedTextFileUtilitiesTest extends BaseManagerTestCase{
 		}
 		
 	}
+
+
+	@Test
+	public void testParseLongTabLine() {
+
+		String delim = "\t";
+		String[] valsShouldBe = new String[]{
+				"Studies, Allegretto in E",
+				"The Segovia Collection Vol. 7: Guitar Etudes",
+				"Andrés Segovia",
+				"Fernando Sor",
+				"Classical - Romantic",
+				"1990",
+				"3C010B625C783D64",
+				"10833",
+				"192",
+				"mp3",
+				"44100",
+				"2",
+				"/mnt/hgfs/MacintoshHD2/Codaich/Classical/Andr%C3%A9s%20Segovia/The%20Segovia%20Collection%20Vol.%207_%20Guitar%20Et/35%20Studies,%20Allegretto%20in%20E.mp3"};
+		
+		String testLine = "\"Studies, Allegretto in E\"	\"The Segovia Collection Vol. 7: Guitar Etudes\"	\"Andrés Segovia\"	\"Fernando Sor\"	\"Classical - Romantic\"	1990	\"3C010B625C783D64\"	10833	192	\"mp3\"	44100	2	\"/mnt/hgfs/MacintoshHD2/Codaich/Classical/Andr%C3%A9s%20Segovia/The%20Segovia%20Collection%20Vol.%207_%20Guitar%20Et/35%20Studies,%20Allegretto%20in%20E.mp3\"";
+		
+		String[] out = DeliminatedTextFileUtilities.parseDelimTextLine(testLine, delim);
+		
+		for (int i = 0; i < out.length; i++) {
+			if (!out[i].equals(valsShouldBe[i])){
+				fail("Values produced by parser don't match true values.\nParsed: '" + out[i] + "'" + "\nActual: '" + valsShouldBe[i] + "'");
+			}
+		}
+	}
+	
 
 }

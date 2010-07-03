@@ -2,9 +2,13 @@ package org.imirsel.nema.repository.population;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Level;
@@ -56,6 +60,29 @@ public class CsvFileCollectionIngestor {
 		}
 	}
 	
+    /**
+     * Copies one file into another.
+     * 
+     * @param in File to copy.
+     * @param out Location to copy it to.
+     * @throws IOException
+     */
+	private static void copyFile(File in, File out) throws IOException {
+		FileChannel inChannel = new FileInputStream(in).getChannel();
+		FileChannel outChannel = new FileOutputStream(out).getChannel();
+		try {
+			inChannel.transferTo(0, inChannel.size(), outChannel);
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (inChannel != null)
+				inChannel.close();
+			if (outChannel != null)
+				outChannel.close();
+		}
+	}
+    
+	
 	public static void ingestCollectionFromCSVFile(
 			File csvFile, 
 			String site,
@@ -65,6 +92,8 @@ public class CsvFileCollectionIngestor {
 			String delimiter
 			) throws IllegalArgumentException, FileNotFoundException, IOException, SQLException {
 		
+		Logger.getLogger("org.imirsel.nema.repository.population.RepositoryUpdateClientImpl").setLevel(Level.WARNING);
+		
 		System.out.println("Ingesting dataset, moving/renaming files and inserting metadata/paths into DB...");
 		System.out.println("Arguments:");
 
@@ -73,10 +102,16 @@ public class CsvFileCollectionIngestor {
 		System.out.println("collection_id:      " +  collection_id);
 		System.out.println("newAudioDirectory:  " + newAudioDirectory.getAbsolutePath());
 		System.out.println("seriesName:         " +  seriesName);
+		System.out.println("delimmiter:         '" +  delimiter + "'");
+		
 		
 	    //read CSV files headers
 	    System.out.println("Mapping CSV headers to fields...");
-	    String[] headers = DeliminatedTextFileUtilities.loadDelimTextHeaders(csvFile, ",", 0);
+	    String[] headers = DeliminatedTextFileUtilities.loadDelimTextHeaders(csvFile, delimiter, 0);
+	    System.out.println("Got headers:");
+	    for (int i = 0; i < headers.length; i++) {
+			System.out.println("\t'" + headers[i] + "'" );
+		}
 	    Map<String,Integer> headerToCol;
 	    Map<String,Integer> trackMeta;
 	    
@@ -180,6 +215,7 @@ public class CsvFileCollectionIngestor {
 			    
 			    //variables
 				String line = in.readLine();
+				line = in.readLine();//skip first line
 				String newId, path, name, extension, val;
 				File oldFile, newFile;
 				long oldLen, newLen;
@@ -191,28 +227,34 @@ public class CsvFileCollectionIngestor {
 					lineNum++;
 					
 					comps = DeliminatedTextFileUtilities.parseDelimTextLine(line, delimiter);
+					if (pathCol >= comps.length){
+						String msg = "Number of cells on line " + lineNum + " is less than expected.\n" +
+						"Path col was:         " + pathCol + "\n" +
+						"number of components: " + comps.length + "\n" +
+						"line: " + line + "\n" +
+						"components:\n";
+						for (int i = 0; i < comps.length; i++) {
+							msg += i + ":\t'" + comps[i] + "'\n";
+						}
+						throw new RuntimeException(msg);
+					}
 					
 					//generate trackID
 					newId = seriesName + RepositoryManagementUtils.SIX_DIGIT_INTEGER.format(lineNum);
+					path = URLDecoder.decode(comps[pathCol],"UTF8");
 					System.out.println("Track " + lineNum + ", new track id: " + newId);
 					
-					if (pathCol >= comps.length){
-						throw new RuntimeException("Number of cells on line " + lineNum + " is less than expected.\n" +
-								"Path col was:         " + pathCol + "\n" +
-								"number of components: " + comps.length + "\n" +
-								"line: " + line);
-					}
 					
-					path = comps[pathCol];
+					
 					oldFile = new File(path);
 					name = oldFile.getName();
-					extension = name.substring(name.lastIndexOf('.'));
+					extension = name.substring(name.lastIndexOf("."));
 					
 					//copy and rename file based on track id
 					newFile =  new File(newHome.getAbsolutePath() + File.separator + newId + extension);
 					System.out.println("old path: " + oldFile.getAbsolutePath() + ", new path: " + newFile.getAbsolutePath());
 					oldLen = oldFile.length();
-					IOUtil.copyFile(oldFile, newFile);
+					copyFile(oldFile, newFile);
 					newLen = newFile.length();
 					System.out.println("old file length: " + oldLen + ", new length: " + newLen);
 					if(oldLen != newLen) {
