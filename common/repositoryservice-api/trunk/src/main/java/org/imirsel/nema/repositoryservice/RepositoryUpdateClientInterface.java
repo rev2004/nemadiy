@@ -111,9 +111,10 @@ public interface RepositoryUpdateClientInterface extends
 	 * is returned or if the value already exists in the DB the id of the existing value is returned.
 	 * @param metadata_type_id The int type ID to add a value for.
 	 * @param value The value String.
+	 * @return the id generated for the file metadata value.
 	 * @throws SQLException Thrown if a problem with the update occurs.
 	 */
-    public void insertFileMeta(int metadata_type_id, String value) throws SQLException;
+    public int insertFileMeta(int metadata_type_id, String value) throws SQLException;
 
     /**
      * Links a file metadata value to a particular file ID.
