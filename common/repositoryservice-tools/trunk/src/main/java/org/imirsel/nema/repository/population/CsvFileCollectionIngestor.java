@@ -25,7 +25,7 @@ public class CsvFileCollectionIngestor {
 
 	private static final Logger logger = Logger.getLogger(CsvFileCollectionIngestor.class.getName());
 	
-	public static final String USAGE = "args: /path/to/file.csv sitename colleciton_id(int) /path/to/new/audio/dir seriesNamePrefix_ deliminator(T|S|C)";
+	public static final String USAGE = "args: /path/to/file.csv sitename collection_id(int) /path/to/new/audio/dir seriesNamePrefix_ deliminator(T|S|C)";
 	
 	public static void main(String[] args) {
 		if(args.length != 6){
@@ -196,6 +196,13 @@ public class CsvFileCollectionIngestor {
 					newId = seriesName + RepositoryManagementUtils.SIX_DIGIT_INTEGER.format(lineNum);
 					System.out.println("Track " + lineNum + ", new track id: " + newId);
 					
+					if (pathCol >= comps.length){
+						throw new RuntimeException("Number of cells on line " + lineNum + " is less than expected.\n" +
+								"Path col was:         " + pathCol + "\n" +
+								"number of components: " + comps.length + "\n" +
+								"line: " + line);
+					}
+					
 					path = comps[pathCol];
 					oldFile = new File(path);
 					name = oldFile.getName();
@@ -256,7 +263,7 @@ public class CsvFileCollectionIngestor {
 			        
 					//commit
 					client.endTransation();
-					
+					System.out.println("\n");
 					line = in.readLine();
 				}
 				
