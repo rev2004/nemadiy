@@ -41,7 +41,7 @@ public class CsvFileCollectionIngestor {
 
 			String delimString = null;
 			if(delim.equalsIgnoreCase("C")){
-				delimString = "\t";
+				delimString = ",";
 			}else if(delim.equalsIgnoreCase("S")){
 				delimString = "\\s+";
 			}else if(delim.equalsIgnoreCase("T")){
