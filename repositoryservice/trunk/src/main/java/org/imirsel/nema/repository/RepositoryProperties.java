@@ -31,7 +31,7 @@ public class RepositoryProperties {
             if(iStream != null) {
                 repoProps.load(iStream);
             }else {
-               throw new RuntimeException("RepositoryProperties.property file not found");
+               throw new RuntimeException("RepositoryProperties.properties file not found");
             }
         } catch (IOException ex) {
             ex.printStackTrace();
