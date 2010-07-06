@@ -3,10 +3,12 @@ package org.imirsel.nema.analytics.evaluation.onset;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.imirsel.nema.analytics.evaluation.ResultRendererImpl;
 import org.imirsel.nema.analytics.evaluation.WriteCsvResultFiles;
@@ -14,11 +16,13 @@ import org.imirsel.nema.analytics.evaluation.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisOnsetPlotItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisSegmentationPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.NemaSegment;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.util.IOUtil;
 
@@ -87,7 +91,85 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 		
 	}
 
+	@Override
+	public void renderAnalysis(NemaEvaluationResultSet results) throws IOException {
+		/* Write analysis HTML pages */
+		getLogger().info("Creating result HTML files...");
+		writeHtmlAnalysisPages(results, outputDir);
+		
+		getLogger().info("Done.");
+	}
 
+	/**
+	 * Writes the result HTML pages for the evaluation of multiple jobs/algorithms
+	 * 
+	 * @param results                   The NemaEvaluationResultSet to write results pages for.
+	 * @param jobIDToResultPlotFileList map of a jobId to the results plots for that job.
+	 * @param summaryCsv 				the summary csv file that summarizes all jobs.
+	 * @param jobIDToPerTrackCSV 		map of jobId to individual per-track results csv files for that job.
+	 * @param jobIDToTgz 				map of jobId to the tar-balls of individual job results.
+	 * @param outputDir                 directory to write the HTML pages to.
+	 */
+	private void writeHtmlAnalysisPages(NemaEvaluationResultSet results, File outputDir) {
+		String jobId;
+		Map<NemaTrackList,List<NemaData>> sysResults;
+		List<Page> resultPages = new ArrayList<Page>();
+		List<PageItem> items;
+		Page aPage;
+		int numJobs = results.getJobIds().size();
+
+		/* Do intro page to describe task */
+		{
+			items = new ArrayList<PageItem>();
+			Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),
+					results.getDataset());
+			items.add(new TableItem("task_description", "Task Description",
+					descriptionTable.getColHeaders(), descriptionTable
+							.getRows()));
+			aPage = new Page("intro", "Introduction", items, false);
+			resultPages.add(aPage);
+		}
+
+		/* Do per system pages */
+		{
+			for (Iterator<String> it = results.getJobIds().iterator(); it
+					.hasNext();) {
+				jobId = it.next();
+				items = new ArrayList<PageItem>();
+				sysResults = results.getPerTrackEvaluationAndResults(jobId);
+				
+				/* Plot onset transcription against GT for each track result for each system */
+				PageItem[] plots = plotTranscriptionForJob(jobId, results);
+				for (int i = 0; i < plots.length; i++) {
+					items.add(plots[i]);
+				}
+				
+				aPage = new Page(results.getJobName(jobId) + "_results", results.getJobName(jobId),
+						items, true);
+				resultPages.add(aPage);
+			}
+		}
+		
+		if(results.getJobIds().size() > 1){
+			// do comparative plot page
+			{
+				getLogger().info("Creating comparison plots page...");
+				items = new ArrayList<PageItem>();
+				PageItem[] plots = plotTranscriptionForAllJobs(results);
+				for (int i = 0; i < plots.length; i++) {
+					items.add(plots[i]);
+				}
+				getLogger().info("\tdone.");
+				aPage = new Page("comparisonPlots", "Comparative plots", items, true);
+				resultPages.add(aPage);
+			}
+		}		
+		
+		
+
+		Page.writeResultPages(results.getTask().getName(), outputDir, resultPages);
+	}
+	
 	/**
 	 * Writes the result HTML pages for the evaluation of multiple jobs/algorithms
 	 * 
@@ -204,23 +286,26 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 					items.add(plots[i]);
 				}
 				
-//				Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
-//					jobIDToResultPlotFileList.put(jobId, plotFiles);
-//				
-//				List<String> plotPathList = new ArrayList<String>(numJobs);
-//				File[] plotPaths = jobIDToResultPlotFileList.get(jobId);
-//				for (int i = 0; i < plotPaths.length; i++) {
-//					plotPathList.add(IOUtil.makeRelative(plotPaths[i],
-//							outputDir));
-//				}
-//				items.add(new FileListItem("plots", "Per track result plots",
-//						plotPathList));
-
 				aPage = new Page(results.getJobName(jobId) + "_results", results.getJobName(jobId),
 						items, true);
 				resultPages.add(aPage);
 			}
 		}
+		
+		if(results.getJobIds().size() > 1){
+			// do comparative plot page
+			{
+				getLogger().info("Creating comparison plots page...");
+				items = new ArrayList<PageItem>();
+				PageItem[] plots = plotTranscriptionForAllJobs(results);
+				for (int i = 0; i < plots.length; i++) {
+					items.add(plots[i]);
+				}
+				getLogger().info("\tdone.");
+				aPage = new Page("comparisonPlots", "Comparative plots", items, true);
+				resultPages.add(aPage);
+			}
+		}		
 
 		/* Do files page */
 		{
@@ -359,6 +444,136 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 						seriesNames);
 				plotItems.add(plot);
 			}
+		}
+		return plotItems.toArray(new PageItem[plotItems.size()]);
+	}
+	
+	/**
+	 * Plots the chord transcriptions for all jobs, for each file.
+	 * 
+	 * @param testSets    the list of test sets.
+	 * @param results  The results Object containing the data to plot.
+	 * @return         an array of page items that will produce the plots.
+	 */
+	@SuppressWarnings("unchecked")
+	private PageItem[] plotTranscriptionForAllJobs(NemaEvaluationResultSet results) {
+		NemaData groundtruth;
+
+		/* Plot each result */
+		Map<String,Map<NemaTrackList, List<NemaData>>> perTrackResults = results.getJobIdToPerTrackEvaluationAndResults();
+		List<PageItem> plotItems = new ArrayList<PageItem>();
+		
+		Map<String,NemaData[]> trackIDToTranscripts = new HashMap<String,NemaData[]>();
+		//get job names and sort
+		List<String> jobNames = new ArrayList<String>(perTrackResults.keySet());
+		Collections.sort(jobNames);
+		
+		for (Iterator<NemaTrackList> foldIt = results.getTestSetTrackLists().iterator(); foldIt.hasNext();){
+			NemaTrackList testSet = foldIt.next();
+			
+			//map IDs for tracks to an array of NemaData Objects for each system, use nulls in case of missing results
+			for (Iterator<String> systemIt = perTrackResults.keySet().iterator(); systemIt.hasNext();){
+				String system = systemIt.next();
+				int systemIdx = jobNames.indexOf(system);
+				Map<NemaTrackList,List<NemaData>> sysResults = perTrackResults.get(system);
+				List<NemaData> sysSetResults = sysResults.get(testSet);
+				for(Iterator<NemaData> trackIt = sysSetResults.iterator(); trackIt.hasNext();){
+					NemaData track = trackIt.next();
+					NemaData[] transcripts = trackIDToTranscripts.get(track.getId());
+					if(transcripts == null){
+						transcripts = new NemaData[jobNames.size()];
+						trackIDToTranscripts.put(track.getId(), transcripts);
+					}
+					transcripts[systemIdx] = track;
+				}
+			}
+		}
+		
+		//iterate over tracks (in alphabetical order) and produce each plot
+		List<String> trackIds = new ArrayList<String>(trackIDToTranscripts.keySet());
+		Collections.sort(trackIds);	
+		
+		for(Iterator<String> trackIt = trackIds.iterator(); trackIt.hasNext();){
+			String trackId = trackIt.next();
+			NemaData[] transcripts = trackIDToTranscripts.get(trackId);
+			getLogger().info("\t\tplotting track " + trackId +"...");
+			
+			
+			//setup data-series to plot
+			Map<String,double[]> series = new HashMap<String, double[]>(2);			
+			List<String> seriesNames = new ArrayList<String>(1 + transcripts.length);
+
+			//setup time line for for X-axis
+			double startTimeSecs = 0.0;
+			double endTimeSecs = 0;
+			
+			groundtruth = results.getTrackIDToGT().get(trackId);
+			double[][] rawGtData2D = null;
+			String[] annotators = null;
+			if(groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.ONSET_DETECTION_DATA)){
+				rawGtData2D = (double[][])groundtruth.getMetadata(NemaDataConstants.ONSET_DETECTION_DATA);
+				
+				if (groundtruth.hasMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS)) {
+					annotators = groundtruth.getStringArrayMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS);
+				}
+				
+				int numGt = rawGtData2D[0].length;
+				for(int i=0;i<numGt;i++){
+					double[] rawGtData = new double[rawGtData2D.length];
+					for(int j=0;j<rawGtData2D.length;j++){
+						endTimeSecs = Math.max(rawGtData2D[j][i], endTimeSecs);
+						rawGtData[j] = rawGtData2D[j][i];
+					}
+					if (annotators != null) {
+						String annotator = annotators[i];
+						series.put(annotator, rawGtData);
+						seriesNames.add(annotator);
+					} else {
+						series.put("Ground-truth " + i, rawGtData);
+						seriesNames.add("Ground-truth " + i);
+					}
+					
+				}
+			}else{
+				getLogger().warning("No ground-truth found for '" + trackId + "' to be used in plotting");
+			}
+			
+			//iterate through systems
+			for (int i = 0; i < transcripts.length; i++) {
+				NemaData nemaData = transcripts[i];
+				Object rawDataObj = nemaData.getMetadata(NemaDataConstants.ONSET_DETECTION_DATA);
+				if(rawDataObj != null){
+					double[][] rawData2D = (double[][]) rawDataObj;
+					double[] rawData = new double[rawData2D.length];
+					for (int j = 0; j < rawData.length; j++) {
+						rawData[j] = rawData2D[j][0];
+						endTimeSecs = Math.max(rawData[j], endTimeSecs);
+					}
+					
+					series.put(jobNames.get(i), rawData);
+					seriesNames.add(jobNames.get(i));
+				}
+			}
+			
+//			try{
+				ProtovisOnsetPlotItem plot = new ProtovisOnsetPlotItem(
+						//plotname
+						"transcription_" + trackId, 
+						//plot caption
+						"Onset transcriptions for track " + trackId,
+						//start time for x axis
+						startTimeSecs, 
+						//end time for x axis
+						endTimeSecs, 
+						//map of annotator/system names to the data
+						series,
+						//ordered list of annotator/system names
+						seriesNames);
+				plotItems.add(plot);
+				plotItems.add(plot);
+//			}catch(IOException e){
+//				getLogger().log(Level.SEVERE, "Failed to plot results for track " + trackId, e);
+//			}
 		}
 		return plotItems.toArray(new PageItem[plotItems.size()]);
 	}

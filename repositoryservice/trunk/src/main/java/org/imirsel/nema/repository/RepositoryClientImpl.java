@@ -87,6 +87,13 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         "SELECT file.*, site.name AS site_name from file,site WHERE file.track_id IN (SELECT track_id from trackList_track_link WHERE set_id=?) AND file.site=site.id";
     private PreparedStatement getTracklistFiles;
     
+    public static final String GET_LEGACY_PATH_FOR_FILE = "SELECT old_path AS path FROM legacy_file_paths WHERE legacy_file_paths.file_id=?";
+    private PreparedStatement getLegacyPathForFile;
+    
+    public static final String GET_FILE_BY_LEGACY_PATH = "SELECT file.*, site.name AS site_name FROM file,legacy_file_paths,site WHERE legacy_file_paths.old_path=? AND legacy_file_paths.file_id=file.id AND file.site=site.id";
+    private PreparedStatement getFileByLegacyPath;
+        
+    
 //    public static final String GET_CONSTRAINED_TRACKLIST_FILES =
 //        "SELECT file.* from file WHERE file.track_id IN (SELECT track_id from trackList_track_link WHERE set_id=?)";
     
@@ -167,6 +174,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         
         getAllTracks = dbCon.con.prepareStatement(GET_ALL_TRACKS);
         getFileMeta = dbCon.con.prepareStatement(GET_FILE_METADATA);
+        
+        getLegacyPathForFile = dbCon.con.prepareStatement(GET_LEGACY_PATH_FOR_FILE);
+        getFileByLegacyPath = dbCon.con.prepareStatement(GET_FILE_BY_LEGACY_PATH);
         
         insertPublishedResult = dbCon.con.prepareStatement(INSERT_PUBLISHED_RESULT);
         getPublishedResultsForDataset = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS_FOR_DATASET);
@@ -612,6 +622,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
         return results;
     }
+    
+    
     
     
     
@@ -1091,6 +1103,26 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             throws SQLException{
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+	public NemaFile getFileByLegacyPath(String legacyPath) throws SQLException {
+		getFileByLegacyPath.setString(1, legacyPath);
+		List<Map<String,String>> results = executePreparedStatement(getFileByLegacyPath);
+    	if(results.size() > 0){
+            return buildNEMAFile(results.get(0));
+        }else{
+            return null;
+        }
+	}
+
+	public String getLegacyFilePath(int fileId) throws SQLException {
+		getLegacyPathForFile.setInt(1, fileId);
+		ResultSet rs = getLegacyPathForFile.executeQuery();
+		if(rs.next()){
+			return rs.getString(1);
+		}else{
+			return null;
+		}
+	}
 
 
 

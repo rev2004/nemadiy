@@ -180,6 +180,18 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
 				friedmanDiscountFoldTablePNG, friedmanDiscountFoldTable,
 				jobIDToTgz, outputDir);
     }
+    
+
+    @Override
+	public void renderAnalysis(NemaEvaluationResultSet results) throws IOException {
+//		/* Write analysis HTML pages */
+//		getLogger().info("Creating result HTML files...");
+//		writeHtmlAnalysisPages(results, outputDir);
+//		
+//		getLogger().info("Done.");
+    	
+    	throw new UnsupportedOperationException("No analysis result rendering facilities are implemented for classification!");
+	}
 
 	private void writeHtmlResultPages(boolean usingAHierarchy,
 			NemaEvaluationResultSet results, List<String> classNames,

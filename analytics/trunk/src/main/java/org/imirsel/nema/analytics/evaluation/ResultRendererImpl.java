@@ -208,6 +208,8 @@ public abstract class ResultRendererImpl implements ResultRenderer {
     }
     
 	public abstract void renderResults(NemaEvaluationResultSet results) throws IOException;
+	
+	public abstract void renderAnalysis(NemaEvaluationResultSet results) throws IOException;
 
 	public void setPerformMatlabStatSigTests(boolean performMatlabStatSigTests) {
 		this.performMatlabStatSigTests = performMatlabStatSigTests;

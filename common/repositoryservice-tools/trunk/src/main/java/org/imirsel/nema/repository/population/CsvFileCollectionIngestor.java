@@ -1,11 +1,14 @@
 package org.imirsel.nema.repository.population;
 
+import java.beans.XMLDecoder;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
@@ -14,6 +17,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
 import org.imirsel.nema.model.util.IOUtil;
 
@@ -107,7 +111,9 @@ public class CsvFileCollectionIngestor {
 		
 	    //read CSV files headers
 	    System.out.println("Mapping CSV headers to fields...");
-	    String[] headers = DeliminatedTextFileUtilities.loadDelimTextHeaders(csvFile, delimiter, 0);
+	    BufferedReader in = new BufferedReader(new FileReader(csvFile));
+	    String headerLine = in.readLine();
+	    String[] headers = DeliminatedTextFileUtilities.parseDelimTextLine(headerLine, delimiter);
 	    System.out.println("Got headers:");
 	    for (int i = 0; i < headers.length; i++) {
 			System.out.println("\t'" + headers[i] + "'" );
@@ -198,24 +204,20 @@ public class CsvFileCollectionIngestor {
 			
 		  //setup new root directory
 		    File newHome = new File(newAudioDirectory.getAbsolutePath() + File.separator + seriesName);
-			if(newHome.exists()) {
-				throw new IllegalArgumentException("The proposed home for the new series '" 
-						+ newHome.getAbsolutePath() + "' already exists! Please modify " +
-								"the series name to continue with this operation.");
-			}
-			if(!newHome.mkdirs()) {
-				throw new IllegalArgumentException("Failed to create directory for the " +
-						"proposed home for the new series '" + newHome.getAbsolutePath() + "'!");
+			if(!newHome.exists()) {
+				if(!newHome.mkdirs()) {
+					throw new IllegalArgumentException("Failed to create directory for the " +
+							"proposed home for the new series '" + newHome.getAbsolutePath() + "'!");
+				}
 			}
 			
-
-			BufferedReader in = new BufferedReader(new FileReader(csvFile));
+			
+			BufferedWriter out = null;
 			try{
 			    int lineNum = 0;
 			    
 			    //variables
 				String line = in.readLine();
-				line = in.readLine();//skip first line
 				String newId, path, name, extension, val;
 				File oldFile, newFile;
 				long oldLen, newLen;
@@ -225,7 +227,7 @@ public class CsvFileCollectionIngestor {
 				//loop through file
 				while(line != null){
 					lineNum++;
-					
+				
 					comps = DeliminatedTextFileUtilities.parseDelimTextLine(line, delimiter);
 					if (pathCol >= comps.length){
 						String msg = "Number of cells on line " + lineNum + " is less than expected.\n" +
@@ -250,11 +252,38 @@ public class CsvFileCollectionIngestor {
 					name = oldFile.getName();
 					extension = name.substring(name.lastIndexOf("."));
 					
+					//check it does not already exist in DB - for resuming
+					NemaFile existingFile = client.getFileByLegacyPath(oldFile.getAbsolutePath());
+					if(existingFile != null){
+						System.out.println("Skipping insertion of path: " + oldFile.getAbsolutePath() + 
+								" as it already exists in the collection as track Id '" + existingFile.getTrackId() + "', path: " + existingFile.getPath() + "\n");
+						line = in.readLine();
+						continue;
+					}
+					
+					
 					//copy and rename file based on track id
 					newFile =  new File(newHome.getAbsolutePath() + File.separator + newId + extension);
 					System.out.println("old path: " + oldFile.getAbsolutePath() + ", new path: " + newFile.getAbsolutePath());
 					oldLen = oldFile.length();
-					copyFile(oldFile, newFile);
+					
+					try{
+						copyFile(oldFile, newFile);
+					}catch(FileNotFoundException e){
+						if (out == null){
+							out = new BufferedWriter(new FileWriter("filesNotFound.csv"));
+							out.write(headerLine);
+						}
+						out.write(line);
+						out.newLine();
+						out.flush();
+						
+						System.out.println("Failed to copy " + oldFile.getAbsolutePath() + " as it did not exist, skipping insertion and writing data to filesNotFound.csv\n");
+						line = in.readLine();
+						continue;
+					}
+					
+					
 					newLen = newFile.length();
 					System.out.println("old file length: " + oldLen + ", new length: " + newLen);
 					if(oldLen != newLen) {
@@ -307,10 +336,14 @@ public class CsvFileCollectionIngestor {
 					client.endTransation();
 					System.out.println("\n");
 					line = in.readLine();
+					
 				}
 				
 			}finally{
 				in.close();
+				if(out != null){
+					out.close();
+				}
 			}
 
 	    }finally {

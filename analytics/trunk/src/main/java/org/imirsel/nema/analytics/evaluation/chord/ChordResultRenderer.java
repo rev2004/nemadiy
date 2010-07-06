@@ -122,7 +122,79 @@ public class ChordResultRenderer extends ResultRendererImpl {
 
 	}
 
+
+	@Override
+	public void renderAnalysis(NemaEvaluationResultSet results) throws IOException {
+		/* Write analysis HTML pages */
+		getLogger().info("Creating result HTML files...");
+		writeHtmlAnalysisPages(results, outputDir);
+		
+		getLogger().info("Done.");
+	}
 	
+	private void writeHtmlAnalysisPages(NemaEvaluationResultSet results, File outputDir) {
+
+		String jobId;
+		getLogger().info("Creating result HTML files...");
+
+		List<Page> resultPages = new ArrayList<Page>();
+		List<PageItem> items;
+		Page aPage;
+
+		// do intro page to describe task
+		{
+			getLogger().info("Creating intro page...");
+			items = new ArrayList<PageItem>();
+			Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results
+					.getTask(), results.getDataset());
+			items.add(new TableItem("task_description", "Task Description",
+					descriptionTable.getColHeaders(), descriptionTable
+							.getRows()));
+			aPage = new Page("intro", "Introduction", items, false);
+			resultPages.add(aPage);
+		}
+
+		// do per system pages
+		{
+			getLogger().info("Creating per-system page...");
+			for (Iterator<String> it = results.getJobIds().iterator(); it
+					.hasNext();) {
+				jobId = it.next();
+				items = new ArrayList<PageItem>();
+				
+				/* Plot chord transcription against GT for each track result for each system */
+				getLogger().info("\tplotting chords for " + results.getJobIdToJobName().get(jobId) +"...");
+				PageItem[] plots = plotTranscriptionForJob(jobId, results);
+				for (int i = 0; i < plots.length; i++) {
+					items.add(plots[i]);
+				}
+				getLogger().info("\tdone.");
+				
+				aPage = new Page(results.getJobIdToJobName().get(jobId), results.getJobIdToJobName().get(jobId),
+						items, true);
+				resultPages.add(aPage);
+			}
+		}
+		
+		// do comparative plot page
+		{
+			getLogger().info("Creating comparison plots page...");
+			items = new ArrayList<PageItem>();
+			PageItem[] plots = plotTranscriptionForAllJobs(results);
+			for (int i = 0; i < plots.length; i++) {
+				items.add(plots[i]);
+			}
+			getLogger().info("\tdone.");
+			aPage = new Page("comparisonPlots", "Comparative plots", items, true);
+			resultPages.add(aPage);
+		}
+		
+		getLogger().info("Writing out pages...");
+		Page.writeResultPages(results.getTask().getName(), outputDir,
+				resultPages);
+		getLogger().info("Done...");
+		
+	}
 
 	private void writeHtmlResultPages(boolean performStatSigTests,
 			NemaEvaluationResultSet results, File overlapCsv, File summaryCsv,
@@ -240,13 +312,13 @@ public class ChordResultRenderer extends ResultRendererImpl {
 							.getColHeaders(), systemTrackTable.getRows()));
 				}
 				
-//				/* Plot chord transcription against GT for each track result for each system */
-//				getLogger().info("\tplotting chords for " + results.getJobIdToJobName().get(jobId) +"...");
-//				PageItem[] plots = plotTranscriptionForJob(jobId, results);
-//				for (int i = 0; i < plots.length; i++) {
-//					items.add(plots[i]);
-//				}
-//				getLogger().info("\tdone.");
+				/* Plot chord transcription against GT for each track result for each system */
+				getLogger().info("\tplotting chords for " + results.getJobIdToJobName().get(jobId) +"...");
+				PageItem[] plots = plotTranscriptionForJob(jobId, results);
+				for (int i = 0; i < plots.length; i++) {
+					items.add(plots[i]);
+				}
+				getLogger().info("\tdone.");
 				
 				aPage = new Page(results.getJobIdToJobName().get(jobId), results.getJobIdToJobName().get(jobId),
 						items, true);
@@ -254,17 +326,19 @@ public class ChordResultRenderer extends ResultRendererImpl {
 			}
 		}
 		
-		// do comparative plot page
-		{
-			getLogger().info("Creating comparison plots page...");
-			items = new ArrayList<PageItem>();
-			PageItem[] plots = plotTranscriptionForAllJobs(results);
-			for (int i = 0; i < plots.length; i++) {
-				items.add(plots[i]);
+		if(results.getJobIds().size() > 1){
+			// do comparative plot page
+			{
+				getLogger().info("Creating comparison plots page...");
+				items = new ArrayList<PageItem>();
+				PageItem[] plots = plotTranscriptionForAllJobs(results);
+				for (int i = 0; i < plots.length; i++) {
+					items.add(plots[i]);
+				}
+				getLogger().info("\tdone.");
+				aPage = new Page("comparisonPlots", "Comparative plots", items, true);
+				resultPages.add(aPage);
 			}
-			getLogger().info("\tdone.");
-			aPage = new Page("comparisonPlots", "Comparative plots", items, true);
-			resultPages.add(aPage);
 		}
 		
 		// do significance tests
@@ -384,31 +458,31 @@ public class ChordResultRenderer extends ResultRendererImpl {
 				getLogger().info("\t\tplotting track " + result.getId() +"...");
 				groundtruth = results.getTrackIDToGT().get(result.getId());
 				
-				if(groundtruth == null){
-					getLogger().warning("No ground-truth found for '" + result.getId() + "' to be used in plotting");
-				}
-				
-//				File plotFile = new File(sysDir.getAbsolutePath()
-//						+ File.separator + "track_" + result.getId() + MELODY_PLOT_EXT);
-//				plotItems.add(plotFile);
-	
-				List<NemaSegment> rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
 				List<NemaSegment> rawData = (List<NemaSegment>)result.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
 				
 				//setup time line for for X-axis
 				double startTimeSecs = 0.0;
 				//end at last offset from GT or predictions
-				double endTimeSecs = Math.max(rawGtData.get(rawGtData.size()-1).getOffset(), rawData.get(rawData.size()-1).getOffset());
+				double endTimeSecs = rawData.get(rawData.size()-1).getOffset();
+				
+				List<NemaSegment> rawGtData = null;
+				
+				if(groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE)){
+					rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+					endTimeSecs = Math.max(rawGtData.get(rawGtData.size()-1).getOffset(), endTimeSecs);
+				}else{
+					getLogger().warning("No ground-truth found for '" + result.getId() + "' to be used in plotting");
+				}
 				
 				//setup data-series to plot
 				Map<String,List<NemaSegment>> series = new HashMap<String, List<NemaSegment>>(2);
-//				series.put("Prediction", convertChordsToSegments(rawData));
-//				series.put("Ground-truth", convertChordsToSegments(rawGtData));
-				series.put("Prediction", (List<NemaSegment>) rawData);
-				series.put("Ground-truth", (List<NemaSegment>) rawGtData);
 				List<String> seriesNames = new ArrayList<String>(2);
+				series.put("Prediction", (List<NemaSegment>) rawData);
 				seriesNames.add("Prediction");
-				seriesNames.add("Ground-truth");
+				if(rawGtData != null){
+					series.put("Ground-truth", (List<NemaSegment>) rawGtData);
+					seriesNames.add("Ground-truth");
+				}
 				
 				try{
 					ProtovisSegmentationPlotItem plot = new ProtovisSegmentationPlotItem(
@@ -483,21 +557,27 @@ public class ChordResultRenderer extends ResultRendererImpl {
 			String trackId = trackIt.next();
 			NemaData[] transcripts = trackIDToTranscripts.get(trackId);
 			getLogger().info("\t\tplotting track " + trackId +"...");
-			groundtruth = results.getTrackIDToGT().get(trackId);
-			if(groundtruth == null){
-				getLogger().warning("No ground-truth found for '" + trackId + "' to be used in plotting");
-			}
+			
 			
 			//setup data-series to plot
 			Map<String,List<NemaSegment>> series = new HashMap<String, List<NemaSegment>>(2);			
-			List<String> seriesNames = new ArrayList<String>(2);
+			List<String> seriesNames = new ArrayList<String>(1 + transcripts.length);
+
+			//setup time line for for X-axis
 			double startTimeSecs = 0.0;
-			List<NemaSegment> rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
-			series.put("Ground-truth", rawGtData);
-			seriesNames.add("Ground-truth");
+			double endTimeSecs = 0;
 			
-			//end at last offset from GT or predictions
-			double endTimeSecs = rawGtData.get(rawGtData.size()-1).getOffset();
+			groundtruth = results.getTrackIDToGT().get(trackId);
+			List<NemaSegment> rawGtData = null;
+			if(groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE)){
+				rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+				endTimeSecs = Math.max(rawGtData.get(rawGtData.size()-1).getOffset(), endTimeSecs);
+				series.put("Ground-truth", rawGtData);
+				seriesNames.add("Ground-truth");
+			}else{
+				getLogger().warning("No ground-truth found for '" + trackId + "' to be used in plotting");
+			}
+			
 			for (int i = 0; i < transcripts.length; i++) {
 				NemaData nemaData = transcripts[i];
 				Object rawData = nemaData.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
@@ -514,7 +594,7 @@ public class ChordResultRenderer extends ResultRendererImpl {
 						//plotname
 						"chords_" + trackId, 
 						//plot caption
-						" Chord transcriptions for track " + trackId, 
+						"Chord transcriptions for track " + trackId, 
 						//start time for x axis
 						startTimeSecs, 
 						//end time for x axis

@@ -60,14 +60,84 @@ public class StructureResultRenderer extends ResultRendererImpl {
 
 		/* Write result HTML pages */
 		getLogger().info("Creating result HTML files...");
-		writeResultHtmlPages(results, summaryCsv, jobIDToPerTrackCSV,
+		writeHtmlResultPages(results, summaryCsv, jobIDToPerTrackCSV,
 				jobIDToTgz, outputDir);
 		
 		getLogger().info("Done.");
 		
 	}
+	
+
+	@Override
+	public void renderAnalysis(NemaEvaluationResultSet results) throws IOException {
+		/* Write analysis HTML pages */
+		getLogger().info("Creating result HTML files...");
+		writeHtmlAnalysisPages(results, outputDir);
+		
+		getLogger().info("Done.");
+	}
 
 
+	/**
+	 * Writes the analysis HTML pages for multiple jobs/algorithms
+	 * 
+	 * @param results   The NemaEvaluationResultSet to write analysis pages for.
+	 * @param outputDir directory to write the HTML pages to.
+	 */
+	private void writeHtmlAnalysisPages(NemaEvaluationResultSet results, File outputDir) {
+		String jobId;
+		List<Page> resultPages = new ArrayList<Page>();
+		List<PageItem> items;
+		Page aPage;
+		
+		/* Do intro page to describe task */
+		{
+			items = new ArrayList<PageItem>();
+			Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),
+					results.getDataset());
+			items.add(new TableItem("task_description", "Task Description",
+					descriptionTable.getColHeaders(), descriptionTable
+							.getRows()));
+			aPage = new Page("intro", "Introduction", items, false);
+			resultPages.add(aPage);
+		}
+
+		/* Do per system pages */
+		{
+			for (Iterator<String> it = results.getJobIds().iterator(); it
+					.hasNext();) {
+				jobId = it.next();
+				items = new ArrayList<PageItem>();
+				
+				/* Plot structure segmentation against GT for each track result for each system */
+				PageItem[] plots = plotTranscriptionForJob(jobId, results);
+				for (int i = 0; i < plots.length; i++) {
+					items.add(plots[i]);
+				}
+
+				aPage = new Page(results.getJobName(jobId) + "_results", results.getJobName(jobId),
+						items, true);
+				resultPages.add(aPage);
+			}
+		}
+		
+		// do comparative plot page
+		{
+			getLogger().info("Creating comparison plots page...");
+			items = new ArrayList<PageItem>();
+			PageItem[] plots = plotTranscriptionForAllJobs(results);
+			for (int i = 0; i < plots.length; i++) {
+				items.add(plots[i]);
+			}
+			getLogger().info("\tdone.");
+			aPage = new Page("comparisonPlots", "Comparative plots", items, true);
+			resultPages.add(aPage);
+		}
+
+
+		Page.writeResultPages(results.getTask().getName(), outputDir, resultPages);
+	}
+	
 	/**
 	 * Writes the result HTML pages for the evaluation of multiple jobs/algorithms
 	 * 
@@ -78,7 +148,7 @@ public class StructureResultRenderer extends ResultRendererImpl {
 	 * @param jobIDToTgz 				map of jobId to the tar-balls of individual job results.
 	 * @param outputDir                 directory to write the HTML pages to.
 	 */
-	private void writeResultHtmlPages(NemaEvaluationResultSet results, File summaryCsv,
+	private void writeHtmlResultPages(NemaEvaluationResultSet results, File summaryCsv,
 			Map<String, File> jobIDToPerTrackCSV, Map<String, File> jobIDToTgz, File outputDir) {
 		String jobId;
 		Map<NemaTrackList,List<NemaData>> sysResults;
@@ -214,26 +284,31 @@ public class StructureResultRenderer extends ResultRendererImpl {
 				getLogger().info("\t\tplotting track " + result.getId() +"...");
 				groundtruth = results.getTrackIDToGT().get(result.getId());
 				
-				if(groundtruth == null){
-					getLogger().warning("No ground-truth found for '" + result.getId() + "' to be used in plotting");
-				}
-
-				List<NemaSegment> rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
 				List<NemaSegment> rawData = (List<NemaSegment>)result.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
 				
 				//setup time line for for X-axis
 				double startTimeSecs = 0.0;
 				//end at last offset from GT or predictions
-				double endTimeSecs = Math.max(rawGtData.get(rawGtData.size()-1).getOffset(), rawData.get(rawData.size()-1).getOffset());
+				double endTimeSecs = rawData.get(rawData.size()-1).getOffset();
+
+				List<NemaSegment> rawGtData = null;
+				
+				if(groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA)){
+					rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
+					endTimeSecs = Math.max(rawGtData.get(rawGtData.size()-1).getOffset(), endTimeSecs);
+				}else{
+					getLogger().warning("No ground-truth found for '" + result.getId() + "' to be used in plotting");
+				}
 				
 				//setup data-series to plot
 				Map<String,List<NemaSegment>> series = new HashMap<String, List<NemaSegment>>(2);
-				series.put("Prediction", rawData);
-				series.put("Ground-truth", rawGtData);
 				List<String> seriesNames = new ArrayList<String>(2);
+				series.put("Prediction", (List<NemaSegment>) rawData);
 				seriesNames.add("Prediction");
-				seriesNames.add("Ground-truth");
-				
+				if(rawGtData != null){
+					series.put("Ground-truth", (List<NemaSegment>) rawGtData);
+					seriesNames.add("Ground-truth");
+				}
 				try{
 					ProtovisSegmentationPlotItem plot = new ProtovisSegmentationPlotItem(
 							//plotname
@@ -307,21 +382,27 @@ public class StructureResultRenderer extends ResultRendererImpl {
 			String trackId = trackIt.next();
 			NemaData[] transcripts = trackIDToTranscripts.get(trackId);
 			getLogger().info("\t\tplotting track " + trackId +"...");
+			
+
+			//setup data-series to plot
+			Map<String,List<NemaSegment>> series = new HashMap<String, List<NemaSegment>>(2);			
+			List<String> seriesNames = new ArrayList<String>(1 + transcripts.length);
+
+			//setup time line for for X-axis
+			double startTimeSecs = 0.0;
+			double endTimeSecs = 0;
+			
 			groundtruth = results.getTrackIDToGT().get(trackId);
-			if(groundtruth == null){
+			List<NemaSegment> rawGtData = null;
+			if(groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA)){
+				rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
+				endTimeSecs = Math.max(rawGtData.get(rawGtData.size()-1).getOffset(), endTimeSecs);
+				series.put("Ground-truth", rawGtData);
+				seriesNames.add("Ground-truth");
+			}else{
 				getLogger().warning("No ground-truth found for '" + trackId + "' to be used in plotting");
 			}
 			
-			//setup data-series to plot
-			Map<String,List<NemaSegment>> series = new HashMap<String, List<NemaSegment>>(2);			
-			List<String> seriesNames = new ArrayList<String>(2);
-			double startTimeSecs = 0.0;
-			List<NemaSegment> rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
-			series.put("Ground-truth", rawGtData);
-			seriesNames.add("Ground-truth");
-			
-			//end at last offset from GT or predictions
-			double endTimeSecs = rawGtData.get(rawGtData.size()-1).getOffset();
 			for (int i = 0; i < transcripts.length; i++) {
 				NemaData nemaData = transcripts[i];
 				Object rawData = nemaData.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
