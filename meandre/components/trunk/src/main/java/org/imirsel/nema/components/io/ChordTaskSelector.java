@@ -32,13 +32,13 @@ import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
 @Component(creator = "Kris West", description = "Select a Chord task from the Nema Repository Service. "
-		+ "Outputs 5 objects: \n"
+		+ "Outputs 4 objects: \n"
 		+ "1) a NemaTask Object defining the task,\n"
 		+ "2) a NemaDataset Object defining the dataset,\n"
 		+ "3) List NemaData Objects encoding the list of tracks used in the experiment (with ground-truth data),\n"
 		+ "4) A Map of test NemaTrackList Objects to a List NemaData Objects encoding the test set data", name = "ChordTaskSelector", 
 		resources={"../../../../../RepositoryProperties.properties"},
-tags = "input, collection, train/test", firingPolicy = Component.FiringPolicy.all)
+tags = "input, collection, chord", firingPolicy = Component.FiringPolicy.all)
 public class ChordTaskSelector extends NemaComponent {
 
 	@ComponentOutput(description = "NemaTask Object defining the task.", name = "NemaTask")

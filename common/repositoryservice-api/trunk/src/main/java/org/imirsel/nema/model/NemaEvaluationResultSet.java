@@ -321,13 +321,104 @@ public class NemaEvaluationResultSet {
 	}
 	
 	/**
+	 * Adds a complete set of analysis results for a system to the set of results.
+	 *  
+	 * @param jobId The job Id the results relate to.
+	 * @param jobName The name of the job that the results relate to.
+	 * @param perTrackResults Map from NemaTrackList to a List of NemaData Objects containing
+	 * the evaluation result and prediction returned for each NemaTrack in each fold of the experiment.
+	 * @throws IllegalArgumentException Thrown if it can be determined that the result data is inconsistent
+	 * with the NemaDataset and associated task lists (e.g. doesn't contain the right number of folds).
+	 */
+	public void addCompleteAnalysisSet(String jobId, String jobName, Map<NemaTrackList,List<NemaData>> perTrackResults)
+			throws IllegalArgumentException{
+		if(perTrackResults.size() != testSetTrackLists.size()){
+			throw new IllegalArgumentException("Expected per-track results for " + testSetTrackLists.size() + " folds, received results for " + perTrackResults.size() + " folds for jobId: " + jobId);
+		}
+		//check all sets are known
+		if(!testSetTrackLists.containsAll(perTrackResults.keySet())){
+			throw new IllegalArgumentException("Unknown test-set in per-track results for jobId: " + jobId);
+		}
+		
+		//check all the expected data is in each track
+		for (Iterator<List<NemaData>> foldIter = perTrackResults.values().iterator(); foldIter.hasNext();) {
+			List<NemaData> trackList = foldIter.next();
+			for (Iterator<NemaData> trackIter = trackList.iterator(); trackIter.hasNext();){
+				NemaData trackData = trackIter.next();
+				for (Iterator<String> metricIterator = trackEvalMetricsAndResults.iterator(); metricIterator.hasNext();) {
+					String key = metricIterator.next();
+					if(!trackData.hasMetadata(key)){
+						throw new IllegalArgumentException("Expected per-track data for '" + trackData.getId() + "' to contain metric '" + key + "' but it was not found!");
+					}
+				}
+			}
+		}
+		
+		jobIdToJobName.put(jobId, jobName);
+		jobIdToPerTrackEvaluationAndResults.put(jobId, perTrackResults);
+	}
+	
+	/**
+	 * Adds results for a specified system for one fold of the experiment.
+	 * 
+	 * @param jobId The job Id the results relate to.
+	 * @param jobName The name of the job that the results relate to.
+	 * @param testSet The test-set for the fold of the experiment that the results relate to.
+	 * @param perTrackEvalAndResults a List of NemaData Objects containing the evaluation result 
+	 * and predictions returned for each NemaTrack in the specified fold of the experiment.
+	 * @throws IllegalArgumentException Thrown if it can be determined that the result data is inconsistent
+	 * with the NemaDataset and associated task lists (e.g. doesn't contain the specified test-set).
+	 */
+	public void addSingleFoldAnalysisSet(String jobId, String jobName, NemaTrackList testSet, List<NemaData> perTrackEvalAndResults)
+			throws IllegalArgumentException{
+		
+		//check test-set is known
+		int idx = this.testSetTrackLists.indexOf(testSet);
+		if (idx == -1){
+			throw new IllegalArgumentException("Test-set " + testSet.getId() + " is not known to be part of this experiment!");
+		}
+		
+		//check if we know the actual track list contents
+		NemaTrackList list = this.testSetTrackLists.get(idx);
+		if(list.getTracks() != null){ 
+			List<NemaTrack> trackList = list.getTracks();
+			if(perTrackEvalAndResults.size() != trackList.size()){
+				throw new IllegalArgumentException("Expected " + trackList.size() + " per-track results relating to NemaTrackList " + list.getId() + ", received results for " + perTrackEvalAndResults.size() + " tracks on that fold for jobId: " + jobId);
+			}
+		}
+		
+		//check the expected metrics are all there
+		//per track
+		for (Iterator<NemaData> trackIter = perTrackEvalAndResults.iterator(); trackIter.hasNext();){
+			NemaData trackData = trackIter.next();
+			
+			for (Iterator<String> metricIterator = trackEvalMetricsAndResults.iterator(); metricIterator.hasNext();) {
+				String key = metricIterator.next();
+				if(!trackData.hasMetadata(key)){
+					throw new IllegalArgumentException("Expected per-track evaluation for '" + trackData.getId() + "' to contain metric '" + key + "' but it was not found!");
+				}
+			}
+		}
+		
+		
+		jobIdToJobName.put(jobId, jobName);
+			
+		Map<NemaTrackList,List<NemaData>> perTrackMap = jobIdToPerTrackEvaluationAndResults.get(jobId);
+		if (perTrackMap == null){
+			perTrackMap = new HashMap<NemaTrackList, List<NemaData>>(testSetTrackLists.size());
+			jobIdToPerTrackEvaluationAndResults.put(jobId, perTrackMap);
+		}
+		perTrackMap.put(testSet, perTrackEvalAndResults);
+	}
+	
+	/**
 	 * Returns a boolean flag indicating whether results have been received overall, for all folds and 
 	 * for all tracks in the experiment - for every system already appearing in the results set.
 	 * 
 	 * @return True if results have been received overall, for all folds and 
 	 * for all tracks in the experiment - for every system already appearing in the results set. 
 	 */
-	public boolean isComplete(){
+	public boolean resultsAreComplete(){
 		int numJobs = jobIdToJobName.size();
 		//check all jobs have data
 		if (jobIdToOverallEvaluation.size() != numJobs){
@@ -408,6 +499,66 @@ public class NemaEvaluationResultSet {
 						String key = metricIterator.next();
 						if(!trackData.hasMetadata(key)){
 							throw new IllegalArgumentException("Expected per-track evaluation for '" + trackData.getId() + "' to contain metric '" + key + "' but it was not found!");
+						}
+					}
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Returns a boolean flag indicating whether analyses have been received overall, for all folds and 
+	 * for all tracks in the experiment - for every system already appearing in the results set.
+	 * 
+	 * @return True if results have been received overall, for all folds and 
+	 * for all tracks in the experiment - for every system already appearing in the results set. 
+	 */
+	public boolean analysesAreComplete(){
+		int numJobs = jobIdToJobName.size();
+		//check all jobs have data
+		if (jobIdToPerTrackEvaluationAndResults.size() != numJobs){
+			return false;
+		}
+			
+		//check all jobs have data for every test-set
+		for (Iterator<String> iterator = jobIdToJobName.keySet().iterator(); iterator.hasNext();) {
+			String jobId = iterator.next();
+			Map<NemaTrackList,List<NemaData>> perTrackMap = jobIdToPerTrackEvaluationAndResults.get(jobId);
+			if(perTrackMap.size() != testSetTrackLists.size()){
+				return false;
+			}
+		}
+		
+		//check results from each system for each fold have data for all the tracks
+		for (Iterator<NemaTrackList> testSetIt = testSetTrackLists.iterator(); testSetIt.hasNext();) {
+			NemaTrackList list = testSetIt.next();
+			if(list.getTracks() != null){ //check if we know the actual track list contents
+				List<NemaTrack> trackList = list.getTracks();
+				for (Iterator<String> jobIt = jobIdToJobName.keySet().iterator(); testSetIt.hasNext();) {
+					String jobId = jobIt.next();
+					Map<NemaTrackList,List<NemaData>> perTrackMap = jobIdToPerTrackEvaluationAndResults.get(jobId);
+					if(perTrackMap.get(list).size() != trackList.size()){
+						return false;
+					}
+				}
+			}
+		}
+		
+		//check the expected metrics are all there
+		//per track
+		for (Iterator<String> jobIt = jobIdToJobName.keySet().iterator(); jobIt.hasNext();) {
+			String jobId = jobIt.next();
+			Map<NemaTrackList,List<NemaData>> perTrackEvalAndResults = jobIdToPerTrackEvaluationAndResults.get(jobId);
+			for (Iterator<List<NemaData>> foldIter = perTrackEvalAndResults.values().iterator(); foldIter.hasNext();) {
+				List<NemaData> trackList = foldIter.next();
+				for (Iterator<NemaData> trackIter = trackList.iterator(); trackIter.hasNext();){
+					NemaData trackData = trackIter.next();
+					for (Iterator<String> metricIterator = trackEvalMetricsAndResults.iterator(); metricIterator.hasNext();) {
+						String key = metricIterator.next();
+						if(!trackData.hasMetadata(key)){
+							throw new IllegalArgumentException("Expected per-track data for '" + trackData.getId() + "' to contain metric '" + key + "' but it was not found!");
 						}
 					}
 				}

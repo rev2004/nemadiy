@@ -51,6 +51,17 @@ public interface ResultRenderer {
      */
     public void renderResults(NemaEvaluationResultSet results) throws IOException;
     
+    /**
+     * Render packaged analysis results to a folder on disk. Analysis results do 
+     * not contain any evaluation metrics.
+     * 
+     * @param results The results Object to render.
+     * @throws IOException Thrown if an IOException occurs while rendering the 
+     * results.
+     */
+    public void renderAnalysis(NemaEvaluationResultSet results) throws IOException;
+    
+    
     //TODO: remove these temporary methods when we get a java implementation of stats tests
     
     /**

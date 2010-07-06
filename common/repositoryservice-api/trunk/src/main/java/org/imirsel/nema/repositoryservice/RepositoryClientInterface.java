@@ -319,7 +319,7 @@ public interface RepositoryClientInterface {
      */
     public NemaFile getFile(NemaTrack track, Set<NemaMetadataEntry> constraint) throws SQLException;
     /**
-     * Returns a NemaFile matching the the NemaTrack specified and having
+     * Returns a NemaFile matching the NemaTrack specified and having
      * the metadata values specified. If more than one NemaFile matches the
      * NemaTrack and constraint then no guarantee is provided as to which is
      * returned. If no NemaFile matches then null is returned.
@@ -334,6 +334,28 @@ public interface RepositoryClientInterface {
      */
     public NemaFile getFile(String trackId, Set<NemaMetadataEntry> constraint) throws SQLException;
 
+    /**
+     * Returns the legacy file path for the specified NemaFile id. If the file
+     * id does not exist or has no legacy path, null is returned.
+     * 
+     * @param fileId The file id to retrieve the legacy path for.
+     * @return String representing the legacy path to the file.
+     * 
+     * @throws SQLException
+     */
+    public String getLegacyFilePath(int fileId) throws SQLException;
+    
+    /**
+     * Returns a NemaFile matching the legacy file path passed. Null is returned
+     * if no file record matches the legacy path.
+     * @param legacyPath The legacy path to resolve to a NemaFile record.
+     * @return a NemaFile matching the legacy file path passed.
+     * @throws SQLException
+     */
+    public NemaFile getFileByLegacyPath(String legacyPath) throws SQLException;
+    
+    
+    
     /**
      * Returns a map linking NemaFile Objects (keys) to Sets of
      * NemaMetadataEntry Objects (values) which define the metadata of that NemaFile

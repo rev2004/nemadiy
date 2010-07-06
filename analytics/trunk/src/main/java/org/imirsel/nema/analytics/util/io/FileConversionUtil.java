@@ -1,7 +1,9 @@
 package org.imirsel.nema.analytics.util.io;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -9,17 +11,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
+import org.imirsel.nema.analytics.evaluation.beat.BeatTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordIntervalTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordNumberTextFile;
 import org.imirsel.nema.analytics.evaluation.chord.ChordShortHandTextFile;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
 import org.imirsel.nema.analytics.evaluation.key.KeyTextFile;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile;
+import org.imirsel.nema.analytics.evaluation.multif0.MultiF0EstTextFile;
+import org.imirsel.nema.analytics.evaluation.onset.OnsetTextFile;
+import org.imirsel.nema.analytics.evaluation.structure.StructureTextFile;
+import org.imirsel.nema.analytics.evaluation.tempo.TempoTextFile;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
+import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 
@@ -39,25 +48,44 @@ import org.imirsel.nema.model.NemaTrackList;
  */
 public class FileConversionUtil {
 
+	/**
+	 * Registry map for file types available to use as input to binaries 
+	 * extracting or predicting the specified metadata key (i.e. doesn't contain 
+	 * ground-truth metadata, just identify files to process).
+	 */
 	public static final Map<String,List<Class<? extends NemaFileType>>> TEST_INPUT_FILE_TYPE_REGISTRY = new HashMap<String, List<Class<? extends NemaFileType>>>();
-	public static final Map<String,List<Class<? extends NemaFileType>>> GT_AND_PREDICTION_FILE_TYPE_REGISTRY = new HashMap<String, List<Class<? extends NemaFileType>>>();	
+	
+	/**
+	 * Registry map for file types available to use as output from binaries 
+	 * extracting or predicting the specified metadata key and as input training
+	 * files (i.e. does contain predicted/ground-truth metadata for the task).
+	 */
+	public static final Map<String,List<Class<? extends NemaFileType>>> GT_AND_PREDICTION_FILE_TYPE_REGISTRY = new HashMap<String, List<Class<? extends NemaFileType>>>();
+	
+	/**
+	 * Registry map for the file type that each metadata is inserted 
+	 * into/retrieved from the repository database in.
+	 */
+	public static final Map<String,Class<? extends SingleTrackEvalFileType>> REPOSITORY_METADATA_FILE_TYPE_REGISTRY = new HashMap<String, Class<? extends SingleTrackEvalFileType>>();	
 	static {
 		//register known list file types for known metadata keys
 		{
 			//setup raw audio file input type
-			List<Class<? extends NemaFileType>> rawAudioTypeList = new ArrayList<Class<? extends NemaFileType>>(4);
+			List<Class<? extends NemaFileType>> rawAudioTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			rawAudioTypeList.add(RawAudioFile.class);
 			//setup track list file input type
-			List<Class<? extends NemaFileType>> trackListTypeList = new ArrayList<Class<? extends NemaFileType>>(5);
+			List<Class<? extends NemaFileType>> trackListTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			trackListTypeList.add(TrackListTextFile.class);
 			
 			//these are tasks where individual audio files are used as input... i.e. there is no list file
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, rawAudioTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.MELODY_EXTRACTION_DATA, rawAudioTypeList);
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, rawAudioTypeList);
-			
-			//chord can also use a list file
-			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, trackListTypeList);
+			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.TEMPO_EXTRACTION_DATA, rawAudioTypeList);
+			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.ONSET_DETECTION_DATA, rawAudioTypeList);
+			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.BEAT_TRACKING_DATA, rawAudioTypeList);
+			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, rawAudioTypeList);
+			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.MULTI_F0_EST_DATA, rawAudioTypeList);
 			
 			//classification tasks
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, trackListTypeList);
@@ -74,22 +102,24 @@ public class FileConversionUtil {
 		
 		//register known GT and prediction file types for known metadata keys
 		{
-			//whether chord systemms return a file at a time or directory of files (which is auto detected) we need to know format
+			//Chord
 			List<Class<? extends NemaFileType>> gtTypeList = new ArrayList<Class<? extends NemaFileType>>(3);
 			gtTypeList.add(ChordIntervalTextFile.class);
 			gtTypeList.add(ChordNumberTextFile.class);
 			gtTypeList.add(ChordShortHandTextFile.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, gtTypeList);
 			
+			//Melody
 			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			gtTypeList.add(MelodyTextFile.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.MELODY_EXTRACTION_DATA, gtTypeList);
 
+			//Key
 			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			gtTypeList.add(KeyTextFile.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, gtTypeList);
 			
-				//classification tasks
+			//classification tasks
 			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(5);
 			gtTypeList.add(ClassificationTextFile.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, gtTypeList);
@@ -98,11 +128,54 @@ public class FileConversionUtil {
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, gtTypeList);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, gtTypeList);
 			
+			//Structure
+			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
+			gtTypeList.add(StructureTextFile.class);
+			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, gtTypeList);
+			
+			//Onset
+			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
+			gtTypeList.add(OnsetTextFile.class);
+			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.ONSET_DETECTION_DATA, gtTypeList);
+			
+			//Beat
+			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
+			gtTypeList.add(BeatTextFile.class);
+			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.BEAT_TRACKING_DATA, gtTypeList);
+			
+			//Multi-F0
+			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
+			gtTypeList.add(MultiF0EstTextFile.class);
+			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.MULTI_F0_EST_DATA, gtTypeList);
+			
+			//Tempo
+			gtTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
+			gtTypeList.add(TempoTextFile.class);
+			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.TEMPO_EXTRACTION_DATA, gtTypeList);
+			
+			
 			//arguments that produce opaque file formats (files we don't know how to read but can move around - e.g. model files)
 			List<Class<? extends NemaFileType>> opaqueTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			opaqueTypeList.add(OpaqueFileFormat.class);
 			GT_AND_PREDICTION_FILE_TYPE_REGISTRY.put(NemaDataConstants.FILE_DATA, opaqueTypeList);
 		}
+		
+		//register known repository file types (what type was used to populate repository) for known metadata keys
+		{
+			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, ChordShortHandTextFile.class);
+			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.MELODY_EXTRACTION_DATA, MelodyTextFile.class);
+			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, KeyTextFile.class);
+			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, StructureTextFile.class);
+			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.ONSET_DETECTION_DATA, OnsetTextFile.class);
+			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.BEAT_TRACKING_DATA, BeatTextFile.class);
+			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.MULTI_F0_EST_DATA, MultiF0EstTextFile.class);
+			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.TEMPO_EXTRACTION_DATA, TempoTextFile.class);
+			
+			//none needed for classification tasks just insert metadata into the field named by the key as a string
+		}
+		
+		
+		
 	}
 	
 	/**
@@ -474,6 +547,94 @@ public class FileConversionUtil {
 		return out;
 	}
 
+	
+	/**
+	 * Converts metadata entries retrieved from the repository into a list of
+	 * NemaData Object models by interpretting the data through a file type
+	 * registered for the repository on the task metadata.
+	 * 
+	 * @param trackToMeta Map of track ID to the List of NemaMetadataEntry
+	 * Objects retrieved from the repository for it.
+	 * @param task The task that the data relates to ().
+	 * @return a List of NemaData Objects encoding the desired data for each 
+	 * track.
+	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
+	 * NemaFileType is received.
+	 * @throws InstantiationException Thrown if the file reader can't be 
+	 * instantiated (for example if there is no zero-arg constructor).
+	 * @throws IllegalAccessException Thrown if we do not have access to the 
+	 * definition of the specified file type class.
+	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
+	 * found.
+	 * @throws IOException Thrown if there is a problem reading a file.
+	 */
+	public static List<NemaData> convertMetadataToGroundtruthModel(
+			Map<String,List<NemaMetadataEntry>> trackToMeta, 
+			NemaTask task) 
+			throws IllegalArgumentException, InstantiationException, 
+				IllegalAccessException, FileNotFoundException, IOException{
+	
+		List<NemaData> out = new ArrayList<NemaData>(trackToMeta.size());
+	
+		//get and instantiate reader file type
+		String metadataType = task.getSubjectTrackMetadataName();
+		Class<? extends SingleTrackEvalFileType> readerClass = REPOSITORY_METADATA_FILE_TYPE_REGISTRY.get(metadataType);
+		if (readerClass == null){
+			for (Iterator<String> it = trackToMeta.keySet().iterator(); it.hasNext();){
+	            String id = it.next();
+	            NemaData aTrack = new NemaData(id);
+	            List<NemaMetadataEntry> meta_list = trackToMeta.get(id);
+	            if (meta_list.size() > 1){
+	            	List<String> vals = new ArrayList<String>(meta_list.size());
+	            	for (Iterator<NemaMetadataEntry> iterator = meta_list.iterator(); iterator.hasNext();) {
+	            		vals.add(iterator.next().getValue());
+					}
+	            	aTrack.setMetadata(metadataType, vals);
+	            }else if(meta_list.size() == 1){
+	            	aTrack.setMetadata(metadataType, meta_list.get(0).getValue());
+	            }else{
+	            	Logger.getLogger(FileConversionUtil.class.getName()).severe("No metadata " + metadataType + " found for id '" + id + "', it is being dropped!");
+	            }
+	            
+	            out.add(aTrack);
+			}
+		}else{
+			SingleTrackEvalFileType reader = readerClass.newInstance();
+			for (Iterator<String> it = trackToMeta.keySet().iterator(); it.hasNext();){
+	            String id = it.next();
+	            
+	            List<NemaMetadataEntry> meta_list = trackToMeta.get(id);
+	            NemaData aTrack;
+	            if (meta_list.size() > 0){
+	            	NemaMetadataEntry metadata = meta_list.iterator().next();
+	            	
+	            	File temp = File.createTempFile(id + ".", ".txt");
+	        		BufferedWriter tmpOut = new BufferedWriter(new FileWriter(temp));
+	        		tmpOut.write(metadata.getValue());
+	        		tmpOut.flush();
+	        		tmpOut.close();
+	        		
+	        		aTrack = reader.readFile(temp);
+	        		aTrack.setMetadata(NemaDataConstants.PROP_ID, id);
+	            	
+	            	out.add(aTrack);
+	            	if(meta_list.size() > 1) {
+	            		//use only first value and print warning
+	            		Logger.getLogger(FileConversionUtil.class.getName()).warning("Found " + meta_list.size() + " " + metadataType + " metadata records for id '" + id + "', using only first value");
+	            	}
+	            }else {
+	            	aTrack = new NemaData(id);
+	            	Logger.getLogger(FileConversionUtil.class.getName()).severe("No metadata " + metadataType + " found for id '" + id + "', it is being dropped!");
+	            }
+	            out.add(aTrack);
+			}
+		}
+		
+		return out;
+	}
+	
+	
+	
 	/**
 	 * Reads the files output by a process using the specified file type. The
 	 * first parameter is a Map of NemaTrackList (each representing

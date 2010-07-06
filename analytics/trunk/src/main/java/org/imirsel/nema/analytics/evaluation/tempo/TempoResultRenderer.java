@@ -61,6 +61,16 @@ public class TempoResultRenderer extends ResultRendererImpl {
 		writeResultHtmlPages(results, summaryCsv, 
 				jobIDToPerTrackCSV, jobIDToTgz, outputDir);
 	}
+	
+	@Override
+	public void renderAnalysis(NemaEvaluationResultSet results) throws IOException {
+//		/* Write analysis HTML pages */
+//		getLogger().info("Creating result HTML files...");
+//		writeHtmlAnalysisPages(results, outputDir);
+//		
+//		getLogger().info("Done.");
+		throw new UnsupportedOperationException("No analysis result rendering facilities are implemented for key classification!");
+	}
 
 	/**
 	 * Writes the result HTML pages for the evaluation of multiple jobs/algorithms
