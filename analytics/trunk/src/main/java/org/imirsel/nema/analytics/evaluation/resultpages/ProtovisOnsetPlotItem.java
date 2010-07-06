@@ -244,6 +244,9 @@ public class ProtovisOnsetPlotItem extends PageItem{
         	    INDENT + "/* Y-axis ticks. */\n" + 
         	    INDENT + "context.add(pv.Rule)\n" + 
         	    INDENT + "    .bottom(15);\n\n" + 
+        	    
+        	    INDENT + "focus.add(pv.Rule)\n" +
+        	    INDENT + "    .bottom(0);\n" +
 		
                 INDENT + "/* Context area chart. */\n" + 
 			    INDENT + "context.add(pv.Panel)\n" + 
