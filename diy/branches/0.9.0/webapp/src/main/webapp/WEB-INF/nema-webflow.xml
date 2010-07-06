@@ -12,7 +12,8 @@
 	<webflow:flow-executor id="flowExecutor">
 
 	</webflow:flow-executor>
-	<webflow:flow-registry id="flowRegistry" flow-builder-services="builder">
+	<webflow:flow-registry id="flowRegistry"
+		flow-builder-services="builder">
 		<webflow:flow-location path="/WEB-INF/flows/tasks-flow.xml"
 			id="task" />
 		<webflow:flow-location path="/WEB-INF/flows/executable/executable-flow.xml"
@@ -21,35 +22,47 @@
 			id="mirex" />
 	</webflow:flow-registry>
 
- <webflow:flow-builder-services development="true" id="builder"/>
- 
+	<webflow:flow-builder-services
+		development="true" id="builder" conversion-service="conversionService" />
+
+	<bean id="conversionService" class="org.springframework.binding.convert.service.DefaultConversionService">
+    	<constructor-arg ref="nemaConversionService"/>
+    </bean>
+
+	<bean id="nemaConversionService"
+		class="org.imirsel.nema.webapp.formatter.NemaFormattringConversionServiceFactoryBean"/>
+
 	<bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
 		p:flowService-ref="flowService" p:userManager-ref="userManager"
 		p:uploadDirectory="/resources" p:artifactService-ref="contentRepositoryClient"
 		p:mirexSubmissionDao-ref="externalMirexSubmissionDao"
-		p:jiniService-ref="jiniService" p:jcrService-ref="jcrService"
-		 />
+		p:jiniService-ref="jiniService" p:jcrService-ref="jcrService" />
 	<bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
-		p:commandLineFormatter-ref="commandLineFormatter" p:resourceServiceType-ref="resource" />
-	<bean id="mirexSubmissionService" class="org.imirsel.nema.webapp.webflow.MirexSubmissionServiceImpl">
-	 <property name="mirexTasks">
-	 <list>
-	 <bean class="org.imirsel.nema.model.MirexTask" p:name="qbsh" p:fullname="Query by Singing and Humming" p:id="0"/>
-		<bean class="org.imirsel.nema.model.MirexTask" p:name="qbt" p:fullname="Query by Tapping" p:id="1"/>
-		<bean class="org.imirsel.nema.model.MirexTask" p:name="melody" p:fullname="Melody"  p:id="2"/>
-		<bean class="org.imirsel.nema.model.MirexTask" p:name="onset" p:fullname="Onset Test"  p:id="3"/>
-	 </list></property>
+		p:commandLineFormatter-ref="commandLineFormatter"
+		p:resourceServiceType-ref="resource" />
+	<bean id="mirexSubmissionService"
+		class="org.imirsel.nema.webapp.webflow.MirexSubmissionServiceImpl">
+		<property name="mirexTasks">
+			<list>
+				<bean class="org.imirsel.nema.model.MirexTask" p:name="qbsh"
+					p:fullname="Query by Singing and Humming" p:id="0" />
+				<bean class="org.imirsel.nema.model.MirexTask" p:name="qbt"
+					p:fullname="Query by Tapping" p:id="1" />
+				<bean class="org.imirsel.nema.model.MirexTask" p:name="melody"
+					p:fullname="Melody" p:id="2" />
+				<bean class="org.imirsel.nema.model.MirexTask" p:name="onset"
+					p:fullname="Onset Test" p:id="3" />
+			</list>
+		</property>
 	</bean>
-		
-		
-		
-	<bean id="jiniService"
-		class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl">
-		<constructor-arg value="nema.lis.uiuc.edu"/>
+
+
+
+	<bean id="jiniService" class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl">
+		<constructor-arg value="nema.lis.uiuc.edu" />
 	</bean>
-	<bean id="jcrService"
-		class="org.imirsel.nema.webapp.service.impl.JcrServiceImpl">
-		<constructor-arg value="rmi://nema.lis.uiuc.edu:2099/jackrabbit.repository"/>
+	<bean id="jcrService" class="org.imirsel.nema.webapp.service.impl.JcrServiceImpl">
+		<constructor-arg value="rmi://nema.lis.uiuc.edu:2099/jackrabbit.repository" />
 	</bean>
 	<bean id="resource"
 		class="org.imirsel.nema.contentrepository.client.ResourceTypeServiceImpl" />
@@ -57,7 +70,7 @@
 		class="org.imirsel.nema.contentrepository.client.CommandLineFormatter" />
 	<bean id="executableValidator"
 		class="org.imirsel.nema.webapp.webflow.validator.UploadedExecutableBundleValidator" />
-		
+
 
 
 </beans>
