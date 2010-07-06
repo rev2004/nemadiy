@@ -14,8 +14,10 @@
 	<import resource="nema-webflow.xml" />
 	
     <context:property-placeholder location="classpath:contentrepositoryservice.properties,classpath:flowservice.properties" />
-	
+	<context:component-scan base-package="org.imirsel.nema.webapp.controller.annotation"></context:component-scan>	
 
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
 	<bean id="exceptionResolver"
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">

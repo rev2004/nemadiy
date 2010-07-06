@@ -4,6 +4,12 @@ label.label {
 label.name {
 	
 }
+label.fixed{
+	width:20em;
+	}
+label.requied{
+	font-weight:bold;
+	}
 .surround{
 	margin:5px;
 }
@@ -25,3 +31,4 @@ label.name {
 {
  float:right;
 }
+
