@@ -22,9 +22,12 @@ public class MirexTaskDaoHibernate extends GenericDaoHibernate<MirexTask,Long> i
 	/* (non-Javadoc)
 	 * @see org.imirsel.nema.dao.MirexTaskDao#addMirexTask(org.imirsel.nema.model.MirexTask)
 	 */
-	@Override
 	public void addMirexTask(MirexTask task) {
 			save(task);
+	}
+	
+	public List<MirexTask> findAllActive() {
+		return getHibernateTemplate().find("find MirexTask where active = ?",true);
 	}
 
 }

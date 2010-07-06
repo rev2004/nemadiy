@@ -9,4 +9,6 @@ public interface ContributorDao extends GenericDao<Contributor,Long>{
 
 	public  List<Contributor> getContributors(MirexSubmission submission);
 
+	public List<Contributor> findSimilar(String str);
+
 }

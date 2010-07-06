@@ -28,7 +28,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenerationTime;
 
 /**
- * Submission record from the Mirex 2010 submission system
+ * Submission record from the Mirex  submission system
  * 
  * @author gzhu1
  * 
@@ -72,6 +72,7 @@ public class MirexSubmission  implements Serializable {
 	private List<Contributor> contributors;
 	private User user;
 	private MirexTask mirexTask;
+	private String url;
 
 	public MirexSubmission() {
 		super();
@@ -183,6 +184,13 @@ public class MirexSubmission  implements Serializable {
 	public MirexTask getMirexTask() {
 		return mirexTask;
 	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getUrl() {
+		return url;
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (this==o) {return true;}
@@ -204,6 +212,7 @@ public class MirexSubmission  implements Serializable {
     		.append("Hashcode:",hashcode);
 		return sb.toString();
 	}
+	
 	
 	
 

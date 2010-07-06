@@ -16,7 +16,12 @@
 			<binding property="status" required="true"/>
 			<binding property="readme" required="false"/>
 		</binder>
-		<transition on="review" to="reviewSubmission"></transition>
+		<transition on="review" to="reviewSubmission">
+			<evaluate expression="mirexSubmissionService.updateSubmission(submission,requestParameters)"></evaluate>
+		</transition>
+		<transition on="refresh" to="submission">
+			<evaluate expression="mirexSubmissionService.updateSubmission(submission,requestParameters)"></evaluate>
+		</transition>
 		<transition on="clear" to="submission"></transition>
 	</view-state>
 	<view-state id="reviewSubmission" >

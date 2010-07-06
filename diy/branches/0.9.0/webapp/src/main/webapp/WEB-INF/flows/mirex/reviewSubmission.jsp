@@ -11,7 +11,6 @@
 	    </fieldset>
 		<fieldset>
 			<label class="label">Status: </label>${submission.status}
-			
 		</fieldset>
 		<fieldset >
 			<label class="label">Readme: </label><br/>
@@ -19,6 +18,7 @@
 			 ${submission.readme}
 			</textarea>
 		</fieldset>
+	
 		<fieldset id="button">
             <input type="submit" name="_eventId_review" value="Review" />
 			<input type="submit" name="_eventId_edit" value="Edit" />
