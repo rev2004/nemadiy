@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
 import org.imirsel.nema.model.fileTypes.StructureTextFile;
 import org.imirsel.nema.model.fileTypes.TempoTextFile;
 import org.imirsel.nema.model.fileTypes.TrackListTextFile;
+import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 
 /**
  * File type conversion utility. Can be used to list the available (registered)
@@ -180,6 +182,34 @@ public class FileConversionUtil {
 		
 		
 		
+	}
+	
+	/**
+	 * Returns the list of file types that may be used as input to
+	 * binaries related to a particular task.
+	 * 
+	 * @param taskId The task ID to retrieve.
+	 * @param client The repository client to use to retrieve the task.
+	 * @return a List of NemaFileType implementations.
+	 * @throws SQLException
+	 */
+	public static List<Class<? extends NemaFileType>> getInputFileTypesForTask(int taskId, RepositoryClientInterface client) throws SQLException{
+		NemaTask task = client.getTask(taskId);
+		return getTestInputFileTypes(task.getSubjectTrackMetadataName());
+	}
+	
+	/**
+	 * Returns the list of file types that may be used as output from
+	 * binaries related to a particular task.
+	 * 
+	 * @param taskId The task ID to retrieve.
+	 * @param client The repository client to use to retrieve the task.
+	 * @returna List of NemaFileType implementations.
+	 * @throws SQLException
+	 */
+	public static List<Class<? extends NemaFileType>> getOutputFileTypesForTask(int taskId, RepositoryClientInterface client) throws SQLException{
+		NemaTask task = client.getTask(taskId);
+		return getGTAndPredictionFileTypes(task.getSubjectTrackMetadataName());
 	}
 	
 	/**
