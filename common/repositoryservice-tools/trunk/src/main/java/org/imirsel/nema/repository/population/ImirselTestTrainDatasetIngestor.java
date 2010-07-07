@@ -13,13 +13,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
-import org.imirsel.nema.analytics.util.io.FileConversionUtil;
-import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
-import org.imirsel.nema.analytics.util.io.TrackListTextFile;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
+import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
+import org.imirsel.nema.model.fileTypes.TrackListTextFile;
+import org.imirsel.nema.model.util.FileConversionUtil;
 import org.imirsel.nema.model.util.IOUtil;
+import org.imirsel.nema.model.util.PathAndTagCleaner;
 
 public class ImirselTestTrainDatasetIngestor {
 

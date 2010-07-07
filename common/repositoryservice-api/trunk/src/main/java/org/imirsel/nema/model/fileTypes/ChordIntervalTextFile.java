@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.evaluation.chord;
+package org.imirsel.nema.model.fileTypes;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,8 +20,7 @@ import java.util.logging.Logger;
 import org.imirsel.nema.model.*;
 import org.imirsel.nema.model.util.ChordConversionUtil;
 import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
-import org.imirsel.nema.analytics.evaluation.*;
-import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
+import org.imirsel.nema.model.util.PathAndTagCleaner;
 
 
 /**
@@ -79,7 +78,6 @@ public class ChordIntervalTextFile extends SingleTrackEvalFileTypeImpl {
 	@Override
 	public void writeFile(File theFile, NemaData data)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
-		//TODO implement me
 		BufferedWriter writer = null;
 		
 		try{

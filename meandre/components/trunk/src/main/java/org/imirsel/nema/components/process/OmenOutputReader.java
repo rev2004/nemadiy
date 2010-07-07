@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.imirsel.nema.analytics.util.io.FileConversionUtil;
-import org.imirsel.nema.analytics.util.io.NemaFileType;
 import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.ProcessArtifact;
+import org.imirsel.nema.model.fileTypes.NemaFileType;
+import org.imirsel.nema.model.util.FileConversionUtil;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;

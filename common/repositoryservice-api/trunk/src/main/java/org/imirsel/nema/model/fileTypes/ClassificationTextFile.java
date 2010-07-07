@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.evaluation.classification;
+package org.imirsel.nema.model.fileTypes;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,8 +18,7 @@ import java.util.logging.Level;
 
 import org.imirsel.nema.model.*;
 import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
-import org.imirsel.nema.analytics.evaluation.*;
-import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
+import org.imirsel.nema.model.util.PathAndTagCleaner;
 
 
 /**

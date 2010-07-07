@@ -1,7 +1,6 @@
-package org.imirsel.nema.analytics.util.io;
+package org.imirsel.nema.model.fileTypes;
 
 import java.io.PrintStream;
-import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 /**

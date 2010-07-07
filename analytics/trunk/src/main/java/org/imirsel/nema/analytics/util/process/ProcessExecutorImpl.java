@@ -7,6 +7,11 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 import org.imirsel.nema.analytics.logging.ProcessExecutorLogFormatter;
 
+/**
+ * 
+ * @author kriswest
+ * 
+ */
 public abstract class ProcessExecutorImpl implements ProcessExecutorInterface{
 
 	protected Logger _logger;

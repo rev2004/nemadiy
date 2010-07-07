@@ -21,6 +21,7 @@ import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imirsel.nema.model.fileTypes.StructureTextFile;
 import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
 
 /**

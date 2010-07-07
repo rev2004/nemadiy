@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.evaluation.chord;
+package org.imirsel.nema.model.fileTypes;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,29 +17,28 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
-import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaChord;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.util.ChordConversionUtil;
 import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
+import org.imirsel.nema.model.util.PathAndTagCleaner;
 
 
 /**
- * Chord file type where chords are specified in the number format.
+ * Chord file type where chords are specified in the shorthand format.
  * 
  * @author mert.bay@gmail.com
  * @author kris.west@gmail.com
  * @since 0.1.0
  */
-public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
+public class ChordShortHandTextFile extends SingleTrackEvalFileTypeImpl {
 
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";	
-	public static final String TYPE_NAME = "Chord Number text file";
+	public static final String TYPE_NAME = "Chord Shorthand text file";
 	
-	public ChordNumberTextFile() {
+	public ChordShortHandTextFile() {
 		super(TYPE_NAME);
 	}
 	
@@ -53,14 +52,21 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 		int nrows = chordStringsData.length;
 		List<NemaChord> chords = new ArrayList<NemaChord>(nrows);
 		
-		double onset,offset;
-		int no;
+		double onset, offset;
+		String shorthand;
 		int[] notes;
-		for(int r = 0; r < nrows-1; r++) {
+		for(int r = 0; r < nrows; r++) {
 			onset = Double.parseDouble(chordStringsData[r][0]);
-			offset = Double.parseDouble(chordStringsData[r+1][0]);
+			offset = Double.parseDouble(chordStringsData[r][1]);
+			shorthand = chordStringsData[r][2];
+			//Delete * character
+	//		if (shorthand.contains("*")){		
+	//			String firstPart = shorthand.substring(0,shorthand.indexOf("*"));
+	//			String secondPart = shorthand.substring(shorthand.indexOf("*")+1,shorthand.length());		
+	//			shorthand = firstPart + secondPart;
+	//		}
 			try{
-				notes = ChordConversionUtil.getInstance().convertChordNumbersToNoteNumbers(chordStringsData[r][1]);
+				notes = ChordConversionUtil.getInstance().convertShorthandToNotenumbers(shorthand);
 			}catch(IllegalArgumentException e){
 				Logger.getLogger(ChordShortHandTextFile.class.getName()).log(Level.SEVERE, "Failed to convert chord format in file: " + theFile.getAbsolutePath(), e);
 				throw e;
@@ -69,8 +75,10 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 		}
 		Collections.sort(chords);
 		
+		// Form the NemaData Object for this file and return as a length-1 list
 		NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
 		obj.setMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE, chords);
+		
 		return obj;
 	}
 	
@@ -78,7 +86,6 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 	@Override
 	public void writeFile(File theFile, NemaData data)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
-		//TODO implement me
 		BufferedWriter writer = null;
 		try{
 			List<NemaChord> chords = null;
@@ -93,7 +100,7 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 			NemaChord nemaChord;
 			for (Iterator<NemaChord> it = chords.iterator(); it.hasNext();) {
 				nemaChord = it.next();
-				writer.write(nemaChord.getOnset() + WRITE_DELIMITER + nemaChord.getOffset() + WRITE_DELIMITER + ChordConversionUtil.getInstance().convertNotenumbersToChordnumbers(nemaChord.getNotes()) + "\n");
+				writer.write(nemaChord.getOnset() + WRITE_DELIMITER + nemaChord.getOffset() + WRITE_DELIMITER + ChordConversionUtil.getInstance().convertNoteNumbersToShorthand(nemaChord.getNotes()) + "\n");
 			}
 			getLogger().info(NemaDataConstants.CHORD_LABEL_SEQUENCE + " metadata for " + data.getId() + " written to file: " + theFile.getAbsolutePath());
 		} finally {

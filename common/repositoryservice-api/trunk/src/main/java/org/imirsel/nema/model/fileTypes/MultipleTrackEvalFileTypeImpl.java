@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.evaluation;
+package org.imirsel.nema.model.fileTypes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.imirsel.nema.analytics.util.io.NemaFileTypeImpl;
 import org.imirsel.nema.model.NemaData;
 
 /**

@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
-import org.imirsel.nema.analytics.util.io.NemaFileType;
 import org.imirsel.nema.analytics.util.process.CommandArgument;
 import org.imirsel.nema.analytics.util.process.CommandLineFormatParser;
 import org.imirsel.nema.model.CommandLineTemplate;
@@ -18,6 +16,8 @@ import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
+import org.imirsel.nema.model.fileTypes.NemaFileType;
+import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
 import org.imirsel.nema.monitor.process.NemaProcess;
 import org.imirsel.nema.service.executor.ExecutorConstants;
 import org.meandre.annotations.Component;
@@ -198,7 +198,7 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				
 				inputs.add(paInputs);
 				
-				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getAbsolutePath(), "File", outputType1.getClass().getName());
+				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(), "File", outputType1.getClass().getName());
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
 				outputs.add(paOutputs);
 				

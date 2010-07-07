@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.logging;
+package org.imirsel.nema.model.logging;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

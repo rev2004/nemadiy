@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.evaluation.beat;
+package org.imirsel.nema.model.fileTypes;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,11 +10,10 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
-import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
+import org.imirsel.nema.model.util.PathAndTagCleaner;
 
 public class BeatTextFile extends SingleTrackEvalFileTypeImpl {
 
