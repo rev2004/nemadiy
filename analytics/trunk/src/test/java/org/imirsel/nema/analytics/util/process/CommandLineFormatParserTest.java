@@ -29,7 +29,7 @@ public class CommandLineFormatParserTest {
 
 	@Test
 	public void testSimpleMelodyFormatParsing() throws Exception {
-		String configString1 = "$i1{org.imirsel.nema.model.util.RawAudioFile} $o1{org.imirsel.nema.model.util.MelodyTextFile}";
+		String configString1 = "$i1{org.imirsel.nema.model.fileTypes.RawAudioFile} $o1{org.imirsel.nema.model.fileTypes.MelodyTextFile}";
 		String path1 = "/dummy/path1";
 		String path2 = "/dummy/path2";
 		String formatString1 = "/dummy/path1 /dummy/path2";
@@ -70,8 +70,8 @@ public class CommandLineFormatParserTest {
 	
 	@Test
 	public void testClassificationFormatParsing() throws Exception {
-		String configString1 = "-v -x 1234 $i1{org.imirsel.nema.model.util.TrackListTextFile(bitrate=96k,sample-rate=22050)} " +
-				"-laln -o=$o1{org.imirsel.nema.model.util.ClassificationTextFile} asdioajds";
+		String configString1 = "-v -x 1234 $i1{org.imirsel.nema.model.fileTypes.TrackListTextFile(bitrate=96k,sample-rate=22050)} " +
+				"-laln -o=$o1{org.imirsel.nema.model.fileTypes.ClassificationTextFile} asdioajds";
 		String path1 = "/dummy/path1";
 		String path2 = "/dummy/path2";
 		String formatString1 = "-v -x 1234 /dummy/path1 -laln -o=/dummy/path2 asdioajds";
