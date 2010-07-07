@@ -6,7 +6,7 @@ label.name {
 }
 label.fixed{
 	float:left;
-	width:16em;
+	width:12em;
 	}
 label.required{
 	font-weight:bold;

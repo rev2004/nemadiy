@@ -1,7 +1,7 @@
 <%@ include file="/common/taglibs.jsp"%>
 <head>
 <title><fmt:message key="contributor.add.title" /></title>
-<link rel="stylesheet" type="text/css" href="<c:url value='/style/task.css'/>" />
+<link rel="stylesheet" type="text/css" href="<c:url value='/styles/tasks.css'/>" />
 </head>
 <body >
 <h1 >Create New Contributor Profile</h1>
