@@ -5,9 +5,10 @@ label.name {
 	
 }
 label.fixed{
-	width:20em;
+	float:left;
+	width:16em;
 	}
-label.requied{
+label.required{
 	font-weight:bold;
 	}
 .surround{

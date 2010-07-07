@@ -44,7 +44,7 @@
 		<level value="WARN" />
 	</logger>
 	<logger name="org.springframework.web.servlet.mvc">
-		<level value="INFO" />
+		<level value="DEBUG" />
 	</logger>
 	<logger name="org.springframework.web.servlet.handler">
 		<level value="INFO" />

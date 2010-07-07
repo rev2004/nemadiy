@@ -11,8 +11,8 @@
 	  addContributor = function (id) {
 			var x = dojo.byId("newContributor");
 			x.value=id;
-			document.myform._eventId="refresh";
-			document.myform.submit();
+			document.forms['myform']._eventId="refresh";
+			document.forms['myform'].submit();
 		}
 
 		
@@ -44,7 +44,7 @@
 			   	</div>
 			</c:forEach> 
 			<input type="button" value="Add Contributor" onclick="window.open('<c:url value='/subpage/contributor.jsp'/>', 'searchpop', 'width=475');return false;">
-			<input type="hidden" name="newContributor" id="contributor"/>		
+			<input type="hidden" name="contributor" id="newContributor"/>		
 		</fieldset>
 		<fieldset >
 			<label class="label">Readme:</label><br/>
