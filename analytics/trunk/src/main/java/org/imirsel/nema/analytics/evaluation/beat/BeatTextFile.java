@@ -124,7 +124,11 @@ public class BeatTextFile extends SingleTrackEvalFileTypeImpl {
 		int nrows = onsetData.length;
 		int ncols = onsetData[0].length;
 		String[][] theData = new String[nrows][ncols];
-		String[] annotators = data.getStringArrayMetadata(NemaDataConstants.BEAT_TRACKING_ANNOTATORS);
+		String[] annotators = null;
+		if(data.hasMetadata(NemaDataConstants.BEAT_TRACKING_ANNOTATORS)) {
+			annotators = data.getStringArrayMetadata(NemaDataConstants.BEAT_TRACKING_ANNOTATORS);
+		}
+		
         try {
             //use buffering
             output = new BufferedWriter( new FileWriter(theFile) );
@@ -145,7 +149,7 @@ public class BeatTextFile extends SingleTrackEvalFileTypeImpl {
                 	if(Double.isNaN(onsetData[i][j])) {
                 		line += "NaN" + WRITE_DELIMITER;
                 	} else {	
-                		line += BEAT_DEC.format(theData[i][j]) + WRITE_DELIMITER;
+                		line += BEAT_DEC.format(onsetData[i][j]) + WRITE_DELIMITER;
                 	}
                 }
                 if(Double.isNaN(onsetData[i][onsetData[i].length-1])) {
