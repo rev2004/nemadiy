@@ -20,6 +20,7 @@ public class ChordConversionUtil {
 	private static ChordConversionUtil instance = null;
 	
 	private Map<String,int[]> shorthandToNoteNumbers;
+	private Map<String,int[]> shorthandToNoteNumbersCleaned;
 	private Map<String,String> noteNumbersToShorthand;
 	
 	private Map<String,int[]> intervalsToNoteNumbers;
@@ -30,6 +31,7 @@ public class ChordConversionUtil {
 	
 	public final String INTERVAL_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/IntervalDictionary.txt";
 	public final String SHORTHAND_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/ShorthandDictionary.txt";
+	public final String SHORTHAND_CLEANED_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/ShorthandDictionaryCleaned.txt";
 	public final String CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/NoteNumbersDictionary.txt";
 	public final String SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/Shorthand2NoteNumberDictionary.txt";
 
@@ -53,7 +55,8 @@ public class ChordConversionUtil {
 		}
 		try {
 			shorthandToNoteNumbers = readChordDictionary(SHORTHAND_DICTIONARY_CLASSPATH);
-			noteNumbersToShorthand = reverseMap(shorthandToNoteNumbers);
+			shorthandToNoteNumbersCleaned = readChordDictionary(SHORTHAND_CLEANED_DICTIONARY_CLASSPATH);
+			noteNumbersToShorthand = reverseMap(shorthandToNoteNumbersCleaned);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
 					"Failed to read chord dictionary from classpath: "
