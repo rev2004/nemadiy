@@ -170,7 +170,7 @@ public class OnsetTextFile extends SingleTrackEvalFileTypeImpl {
                 	if(Double.isNaN(onsetData[i][j])) {
                 		line += "NaN" + WRITE_DELIMITER;
                 	} else {	
-                		line += ONSET_DEC.format(theData[i][j]) + WRITE_DELIMITER;
+                		line += ONSET_DEC.format(onsetData[i][j]) + WRITE_DELIMITER;
                 	}
                 }
                 if(Double.isNaN(onsetData[i][onsetData[i].length-1])) {
