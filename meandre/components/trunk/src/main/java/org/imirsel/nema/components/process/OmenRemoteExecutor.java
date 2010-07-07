@@ -19,6 +19,7 @@ import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
 import org.imirsel.nema.monitor.process.NemaProcess;
+import org.imirsel.nema.service.executor.ExecutorConstants;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
@@ -137,12 +138,9 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 		for (Iterator<NemaTrackList> setIt = inputPaths.keySet().iterator(); setIt.hasNext();) {
 			NemaTrackList testSet = setIt.next();
 			
-			//scratch dir
-			String scratch = "testSet" + testSet.getId();
-			if(!new File(scratch).mkdirs()){
-				throw new ComponentExecutionException("Failed to create scratch dir for a process execution at: " + scratch);
-			}
-			
+			//scratch dir -this gets created at the executor end
+			String scratch = ExecutorConstants.REMOTE_PATH_SCRATCH_TOKEN;
+	
 			getLogger().info("Performing executions for test set " + testSet.getFoldNumber() + ", id: " + testSet.getId());
 			List<String> inputs1ForFold = inputPaths.get(testSet);
 			List<File> outputs1ForFold = outputPaths.get(testSet);
