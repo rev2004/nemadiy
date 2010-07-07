@@ -47,6 +47,7 @@ public abstract class ContentRepositoryBase extends NemaComponent implements Rem
 	private static ResultStorageService resultStorageService;
 	private SimpleCredentials credentials;
 	private String flowInstanceId;
+	private String token;
 	
 	
 	public void initialize(ComponentContextProperties ccp)
@@ -56,6 +57,7 @@ public abstract class ContentRepositoryBase extends NemaComponent implements Rem
 		String _credentials = ccp.getProperty(PROPERTY_1);
 		String contentRepositoryUri = ccp.getProperty(PROPERTY_2);
 		this.flowInstanceId = ccp.getFlowExecutionInstanceID();
+		this.token = getToken(ccp.getFlowExecutionInstanceID());
 		setCredentials(parseCredentials(_credentials));
 		synchronized(ContentRepositoryBase.class){
 		if(resultStorageService==null){
@@ -74,8 +76,14 @@ public abstract class ContentRepositoryBase extends NemaComponent implements Rem
 	}
 	
 
-
-
+	private String getToken(String flowExecutionInstanceID) {
+		String[] splits = flowExecutionInstanceID.split("/");
+		String token = flowExecutionInstanceID;
+		if(splits.length !=0){
+			token = splits[splits.length-1];
+		}
+		return token;
+	}
 
 
 
@@ -161,7 +169,7 @@ public abstract class ContentRepositoryBase extends NemaComponent implements Rem
 		if(fileContent==null){
 			throw new RuntimeException("file byte contents size is null " + path);
 		}
-		nemaResult.setExecutionId(this.flowInstanceId);
+		nemaResult.setExecutionId(this.token);
 		nemaResult.setFileContent(fileContent);
 		String parentPath=file.getParent();
 		nemaResult.setModelClass(model);

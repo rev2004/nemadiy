@@ -108,6 +108,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	private ComponentContextProperties componentContextProperties;
 	private ProcessExecutorService processExecutorService;
 	private String flowInstanceId;
+	private String token;
 	private String memoryProfile;
 	
 	
@@ -124,6 +125,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		
 		this.componentContextProperties = ccp;
 		this.flowInstanceId = ccp.getFlowExecutionInstanceID();
+		this.token = getToken(ccp.getFlowExecutionInstanceID());
 		this.setGroup(group);
 		this.setOS(os);
 		this.setLookupHost(lookupHost);
@@ -149,6 +151,14 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		
 	}
 	
+	private String getToken(String flowExecutionInstanceID) {
+		String[] splits = flowExecutionInstanceID.split("/");
+		String token = flowExecutionInstanceID;
+		if(splits.length !=0){
+			token = splits[splits.length-1];
+		}
+		return token;
+	}
 
 
 
@@ -479,7 +489,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 			throw new RuntimeException("file byte contents size is null " + path);
 		}
 		
-		nemaResult.setExecutionId(this.flowInstanceId);
+		nemaResult.setExecutionId(this.token);
 		nemaResult.setFileContent(fileContent);
 		String parentPath=file.getParent();
 		nemaResult.setModelClass(model);
