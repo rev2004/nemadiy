@@ -142,8 +142,16 @@ public class OnsetTextFile extends SingleTrackEvalFileTypeImpl {
 		int nrows = onsetData.length;
 		int ncols = onsetData[0].length;
 		String[][] theData = new String[nrows][ncols];
-		String className = data.getStringMetadata(NemaDataConstants.ONSET_DETECTION_CLASS);
-		String[] annotators = data.getStringArrayMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS);
+		
+		String className = null;
+		String[] annotators = null;
+		if(data.hasMetadata(NemaDataConstants.ONSET_DETECTION_CLASS)) {
+			className = data.getStringMetadata(NemaDataConstants.ONSET_DETECTION_CLASS);
+		}
+		if(data.hasMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS)) {
+			annotators = data.getStringArrayMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS);
+		}
+		
         try {
             //use buffering
             output = new BufferedWriter( new FileWriter(theFile) );
