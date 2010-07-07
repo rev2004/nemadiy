@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -289,6 +290,12 @@ public class TasksServiceImpl {
 				JobForm.IMPOSSIBLE, "not a mirex submission");
 		List<MirexSubmission> submissions = mirexSubmissionDao
 				.getAllSubmissions();
+		Collections.sort(submissions,new Comparator<MirexSubmission>(){
+
+			@Override
+			public int compare(MirexSubmission arg0, MirexSubmission arg1) {
+				return arg0.getHashcode().compareTo(arg1.getHashcode());
+			}});
 		submissions.add(nonSubmission);
 		return submissions;
 	}
