@@ -504,18 +504,14 @@ public class FileConversionUtil {
 			NemaFileType outputFileTypeInstance,
 			String outputFileExt,
 			String outputDirectory
-			) {
-		
-		if(!SingleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) || 
-				!SingleTrackEvalFileType.class.isAssignableFrom(inputType)){
-			throw new IllegalArgumentException("Multiple track file types are not supported for OMEN execution");
-		}
+			) {		 
 		
 		Map<String,Map<NemaTrackList,List<File>>> out = new HashMap<String,Map<NemaTrackList,List<File>>>(5);
 		
+		//iterate through folds
 		for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator.hasNext();) {
 			NemaTrackList testSet = iterator.next();
-			Map<NemaTrackList,List<File>> aMap;
+			Map<NemaTrackList,List<File>> aSiteMap;
 			List<File> fileList;
 			
 			//files
@@ -523,25 +519,62 @@ public class FileConversionUtil {
 			
 			//create directory of metadata or new raw audio files
 			File foldDir = new File(outputDirectory + File.separator +"set-" + testSet.getId());
-			//TODO: this directory will need to be created...
+			foldDir.mkdirs();
 			
+			//divide data according to sites
+			Map<String,List<NemaData>> siteToData = new HashMap<String, List<NemaData>>();
 			for (Iterator<NemaData> nemaDataIt = data.iterator(); nemaDataIt.hasNext();) {
 				NemaData anItem = nemaDataIt.next();
-				File fileLoc = new File(anItem.getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
-				String name = fileLoc.getName();
-				File newPath = new File(foldDir.getPath() + File.separator + name + outputFileExt + outputFileTypeInstance.getFilenameExtension());
 				String site = anItem.getStringMetadata(NemaDataConstants.PROP_FILE_SITE);
-				aMap = out.get(site);
-				if(aMap == null){
-					aMap = new HashMap<NemaTrackList, List<File>>();
-					out.put(site, aMap);
+				List<NemaData> siteList = siteToData.get(site); 
+				if(siteList == null){
+					siteList = new ArrayList<NemaData>();
+					siteToData.put(site,siteList);
 				}
-				fileList = aMap.get(testSet);
+				siteList.add(anItem);
+			}
+			
+			//iterate through sites
+			for (Iterator<String> siteIt = siteToData.keySet().iterator(); siteIt.hasNext();) {
+				String site = siteIt.next();
+				List<NemaData> siteList = siteToData.get(site); 
+				aSiteMap = out.get(site);
+				if(aSiteMap == null){
+					aSiteMap = new HashMap<NemaTrackList, List<File>>();
+					out.put(site, aSiteMap);
+				}
+				fileList = aSiteMap.get(testSet);
 				if (fileList == null){
 					fileList = new ArrayList<File>();
-					aMap.put(testSet, fileList);
+					aSiteMap.put(testSet, fileList);
 				}
-				fileList.add(newPath);
+				
+				/*If the input has data on multiple tracks per file and the output 
+				 * output file type contains data on a single track per file, we are 
+				 * probably going to receive a directory of output files with 
+				 * unspecified names, otherwise its one in one out).
+				*/
+				if(!MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) && 
+						MultipleTrackEvalFileType.class.isAssignableFrom(inputType)){
+					//directory
+					fileList.add(foldDir);
+				}else{
+					//files
+					if (SingleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
+						//create directory of metadata or new raw audio files
+						for (Iterator<NemaData> nemaDataIt = siteList.iterator(); nemaDataIt.hasNext();) {
+							File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
+							String name = fileLoc.getName();
+							File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+							fileList.add(newPath);
+						}
+					}else if(MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
+						//create one output file per fold
+						File newPath = new File(foldDir.getAbsolutePath() + File.separator +"set-" + testSet.getId() + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+						fileList.add(newPath);
+					}
+				}
+				
 			}
 		}
 		return out;
