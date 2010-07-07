@@ -158,7 +158,7 @@ public class MirexSubmission  implements Serializable {
 	public void setContributors(List<Contributor> contributors) {
 		this.contributors = contributors;
 	}
-	@ManyToMany(cascade=CascadeType.ALL)
+	@ManyToMany(cascade=CascadeType.MERGE)
 	public List<Contributor> getContributors() {
 		return contributors;
 	}

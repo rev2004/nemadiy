@@ -20,4 +20,8 @@
 		<property name="refreshStubOnConnectFailure" value="true" />
 	</bean>
 	
+	<bean id="mirexContributorDictionary" class="org.imirsel.nema.webapp.service.impl.MirexContributorDictionaryDaoImpl"
+	p:dao-ref="mirexContributorDao"/>
+	<bean id="mirexTaskDictionary" class="org.imirsel.nema.webapp.service.impl.MirexTaskDictionaryImpl"
+	p:dao-ref="mirexTaskDao"/>
 </beans>

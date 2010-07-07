@@ -18,6 +18,7 @@
 
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
 	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+	
 	<bean id="exceptionResolver"
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
@@ -126,6 +127,8 @@
 		<property name="artifactService" ref="contentRepositoryClient"/>
 		<property name="methodNameResolver" ref="flowMethodResolver" />
 	</bean>
+
+
 
 
 
