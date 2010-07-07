@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.util.io;
+package org.imirsel.nema.model.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,24 +13,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileType;
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
-import org.imirsel.nema.analytics.evaluation.beat.BeatTextFile;
-import org.imirsel.nema.analytics.evaluation.chord.ChordIntervalTextFile;
-import org.imirsel.nema.analytics.evaluation.chord.ChordNumberTextFile;
-import org.imirsel.nema.analytics.evaluation.chord.ChordShortHandTextFile;
-import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
-import org.imirsel.nema.analytics.evaluation.key.KeyTextFile;
-import org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile;
-import org.imirsel.nema.analytics.evaluation.multif0.MultiF0EstTextFile;
-import org.imirsel.nema.analytics.evaluation.onset.OnsetTextFile;
-import org.imirsel.nema.analytics.evaluation.structure.StructureTextFile;
-import org.imirsel.nema.analytics.evaluation.tempo.TempoTextFile;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imirsel.nema.model.fileTypes.BeatTextFile;
+import org.imirsel.nema.model.fileTypes.ChordIntervalTextFile;
+import org.imirsel.nema.model.fileTypes.ChordNumberTextFile;
+import org.imirsel.nema.model.fileTypes.ChordShortHandTextFile;
+import org.imirsel.nema.model.fileTypes.ClassificationTextFile;
+import org.imirsel.nema.model.fileTypes.KeyTextFile;
+import org.imirsel.nema.model.fileTypes.MelodyTextFile;
+import org.imirsel.nema.model.fileTypes.MultiF0EstTextFile;
+import org.imirsel.nema.model.fileTypes.MultipleTrackEvalFileType;
+import org.imirsel.nema.model.fileTypes.NemaFileType;
+import org.imirsel.nema.model.fileTypes.OnsetTextFile;
+import org.imirsel.nema.model.fileTypes.OpaqueFileFormat;
+import org.imirsel.nema.model.fileTypes.RawAudioFile;
+import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
+import org.imirsel.nema.model.fileTypes.StructureTextFile;
+import org.imirsel.nema.model.fileTypes.TempoTextFile;
+import org.imirsel.nema.model.fileTypes.TrackListTextFile;
 
 /**
  * File type conversion utility. Can be used to list the available (registered)

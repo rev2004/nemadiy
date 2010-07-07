@@ -6,7 +6,7 @@ package org.imirsel.nema.analytics.util.process;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.imirsel.nema.analytics.util.io.NemaFileType;
+import org.imirsel.nema.model.fileTypes.NemaFileType;
 
 /**
  * Class representing an input or output file component of a command line calling

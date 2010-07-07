@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.evaluation.similarity;
+package org.imirsel.nema.model.fileTypes;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,12 +13,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.imirsel.nema.analytics.evaluation.MultipleTrackEvalFileTypeImpl;
-import org.imirsel.nema.analytics.util.io.NemaFileType;
-import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaTrackDistance;
+import org.imirsel.nema.model.util.PathAndTagCleaner;
 
 public class SparseDistanceMatrixFile extends MultipleTrackEvalFileTypeImpl implements
 		NemaFileType {

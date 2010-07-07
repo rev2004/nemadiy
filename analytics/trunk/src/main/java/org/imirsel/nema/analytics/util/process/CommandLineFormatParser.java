@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.imirsel.nema.analytics.util.io.NemaFileType;
+
+import org.imirsel.nema.model.fileTypes.NemaFileType;
 
 /**
  * Parses and produces command line formatting strings, an examle of which is:

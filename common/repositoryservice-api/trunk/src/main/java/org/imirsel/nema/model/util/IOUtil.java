@@ -481,8 +481,10 @@ public class IOUtil {
         return resultFiles;
     }
 
-    public static void listFiles(File dir, File outputFile, String extension){
-        Collection<File> paths = FileUtils.listFiles(dir, new String[]{extension}, true);//getFilteredPathStrings(dir, extension);
+
+    @SuppressWarnings("unchecked")
+	public static void listFiles(File dir, File outputFile, String extension){
+        Collection<File> paths = (Collection<File>)FileUtils.listFiles(dir, new String[]{extension}, true);//getFilteredPathStrings(dir, extension);
         BufferedWriter out = null;
         try{
             out = new BufferedWriter(new FileWriter(outputFile));

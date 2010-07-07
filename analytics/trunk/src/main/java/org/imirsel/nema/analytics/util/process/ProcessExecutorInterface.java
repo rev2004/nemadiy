@@ -6,6 +6,10 @@ import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
+/**
+ * 
+ * @author kriswest
+ */
 public interface ProcessExecutorInterface {
 
 	/**

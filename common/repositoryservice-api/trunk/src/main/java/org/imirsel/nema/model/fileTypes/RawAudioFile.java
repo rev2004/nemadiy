@@ -3,22 +3,14 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.analytics.util.io;
+package org.imirsel.nema.model.fileTypes;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
-
 import org.imirsel.nema.model.*;
 import org.imirsel.nema.model.util.IOUtil;
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
-import org.imirsel.nema.analytics.util.*;
+import org.imirsel.nema.model.util.PathAndTagCleaner;
 
 /**
  * Reads and writes Raw audio files. When reading data is read into a byte[] and

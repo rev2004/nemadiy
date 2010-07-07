@@ -18,13 +18,13 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
-import org.imirsel.nema.analytics.logging.AnalyticsLogFormatter;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imirsel.nema.model.logging.AnalyticsLogFormatter;
 
 /**
  * Abstract implementation of Evaluator.

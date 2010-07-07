@@ -29,7 +29,7 @@ public class CommandLineFormatParserTest {
 
 	@Test
 	public void testSimpleMelodyFormatParsing() throws Exception {
-		String configString1 = "$i1{org.imirsel.nema.analytics.util.io.RawAudioFile} $o1{org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile}";
+		String configString1 = "$i1{org.imirsel.nema.model.util.RawAudioFile} $o1{org.imirsel.nema.model.util.MelodyTextFile}";
 		String path1 = "/dummy/path1";
 		String path2 = "/dummy/path2";
 		String formatString1 = "/dummy/path1 /dummy/path2";
@@ -45,8 +45,8 @@ public class CommandLineFormatParserTest {
 		}
 		
 		//check IO types
-		assert(parser.getInputType(1).equals(org.imirsel.nema.analytics.util.io.RawAudioFile.class));
-		assert(parser.getOutputType(1).equals(org.imirsel.nema.analytics.evaluation.melody.MelodyTextFile.class));
+		assert(parser.getInputType(1).equals(org.imirsel.nema.model.fileTypes.RawAudioFile.class));
+		assert(parser.getOutputType(1).equals(org.imirsel.nema.model.fileTypes.MelodyTextFile.class));
 		
 		//check properties
 		//TODO implement properties check
@@ -70,8 +70,8 @@ public class CommandLineFormatParserTest {
 	
 	@Test
 	public void testClassificationFormatParsing() throws Exception {
-		String configString1 = "-v -x 1234 $i1{org.imirsel.nema.analytics.util.io.TrackListTextFile(bitrate=96k,sample-rate=22050)} " +
-				"-laln -o=$o1{org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile} asdioajds";
+		String configString1 = "-v -x 1234 $i1{org.imirsel.nema.model.util.TrackListTextFile(bitrate=96k,sample-rate=22050)} " +
+				"-laln -o=$o1{org.imirsel.nema.model.util.ClassificationTextFile} asdioajds";
 		String path1 = "/dummy/path1";
 		String path2 = "/dummy/path2";
 		String formatString1 = "-v -x 1234 /dummy/path1 -laln -o=/dummy/path2 asdioajds";
@@ -87,8 +87,8 @@ public class CommandLineFormatParserTest {
 		}
 		
 		//check IO types
-		assert(parser.getInputType(1).equals(org.imirsel.nema.analytics.util.io.TrackListTextFile.class));
-		assert(parser.getOutputType(1).equals(org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile.class));
+		assert(parser.getInputType(1).equals(org.imirsel.nema.model.fileTypes.TrackListTextFile.class));
+		assert(parser.getOutputType(1).equals(org.imirsel.nema.model.fileTypes.ClassificationTextFile.class));
 		
 		//check properties
 		//TODO implement properties check

@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.imirsel.nema.analytics.evaluation.classification.ClassificationTextFile;
-import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.fileTypes.ClassificationTextFile;
+import org.imirsel.nema.model.util.PathAndTagCleaner;
 import org.imirsel.nema.repositoryservice.RepositoryUpdateClientInterface;
 import org.imirsel.nema.repository.RepositoryClientImpl;
 

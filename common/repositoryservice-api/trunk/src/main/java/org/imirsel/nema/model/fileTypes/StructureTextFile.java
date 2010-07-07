@@ -1,4 +1,4 @@
-package org.imirsel.nema.analytics.evaluation.structure;
+package org.imirsel.nema.model.fileTypes;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,14 +15,10 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileTypeImpl;
-import org.imirsel.nema.model.NemaChord;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaSegment;
-import org.imirsel.nema.analytics.util.io.PathAndTagCleaner;
 import org.imirsel.nema.model.NemaDataConstants;
-import org.imirsel.nema.model.util.ChordConversionUtil;
-import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
+import org.imirsel.nema.model.util.PathAndTagCleaner;
 
 public class StructureTextFile extends SingleTrackEvalFileTypeImpl {
 
@@ -110,6 +106,7 @@ public class StructureTextFile extends SingleTrackEvalFileTypeImpl {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void writeFile(File theFile, NemaData data)
 	throws IllegalArgumentException, FileNotFoundException, IOException {

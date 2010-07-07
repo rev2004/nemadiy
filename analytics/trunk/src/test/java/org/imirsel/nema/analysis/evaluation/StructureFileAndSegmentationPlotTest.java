@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.imirsel.nema.analytics.evaluation.SingleTrackEvalFileType;
 import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisSegmentationPlotItem;
-import org.imirsel.nema.analytics.evaluation.structure.StructureTextFile;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaSegment;
+import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
+import org.imirsel.nema.model.fileTypes.StructureTextFile;
 import org.imirsel.nema.test.BaseManagerTestCase;
 import org.junit.BeforeClass;
 import org.junit.Test;
