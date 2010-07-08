@@ -28,6 +28,11 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 	public static final String INDENT = "\t\t\t";
 	public static final DecimalFormat MS_FORMAT = new DecimalFormat("###.# ms");
 	public static final DecimalFormat TIMESTAMP_FORMAT = new DecimalFormat("###.###");
+
+	private static final int HOFFSET = 0;
+	private static final int FOCUSOFFSET = 15;
+	private static final int HSEP = 15;
+	private static final int LEGENDOFFSET = 60;
 	
 	private double startTime;
     private double endTime;
@@ -55,9 +60,11 @@ public class ProtovisSegmentationPlotItem extends PageItem{
         	out += "[\n";
 			List<NemaSegment> data = series.get(getSeriesNames().get(s));
 			NemaSegment seg = null;
+			int count = 0;
 			for (Iterator<NemaSegment> it = data.iterator(); it.hasNext();) {
 				seg = it.next();
-				out += "{o: " + TIMESTAMP_FORMAT.format(seg.getOnset()) + ", f: " + TIMESTAMP_FORMAT.format(seg.getOffset()) + ", l: \"" + seg.getLabel() + "\"}";
+				out += "{o: " + TIMESTAMP_FORMAT.format(seg.getOnset()) + ", f: " + TIMESTAMP_FORMAT.format(seg.getOffset()) + ", l: \"" + seg.getLabel() + "\", a: " + count%2 + "}";
+				count++;
 				if(it.hasNext()){
 					out +=",\n";
 				}else{
@@ -67,7 +74,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		}
         out += "];\n\n";
         
-	    out += INDENT + "var " + this.getName() + "_seriesNames = [";
+	    out += "var " + this.getName() + "_seriesNames = [";
         for (int j = 0; j < getSeriesNames().size(); j++) {
 			out += "\"" + getSeriesNames().get(j) + "\"";
 			if (j < getSeriesNames().size()-1){
@@ -122,22 +129,23 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		"	function init_segmentation_plot(start,end,numseries){\n" +
 		"		/* Scales and sizing. */\n" +
 		"		var w = 810,\n" +
-		"		    hOffset = 0,\n" +
-		"		    legendOffset = 60,\n" +
-		"		    h1 = 3 + 33 * numseries,\n" +
-		"		    h2 = 15 + (15 * numseries),\n" +
-		"		    totalHeight = h1 + 20 + h2 + hOffset,\n" +
+		"		    hOffset = " + HOFFSET + ",\n" +
+		"			hSep = " + HSEP + ",\n" + 
+		"		    legendOffset = " + LEGENDOFFSET + ",\n" +
+		"		    h1 = " + FOCUSOFFSET + " + 3 + 33 * numseries,\n" +
+		"		    h2 = 15 * numseries,\n" +
+		"		    totalHeight = h1 + 20 + h2 + 15 + hOffset + hSep,\n" +
 		"		    x = pv.Scale.linear(start, end).range(0, w-legendOffset),\n" +
 		"		    i = -1;\n" +
 		"\n" + 
 		"		/* Root panel. */\n" +
 		"		var vis = new pv.Panel()\n" +
 		"		    .width(w)\n" +
-		"		    .height(h1 + 20 + h2 + hOffset)\n" +
-		"		    .bottom(20)\n" +
+		"		    .height(h1 + 20 + h2 + hOffset + hSep)\n" +
+		"		    .bottom(25)\n" +
 		"		    .left(30)\n" +
 		"		    .right(20)\n" +
-		"		    .top(5);\n" +
+		"		    .top(10);\n" +
 		"\n" + 
 		"		vis.render();\n" +
 		"		\n" +
@@ -161,7 +169,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		"				    .data(seriesNames)\n" +
 		"				    .textAlign(\"right\")\n" +
 		"				    .textBaseline(\"middle\")\n" +
-		"				    .top(function() 18+((numseries - (1+this.index)) * 33)) \n" +
+		"				    .top(function() " + (FOCUSOFFSET + 18) + " +((numseries - (1+this.index)) * 33)) \n" +
 		"				    .height(10)\n" +
 		"				    .right(0)\n" +
 		"				    .text(function(d) d);\n" +
@@ -197,6 +205,9 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		"					    fx.domain(d1, d2);\n" +
 		"					    return out;\n" +
 		"				      })\n" +
+		"					.def(\"focus_length\", function() {\n" +
+		"						return \"showing: \" + x.invert(i.x).toFixed(2) + \" to \" + x.invert(i.x + i.dx).toFixed(2) + \" seconds\";\n" + 
+		"					 })\n" +
 		"				    .top(hOffset)\n" +
 		"				    .height(h1);\n" +
 		"\n" + 
@@ -211,19 +222,27 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		"				/* Focus area chart. */\n" +
 		"				focus.add(pv.Panel)\n" +
 		"				    .overflow(\"hidden\")\n" +
-		"				    .data(function(d) focus.init_data())\n" +
-		"				  .add(pv.Bar)\n" +
+		"				    .data(function() focus.init_data())\n" +
+		"				  .add(pv.Panel)\n" +
+		"					.fillStyle(\"#FFFFFF\")\n" + 
 		"				    .data(function(array) array)\n" +
-		"				    .overflow(\"hidden\")\n" +
-		"				    .left(function(d) fx(d.o))\n" +
-		"				    .width(function(d) fx(d.f) - fx(d.o))\n" +
-		"				    .bottom(function() 3 + (33*this.parent.index))\n" +
-		"				    .height(30)\n" +
-		"				    .fillStyle(function() segmentation_colors[this.parent.index % segmentation_colors.length])\n" +
 		"				    .strokeStyle(\"black\")\n" +
 		"				    .lineWidth(1)\n" +
-		"				    .title(function(d) d.l)\n" +
-		"				    .anchor(\"left\").add(pv.Label).overflow(\"hidden\").text(function(d) d.l);\n" +
+		"				    .antialias(false)\n" +
+		"				    .left(function(d) fx(d.o) < 0 ? 0 : fx(d.o))\n" +
+		"				    .width(function(d) fx(d.o) < 0 ? fx(d.f) : (fx(d.f) - fx(d.o)))\n" +
+		"				    .bottom(function() 3 + (33*this.parent.index))\n" +
+		"				    .height(30)\n" +
+		"				    .add(pv.Panel)\n" +
+		"				      .fillStyle(function(d) pv.color(segmentation_colors[this.parent.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6))\n" +
+		"				      .title(function(d) d.l)\n" +
+		"				      .anchor(\"left\").add(pv.Label).text(function(d) fx(d.o) < 0 ? '...' + d.l : d.l).width(function() this.parent.width());\n" +
+		"\n" + 
+		"				focus.add(pv.Label)\n" + 
+		"				   .right(10)\n" +  
+		"				   .top(12)\n" +  
+		"				   .textAlign(\"right\")\n" +  
+		"				   .text(function() focus.focus_length());\n" +  
 		"\n" + 
 		"				/* Context panel (zoomed out). */\n" +
 		"				var context = vis.add(pv.Panel)\n" +
@@ -234,35 +253,41 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		"				/* X-axis ticks. */\n" +
 		"				context.add(pv.Rule)\n" +
 		"				    .data(x.ticks())\n" +
-		"				    .bottom(15)\n" +
+//		"				    .bottom(15)\n" +
 		"				    .left(x)\n" +
 		"				    .strokeStyle(\"#eee\")\n" +
 		"				  .anchor(\"bottom\").add(pv.Label)\n" +
 		"				    .text(x.tickFormat);\n" +
 		"\n" + 
-		"				/* Y-axis ticks. */\n" +
 		"				context.add(pv.Rule)\n" +
-		"				    .bottom(15);\n" +
+		"				    .bottom(0);\n" +
+		"				context.add(pv.Rule)\n" +
+		"				    .left(0);\n" +
 		"\n" + 
 		"				focus.add(pv.Rule)\n" +
 		"				    .bottom(0);\n" +
+		"				focus.add(pv.Rule)\n" +
+		"				    .left(0);\n" +
 		"\n" + 
 		"				/* Context area chart. */\n" +
 		"				context.add(pv.Panel)\n" +
 		"				    .data(data)\n" +
-		"				    .add(pv.Panel)\n" +
+		"				    .add(pv.Bar)\n" +
 		"				      .data(function(array) array)\n" +
 		"				      .left(function(d) x(d.o))\n" +
-		"				      .bottom(function() 15 + 3 + (13 * this.parent.index))\n" +
+		"				      .width(function(d) x(d.f) - x(d.o))\n" +
+		"				      .bottom(function() 3 + (13 * this.parent.index))\n" +
 		"				      .height(10)\n" +
+		"				      .fillStyle(function(d) pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6))\n" +
 		"				      .strokeStyle(\"Black\")\n" +
-		"				      .fillStyle(function() segmentation_colors[this.parent.index % segmentation_colors.length])\n" +
-		"				      .lineWidth(1);\n" +
+		"				      .title(function(d) d.l)\n" +
+		"				      .lineWidth(1)\n" +
+		"				      .antialias(false);\n" +
 		"\n" + 
 		"				/* The selectable, draggable focus region. */\n" +
 		"				context.add(pv.Panel)\n" +
 		"				    .data([i])\n" +
-		"				    .bottom(15)\n" +
+		"				    .bottom(0)\n" +
 		"				    .cursor(\"crosshair\")\n" +
 		"				    .events(\"all\")\n" +
 		"				    .event(\"mousedown\", pv.Behavior.select())\n" +
@@ -271,6 +296,9 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		"				    .left(function(d) d.x)\n" +
 		"				    .width(function(d) d.dx)\n" +
 		"				    .fillStyle(\"rgba(255, 128, 128, .4)\")\n" +
+		"				    .strokeStyle(\"rgb(255, 128, 128)\")\n" +
+		"				    .lineWidth(1)\n" +
+		"				    .antialias(false)\n" +
 		"				    .cursor(\"move\")\n" +
 		"				    .event(\"mousedown\", pv.Behavior.drag())\n" +
 		"				    .event(\"drag\", focus);\n" +
@@ -301,7 +329,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		}
 		out += "</h4>\n";
 		
-		int height = (3 + 33 * series.size()) + (15 * series.size()) + 20 + 2 + 20;
+		int height = HOFFSET + FOCUSOFFSET + (3 + 33 * series.size()) + HSEP + (15 * series.size()) + 20 + 2 + 20 + 10;
 		
 		out += 	"\t<div id=\"center\">\n" + 
 		       	"\t\t<div style=\"width: 860px; height: " + height + "px;; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;\">\n";
