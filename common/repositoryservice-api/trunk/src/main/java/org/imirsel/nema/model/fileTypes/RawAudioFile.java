@@ -26,10 +26,19 @@ public class RawAudioFile extends SingleTrackEvalFileTypeImpl {
 	
 	public RawAudioFile(File path) {
 		super(TYPE_NAME);
+		setExamplePath(path);
+	}
+	
+	public RawAudioFile() {
+		super(TYPE_NAME);
+		this.setFilenameExtension("");
+	}
+	
+	public void setExamplePath(File path){
 		String name = path.getName();
 		int extIdx = name.lastIndexOf('.');
 		if (extIdx == -1) {
-			
+			this.setFilenameExtension("");
 		}else{
 			String ext = name.substring(extIdx);
 			this.setFilenameExtension(ext);
