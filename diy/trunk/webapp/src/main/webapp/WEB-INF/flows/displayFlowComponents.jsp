@@ -30,19 +30,17 @@ function setIdx(idx)
 		descNode=dojo.byId("description");
 		descNode.value=appendSuffix(descNode.value,suffix);
 	}
-	var taskDesc={};
-	<c:forEach items="${taskIds}" var="task"> 
-		taskDesc[${task.id}]="${task.name}";
-	</c:forEach>
+	var taskIdDesc;
 	function changeTaskDesc(taskField){
-		var taskIdDesc=dojo.byId("taskIdDesc");
+		if (taskIdDesc) {taskIdDesc.hide();}
 		var id=taskField.options[taskField.selectedIndex].value;
-		taskIdDesc.innerHTML=taskDesc[id];
+		taskIdDesc=dojo.byId("taskIdDesc"+id);
+		taskIdDesc.show();
 	}
 </script> 
 <meta name="heading" content="Edit Task Properties: ${flow.name}" />
 </head>
-
+<body onLoad="changeTaskDesc(dojo.byId('taskIdSelect'));">
 <p>${flow.description}</p>
 
 <div class="actionBox">
@@ -75,8 +73,12 @@ ${messageContext.allMessages}
  
        <fieldset>
         <label class="label">Task Collection:</label>
-        <form:select path="taskId" items="${taskIds}" itemLabel="name" itemValue="id" onchange="changeTaskDesc(this);"/>
+        <form:select path="taskId" id="taskIdSelect" 
+        	items="${taskIds}" itemLabel="name" itemValue="id" onchange="changeTaskDesc(this);"/>
         <div id="taskIdDesc"></div>
+        <c:forEach items="${taskIds}" var="task"> 
+			<div id="taskIdDesc${task.id}" style="display:none;">${task.description};</div>
+		</c:forEach>
       </fieldset>
       <c:forEach items="${componentList}" var="component" varStatus="status">
         <c:if test="${(!component.hidden)&&(not empty componentMap[component])}">
@@ -99,3 +101,4 @@ ${messageContext.allMessages}
     </form:form>
   </div>
 </div>
+</body>

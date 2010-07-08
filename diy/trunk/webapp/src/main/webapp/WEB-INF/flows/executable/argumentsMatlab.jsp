@@ -136,7 +136,7 @@
 		</fieldset>
 
 		<fieldset>
-			<c:set var="nums">0,1,2,3</c:set>
+			<c:set var="nums">1,2,3,4</c:set>
 			<div>
 				<label class="label fixed">Input Files:</label>
 					<select name="inputNo" id='inputParam'>
