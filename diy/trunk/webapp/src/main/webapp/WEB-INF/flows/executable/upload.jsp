@@ -11,7 +11,7 @@
                 var archiveLabelMessage = 'Archive containing the executable:';
                 var uploadedArchiveLabelMessage='Chosen archive containing the executable:';
                 var executableLabelMessage='Path to the executable inside the archive:';
-                
+                $('executableName').show();
                 if(val ==0){ // JAVA
                 archiveLabelMessage = 'Executable JAR or ZIP file containing JARs:';
                 uploadedArchiveLabelMessage = 'Chosen executable JAR or ZIP file containing JARs:';
@@ -20,6 +20,9 @@
                 archiveLabelMessage = 'ZIP archive containing MATLAB script(s):';
                 uploadedArchiveLabelMessage = 'Chosen archive containing MATLAB script(s):';
                 executableLabelMessage='Path to the MATLAB script: ';
+                //$('executableNameInput').value="";
+                $('executableName').hide();
+                
                 }else if(val==2){ // C
                 archiveLabelMessage = 'ZIP archive containing C executable binary:';
                 uploadedArchiveLabelMessage = 'Chosen archive containing C executable binary:';
@@ -32,9 +35,7 @@
                 $('archiveLabel').innerHTML=archiveLabelMessage;
                 $('uploadedArchiveLabel').innerHTML=uploadedArchiveLabelMessage;
                 $('executableNameLabel').innerHTML=executableLabelMessage;
-function fixLabels(){
-	alert("here....");
-}
+
 
                 }
                 
@@ -78,9 +79,9 @@ function fixLabels(){
         <input type="submit" name="_eventId_clearArchive" value="Clear Archive" />
     </fieldset>
 
-    <fieldset>
+    <fieldset id="executableName">
         <label id="executableNameLabel"  class="label">Main class including the package:</label>
-        <form:input path="executableName" />
+        <form:input path="executableName" id="exectuableNameInput"/>
     </fieldset>
     <fieldset id="preferredOsLabel" >
         <label class="label">Operating system required to run the executable:</label>
@@ -92,11 +93,5 @@ function fixLabels(){
     </fieldset>
 </form:form>
 
-<script>
-jQuery(document).ready( function() {
-	  // put your code here
-		console.log("hello world");
-	}); 
-</script>
 
 </body>

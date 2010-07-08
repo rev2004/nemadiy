@@ -37,7 +37,8 @@
 		<constructor-arg value="rmi://nema.lis.uiuc.edu:2099/jackrabbit.repository"/>
 	</bean>
 	<bean id="resource"
-		class="org.imirsel.nema.contentrepository.client.ResourceTypeServiceImpl" />
+		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl" 
+		p:repositoryClientConnectionPool-ref="repositoryClientConnectionPool"/>
 	<bean id="commandLineFormatter"
 		class="org.imirsel.nema.contentrepository.client.CommandLineFormatter" />
 	<bean id="executableValidator"

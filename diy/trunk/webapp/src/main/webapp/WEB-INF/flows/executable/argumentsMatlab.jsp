@@ -139,9 +139,9 @@
 			<c:set var="nums">0,1,2,3</c:set>
 			<div>
 				<label class="label fixed">Input Files:</label>
-					<select name="input" id='inputParam'>
+					<select name="inputNo" id='inputParam'>
 						<option value="">Select</option>
-						<c:forEach items="${supportedFiles}" var="file">
+						<c:forEach items="${supportedInputFiles}" var="file">
 							<option value="${file.value}">${file.name}</option>
 						</c:forEach>
 					</select>
@@ -155,9 +155,9 @@
 			</div>
 			<div>
 				<label class="label">Output Files:</label>
-					<select name="output" id='outputParam'>
+					<select name="outputNo" id='outputParam'>
 						<option value="">Select</option>
-						<c:forEach items="${supportedFiles}" var="file">
+						<c:forEach items="${supportedOutputFiles}" var="file">
 							<option value="${file.value}">${file.name}</option>
 						</c:forEach>
 					</select>

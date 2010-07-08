@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.model.FileDataType;
 import org.imirsel.nema.model.GroupDataType;
 import org.imirsel.nema.model.NemaTask;
@@ -14,7 +16,7 @@ import org.imirsel.nema.model.util.FileConversionUtil;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.imirsel.nema.webapp.service.ResourceTypeService;
-import org.imirsel.nema.webapp.service.TaskDataType;
+import org.imirsel.nema.webapp.webflow.TasksServiceImpl;
 
 
 /**Returns various resource types
@@ -28,6 +30,8 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 	/**Version of this class
 	 * 
 	 */
+	static private Log logger = LogFactory.getLog(ResourceTypeServiceImpl.class);
+
 	private static final long serialVersionUID = 5186004401706711111L;
 	private final List<OsDataType> supportedOsList  = new ArrayList<OsDataType>();
 	private final List<GroupDataType> groupList = new ArrayList<GroupDataType>();
@@ -47,7 +51,8 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 	 *  @param taskId the numeric id of the task
 	 *  @return list of the input file data types that are relevant to the taskId
 	 */
-	public final List<FileDataType> getSupportedInputFileDataTypes(int taskId){
+	public final List<FileDataType> getSupportedInputFileDataTypes(int taskId) throws SQLException{
+		logger.debug("Start loading Input file list for task "+taskId+" at "+System.currentTimeMillis());
 		RepositoryClientInterface client = repositoryClientConnectionPool.getFromPool();
 		List<FileDataType> flist = new ArrayList<FileDataType>();
 		try {
@@ -56,15 +61,15 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 				FileDataType fdt = new FileDataType(object.getName(),object.getClass().getName());
 				flist.add(fdt);
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally{
+		} finally{
 				if(client!=null)
 				client.close();
+				logger.debug("Finish loading Input file list for task "+taskId+" at "+System.currentTimeMillis());
+				return flist;
 		}
 		
-		return flist;
+		
+		
 	}
 	
 	
@@ -74,6 +79,7 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 	 *  @return list of the output file data types that are relevant to the taskId
 	 */
 	public final List<FileDataType> getSupportedOutputFileDataTypes(int taskId) throws SQLException{
+		
 		RepositoryClientInterface client = repositoryClientConnectionPool.getFromPool();
 		List<FileDataType> flist = new ArrayList<FileDataType>();
 		try {
@@ -85,8 +91,9 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 		}finally{
 			if(client!=null)
 			client.close();
+			return flist;
 		}
-		return flist;
+		
 	}
 	
 	
@@ -138,13 +145,13 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 		List<NemaTask> list = null;
 		try {
 			list=client.getTasks();
-			return list;
 		}finally{
 				if(client!=null)
 				client.close();
+				return list;
 		}
 		
-		return list;
+		
 	}
 
 }

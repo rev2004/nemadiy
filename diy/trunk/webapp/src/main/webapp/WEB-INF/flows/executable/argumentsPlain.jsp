@@ -21,7 +21,8 @@
 
 	
 		
-		<n:argumentsTemplate supportFiles="${supportFiles}" niceParams="${niceParams}" plainTemplate="${plainTemplate}"></n:argumentsTemplate>
+		<n:argumentsTemplate supportedInputFiles="${supportedInputFiles}" supportedOutputFiles="${supportedOutputFiles}" niceParams="${niceParams}" plainTemplate="${plainTemplate}"></n:argumentsTemplate>
+ 
 		
         <n:argumentPagesSubmitButtons/>
         
