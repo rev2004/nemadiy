@@ -86,7 +86,7 @@ public class Page {
         for (; it.hasNext();){
             aPage = it.next();
             //names[idx] = aPage.getName();
-            filenames[idx] = cleanName(aPage.getId()).trim() + ".htm";
+            filenames[idx] = cleanName(aPage.getId()).trim() + ".html";
             idx++;
         }
 
@@ -229,6 +229,7 @@ public class Page {
         out += closeheader(set_name);
         out += createTabs(currPage, pages, pageFileNames);
         out += startContent();
+        out += "<h3>" + currPage.getTitle() + "</h3>\n";
         if(currPage.getAddTOC()){
             out += createIndex(currPage);
         }
@@ -329,8 +330,7 @@ public class Page {
      * @return The index HTML.
      */
     private static String createIndex(Page currPage){
-        String out = "<h3>" + currPage.getTitle() + "</h3>\n";
-        out +="<ul>\n";
+        String out = "<ul>\n";
         for (Iterator<PageItem> it = currPage.getItems().iterator(); it.hasNext();){
             PageItem item = it.next();
             out +="\t<li><a href=\"#" + item.getName() + "\">" + item.getCaption() + "</a></li>\n";
