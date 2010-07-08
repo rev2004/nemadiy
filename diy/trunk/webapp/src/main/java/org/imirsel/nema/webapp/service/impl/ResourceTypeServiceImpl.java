@@ -16,7 +16,7 @@ import org.imirsel.nema.model.util.FileConversionUtil;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.imirsel.nema.webapp.service.ResourceTypeService;
-import org.imirsel.nema.webapp.webflow.TasksServiceImpl;
+
 
 
 /**Returns various resource types
@@ -57,19 +57,25 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 		List<FileDataType> flist = new ArrayList<FileDataType>();
 		try {
 			List<Class<? extends NemaFileType>>  list=FileConversionUtil.getInputFileTypesForTask(taskId, client);
-			for(Class<? extends NemaFileType> object:list){
-				FileDataType fdt = new FileDataType(object.getName(),object.getClass().getName());
+			for(Class<? extends NemaFileType> claszz:list){
+				Object object = claszz.newInstance();
+				FileDataType fdt = new FileDataType(claszz.newInstance().getTypeName(),claszz.getName());
 				flist.add(fdt);
 			}
+			return flist;
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally{
 				if(client!=null)
-				client.close();
+				this.repositoryClientConnectionPool.returnToPool(client);
 				logger.debug("Finish loading Input file list for task "+taskId+" at "+System.currentTimeMillis());
-				return flist;
+			
 		}
-		
-		
-		
+		return flist;
 	}
 	
 	
@@ -83,16 +89,24 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 		RepositoryClientInterface client = repositoryClientConnectionPool.getFromPool();
 		List<FileDataType> flist = new ArrayList<FileDataType>();
 		try {
-			List<Class<? extends NemaFileType>>  list=FileConversionUtil.getInputFileTypesForTask(taskId, client);
-			for(Class<? extends NemaFileType> object:list){
-				FileDataType fdt = new FileDataType(object.getName(),object.getClass().getName());
+			List<Class<? extends NemaFileType>>  list=FileConversionUtil.getOutputFileTypesForTask(taskId, client);
+			for(Class<? extends NemaFileType> claszz:list){
+				FileDataType fdt = new FileDataType(claszz.newInstance().getTypeName(),claszz.getName());
 				flist.add(fdt);
 			}
+			return flist;
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}finally{
 			if(client!=null)
-			client.close();
-			return flist;
+			this.repositoryClientConnectionPool.returnToPool(client);
+			
 		}
+		return flist;
 		
 	}
 	
@@ -147,7 +161,7 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 			list=client.getTasks();
 		}finally{
 				if(client!=null)
-				client.close();
+				this.repositoryClientConnectionPool.returnToPool(client);
 				return list;
 		}
 		
