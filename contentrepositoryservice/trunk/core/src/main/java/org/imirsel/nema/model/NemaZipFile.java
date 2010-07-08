@@ -195,6 +195,20 @@ public class NemaZipFile implements Serializable {
    }
    
    /**
+    * Check whether the zip file has a file with certain extension. 
+    * @param ext
+    * @return true if have at least one file with such extension
+    */
+   public boolean containsExt(String ext){
+	   validateOpened();
+	   boolean contains=false;
+	   Enumeration<? extends ZipEntry> e = sourceZip.entries();
+	   while ( (e.hasMoreElements())&&(!contains)){
+	       contains=contains||(e.nextElement().getName().endsWith(ext));
+	   }
+	   return contains;
+   }
+   /**
     * Test for the presence of the specified class file within the JAR files
     * that are present in this ZIP. The class name must include all package 
     * names (be fully qualified). For example, org.moo.foo.FooBar.
