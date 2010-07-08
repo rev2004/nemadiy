@@ -67,7 +67,6 @@
 	
 
 	<n:argumentsTemplate supportedInputFiles="${supportedInputFiles}" supportedOutputFiles="${supportedOutputFiles}" niceParams="${niceParams}" plainTemplate="${javaTemplate}"></n:argumentsTemplate>
-    ${supportedInputFiles } ${supportedOutputFiles }
     <n:argumentPagesSubmitButtons/>
 
 </form:form>
