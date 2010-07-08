@@ -30,6 +30,15 @@ function setIdx(idx)
 		descNode=dojo.byId("description");
 		descNode.value=appendSuffix(descNode.value,suffix);
 	}
+	var taskDesc={};
+	<c:forEach items="${taskIds}" var="task"> 
+		taskDesc[${task.id}]="${task.name}";
+	</c:forEach>
+	function changeTaskDesc(taskField){
+		var taskIdDesc=dojo.byId("taskIdDesc");
+		var id=taskField.options[taskField.selectedIndex].value;
+		taskIdDesc.innerHTML=taskDesc[id];
+	}
 </script> 
 <meta name="heading" content="Edit Task Properties: ${flow.name}" />
 </head>
@@ -55,13 +64,19 @@ ${messageContext.allMessages}
         <form:select id="submissionCode" path="mirexSubmissionCode" onchange="modifyNameDesc();" items="${mirexSubmissions}" itemLabel="hashcode" itemValue="hashcode"  cssStyle="margin-bottom:5px"/>
  
       </fieldset>
-      <fieldset id="pt1">
+      <fieldset >
         <label class="label">Enter the Job Name:</label>
         <form:input id="name" path="name" cssStyle="width:200px;"/>
       </fieldset>
       <fieldset id="pt1">
         <label class="label">Enter the Job Description:</label>
         <form:input id="description" path="description" cssStyle="width:300px;"/>
+      </fieldset>
+ 
+       <fieldset>
+        <label class="label">Task Collection:</label>
+        <form:select path="taskId" items="${taskIds}" itemLabel="name" itemValue="id" onchange="changeTaskDesc(this);"/>
+        <div id="taskIdDesc"></div>
       </fieldset>
       <c:forEach items="${componentList}" var="component" varStatus="status">
         <c:if test="${(!component.hidden)&&(not empty componentMap[component])}">
@@ -70,8 +85,7 @@ ${messageContext.allMessages}
           <br/>
           <label class="label">Description</label>: ${component.description}          
          <div style="margin-top: 5px">  <input type="submit" name="_eventId_edit"  onclick="setIdx(${status.index})" value="Edit Properties" /></div>
-           
-   
+          
           </fieldset>
         </c:if>
       </c:forEach>

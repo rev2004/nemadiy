@@ -356,6 +356,18 @@ public class TasksServiceImpl {
 	}
 	
 	/**
+	 * @see TasksServiceImpl.replacePropertyValue();
+	 * @param componentMap
+	 * @param name
+	 * @param value
+	 */
+	public void replacePropertyValue(
+			Map<Component, List<Property>> componentMap, String name,
+			int value) {
+		replacePropertyValue(componentMap, name, String.valueOf(value));
+	}
+	
+	/**
 	 * update properties (_submissionCode, _submissionName) from componentMap with the submissions code
 	 * @param componentMap  Properties of all components, Note: corresponding properties are modified
 	 * @param submissionCode 

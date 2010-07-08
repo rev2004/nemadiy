@@ -16,6 +16,7 @@
 		<evaluate expression="tasksService.buildUploadPath(externalContext,jobForm.uuid)" />
 		<evaluate expression="jobForm.setFlowId(flowId)" />
 		<set name="flowScope.mirexSubmissions" value="tasksService.getAllMirexSubmissions()"/>
+		<set name="flowScope.taskIds" value="resource.getSupportedTasks()"/>
 	</on-start>
 
 	<view-state id="selectTask" model="jobForm"  >
@@ -90,7 +91,7 @@
 		<input name="executableBundleInput" value="tasksService.findBundle(jobForm.executableMap[flowScope.component],properties)"
 			type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<input name="executableTemplateInput" value="jobForm.templateMap[flowScope.component]" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
-
+		<input name="taskId" value="jobForm.taskId"/>
 		<output name="executableTemplate" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 		<output name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<transition on="success" to="addExecutableSuccess">
@@ -103,6 +104,7 @@
 	</subflow-state>
 
 	<action-state id="editComponentProperties">
+		<evaluate expression="tasksService.replacePropertyValue(componentMap,'taskID',jobForm.taskId)"/>
 		<evaluate expression="tasksService.getRoles()" result="flowScope.userRoles" />
 		<evaluate expression="componentList.get(requestParameters.idx)" result="flowScope.component" />
 		<set name="flowScope.properties" value="componentMap[flowScope.component]" />

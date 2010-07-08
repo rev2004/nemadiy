@@ -29,6 +29,7 @@ public class JobForm implements Serializable {
 	private String mirexSubmissionCode;
 
 	private UUID uuid;
+	private int taskId;
 
 	public final static String IMPOSSIBLE="NON-SUBMISSION";
 	/**
@@ -88,6 +89,14 @@ public class JobForm implements Serializable {
 
 	public String getMirexSubmissionCode() {
 		return mirexSubmissionCode;
+	}
+
+	public void setTaskId(int taskId) {
+		this.taskId = taskId;
+	}
+
+	public int getTaskId() {
+		return taskId;
 	}
 
 }
