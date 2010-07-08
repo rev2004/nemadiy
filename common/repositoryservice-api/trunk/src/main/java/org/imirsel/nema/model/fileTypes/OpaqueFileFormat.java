@@ -29,6 +29,11 @@ public class OpaqueFileFormat extends NemaFileTypeImpl {
 	public static final String TYPE_NAME = "Opaque format file on disk";
 	String extension;
 	
+	public OpaqueFileFormat() {
+		super(TYPE_NAME, false);
+		this.setFilenameExtension("");
+	}
+	
 	public OpaqueFileFormat(String extension) {
 		super(TYPE_NAME, false);
 		this.setFilenameExtension(extension);
