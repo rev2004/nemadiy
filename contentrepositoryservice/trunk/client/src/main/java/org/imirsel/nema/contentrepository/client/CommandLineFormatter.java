@@ -18,6 +18,7 @@ import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
  * 
  * @author kumaramit01
  * @since 0.0.1
+ * @version 0.0.4 -modified the matlab  command line formatter to add function call
  */
 public class CommandLineFormatter {
 	
@@ -121,6 +122,11 @@ public class CommandLineFormatter {
 		if(paramString!=null){
 			sbuilder.append(" "+paramString);
 		}
+		
+		if(pct.getFunctionCall()!=null){
+			sbuilder.append(" "+ pct.getFunctionCall());
+		}
+		
 		
 		return sbuilder.toString();
 	}
