@@ -126,12 +126,10 @@ public class TableItem extends PageItem{
     	String out = "\t<a name=\"" + getName() + "\"></a>\n" +
         "\t<h4>" + getCaption();
 		if (topLink){
-		    out += "&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"toplink\"><a href=\"#top\">[top]</a></span>\n";
+		    out += "&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"toplink\"><a href=\"#top\">[top]</a></span>";
 		}
+		out += "</h4>\n";
         out += "\t<div id=\"" + getName() + "\"></div>\n";
-        if (topLink){
-            out += "<span class=\"toplink\"><a href=\"#top\">[top]</a></span>\n";
-        }
         out += "\t<br><br>\n";
         return out;
     }
