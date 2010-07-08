@@ -18,7 +18,7 @@ caption {
 
 td, th {
     padding: 4px;
-        text-align: center;
+        text-align: left;
 }
 
 th {
@@ -26,7 +26,7 @@ th {
 }
 
 thead th {
-    text-align: center;
+    text-align: left;
     background: #E6EDF5;
     color: #2C639E;
     font-size: 100% !important;
