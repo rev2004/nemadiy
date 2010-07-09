@@ -65,7 +65,7 @@ public abstract class RemoteDynamicComponent extends NemaComponent {
 	@ComponentProperty(defaultValue = "test:test", description = "", name = "_credentials")
 	private static final String PROPERTY_4 ="_credentials";
 	
-	@StringDataType(valueList={"imirsel","imirsel"}, labelList={"imirsel","imirsel"})
+	@StringDataType(valueList={"imirsel","mcgill"}, labelList={"imirsel","mcgill"})
 	@ComponentProperty(defaultValue = "imirsel", description = "execution group", name = "_group")
 	private static final String PROPERTY_5 ="_group";
 	

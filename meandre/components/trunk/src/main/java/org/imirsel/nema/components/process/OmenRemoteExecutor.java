@@ -229,8 +229,12 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				//We may not need to do this as we already know the paths to outputTypes on shared storage
 				List<ProcessArtifact> list = this.getResult(nemaProcess);
 				
-				getLogger().info("GOT RESULTS PUSHING RESULT: " + list.get(0).getResourcePath());
-				
+				if(list.size()>0){
+					getLogger().info("got results pushing the results: " + list.get(0).getResourcePath());
+				}else{
+					getLogger().info("Error -could not get the results; Aborting the flow");
+					throw new ComponentExecutionException("Error -no output results");
+				}
 				cc.pushDataComponentToOutput(DATA_OUT_PROCESS_ARTIFACT, list);
 				
 				/*ProcessArtifact processArtifact= list.get(0);
