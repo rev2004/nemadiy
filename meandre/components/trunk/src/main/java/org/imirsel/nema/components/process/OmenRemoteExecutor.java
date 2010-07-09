@@ -16,6 +16,7 @@ import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
+import org.imirsel.nema.model.fileTypes.MultipleTrackEvalFileType;
 import org.imirsel.nema.model.fileTypes.NemaFileType;
 import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
 import org.imirsel.nema.monitor.process.NemaProcess;
@@ -198,9 +199,17 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				
 				inputs.add(paInputs);
 				
-				ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(), "File", outputType1.getClass().getName());
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
-				outputs.add(paOutputs);
+				if ( MultipleTrackEvalFileType.class.isAssignableFrom(inputType1) &&  SingleTrackEvalFileType.class.isAssignableFrom(outputType1)){
+					//output is a directory rather than a file!
+					ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(), "Directory", outputType1.getClass().getName());
+					outputs.add(paOutputs);
+				}else{
+					//output is a file
+					ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(), "File", outputType1.getClass().getName());
+					outputs.add(paOutputs);
+				}
+				
 				
 				ProcessExecutionProperties pep = new ProcessExecutionProperties();
 				pep.setId(cc.getFlowExecutionInstanceID());
