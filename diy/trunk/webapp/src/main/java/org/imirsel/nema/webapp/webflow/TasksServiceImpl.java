@@ -189,7 +189,7 @@ public class TasksServiceImpl {
 			SimpleCredentials credential)
 			throws ContentRepositoryServiceException {
 		logger.info("Calling deleteExecutableFromRepository -commmenting it out. This will impact clear bundle function");
-		/*try {
+		try {
 			if ((path != null) && (artifactService.exists(credential, path))) {
 				logger.info("remove from content repository executable bundle:"
 						+ path);
@@ -199,7 +199,7 @@ public class TasksServiceImpl {
 			logger.error(e, e);
 			throw (e);
 		}
-		*/
+		
 
 	}
 
@@ -429,7 +429,7 @@ public class TasksServiceImpl {
 		String templateFlowId = flow.getId().toString();
 		String templateFlowUri = flow.getUri();
 
-		logger.debug("start to test run");
+		logger.debug("start to run");
 		if (templateFlowId == null || templateFlowUri == null) {
 			logger
 					.error("flowId or flowUri is null -some severe error happened...");
@@ -485,7 +485,7 @@ public class TasksServiceImpl {
 		Job job = this.flowService.executeJob(credential, token, name,
 				description, instanceId, user.getId(), user.getEmail());
 
-		logger.info("After calling execute Job");
+		logger.info("Finish calling execute Job");
 		return job;
 
 	}
