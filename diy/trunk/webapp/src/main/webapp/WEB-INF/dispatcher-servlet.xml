@@ -26,6 +26,9 @@
 				<prop key="org.springframework.remoting.RemoteConnectFailureException">
 					remoteAccessFailure
                 </prop>
+                <prop key="org.springframework.remoting.RemoteAccessException">
+					remoteAccessFailure
+                </prop>
 				<prop key="org.springframework.remoting.RemoteLookupFailureException">
 					remoteAccessFailure
                 </prop>
