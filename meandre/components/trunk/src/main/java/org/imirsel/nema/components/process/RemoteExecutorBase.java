@@ -236,8 +236,9 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 			e1.printStackTrace();
 		}
 		System.out.println("PROCESS TEMPLATE: " + this.getProcessTemplate().getName() + "  " + this.getProcessTemplate().getId());
-		Name name = new Name(this.getProcessTemplate().getName());
-		getLogger().info("Profile Name is: " + this.getProcessTemplate().getName());
+		
+		//Name name = new Name(this.getProcessTemplate().getName());
+		//getLogger().info("Profile Name is: " + this.getProcessTemplate().getName());
 		
 		DynamicType dynamicType = new DynamicType();
 		OsType osType = new OsType(this.getOS());
@@ -245,13 +246,22 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		
 		ProcessExecutorService executorService=null;
 		
-		Entry[] attrList = new Entry[]{name};
+		/*Entry[] attrList = new Entry[]{name};
 		Class<ProcessExecutorService>[] classes = new Class[1]; 
 		classes[0] = ProcessExecutorService.class;
 		ServiceTemplate template = new ServiceTemplate(null,classes,attrList);
 				ServiceMatches serviceMatches=registrar.lookup(template,10);
 				ProcessExecutorService serviceFound=null;
-				
+			*/
+		
+		Entry[] attrList = new Entry[]{osType,rgt,dynamicType};
+		Class<ProcessExecutorService>[] classes = new Class[1]; 
+		classes[0] = ProcessExecutorService.class;
+		ServiceTemplate template = new ServiceTemplate(null,classes,attrList);
+		ServiceMatches serviceMatches=registrar.lookup(template,10);
+		ProcessExecutorService serviceFound=null;
+
+		
 				if(serviceMatches.totalMatches>0){
 					getLogger().info("Found:  " + serviceMatches.totalMatches);
 					int min = Integer.MAX_VALUE;
@@ -266,7 +276,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 					
 					
 				}else{
-					getLogger().info("NO PROCESS EXECUTOR SERVICE FOUND: "  + name);
+					getLogger().info("NO PROCESS EXECUTOR SERVICE FOUND: " );
 				}
 				
 				if(serviceFound==null){
