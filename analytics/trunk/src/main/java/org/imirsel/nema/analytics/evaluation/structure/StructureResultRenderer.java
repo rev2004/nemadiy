@@ -395,6 +395,13 @@ public class StructureResultRenderer extends ResultRendererImpl {
 			double startTimeSecs = 0.0;
 			double endTimeSecs = 0;
 			
+			if(results.getTrackIDToGT() != null){
+				groundtruth = results.getTrackIDToGT().get(trackId);
+			}
+			if(groundtruth == null){
+				getLogger().warning("No ground-truth found for '" + trackId + "' to be used in plotting");
+			}
+			
 			List<NemaSegment> rawGtData = null;
 			if(groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA)){
 				rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
