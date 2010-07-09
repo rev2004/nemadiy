@@ -77,8 +77,9 @@ public class FileConversionUtil {
 		//register known list file types for known metadata keys
 		{
 			//setup raw audio file input type
-			List<Class<? extends NemaFileType>> rawAudioTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
+			List<Class<? extends NemaFileType>> rawAudioTypeList = new ArrayList<Class<? extends NemaFileType>>(2);
 			rawAudioTypeList.add(RawAudioFile.class);
+			rawAudioTypeList.add(TrackListTextFile.class);
 			//setup track list file input type
 			List<Class<? extends NemaFileType>> trackListTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			trackListTypeList.add(TrackListTextFile.class);
