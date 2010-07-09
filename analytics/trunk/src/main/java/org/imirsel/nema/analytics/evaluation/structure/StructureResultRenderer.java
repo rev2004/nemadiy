@@ -306,12 +306,12 @@ public class StructureResultRenderer extends ResultRendererImpl {
 				//setup data-series to plot
 				Map<String,List<NemaSegment>> series = new HashMap<String, List<NemaSegment>>(2);
 				List<String> seriesNames = new ArrayList<String>(2);
-				series.put("Prediction", (List<NemaSegment>) rawData);
-				seriesNames.add("Prediction");
 				if(rawGtData != null){
 					series.put("Ground-truth", (List<NemaSegment>) rawGtData);
 					seriesNames.add("Ground-truth");
 				}
+				series.put("Prediction", (List<NemaSegment>) rawData);
+				seriesNames.add("Prediction");
 				try{
 					ProtovisSegmentationPlotItem plot = new ProtovisSegmentationPlotItem(
 							//plotname
