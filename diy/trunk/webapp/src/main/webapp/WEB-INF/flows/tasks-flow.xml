@@ -149,7 +149,5 @@
 		<transition on-exception="org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException" to="runError" />
 	</global-transitions>
 
-	<on-end>
-		<evaluate expression="tasksService.clearBundles(jobForm.executableMap)" />
-	</on-end>
+	
 </flow>
