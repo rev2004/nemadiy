@@ -5,6 +5,10 @@
 
 package org.imirsel.nema.analytics.evaluation.resultpages;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
@@ -24,37 +28,327 @@ public class ProtovisOnsetPlotItem extends PageItem{
 	public static final DecimalFormat MS_FORMAT = new DecimalFormat("###.# ms");
 	public static final DecimalFormat TIMESTAMP_FORMAT = new DecimalFormat("###.###");
 	
+	private static final int HOFFSET = 0;
+	private static final int FOCUSOFFSET = 15;
+	private static final int HSEP = 15;
+	private static final int LEGENDOFFSET = 60;
+	private static final int FOCUS_SERIES_HEIGHT = 23;
+	private static final int CONTEXT_SERIES_HEIGHT = 10;
+	
 	private double startTime;
     private double endTime;
     private Map<String,double[]> series;
     private List<String> seriesNames; 
+    private List<Boolean> isGroundtruth;
     
     public ProtovisOnsetPlotItem(String name, String caption, 
     		double startTime, double endTime, 
-    		Map<String,double[]> series, List<String> seriesNames){
+    		Map<String,double[]> series, List<String> seriesNames, 
+    		List<Boolean> isGroundtruth,File outputDir) throws IOException{
     	
         super(name,caption);
         setStartTime(startTime);
         setEndTime(endTime);
         setSeries(series);
         setSeriesNames(seriesNames);
+        setIsGroundtruth(isGroundtruth);
+        writeOutData(outputDir);
     }
     
+    private void writeOutData(File dir) throws IOException{
+    	File outFile = new File(dir.getPath() + File.separator + this.getName() + ".js");
+    	
+    	String out = "var " + this.getName() + "_data = [\n";
+        for (int s = 0; s < getSeriesNames().size(); s++) {
+        	out += "[";
+        	double[] data = series.get(seriesNames.get(s));
+			for (int i=0;i<data.length;i++) {
+				out += TIMESTAMP_FORMAT.format(data[i]);
+				if(i<data.length-1){
+					out +=", ";
+				}
+			}
+			if(s<seriesNames.size()-1){
+				out +="],\n";
+			}else{
+				out +="]\n";
+			}
+		}
+        out += "];\n\n";
+        
+        out += "var " + this.getName() + "_seriesNames = [";
+        for (int j = 0; j < getSeriesNames().size(); j++) {
+			out += "\"" + getSeriesNames().get(j) + "\"";
+			if (j < getSeriesNames().size()-1){
+				out += ",";
+			}
+		}
+        out += "];\n";
+        
+        out += "var " + this.getName() + "_isGroundtruth = [";
+        for (int j = 0; j < getIsGroundtruth().size(); j++) {
+			out += getIsGroundtruth().get(j);
+			if (j < getIsGroundtruth().size()-1){
+				out += ",";
+			}
+		}
+        out += "];\n";
+        
+        
+        BufferedWriter writer = null;
+        try{
+	        writer = new BufferedWriter(new FileWriter(outFile));
+	        writer.write(out);
+	        writer.flush();
+	        
+        }finally{
+        	if (writer != null){
+        		writer.close();
+        	}
+        }
+    }
 
     public String getHeadStaticDeclarations(){
     	//for javascript debugging use: protovis-d3.2.js
     	//String out = "<script type=\"text/javascript\" src=\"protovis-d3.2.js\"></script>\n" +
 		
-    	String out = "<script type=\"text/javascript\" src=\"protovis-r3.2.js\"></script>\n";
+    	String out = "<script type=\"text/javascript\" src=\"protovis-r3.2.js\"></script>\n\n" +
+		"<script type=\"text/javascript+protovis\">\n" +
+		"	var predictionColor = \"salmon\";\n" +
+		"	var gtColor = \"steelblue\";\n" +
+		"	 \n" +
+		"	function loadScript(url, plot){\n" +
+		"		var loadedscript = document.createElement('script');\n" +
+		"	    loadedscript.setAttribute(\"type\",\"text/javascript\");\n" +
+		"	  	\n" +
+		"	    if (loadedscript.readyState){  //IE\n" +
+		"	        loadedscript.onreadystatechange = function(){\n" +
+		"	            if (loadedscript.readyState == \"loaded\" ||\n" +
+		"	                    loadedscript.readyState == \"complete\"){\n" +
+		"	                loadedscript.onreadystatechange = null;\n" +
+		"	                plot.setLoaded();\n" +
+		"	            }\n" +
+		"	        };\n" +
+		"	    } else {  //Others\n" +
+		"	        loadedscript.onload = function(){\n" +
+		"	            plot.setLoaded();\n" +
+		"	        };\n" +
+		"	    }\n" +
+		"	    loadedscript.setAttribute(\"src\", url);\n" +
+		"	    document.body.appendChild(loadedscript);\n" +
+		"	}\n" +
+		"	 \n" +
+		"	function init_onset_plot(start,end,numseries){\n" +
+		"		/* Scales and sizing. */\n" +
+		"		var w = 810,\n" +
+		"		    hOffset = " + HOFFSET + ",\n" +
+		"			hSep = " + HSEP + ",\n" + 
+		"		    legendOffset = " + LEGENDOFFSET + ",\n" +
+		"		    h1 = " + FOCUSOFFSET + " + 3 + " + FOCUS_SERIES_HEIGHT + " * numseries,\n" +
+		"		    h2 = " + CONTEXT_SERIES_HEIGHT + " * numseries,\n" +
+		"		    totalHeight = h1 + 20 + h2 + 15 + hOffset + hSep,\n" +
+		"		    x = pv.Scale.linear(start, end).range(0, w-legendOffset),\n" +
+		"		    i = -1;\n" +
+		"\n" + 
+		"		/* Root panel. */\n" +
+		"		var vis = new pv.Panel()\n" +
+		"		    .width(w)\n" +
+		"		    .height(h1 + 20 + h2 + hOffset + hSep)\n" +
+		"		    .bottom(25)\n" +
+		"		    .left(30)\n" +
+		"		    .right(20)\n" +
+		"		    .top(10);\n" +
+		"\n" + 
+		"		vis.render();\n" +
+		"		\n" +
+		"		var loaded = false;\n" +
+		"		\n" +
+		"		return {\n" +
+		"			setLoaded : function(){loaded = true;},\n" +
+		"			isLoaded : function(){return loaded;},\n" +
+		"			plot : function(data,seriesNames,isGroundtruth){\n" +
+		"				/* Interaction state. Focus scales will have domain set on-render. */\n" +
+		"				var i = {x:0, dx:100},\n" +
+		"				    fx = pv.Scale.linear().range(0, w-legendOffset);\n" +
+		"\n" + 
+		"				/* Legend area. */\n" +
+		"				var legend = vis.add(pv.Panel)\n" +
+		"				    .left(0)\n" +
+		"				    .width(legendOffset)\n" +
+		"				    .height(totalHeight)\n" +
+		"				    .top(0);\n" +
+		"				legend.add(pv.Label)\n" +
+		"				    .data(seriesNames)\n" +
+		"				    .textAlign(\"right\")\n" +
+		"				    .textBaseline(\"middle\")\n" +
+		"				    .top(function() " + (FOCUSOFFSET + 18) + " +((numseries - (1+this.index)) * " + FOCUS_SERIES_HEIGHT + ")) \n" +
+		"				    .height(10)\n" +
+		"				    .right(0)\n" +
+		"				    .text(function(d) d);\n" +
+		"				legend.add(pv.Label)\n" +
+		"				    .text('time (secs)')\n" +
+		"				    .textAlign(\"right\")\n" +
+		"				    .height(10)\n" +
+		"				    .right(5)\n" +
+		"				    .textBaseline(\"top\")\n" +
+		"				    .bottom(15);\n" +
+		"				legend.add(pv.Label)\n" +
+		"				    .text('time (secs)')\n" +
+		"				    .textAlign(\"right\")\n" +
+		"				    .height(10)\n" +
+		"				    .right(5)\n" +
+		"				    .textBaseline(\"top\")\n" +
+		"				    .top(hOffset + h1);\n" +
+		"\n" + 
+		"				/* Focus panel (zoomed in). */\n" +
+		"				var focus = vis.add(pv.Panel)\n" +
+		"				    .left(legendOffset)\n" +
+		"				    .def(\"init_data\", function() {\n" +
+		"				        var d1 = x.invert(i.x),\n" +
+		"				            d2 = x.invert(i.x + i.dx);\n" +
+		"				        var out = new Array(numseries);\n" +
+		"				        for(s=0;s<numseries;s=s+1){;\n" +
+		"				            offsetsearch = pv.search.index(data[s], d1, function(d) d),\n" +
+		"				            firstvisible = offsetsearch >= 0 ? offsetsearch : -(1+offsetsearch),\n" +
+		"				            onsetsearch = pv.search.index(data[s], d2, function(d) d),\n" +
+		"				            lastvisible = onsetsearch >= 0 ? onsetsearch : -(1+onsetsearch),\n" +
+		"					          out[s] = data[s].slice(firstvisible,lastvisible+1);\n" +
+		"					    }\n" +
+		"					    fx.domain(d1, d2);\n" +
+		"					    return out;\n" +
+		"				      })\n" +
+		"					.def(\"focus_length\", function() {\n" +
+		"						return \"showing: \" + x.invert(i.x).toFixed(2) + \" to \" + x.invert(i.x + i.dx).toFixed(2) + \" seconds\";\n" + 
+		"					 })\n" +
+		"				    .top(hOffset)\n" +
+		"				    .height(h1);\n" +
+		"\n" + 
+		"				/* X-axis ticks. */\n" +
+		"				focus.add(pv.Rule)\n" +
+		"				    .data(function() fx.ticks())\n" +
+		"				    .left(fx)\n" +
+		"				    .strokeStyle(\"#eee\")\n" +
+		"				  .anchor(\"bottom\").add(pv.Label)\n" +
+		"				    .text(fx.tickFormat);\n" +
+		"\n" + 
+		"				/* Focus area chart. */\n" +
+		"				focus.add(pv.Panel)\n" +
+		"				    .overflow(\"hidden\")\n" +
+		"				    .data(function() focus.init_data())\n" +
+		"				  .add(pv.Dot)\n" +
+		"					.data(function(array) array)\n" +
+		"				    .overflow(\"hidden\")\n" +
+		"				    .lineWidth(1.5)\n" +
+		"				    .antialias(true)\n" +
+		"				    .left(function(d) fx(d))\n" +
+		"				    .bottom(function() 8 + (" + FOCUS_SERIES_HEIGHT + "*this.parent.index))\n" +
+		"				    .size(7)\n" +
+//		"				    .strokeStyle(function() isGroundtruth == true ? gtColor : predictionColor)\n" +
+//		"				    .fillStyle(function() this.strokeStyle().alpha(.2))\n" +
+		"				    .fillStyle(function() isGroundtruth[this.parent.index] ? gtColor : predictionColor)\n" +
+		"				    .strokeStyle(null)\n" +
+		"				    .title(function(d) d.toFixed(2));\n" +
+		"\n" + 
+		"				focus.add(pv.Label)\n" + 
+		"				   .right(10)\n" +  
+		"				   .top(12)\n" +  
+		"				   .textAlign(\"right\")\n" +  
+		"				   .text(function() focus.focus_length());\n" +  
+		"\n" + 
+		"				focus.add(pv.Dot)\n" + 
+		"				   .data([\"Predictions\"])\n" +  
+		"				   .left(10)\n" +  
+		"				   .top(12)\n" + 
+		"				   .size(7)\n" + 
+		"				   .fillStyle(predictionColor)\n" +
+		"				   .strokeStyle(null)\n" +
+		"				   .anchor(\"right\").add(pv.Label);\n" +  
+		"\n" + 
+		"				focus.add(pv.Dot)\n" + 
+		"				   .data([\"Ground-truth\"])\n" +  
+		"				   .left(90)\n" +  
+		"				   .top(12)\n" + 
+		"				   .size(6)\n" + 
+		"				   .fillStyle(gtColor)\n" +
+		"				   .strokeStyle(null)\n" +
+		"				   .anchor(\"right\").add(pv.Label);\n" +  
+		"\n" + 
+		"				/* Context panel (zoomed out). */\n" +
+		"				var context = vis.add(pv.Panel)\n" +
+		"				    .left(legendOffset)\n" +
+		"				    .bottom(0)\n" +
+		"				    .height(h2);\n" +
+		"\n" + 
+		"				/* X-axis ticks. */\n" +
+		"				context.add(pv.Rule)\n" +
+		"				    .data(x.ticks())\n" +
+//		"				    .bottom(15)\n" +
+		"				    .left(x)\n" +
+		"				    .strokeStyle(\"#eee\")\n" +
+		"				  .anchor(\"bottom\").add(pv.Label)\n" +
+		"				    .text(x.tickFormat);\n" +
+		"\n" + 
+		"				context.add(pv.Rule)\n" +
+		"				    .bottom(0);\n" +
+		"				context.add(pv.Rule)\n" +
+		"				    .left(0);\n" +
+		"\n" + 
+		"				focus.add(pv.Rule)\n" +
+		"				    .bottom(0);\n" +
+		"				focus.add(pv.Rule)\n" +
+		"				    .left(0);\n" +
+		"\n" + 
+		"				/* Context area chart. */\n" +
+		"				context.add(pv.Panel)\n" +
+		"				    .data(data)\n" +
+		"				  .add(pv.Dot)\n" +
+		"					.data(function(array) array)\n" +
+		"				    .overflow(\"hidden\")\n" +
+		"				    .lineWidth(1.5)\n" +
+		"				    .antialias(true)\n" +
+		"				    .left(function(d) x(d))\n" +
+		"				    .bottom(function() 3 + (" + CONTEXT_SERIES_HEIGHT + "*this.parent.index))\n" +
+		"				    .height(10)\n" +
+		"				    .size(3)\n" +
+		"				    .strokeStyle(null)\n" +
+		"				    .fillStyle(function() isGroundtruth[this.parent.index] ? gtColor : predictionColor)\n" +
+		"				    .title(function(d) d.toFixed(2));\n" +
+		"\n" + 
+		"				/* The selectable, draggable focus region. */\n" +
+		"				context.add(pv.Panel)\n" +
+		"				    .data([i])\n" +
+		"				    .bottom(0)\n" +
+		"				    .cursor(\"crosshair\")\n" +
+		"				    .events(\"all\")\n" +
+		"				    .event(\"mousedown\", pv.Behavior.select())\n" +
+		"				    .event(\"select\", focus)\n" +
+		"					.title(\"click and drag to select new focus region\")" + 
+		"				  .add(pv.Bar)\n" +
+		"				    .left(function(d) d.x)\n" +
+		"				    .width(function(d) d.dx)\n" +
+		"				    .fillStyle(\"rgba(255, 128, 128, .4)\")\n" +
+		"				    .strokeStyle(\"rgb(255, 128, 128)\")\n" +
+		"				    .lineWidth(1)\n" +
+		"				    .antialias(false)\n" +
+		"					.title(\"drag to move focus region\")" + 
+		"				    .cursor(\"move\")\n" +
+		"				    .event(\"mousedown\", pv.Behavior.drag())\n" +
+		"				    .event(\"drag\", focus);\n" +
+		"\n" + 
+		"					vis.render();\n" +
+		"					\n" +
+		"				}\n" +
+		"			};\n" +
+		"		}\n" +
+		"</script>\n";
 		return out;
     }
-    
     
     @Override
     public String getHeadData(){
     	return "";
     }
-
+    
     @Override
     public String getBodyData(boolean topLink){
     	System.out.println("generating onset plot HTML for: " + getName());
@@ -65,228 +359,35 @@ public class ProtovisOnsetPlotItem extends PageItem{
 		}
 		out += "</h4>\n";
 		
-		int height = (3 + 12 * series.size()) + (15 + 5 * series.size()) + 20 + 4;
+		int height = HOFFSET + FOCUSOFFSET + (3 + FOCUS_SERIES_HEIGHT * series.size()) + HSEP + (CONTEXT_SERIES_HEIGHT * series.size()) + 20 + 2 + 20 + 10;
 		
 		out += 	"\t<div id=\"center\">\n" + 
-		       	"\t\t<div style=\"width: 860px; height: " + height + "px; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;\">\n";
+		       	"\t\t<div style=\"width: 860px; height: " + height + "px;; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;\">\n";
 		
-		String functionName = getName() + "_onset_plot";
-		String[] seriesNames = this.seriesNames.toArray(new String[series.size()]);
-
-        
 		out +=  "\t\t<script type=\"text/javascript+protovis\">\n" +
-				"\t\t\tvar " + functionName + " = function() {\n";
-		
-		//setup data
-        
-        out +=  INDENT + "var start = " + startTime + ";\n" +
-        		INDENT + "var end = " + endTime + ";\n" + 
-        		INDENT + "var numseries = " + seriesNames.length + ";\n" + 
-        		
-        		INDENT + "/* Scales and sizing. */\n" + 
-			    INDENT + "var w = 810,\n" + 
-			    INDENT + "    hOffset = 0,\n" + 
-			    INDENT + "    legendOffset = 60,\n" + 
-			    INDENT + "    h1 = 3 + 12 * numseries,\n" + 
-			    INDENT + "    h2 = 15 + 5 * numseries,\n" +
-			    INDENT + "    totalHeight = h1 + 20 + h2 + hOffset;\n\n" + 
-			    
-			    INDENT + "/* Root panel. */\n" + 
-			    INDENT + "var vis = new pv.Panel()\n" + 
-			    INDENT + "    .width(w)\n" + 
-			    INDENT + "    .height(totalHeight)\n" + 
-			    INDENT + "    .bottom(20)\n" + 
-			    INDENT + "    .left(30)\n" + 
-			    INDENT + "    .right(20)\n" + 
-			    INDENT + "    .top(5);\n\n" +
-			    INDENT + "vis.render();\n\n";
-        
-        	out += INDENT + "var data = [\n";
-        	for (int s = 0; s < seriesNames.length; s++) {
-        		out += "[";
-    			double[] data = series.get(seriesNames[s]);
-				for (int i=0;i<data.length;i++) {
-					out += TIMESTAMP_FORMAT.format(data[i]);
-					if(i<data.length-1){
-						out +=", ";
-					}
-				}
-				if(s<seriesNames.length-1){
-					out +="],\n";
-				}else{
-					out +="]\n";
-				}
-        	}
-        	out += "];\n\n" + 
-        
-        	
-	    		INDENT + "var seriesNames = [";
-        for (int j = 0; j < seriesNames.length; j++) {
-			out += "\"" + seriesNames[j] + "\"";
-			if (j < seriesNames.length-1){
-				out += ",";
-			}
-		}
-        
-        out += "];\n" + 
-				INDENT + "var predictionColor = \"salmon\";\n" + 
-				INDENT + "var gtColor = \"steelblue\";\n\n" + 
-        		
-				INDENT + "function get_color(i){\n" + 
-				INDENT + "    if(i==0){\n" + 
-				INDENT + "        return predictionColor;\n" + 
-				INDENT + "    }else{\n" + 
-				INDENT + "        return gtColor;\n" + 
-				INDENT + "    }\n" + 
-				INDENT + "}\n\n" + 
-				
-        		INDENT + "return {\n" +
-        		INDENT + "plot : function() {\n" + 
-        		
-				INDENT + "/* Interaction state. Focus scales will have domain set on-render. */\n" + 
-        	    INDENT + "var x = pv.Scale.linear(start, end).range(0, w-legendOffset),\n" + 
-        	    INDENT + "    i = {x:0, dx:100},\n" + 
-        	    INDENT + "    fx = pv.Scale.linear().range(0, w-legendOffset);\n\n" +
-        	    
-        	  
-
-        	    INDENT + "/* Legend area. */\n" + 
-        	    INDENT + "var legend = vis.add(pv.Panel)\n" + 
-        	    INDENT + "    .left(0)\n" + 
-        	    INDENT + "    .width(legendOffset)\n" + 
-        	    INDENT + "    .height(totalHeight)\n" + 
-        	    INDENT + "    .top(0);\n\n" + 
-        	    INDENT + "legend.add(pv.Label)\n" + 
-        	    INDENT + "    .data(seriesNames)\n" + 
-        	    INDENT + "    .textAlign(\"right\")\n" + 
-        	    INDENT + "    .textBaseline(\"middle\")\n" + 
-        	    INDENT + "    .top(function() 8+((numseries - (1+this.index)) * 12)) \n" + 
-        	    INDENT + "    .height(10)\n" + 
-        	    INDENT + "    .right(0)\n" + 
-        	    INDENT + "    .text(function(d) d);\n\n" + 
-        	    INDENT + "legend.add(pv.Label)\n" + 
-        	    INDENT + "    .text('time (secs)')\n" + 
-        	    INDENT + "    .textAlign(\"right\")\n" + 
-        	    INDENT + "    .height(10)\n" + 
-        	    INDENT + "    .right(5)\n" + 
-        	    INDENT + "    .textBaseline(\"top\")\n" + 
-        	    INDENT + "    .bottom(15);\n\n" + 
-        		INDENT + "legend.add(pv.Label)\n" + 
-        		INDENT + "    .text('time (secs)')\n" + 
-        		INDENT + "    .textAlign(\"right\")\n" + 
-        		INDENT + "    .height(10)\n" + 
-        		INDENT + "    .right(5)\n" + 
-        		INDENT + "    .textBaseline(\"top\")\n" + 
-        		INDENT + "    .top(hOffset + h1);\n\n" + 
-        	    
-        	    
-        	    INDENT + "/* Focus panel (zoomed in). */\n" + 
-        	    INDENT + "var focus = vis.add(pv.Panel)\n" + 
-        	    INDENT + "    .left(legendOffset)\n" +
-        	    INDENT + "    .top(hOffset)\n" +
-        	    INDENT + "    .height(h1)\n" +
-        	    INDENT + "    .def(\"init_data\", function() {\n" + 
-        	    INDENT + "        var out = new Array(numseries);\n" + 
-        	    INDENT + "        var d1 = x.invert(i.x),\n" + 
-        	    INDENT + "            d2 = x.invert(i.x + i.dx);\n" + 
-        	    INDENT + "        for(s=0;s<numseries;s=s+1){\n" + 
-        	    INDENT + "            offsetsearch = pv.search.index(data[s], d1, function(d) d),\n" + 
-        	    INDENT + "            firstvisible = offsetsearch >= 0 ? offsetsearch : -(1+offsetsearch),\n" + 
-        	    INDENT + "            onsetsearch = pv.search.index(data[s], d2, function(d) d),\n" + 
-        	    INDENT + "            lastvisible = onsetsearch >= 0 ? onsetsearch : -(1+onsetsearch),\n" + 
-        	    INDENT + "	          out[s] = data[s].slice(firstvisible,lastvisible+1);\n" + 
-        	    INDENT + "	      }\n" + 
-        	    INDENT + "	      fx.domain(d1, d2);\n" + 
-        	    INDENT + "	      return out;\n" + 
-        	    INDENT + "    });\n" + 
-		
-        
-        	    INDENT + "/* X-axis ticks. */\n" + 
-        	    INDENT + "focus.add(pv.Rule)\n" + 
-    	    	INDENT + "    .data(function() fx.ticks())\n" + 
-        	    INDENT + "    .left(fx)\n" + 
-        	    INDENT + "    .strokeStyle(\"#eee\")\n" + 
-        	    INDENT + "  .anchor(\"bottom\").add(pv.Label)\n" + 
-        	    INDENT + "    .text(fx.tickFormat);\n\n" + 
-        	    
-        	    INDENT + "/* Focus area chart. */\n" + 
-		
-		
-        	    INDENT + "focus.add(pv.Panel)\n" + 
-        	    INDENT + "    .overflow(\"hidden\")\n" + 
-        	    INDENT + "    .data(function(d) focus.init_data())\n" + 
-        	    INDENT + "  .add(pv.Dot)\n" +
-        	    INDENT + "    .data(function(array) array)\n" + 
-        	    INDENT + "    .overflow(\"hidden\")\n" + 
-        	    INDENT + "    .left(function(d) fx(d))\n" + 
-        	    INDENT + "    .bottom(function() 7 + (12*this.parent.index))\n" + 
-        	    INDENT + "    .size(3)\n" + 
-        	    INDENT + "    .strokeStyle(function() get_color(this.parent.index))\n" + 
-        	    INDENT + "    .fillStyle(function() this.strokeStyle().alpha(.2))\n" + 
-        	    INDENT + "    .title(function(d) d.toFixed(2));\n\n" + 
-		
-		
-        	    INDENT + "/* Context panel (zoomed out). */\n" + 
-        	    INDENT + "var context = vis.add(pv.Panel)\n" + 
-        	    INDENT + "    .left(legendOffset)\n" + 
-        	    INDENT + "    .bottom(0)\n" + 
-        	    INDENT + "    .height(h2);\n\n" + 
-
-    	    	INDENT + "/* X-axis ticks. */\n" + 
-        	    INDENT + "context.add(pv.Rule)\n" + 
-        	    INDENT + "    .data(x.ticks())\n" + 
-        	    INDENT + "    .bottom(15)\n" + 
-        	    INDENT + "    .left(x)\n" + 
-        	    INDENT + "    .strokeStyle(\"#eee\")\n" + 
-        	    INDENT + "  .anchor(\"bottom\").add(pv.Label)\n" + 
-        	    INDENT + "    .text(x.tickFormat);\n\n" + 
-        	    
-        	    INDENT + "/* Y-axis ticks. */\n" + 
-        	    INDENT + "context.add(pv.Rule)\n" + 
-        	    INDENT + "    .bottom(15);\n\n" + 
-        	    
-        	    INDENT + "focus.add(pv.Rule)\n" +
-        	    INDENT + "    .bottom(0);\n" +
-		
-                INDENT + "/* Context area chart. */\n" + 
-			    INDENT + "context.add(pv.Panel)\n" + 
-			    INDENT + "    .data(data)\n" + 
-			    INDENT + "    .add(pv.Dot)\n" + 
-			    INDENT + "        .data(function(array) array)\n" + 
-        	    INDENT + "        .left(function(d) x(d))\n" + 
-        	    INDENT + "        .bottom(function(s) 18 + (this.parent.index * 5))\n" + 
-        	    INDENT + "        .height(5)\n" + 
-        	    INDENT + "        .strokeStyle(function() get_color(this.parent.index))\n" + 
-        	    INDENT + "        .size(1);\n\n" + 
-		
-
-		        INDENT + "/* The selectable, draggable focus region. */\n" + 
-        	    INDENT + "context.add(pv.Panel)\n" + 
-        	    INDENT + "    .data([i])\n" + 
-        	    INDENT + "    .cursor(\"crosshair\")\n" + 
-        	    INDENT + "    .events(\"all\")\n" + 
-        	    INDENT + "    .event(\"mousedown\", pv.Behavior.select())\n" + 
-        	    INDENT + "    .event(\"select\", focus)\n" + 
-        	    INDENT + "  .add(pv.Bar)\n" + 
-        	    INDENT + "    .left(function(d) d.x)\n" + 
-        	    INDENT + "    .width(function(d) d.dx)\n" + 
-        	    INDENT + "    .fillStyle(\"rgba(255, 128, 128, .4)\")\n" + 
-        	    INDENT + "    .cursor(\"move\")\n" + 
-        	    INDENT + "    .event(\"mousedown\", pv.Behavior.drag())\n" + 
-        	    INDENT + "    .event(\"drag\", focus);\n\n" + 
-        	    
-        	    INDENT + "vis.render();\n\n" + 
-        	    "\t\t\t\t\t}\n" + 
-        	    "\t\t\t\t};\n" + 
-    	    	"\t\t\t}();\n" + 	
+				"\t\t\tvar " + getName() + "_onset_plot = init_onset_plot(" + 
+				startTime + ", " + endTime + ", " + series.size() + ");\n\n" +
+				"\t\t\tvar " + getName() + "_interval;\n" +
+				"\t\t\tfunction " + getName() + "_serviceInterval(){\n" +
+				"\t\t\t\tif(" + getName() + "_onset_plot.isLoaded()){\n" +
+				"\t\t\t\t\tclearInterval(" + getName() + "_interval);\n" + 
+				"\t\t\t\t\t" + getName() + "_onset_plot.plot(" + getName() + "_data," + getName() + "_seriesNames," + getName() + "_isGroundtruth);\n" +
+				"\t\t\t\t\tdocument.getElementById(\"" + getName() + "_button\").setAttribute(\"value\",\"done.\");\n" +
+				"\t\t\t\t}\n" + 
+				"\t\t\t}\n" +
 				"\t\t\t</script>\n\n" +
 				"\t\t\t</div>\n" + 
 				//add button to trigger plot function
 				"\t\t\t<div style=\"text-align:left;padding-left:10px;\">\n" +
-				"\t\t\t\t<input type=\"button\" value=\"Plot\" id=\"run_" + functionName + "\" onClick=\"" + functionName + ".plot();this.disabled=true;\">\n" +
-				"\t\t\t\t<label for=\"srun_" + functionName + "\">Click here to plot the figure</label>\n" +
+				"\t\t\t\t<input type=\"button\" value=\"Plot\" id=\"" + getName() + "_button\" onClick=\"\n" +
+				"\t\t\t\t\tthis.value='loading data...';\n" + 
+				"\t\t\t\t\tthis.disabled=true;\n" + 
+				"\t\t\t\t\tloadScript('" + getName() + ".js'," + getName() + "_onset_plot);\n" + 
+				"\t\t\t\t\t" + getName() + "_interval = setInterval('" + getName() + "_serviceInterval()',500);\n" + 
+				"\t\t\t\t\t\">\n" + 
+				"\t\t\t\t<label for=\"" + getName() + "_button\">Click here to plot the figure</label>\n" +
 				"\t\t\t</div>\n" + 
-				"\t\t</div>\n";
+				"\t\t</div>\n<br>\n";
         
         return out;
     }
@@ -323,6 +424,16 @@ public class ProtovisOnsetPlotItem extends PageItem{
 
 	public List<String> getSeriesNames() {
 		return seriesNames;
+	}
+
+
+	public void setIsGroundtruth(List<Boolean> isGroundtruth) {
+		this.isGroundtruth = isGroundtruth;
+	}
+
+
+	public List<Boolean> getIsGroundtruth() {
+		return isGroundtruth;
 	}
 
 }

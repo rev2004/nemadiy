@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.imirsel.nema.analytics.evaluation.ResultRendererImpl;
 import org.imirsel.nema.analytics.evaluation.WriteCsvResultFiles;
@@ -151,8 +152,7 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 						perTrackTable.getRows()));
 
 				/* Plot melody transcription against GT for each track result for each system */
-				PageItem[] plots = plotTranscriptionForJob(results.getJobIdToPerTrackEvaluationAndResults().get(jobId),
-						results.getTrackIDToGT(),results.getJobName(jobId));
+				PageItem[] plots = plotTranscriptionForJob(jobId, results);
 				for (int i = 0; i < plots.length; i++) {
 					items.add(plots[i]);
 				}
@@ -249,7 +249,7 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 				sysResults = results.getJobIdToPerTrackEvaluationAndResults().get(jobId);
 				
 				/* Plot melody transcription against GT for each track result for each system */
-				PageItem[] plots = plotTranscriptionForJob(results.getJobIdToPerTrackEvaluationAndResults().get(jobId), null, results.getJobIdToJobName().get(jobId));
+				PageItem[] plots = plotTranscriptionForJob(jobId, results);
 				for (int i = 0; i < plots.length; i++) {
 					items.add(plots[i]);
 				}
@@ -273,14 +273,12 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 	 * @param jobIdToJobName
 	 * @return an array of page items that will produce the plots.
 	 */
-	private PageItem[] plotTranscriptionForJob(
-			Map<NemaTrackList, List<NemaData>> jobResults,
-			Map<String,NemaData> trackIdToGroundTruth,
-			String jobName
-			) {
+	private PageItem[] plotTranscriptionForJob(String jobId,
+			NemaEvaluationResultSet results) {
 		NemaData result, groundtruth = null;
 
 		/* Plot each result */
+		Map<NemaTrackList, List<NemaData>> jobResults = results.getPerTrackEvaluationAndResults(jobId);
 		List<PageItem> plotItems = new ArrayList<PageItem>();
 		
 		for (Iterator<NemaTrackList> foldIt = jobResults.keySet().iterator(); foldIt.hasNext();){
@@ -289,8 +287,9 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 					.hasNext();) {
 				result = iterator.next();
 				
-				if(trackIdToGroundTruth != null){
-					groundtruth = trackIdToGroundTruth.get(result.getId());
+				getLogger().info("\t\tplotting track " + result.getId() +"...");
+				if(results.getTrackIDToGT() != null){
+					groundtruth = results.getTrackIDToGT().get(result.getId());
 				}
 				
 				if(groundtruth == null){
@@ -309,34 +308,46 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 					tot = Math.max(rawGtData.length, tot);
 				}
 				
-				
 				//setup time line for for X-axis
 				double startTimeSecs = 0.0;
 				double endTimeSecs = tot * NemaDataConstants.MELODY_TIME_INC;
 				
 				//setup data-series to plot
 				Map<String,double[][]> series = new HashMap<String, double[][]>(2);
-				series.put("Prediction", rawData);
+				List<String> seriesNames = new ArrayList<String>(2);
 				if(rawGtData != null){
 					series.put("Ground-truth", rawGtData);
+					seriesNames.add("Ground-truth");
 				}
+				series.put("Prediction", rawData);
+				seriesNames.add("Prediction");
 				
-				ProtovisFunctionTimestepPlotItem plot = new ProtovisFunctionTimestepPlotItem(
-						//plotname
-						jobName + "_transcription_" + result.getId(), 
-						//plot caption
-						jobName + ": Melody transcription for track " + result.getId(), 
-						//start time for x axis
-						startTimeSecs, 
-						//end time for x axis
-						endTimeSecs, 
-						//current resolution of data
-						NemaDataConstants.MELODY_TIME_INC,
-						//resolution to downsample to for plotting (too many values and current plot grinds to a halt)
-						TARGET_PLOT_RESOLUTION,
-						//series to plot
-						series);
-				plotItems.add(plot);
+				try{
+					ProtovisFunctionTimestepPlotItem plot = new ProtovisFunctionTimestepPlotItem(
+							//plotname
+							results.getJobName(jobId) + "_melody_transcript_" + result.getId(), 
+							//plot caption
+							results.getJobName(jobId) + ": Melody transcription for track " + result.getId(), 
+							//start time for x axis
+							startTimeSecs, 
+							//end time for x axis
+							endTimeSecs, 
+							//current resolution of data
+							NemaDataConstants.MELODY_TIME_INC,
+							//resolution to downsample to for plotting (too many values and current plot grinds to a halt)
+							TARGET_PLOT_RESOLUTION,
+							//y axis label
+							"Dominant F0 (Hz)",
+							//series to plot
+							series,
+							//series names in order to plot
+							seriesNames,
+							//output dir
+							outputDir);
+					plotItems.add(plot);
+				}catch(IOException e){
+					getLogger().log(Level.SEVERE, "Failed to plot results for job " + results.getJobName(jobId) + " (" + jobId + ") for track " + result.getId(), e);
+				}
 			}
 		}
 		return plotItems.toArray(new PageItem[plotItems.size()]);

@@ -268,7 +268,7 @@ public class StructureResultRenderer extends ResultRendererImpl {
 	 */
 	private PageItem[] plotTranscriptionForJob(String jobId,
 			NemaEvaluationResultSet results) {
-		NemaData result, groundtruth;
+		NemaData result, groundtruth = null;
 
 		/* Plot each result */
 		Map<NemaTrackList, List<NemaData>> job_results = results.getPerTrackEvaluationAndResults(jobId);
@@ -279,11 +279,15 @@ public class StructureResultRenderer extends ResultRendererImpl {
 			for (Iterator<NemaData> iterator = job_results.get(testSet).iterator(); iterator
 					.hasNext();) {
 				
-				
 				result = iterator.next();
-				getLogger().info("\t\tplotting track " + result.getId() +"...");
-				groundtruth = results.getTrackIDToGT().get(result.getId());
 				
+				getLogger().info("\t\tplotting track " + result.getId() +"...");
+				if(results.getTrackIDToGT() != null){
+					groundtruth = results.getTrackIDToGT().get(result.getId());
+				}
+				if(groundtruth == null){
+					getLogger().warning("No ground-truth found for '" + result.getId() + "' to be used in plotting");
+				}
 				List<NemaSegment> rawData = (List<NemaSegment>)result.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
 				
 				//setup time line for for X-axis
@@ -292,7 +296,6 @@ public class StructureResultRenderer extends ResultRendererImpl {
 				double endTimeSecs = rawData.get(rawData.size()-1).getOffset();
 
 				List<NemaSegment> rawGtData = null;
-				
 				if(groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA)){
 					rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
 					endTimeSecs = Math.max(rawGtData.get(rawGtData.size()-1).getOffset(), endTimeSecs);
@@ -343,7 +346,7 @@ public class StructureResultRenderer extends ResultRendererImpl {
 	 */
 	@SuppressWarnings("unchecked")
 	private PageItem[] plotTranscriptionForAllJobs(NemaEvaluationResultSet results) {
-		NemaData groundtruth;
+		NemaData groundtruth = null;
 
 		/* Plot each result */
 		Map<String,Map<NemaTrackList, List<NemaData>>> perTrackResults = results.getJobIdToPerTrackEvaluationAndResults();
@@ -392,8 +395,13 @@ public class StructureResultRenderer extends ResultRendererImpl {
 			double startTimeSecs = 0.0;
 			double endTimeSecs = 0;
 			
-			groundtruth = results.getTrackIDToGT().get(trackId);
 			List<NemaSegment> rawGtData = null;
+			if(groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA)){
+				rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
+				endTimeSecs = Math.max(rawGtData.get(rawGtData.size()-1).getOffset(), endTimeSecs);
+			}else{
+				getLogger().warning("No ground-truth found for '" + trackId + "' to be used in plotting");
+			}
 			if(groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA)){
 				rawGtData = (List<NemaSegment>)groundtruth.getMetadata(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA);
 				endTimeSecs = Math.max(rawGtData.get(rawGtData.size()-1).getOffset(), endTimeSecs);

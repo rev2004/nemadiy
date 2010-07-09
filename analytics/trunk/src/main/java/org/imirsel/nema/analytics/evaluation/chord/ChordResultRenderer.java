@@ -442,7 +442,7 @@ public class ChordResultRenderer extends ResultRendererImpl {
 	@SuppressWarnings("unchecked")
 	private PageItem[] plotTranscriptionForJob(String jobId,
 			NemaEvaluationResultSet results) {
-		NemaData result, groundtruth;
+		NemaData result, groundtruth = null;
 
 		/* Plot each result */
 		Map<NemaTrackList, List<NemaData>> job_results = results.getPerTrackEvaluationAndResults(jobId);
@@ -456,8 +456,13 @@ public class ChordResultRenderer extends ResultRendererImpl {
 				
 				result = iterator.next();
 				getLogger().info("\t\tplotting track " + result.getId() +"...");
-				groundtruth = results.getTrackIDToGT().get(result.getId());
+				if(results.getTrackIDToGT() != null){
+					groundtruth = results.getTrackIDToGT().get(result.getId());
+				}
 				
+				if(groundtruth == null){
+					getLogger().warning("No ground-truth found for '" + result.getId() + "' to be used in plotting");
+				}
 				List<NemaSegment> rawData = (List<NemaSegment>)result.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
 				
 				//setup time line for for X-axis

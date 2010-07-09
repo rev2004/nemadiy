@@ -33,14 +33,14 @@ public abstract class SingleTrackEvalFileTypeImpl extends NemaFileTypeImpl imple
 			if(extension == null){
 				for (int i = 0; i < files.length; i++){
 			        File file = files[i];
-			        if (!file.isDirectory()){
+			        if (!file.isDirectory() && !file.getName().startsWith(".")){
 			            filesToUse.add(file);
 			        }
 			    }
 			}else{
 				for (int i = 0; i < files.length; i++){
 			        File file = files[i];
-			        if (!file.isDirectory() && file.getName().endsWith(extension)){
+			        if (!file.isDirectory() && file.getName().endsWith(extension) && !file.getName().startsWith(".")){
 			            filesToUse.add(file);
 			        }
 			    }
