@@ -188,7 +188,8 @@ public class TasksServiceImpl {
 	private void deleteExecutableFromRepository(ResourcePath path,
 			SimpleCredentials credential)
 			throws ContentRepositoryServiceException {
-		try {
+		logger.info("Calling deleteExecutableFromRepository -commmenting it out. This will impact clear bundle function");
+		/*try {
 			if ((path != null) && (artifactService.exists(credential, path))) {
 				logger.info("remove from content repository executable bundle:"
 						+ path);
@@ -198,6 +199,7 @@ public class TasksServiceImpl {
 			logger.error(e, e);
 			throw (e);
 		}
+		*/
 
 	}
 
