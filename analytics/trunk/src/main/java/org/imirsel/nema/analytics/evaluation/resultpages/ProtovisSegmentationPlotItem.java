@@ -36,7 +36,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 	
 	private double startTime;
     private double endTime;
-    private Map<String,List<NemaSegment>> series; //indices are 0=x, 1=y
+    private Map<String,List<NemaSegment>> series;
     private List<String> seriesNames; 
     
     public ProtovisSegmentationPlotItem(String name, String caption, 
@@ -57,7 +57,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
     	
     	String out = "var " + this.getName() + "_data = [\n";
         for (int s = 0; s < getSeriesNames().size(); s++) {
-        	out += "[\n";
+        	out += "[";
 			List<NemaSegment> data = series.get(getSeriesNames().get(s));
 			NemaSegment seg = null;
 			int count = 0;
@@ -68,7 +68,11 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 				if(it.hasNext()){
 					out +=",\n";
 				}else{
-					out += "\n],\n";
+					if(s < getSeriesNames().size()-1){
+						out += "],\n";
+					}else{
+						out += "]\n";
+					}
 				}
 			}
 		}
@@ -334,7 +338,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		int height = HOFFSET + FOCUSOFFSET + (3 + 33 * series.size()) + HSEP + (15 * series.size()) + 20 + 2 + 20 + 10;
 		
 		out += 	"\t<div id=\"center\">\n" + 
-		       	"\t\t<div style=\"width: 860px; height: " + height + "px;; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;\">\n";
+		       	"\t\t<div style=\"width: 860px; height: " + height + "px; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;\">\n";
 		
 		out +=  "\t\t<script type=\"text/javascript+protovis\">\n" +
 				"\t\t\tvar " + getName() + "_segment_plot = init_segmentation_plot(" + 
@@ -359,7 +363,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 				"\t\t\t\t\t\">\n" + 
 				"\t\t\t\t<label for=\"" + getName() + "_button\">Click here to plot the figure</label>\n" +
 				"\t\t\t</div>\n" + 
-				"\t\t</div>\n";
+				"\t\t</div>\n<br>\n";
         
         return out;
     }

@@ -355,7 +355,7 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 	 */
 	private PageItem[] plotTranscriptionForJob(String jobId,
 			NemaEvaluationResultSet results) {
-		NemaData result, groundtruth;
+		NemaData result, groundtruth = null;
 
 		/* Plot each result */
 		Map<NemaTrackList, List<NemaData>> job_results = results.getPerTrackEvaluationAndResults(jobId);
@@ -366,8 +366,9 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 			for (Iterator<NemaData> iterator = job_results.get(testSet).iterator(); iterator
 					.hasNext();) {
 				result = iterator.next();
-				groundtruth = results.getTrackIDToGT().get(result.getId());
-				
+				if(results.getTrackIDToGT() != null){
+					groundtruth = results.getTrackIDToGT().get(result.getId());
+				}
 				if(groundtruth == null){
 					getLogger().warning("No ground-truth found for '" + result.getId() + "' to be used in plotting");
 				}
@@ -377,10 +378,12 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 //				plotItems.add(plotFile);
 	
 				double[][] rawData2D = result.get2dDoubleArrayMetadata(NemaDataConstants.ONSET_DETECTION_DATA);
-				double[][] rawGtData2D = groundtruth.get2dDoubleArrayMetadata(NemaDataConstants.ONSET_DETECTION_DATA);
-				
+				double[][] rawGtData2D = null;
+				if(groundtruth != null){
+					rawGtData2D = groundtruth.get2dDoubleArrayMetadata(NemaDataConstants.ONSET_DETECTION_DATA);
+				}
 				String[] annotators = null;
-				if (groundtruth.hasMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS)) {
+				if (groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS)) {
 					annotators = groundtruth.getStringArrayMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS);
 				}
 				//setup time line for for X-axis
@@ -398,51 +401,64 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 					
 				//setup hash map for to plot
 				Map<String,double[]> series = new HashMap<String, double[]>(rawGtData2D[0].length + 1);
-				ArrayList<String> seriesNames = new ArrayList<String>(rawGtData2D[0].length + 1);
-				series.put(results.getJobName(jobId), rawData);
-				seriesNames.add(results.getJobName(jobId));
-				for (int curGT = 0; curGT < rawGtData2D[0].length; curGT++) {
-					ArrayList<Double> gtDataArr = new ArrayList<Double>();
-					for (int t=0; t<rawGtData2D.length; t++) {
-						double onTime = rawGtData2D[t][curGT];
-						if (!Double.isNaN(onTime)) {
-							gtDataArr.add(new Double(onTime));
-							if (onTime > endTimeSecs) {
-								endTimeSecs = onTime;
+				List<String> seriesNames = new ArrayList<String>(rawGtData2D[0].length + 1);
+				List<Boolean> isGroundtruth = new ArrayList<Boolean>(rawGtData2D[0].length + 1);
+				if (groundtruth != null){
+					for (int curGT = 0; curGT < rawGtData2D[0].length; curGT++) {
+						ArrayList<Double> gtDataArr = new ArrayList<Double>();
+						for (int t=0; t<rawGtData2D.length; t++) {
+							double onTime = rawGtData2D[t][curGT];
+							if (!Double.isNaN(onTime)) {
+								gtDataArr.add(new Double(onTime));
+								if (onTime > endTimeSecs) {
+									endTimeSecs = onTime;
+								}
 							}
 						}
+						double[] rawGtData = new double[gtDataArr.size()];
+						for(int t = 0; t < rawGtData.length; t++) {
+							rawGtData[t] = gtDataArr.get(t).doubleValue();
+						}
+						if (groundtruth.hasMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS)) {
+							String annotator = annotators[curGT];
+							series.put(annotator, rawGtData);
+							seriesNames.add(annotator);
+						} else {
+							series.put("Ground-truth " + curGT, rawGtData);
+							seriesNames.add("Ground-truth " + curGT);
+						}
+						isGroundtruth.add(true);
 					}
-					double[] rawGtData = new double[gtDataArr.size()];
-					for(int t = 0; t < rawGtData.length; t++) {
-						rawGtData[t] = gtDataArr.get(t).doubleValue();
-					}
-					if (groundtruth.hasMetadata(NemaDataConstants.ONSET_DETECTION_ANNOTATORS)) {
-						String annotator = annotators[curGT];
-						series.put(annotator, rawGtData);
-						seriesNames.add(annotator);
-					} else {
-						series.put("Ground-truth " + curGT, rawGtData);
-						seriesNames.add("Ground-truth " + curGT);
-					}
-						
-					
 				}
 				
+				series.put(results.getJobName(jobId), rawData);
+				seriesNames.add(results.getJobName(jobId));
+				isGroundtruth.add(false);
 				
-				ProtovisOnsetPlotItem plot = new ProtovisOnsetPlotItem(
-						//plotname
-						results.getJobName(jobId) + "_transcription_" + result.getId(), 
-						//plot caption
-						results.getJobName(jobId) + ": Onset transcription for track " + result.getId(), 
-						//start time for x axis
-						startTimeSecs, 
-						//end time for x axis
-						endTimeSecs, 
-						//map of annotator/system names to the data
-						series,
-						//ordered list of annotator/system names
-						seriesNames);
-				plotItems.add(plot);
+				
+				try{
+					ProtovisOnsetPlotItem plot = new ProtovisOnsetPlotItem(
+							//plotname
+							results.getJobName(jobId) + "_onset_transcript_" + result.getId(), 
+							//plot caption
+							results.getJobName(jobId) + ": Onset transcription for track " + result.getId(), 
+							//start time for x axis
+							startTimeSecs, 
+							//end time for x axis
+							endTimeSecs, 
+							//map of annotator/system names to the data
+							series,
+							//ordered list of annotator/system names
+							seriesNames,
+							//flags indicating whether a series is ground-truth
+							isGroundtruth,
+							//Directory to write JS data files to
+							outputDir
+						);
+					plotItems.add(plot);
+				}catch(IOException e){
+					getLogger().log(Level.SEVERE, "Failed to plot results for job " + results.getJobName(jobId) + " (" + jobId + ") for track " + result.getId(), e);
+				}
 			}
 		}
 		return plotItems.toArray(new PageItem[plotItems.size()]);
@@ -457,7 +473,7 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 	 */
 	@SuppressWarnings("unchecked")
 	private PageItem[] plotTranscriptionForAllJobs(NemaEvaluationResultSet results) {
-		NemaData groundtruth;
+		NemaData groundtruth = null;
 
 		/* Plot each result */
 		Map<String,Map<NemaTrackList, List<NemaData>>> perTrackResults = results.getJobIdToPerTrackEvaluationAndResults();
@@ -502,12 +518,18 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 			//setup data-series to plot
 			Map<String,double[]> series = new HashMap<String, double[]>(2);			
 			List<String> seriesNames = new ArrayList<String>(1 + transcripts.length);
-
+			List<Boolean> isGroundtruth = new ArrayList<Boolean>(1 + transcripts.length);
+			
 			//setup time line for for X-axis
 			double startTimeSecs = 0.0;
 			double endTimeSecs = 0;
 			
-			groundtruth = results.getTrackIDToGT().get(trackId);
+			if(results.getTrackIDToGT() != null){
+				groundtruth = results.getTrackIDToGT().get(trackId);
+			}
+			if(groundtruth == null){
+				getLogger().warning("No ground-truth found for '" + trackId + "' to be used in plotting");
+			}
 			double[][] rawGtData2D = null;
 			String[] annotators = null;
 			if(groundtruth != null && groundtruth.hasMetadata(NemaDataConstants.ONSET_DETECTION_DATA)){
@@ -520,9 +542,21 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 				int numGt = rawGtData2D[0].length;
 				for(int i=0;i<numGt;i++){
 					double[] rawGtData = new double[rawGtData2D.length];
+					int trim = -1;
 					for(int j=0;j<rawGtData2D.length;j++){
-						endTimeSecs = Math.max(rawGtData2D[j][i], endTimeSecs);
 						rawGtData[j] = rawGtData2D[j][i];
+						if (Double.isNaN(rawGtData[j])){
+							trim = j;
+							break;
+						}
+						endTimeSecs = Math.max(rawGtData[j], endTimeSecs);
+					}
+					if(trim != -1){
+						double[] trimmedData = new double[trim];
+						for (int j = 0; j < trimmedData.length; j++) {
+							trimmedData[j] = rawGtData[j];
+						}
+						rawGtData = trimmedData;
 					}
 					if (annotators != null) {
 						String annotator = annotators[i];
@@ -532,6 +566,7 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 						series.put("Ground-truth " + i, rawGtData);
 						seriesNames.add("Ground-truth " + i);
 					}
+					isGroundtruth.add(true);
 					
 				}
 			}else{
@@ -547,15 +582,18 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 					double[] rawData = new double[rawData2D.length];
 					for (int j = 0; j < rawData.length; j++) {
 						rawData[j] = rawData2D[j][0];
+						
 						endTimeSecs = Math.max(rawData[j], endTimeSecs);
 					}
 					
+					
 					series.put(jobNames.get(i), rawData);
 					seriesNames.add(jobNames.get(i));
+					isGroundtruth.add(false);
 				}
 			}
 			
-//			try{
+			try{
 				ProtovisOnsetPlotItem plot = new ProtovisOnsetPlotItem(
 						//plotname
 						"transcription_" + trackId, 
@@ -568,12 +606,16 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 						//map of annotator/system names to the data
 						series,
 						//ordered list of annotator/system names
-						seriesNames);
+						seriesNames,
+						//flags indicating whether a series is ground-truth
+						isGroundtruth,
+						//Directory to write JS data files to
+						outputDir
+					);
 				plotItems.add(plot);
-				plotItems.add(plot);
-//			}catch(IOException e){
-//				getLogger().log(Level.SEVERE, "Failed to plot results for track " + trackId, e);
-//			}
+			}catch(IOException e){
+				getLogger().log(Level.SEVERE, "Failed to plot results for track " + trackId, e);
+			}
 		}
 		return plotItems.toArray(new PageItem[plotItems.size()]);
 	}

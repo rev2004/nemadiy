@@ -124,6 +124,7 @@ public class Page {
             String pageContent = createPageHTML(set_title, aPage, pages, filenames);
             try{
             	FileUtils.writeStringToFile(pageFile, pageContent, "utf-8");
+            	Logger.getLogger(Page.class.getName()).fine("written HTML file: " + pageFile.getAbsolutePath());
             }catch (UnsupportedEncodingException ex){
                 Logger.getLogger(Page.class.getName()).log(Level.SEVERE, "UTF-8 encoding was not available!?!", ex);
             }catch (FileNotFoundException ex){

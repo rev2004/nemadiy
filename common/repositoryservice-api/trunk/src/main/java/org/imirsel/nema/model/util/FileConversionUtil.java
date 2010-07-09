@@ -204,7 +204,7 @@ public class FileConversionUtil {
 	 * 
 	 * @param taskId The task ID to retrieve.
 	 * @param client The repository client to use to retrieve the task.
-	 * @returna List of NemaFileType implementations.
+	 * @return a List of NemaFileType implementations.
 	 * @throws SQLException
 	 */
 	public static List<Class<? extends NemaFileType>> getOutputFileTypesForTask(int taskId, RepositoryClientInterface client) throws SQLException{

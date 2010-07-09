@@ -45,11 +45,14 @@ public class OnsetEvaluationIntegrationTest extends BaseManagerTestCase {
 	     outputDirectory.mkdirs();
 	}
 	
+	public static final String GT_PATH = "src/test/resources/onset/groundtruth";
+	public static final String RESULT_PATH = "src/test/resources/onset/results";
+	
 	
 	@Before
 	public void setUp() throws Exception {
 		
-		groundTruthDirectory = new File("src/test/resources/onset/groundtruth");
+		groundTruthDirectory = new File(GT_PATH);
 		singleSetTask = new NemaTask();
         singleSetTask.setId(14);
         singleSetTask.setName("Audio Onset Detection");
@@ -87,8 +90,8 @@ public class OnsetEvaluationIntegrationTest extends BaseManagerTestCase {
 	
 	@Test
 	public void testEvaluateOnset()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
-		File groundTruthDirectory = new File("src/test/resources/onset/groundtruth");
-		File resultsDirectory = new File("src/test/resources/onset/results");
+		File groundTruthDirectory = new File(GT_PATH);
+		File resultsDirectory = new File(RESULT_PATH);
 		
 		List<File> systemDirs = new ArrayList<File>();
 		List<String> systemNames = new ArrayList<String>();
