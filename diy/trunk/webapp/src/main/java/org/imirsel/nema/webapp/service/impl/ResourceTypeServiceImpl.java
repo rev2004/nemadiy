@@ -22,7 +22,7 @@ import org.imirsel.nema.webapp.service.ResourceTypeService;
 /**Returns various resource types
  * 
  * @author kumaramit01
- * @since 0.8.0 -moved from the contentrepository client
+ * @since 0.8.0 -moved from the content repository client
  *  
  */
 final public class ResourceTypeServiceImpl implements ResourceTypeService {

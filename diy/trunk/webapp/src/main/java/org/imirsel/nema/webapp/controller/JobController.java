@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -328,15 +329,8 @@ public class JobController extends MultiActionController {
 		String _jobId = req.getParameter("id");
 		long jobId = Long.parseLong(_jobId);
 		Job job = flowService.getJob(jobId);
-		System.out.println("Show Job here: " + job.getName());
-		System.out.println("STATUS CODE: " + job.getStatusCode());
-		System.out.println("STATUS VAL: " + job.getJobStatus());
-		System.out.println("NUMBER of RESULTS: " + job.getResults().size());
-
 		for (JobResult result : job.getResults()) {
-			logger.debug("RESULT: " + result.getUrl() + "  " + result.getId());
 			result.setUrl(processUrl(result.getUrl(), hostName));
-
 		}
 
 		logger.debug("start to render displayed results");
@@ -551,19 +545,31 @@ public class JobController extends MultiActionController {
 			HttpServletResponse response) throws MeandreServerException {
 		String _jobId = request.getParameter("jobId");
 		long jobId = Long.parseLong(_jobId);
-
-		// We need either change the parameter to job or we need to add a new
-		// method in flowService.
 		Job job = this.flowService.getJob(jobId);
 
 		String text = this.flowService.getConsole(job);
+		String reverseLines = getReverseLines(text);
+		
 		try {
 			response.setContentType("text/plain");
-			response.getOutputStream().println(text);
+			response.getOutputStream().println(reverseLines);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private String getReverseLines(String text) {
+		String[] splits = text.split(System.getProperty("line.separator"));
+		StringBuilder sbuilder = new StringBuilder();
+		for(int i= splits.length-1; i>=0;i--){
+			sbuilder.append(splits[i]+System.getProperty("line.separator"));
+		}
+		if(sbuilder.toString()!=null){
+			return sbuilder.toString().trim();
+		}else{
+			return null;
+		}
 	}
 
 	/**
