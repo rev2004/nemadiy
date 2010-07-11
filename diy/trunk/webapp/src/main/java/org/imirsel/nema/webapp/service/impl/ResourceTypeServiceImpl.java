@@ -159,6 +159,7 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 		List<NemaTask> list = null;
 		try {
 			list=client.getTasks();
+			logger.debug("Load list of taskIds, Total #:"+(list==null?"none":list.size()));
 		}finally{
 				if(client!=null)
 				this.repositoryClientConnectionPool.returnToPool(client);

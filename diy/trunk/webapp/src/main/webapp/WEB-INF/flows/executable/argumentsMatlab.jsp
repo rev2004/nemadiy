@@ -13,24 +13,28 @@
 	 if (myValue!="") {
 		 myValue="'"+prefix+orderValue+"{"+myValue+"}'";
 	 }
-	//IE support
-	if (document.selection) {
-	myField.focus();
-	sel = document.selection.createRange();
-	sel.text = myValue;
-	}
-	//MOZILLA/NETSCAPE support
-	else if (myField.selectionStart || myField.selectionStart == '0') {
-	var startPos = myField.selectionStart;
-	var endPos = myField.selectionEnd;
-	myField.value = myField.value.substring(0, startPos)
-	+ myValue
-	+ myField.value.substring(endPos, myField.value.length);
-	} else {
-	myField.value += myValue;
-	}
-	myField.focus();
-	}
+	 insertStrAtCursor(myField,myValue);
+	};
+function insertStrAtCursor(myField,myValue) {
+		 
+		//IE support
+		if (document.selection) {
+		myField.focus();
+		sel = document.selection.createRange();
+		sel.text = myValue;
+		}
+		//MOZILLA/NETSCAPE support
+		else if (myField.selectionStart || myField.selectionStart == '0') {
+		var startPos = myField.selectionStart;
+		var endPos = myField.selectionEnd;
+		myField.value = myField.value.substring(0, startPos)
+		+ myValue
+		+ myField.value.substring(endPos, myField.value.length);
+		} else {
+		myField.value += myValue;
+		}
+		myField.focus();
+		};
 	 
  </script>
 </head>
@@ -158,7 +162,8 @@
 							<option value="${num}">${num}</option>
 						</c:forEach>
 					</select>
-			<input type="button" value="+" onclick="insertAtCursor($('functionCall'),'$i',$('inputParam'),$('inputParamOrder'));" />
+				<input type="button" value="+" 
+					onclick="insertAtCursor($('functionCall'),'$i',$('inputParam'),$('inputParamOrder'));" />
 			</div>
 			<div>
 				<label class="label">Output Files:</label>
@@ -175,8 +180,12 @@
 						</c:forEach>
 					</select>
 					
-			<input type="button" value="+" onclick="insertAtCursor($('functionCall'),'$o',$('outputParam'),$('outputParamOrder'));" />
+				<input type="button" value="+" 
+					onclick="insertAtCursor($('functionCall'),'$o',$('outputParam'),$('outputParamOrder'));" />
 			</div>
+			<div>
+				<input type="button" value="Scratch Directory" 
+					onclick="insertStrAtCursor($('functionCall'),'$s');" /></div>
 			<div><label class="label">Function Call: </label></div>
 			<form:textarea path="functionCall" id="functionCall" cols="70" rows="20"/>
 			<div><input type="button" value="Clear" onclick="$('functionCall').value='';"/></div>
