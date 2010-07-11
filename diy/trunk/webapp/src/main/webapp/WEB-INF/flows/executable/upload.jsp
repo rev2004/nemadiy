@@ -24,8 +24,8 @@
                 $('executableName').hide();
                 
                 }else if(val==2){ // C
-                archiveLabelMessage = 'ZIP archive containing C executable binary:';
-                uploadedArchiveLabelMessage = 'Chosen archive containing C executable binary:';
+                archiveLabelMessage = 'ZIP archive containing executable binary:';
+                uploadedArchiveLabelMessage = 'Chosen archive containing executable binary:';
                 executableLabelMessage='Path to the executable binary: ';
                 }else if(val==3){ // Shell
                 archiveLabelMessage = 'ZIP archive containing shell script(s):';
