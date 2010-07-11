@@ -33,7 +33,7 @@
        		$('job.endTimestamp').innerHTML=checkNull(json.job.endTimestamp);
        		$('job.name').innerHTML=json.job.name;
        		$('job.description').innerHTML=json.job.description;
-       		if (((json.job.statusCode-0)==3)&&($('resultContent').empty())){
+       		if ((json.job.status.toLowerCase()=="finished")&&($('resultContent').empty())){
            		$('result').show();           		
            		if (json.resultSet.root!=null){
            			var root = new Element('a', {  target:"_blank",href: json.resultSet.root.url });
@@ -50,8 +50,12 @@
 						}
            			}	
            		}
-       		}           
-       		if (((json.job.statusCode-0)>=3)&&(pe!=null)) {
+       		}  
+       		var jobDone=(json.job.status!=null)&&
+       			(	(json.job.status.toLowerCase()=="finished")||
+       	       		(json.job.status.toLowerCase()=="aborted")|| 
+       	       		(json.job.status.toLowerCase()=="failed"));    
+       		if ((jobDone)&&(pe!=null)) {
            		pe.stop();
            		consoleUpdater.stop();
            		$('refresh').hide();
@@ -116,7 +120,7 @@
 			</tr>
 			<tr>
 				<td><label class="label">Schedule Time</label></td><td>:</td>
-				<td id="job.scheduldeTimestamp">${job.scheduleTimestamp}</td>
+				<td id="job.scheduleTimestamp">${job.scheduleTimestamp}</td>
 			</tr>
 			<tr>
 				<td><label class="label">Submit to Meandre Server</label></td><td>:</td>
