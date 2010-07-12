@@ -30,7 +30,7 @@
 		<transition on="cancel" to="cancel" validate="false"/>
 	</view-state>
 
-	<view-state id="argumentsPlain">
+	<view-state id="argumentsPlain" model="plainTemplate">
 	    <on-entry>
 			<set name="flashScope.niceParams" value="executableService.getNiceParams(plainTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
 		</on-entry>

@@ -7,7 +7,7 @@
             <script>
 
                 function updateLabels(val){
-                   
+                //default value, (Perl, Python, Wine, Ruby)
                 var archiveLabelMessage = 'Archive containing the executable:';
                 var uploadedArchiveLabelMessage='Chosen archive containing the executable:';
                 var executableLabelMessage='Path to the executable inside the archive:';
@@ -20,12 +20,11 @@
                 archiveLabelMessage = 'ZIP archive containing MATLAB script(s):';
                 uploadedArchiveLabelMessage = 'Chosen archive containing MATLAB script(s):';
                 executableLabelMessage='Path to the MATLAB script: ';
-                //$('executableNameInput').value="";
                 $('executableName').hide();
                 
-                }else if(val==2){ // C
-                archiveLabelMessage = 'ZIP archive containing executable binary:';
-                uploadedArchiveLabelMessage = 'Chosen archive containing executable binary:';
+                }else if(val==2){ // BIN
+                archiveLabelMessage = 'ZIP archive containing the executable binary:';
+                uploadedArchiveLabelMessage = 'Chosen archive containing the executable binary:';
                 executableLabelMessage='Path to the executable binary: ';
                 }else if(val==3){ // Shell
                 archiveLabelMessage = 'ZIP archive containing shell script(s):';
