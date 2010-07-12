@@ -57,10 +57,12 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 		List<FileDataType> flist = new ArrayList<FileDataType>();
 		try {
 			List<Class<? extends NemaFileType>>  list=FileConversionUtil.getInputFileTypesForTask(taskId, client);
-			for(Class<? extends NemaFileType> claszz:list){
-				Object object = claszz.newInstance();
-				FileDataType fdt = new FileDataType(claszz.newInstance().getTypeName(),claszz.getName());
-				flist.add(fdt);
+			if(list!=null){
+				for(Class<? extends NemaFileType> claszz:list){
+					Object object = claszz.newInstance();
+					FileDataType fdt = new FileDataType(claszz.newInstance().getTypeName(),claszz.getName());
+					flist.add(fdt);
+				}
 			}
 			return flist;
 		} catch (InstantiationException e) {
@@ -88,11 +90,14 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 		
 		RepositoryClientInterface client = repositoryClientConnectionPool.getFromPool();
 		List<FileDataType> flist = new ArrayList<FileDataType>();
+		
 		try {
 			List<Class<? extends NemaFileType>>  list=FileConversionUtil.getOutputFileTypesForTask(taskId, client);
+			if(list!=null){
 			for(Class<? extends NemaFileType> claszz:list){
 				FileDataType fdt = new FileDataType(claszz.newInstance().getTypeName(),claszz.getName());
 				flist.add(fdt);
+			}
 			}
 			return flist;
 		} catch (InstantiationException e) {
