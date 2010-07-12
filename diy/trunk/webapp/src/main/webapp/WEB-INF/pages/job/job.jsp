@@ -32,7 +32,7 @@
        		$('job.startTimestamp').innerHTML=checkNull(json.job.startTimestamp);
        		$('job.endTimestamp').innerHTML=checkNull(json.job.endTimestamp);
        		$('job.name').innerHTML=json.job.name;
-       		$('job.description').innerHTML=json.job.description;
+       		if (json.job.description) {$('job.description').innerHTML=json.job.description;}
        		if ((json.job.status.toLowerCase()=="finished")&&($('resultContent').empty())){
            		$('result').show();           		
            		if (json.resultSet.root!=null){
@@ -83,7 +83,6 @@
   </script>
 </head>
 <body id="jobdetails" onload="updateJob();">
-<h4 id="refresh">This page autorefreshes every 10 seconds</h4>
 <h1 id="job.name">${job.name}</h1>
 <div id="job.description" class="surround">${job.description}</div>
 <c:if test="${!(empty jobForSubmission)}">

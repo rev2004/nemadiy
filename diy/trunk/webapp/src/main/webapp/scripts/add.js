@@ -41,7 +41,7 @@ function insertAtCursor(myField, prefix,myValueField,orderField) {
 	 myValue=myValueField.options[myValueField.selectedIndex].value;
 	 orderValue=orderField.options[orderField.selectedIndex].value;
 	 if (myValue!="") {
-		 myValue="'"+prefix+orderValue+"{"+myValue+"}'";
+		 myValue=prefix+orderValue+"{"+myValue+"}";
 	 }
 	 insertStrAtCursor(myField,myValue);
 	};
