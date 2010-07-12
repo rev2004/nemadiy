@@ -30,7 +30,8 @@ import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
 /**
- * 
+ * TODO: THERE IS  BIG  IN THIS CODE _THE FLOW INSTANCE ID IS SET AS THE ProcessExecutionProperties.id
+ * which means that there can only be one execution per flow LINE 217 -FIX REQUIRED -FOR AMIT
  * @author kris.west@gmail.com
  * @since 0.3.0
  */
@@ -201,7 +202,7 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
 				if ( MultipleTrackEvalFileType.class.isAssignableFrom(inputType1) &&  SingleTrackEvalFileType.class.isAssignableFrom(outputType1)){
 					//output is a directory rather than a file!
-					ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(), "Directory", outputType1.getClass().getName());
+					ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath() + File.separator, "Directory", outputType1.getClass().getName());
 					outputs.add(paOutputs);
 					formatModel.setPreparedPathForOutput(1, outputFile.getPath() + File.separator);
 				}else{
