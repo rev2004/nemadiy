@@ -601,12 +601,12 @@ public class FileConversionUtil {
 						for (Iterator<NemaData> nemaDataIt = siteList.iterator(); nemaDataIt.hasNext();) {
 							File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
 							String name = fileLoc.getName();
-							File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+							File newPath = new File(foldDir.getPath() + File.separator + name + outputFileExt + outputFileTypeInstance.getFilenameExtension());
 							fileList.add(newPath);
 						}
 					}else if(MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
 						//create one output file per fold
-						File newPath = new File(foldDir.getAbsolutePath() + File.separator +"set-" + testSet.getId() + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+						File newPath = new File(foldDir.getPath() + File.separator +"set-" + testSet.getId() + outputFileExt + outputFileTypeInstance.getFilenameExtension());
 						fileList.add(newPath);
 					}
 				}
