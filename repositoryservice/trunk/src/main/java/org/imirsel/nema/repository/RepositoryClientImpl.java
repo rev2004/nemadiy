@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.imirsel.nema.repositoryservice.*;
 import org.imirsel.nema.model.*;
@@ -184,6 +185,15 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         deletePublishedResult = dbCon.con.prepareStatement(DELETE_PUBLISHED_RESULT);
 
         initTypesMaps();
+    }
+    
+    public boolean isValid() {
+    	try {
+			return dbCon.con.isValid(10);
+		} catch (SQLException e) {
+			logger.log(Level.WARNING,"Failed to check validity of connection due to SQLException",e);
+			return false;
+		}
     }
 
     public DatabaseConnector getDbCon() {
