@@ -1,30 +1,20 @@
 package org.imirsel.nema.components.io;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.imirsel.nema.annotations.StringDataType;
-import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
-import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.renderers.CollectionRenderer;
-import org.imirsel.nema.repository.DatasetListFileGenerator;
 import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.meandre.annotations.Component;
@@ -34,8 +24,13 @@ import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
-import org.meandre.core.ExecutableComponent;
 
+/**
+ * 
+ * @author kriswest
+ * @deprecated
+ */
+@Deprecated
 @Component(creator = "Kris West and Mert Bay", description = "Selects a Train / Test dataset from NEMA repository service. "
 		+ "Outputs 5 objects: \n"
 		+ "1) a NemaTask Object defining the task,\n"
@@ -109,6 +104,7 @@ public class RepositoryTrainTestTaskSelector extends NemaComponent {
 
 //	private Set<NemaMetadataEntry> file_encoding_constraint;
 
+	@Override
 	public void initialize(ComponentContextProperties ccp)
 			throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
@@ -124,6 +120,7 @@ public class RepositoryTrainTestTaskSelector extends NemaComponent {
 		getLogger().info("Task ID " + taskID + " is selected.");
 	}
 
+	@Override
 	public void dispose(ComponentContextProperties ccp)
 			throws ComponentContextException {
 		super.dispose(ccp);
@@ -174,6 +171,7 @@ public class RepositoryTrainTestTaskSelector extends NemaComponent {
     }
 
 
+	@Override
 	public void execute(ComponentContext ccp)
 			throws ComponentExecutionException, ComponentContextException {
 
