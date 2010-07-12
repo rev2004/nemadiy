@@ -34,6 +34,12 @@ public interface RepositoryClientInterface {
     public void close();
 
     /**
+     * Check if the client is connected and valid.
+     * @return Boolean flag indicating whether the client is still valid.
+     */
+    public boolean isValid();
+    
+    /**
      * Retrieves a list of NemaCollection Objects describing the available
      * collections.
      *

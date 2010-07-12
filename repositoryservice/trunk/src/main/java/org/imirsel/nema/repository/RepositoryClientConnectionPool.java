@@ -91,13 +91,18 @@ public class RepositoryClientConnectionPool {
      * 
      * @return A RepositoryClientImpl Object from the pool.
      */
-    public RepositoryClientInterface getFromPool(){
+    public RepositoryClientInterface getFromPool() throws SQLException{
         RepositoryClientInterface util = null;
         try {
             util = pool.poll(30, TimeUnit.SECONDS);
         } catch (InterruptedException ex) {
         	logger.log(Level.WARNING, null, ex);
         }
+        if (!util.isValid()){
+        	logger.warning("The repository DB connection was not valid and will be refreshed");
+        	util = new RepositoryClientImpl();
+        }
+        
         return util;
     }
     
