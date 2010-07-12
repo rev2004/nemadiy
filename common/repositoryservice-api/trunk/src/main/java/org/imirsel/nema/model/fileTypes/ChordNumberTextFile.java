@@ -56,9 +56,9 @@ public class ChordNumberTextFile extends SingleTrackEvalFileTypeImpl {
 		int[] notes;
 		for(int r = 0; r < nrows-1; r++) {
 			onset = Double.parseDouble(chordStringsData[r][0]);
-			offset = Double.parseDouble(chordStringsData[r+1][0]);
+			offset = Double.parseDouble(chordStringsData[r+1][1]);
 			try{
-				notes = ChordConversionUtil.getInstance().convertChordNumbersToNoteNumbers(chordStringsData[r][1]);
+				notes = ChordConversionUtil.getInstance().convertChordNumbersToNoteNumbers(chordStringsData[r][2]);
 			}catch(IllegalArgumentException e){
 				Logger.getLogger(ChordShortHandTextFile.class.getName()).log(Level.SEVERE, "Failed to convert chord format in file: " + theFile.getAbsolutePath(), e);
 				throw e;
