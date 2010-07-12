@@ -32,23 +32,7 @@
 
 		</fieldset>
 
-		<fieldset >
-			<label class="label">Other Argument Flags:</label>
-			<input type="button" value="+" onclick="add($('otherMain'),$('otherParam1'),1)" />
-			<br />
-			<div id='otherMain'>
-				<c:forEach items="${niceParams.others}" var="item">
-					<div id='otherParam0'>
-						<input name="other" type="text" value="${item}" />
-						<input type="button" value="-" onclick="removeNode(this,'otherParam1')" />
-					</div>
-				</c:forEach>
-				<div id='otherParam1'>
-					<input name="other" type="text" />
-					<input type="button" value="-" onclick="removeNode(this,'otherParam1')" />
-				</div>
-			</div>
-		</fieldset>
+
 
 	<fieldset>
 			<c:set var="nums">1,2,3,4</c:set>
