@@ -69,6 +69,10 @@ public class CommandLineFormatter {
 		if(paramString!=null){
 			sbuilder.append(" "+paramString);
 		}
+		
+		if(pct.getFunctionCall()!=null){
+			sbuilder.append(" "+ pct.getFunctionCall());
+		}
 		return sbuilder.toString();
 	}
 
@@ -239,6 +243,10 @@ public class CommandLineFormatter {
 		String paramString= getParametersAsString(pct);
 		if(paramString!=null){
 			sbuilder.append(" "+paramString);
+		}
+		
+		if(pct.getFunctionCall()!=null){
+			sbuilder.append(" "+ pct.getFunctionCall());
 		}
 		
 		return sbuilder.toString();
