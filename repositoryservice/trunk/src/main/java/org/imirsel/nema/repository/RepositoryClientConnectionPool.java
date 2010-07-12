@@ -99,7 +99,12 @@ public class RepositoryClientConnectionPool {
         	logger.log(Level.WARNING, null, ex);
         }
         if (!util.isValid()){
+        	//attempt to close connection
+        	try{
+        		util.close();
+        	}catch(Exception e){}
         	logger.warning("The repository DB connection was not valid and will be refreshed");
+        	
         	util = new RepositoryClientImpl();
         }
         

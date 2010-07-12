@@ -57,7 +57,7 @@ public class RepositoryClientImplTest extends BaseManagerTestCase {
 	}
 
 	@Test
-	public final void testClientConnectionPool() {
+	public final void testClientConnectionPool() throws SQLException{
 		RepositoryClientConnectionPool rcp = RepositoryClientConnectionPool
 				.getInstance();
 		RepositoryClientInterface rci = rcp.getFromPool();
