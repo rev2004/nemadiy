@@ -11,6 +11,7 @@ import java.util.Map;
  * 
  * @author kumaramit01
  * @since 0.0.1
+ * @since 0.0.4 add FunctionCall field ( It covers input/output and maybe some other things.  )
  */
 public class VanillaPredefinedCommandTemplate implements
 		PredefinedCommandTemplate, Serializable{
@@ -23,6 +24,7 @@ public class VanillaPredefinedCommandTemplate implements
 	private Map<String,String> environmentMap = new HashMap<String,String>();
 	private List<Param> execParams = new ArrayList<Param>();
 	private String executableName;
+	private String functionCall;
 	
 	
 	public void addEnvironmentVariable(String key, String value){
@@ -65,6 +67,15 @@ public class VanillaPredefinedCommandTemplate implements
 		this.execParams = execParams;
 	}
 	
+
+	public String getFunctionCall() {
+		return functionCall;
+	}
+	
+	
+	public void setFunctionCall(String functionCall) {
+		this.functionCall = functionCall;
+	}
 	
 	
 	

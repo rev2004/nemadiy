@@ -6,7 +6,8 @@ import java.io.Serializable;
  * 
  * @author kumaramit01
  * @since 0.0.1
- * @version 0.0.4 -Added functionCall to support matlab function
+ * @version 0.0.4 -Added functionCall to support matlab function. It is pushed to the superclass 
+ * 					 {@link VanillaPredefinedCommandTemplate}
  */
 public class MatlabPredefinedCommandTemplate extends VanillaPredefinedCommandTemplate implements
 		Serializable {
@@ -22,7 +23,7 @@ public class MatlabPredefinedCommandTemplate extends VanillaPredefinedCommandTem
 	private boolean debug=false;
 	private boolean logfile=false;
 	private String log;
-	private String functionCall;
+	
 	
 	public boolean isJvm() {
 		return jvm;
@@ -66,12 +67,7 @@ public class MatlabPredefinedCommandTemplate extends VanillaPredefinedCommandTem
 	public void setLog(String log) {
 		this.log = log;
 	}
-	public String getFunctionCall() {
-		return functionCall;
-	}
-	public void setFunctionCall(String functionCall) {
-		this.functionCall = functionCall;
-	}
+	
 	
 
 }
