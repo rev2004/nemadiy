@@ -83,6 +83,7 @@ public class FileConversionUtil {
 			//setup track list file input type
 			List<Class<? extends NemaFileType>> trackListTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			trackListTypeList.add(TrackListTextFile.class);
+			trackListTypeList.add(ClassificationTextFile.class);
 			
 			//these are tasks where individual audio files are used as input... i.e. there is no list file
 			TEST_INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CHORD_LABEL_SEQUENCE, rawAudioTypeList);

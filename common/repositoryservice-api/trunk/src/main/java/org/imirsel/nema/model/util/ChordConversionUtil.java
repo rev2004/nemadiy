@@ -29,11 +29,11 @@ public class ChordConversionUtil {
 	private Map<String,int[]> chordNumberToNoteNumbers;
 	private Map<String, int[]> NoteNumbersToChordNumbers;
 	
-	public final String INTERVAL_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/IntervalDictionary.txt";
-	public final String SHORTHAND_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/ShorthandDictionary.txt";
-	public final String SHORTHAND_CLEANED_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/ShorthandDictionaryCleaned.txt";
-	public final String CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/NoteNumbersDictionary.txt";
-	public final String SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/Shorthand2NoteNumberDictionary.txt";
+	public static final String INTERVAL_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/IntervalDictionary.txt";
+	public static final String SHORTHAND_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/ShorthandDictionary.txt";
+	public static final String SHORTHAND_CLEANED_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/ShorthandDictionaryCleaned.txt";
+	public static final String CHORDNUMBERS_DICTIONARY_CLASSPATH = "/org/imirsel/nema/model/util/NoteNumbersDictionary.txt";
+	public static final String NOTE_NUMBERS_TO_CHORD_NUMBER_CLASSPATH = "/org/imirsel/nema/model/util/NoteNumbersToChordNumbers.txt";
 
 	public static ChordConversionUtil getInstance(){
 		if (instance == null){
@@ -72,11 +72,11 @@ public class ChordConversionUtil {
 		}
 		
 		try{
-			NoteNumbersToChordNumbers = readChordDictionary(SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH); //reverseMap(chordNumberToNoteNumbers);
+			NoteNumbersToChordNumbers = readChordDictionary(NOTE_NUMBERS_TO_CHORD_NUMBER_CLASSPATH); //reverseMap(chordNumberToNoteNumbers);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
 					"Failed to read chord dictionary from classpath: "
-							+ SHORTHAND2CHORDNUMBERS_DICTIONARY_CLASSPATH, e);
+							+ NOTE_NUMBERS_TO_CHORD_NUMBER_CLASSPATH, e);
 		}
 	}
 
