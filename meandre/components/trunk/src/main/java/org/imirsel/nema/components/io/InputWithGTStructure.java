@@ -22,6 +22,11 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
+/**
+ * 
+ * @author kriswest
+ * @deprecated
+ */
 @Component(creator = "Mert Bay", description = "Input component that outputs both the audio and ground-truth file locations.", name = "Structure Input", tags = "input, file, URL,file download, CSV reader, XML reader",
 		 firingPolicy = Component.FiringPolicy.all)
 public class InputWithGTStructure extends NemaComponent {

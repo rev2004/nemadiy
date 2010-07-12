@@ -22,6 +22,11 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
+/**
+ * 
+ * @author kriswest
+ * @deprecated
+ */
 @Component(creator = "Mert Bay", description = "Reads an XML or CSV file from a local directory or an URL, with File location and  class " +
 		" metadata. Output is a 2D String array that holds the fileLocation  in the first column and its " +
 		"class metadata in the second column. If the fileLocation is a URL, it will be downloaded  to a local path. " +
