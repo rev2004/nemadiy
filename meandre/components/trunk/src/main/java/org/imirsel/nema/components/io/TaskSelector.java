@@ -108,8 +108,14 @@ public class TaskSelector extends NemaComponent {
 		try {
 			RepositoryClientInterface client = new RepositoryClientImpl();
 			task = client.getTask(taskID);
+			if(task == null){
+				throw new ComponentExecutionException("Task id " + taskID + " was not found in the repository!");
+			}
 	        dataset = client.getDataset(task.getDatasetId());
-
+	        if(dataset == null){
+				throw new ComponentExecutionException("Dataset id " + task.getDatasetId() + 
+						" was not found in the repository but was linked from task ID: " + taskID + " in the repository!");
+			}
 	        //produce Ground-truth list
 	        gtList = getGroundtruthData(client, task, dataset.getSubsetTrackListId(), task.getSubjectTrackMetadataId());
 	        
