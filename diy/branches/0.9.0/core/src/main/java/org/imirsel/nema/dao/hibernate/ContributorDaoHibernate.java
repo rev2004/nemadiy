@@ -31,7 +31,7 @@ public class ContributorDaoHibernate extends GenericDaoHibernate<Contributor, Lo
 
 	public List<Contributor> findSimilar(String str) {
 		List list = 
-			getHibernateTemplate().find("from Contributor where (firstname like ?) or (lastname like ?) or (orgnization like ?)",
+			getHibernateTemplate().find("from Contributor where (firstname like '%?%') or (lastname like '%?%') or (orgnization like '%?%')",
 					str,str,str);
 		return list;
 	}

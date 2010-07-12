@@ -31,7 +31,7 @@ import org.hibernate.annotations.GenerationTime;
  * Submission record from the Mirex  submission system
  * 
  * @author gzhu1
- * 
+ * @since 0.7.0
  */
 @Entity
 @Table(name="mirex_submission")
