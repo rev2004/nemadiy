@@ -45,7 +45,7 @@ public class TempoTextFile extends SingleTrackEvalFileTypeImpl {
 			throw new IllegalArgumentException(msg);
 		}
 		
-		if (tempoDataStrArray[0].length != 3 || tempoDataStrArray[0].length != 2) {
+		if (!(tempoDataStrArray[0].length != 3 || tempoDataStrArray[0].length != 2)) {
 			String msg = "This file could not be parsed into separate tempo1, tempo2, and tempo salience! " +
 					"Format should be <tempo1>\t<tempo2>\t<salience>\n<EOF> OR <tempo1>\t<tempo2>\n<EOF>. Content: \n";
 			for (int i = 0; i < tempoDataStrArray[0].length; i++) {
