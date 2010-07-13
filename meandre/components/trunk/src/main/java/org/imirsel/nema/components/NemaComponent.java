@@ -29,7 +29,8 @@ public abstract class NemaComponent implements ExecutableComponent {
 	// log messages are here
 	private Logger _logger;
 	private PrintStream logDestination = null;
-	private String flowExecutionInstanceID= null;
+	private String flowExecutionInstanceID = null;
+	private String executionInstanceID = null;
 	private String publicResourceDirectory = null;
 	private String nemaResourceDirectory=null;
 	private String processWorkingDirectory=null;
@@ -69,8 +70,9 @@ public abstract class NemaComponent implements ExecutableComponent {
 	 */
 	public void initialize(ComponentContextProperties componentContextProperties)
 			throws ComponentExecutionException, ComponentContextException {
-		flowExecutionInstanceID= componentContextProperties.getFlowExecutionInstanceID();
-		publicResourceDirectory=componentContextProperties.getPublicResourcesDirectory();
+		flowExecutionInstanceID = componentContextProperties.getFlowExecutionInstanceID();
+		executionInstanceID = componentContextProperties.getExecutionInstanceID();
+		publicResourceDirectory = componentContextProperties.getPublicResourcesDirectory();
 		
 		getLogger().setLevel(Level.FINEST);
 		synchronized(NemaComponent.class){
@@ -131,7 +133,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 	 */
 	public Logger getLogger() {
 		if (_logger == null){
-			_logger = Logger.getLogger(this.getClass().getName());
+			_logger = Logger.getLogger(this.getClass().getName() + "-" + executionInstanceID);
 		}
 		return _logger;
 	}
