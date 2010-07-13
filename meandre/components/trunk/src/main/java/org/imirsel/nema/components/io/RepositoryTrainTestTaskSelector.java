@@ -28,7 +28,8 @@ import org.meandre.core.ComponentExecutionException;
 /**
  * 
  * @author kriswest
- * @deprecated
+ * 
+ * @deprecated Use TaskSelector or TrainTestTaskSelector
  */
 @Deprecated
 @Component(creator = "Kris West and Mert Bay", description = "Selects a Train / Test dataset from NEMA repository service. "

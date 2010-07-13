@@ -33,6 +33,11 @@ import org.meandre.core.ExecutableComponent;
 import com.healthmarketscience.rmiio.RemoteOutputStream;
 import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 
+/**
+ * @deprecated
+ * @author kriswest
+ *
+ */
 @Component(creator = "Amit Kumar", description = "Creates a file with Time on the server", 
 		name = "RemoteTimeComponent", tags = "remote time test")
 public class RemoteTimeComponent implements ExecutableComponent{

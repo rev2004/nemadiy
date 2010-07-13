@@ -23,19 +23,20 @@ import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 import org.meandre.core.ExecutableComponent;
 
-	/**
-	 * 
-	 * @author kriswest
-	 * @deprecated
-	 */
-	@Component(creator = "Mert Bay", description = "Selects a Train / Test dataset from NEMA servers. Outputs 4 objects: " +
-				"1) a Feature Extraction list file path 2) Ground-truth file path 3) an array of train file paths " +
-				"4) an array of test file paths", name = "CollectionSelector",//resources={"RepositoryProperties.properties"},
-					tags = "input, collection, train/test", firingPolicy = Component.FiringPolicy.all)	
-	public class TrainTestCollectionInputSelector extends NemaComponent {
+/**
+ * 
+ * @author kris.west@gmail.com
+ * 
+ * @deprecated Use TaskSelector or TrainTestTaskSelector
+ */
+@Component(creator = "Mert Bay", description = "Selects a Train / Test dataset from NEMA servers. Outputs 4 objects: " +
+			"1) a Feature Extraction list file path 2) Ground-truth file path 3) an array of train file paths " +
+			"4) an array of test file paths", name = "CollectionSelector",//resources={"RepositoryProperties.properties"},
+				tags = "input, collection, train/test", firingPolicy = Component.FiringPolicy.all)	
+public class TrainTestCollectionInputSelector extends NemaComponent {
 
-	
-	
+
+
 	@ComponentOutput(description = "String[] that holds the file locations for the feature extraction list file", name = "featExtList")
 	public final static String DATA_OUTPUT_FeatExtList = "featExtList";
 	

@@ -20,7 +20,10 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
-
+/**
+ * 
+ * @deprecated
+ */
 @Component(creator = "Mert Bay", description = "The remote execution component for phase vocoder analysis. C" 
 		, name = "RemotePVANComponent", tags = "remote execution, PVAN",
 		 firingPolicy = Component.FiringPolicy.all)

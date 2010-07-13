@@ -18,7 +18,7 @@ import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
 /**
- * 
+ * @deprecated
  * @author kumaramit01
  * @since 0.2.0
  */

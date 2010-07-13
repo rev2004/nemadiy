@@ -227,7 +227,7 @@ public class ProtovisOnsetPlotItem extends PageItem{
 		"				focus.add(pv.Rule)\n" +
 		"				    .data(function() fx.ticks())\n" +
 		"				    .left(fx)\n" +
-		"				    .strokeStyle(\"#eee\")\n" +
+		"				    .strokeStyle(\"#aaa\")\n" +
 		"				  .anchor(\"bottom\").add(pv.Label)\n" +
 		"				    .text(fx.tickFormat);\n" +
 		"\n" + 

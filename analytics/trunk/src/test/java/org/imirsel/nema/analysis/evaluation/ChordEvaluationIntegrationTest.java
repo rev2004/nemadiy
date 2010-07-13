@@ -108,7 +108,7 @@ public class ChordEvaluationIntegrationTest extends BaseManagerTestCase{
 		renderer.renderResults(results);
 	}
 
-	
+	@Test
 	public void testEvaluateManyShortHandBasedSystems() throws FileNotFoundException, IOException, IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		List<NemaTrackList> testSets;
 		File groundTruthDirectory = new File("src/test/resources/chord/long/groundtruth");

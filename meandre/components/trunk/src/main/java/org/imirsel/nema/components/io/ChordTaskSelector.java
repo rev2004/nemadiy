@@ -31,6 +31,11 @@ import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
+/**
+ * 
+ * @author kris.west@gmail.com
+ * @deprecated Use TaskSelector or TrainTestTaskSelector
+ */
 @Component(creator = "Kris West", description = "Select a Chord task from the Nema Repository Service. "
 		+ "Outputs 6 objects: \n"
 		+ "1) a NemaTask Object defining the task,\n"
