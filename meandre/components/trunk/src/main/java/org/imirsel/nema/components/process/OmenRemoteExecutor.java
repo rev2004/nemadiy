@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.imirsel.nema.analytics.util.process.CommandArgument;
 import org.imirsel.nema.analytics.util.process.CommandLineFormatParser;
@@ -214,7 +215,8 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				
 				
 				ProcessExecutionProperties pep = new ProcessExecutionProperties();
-				pep.setId(cc.getFlowExecutionInstanceID());
+				String uuid=UUID.randomUUID().toString();
+				pep.setId(uuid);
 				pep.setOutputs(outputs);
 				pep.setInputs(inputs);
 				

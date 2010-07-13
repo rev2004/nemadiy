@@ -17,6 +17,7 @@ import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.util.FileConversionUtil;
 import org.imirsel.nema.renderers.CollectionRenderer;
+import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.meandre.annotations.Component;
@@ -116,8 +117,9 @@ public class TrainTestTaskSelector extends NemaComponent {
 		Map<NemaTrackList,List<NemaData>> trainingSets = new HashMap<NemaTrackList,List<NemaData>>();
 		Map<NemaTrackList,List<NemaData>> testSets = new HashMap<NemaTrackList,List<NemaData>>();
 		
+		RepositoryClientInterface client = null;
 		try {
-			RepositoryClientInterface client = new RepositoryClientImpl();
+			client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			task = client.getTask(taskID);
 			if(task == null){
 				throw new ComponentExecutionException("Task id " + taskID + " was not found in the repository!");
@@ -155,6 +157,10 @@ public class TrainTestTaskSelector extends NemaComponent {
 		} catch (Exception e) {
 			throw new ComponentExecutionException("Exception in "
 					+ this.getClass().getName(), e);
+		}finally{
+			if(client!=null){
+				RepositoryClientConnectionPool.getInstance().returnToPool(client);
+			}
 		}
 
 		// Push the data out

@@ -428,7 +428,10 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		CountDownLatch latch = new CountDownLatch(1);
 		RemoteOutputStream ros = new SimpleRemoteOutputStream(this.componentContextProperties.getOutputConsole());
 		RecordStreamProcessMonitor remoteProcessMonitor = null;
+		
 		remoteProcessMonitor = new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue);
+		remoteProcessMonitor.setLogger(getLogger());
+		
 		return remoteProcessMonitor;
 	}
 	

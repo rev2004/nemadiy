@@ -92,10 +92,11 @@ import org.meandre.core.ExecutableComponent;
        // String ID = (String)ccp.getDataComponentFromInput(DATA_INPUT_ID);
      //   int datasetID = Integer.parseInt(ID);
 		RepositoryClientConnectionPool pool = RepositoryClientConnectionPool.getInstance();
-		RepositoryClientInterface client = pool.getFromPool();
+	
 		List<NemaPublishedResult> resultList = null;
-
+		RepositoryClientInterface client =null;
 		try{
+		   client = pool.getFromPool();
 		   resultList = client.getPublishedResultsForDataset(datasetid);
 		   names = new String[resultList.size()];
 		   paths = new String[resultList.size()];
@@ -114,7 +115,9 @@ import org.meandre.core.ExecutableComponent;
 			throw new ComponentExecutionException("SQLException in " + this.getClass().getName(),e);
 		}
 		finally{
-		   pool.returnToPool(client);
+			if(client!=null){
+			pool.returnToPool(client);
+			}
 		}
 
 	    file_encoding_constraint = DatasetListFileGenerator.buildConstraints(bitRate, channels, clip_type, encoding, sample_rate);		
