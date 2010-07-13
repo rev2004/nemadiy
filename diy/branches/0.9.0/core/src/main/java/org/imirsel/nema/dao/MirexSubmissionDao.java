@@ -12,5 +12,6 @@ public interface MirexSubmissionDao extends GenericDao<MirexSubmission,Long>{
 	public List<MirexSubmission> getSubmissions(User user);
 	public List<MirexSubmission> getSubmissions(Contributor contributor);
 	public List<MirexSubmission> getSubmissions(MirexTask task);
+	public List<MirexSubmission> findByHashcodeBeginning(String string);
 
 }

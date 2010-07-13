@@ -54,4 +54,12 @@ public class StringUtil {
 
 		return newkey.toString();
 	}
+	
+	/**
+	 * @return true if str==null or ""
+	 * 
+	 */
+	public static boolean isEmpty(String str){
+		return (str==null)||("".equals(str));
+	}
 }

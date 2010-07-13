@@ -35,4 +35,9 @@ public class MirexSubmissionDaoHibernate extends GenericDaoHibernate<MirexSubmis
 		List<MirexSubmission> submissionList = getHibernateTemplate().find("from MirexSubmission sub where sub.mirexTask=?", task);
 		  return submissionList;
 	}
+
+	public List<MirexSubmission> findByHashcodeBeginning(String code) {
+		List<MirexSubmission> submissionList = getHibernateTemplate().find("from MirexSubmission  where hashcode like ?", code+"%");
+		  return submissionList;
+	}
 }
