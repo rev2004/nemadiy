@@ -29,7 +29,7 @@
   <preference_value id="8" value="true" mkey="emailPrefFlowResult"/>
   <role id="-2" name="ROLE_USER" description="Default role for all Users"/>
   <role id="-1" name="ROLE_ADMIN" description="Administrator role (can edit Users)"/>
-  <role id="1" name="MirexRunner" description="Runner of Mirex"/>
+  <role id="1" name="MIREX_RUNNER" description="Runner of Mirex"/>
   <submission id="1" name="one" type="Inherits" jobId="1" userId="-2"/>
   <submission id="2" name="one" type="Feature Extraction" jobId="2" userId="-2"/>
   <submission id="3" name="one" type="Classification" jobId="3" userId="-2"/>
