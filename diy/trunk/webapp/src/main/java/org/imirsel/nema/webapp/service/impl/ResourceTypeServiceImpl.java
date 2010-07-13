@@ -64,6 +64,7 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 					flist.add(fdt);
 				}
 			}
+			logger.debug("Finished loading input file list. Total #:"+(flist==null?0:flist.size())  );
 			return flist;
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
@@ -99,6 +100,7 @@ final public class ResourceTypeServiceImpl implements ResourceTypeService {
 				flist.add(fdt);
 			}
 			}
+			logger.debug("Finished loading output file list. Total #:"+(flist==null?0:flist.size())  );
 			return flist;
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
