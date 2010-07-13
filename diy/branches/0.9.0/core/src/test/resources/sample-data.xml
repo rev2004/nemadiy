@@ -1,48 +1,432 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-  <app_user id="-2" version="2" password="b2cebd873228d3e6753d9b39195730694e3d1bbc" username="admin" account_enabled="true" email="matt@raibledesigns.com" password_hint="Not a female kitty." first_name="Matt" last_name="Raible" account_expired="false" account_locked="false" credentials_expired="false"/>
-  <app_user id="-1" version="1" password="12dea96fec20593566ab75692c9949596833adc9" username="user" account_enabled="true" email="matt_raible@yahoo.com" password_hint="A male kitty." first_name="Tomcat" last_name="User" account_expired="false" account_locked="false" credentials_expired="false"/>
-  <mirex_profile id="1" address_country="USA" orgnization="UIUC" url="http://nema.lis.uiuc.edu" firstname="Nema" lastname="Imirsel" startYear="2000" endYear="2010" creator_id="-1"/>
-  <mirex_profile id="2" address_country="USA" orgnization="UI" url="http://imirsel.lis.uiuc.edu" firstname="Imirsel" lastname="Imirsel" startYear="2009" endYear="now" phone="2173331000" creator_id="-1"/>
-  <mirex_profile id="3" address_country="USA" orgnization="Imirsel" url="http://imirsel.lis.uiuc.edu" firstname="Nemadiy" lastname="Imirsel" startYear="2009" endYear="now" phone="2173331000" creator_id="-2"/>
-  <mirex_task id="1" name="QBT" active="true" fullname="Query By Tapping"/>
-  <mirex_task id="2" name="QBSH" active="true" fullname="Query By Singing and Humming"/>
-  <mirex_task id="3" name="Chord" active="true" fullname="Chord Description"/>
-  <mirex_task id="4" name="Melody" active="false" fullname="Melody Finding"/>
- <mirex_submission id="1" name="submission 1" status="STARTED" hashcode="ABC1" privateNote="private note" readme="readme" publicNote="public note" updateTime="2010-01-01 00:00:00.0" mirexTask_id="1" user_id="-1"/>
-  <mirex_submission id="2" name="submission 2" status="FINISHED" hashcode="ABC2" privateNote="private note" readme="readme" publicNote="public note" updateTime="1999-10-01 00:00:00.0" mirexTask_id="1" user_id="-1"/>
-  <mirex_submission id="3" name="submission 3" status="UNKNOWN" hashcode="EF" privateNote="private note" readme="readme" publicNote="public note" updateTime="2005-03-01 12:34:00.0" mirexTask_id="2" user_id="-2"/>
-  <mirex_submission id="4" name="submission 4" status="REVIEWED" hashcode="GZ" privateNote="private note" readme="readme" publicNote="public note" mirexTask_id="3" user_id="-2"/>
-  <mirex_submission_mirex_profile mirex_submission_id="1" contributors_id="1"/>
-  <mirex_submission_mirex_profile mirex_submission_id="2" contributors_id="1"/>
-  <mirex_submission_mirex_profile mirex_submission_id="2" contributors_id="2"/>
-  <mirex_submission_mirex_profile mirex_submission_id="3" contributors_id="3"/>
-  <mirex_submission_mirex_profile mirex_submission_id="3" contributors_id="1"/>
-  <mirex_submission_mirex_profile mirex_submission_id="4" contributors_id="2"/>
-   <preference_value id="1" value="FALSE" mkey="emailPrefStartFlow"/>
-  <preference_value id="2" value="TRUE" mkey="emailPrefEndFlow"/>
-  <preference_value id="3" value="TRUE" mkey="emailPrefAbortFlow"/>
-  <preference_value id="4" value="TRUE" mkey="emailPrefFlowResult"/>
-  <preference_value id="5" value="false" mkey="emailPrefStartFlow"/>
-  <preference_value id="6" value="true" mkey="emailPrefEndFlow"/>
-  <preference_value id="7" value="true" mkey="emailPrefAbortFlow"/>
-  <preference_value id="8" value="true" mkey="emailPrefFlowResult"/>
-  <role id="-2" name="ROLE_USER" description="Default role for all Users"/>
-  <role id="-1" name="ROLE_ADMIN" description="Administrator role (can edit Users)"/>
-  <role id="1" name="MIREX_RUNNER" description="Runner of Mirex"/>
-  <submission id="1" name="one" type="Inherits" jobId="1" userId="-2"/>
-  <submission id="2" name="one" type="Feature Extraction" jobId="2" userId="-2"/>
-  <submission id="3" name="one" type="Classification" jobId="3" userId="-2"/>
-  <submission id="4" name="one" type="Evaluation" jobId="4" userId="-2"/>
-  <submission id="5" name="one" type="Analysis" jobId="5" userId="-2"/>
-  <user_prefs user_id="-2" preferences_id="5"/>
-  <user_prefs user_id="-2" preferences_id="6"/>
-  <user_prefs user_id="-2" preferences_id="7"/>
-  <user_prefs user_id="-2" preferences_id="8"/>
-  <user_prefs user_id="-1" preferences_id="1"/>
-  <user_prefs user_id="-1" preferences_id="2"/>
-  <user_prefs user_id="-1" preferences_id="3"/>
-  <user_prefs user_id="-1" preferences_id="4"/>
-  <user_role user_id="-2" role_id="-1"/>
-  <user_role user_id="-1" role_id="-2"/>
+  <table name="app_user">
+    <column>id</column>
+    <column>version</column>
+    <column>password</column>
+    <column>username</column>
+    <column>account_enabled</column>
+    <column>email</column>
+    <column>password_hint</column>
+    <column>first_name</column>
+    <column>last_name</column>
+    <column>account_expired</column>
+    <column>account_locked</column>
+    <column>credentials_expired</column>
+    <row>
+      <value>-2</value>
+      <value>2</value>
+      <value>b2cebd873228d3e6753d9b39195730694e3d1bbc</value>
+      <value>admin</value>
+      <value>true</value>
+      <value>matt@raibledesigns.com</value>
+      <value><![CDATA[Not a female kitty.]]></value>
+      <value>Matt</value>
+      <value>Raible</value>
+      <value>false</value>
+      <value>false</value>
+      <value>false</value>
+    </row>
+    <row>
+      <value>-1</value>
+      <value>1</value>
+      <value>12dea96fec20593566ab75692c9949596833adc9</value>
+      <value>user</value>
+      <value>true</value>
+      <value>matt_raible@yahoo.com</value>
+      <value><![CDATA[A male kitty.]]></value>
+      <value>Tomcat</value>
+      <value>User</value>
+      <value>false</value>
+      <value>false</value>
+      <value>false</value>
+    </row>
+  </table>
+  <table name="mirex_profile">
+    <column>id</column>
+    <column>address_country</column>
+    <column>address_streat_1</column>
+    <column>address_streat_2</column>
+    <column>address_streat_3</column>
+    <column>address_city</column>
+    <column>address_region</column>
+    <column>address_postcode</column>
+    <column>orgnization</column>
+    <column>url</column>
+    <column>email</column>
+    <column>firstname</column>
+    <column>lastname</column>
+    <column>title</column>
+    <column>department</column>
+    <column>unit</column>
+    <column>startYear</column>
+    <column>endYear</column>
+    <column>phone</column>
+    <column>creator_id</column>
+    <row>
+      <value>1</value>
+      <value>USA</value>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <value>UIUC</value>
+      <value>http://nema.lis.uiuc.edu</value>
+      <null/>
+      <value>Nema</value>
+      <value>Imirsel</value>
+      <null/>
+      <null/>
+      <null/>
+      <value>2000</value>
+      <value>2010</value>
+      <null/>
+      <value>-1</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>USA</value>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <value>UI</value>
+      <value>http://imirsel.lis.uiuc.edu</value>
+      <null/>
+      <value>Imirsel</value>
+      <value>Imirsel</value>
+      <null/>
+      <null/>
+      <null/>
+      <value>2009</value>
+      <value>now</value>
+      <value>2173331000</value>
+      <value>-1</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>USA</value>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <value>Imirsel</value>
+      <value>http://imirsel.lis.uiuc.edu</value>
+      <null/>
+      <value>Nemadiy</value>
+      <value>Imirsel</value>
+      <null/>
+      <null/>
+      <null/>
+      <value>2009</value>
+      <value>now</value>
+      <value>2173331000</value>
+      <value>-2</value>
+    </row>
+  </table>
+  <table name="mirex_task">
+    <column>id</column>
+    <column>name</column>
+    <column>url</column>
+    <column>active</column>
+    <column>description</column>
+    <column>fullname</column>
+    <row>
+      <value>1</value>
+      <value>QBT</value>
+      <null/>
+      <value>true</value>
+      <null/>
+      <value><![CDATA[Query By Tapping]]></value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>QBSH</value>
+      <null/>
+      <value>true</value>
+      <null/>
+      <value><![CDATA[Query By Singing and Humming]]></value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>Chord</value>
+      <null/>
+      <value>true</value>
+      <null/>
+      <value><![CDATA[Chord Description]]></value>
+    </row>
+    <row>
+      <value>4</value>
+      <value>Melody</value>
+      <null/>
+      <value>false</value>
+      <null/>
+      <value><![CDATA[Melody Finding]]></value>
+    </row>
+  </table>
+  <table name="mirex_submission">
+    <column>id</column>
+    <column>status</column>
+    <column>url</column>
+    <column>updateTime</column>
+    <column>createTime</column>
+    <column>hashcode</column>
+    <column>readme</column>
+    <column>name</column>
+    <column>publicNote</column>
+    <column>privateNote</column>
+    <column>user_id</column>
+    <column>mirexTask_id</column>
+    <row>
+      <value>1</value>
+      <value>STARTED</value>
+      <null/>
+      <value><![CDATA[2010-01-01 00:00:00.0]]></value>
+      <value><![CDATA[1992-07-01 18:25:10.0]]></value>
+      <value>ABC1</value>
+      <value>readme</value>
+      <value><![CDATA[submission 1]]></value>
+      <value><![CDATA[public note]]></value>
+      <value><![CDATA[private note]]></value>
+      <value>-1</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>FINISHED</value>
+      <null/>
+      <value><![CDATA[1999-10-01 00:00:00.0]]></value>
+      <value><![CDATA[1985-07-11 18:25:19.0]]></value>
+      <value>ABC2</value>
+      <value>readme</value>
+      <value><![CDATA[submission 2]]></value>
+      <value><![CDATA[public note]]></value>
+      <value><![CDATA[private note]]></value>
+      <value>-1</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>UNKNOWN</value>
+      <null/>
+      <value><![CDATA[2005-03-01 12:34:00.0]]></value>
+      <value><![CDATA[2003-07-10 18:25:35.0]]></value>
+      <value>EF</value>
+      <value>readme</value>
+      <value><![CDATA[submission 3]]></value>
+      <value><![CDATA[public note]]></value>
+      <value><![CDATA[private note]]></value>
+      <value>-2</value>
+      <value>2</value>
+    </row>
+    <row>
+      <value>4</value>
+      <value>REVIEWED</value>
+      <null/>
+      <value><![CDATA[2010-07-12 18:24:41.0]]></value>
+      <value><![CDATA[2010-07-01 18:24:50.0]]></value>
+      <value>GZ</value>
+      <value>readme</value>
+      <value><![CDATA[submission 4]]></value>
+      <value><![CDATA[public note]]></value>
+      <value><![CDATA[private note]]></value>
+      <value>-2</value>
+      <value>3</value>
+    </row>
+  </table>
+  <table name="mirex_submission_mirex_profile">
+    <column>mirex_submission_id</column>
+    <column>contributors_id</column>
+    <row>
+      <value>1</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>2</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>3</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>4</value>
+      <value>2</value>
+    </row>
+  </table>
+  <table name="preference_value">
+    <column>id</column>
+    <column>value</column>
+    <column>mkey</column>
+    <row>
+      <value>1</value>
+      <value>FALSE</value>
+      <value>emailPrefStartFlow</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>TRUE</value>
+      <value>emailPrefEndFlow</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>TRUE</value>
+      <value>emailPrefAbortFlow</value>
+    </row>
+    <row>
+      <value>4</value>
+      <value>TRUE</value>
+      <value>emailPrefFlowResult</value>
+    </row>
+    <row>
+      <value>5</value>
+      <value>false</value>
+      <value>emailPrefStartFlow</value>
+    </row>
+    <row>
+      <value>6</value>
+      <value>true</value>
+      <value>emailPrefEndFlow</value>
+    </row>
+    <row>
+      <value>7</value>
+      <value>true</value>
+      <value>emailPrefAbortFlow</value>
+    </row>
+    <row>
+      <value>8</value>
+      <value>true</value>
+      <value>emailPrefFlowResult</value>
+    </row>
+  </table>
+  <table name="role">
+    <column>id</column>
+    <column>name</column>
+    <column>description</column>
+    <row>
+      <value>-2</value>
+      <value>ROLE_USER</value>
+      <value><![CDATA[Default role for all Users]]></value>
+    </row>
+    <row>
+      <value>-1</value>
+      <value>ROLE_ADMIN</value>
+      <value><![CDATA[Administrator role (can edit Users)]]></value>
+    </row>
+    <row>
+      <value>1</value>
+      <value>MIREX_RUNNER</value>
+      <value><![CDATA[Runner of Mirex]]></value>
+    </row>
+  </table>
+  <table name="submission">
+    <column>id</column>
+    <column>name</column>
+    <column>type</column>
+    <column>jobId</column>
+    <column>dateCreated</column>
+    <column>userId</column>
+    <row>
+      <value>1</value>
+      <value>one</value>
+      <value>Inherits</value>
+      <value>1</value>
+      <null/>
+      <value>-2</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>one</value>
+      <value><![CDATA[Feature Extraction]]></value>
+      <value>2</value>
+      <null/>
+      <value>-2</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>one</value>
+      <value>Classification</value>
+      <value>3</value>
+      <null/>
+      <value>-2</value>
+    </row>
+    <row>
+      <value>4</value>
+      <value>one</value>
+      <value>Evaluation</value>
+      <value>4</value>
+      <null/>
+      <value>-2</value>
+    </row>
+    <row>
+      <value>5</value>
+      <value>one</value>
+      <value>Analysis</value>
+      <value>5</value>
+      <null/>
+      <value>-2</value>
+    </row>
+  </table>
+  <table name="user_prefs">
+    <column>user_id</column>
+    <column>preferences_id</column>
+    <row>
+      <value>-2</value>
+      <value>5</value>
+    </row>
+    <row>
+      <value>-2</value>
+      <value>6</value>
+    </row>
+    <row>
+      <value>-2</value>
+      <value>7</value>
+    </row>
+    <row>
+      <value>-2</value>
+      <value>8</value>
+    </row>
+    <row>
+      <value>-1</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>-1</value>
+      <value>2</value>
+    </row>
+    <row>
+      <value>-1</value>
+      <value>3</value>
+    </row>
+    <row>
+      <value>-1</value>
+      <value>4</value>
+    </row>
+  </table>
+  <table name="user_role">
+    <column>user_id</column>
+    <column>role_id</column>
+    <row>
+      <value>-2</value>
+      <value>-1</value>
+    </row>
+    <row>
+      <value>-1</value>
+      <value>-2</value>
+    </row>
+  </table>
 </dataset>

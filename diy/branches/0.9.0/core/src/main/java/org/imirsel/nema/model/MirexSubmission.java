@@ -18,6 +18,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -150,7 +152,7 @@ public class MirexSubmission  implements Serializable {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
-	@org.hibernate.annotations.Generated(GenerationTime.ALWAYS)
+	@PreUpdate
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="updateTime",insertable=false,updatable=false)
 	public Date getUpdateTime() {
@@ -191,7 +193,7 @@ public class MirexSubmission  implements Serializable {
 	public String getUrl() {
 		return url;
 	}
-	
+	@PrePersist
 	public Date getCreateTime() {
 		return createTime;
 	}
