@@ -59,7 +59,7 @@
     	class="org.imirsel.nema.dao.hibernate.MirexTaskDaoHibernate">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
-    <bean id="mirexContributorDao"
+    <bean id="contributorDao"
     	class="org.imirsel.nema.dao.hibernate.ContributorDaoHibernate">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>

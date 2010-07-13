@@ -41,19 +41,10 @@
 		p:commandLineFormatter-ref="commandLineFormatter"
 		p:resourceServiceType-ref="resource" />
 	<bean id="mirexSubmissionService"
-		class="org.imirsel.nema.webapp.webflow.MirexSubmissionServiceImpl">
-		<property name="mirexTasks">
-			<list>
-				<bean class="org.imirsel.nema.model.MirexTask" p:name="qbsh"
-					p:fullname="Query by Singing and Humming" p:id="0" />
-				<bean class="org.imirsel.nema.model.MirexTask" p:name="qbt"
-					p:fullname="Query by Tapping" p:id="1" />
-				<bean class="org.imirsel.nema.model.MirexTask" p:name="melody"
-					p:fullname="Melody" p:id="2" />
-				<bean class="org.imirsel.nema.model.MirexTask" p:name="onset"
-					p:fullname="Onset Test" p:id="3" />
-			</list>
-		</property>
+		class="org.imirsel.nema.webapp.webflow.MirexSubmissionServiceImpl"
+		p:mirexContributorDictionary-ref="mirexContributorDictionary"
+		p:mirexSubmissionDao-ref="mirexSubmissionDao"
+		p:mirexTaskDictionary-ref="mirexTaskDictionary">
 	</bean>
 
 
