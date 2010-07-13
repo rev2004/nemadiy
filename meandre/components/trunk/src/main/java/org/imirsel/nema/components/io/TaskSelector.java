@@ -1,8 +1,6 @@
 package org.imirsel.nema.components.io;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,15 +11,14 @@ import java.util.Map;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.NemaData;
-import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
-import org.imirsel.nema.model.fileTypes.MelodyTextFile;
 import org.imirsel.nema.model.util.FileConversionUtil;
 import org.imirsel.nema.renderers.CollectionRenderer;
+import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.meandre.annotations.Component;
@@ -105,8 +102,9 @@ public class TaskSelector extends NemaComponent {
 		List<NemaData> gtList = null;
 		Map<NemaTrackList,List<NemaData>> testSets = new HashMap<NemaTrackList,List<NemaData>>();
 		
+		RepositoryClientInterface client = null;
 		try {
-			RepositoryClientInterface client = new RepositoryClientImpl();
+			client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			task = client.getTask(taskID);
 			if(task == null){
 				throw new ComponentExecutionException("Task id " + taskID + " was not found in the repository!");
@@ -132,6 +130,10 @@ public class TaskSelector extends NemaComponent {
 		} catch (Exception e) {
 			throw new ComponentExecutionException("Exception in "
 					+ this.getClass().getName(), e);
+		}finally{
+			if(client!=null){
+				RepositoryClientConnectionPool.getInstance().returnToPool(client);
+			}
 		}
 
 		// Push the data out

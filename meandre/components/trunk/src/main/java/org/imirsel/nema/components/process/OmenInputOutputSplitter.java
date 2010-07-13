@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.imirsel.nema.analytics.util.process.CommandArgument;
 import org.imirsel.nema.analytics.util.process.CommandLineFormatParser;
-import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
 import org.imirsel.nema.model.CommandLineTemplate;
 import org.imirsel.nema.model.NemaData;
@@ -150,13 +149,16 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 		getLogger().info("Resolving tracks to audio paths...");
 		
 		//resolve tracks using repository
-		RepositoryClientInterface client = RepositoryClientConnectionPool.getInstance().getFromPool();
+		RepositoryClientInterface client = null;
 		try {
+			client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			client.resolveTracksToFiles(dataToProcess,encodingConstraint);
 		}catch(Exception e){
 			throw new ComponentExecutionException("Exception occured while resolving tracks to files using properties: " + propsString,e);
 		}finally {
-			RepositoryClientConnectionPool.getInstance().returnToPool(client);
+			if(client!=null){
+				RepositoryClientConnectionPool.getInstance().returnToPool(client);
+			}
 		}
 		
 		

@@ -143,10 +143,10 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 			}
 			
 			getLogger().info("Resolving tracks to audio paths...");
-			
-			//resolve tracks using repository
-			RepositoryClientInterface client = RepositoryClientConnectionPool.getInstance().getFromPool();
+			RepositoryClientInterface client =null;
 			try {
+				//resolve tracks using repository
+				client = RepositoryClientConnectionPool.getInstance().getFromPool();
 				client.resolveTracksToFiles(dataToProcess,encodingConstraint);
 			}catch(Exception e){
 				throw new ComponentExecutionException("Exception occured while resolving tracks to files using properties: " + propsString,e);
