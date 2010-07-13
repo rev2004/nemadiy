@@ -244,7 +244,13 @@ public class FileConversionUtil {
 	 * @return a List of NemaFileType implementations.
 	 */
 	public static List<Class<? extends NemaFileType>> getTestInputFileTypes(String metadataKey){
-		return INPUT_FILE_TYPE_REGISTRY.get(metadataKey);
+		List<Class<? extends NemaFileType>> types = INPUT_FILE_TYPE_REGISTRY.get(metadataKey);
+		if (types == null){
+			Logger.getLogger(FileConversionUtil.class.getName()).severe("Failed to retrieve input types for metadata key '" + metadataKey + "', which is not registered!");
+		}else if (types.size()==0){
+			Logger.getLogger(FileConversionUtil.class.getName()).warning("Retrieved list of 0 input types for metadata key '" + metadataKey + "'!");
+		}
+		return types; 
 	}
 	
 	/**
@@ -255,7 +261,13 @@ public class FileConversionUtil {
 	 * @return a List of NemaFileType implementations.
 	 */
 	public static List<Class<? extends NemaFileType>> getGTAndPredictionFileTypes(String metadataKey){
-		return OUTPUT_FILE_TYPE_REGISTRY.get(metadataKey);
+		List<Class<? extends NemaFileType>> types = OUTPUT_FILE_TYPE_REGISTRY.get(metadataKey);
+		if (types == null){
+			Logger.getLogger(FileConversionUtil.class.getName()).severe("Failed to retrieve input types for metadata key '" + metadataKey + "', which is not registered!");
+		}else if (types.size()==0){
+			Logger.getLogger(FileConversionUtil.class.getName()).warning("Retrieved list of 0 input types for metadata key '" + metadataKey + "'!");
+		}
+		return types;
 	}
 	
 	/**
@@ -477,7 +489,6 @@ public class FileConversionUtil {
 			Map<NemaTrackList,List<NemaData>> executionData, 
 			Class<? extends NemaFileType> inputType,
 			NemaFileType outputFileTypeInstance,
-			String outputFileExt,
 			File outputDirectory
 			) {
 		
@@ -493,7 +504,26 @@ public class FileConversionUtil {
 			 * probably going to receive a directory of output files with 
 			 * unspecified names, otherwise its one in one out).
 			*/
-			if(!MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) && 
+			if(OpaqueDirectoryFormat.class.isAssignableFrom(outputFileTypeInstance.getClass())){
+				//directory
+				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
+				foldDir.mkdirs();
+				list.add(foldDir);
+				
+			}else if(OpaqueFileFormat.class.isAssignableFrom(outputFileTypeInstance.getClass())){
+				//create directory of metadata or new raw audio files
+				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
+				foldDir.mkdirs();
+				List<NemaData> data = executionData.get(testSet);
+				for (Iterator<NemaData> nemaDataIt = data.iterator(); nemaDataIt
+						.hasNext();) {
+					File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
+					String name = fileLoc.getName();
+					File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileTypeInstance.getFilenameExtension());
+					list.add(newPath);
+				}
+				
+			}else if(!MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) && 
 					MultipleTrackEvalFileType.class.isAssignableFrom(inputType)){
 				//directory
 				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
@@ -514,13 +544,13 @@ public class FileConversionUtil {
 							.hasNext();) {
 						File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
 						String name = fileLoc.getName();
-						File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+						File newPath = new File(foldDir.getAbsolutePath() + File.separator + name + outputFileTypeInstance.getFilenameExtension());
 						list.add(newPath);
 					}
 				}else if(MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
 					//create one output file per fold
 					list = new ArrayList<File>(1);
-					File newPath = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+					File newPath = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + outputFileTypeInstance.getFilenameExtension());
 					list.add(newPath);
 				}
 			}
@@ -558,7 +588,6 @@ public class FileConversionUtil {
 			Map<NemaTrackList,List<NemaData>> executionData, 
 			Class<? extends NemaFileType> inputType,
 			NemaFileType outputFileTypeInstance,
-			String outputFileExt,
 			String outputDirectory
 			) {		 
 		
@@ -610,7 +639,18 @@ public class FileConversionUtil {
 				 * probably going to receive a directory of output files with 
 				 * unspecified names, otherwise its one in one out).
 				*/
-				if(!MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) && 
+				if(OpaqueDirectoryFormat.class.isAssignableFrom(outputFileTypeInstance.getClass())){
+					//directory
+					fileList.add(foldDir);
+				}else if(OpaqueFileFormat.class.isAssignableFrom(outputFileTypeInstance.getClass())){
+					//create directory of metadata or new raw audio files
+					for (Iterator<NemaData> nemaDataIt = siteList.iterator(); nemaDataIt.hasNext();) {
+						File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
+						String name = fileLoc.getName();
+						File newPath = new File(foldDir.getPath() + File.separator + name + outputFileTypeInstance.getFilenameExtension());
+						fileList.add(newPath);
+					}
+				}else if(!MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) && 
 						MultipleTrackEvalFileType.class.isAssignableFrom(inputType)){
 					//directory
 					fileList.add(foldDir);
@@ -621,12 +661,12 @@ public class FileConversionUtil {
 						for (Iterator<NemaData> nemaDataIt = siteList.iterator(); nemaDataIt.hasNext();) {
 							File fileLoc = new File(nemaDataIt.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
 							String name = fileLoc.getName();
-							File newPath = new File(foldDir.getPath() + File.separator + name + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+							File newPath = new File(foldDir.getPath() + File.separator + name + outputFileTypeInstance.getFilenameExtension());
 							fileList.add(newPath);
 						}
 					}else if(MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
 						//create one output file per fold
-						File newPath = new File(foldDir.getPath() + File.separator +"set-" + testSet.getId() + outputFileExt + outputFileTypeInstance.getFilenameExtension());
+						File newPath = new File(foldDir.getPath() + File.separator +"set-" + testSet.getId() + outputFileTypeInstance.getFilenameExtension());
 						fileList.add(newPath);
 					}
 				}
