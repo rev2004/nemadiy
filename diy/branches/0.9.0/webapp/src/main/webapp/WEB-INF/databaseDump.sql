@@ -236,7 +236,7 @@ INSERT INTO `role` (`id`,`name`,`description`)
 VALUES
 	(-2,'ROLE_USER','Default role for all Users'),
 	(-1,'ROLE_ADMIN','Administrator role (can edit Users)'),
-	(1,'MirexRunner','Runner of Mirex');
+	(1,'MIREX_RUNNER','Runner of Mirex');
 
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;

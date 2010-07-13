@@ -69,6 +69,7 @@ public class MirexSubmission  implements Serializable {
 	private String privateNote;
 	private SubmissionStatus status=SubmissionStatus.UNKNOWN;
 	private Date updateTime;
+	private Date createTime;
 	private List<Contributor> contributors;
 	private User user;
 	private MirexTask mirexTask;
@@ -191,6 +192,12 @@ public class MirexSubmission  implements Serializable {
 		return url;
 	}
 	
+	public Date getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this==o) {return true;}

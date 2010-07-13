@@ -63,7 +63,7 @@ public class Constants {
     public static final String USER_ROLE = "ROLE_USER";
     
     /**
-     * The name of the Mirex runner role, as specified in web.xml
+     * The name of the Mirex runner role, as specified in database
      */
     public static final String MIREX_RUNNER_ROLE = "MIREX_RUNNER";
     

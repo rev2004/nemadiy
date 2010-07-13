@@ -6,6 +6,7 @@ package org.imirsel.nema.webapp.controller.annotation;
 import java.util.List;
 import java.util.Set;
 
+import org.imirsel.nema.Constants;
 import org.imirsel.nema.dao.MirexSubmissionDao;
 import org.imirsel.nema.model.Contributor;
 import org.imirsel.nema.model.MirexSubmission;
@@ -64,10 +65,25 @@ public class MirexSubmissionController {
 	@RequestMapping("/submissions")
 	ModelAndView getSubmissions(){
 		User user=userManager.getCurrentUser();
-		Set<Role>  roles=user.getRoles();
-		if ()
-		List<MirexSubmission> submissions=mirexSubmissionDao.getAll();
+		List<MirexSubmission> submissions;
+		if (isSuperUser(user)){
+			submissions=mirexSubmissionDao.getAll();
+		}else {
+			submissions=mirexSubmissionDao.getSubmissions(user);
+		}
 		ModelAndView mav=new ModelAndView("/mirex/submissions","submissions",submissions);
 		return mav;
+	}
+	
+	private boolean isSuperUser(User user){
+		
+		Set<Role>  roles=user.getRoles();
+		for (Role role:roles){
+			if ((Constants.MIREX_RUNNER_ROLE.equals(role.getName()))||
+					(Constants.ADMIN_ROLE.equals(role.getName()))){
+				return true;
+			}
+		}
+		return false;
 	}
 }
