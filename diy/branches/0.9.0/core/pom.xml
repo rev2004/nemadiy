@@ -136,18 +136,18 @@
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>dbunit-maven-plugin</artifactId>
-                <version>1.0-beta-1</version>
+				<artifactId>dbunit-maven-plugin</artifactId>
+				<version>1.0-beta-3</version>
                 <configuration>
                     <dataTypeFactoryName>${dbunit.dataTypeFactoryName}</dataTypeFactoryName>
                     <driver>${jdbc.driverClassName}</driver>
                     <username>${jdbc.username}</username>
                     <password>${jdbc.password}</password>
-                    <url>${jdbc.url}</url>
+                    <url>${jdbc.test.url}</url>
                     <src>src/test/resources/sample-data.xml</src>
                     <type>${dbunit.operation.type}</type>
-                    <schema>${dbunit.schema}</schema>
                     <skip>${maven.test.skip}</skip>
+                    <ordered>true</ordered>
                 </configuration>
                 <executions>
                     <execution>
@@ -184,7 +184,8 @@
 
     </build>
 
-    <!-- Dependencies calculated by AppFuse when running full-source plugin -->
+    <!-- Dependencies calculated by AppFuse when running full-source plugin
+-->
     <dependencies>
         <dependency>
             <groupId>commons-beanutils</groupId>

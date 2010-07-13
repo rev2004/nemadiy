@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -43,6 +44,7 @@ public class Contributor implements Serializable {
 	private String startYear;
 	private String endYear;
 	private String phone;
+	private User creator;
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	public long getId() {
 		return id;
@@ -134,7 +136,13 @@ public class Contributor implements Serializable {
 	public String getPhone() {
 		return phone;
 	}
-
+	@ManyToOne
+	public User getCreator() {
+		return creator;
+	}
+	public void setCreator(User creator) {
+		this.creator = creator;
+	}
 	@Override
 	public	boolean equals(Object o){
 		if (this==o) {return true;}

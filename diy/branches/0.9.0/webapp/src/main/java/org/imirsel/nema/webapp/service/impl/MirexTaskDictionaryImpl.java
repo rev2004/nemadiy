@@ -16,6 +16,8 @@ import org.imirsel.nema.webapp.service.NemaServiceException;
 import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
+ * Facade of the {@link MirexTaskDao} with simple cache and manual refresh.   
+ * It implement a internal map with the id as key. 
  * @author gzhu1
  *
  */
@@ -53,7 +55,7 @@ public class MirexTaskDictionaryImpl implements MirexTaskDictionary {
 
 	public void refresh() {
 		if (dao==null) {throw new NemaServiceException("MirexTaskDao needs to be set before using MirexTaskDictionary");}
-		List<MirexTask> list=dao.findAllActive();
+		List<MirexTask> list=dao.getAll();
 		map=new HashMap<Long,MirexTask>();
 		for (MirexTask task:list){
 			map.put(task.getId(),task);
@@ -68,6 +70,18 @@ public class MirexTaskDictionaryImpl implements MirexTaskDictionary {
 		Collections.sort(list);
 		return list;
 	}
+
+
+	public List<MirexTask> findAllActive() {
+		refresh();
+		List<MirexTask> list=new ArrayList<MirexTask>();
+		for (MirexTask task:map.values()){
+			if (task.isActive()) {list.add(task);}
+		}
+		Collections.sort(list);
+		return list;
+	}
+	
 	
 
 }

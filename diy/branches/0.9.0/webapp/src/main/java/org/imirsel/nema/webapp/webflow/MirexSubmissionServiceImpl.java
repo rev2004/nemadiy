@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.imirsel.nema.dao.MirexSubmissionDao;
 import org.imirsel.nema.model.Contributor;
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.MirexTask;
@@ -26,17 +27,27 @@ public class MirexSubmissionServiceImpl {
 		return list;
 	}
 
-	private List<MirexTask> mirexTasks;
 	private MirexTaskDictionary mirexTaskDictionary;
 	private MirexContributorDictionary mirexContributorDictionary;
+	private MirexSubmissionDao mirexSubmissionDao;
+	
+	public void setMirexTaskDictionary(MirexTaskDictionary mirexTaskDictionary) {
+		this.mirexTaskDictionary = mirexTaskDictionary;
+	}
 
+	public void setMirexContributorDictionary(
+			MirexContributorDictionary mirexContributorDictionary) {
+		this.mirexContributorDictionary = mirexContributorDictionary;
+	}
+
+	public void setMirexSubmissionDao(MirexSubmissionDao mirexSubmissionDao) {
+		this.mirexSubmissionDao = mirexSubmissionDao;
+	}
+	
 	public List<MirexTask> mirexTaskSet() {
-		return mirexTasks;
+		return mirexTaskDictionary.findAllActive();
 	}
 
-	public void setMirexTasks(List<MirexTask> mirexTasks) {
-		this.mirexTasks = mirexTasks;
-	}
 
 	public void updateSubmission(MirexSubmission submission, ParameterMap params) {
 		Long[] contributorIds = (Long[]) params.getArray("contributor",
@@ -50,5 +61,9 @@ public class MirexSubmissionServiceImpl {
 			}
 			submission.setContributors(list);
 		}
+	}
+	
+	public MirexSubmission save(MirexSubmission submission){
+		return mirexSubmissionDao.save(submission);
 	}
 }

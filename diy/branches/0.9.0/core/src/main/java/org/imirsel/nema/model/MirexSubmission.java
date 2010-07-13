@@ -38,7 +38,7 @@ import org.hibernate.annotations.GenerationTime;
 public class MirexSubmission  implements Serializable {
 
 	public static enum SubmissionStatus {
-		UNKOWN(-1,"unkown"),STARTED(0,"started"),READY_FOR_RUN(1,"ready for run"),RUNNING(2,"running"),ERROR(3,"error in running"),
+		UNKNOWN(-1,"unknown"),STARTED(0,"started"),READY_FOR_RUN(1,"ready for run"),RUNNING(2,"running"),ERROR(3,"error in running"),
 		FINISHED(4,"finished running"),REVIEWED(5,"reviewed"),DELETED(6,"deleted");
 		final private int code;
 		final private String statusStr;
@@ -67,7 +67,7 @@ public class MirexSubmission  implements Serializable {
 	private String readme;
 	private String publicNote;
 	private String privateNote;
-	private SubmissionStatus status=SubmissionStatus.UNKOWN;
+	private SubmissionStatus status=SubmissionStatus.UNKNOWN;
 	private Date updateTime;
 	private List<Contributor> contributors;
 	private User user;

@@ -475,6 +475,7 @@
 		<jdbc.version>5.1.6</jdbc.version>
 		<jdbc.driverClassName>${diy.jdbc.driverClassName}</jdbc.driverClassName>
 		<jdbc.url>${diy.jdbc.url}</jdbc.url>
+		<jdbc.test.url>${diy.test.jdbc.url}</jdbc.test.url>
 		<jdbc.username>${diy.jdbc.username}</jdbc.username>
 		<jdbc.password>${diy.jdbc.password}</jdbc.password>
 
