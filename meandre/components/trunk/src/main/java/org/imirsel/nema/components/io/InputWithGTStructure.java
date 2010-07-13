@@ -24,8 +24,9 @@ import org.meandre.core.ComponentExecutionException;
 
 /**
  * 
- * @author kriswest
- * @deprecated
+ * @author mertbay
+ * 
+ * @deprecated Use TaskSelector or TrainTestTaskSelector
  */
 @Component(creator = "Mert Bay", description = "Input component that outputs both the audio and ground-truth file locations.", name = "Structure Input", tags = "input, file, URL,file download, CSV reader, XML reader",
 		 firingPolicy = Component.FiringPolicy.all)
