@@ -182,7 +182,7 @@ public class RemoteNemaProcessComponent extends RemoteProcessExecutorComponent {
 				((ClassificationTextFile)outputTypeInstance).setMetadataType(task.getSubjectTrackMetadataName());
 			}
 			//TODO do something with output properties - could be file name extensions (e.g. if producing an opaque model file)
-			outputFiles = FileConversionUtil.createOutputFileNames(dataToProcess, inputType1, outputTypeInstance, ".out", new File(getAbsoluteResultLocationForJob()));
+			outputFiles = FileConversionUtil.createOutputFileNames(dataToProcess, inputType1, outputTypeInstance, new File(getAbsoluteResultLocationForJob()));
 
 			
 			//setup remote execution

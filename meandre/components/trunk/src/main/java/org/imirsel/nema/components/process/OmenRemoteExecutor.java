@@ -19,6 +19,8 @@ import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
 import org.imirsel.nema.model.fileTypes.MultipleTrackEvalFileType;
 import org.imirsel.nema.model.fileTypes.NemaFileType;
+import org.imirsel.nema.model.fileTypes.OpaqueDirectoryFormat; 
+import org.imirsel.nema.model.fileTypes.OpaqueFileFormat;
 import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
 import org.imirsel.nema.monitor.process.NemaProcess;
 import org.imirsel.nema.service.executor.ExecutorConstants;
@@ -201,7 +203,19 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				inputs.add(paInputs);
 				
 				List<ProcessArtifact> outputs = new ArrayList<ProcessArtifact>();
-				if ( MultipleTrackEvalFileType.class.isAssignableFrom(inputType1) &&  SingleTrackEvalFileType.class.isAssignableFrom(outputType1)){
+				
+				
+				if(OpaqueDirectoryFormat.class.isAssignableFrom(outputType1)){
+					//output is a directory rather than a file!
+					ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath() + File.separator, "Directory", outputType1.getClass().getName());
+					outputs.add(paOutputs);
+					formatModel.setPreparedPathForOutput(1, outputFile.getPath() + File.separator);
+				}else if(OpaqueFileFormat.class.isAssignableFrom(outputType1)){
+					//output is a file
+					ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath(), "File", outputType1.getClass().getName());
+					outputs.add(paOutputs);
+					formatModel.setPreparedPathForOutput(1, outputFile.getPath());
+				}else if (MultipleTrackEvalFileType.class.isAssignableFrom(inputType1) &&  SingleTrackEvalFileType.class.isAssignableFrom(outputType1)){
 					//output is a directory rather than a file!
 					ProcessArtifact paOutputs = new ProcessArtifact(outputFile.getPath() + File.separator, "Directory", outputType1.getClass().getName());
 					outputs.add(paOutputs);
