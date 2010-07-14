@@ -29,20 +29,6 @@ public class TempoResultRenderer extends ResultRendererImpl {
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
 
-//		/* Plot summary bar plot for each system */
-//		getLogger().info("Plotting result summaries...");
-//		Map<String, File[]> jobIDToResultPlotFileList = new HashMap<String, File[]>();
-//		for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
-//			String jobId = it.next();
-//			File sysDir = jobIDToResultDir.get(jobId);
-//
-//			/* Get summary results to plot */	
-//			File[] summaryPlot = new File[1];
-//			summaryPlot[0] = plotSummaryForJob(jobId, results.getJobIdToOverallEvaluation(),sysDir);
-//
-//			jobIDToResultPlotFileList.put(jobId, summaryPlot);
-//		}
-
 		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");
 		File summaryCsv = writeOverallResultsCSV(results);
@@ -120,6 +106,10 @@ public class TempoResultRenderer extends ResultRendererImpl {
 				items = new ArrayList<PageItem>();
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 
+				/* Plot summary result bar chart for each system */
+				PageItem plot = plotSummaryForJob(jobId, results);
+				items.add(plot);
+				
 				/* Add per track table */
 				Table perTrackTable = WriteCsvResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, results.getTrackEvalMetricsAndResultsKeys());
 				items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_results", results.getJobName(jobId)
@@ -136,12 +126,6 @@ public class TempoResultRenderer extends ResultRendererImpl {
 //				items.add(new FileListItem("plots", "System summary plot",
 //						plotPathList));
 
-				/* Plot summary result bar chart for each system */
-				PageItem plot = plotSummaryForJob(jobId, results);
-				items.add(plot);
-				
-//				
-				
 				aPage = new Page(results.getJobIdToJobName().get(jobId) + "_results", results.getJobName(jobId),
 						items, true);
 				resultPages.add(aPage);
@@ -181,8 +165,6 @@ public class TempoResultRenderer extends ResultRendererImpl {
 
 		Page.writeResultPages(results.getTask().getName(), outputDir, resultPages);
 	}
-
-
 
 	/**
 	 * Plots bar chart of the performance scores for a job.

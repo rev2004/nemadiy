@@ -296,7 +296,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		"				    .events(\"all\")\n" +
 		"				    .event(\"mousedown\", pv.Behavior.select())\n" +
 		"				    .event(\"select\", focus)\n" +
-		"					.title(\"click and drag to select new focus region\")" + 
+		"					.title(\"click and drag to select new focus region\")\n" + 
 		"				  .add(pv.Bar)\n" +
 		"				    .left(function(d) d.x)\n" +
 		"				    .width(function(d) d.dx)\n" +
@@ -304,13 +304,12 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 		"				    .strokeStyle(\"rgb(255, 128, 128)\")\n" +
 		"				    .lineWidth(1)\n" +
 		"				    .antialias(false)\n" +
-		"					.title(\"drag to move focus region\")" + 
+		"					.title(\"drag to move focus region\")\n" + 
 		"				    .cursor(\"move\")\n" +
 		"				    .event(\"mousedown\", pv.Behavior.drag())\n" +
 		"				    .event(\"drag\", focus);\n" +
 		"\n" + 
-		"					vis.render();\n" +
-		"					\n" +
+		"				vis.render();\n" +
 		"				}\n" +
 		"			};\n" +
 		"		}\n" +
