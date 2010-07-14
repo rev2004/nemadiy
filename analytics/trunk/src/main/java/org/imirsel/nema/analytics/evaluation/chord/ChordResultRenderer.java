@@ -36,8 +36,6 @@ import org.imirsel.nema.model.util.IOUtil;
  */
 public class ChordResultRenderer extends ResultRendererImpl {
 
-	private static final String PLOT_EXT = ".chords.png";
-
 	public ChordResultRenderer() {
 		super();
 	}
@@ -50,7 +48,6 @@ public class ChordResultRenderer extends ResultRendererImpl {
 	public void renderResults(NemaEvaluationResultSet results)
 			throws IOException {
 		
-		int numFolds = results.getTestSetTrackLists().size();
 		int numJobs = results.getJobIds().size();
 		
 		
