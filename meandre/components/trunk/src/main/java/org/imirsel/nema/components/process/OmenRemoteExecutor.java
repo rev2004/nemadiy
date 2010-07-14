@@ -88,11 +88,11 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 			getLogger().warning("No output paths found for site '" + group + "'");
 		}
 		
-		getLogger().info("Getting command formatting string...");
+		getLogger().fine("Getting command formatting string...");
 		//get command formatting string and parse
 		CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
 		String commandlineFormat = cTemplate.getCommandLineFormatter();
-		getLogger().info("Parsing command formatting string: " + commandlineFormat);
+		getLogger().fine("Parsing command formatting string: " + commandlineFormat);
 		if (commandlineFormat.contains("\n")){
 			commandlineFormat = commandlineFormat.replaceAll("\n", " ");
 			getLogger().warning("Comamnd format string contained new line characters. These were replaced with spaces");
@@ -100,7 +100,7 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 		
 		//parse and extract I/O classes and parameters
 		CommandLineFormatParser formatModel = new CommandLineFormatParser(commandlineFormat);
-		getLogger().info("Format string parsed as: " + formatModel.toConfigString());
+		getLogger().fine("Format string parsed as: " + formatModel.toConfigString());
 		
 		String args = "Number of command argument parts: " + formatModel.getArguments().size() + "\n"; 
 		int count = 0;
@@ -108,7 +108,7 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 			CommandArgument arg = iterator.next();
 			args += "\t" + count++ + ": " + arg.toConfigString() + "\n";  
 		}
-		getLogger().info(args);
+		getLogger().fine(args);
 		
 		//Extract constraints from inputs
 		//only dealing with input 1 as this is a 1 input component
@@ -118,7 +118,7 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 		HashSet<NemaMetadataEntry> encodingConstraint = new HashSet<NemaMetadataEntry>();
 		String propsString = "";
 		if(properties1 != null) {
-			getLogger().info("Processing audio encoding properties...");
+			getLogger().fine("Processing audio encoding properties...");
 			
 			for (Iterator<String> iterator = properties1.keySet().iterator(); iterator.hasNext();) {
 				String key = iterator.next();
@@ -138,11 +138,21 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 		//get output type
 		Class<? extends NemaFileType> outputType1 = formatModel.getOutputType(1);
 		
-		
-		//setup Process Execution Properties for each execution - this needs to be updated
+		//count number of executions to perform
+		int executionTotal = 0;
 		for (Iterator<NemaTrackList> setIt = inputPaths.keySet().iterator(); setIt.hasNext();) {
 			NemaTrackList testSet = setIt.next();
-			
+			List<String> inputs1ForFold = inputPaths.get(testSet);
+			executionTotal += inputs1ForFold.size();
+		}
+		
+		
+		//setup Process Execution Properties for each execution - this needs to be updated
+		int executionCount = 0;
+		int foldCount = 0;
+		for (Iterator<NemaTrackList> setIt = inputPaths.keySet().iterator(); setIt.hasNext();) {
+			NemaTrackList testSet = setIt.next();
+			foldCount++;
 			//scratch dir -this gets created at the executor end
 			String scratch = ExecutorConstants.REMOTE_PATH_SCRATCH_TOKEN;
 	
@@ -188,7 +198,7 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				}else {
 					outputFile = outputs1ForFold.get(i);
 				}
-				this.getLogger().info("Running for the output file: " + outputFile);
+				this.getLogger().fine("Running for the output file: " + outputFile);
 				formatModel.clearPreparedPaths();
 				formatModel.setPreparedPathForInput(1, inputPath);
 				
@@ -238,30 +248,32 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				String formattedArgs = formatModel.toFormattedString();
 				pep.setCommandLineFlags(formattedArgs);
 			
-				getLogger().info("Executing process... " + i + "\n");
+				getLogger().fine("Executing process... " + (i+1) + " of " + inputs1ForFold.size() + " for fold " + foldCount + " of " + inputPaths.size());
 				NemaProcess nemaProcess=null;
 				try {
 					nemaProcess=this.executeProcess(pep);
 				} catch (RemoteException e) {
 					throw new ComponentExecutionException(e);
 				} 
-				getLogger().info("Executed process. Waiting for the process to end..." + i + "\n");
+//				getLogger().info("Executed process. Waiting for the process to end..." + i);
 				try {
 					this.waitForProcess(nemaProcess);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				getLogger().info("Done Waiting..." +i +"\n Now wait to get the result");
+//				getLogger().info("Done Waiting..." +i +"\n Now wait to get the result");
 				
 				//We may not need to do this as we already know the paths to outputTypes on shared storage
 				List<ProcessArtifact> list = this.getResult(nemaProcess);
 				
 				if(list.size()>0){
-					getLogger().info("got results pushing the results: " + list.get(0).getResourcePath());
+					getLogger().fine("got results pushing the results: " + list.get(0).getResourcePath());
 				}else{
-					getLogger().info("Error -could not get the results; Aborting the flow");
+					getLogger().severe("Error -could not get the results; Aborting the flow");
 					throw new ComponentExecutionException("Error -no output results");
 				}
+				
+				getLogger().info("== Completed " + ++executionCount + " of " + executionTotal + " executions ==");
 				cc.pushDataComponentToOutput(DATA_OUT_PROCESS_ARTIFACT, list);
 				
 				/*ProcessArtifact processArtifact= list.get(0);
