@@ -158,6 +158,7 @@
 <form id="theform" action="<c:url value='/get/JobManager.jobAction'/>" method="post"><input name="id"
 	type="hidden" value="${job.id}" />
 	<input id="abortButton" name="submit" tabindex="6" value="Abort This Job" type="submit" style="display:none;"/>
+	  <input type="button" value="Clone" class="mycenter" onclick="window.location.assign('<c:url value='/get/task?flowId=${job.flow.id}&cloned=true'/>')"/>
 	<input  tabindex="6" name="submit" value="Delete This Job" type="submit" class="myright"/>
 </form>
 </fieldset>

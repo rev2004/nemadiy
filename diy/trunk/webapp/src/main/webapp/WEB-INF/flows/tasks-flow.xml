@@ -7,10 +7,12 @@
 	<var name="jobForm" class="org.imirsel.nema.webapp.model.JobForm" />
 	<var name="flow" class="org.imirsel.nema.model.Flow" />
 	<var name="componentList" class="java.util.ArrayList" />
+	<var name="newExecutable" class="java.util.HashMap"/>
 	
 
 	<input name="flowType" type="java.lang.String" />
 	<input name="flowId" type="java.lang.Integer" />
+	<input name="cloned" type="java.lang.Boolean"/>
 
 	<on-start>
 		<evaluate expression="tasksService.buildUploadPath(externalContext,jobForm.uuid)" />
@@ -48,12 +50,32 @@
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
+	
+	<decision-state id="editRemoteServiceComponentProperties">
+		<if test="cloned" then="editRemoteServiceComponentPropertiesCloned" else="editRemoteServiceComponentPropertiesNotCloned"/>
+	</decision-state>
 
-	<view-state id="editRemoteServiceComponentProperties">
+	<view-state id="editRemoteServiceComponentPropertiesCloned">
+		<on-entry>
+			<evaluate expression="tasksService.removeHiddenPropertiesForRemoteDynamicComponent(properties)" result="viewScope.formattedProperties" />
+			<set name="viewScope.commandLne" value="tasksService.getCommandLine(properties)"/>
+		</on-entry>
+		<transition on="save" to="displayFlowComponents">
+			<evaluate expression="tasksService.cloneExecutableBundle(requestParameters,properties,newExecutable,component)" />
+			
+			<evaluate expression="tasksService.updateProperties(requestParameters,properties)" />
+		</transition>
+		<transition on="cancel" to="displayFlowComponents" />
+	</view-state>
+	
+	
+	
+	<view-state id="editRemoteServiceComponentPropertiesNotCloned">
 		<on-entry>
 			<evaluate expression="tasksService.removeHiddenPropertiesForRemoteDynamicComponent(properties)" result="viewScope.formattedProperties" />
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
+			
 			<evaluate expression="tasksService.updateProperties(requestParameters,properties)" />
 		</transition>
 		<transition on="next" to="generateExecutable">
@@ -84,6 +106,7 @@
 		<set name="flowScope.jobForm.name" value="flow.name">
 			<attribute name="name" value="lastStep" />
 		</set>
+		<set name="newExecutable" value="taskService.generateNewExecutable(componentList)"/>
 		<transition on="lastStep.success" to="displayFlowComponents" />
 	</action-state>
 
@@ -138,7 +161,7 @@
 	</decision-state>
 
 	<decision-state id="startPoint">
-		<if test="jobForm.flowId==null" then="selectTask" else="getTemplate" />
+		<if test="(jobForm.flowId==null) or (cloned==null) or (!cloned)" then="selectTask" else="getTemplate" />
 	</decision-state>
 
 	<end-state id="jobdetail" view="externalRedirect:contextRelative:/get/JobManager.jobDetail?id=#{flowScope.job.id}" />
