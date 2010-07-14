@@ -17,7 +17,7 @@ import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContextProperties;
 
 @Component(creator="Tester", description="", tags="seasr fork redundant", name="ForkX2")
-public class ForkX2 extends NemaComponent {
+public class ForkX5 extends NemaComponent {
 
     static public final int s_REFERENCE = 0;
     static public final int s_CLONE_SHALLOW = 1;
@@ -31,6 +31,12 @@ public class ForkX2 extends NemaComponent {
     static public final String s_OUTPUT_1 = "output_object_1";
     @ComponentOutput(description="output object", name="output_object_2")
     static public final String s_OUTPUT_2 = "output_object_2";
+    @ComponentOutput(description="output object", name="output_object_3")
+    static public final String s_OUTPUT_3 = "output_object_3";
+    @ComponentOutput(description="output object", name="output_object_4")
+    static public final String s_OUTPUT_4 = "output_object_4";
+    @ComponentOutput(description="output object", name="output_object_5")
+    static public final String s_OUTPUT_5 = "output_object_5";
 
     @ComponentProperty(defaultValue="0", description="Replication Mode", name="Replication_Mode")
     static public final String s_REPLICATION_METHOD = "Replication_Mode";
@@ -39,7 +45,7 @@ public class ForkX2 extends NemaComponent {
             "Custom_Copy_Method_Name";
 
   
-    public ForkX2() {
+    public ForkX5() {
     }
 
     
@@ -58,50 +64,77 @@ public class ForkX2 extends NemaComponent {
 	public void execute(ComponentContext cc) throws ComponentExecutionException,
             ComponentContextException {
 
-        String fn = cc.getProperty(ForkX2.s_REPLICATION_METHOD);
+        String fn = cc.getProperty(ForkX5.s_REPLICATION_METHOD);
         if (fn == null || fn.length() == 0) {
             throw new RuntimeException("No replication mode given.");
         }
 
         try {
             int repMode = Integer.parseInt(fn);
-            Object dat = cc.getDataComponentFromInput(ForkX2.s_INPUT_1);
+            Object dat = cc.getDataComponentFromInput(ForkX5.s_INPUT_1);
             switch (repMode) {
             case 0: //REFERENCE
-                cc.pushDataComponentToOutput(ForkX2.s_OUTPUT_1, dat);
-                cc.pushDataComponentToOutput(ForkX2.s_OUTPUT_2, dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_1, dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_2, dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_3, dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_4, dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_5, dat);
                 break;
 
             case 1: //CLONE Shallow Copy
 
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_1, dat);
                 Object obj = makeClone(dat);
-                cc.pushDataComponentToOutput(ForkX2.s_OUTPUT_1, dat);
-                cc.pushDataComponentToOutput(ForkX2.s_OUTPUT_2, obj);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_2, obj);
+                obj = makeClone(dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_3, obj);
+                obj = makeClone(dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_4, obj);
+                obj = makeClone(dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_5, obj);
                 break;
 
             case 2: //SERIALIZE Deep Copy
 
                 obj = null;
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_1, dat);
                 obj = makeDeepCopy(dat);
-                cc.pushDataComponentToOutput(ForkX2.s_OUTPUT_1, dat);
-                cc.pushDataComponentToOutput(ForkX2.s_OUTPUT_2, obj);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_2, obj);
+                obj = makeDeepCopy(dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_3, obj);
+                obj = makeDeepCopy(dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_4, obj);
+                obj = makeDeepCopy(dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_5, obj);
                 break;
 
             case 3: //CONSTRUCTOR
 
                 obj = null;
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_1, dat);
                 obj = copyViaConstructor(dat);
-                cc.pushDataComponentToOutput(ForkX2.s_OUTPUT_1, dat);
-                cc.pushDataComponentToOutput(ForkX2.s_OUTPUT_2, obj);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_2, obj);
+                obj = copyViaConstructor(dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_3, obj);
+                obj = copyViaConstructor(dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_4, obj);
+                obj = copyViaConstructor(dat);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_5, obj);
                 break;
 
             case 4: //CUSTOM
 
-                String meth = cc.getProperty(ForkX2.s_CUSTOM_COPY_METHOD_NAME);
+                String meth = cc.getProperty(ForkX5.s_CUSTOM_COPY_METHOD_NAME);
                 obj = null;
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_1, dat);
                 obj = copyViaCustomMethod(dat, meth);
-                cc.pushDataComponentToOutput(ForkX2.s_OUTPUT_1, dat);
-                cc.pushDataComponentToOutput(ForkX2.s_OUTPUT_2, obj);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_2, obj);
+                obj = copyViaCustomMethod(dat, meth);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_3, obj);
+                obj = copyViaCustomMethod(dat, meth);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_4, obj);
+                obj = copyViaCustomMethod(dat, meth);
+                cc.pushDataComponentToOutput(ForkX5.s_OUTPUT_5, obj);
                 break;
 
             default:
