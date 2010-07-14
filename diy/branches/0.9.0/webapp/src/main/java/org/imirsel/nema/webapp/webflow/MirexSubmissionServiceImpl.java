@@ -1,6 +1,7 @@
 package org.imirsel.nema.webapp.webflow;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -66,7 +67,6 @@ public class MirexSubmissionServiceImpl {
 	
 	public MirexSubmission save(MirexSubmission submission){
 		submission.setHashcode(hashcodeGenerate(submission.getContributors()));
-		submission.setUpdateTime(new Date());
 		submission.setStatus(SubmissionStatus.READY_FOR_RUN);
 		return mirexSubmissionDao.save(submission);
 	}

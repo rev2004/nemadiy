@@ -1,5 +1,8 @@
 package org.imirsel.nema.dao;
 
+import java.util.Date;
+import java.util.List;
+
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.MirexTask;
 import org.imirsel.nema.model.User;
@@ -14,7 +17,7 @@ public class MirexSubmissionDaoTest extends BaseDaoTestCase{
 	private MirexTaskDao mirexTaskDao=null;
 
 	@Test
-	public final void testSave() {
+	public final void testSaveAndRemove() {
 		assertEquals(4, dao.getAll().size());
 		MirexSubmission submission=new MirexSubmission();
 		User user=userDao.get(-1L);
@@ -35,9 +38,15 @@ public class MirexSubmissionDaoTest extends BaseDaoTestCase{
 		
 		//save the same ID object twice should only add one record 
 		submission=dao.save(submission);
+		Date createTime=submission.getCreateTime();
+		Date updateTime=submission.getUpdateTime();
+		assertNotNull(createTime);
+		assertNotNull(updateTime);
 		flush();
 		submission.setStatus(SubmissionStatus.FINISHED);
-		dao.save(submission);
+		submission=dao.save(submission);
+		assertNotSame(updateTime,submission.getUpdateTime());
+		assertEquals(createTime,submission.getCreateTime());
 		flush();
 		assertEquals(5, dao.getAll().size());
 		
@@ -50,6 +59,17 @@ public class MirexSubmissionDaoTest extends BaseDaoTestCase{
         } catch (DataAccessException d) {
             assertNotNull(d);
         }
+	}
+	
+	
+	@Test
+	public void testFindByHashcodeBeginning(){
+		List<MirexSubmission> list=dao.findByHashcodeBeginning("ABC");
+		assertEquals(2, list.size());
+		list=dao.findByHashcodeBeginning("GZ");
+		assertEquals(1, list.size());
+		list=dao.findByHashcodeBeginning("ABCD");
+		assertEquals(0, list.size());
 	}
 
 	public void setMirexSubmissionDao(MirexSubmissionDao mirexSubmissionDao) {

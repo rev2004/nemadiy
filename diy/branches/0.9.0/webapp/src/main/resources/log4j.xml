@@ -62,6 +62,7 @@
 	<logger name="org.imirsel.nema.webapp.filter.StaticFilter">
 		<level value="INFO" />
 	</logger>
+	<logger name="org.dbunit"><level value="DEBUG"/> </logger>
 
 	<root>
 		<level value="WARN" />
