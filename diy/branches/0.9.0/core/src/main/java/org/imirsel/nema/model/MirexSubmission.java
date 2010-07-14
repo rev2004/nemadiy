@@ -62,7 +62,7 @@ public class MirexSubmission  implements Serializable {
 	}
 	
 	private static final long serialVersionUID = -979140837106061694L;
-	private long id;
+	private Long id;
 	// unique code for submission, usually initials of programmers + number
 	private String hashcode="";
 	private String name;
@@ -88,11 +88,11 @@ public class MirexSubmission  implements Serializable {
 	}
 
 	@Id  @GeneratedValue(strategy=GenerationType.AUTO)
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -152,7 +152,7 @@ public class MirexSubmission  implements Serializable {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
-	@PreUpdate
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="updateTime",insertable=false,updatable=false)
 	public Date getUpdateTime() {
@@ -193,7 +193,7 @@ public class MirexSubmission  implements Serializable {
 	public String getUrl() {
 		return url;
 	}
-	@PrePersist
+
 	public Date getCreateTime() {
 		return createTime;
 	}

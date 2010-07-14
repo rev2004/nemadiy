@@ -43,7 +43,7 @@
 			   		<input type="hidden" value="${contributor.id}" name="contributor"/>
 			   	</div>
 			</c:forEach> 
-			<input type="button" value="Add Contributor" onclick="window.open('<c:url value='/subpage/contributor.jsp'/>', 'searchpop', 'width=475');return false;">
+			<input type="button" value="Add Contributor" onclick="window.open('<c:url value='/get/subpage/contributor'/>', 'searchpop', 'width=475');return false;">
 			<input type="hidden" name="contributor" id="newContributor"/>		
 		</fieldset>
 		<fieldset >
