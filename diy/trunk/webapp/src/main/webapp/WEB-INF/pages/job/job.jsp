@@ -8,21 +8,24 @@
 	
      new PeriodicalExecuter(updateJob,10);
 
-     var scrollPosition=0;
-     var consoleUpdater=new Ajax.PeriodicalUpdater('meandreConsole', "<c:url value='/get/JobManager.getConsole'/>",
- 		  {
- 		    method: 'get',
- 		    parameters: {jobId:"${job.id}" },
- 		    frequency: 5,
- 		    decay:2,
- 		    onLoading:function(){
- 	 		    scrollPosition=$('meandreConsole').scrollTop;
- 		    },
- 		    onComplete:function(transport){
- 	 		    $('meandreConsole').scrollTop=scrollPosition;
- 		    }
- 		});
-    
+
+	
+	consoleUpdater=new PeriodicalExecuter(updateConsole,10);
+ 	function updateConsole(){
+ 	  	  new Ajax.Request("<c:url value='/get/JobManager.getConsole'/>",{
+ 	        method:'get',
+ 	        parameters: {jobId:"${job.id}" },
+ 	        onSuccess: function(fillConsole){
+ 	 	        var text=fillConsole.responseText;
+ 	 	      	var scrollPosition=$('meandreConsole').scrollTop;
+ 	 	      	var oldSize=$('meandreConsole').value.length;
+ 	 	      	if (text.length-oldSize>10){
+ 	 	      		$('meandreConsole').innerHTML=text;
+ 	 	      		$('meandreConsole').scrollTop=scrollPosition;
+ 	 	      	}
+ 	        }
+ 	  	  })//Ajax.Request
+ 	};
      
 	function updateJob(pe){
   	  new Ajax.Request("<c:url value='/get/JobManager.jobDetail.json'/>",{
@@ -57,7 +60,7 @@
 						}
            			}	
            		}
-       		}  
+       		};  
        		var jobDone=(json.job.status!=null)&&
        			(	(json.job.status.toLowerCase()=="finished")||
        	       		(json.job.status.toLowerCase()=="aborted")|| 
@@ -65,18 +68,7 @@
        		if ((jobDone)&&(pe!=null)) {
            		pe.stop();
            		consoleUpdater.stop();
-           		$('refresh').hide();
-           		new Ajax.Updater('meandreConsole', "<c:url value='/get/JobManager.getConsole'/>",
-              		  {
-              		    method: 'get',
-              		    parameters: {jobId:"${job.id}" },  
-              		  	onLoading:function(){
-             	 		    scrollPosition=$('meandreConsole').scrollTop;
-             		    },
-             		    onComplete:function(transport){
-             	 		    $('meandreConsole').scrollTop=scrollPosition;
-             		    }  		    
-              		});
+           		updateConsole();
            		
            	};
        		if (json.job.status.toLowerCase()=="started") {$('abortButton').show();} 
@@ -170,6 +162,6 @@
 </form>
 </fieldset>
 
- <textarea id="meandreConsole" cols='89' rows='30'>(getting console...)</textarea></div>
+ <textarea id="meandreConsole" cols='89' rows='30' readonly="readonly">(getting console...)</textarea></div>
 </body>
 
