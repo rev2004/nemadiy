@@ -16,7 +16,7 @@ import org.meandre.annotations.ComponentOutput;
 import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContextProperties;
 
-@Component(creator="Tester", description="", tags="seasr fork redundant", name="ForkX2")
+@Component(creator="Tester", description="", tags="seasr fork redundant", name="ForkX5")
 public class ForkX5 extends NemaComponent {
 
     static public final int s_REFERENCE = 0;
