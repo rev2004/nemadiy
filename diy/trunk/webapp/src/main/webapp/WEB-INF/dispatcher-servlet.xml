@@ -20,6 +20,9 @@
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
 			<props>
+				<prop key="java.lang.IllegalArgumentException">
+					illegalArgument
+				</prop>
 				<prop key="org.springframework.dao.DataAccessException">
 					dataAccessFailure
                 </prop>
