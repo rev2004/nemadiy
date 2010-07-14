@@ -42,7 +42,7 @@ import org.meandre.core.ComponentExecutionException;
 	+ "4) List NemaData Objects encoding the list of tracks used in the experiment (with ground-truth data),\n"
 	+ "5) A Map of test NemaTrackList Objects to a List NemaData Objects (with ground-truth data) encoding the test set data,\n"
 	+ "6) A Map of test NemaTrackList Objects to a List NemaData Objects encoding the test set data.", 
-	name = "ChordTaskSelector", 
+	name = "TrainTestTaskSelector", 
 	resources={"../../../../../RepositoryProperties.properties"},
 tags = "input, collection, classification", firingPolicy = Component.FiringPolicy.all)
 public class TrainTestTaskSelector extends NemaComponent {
