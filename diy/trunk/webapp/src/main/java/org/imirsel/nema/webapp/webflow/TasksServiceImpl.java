@@ -708,6 +708,22 @@ public class TasksServiceImpl {
 		return list;
 	}
 
+	public String getCommandLine(List<Property> properties){
+		//TODO
+	}
+	
+	public void cloneExecutableBundle(ParameterMap parameters, List<Property> properties,Map<Component,Boolean> newExecutable, Component component){
+		//TODO
+	}
+	
+	public Map<Component,Boolean> generateNewExecutable(Collection<Component> components){
+		Map<Component,Boolean> map=new HashMap<Component,Boolean>();
+		for (Component component:components){
+			map.put(component, false);
+		}
+		return map;
+	}
+	
 	public void setMirexSubmissionDao(MirexSubmissionDao mirexSubmissionDao) {
 		this.mirexSubmissionDao = mirexSubmissionDao;
 	}
