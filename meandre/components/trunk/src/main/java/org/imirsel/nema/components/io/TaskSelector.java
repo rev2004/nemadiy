@@ -124,7 +124,9 @@ public class TaskSelector extends NemaComponent {
 	            
 	            for (Iterator<NemaTrackList> it1 = list.iterator(); it1.hasNext();){
 	                NemaTrackList trackList = it1.next();
-	                testSets.put(trackList,getTestData(trackList.getId(), client));
+	                if (trackList.getTrackListTypeName().equalsIgnoreCase("test")){
+	                	testSets.put(trackList,getTestData(trackList.getId(), client));
+	                }
 	            }
 	        }
 		} catch (Exception e) {
