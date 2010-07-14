@@ -430,7 +430,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		RecordStreamProcessMonitor remoteProcessMonitor = null;
 		
 		remoteProcessMonitor = new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue);
-		remoteProcessMonitor.setLogger(getLogger());
+		remoteProcessMonitor.setLogger(getLogger()); 
 		
 		return remoteProcessMonitor;
 	}

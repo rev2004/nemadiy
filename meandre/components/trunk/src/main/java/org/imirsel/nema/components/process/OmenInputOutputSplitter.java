@@ -226,7 +226,7 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 		}
 		
 		Map<String,Map<NemaTrackList,List<File>>> siteToOutputFiles = FileConversionUtil.createOMENOutputFileNames(
-				dataToProcess, inputType1, outputTypeInstance, outputTypeInstance.getFilenameExtension(), ExecutorConstants.REMOTE_PATH_TOKEN);
+				dataToProcess, inputType1, outputTypeInstance, ExecutorConstants.REMOTE_PATH_TOKEN);
 		getLogger().info("got process output files spanning " + siteToOutputFiles.size() + " sites");
 		
 		//merge into overall output files
