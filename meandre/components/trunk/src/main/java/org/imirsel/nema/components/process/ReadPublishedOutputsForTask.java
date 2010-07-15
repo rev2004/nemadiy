@@ -36,7 +36,9 @@ import org.meandre.core.ComponentExecutionException;
 @Component(creator = "Kris West", description = "Takes a task ID and retrieves " +
 		"all the published results on the task, reads them up and outputs a map " +
 		"of submission code to a datastructure containing NemaData Objects " +
-		"representing the data produced on the specified task.", 
+		"representing the data produced on the specified task, filtered to only " +
+		"include the test sets (eliminating feature extraction and training sets " +
+		"etc.).", 
 		name = "ReadPublishedOutputsForTask",
 		resources={"../../../../../RepositoryProperties.properties"},
 		tags = "publish results repository", firingPolicy = Component.FiringPolicy.all)
@@ -45,13 +47,15 @@ public class ReadPublishedOutputsForTask extends NemaComponent {
 	@ComponentInput(description = "NemaTask Object defining the task.", name = "NemaTask")
 	public final static String DATA_INPUT_NEMATASK = "NemaTask";
 	
+	@ComponentInput(description = "Map of NemaTrackList to a List of NemaData Objects defining each test set (no ground-truth data).", name = "TestSets")
+	public final static String DATA_INPUT_TEST_SETS = "TestSets";
+	
 	@ComponentOutput(description = "Job ID to Output data map", name = "jobIdToOutputDataMap")
 	private static final String DATA_OUT_OUTPUT_DATA_MAP ="jobIdToOutputDataMap";
 
 	@ComponentOutput(description = "Job ID to Job Name map", name = "jobIdToJobNameMap")
 	private static final String DATA_OUT_JOBID_TO_JOBNAME_MAP ="jobIdToJobNameMap";
 
-	
 	@Override
 	public void initialize(ComponentContextProperties cc) throws ComponentExecutionException, ComponentContextException {
 		super.initialize(cc);
@@ -67,6 +71,7 @@ public class ReadPublishedOutputsForTask extends NemaComponent {
 	public void execute(ComponentContext ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		NemaTask task = (NemaTask)ccp.getDataComponentFromInput(DATA_INPUT_NEMATASK);
+		Map<NemaTrackList,List<NemaData>> testSets = (Map<NemaTrackList,List<NemaData>>)ccp.getDataComponentFromInput(DATA_INPUT_TEST_SETS);
 		
 		RepositoryClientInterface client = null;
 		Map<String,Map<NemaTrackList,List<NemaData>>> output = null;
@@ -127,7 +132,10 @@ public class ReadPublishedOutputsForTask extends NemaComponent {
 					if(trackList == null){
 						throw new ComponentExecutionException("Failed to retreive NemaTrackList id: " + trackListId);
 					}
-					
+					if(!testSets.containsKey(trackList)){
+						getLogger().info("Ignoring data for set " + trackListId + " from job " + jobId + " as it was not in the list of test sets.");
+						continue;
+					}
 					List<File> filesToRead = trackListIdToFiles.get(trackList);
 					List<NemaData> setDataList = new ArrayList<NemaData>();
 					for (File file:filesToRead){
