@@ -30,6 +30,7 @@ import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.ExecutableBundle;
+import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.InvalidResourcePathException;
 import org.imirsel.nema.model.Job;
@@ -526,15 +527,17 @@ public class TasksServiceImpl {
 	 * @return Map containing {@link Component}s to {@link Properties}.
 	 */
 	public Map<Component, List<Property>> loadFlowComponents(Flow flow) {
+		
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		Map<Component, List<Property>> componentsToPropertyLists = flowService
-				.getAllComponentsAndPropertyDataTypes(flow.getUri());
+				.getAllComponentsAndPropertyDataTypes(credential,flow.getUri());
 
 		for (List<Property> properties : componentsToPropertyLists.values()) {
 			Collections.sort(properties);
 		}
 		
 		//prepopulate the credential field
-		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		
 		String credentialString = credential.getUserID() + ":"
 				+ new String(credential.getPassword());
 		replacePropertyValue(componentsToPropertyLists, CREDENTIALS, credentialString);
@@ -715,12 +718,13 @@ public class TasksServiceImpl {
 	 * @throws ContentRepositoryServiceException
 	 * @throws InvalidResourcePathException
 	 */
-	public ExecutableBundle getExecutable(List<Property> properties) throws ContentRepositoryServiceException, InvalidResourcePathException{
+	public ExecutableMetadata getExecutableMetadata(List<Property> properties) throws ContentRepositoryServiceException, InvalidResourcePathException{
 		Property executable=findProperty(properties, EXECUTABLE_URL);
 		ResourcePath path=getRepositoryResourcePath(executable.getValue());
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-		ExecutableBundle bundle=artifactService.getExecutableBundle(credential, path);
-		return bundle;
+		ExecutableMetadata meta=artifactService.getBundleMetadata(credential, path); 
+		
+		return meta;
 	}
 	
 	/**
@@ -728,7 +732,7 @@ public class TasksServiceImpl {
 	 * send it over to content repository, update the property with the new resource path, and change the newExecutable flag with true. 
 	 * If it is already the new executable, the previous one in content repository is removed.     
 	 * @param parameters
-	 * @param executable Executable bundle, old one.  
+	 * @param meta Original executable metadata.  
 	 * @param properties Modified.  The Executable_URL is replaced with the new one if command line is changed
 	 * @param uuid   
 	 * @param newExecutable   The map of flags, with component as key.  {@see generateIsNewExecutableMap}
@@ -736,15 +740,16 @@ public class TasksServiceImpl {
 	 * @throws InvalidResourcePathException
 	 * @throws ContentRepositoryServiceException
 	 */
-	public void cloneExecutableBundle(ParameterMap parameters, ExecutableBundle executable,List<Property> properties,UUID uuid,Map<Component,Boolean> newExecutable, Component component)
+	public void cloneExecutableBundle(ParameterMap parameters, ExecutableMetadata meta,List<Property> properties,UUID uuid,Map<Component,Boolean> newExecutable, Component component)
 		throws InvalidResourcePathException, ContentRepositoryServiceException{
 		String commandLine=parameters.get("commandLine");
-		if (!executable.getCommandLineFlags().equals(commandLine)){
+		if (!meta.getCommandLineFlags().equals(commandLine)){
 			Property executableProp=findProperty(properties, EXECUTABLE_URL);
 			SimpleCredentials credential = userManager.getCurrentUserCredentials();
+			ResourcePath path=getRepositoryResourcePath(executableProp.getValue());
+			ExecutableBundle executable=artifactService.getExecutableBundle(credential, path);
 			
 			if (newExecutable.get(component)){
-				ResourcePath path=getRepositoryResourcePath(executableProp.getValue());
 				deleteExecutableFromRepository(path, credential);
 			}else {
 				newExecutable.put(component,true);
@@ -791,6 +796,35 @@ public class TasksServiceImpl {
 			map.put(component, false);
 		}
 		return map;
+	}
+	
+	
+	public void prepareModel(JobForm jobForm,Map<Component,List<Property>> componentMap,Flow flow,Boolean cloned){
+		if (cloned==null) {cloned=false;}
+		
+		String des=flow.getDescription();
+		if (des==null) des="";
+		if (cloned) {des="Clone of \""+flow.getName()+"("+flow.getUri()+")\"\n"+des;}
+		jobForm.setDescription(des);
+		Property taskId=searchProperty(componentMap,"taskID");
+		if (taskId!=null){
+		try{
+			jobForm.setTaskId(Integer.parseInt(taskId.getValue()));
+		}catch(NumberFormatException e){
+			jobForm.setTaskId(0);
+		}
+		}
+		Property mirexSub=searchProperty(componentMap,MIREX_SUBMISSION_CODE);
+		if (mirexSub!=null) {jobForm.setMirexSubmissionCode(mirexSub.getValue());}
+		
+	}
+	
+	private Property searchProperty(Map<Component,List<Property>> componentMap,String name){
+		for (List<Property> list:componentMap.values()){
+			Property prop=findProperty(list, name);
+			if (prop!=null) return prop;
+		}
+		return null;
 	}
 	
 	public void setMirexSubmissionDao(MirexSubmissionDao mirexSubmissionDao) {

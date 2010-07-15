@@ -129,6 +129,7 @@
 		<property name="flowService" ref="realFlowService" />
 		<property name="artifactService" ref="contentRepositoryClient"/>
 		<property name="methodNameResolver" ref="flowMethodResolver" />
+		<property name="userManager" ref="userManager"/>
 	</bean>
 
 

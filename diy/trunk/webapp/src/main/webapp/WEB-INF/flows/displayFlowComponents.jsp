@@ -52,12 +52,16 @@ ${messageContext.allMessages}
 		<c:forEach items="${messageContext.allMessages}" var="message"><p >${message}</p></c:forEach>
 	</div>
 </c:if>
+<c:if test="${cloned}">
+    <div class="message">This is a CLONED job of ${flow.name}.</div>
+</c:if>
 
 <br/>
 <div id="formcontainer_job">
   <div class="form_job">
     <form:form commandName="jobForm" id="myForm">
-    <fieldset id="pt1">
+    
+   	 <fieldset id="pt1">
         <label class="label">Mirex Submission Code:</label>
         <form:select id="submissionCode" path="mirexSubmissionCode" onchange="modifyNameDesc();" items="${mirexSubmissions}" itemLabel="hashcode" itemValue="hashcode"  cssStyle="margin-bottom:5px"/>
  
@@ -67,8 +71,8 @@ ${messageContext.allMessages}
         <form:input id="name" path="name" cssStyle="width:200px;"/>
       </fieldset>
       <fieldset id="pt1">
-        <label class="label">Enter the Job Description:</label>
-        <form:input id="description" path="description" cssStyle="width:300px;"/>
+        <label class="label">Enter the Job Description:</label><br/>
+        <form:textarea rows="4" id="description" path="description" cols="70"/>
       </fieldset>
  
        <fieldset>
