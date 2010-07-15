@@ -757,6 +757,7 @@ public class TasksServiceImpl {
 			
 			executable.setCommandLineFlags(commandLine);
 			ResourcePath newPath=artifactService.saveExecutableBundle(credential, uuid.toString(), executable);
+			logger.info("Saved executable bundle at "+newPath.getURIAsString());
 			executableProp.setValue(newPath.getURIAsString());
 			
 		}
