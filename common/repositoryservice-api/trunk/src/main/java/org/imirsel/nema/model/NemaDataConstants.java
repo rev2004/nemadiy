@@ -147,6 +147,18 @@ public class NemaDataConstants {
     public static final String MULTI_F0_EST_E_MISS = "Multi-F0 Estimation Missed Error";
     public static final String MULTI_F0_EST_E_FA = "Multi-F0 Estimation False Alarm Error";
     
+ // Multi-F0 Note Tracking Evaluator Constants
+    public static final String MULTI_F0_NT_NOTE_SEQUENCE = "Multi-F0 Note Tracking note sequence";
+    public static final String MULTI_F0_NT_DATA = "Multi-F0 Note Tracking data with onset, offset and F0 values";
+    public static final String MULTI_F0_NT_PRECISION = "Multi-F0 Note Tracking precision";
+    public static final String MULTI_F0_NT_RECALL =  "Multi-F0 Note Tracking recall";
+    public static final String MULTI_F0_NT_OVERLAP = "Multi-F0 Note Tracking overlap";
+    public static final String MULTI_F0_AVE_NT_OVERLAP = "Multi-F0 Note Tracking average overlap";	    
+    public static final String MULTI_F0_NT_F_MEASURE = "Multi-F0 Note Tracking F-measure";
+    public static final String MULTI_F0_NT_AVE_F_MEASURE = "Multi-F0 Note Tracking average F-measure";
+    	        	
+    	    	
+    
     // Key Detection Evaluator Constants
     public static final String KEY_DETECTION_DATA = "The musical key (tonic/mode)";
     public static final String KEY_DETECTION_WEIGHTED_SCORE ="Weighted Key Score";
