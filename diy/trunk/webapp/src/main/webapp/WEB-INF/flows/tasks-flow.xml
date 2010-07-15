@@ -58,10 +58,10 @@
 	<view-state id="editRemoteServiceComponentPropertiesCloned">
 		<on-entry>
 			<evaluate expression="tasksService.removeHiddenPropertiesForRemoteDynamicComponent(properties)" result="viewScope.formattedProperties" />
-			<set name="viewScope.commandLne" value="tasksService.getCommandLine(properties)"/>
+			<set name="viewScope.executalble" value="tasksService.getExecutable(properties)"/>
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
-			<evaluate expression="tasksService.cloneExecutableBundle(requestParameters,properties,newExecutable,component)" />
+			<evaluate expression="tasksService.cloneExecutableBundle(requestParameters,executable,properties,jobForm.uuid,isNewExecutableMap,component)" />
 			
 			<evaluate expression="tasksService.updateProperties(requestParameters,properties)" />
 		</transition>
@@ -106,7 +106,7 @@
 		<set name="flowScope.jobForm.name" value="flow.name">
 			<attribute name="name" value="lastStep" />
 		</set>
-		<set name="newExecutable" value="taskService.generateNewExecutable(componentList)"/>
+		<set name="isNewExecutable" value="taskService.generateIsNewExecutableMap(componentList)"/>
 		<transition on="lastStep.success" to="displayFlowComponents" />
 	</action-state>
 

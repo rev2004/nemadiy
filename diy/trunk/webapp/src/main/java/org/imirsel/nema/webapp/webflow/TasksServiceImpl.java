@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,8 +31,10 @@ import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.Flow;
+import org.imirsel.nema.model.InvalidResourcePathException;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.Property;
+import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
@@ -130,8 +131,7 @@ public class TasksServiceImpl {
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
 				uuid.toString(), bundle);
 		executableMap.put(component, path);
-		String uri = path.getProtocol() + ":" + path.getWorkspace() + "://"
-				+ path.getPath();
+		String uri=path.getURIAsString();
 		findProperty(properties, EXECUTABLE_URL).setValue(uri);
 		if (path != null) {
 			// MessageContext messageContext=requestContext.getMessageContext();
@@ -708,15 +708,84 @@ public class TasksServiceImpl {
 		return list;
 	}
 
-	public String getCommandLine(List<Property> properties){
-		//TODO
+	/**
+	 * Find the Executable Bundle from the content repository using the properties's profile as the path
+	 * @param properties
+	 * @return
+	 * @throws ContentRepositoryServiceException
+	 * @throws InvalidResourcePathException
+	 */
+	public ExecutableBundle getExecutable(List<Property> properties) throws ContentRepositoryServiceException, InvalidResourcePathException{
+		Property executable=findProperty(properties, EXECUTABLE_URL);
+		ResourcePath path=getRepositoryResourcePath(executable.getValue());
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		ExecutableBundle bundle=artifactService.getExecutableBundle(credential, path);
+		return bundle;
 	}
 	
-	public void cloneExecutableBundle(ParameterMap parameters, List<Property> properties,Map<Component,Boolean> newExecutable, Component component){
-		//TODO
+	/**
+	 * If the commandlineflag ("commandLine" in request) is changed, duplicate the executable bundle , 
+	 * send it over to content repository, update the property with the new resource path, and change the newExecutable flag with true. 
+	 * If it is already the new executable, the previous one in content repository is removed.     
+	 * @param parameters
+	 * @param executable Executable bundle, old one.  
+	 * @param properties Modified.  The Executable_URL is replaced with the new one if command line is changed
+	 * @param uuid   
+	 * @param newExecutable   The map of flags, with component as key.  {@see generateIsNewExecutableMap}
+	 * @param component
+	 * @throws InvalidResourcePathException
+	 * @throws ContentRepositoryServiceException
+	 */
+	public void cloneExecutableBundle(ParameterMap parameters, ExecutableBundle executable,List<Property> properties,UUID uuid,Map<Component,Boolean> newExecutable, Component component)
+		throws InvalidResourcePathException, ContentRepositoryServiceException{
+		String commandLine=parameters.get("commandLine");
+		if (!executable.getCommandLineFlags().equals(commandLine)){
+			Property executableProp=findProperty(properties, EXECUTABLE_URL);
+			SimpleCredentials credential = userManager.getCurrentUserCredentials();
+			
+			if (newExecutable.get(component)){
+				ResourcePath path=getRepositoryResourcePath(executableProp.getValue());
+				deleteExecutableFromRepository(path, credential);
+			}else {
+				newExecutable.put(component,true);
+			}
+			
+			executable.setCommandLineFlags(commandLine);
+			ResourcePath newPath=artifactService.saveExecutableBundle(credential, uuid.toString(), executable);
+			executableProp.setValue(newPath.getURIAsString());
+			
+		}
 	}
 	
-	public Map<Component,Boolean> generateNewExecutable(Collection<Component> components){
+	
+	
+	private RepositoryResourcePath getRepositoryResourcePath(final String jcrUri)
+			                        throws InvalidResourcePathException {
+			                String split[] = jcrUri.split(":");
+			                if (split.length != 3) {
+			                        throw new InvalidResourcePathException(
+			                                        "The resource path is of the format protocol:workspace:nodepath");
+			                }
+			                String protocol = split[0];
+			                String workspace = split[1];
+			                String path = split[2];
+			                // get rid of the first two slashes
+			                path = path.substring(2);
+			                RepositoryResourcePath rrp = new RepositoryResourcePath(protocol,workspace, path);
+			                return rrp;
+    }
+
+	
+	/**
+	 * Generate the map of flags, with component as key. 
+	 * 
+	 * 	 	True if  it is already the new executable bundle that should be removed from content repository.  
+	 * 		False if the executable bundle is the old one that should be kept in the content repository. 
+
+	 * @param components
+	 * @return
+	 */
+	public Map<Component,Boolean> generateIsNewExecutableMap(Collection<Component> components){
 		Map<Component,Boolean> map=new HashMap<Component,Boolean>();
 		for (Component component:components){
 			map.put(component, false);
