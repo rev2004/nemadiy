@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.imirsel.nema.repositoryservice.*;
 import org.imirsel.nema.model.*;
+import org.imirsel.nema.model.fileTypes.NemaFileType;
 
 /**
  * 
@@ -53,6 +54,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 
     public static final String GET_SUBSET_TRACKLIST_FOR_DATASET_QUERY = "SELECT trackList.* FROM trackList,dataset WHERE dataset.id=? AND trackList.id=dataset.subset_set_id";
     private PreparedStatement getSubsetTrackListForDataset;
+
+    public static final String GET_TRACKLIST_QUERY = "SELECT trackList.* FROM trackList WHERE trackList.id=?";
+    private PreparedStatement getTrackList;
 
     public static final String GET_EXPERIMENT_TRACKLISTS_FOR_DATASET_QUERY = "SELECT trackList.* FROM trackList,dataset WHERE trackList.dataset_id=? AND dataset.id=trackList.dataset_id AND trackList.id!=dataset.subset_set_id";
     private PreparedStatement getExpTrackListsForDataset;
@@ -106,17 +110,27 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     private PreparedStatement getAllTracks;
 
 
-    public static final String INSERT_PUBLISHED_RESULT = "INSERT INTO published_results(dataset_id,username,system_name,result_path) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE result_path=VALUES(result_path)";
+    public static final String INSERT_PUBLISHED_RESULT = "INSERT INTO published_task_results(task_id,set_id,submission_code,system_name,result_path,file_type) VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE result_path=VALUES(result_path)";
     private PreparedStatement insertPublishedResult;
 
-    public static final String GET_PUBLISHED_RESULTS_FOR_DATASET = "SELECT * FROM published_results WHERE dataset_id=?";
-    private PreparedStatement getPublishedResultsForDataset;
+    public static final String GET_PUBLISHED_RESULTS_FOR_TASK = "SELECT * FROM published_task_results WHERE task_id=?";
+    private PreparedStatement getPublishedResultsForTask;
+    
+    public static final String GET_PUBLISHED_RESULTS_FOR_TASK_AND_SUBMISSION = "SELECT * FROM published_task_results WHERE task_id=? AND submission_code=?";
+    private PreparedStatement getPublishedResultsForTaskAndSubmission;
+    
+    
+    public static final String GET_PUBLISHED_RESULTS_FOR_TRACK_LIST = "SELECT * FROM published_task_results WHERE set_id=?";
+    private PreparedStatement getPublishedResultsForTrackList;
 
-    public static final String GET_PUBLISHED_RESULTS_FOR_USERNAME = "SELECT * FROM published_results WHERE username=?";
-    private PreparedStatement getPublishedResultsForUsername;
+    public static final String GET_PUBLISHED_RESULTS_FOR_SUBMISSION_CODE = "SELECT * FROM published_task_results WHERE submission_code=?";
+    private PreparedStatement getPublishedResultsForSubmissionCode;
 
-    public static final String DELETE_PUBLISHED_RESULT = "DELETE FROM published_results WHERE id=?";
+    public static final String DELETE_PUBLISHED_RESULT = "DELETE FROM published_task_results WHERE id=?";
     private PreparedStatement deletePublishedResult;
+    
+    public static final String DELETE_PUBLISHED_RESULT_FOR_TASK_AND_SUB_CODE = "DELETE FROM published_task_results WHERE task_id=? AND submission_code=?";
+    private PreparedStatement deletePublishedResultForTaskAndSubmission;
 
     
     //cached types maps
@@ -163,6 +177,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         getTasks = dbCon.con.prepareStatement(GET_TASKS_QUERY);
         getTasksForMeta = dbCon.con.prepareStatement(GET_TASKS_FOR_METADATA_QUERY);
         getTaskByID = dbCon.con.prepareStatement(GET_TASK_BY_ID_QUERY);
+    	getTrackList = dbCon.con.prepareStatement(GET_TRACKLIST_QUERY);
         getSubsetTrackListForDataset = dbCon.con.prepareStatement(GET_SUBSET_TRACKLIST_FOR_DATASET_QUERY);
         getExpTrackListsForDataset = dbCon.con.prepareStatement(GET_EXPERIMENT_TRACKLISTS_FOR_DATASET_QUERY);
         getTrackListTracks = dbCon.con.prepareStatement(GET_TRACKLIST_TRACKS_QUERY);
@@ -180,10 +195,12 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         getFileByLegacyPath = dbCon.con.prepareStatement(GET_FILE_BY_LEGACY_PATH);
         
         insertPublishedResult = dbCon.con.prepareStatement(INSERT_PUBLISHED_RESULT);
-        getPublishedResultsForDataset = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS_FOR_DATASET);
-        getPublishedResultsForUsername = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS_FOR_USERNAME);
+        getPublishedResultsForTask = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS_FOR_TASK);
+        getPublishedResultsForTrackList = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS_FOR_TRACK_LIST);
+        getPublishedResultsForSubmissionCode = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS_FOR_SUBMISSION_CODE);
+        getPublishedResultsForTaskAndSubmission = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS_FOR_TASK_AND_SUBMISSION);
         deletePublishedResult = dbCon.con.prepareStatement(DELETE_PUBLISHED_RESULT);
-
+        deletePublishedResultForTaskAndSubmission = dbCon.con.prepareStatement(DELETE_PUBLISHED_RESULT_FOR_TASK_AND_SUB_CODE);
         initTypesMaps();
     }
     
@@ -386,7 +403,15 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             return null;
         }
     }
-
+    
+    public NemaTrackList getTrackList(int setId) throws SQLException{
+        List<Map<String, String>> results = executeStatement(getTrackList, setId);
+        if(results.size() > 0){
+            return buildNEMATrackList(results.get(0));
+        }else{
+            return null;
+        }
+    }
 
     public List<List<NemaTrackList>> getExperimentTrackLists(NemaDataset dataset) throws SQLException{
         return getExperimentTrackLists(dataset.getId());
@@ -1059,50 +1084,100 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         return rev;
     }
 
-    public void publishResultForDataset(int dataset_id, String username, String systemName,
-                                        String result_path) throws SQLException{
-        insertPublishedResult.setInt(1,dataset_id);
-        insertPublishedResult.setString(2, username);
-        insertPublishedResult.setString(3, systemName);
-        insertPublishedResult.setString(4, result_path);
+    public void publishResultForTask(int task_id, int set_id, String submissionCode, String systemName,
+                                        String result_path, Class<NemaFileType> fileType) throws SQLException{
+    	insertPublishedResult.setInt(1,task_id);
+    	insertPublishedResult.setInt(2,set_id);
+        insertPublishedResult.setString(3, submissionCode);
+        insertPublishedResult.setString(4, systemName);
+        insertPublishedResult.setString(5, result_path);
+        insertPublishedResult.setString(5, result_path);
+        insertPublishedResult.setString(6, fileType.getName());
         insertPublishedResult.executeUpdate();
     }
 
-    public List<NemaPublishedResult> getPublishedResultsForDataset(int dataset_id)
+    public List<NemaPublishedResult> getPublishedResultsForTask(int task_id)
             throws SQLException{
-        getPublishedResultsForDataset.setInt(1,dataset_id);
-        ResultSet rs = getPublishedResultsForDataset.executeQuery();
+        getPublishedResultsForTask.setInt(1,task_id);
+        ResultSet rs = getPublishedResultsForTask.executeQuery();
         List<NemaPublishedResult> out = new ArrayList<NemaPublishedResult>();
         while(rs.next()){
-            int id = rs.getInt("id");
-            String username = rs.getString("username");
+        	int id = rs.getInt("id");
+        	int set_id = rs.getInt("set_id");
+            String submissionCode = rs.getString("submission_code");
             String name = rs.getString("system_name");
             String path = rs.getString("result_path");
             Timestamp time = rs.getTimestamp("last_updated");
-            out.add(new NemaPublishedResult(id, username, name, path, time));
+            String fileType = rs.getString("file_type");
+            out.add(new NemaPublishedResult(id, task_id, set_id, submissionCode, name, path, time, fileType));
         }
         return out;
     }
+    
+    public List<NemaPublishedResult> getPublishedResultsForTrackList(int set_id)
+	    throws SQLException{
+    	getPublishedResultsForTrackList.setInt(1,set_id);
+		ResultSet rs = getPublishedResultsForTrackList.executeQuery();
+		List<NemaPublishedResult> out = new ArrayList<NemaPublishedResult>();
+		while(rs.next()){
+			int id = rs.getInt("id");
+			int task_id = rs.getInt("task_id");
+		    String submissionCode = rs.getString("submission_code");
+		    String name = rs.getString("system_name");
+		    String path = rs.getString("result_path");
+		    Timestamp time = rs.getTimestamp("last_updated");
+            String fileType = rs.getString("file_type");
+            out.add(new NemaPublishedResult(id, task_id, set_id, submissionCode, name, path, time, fileType));
+		}
+		return out;
+	}
 
-    public List<NemaPublishedResult> getPublishedResultsForDataset(String username)
+    public List<NemaPublishedResult> getPublishedResultsForSubmissionCode(String submissionCode)
             throws SQLException{
-        getPublishedResultsForUsername.setString(1,username);
-        ResultSet rs = getPublishedResultsForUsername.executeQuery();
+        getPublishedResultsForSubmissionCode.setString(1,submissionCode);
+        ResultSet rs = getPublishedResultsForSubmissionCode.executeQuery();
         List<NemaPublishedResult> out = new ArrayList<NemaPublishedResult>();
         while(rs.next()){
-            int id = rs.getInt("id");
-            String username2 = rs.getString("username");
+        	int id = rs.getInt("id");
+        	int set_id = rs.getInt("set_id");
+            int task_id = rs.getInt("task_id");
             String name = rs.getString("system_name");
             String path = rs.getString("result_path");
             Timestamp time = rs.getTimestamp("last_updated");
-            out.add(new NemaPublishedResult(id, username2, name, path, time));
+            String fileType = rs.getString("file_type");
+            out.add(new NemaPublishedResult(id, task_id, set_id, submissionCode, name, path, time, fileType));
         }
         return out;
     }
+    
+    public List<NemaPublishedResult> getPublishedResultsForTaskAndSubmissionCode(int task_id, String submissionCode)
+    		throws SQLException{
+		getPublishedResultsForTaskAndSubmission.setInt(1,task_id);
+		getPublishedResultsForTaskAndSubmission.setString(2, submissionCode);
+		ResultSet rs = getPublishedResultsForTaskAndSubmission.executeQuery();
+		List<NemaPublishedResult> out = new ArrayList<NemaPublishedResult>();
+		while(rs.next()){
+			int id = rs.getInt("id");
+			int set_id = rs.getInt("set_id");
+		    String name = rs.getString("system_name");
+		    String path = rs.getString("result_path");
+		    Timestamp time = rs.getTimestamp("last_updated");
+            String fileType = rs.getString("file_type");
+            out.add(new NemaPublishedResult(id, task_id, set_id, submissionCode, name, path, time, fileType));
+		}
+		return out;
+	}
 
     public void deletePublishedResult(int result_id) throws SQLException{
         deletePublishedResult.setInt(1, result_id);
         deletePublishedResult.execute();
+    }
+    
+
+    public void deletePublishedResultsForTaskAndSubmission(int task_id, String submissionCode) throws SQLException{
+    	deletePublishedResultForTaskAndSubmission.setInt(1, task_id);
+    	deletePublishedResultForTaskAndSubmission.setString(2, submissionCode);
+        deletePublishedResultForTaskAndSubmission.execute();
     }
 
     public void deletePublishedResult(NemaPublishedResult result) throws SQLException{

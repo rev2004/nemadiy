@@ -33,7 +33,7 @@ import org.meandre.core.ComponentExecutionException;
 		"(files) being fulfilled by a process execution and retrieval of the " +
 		"result to the desired local path. When all of the files have been " +
 		"received, they are read and the resulting models output.",
-		name = "OmenOutputReader", tags = "profile process execution", 
+		name = "OmenOutputReader", tags = "process output reader", 
 		firingPolicy = Component.FiringPolicy.any)
 public class OmenOutputReader extends NemaComponent {
 

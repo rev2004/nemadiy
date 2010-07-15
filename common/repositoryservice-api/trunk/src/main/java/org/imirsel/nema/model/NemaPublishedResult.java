@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Class representing a published result for an algorithm against a dataset. 
+ * Class representing a published result for an algorithm against a task. 
  * 
  * @author kris.west@gmail.com
  */
@@ -17,27 +17,39 @@ public class NemaPublishedResult implements Serializable{
     public static final long serialVersionUID = 1L;
 
     private int id;
-    private String username;
+    private int setId;
+    private int taskId;
+    private String submissionCode;
     private String name;
     private String result_path;
+    private String fileType;
     private Date date;
 
     /**
-     * Constructor. An ID for the result, the username of the publishing user, an algorithm name,
-     * a path to the results on the filesystem and date of publication must be specified.
+     * Constructor. A unique id, an id for the task that the result applies to, 
+     * the submission code of the publishing flow, an algorithm name, a path to 
+     * the results on the filesystem and date of publication must be specified.
      * 
-     * @param id The result ID.
-     * @param username The username of the publishing user.
+     * @param id The unique id fir the result.
+     * @param taskId The task ID that the result refers to.
+     * @param setId The set ID that the result refers to.
+     * @param submissionCode The submission code of the publishing flow.
      * @param name The name of the system or algorithm that produced the result.
      * @param result_path The path to the results directory on the filesystem/
      * @param date The date of publication.
+     * @param fileType The class name of the NemaFileType associated with the 
+     * output.
      */
-    public NemaPublishedResult(int id, String username, String name, String result_path, Date date){
+    public NemaPublishedResult(int id, int taskId, int setId, String submissionCode, 
+    		String name, String result_path, Date date, String fileType){
         this.id = id;
-        this.username = username;
+        this.taskId = taskId;
+        this.setId = setId;
+    	this.submissionCode = submissionCode;
         this.name = name;
         this.result_path = result_path;
         this.date = date;
+        this.fileType = fileType;
     }
 
     /**
@@ -52,6 +64,21 @@ public class NemaPublishedResult implements Serializable{
      */
     public void setId(int id){
         this.id = id;
+    }
+    
+
+    /**
+     * @return the task id
+     */
+    public int getTaskId(){
+        return taskId;
+    }
+
+    /**
+     * @param id the task id to set
+     */
+    public void setTaskId(int id){
+        this.taskId = id;
     }
 
     /**
@@ -97,24 +124,42 @@ public class NemaPublishedResult implements Serializable{
     }
 
     /**
-     * @return the username
+     * @return the submission code
      */
-    public String getUsername(){
-        return username;
+    public String getSubmissionCode(){
+        return submissionCode;
     }
 
     /**
-     * @param username the username to set
+     * @param submissionCode the submission code to set
      */
-    public void setUsername(String username){
-        this.username = username;
+    public void setSubmissionCode(String submissionCode){
+        this.submissionCode = submissionCode;
     }
 
 	@Override
 	public String toString() {
-		return "org.imirsel.nema.model.NemaPublishedResult [date=" + date + ", id=" + id + ", name="
-				+ name + ", result_path=" + result_path + ", username="
-				+ username + "]";
+		return "org.imirsel.nema.model.NemaPublishedResult [date=" + date + 
+				", id=" + id + ", taskId=" + taskId + ", setId=" + setId + 
+				", name=" + name + ", result_path=" + result_path + 
+				", username=" + submissionCode + 
+				", filetype=" + fileType + "]";
+	}
+
+	public void setSetId(int setId) {
+		this.setId = setId;
+	}
+
+	public int getSetId() {
+		return setId;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public String getFileType() {
+		return fileType;
 	}
 
 
