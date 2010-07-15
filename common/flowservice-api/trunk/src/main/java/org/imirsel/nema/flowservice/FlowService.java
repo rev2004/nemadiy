@@ -24,6 +24,7 @@ import org.imirsel.nema.model.Property;
  * @since 0.4.0
  * @version 0.7.0 -Added createNewFlow which takes credentials. 
  *                 Removed storeFlowInstance
+ * @version 0.9.0 Modified flow store methods to take content repository credentials.
  */
 public interface FlowService {
 
@@ -227,20 +228,24 @@ public interface FlowService {
     * @param component The {@link Component} to get the property data types for.
     * @param flowUri The URI of the flow containing the component to get the data.
     * types for.
+    * @param credentials -Content Repository credentials
     * @return The Map of component names and properties.
     * @since 0.5.0
+    * @since 0.9.0 -added credentials parameter
     */
-   public Map<String, Property> getComponentPropertyDataType(Component component, String flowUri);
+   public Map<String, Property> getComponentPropertyDataType(Credentials credentials,Component component, String flowUri);
    
    
    /**
     * Return a map with the component and properties.
     * 
     * @param flowUri
+    * @param credentials -Content Repository credentials
     * @return The Map of the  {@link Component}s and list of {@link Property}
     * @since 0.8.0
+    * @since 0.9.0 -added credentials parameter
     */
-   public Map<Component,List<Property>> getAllComponentsAndPropertyDataTypes(String flowUri);
+   public Map<Component,List<Property>> getAllComponentsAndPropertyDataTypes(Credentials credentials,String flowUri);
    
    
 
@@ -248,10 +253,12 @@ public interface FlowService {
     * Return the {@link Component}s contained in the flow at the specified URI.
     * 
     * @param flowUri The URI of the flow for which components should be returned.
+    * @param credentials -Content Repository credentials.
     * @return Components in the flow at the specified URL.
     * @since 0.5.0
+    * @since 0.9.0 -added credentials parameter
     */
-   public List<Component> getComponents(String flowUri);
+   public List<Component> getComponents(Credentials credentials,String flowUri);
 
    /** 
     * Remove the flow with the specified URI.
