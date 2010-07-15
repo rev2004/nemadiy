@@ -2,9 +2,9 @@
 # Version 2210
 # http://code.google.com/p/sequel-pro
 #
-# Host: nema-dev.lis.illinois.edu (MySQL 5.0.77)
-# Database: nemadatarepository030
-# Generation Time: 2010-06-22 12:47:48 +0100
+# Host: nema.lis.uiuc.edu (MySQL 5.0.77)
+# Database: nemadatarepository040
+# Generation Time: 2010-07-15 15:42:00 +0100
 # ************************************************************
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -28,7 +28,7 @@ CREATE TABLE `collection` (
   `description` text NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 
 
@@ -73,7 +73,7 @@ CREATE TABLE `dataset` (
   CONSTRAINT `dataset_ibfk_1` FOREIGN KEY (`subject_track_metadata_type_id`) REFERENCES `track_metadata_definitions` (`id`),
   CONSTRAINT `dataset_ibfk_2` FOREIGN KEY (`collection_id`) REFERENCES `collection` (`id`),
   CONSTRAINT `dataset_ibfk_4` FOREIGN KEY (`subset_set_id`) REFERENCES `trackList` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
 
 
 
@@ -91,9 +91,9 @@ CREATE TABLE `file` (
   KEY `track_id` (`track_id`),
   KEY `path` (`path`(255)),
   KEY `site` (`site`),
-  CONSTRAINT `file_ibfk_2` FOREIGN KEY (`site`) REFERENCES `site` (`id`),
-  CONSTRAINT `file_ibfk_1` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=214026 DEFAULT CHARSET=utf8;
+  CONSTRAINT `file_ibfk_1` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `file_ibfk_2` FOREIGN KEY (`site`) REFERENCES `site` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=247403 DEFAULT CHARSET=utf8;
 
 
 
@@ -111,7 +111,7 @@ CREATE TABLE `file_file_metadata_link` (
   UNIQUE KEY `file_metadata_id` (`file_metadata_id`,`file_id`),
   CONSTRAINT `file_file_metadata_link_ibfk_1` FOREIGN KEY (`file_id`) REFERENCES `file` (`id`) ON DELETE CASCADE,
   CONSTRAINT `file_metadata_id` FOREIGN KEY (`file_metadata_id`) REFERENCES `file_metadata` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=891893 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1025397 DEFAULT CHARSET=utf8;
 
 
 
@@ -128,7 +128,7 @@ CREATE TABLE `file_metadata` (
   UNIQUE KEY `metadata_type_id` (`metadata_type_id`,`value`),
   UNIQUE KEY `value` (`value`,`metadata_type_id`),
   CONSTRAINT `file_metadata_metadata_type_id` FOREIGN KEY (`metadata_type_id`) REFERENCES `file_metadata_definitions` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=208 DEFAULT CHARSET=utf8;
 
 
 
@@ -180,6 +180,29 @@ CREATE TABLE `published_results` (
 
 
 
+# Dump of table published_task_results
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `published_task_results`;
+
+CREATE TABLE `published_task_results` (
+  `id` int(11) NOT NULL auto_increment,
+  `task_id` int(11) NOT NULL default '-1',
+  `system_name` varchar(128) NOT NULL,
+  `result_path` varchar(512) NOT NULL,
+  `submission_code` varchar(128) NOT NULL default '',
+  `last_updated` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `set_id` int(11) NOT NULL default '-1',
+  `file_type` varchar(128) NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `submission_code` (`submission_code`),
+  KEY `set_id` (`set_id`),
+  KEY `task_id` (`task_id`),
+  CONSTRAINT `published_task_results_ibfk_2` FOREIGN KEY (`set_id`) REFERENCES `trackList` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 # Dump of table site
 # ------------------------------------------------------------
 
@@ -190,7 +213,7 @@ CREATE TABLE `site` (
   `name` varchar(128) NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `site_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 
@@ -210,7 +233,7 @@ CREATE TABLE `task` (
   KEY `dataset_id` (`dataset_id`),
   CONSTRAINT `task_ibfk_2` FOREIGN KEY (`subject_track_metadata`) REFERENCES `track_metadata_definitions` (`id`),
   CONSTRAINT `task_ibfk_3` FOREIGN KEY (`dataset_id`) REFERENCES `dataset` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
 
 
 
@@ -236,8 +259,9 @@ CREATE TABLE `track_metadata` (
   `metadata_type_id` int(11) NOT NULL default '-1',
   `value` mediumtext NOT NULL,
   PRIMARY KEY  (`id`),
-  KEY `metadata_type_id` (`metadata_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37064 DEFAULT CHARSET=utf8;
+  KEY `metadata_type_id` (`metadata_type_id`),
+  CONSTRAINT `track_metadata_ibfk_1` FOREIGN KEY (`metadata_type_id`) REFERENCES `track_metadata_definitions` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=213226 DEFAULT CHARSET=utf8;
 
 
 
@@ -251,7 +275,7 @@ CREATE TABLE `track_metadata_definitions` (
   `name` varchar(128) NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 
 
@@ -269,7 +293,7 @@ CREATE TABLE `track_track_metadata_link` (
   KEY `track_metadata_id` (`track_metadata_id`),
   CONSTRAINT `track_track_metadata_link_ibfk_1` FOREIGN KEY (`track_id`) REFERENCES `track` (`id`) ON DELETE CASCADE,
   CONSTRAINT `track_track_metadata_link_track_metadata_id` FOREIGN KEY (`track_metadata_id`) REFERENCES `track_metadata` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=229008 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=405169 DEFAULT CHARSET=utf8;
 
 
 
@@ -288,7 +312,7 @@ CREATE TABLE `trackList` (
   KEY `dataset_id` (`dataset_id`),
   CONSTRAINT `set_type_id` FOREIGN KEY (`set_type_id`) REFERENCES `trackList_type_definitions` (`id`),
   CONSTRAINT `trackList_ibfk_1` FOREIGN KEY (`dataset_id`) REFERENCES `dataset` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=132 DEFAULT CHARSET=utf8;
 
 
 

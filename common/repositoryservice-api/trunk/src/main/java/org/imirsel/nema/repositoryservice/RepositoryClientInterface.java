@@ -19,6 +19,7 @@ import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaPublishedResult;
+import org.imirsel.nema.model.fileTypes.NemaFileType;
 
 /**
  * An interface defining the methods of a query client for the temporary NEMA metadata
@@ -182,6 +183,14 @@ public interface RepositoryClientInterface {
      */
     public NemaTrackList getDatasetSubset(int datasetId) throws SQLException;
 
+    /**
+     * Retrieves a NemaTrackList Object by Id.
+     * 
+     * @param setId The id of the track list to be retrieved.
+     * @return A NemaTrackList Object describing the track list.
+     * @throws SQLException
+     */
+    public NemaTrackList getTrackList(int setId) throws SQLException;
 
     /**
      * Retrieves a List containing Lists of NemaMetadataEntry Objects where
@@ -473,37 +482,49 @@ public interface RepositoryClientInterface {
      * @param username The user name, will be used to list the published
      * results for a user.
      * @param result_path The path or identifier that will be used to retrieve
-     * the reslt directory.
-     * 
+     * the result directory.
+     * @param fileType The NemaFileType class associated with the outputs 
+     * (whether the path refers to a directory or such files or a single file).
      * @throws SQLException
      */
-    public void publishResultForDataset(int dataset_id, String username, String systemName, String result_path) throws SQLException;
+    public void publishResultForTask(int task_id, int set_id, String submissionCode, String systemName,
+            String result_path, Class<NemaFileType> fileType) throws SQLException;
 
-    /**This is a HACK it returns all the published results for a user.
-     * It might be from any dataset. Added by Amit at the last minute.
+    /**Returns all the published results for a submission code over all tasks. 
      * 
-     * @param username
+     * @param submissionCode The submission code to retrieve results for.
      * @return List<NemaPublishedResult> list of published results
      * @throws SQLException
      */
-    public List<NemaPublishedResult> getPublishedResultsForDataset(String username) throws SQLException;;
+    public List<NemaPublishedResult> getPublishedResultsForSubmissionCode(String submissionCode) throws SQLException;;
+    
     /**
-     * Returns a list of the published results for a username.
+     * Returns a list of the published results for a task.
      *
-     * @param username The user retrieve published results for.
-     * @return a list of the published results for a username.
+     * @param task_id The id of the task
+     * @return a list of the published results for a task.
      * @throws SQLException
      */
-    public List<NemaPublishedResult> getPublishedResultsForUsername(String username) throws SQLException;
+    public List<NemaPublishedResult> getPublishedResultsForTask(int task_id) throws SQLException;
+    
+    /**
+     * Returns a list of the published results for a track list.
+     *
+     * @param set_id The id of the track list
+     * @return a list of the published results for a track list.
+     * @throws SQLException
+     */
+    public List<NemaPublishedResult> getPublishedResultsForTrackList(int track_list_id) throws SQLException;
 
     /**
-     * Returns a list of the published results for a dataset.
+     * Returns a list of the published results for a task and submission code.
      *
-     * @param dataset_id The id of the dataset
-     * @return a list of the published results for a dataset.
+     * @param task_id The id of the task
+     * @param submissionCode  The submission code to retrieve results for.
+     * @return a list of the published results for a task.
      * @throws SQLException
      */
-    public List<NemaPublishedResult> getPublishedResultsForDataset(int dataset_id) throws SQLException;
+    public List<NemaPublishedResult> getPublishedResultsForTaskAndSubmissionCode(int task_id, String submissionCode) throws SQLException;
 
     /**
      * Deletes a published result record from the DB.
@@ -512,6 +533,17 @@ public interface RepositoryClientInterface {
      * @throws SQLException
      */
     public void deletePublishedResult(int result_id) throws SQLException;
+    
+    /**
+     * Deletes a published result records from the DB with specific task and 
+     * submission code values..
+     *
+     * @param task_id The id of the results to delete.
+     * @param submissionCode The submission code of the results to delete.
+     * @throws SQLException
+     */
+    public void deletePublishedResultsForTaskAndSubmission(int task_id, String submissionCode) throws SQLException;
+    
     /**
      * Deletes a published result record from the DB.
      *

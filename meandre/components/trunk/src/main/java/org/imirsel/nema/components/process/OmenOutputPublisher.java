@@ -85,7 +85,22 @@ public class OmenOutputPublisher extends NemaComponent {
 		if(task == null && cc.isInputAvailable(DATA_IN_NEMATASK)){
 			task = (NemaTask)cc.getDataComponentFromInput(DATA_IN_NEMATASK);
 			getLogger().fine("got task");
-				
+			if(subCode != null){
+				RepositoryClientInterface client = null;
+				try {
+					client = RepositoryClientConnectionPool.getInstance().getFromPool();
+					//clear out existing results for this task-submission code pair
+					getLogger().info("deleting existing published results for submission code " + subCode + " on task " + task.getId() + " (" + task.getName() + ")");
+					client.deletePublishedResultsForTaskAndSubmission(task.getId(),subCode);
+				} catch (Exception e) {
+					throw new ComponentExecutionException("Exception in "
+							+ this.getClass().getName(), e);
+				}finally{
+					if(client!=null){
+						RepositoryClientConnectionPool.getInstance().returnToPool(client);
+					}
+				}
+			}
 		}
 		if(fileType == null && cc.isInputAvailable(DATA_IN_OUTPUT_TYPE)){
 			fileType = (Class<NemaFileType>)cc.getDataComponentFromInput(DATA_IN_OUTPUT_TYPE);
@@ -94,6 +109,22 @@ public class OmenOutputPublisher extends NemaComponent {
 		if(subCode == null && cc.isInputAvailable(DATA_IN_SUBMISSION_CODE)){
 			subCode = (String)cc.getDataComponentFromInput(DATA_IN_SUBMISSION_CODE);
 			getLogger().fine("got submission code: " + subCode);
+			if(task != null){
+				RepositoryClientInterface client = null;
+				try {
+					client = RepositoryClientConnectionPool.getInstance().getFromPool();
+					//clear out existing results for this task-submission code pair
+					getLogger().info("deleting existing published results for submission code " + subCode + " on task " + task.getId() + " (" + task.getName() + ")");
+					client.deletePublishedResultsForTaskAndSubmission(task.getId(),subCode);
+				} catch (Exception e) {
+					throw new ComponentExecutionException("Exception in "
+							+ this.getClass().getName(), e);
+				}finally{
+					if(client!=null){
+						RepositoryClientConnectionPool.getInstance().returnToPool(client);
+					}
+				}
+			}
 		}
 		if(subName == null && cc.isInputAvailable(DATA_IN_SUBMISSION_NAME)){
 			subCode = (String)cc.getDataComponentFromInput(DATA_IN_SUBMISSION_NAME);
@@ -114,46 +145,48 @@ public class OmenOutputPublisher extends NemaComponent {
 		}
 		//when we are configured start receiving process artifacts
 		if(task != null && fileType != null && expectedPaths != null && subCode != null && subName != null){
+			
+			RepositoryClientInterface client = null;
+			
 			getLogger().fine("Receiving a process artifact");
 			if(cc.isInputAvailable(DATA_IN_PROCESS_ARTIFACTS)){
 				List<ProcessArtifact> in = (List<ProcessArtifact>)cc.getDataComponentFromInput(DATA_IN_PROCESS_ARTIFACTS);
 				cc.getOutputConsole().println("The process artifact: " + in.size() + "  " + in.get(0).getResourcePath());
-				for(Iterator<ProcessArtifact> it = in.iterator();it.hasNext();){
-					File path = new File(it.next().getResourcePath());
-					NemaTrackList trackList = fileToTrackList.remove(path);
-					if(trackList != null){
-						getLogger().fine("Received file: " + path.getAbsolutePath() + ", expecting " + fileToTrackList.size() + " further files.");
+				try {
+					client = RepositoryClientConnectionPool.getInstance().getFromPool();
 						
-						
-						//save to repository DB here
-						RepositoryClientInterface client = null;
-						try {
-							client = RepositoryClientConnectionPool.getInstance().getFromPool();
-							client.publishResultForTask(task.getId(), trackList.getId(), subCode, subName, path.getAbsolutePath());
-						} catch (Exception e) {
-							throw new ComponentExecutionException("Exception in "
-									+ this.getClass().getName(), e);
-						}finally{
-							if(client!=null){
-								RepositoryClientConnectionPool.getInstance().returnToPool(client);
+					for(Iterator<ProcessArtifact> it = in.iterator();it.hasNext();){
+						File path = new File(it.next().getResourcePath());
+						NemaTrackList trackList = fileToTrackList.remove(path);
+						if(trackList != null){
+							getLogger().fine("Received file: " + path.getAbsolutePath() + ", expecting " + fileToTrackList.size() + " further files.");
+							//save to repository DB here
+							client.publishResultForTask(task.getId(), trackList.getId(), subCode, subName, path.getAbsolutePath(), fileType);
+						}else{
+							String msg = "Received unexpected file: " + path.getAbsolutePath() + ", waiting on " + fileToTrackList.size() + " files. Paths expected but not yet received: ";
+							for (Iterator<File> iterator = fileToTrackList.keySet().iterator(); iterator.hasNext();) {
+								msg += "\t" + iterator.next().getAbsolutePath() + "\n";
 							}
+							getLogger().warning(msg);
 						}
-						
-					}else{
-						String msg = "Received unexpected file: " + path.getAbsolutePath() + ", waiting on " + fileToTrackList.size() + " files. Paths expected but not yet received: ";
-						for (Iterator<File> iterator = fileToTrackList.keySet().iterator(); iterator.hasNext();) {
-							msg += "\t" + iterator.next().getAbsolutePath() + "\n";
+						if (fileToTrackList.isEmpty()){
+							//we have all the files expected so reset
+							task = null;
+							fileType = null;
+							expectedPaths = null;
+							fileToTrackList = null;
 						}
-						getLogger().warning(msg);
 					}
-					if (fileToTrackList.isEmpty()){
-						//we have all the files expected so reset
-						task = null;
-						fileType = null;
-						expectedPaths = null;
-						fileToTrackList = null;
+					
+				} catch (Exception e) {
+					throw new ComponentExecutionException("Exception in "
+							+ this.getClass().getName(), e);
+				}finally{
+					if(client!=null){
+						RepositoryClientConnectionPool.getInstance().returnToPool(client);
 					}
 				}
+				
 			}else{
 				getLogger().info("Process Artifact input is not available yet.");
 			}

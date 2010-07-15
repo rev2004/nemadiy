@@ -38,10 +38,10 @@ import org.meandre.core.ComponentExecutionException;
 	+ "Outputs 6 objects: \n"
 	+ "1) a NemaTask Object defining the task,\n"
 	+ "2) a NemaDataset Object defining the dataset,\n"
-	+ "3) List NemaData Objects encoding the list of tracks to be used for feature extraction,\n"
+	+ "3) Map of NemaTrackList to a List of NemaData Objects encoding the list of tracks to be used for feature extraction,\n"
 	+ "4) List NemaData Objects encoding the list of tracks used in the experiment (with ground-truth data),\n"
-	+ "5) A Map of test NemaTrackList Objects to a List NemaData Objects (with ground-truth data) encoding the test set data,\n"
-	+ "6) A Map of test NemaTrackList Objects to a List NemaData Objects encoding the test set data.", 
+	+ "5) A Map of test NemaTrackList Objects to a List of NemaData Objects (with ground-truth data) encoding the test set data,\n"
+	+ "6) A Map of test NemaTrackList Objects to a List of NemaData Objects encoding the test set data.", 
 	name = "TrainTestTaskSelector", 
 	resources={"../../../../../RepositoryProperties.properties"},
 tags = "input, collection, classification", firingPolicy = Component.FiringPolicy.all)
@@ -53,20 +53,20 @@ public class TrainTestTaskSelector extends NemaComponent {
 	@ComponentOutput(description = "NemaDataset Object defining the task.", name = "NemaDataset")
 	public final static String DATA_OUTPUT_DATASET = "NemaDataset";
 
-	@ComponentOutput(description = "List of NemaData Objects defining the feature extraction list.", name = "FeatureExtractionList")
-	public final static String DATA_OUTPUT_FEATURE_EXTRACTION_LIST = "FeatureExtractionList";
+	@ComponentOutput(description = "Map of NemaTrackList to a List of NemaData Objects defining the feature extraction list.", name = "FeatureExtractionSet")
+	public final static String DATA_OUTPUT_FEATURE_EXTRACTION_LIST = "FeatureExtractionSet";
 
 	@ComponentOutput(description = "List of NemaData Objects defining the ground-truth list.", name = "GroundTruthList")
 	public final static String DATA_OUTPUT_GROUNDTRUTH_LIST = "GroundTruthList";
 
-	@ComponentOutput(description = "Map of NemaTrackList to List of NemaData Objects defining each training set (including ground-truth data).", name = "TrainingSet")
+	@ComponentOutput(description = "Map of NemaTrackList to a List of NemaData Objects defining each training set (including ground-truth data).", name = "TrainingSet")
 	public final static String DATA_OUTPUT_TRAINING_SETS = "TrainingSet";
 
-	@ComponentOutput(description = "Map of NemaTrackList to List of NemaData Objects defining each test set (no ground-truth data).", name = "TestSets")
+	@ComponentOutput(description = "Map of NemaTrackList to a List of NemaData Objects defining each test set (no ground-truth data).", name = "TestSets")
 	public final static String DATA_OUTPUT_TEST_SETS = "TestSets";
 
 	@StringDataType(renderer = CollectionRenderer.class)
-	@ComponentProperty(defaultValue = "3", description = "The ID number of the classificaiton (train/test) task to be loaded.", name = "taskID")
+	@ComponentProperty(defaultValue = "3", description = "The ID number of the classification (train/test) task to be loaded.", name = "taskID")
 	final static String DATA_PROPERTY_TASK_ID = "taskID";
 	private int taskID = 3;
 	
@@ -112,8 +112,8 @@ public class TrainTestTaskSelector extends NemaComponent {
 
 		NemaTask task = null;
 		NemaDataset dataset = null;
-		List<NemaData> featExtractList = null;
 		List<NemaData> gtList = null;
+		Map<NemaTrackList,List<NemaData>> featExtractMap = new HashMap<NemaTrackList, List<NemaData>>(1);;
 		Map<NemaTrackList,List<NemaData>> trainingSets = new HashMap<NemaTrackList,List<NemaData>>();
 		Map<NemaTrackList,List<NemaData>> testSets = new HashMap<NemaTrackList,List<NemaData>>();
 		
@@ -131,7 +131,10 @@ public class TrainTestTaskSelector extends NemaComponent {
 			}
 
 	        //produce feature extraction list
-	        featExtractList = getTestData(dataset.getSubsetTrackListId(), client);
+	        NemaTrackList featExtractSet = client.getDatasetSubset(dataset.getId());
+	        List<NemaData> featExtractList = getTestData(dataset.getSubsetTrackListId(), client);
+	        
+	        featExtractMap.put(featExtractSet, featExtractList);
 	        
 	        //produce Ground-truth list
 	        gtList = getGroundtruthData(client, task, dataset.getSubsetTrackListId(), task.getSubjectTrackMetadataId());
@@ -166,7 +169,7 @@ public class TrainTestTaskSelector extends NemaComponent {
 		// Push the data out
 		ccp.pushDataComponentToOutput(DATA_OUTPUT_NEMATASK, task);
 		ccp.pushDataComponentToOutput(DATA_OUTPUT_DATASET, dataset);
-		ccp.pushDataComponentToOutput(DATA_OUTPUT_FEATURE_EXTRACTION_LIST, featExtractList);
+		ccp.pushDataComponentToOutput(DATA_OUTPUT_FEATURE_EXTRACTION_LIST, featExtractMap);
 		ccp.pushDataComponentToOutput(DATA_OUTPUT_GROUNDTRUTH_LIST, gtList);
 		ccp.pushDataComponentToOutput(DATA_OUTPUT_TRAINING_SETS, trainingSets);
 		ccp.pushDataComponentToOutput(DATA_OUTPUT_TEST_SETS, testSets);
