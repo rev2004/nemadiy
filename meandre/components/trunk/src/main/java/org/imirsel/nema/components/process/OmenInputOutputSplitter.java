@@ -58,7 +58,7 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 	@ComponentInput(description = "Map of NemaTrackList to List of NemaData Objects defining each track list (encoding any required metadata).", name = "DataToProcess")
 	public final static String DATA_INPUT_DATA = "DataToProcess";
 
-	@ComponentOutput(description = "Map of NemaTrackList to List of NemaFile Objects defining expected output files.", name = "expectedOutput")
+	@ComponentOutput(description = "Map of NemaTrackList to List of File Objects defining expected output files.", name = "expectedOutput")
 	private static final String DATA_OUT_EXPECTED_OUTPUTS ="expectedOutput";
 
 	@ComponentOutput(description = "Process template to be used to perform executions.", name = "processTemplate")
