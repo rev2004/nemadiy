@@ -24,7 +24,9 @@
   
      <fieldset id="pt1">
     <label for="jobname" class="label"> Command Line: </label>
-	<textarea name="commandLine" rows="5" cols="80" >${executableMetadata.commandLineFlags}</textarea>
+    <div class="surround">
+	<textarea name="commandLine" rows="5" style="width:80%;" >${executableMetadata.commandLineFlags}</textarea>
+	</div>
  </fieldset>
    <input type="submit" name="_eventId_save" value="Save" />
   <input type="submit" name="_eventId_cancel" value="Cancel"  style="float:right"/>
