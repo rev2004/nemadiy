@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -328,15 +329,8 @@ public class JobController extends MultiActionController {
 		String _jobId = req.getParameter("id");
 		long jobId = Long.parseLong(_jobId);
 		Job job = flowService.getJob(jobId);
-		System.out.println("Show Job here: " + job.getName());
-		System.out.println("STATUS CODE: " + job.getStatusCode());
-		System.out.println("STATUS VAL: " + job.getJobStatus());
-		System.out.println("NUMBER of RESULTS: " + job.getResults().size());
-
 		for (JobResult result : job.getResults()) {
-			logger.debug("RESULT: " + result.getUrl() + "  " + result.getId());
 			result.setUrl(processUrl(result.getUrl(), hostName));
-
 		}
 
 		logger.debug("start to render displayed results");
@@ -551,20 +545,20 @@ public class JobController extends MultiActionController {
 			HttpServletResponse response) throws MeandreServerException {
 		String _jobId = request.getParameter("jobId");
 		long jobId = Long.parseLong(_jobId);
-
-		// We need either change the parameter to job or we need to add a new
-		// method in flowService.
 		Job job = this.flowService.getJob(jobId);
 
 		String text = this.flowService.getConsole(job);
+		
 		try {
 			response.setContentType("text/plain");
 			response.getOutputStream().println(text);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e,e);
 		}
 		return null;
 	}
+
+	
 
 	/**
 	 * Query for the satus of servers 
@@ -576,22 +570,6 @@ public class JobController extends MultiActionController {
 		MeandreServerProxyConfig head = flowService.getHeadConfig();
 		List<Job> scheduledJobs = flowService.getScheduledJobs();
 		
-//		Date date = new Date(System.currentTimeMillis());
-//		Date date2 = new java.sql.Timestamp(System.currentTimeMillis());
-//		Job job = new Job();
-//		job.setName("test job");
-//		job.setId(100L);
-//		job.setFlow(new Flow());
-//		job.setScheduleTimestamp(date);
-//		job.setEndTimestamp(date2);
-//		job.setStartTimestamp(date);
-//		job.setSubmitTimestamp(date2);
-//		job.setResults(null);
-//		List<Job> list = new ArrayList<Job>();
-//		
-//		list.add(job);
-//		//job.setId(2000L);list.add(job);
-//		scheduledJobs=list;
 		
 		ModelAndView mav;
 		String uri = (req != null) ? req.getRequestURI() : "";
@@ -610,15 +588,6 @@ public class JobController extends MultiActionController {
 		
 			ConverterToMapServerConfig converter3=new ConverterToMapServerConfig();
 			mav.addObject("head",converter3.convertToMap(head));
-			
-//			Map<String,Object> model=new HashMap<String,Object>();
-//			model.put("workers", workers);
-//			model.put("head", head);
-//			model.put("jobs", scheduledJobs);
-//			XStream xstream = new XStream(new JettisonMappedXmlDriver());
-//			res.setContentType("application/json");
-//			res.getWriter().write(xstream.toXML(model));
-//			return null;
 			
 			
 		} else {
@@ -665,7 +634,7 @@ public class JobController extends MultiActionController {
 
 	}
 
-	private RepositoryClientInterface getRepositoryClient() {
+	private RepositoryClientInterface getRepositoryClient() throws SQLException {
 		return repositoryClientConnectionPool.getFromPool();
 	}
 

@@ -9,7 +9,6 @@ import java.util.UUID;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.contentrepository.client.CommandLineFormatter;
-import org.imirsel.nema.contentrepository.client.ResourceTypeService;
 import org.imirsel.nema.model.ExecutableBundle;
 import org.imirsel.nema.model.ExecutableType;
 import org.imirsel.nema.model.InvalidCommandLineFlagException;
@@ -22,6 +21,7 @@ import org.imirsel.nema.model.VanillaPredefinedCommandTemplate;
 import org.imirsel.nema.webapp.model.DiyJavaTemplate;
 import org.imirsel.nema.webapp.model.NiceParams;
 import org.imirsel.nema.webapp.model.UploadedExecutableBundle;
+import org.imirsel.nema.webapp.service.ResourceTypeService;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.core.collection.ParameterMap;
 

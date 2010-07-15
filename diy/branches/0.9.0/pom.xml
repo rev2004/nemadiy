@@ -437,11 +437,11 @@
 		
 		<!-- NEMA Dependencies   -->
 		<imirsel-nema-annotations.version>0.7.0-SNAPSHOT</imirsel-nema-annotations.version>
-	    <contentrepository-client.version>0.0.3-SNAPSHOT</contentrepository-client.version>
+	    <contentrepository-client.version>0.0.4-SNAPSHOT</contentrepository-client.version>
 		<imirsel-nema-core.version>0.7.0-SNAPSHOT</imirsel-nema-core.version>
 		<imirsel-meandre-client.version>0.8.0-SNAPSHOT</imirsel-meandre-client.version>
 		<flowservice.version>0.9.0-SNAPSHOT</flowservice.version>
-		<repositoryservice.version>0.3.0-SNAPSHOT</repositoryservice.version>
+		<repositoryservice.version>0.4.0-SNAPSHOT</repositoryservice.version>
 
 		<!-- Framework dependency versions -->
 		<appfuse.version>2.0.2</appfuse.version>

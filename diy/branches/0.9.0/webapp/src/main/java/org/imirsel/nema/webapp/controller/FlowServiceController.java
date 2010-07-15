@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,6 +21,7 @@ import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Property;
+import org.imirsel.nema.service.UserManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -36,6 +38,12 @@ public class FlowServiceController extends MultiActionController{
 	private final static Logger log = Logger.getLogger(FlowServiceController.class.getName());
 	private FlowService flowService = null;
 	private ArtifactService artifactService;
+	private UserManager userManager;
+
+	public void setUserManager(UserManager userManager) {
+		this.userManager = userManager;
+	}
+
 
 	public FlowService getFlowService() {
 		return flowService;
@@ -55,6 +63,7 @@ public class FlowServiceController extends MultiActionController{
 	 */
 	public ModelAndView getComponentDataType(HttpServletRequest request, HttpServletResponse response)
 	throws  MeandreServerException{
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		String componentUri=request.getParameter("componentUri");
 		String flowUri = request.getParameter("flowUri");
 		if(componentUri==null || flowUri==null){
@@ -66,7 +75,7 @@ public class FlowServiceController extends MultiActionController{
 				e.printStackTrace();
 			}
 		}
-		List<Component> componentList=flowService.getComponents(flowUri);
+		List<Component> componentList=flowService.getComponents(credential,flowUri);
 		Component component = null;
 		for(Component thisComponent:componentList){
 			if(thisComponent.getUri().equalsIgnoreCase(componentUri)){
@@ -74,7 +83,7 @@ public class FlowServiceController extends MultiActionController{
 			}
 		}
 		if(component!=null){
-			HashMap<String, Property> map=(HashMap<String, Property>)flowService.getComponentPropertyDataType(component, flowUri);
+			HashMap<String, Property> map=(HashMap<String, Property>)flowService.getComponentPropertyDataType(credential,component, flowUri);
 			ModelAndView mav=new ModelAndView("jsonView");
 			mav.addObject(Constants.COMPONENTPROPERTYMAP, map);
 			return mav;
@@ -100,6 +109,7 @@ public class FlowServiceController extends MultiActionController{
 	 */
 	public ModelAndView getComponentList(HttpServletRequest request, HttpServletResponse response)
 	throws  MeandreServerException{
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		String _id=request.getParameter("flowUri");
 		if(_id==null){
 			try {
@@ -112,7 +122,7 @@ public class FlowServiceController extends MultiActionController{
 		}
 		int id = Integer.parseInt(_id);
 		Flow flow=this.flowService.getFlow(id);
-		List<Component> componentList=flowService.getComponents(flow.getUri());
+		List<Component> componentList=flowService.getComponents(credential,flow.getUri());
 		ModelAndView mav=new ModelAndView("jsonView");
 		mav.addObject(Constants.COMPONENTLIST, componentList);
 		return mav;

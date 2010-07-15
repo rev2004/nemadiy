@@ -22,7 +22,6 @@
 	     <label class="label">Arguments:</label>
 	     ${executable.commandLineFlags}
 	</fieldset>
-
 	<fieldset id="button">
 	    <input type="submit" name="_eventId_back" value="Back" />
 	    <input type="submit" name="_eventId_save" value="Save" />

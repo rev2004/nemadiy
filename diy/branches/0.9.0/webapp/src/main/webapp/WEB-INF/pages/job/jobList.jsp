@@ -8,7 +8,7 @@
 </head>
 
 
-<display:table name="jobList" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="4" 
+<display:table name="jobList" cellspacing="0" cellpadding="0" requestURI="" sort="list" defaultsort="5" 
 defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10">
   <display:column property="name" escapeXml="true" sortable="true" titleKey="job.name"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
