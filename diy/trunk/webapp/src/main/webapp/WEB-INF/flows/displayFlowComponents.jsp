@@ -67,7 +67,12 @@ ${messageContext.allMessages}
  
       </fieldset>
       <fieldset >
-        <label class="label">Enter the Job Name:</label>
+        <label class="label">
+        <c:choose>
+        	<c:when test="${cloned}">Copy of:</c:when>
+        	<c:otherwise>Enter the Job Name:</c:otherwise>
+        </c:choose>
+        </label>
         <form:input id="name" path="name" cssStyle="width:200px;"/>
       </fieldset>
       <fieldset id="pt1">
