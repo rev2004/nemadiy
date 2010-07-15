@@ -136,7 +136,7 @@ public class ReadPublishedOutputsForTask extends NemaComponent {
 						getLogger().info("Ignoring data for set " + trackListId + " from job " + jobId + " as it was not in the list of test sets.");
 						continue;
 					}
-					List<File> filesToRead = trackListIdToFiles.get(trackList);
+					List<File> filesToRead = trackListIdToFiles.get(trackListId);
 					List<NemaData> setDataList = new ArrayList<NemaData>();
 					for (File file:filesToRead){
 						Class<NemaFileType> fileType = pathToType.get(file);
