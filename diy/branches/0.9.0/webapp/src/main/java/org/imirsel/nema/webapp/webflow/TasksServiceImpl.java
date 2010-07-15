@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,10 +29,13 @@ import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.ExecutableBundle;
+import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.Flow;
+import org.imirsel.nema.model.InvalidResourcePathException;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.Property;
+import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
@@ -129,8 +132,7 @@ public class TasksServiceImpl {
 		ResourcePath path = artifactService.saveExecutableBundle(credential,
 				uuid.toString(), bundle);
 		executableMap.put(component, path);
-		String uri = path.getProtocol() + ":" + path.getWorkspace() + "://"
-				+ path.getPath();
+		String uri=path.getURIAsString();
 		findProperty(properties, EXECUTABLE_URL).setValue(uri);
 		if (path != null) {
 			// MessageContext messageContext=requestContext.getMessageContext();
@@ -187,6 +189,7 @@ public class TasksServiceImpl {
 	private void deleteExecutableFromRepository(ResourcePath path,
 			SimpleCredentials credential)
 			throws ContentRepositoryServiceException {
+		logger.info("Calling deleteExecutableFromRepository -commmenting it out. This will impact clear bundle function");
 		try {
 			if ((path != null) && (artifactService.exists(credential, path))) {
 				logger.info("remove from content repository executable bundle:"
@@ -197,6 +200,7 @@ public class TasksServiceImpl {
 			logger.error(e, e);
 			throw (e);
 		}
+		
 
 	}
 
@@ -289,6 +293,12 @@ public class TasksServiceImpl {
 				JobForm.IMPOSSIBLE, "not a mirex submission");
 		List<MirexSubmission> submissions = mirexSubmissionDao
 				.getAllSubmissions();
+		Collections.sort(submissions,new Comparator<MirexSubmission>(){
+
+			@Override
+			public int compare(MirexSubmission arg0, MirexSubmission arg1) {
+				return arg0.getHashcode().compareTo(arg1.getHashcode());
+			}});
 		submissions.add(nonSubmission);
 		return submissions;
 	}
@@ -346,6 +356,18 @@ public class TasksServiceImpl {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * @see TasksServiceImpl.replacePropertyValue();
+	 * @param componentMap
+	 * @param name
+	 * @param value
+	 */
+	public void replacePropertyValue(
+			Map<Component, List<Property>> componentMap, String name,
+			int value) {
+		replacePropertyValue(componentMap, name, String.valueOf(value));
 	}
 	
 	/**
@@ -408,7 +430,7 @@ public class TasksServiceImpl {
 		String templateFlowId = flow.getId().toString();
 		String templateFlowUri = flow.getUri();
 
-		logger.debug("start to test run");
+		logger.debug("start to run");
 		if (templateFlowId == null || templateFlowUri == null) {
 			logger
 					.error("flowId or flowUri is null -some severe error happened...");
@@ -464,7 +486,7 @@ public class TasksServiceImpl {
 		Job job = this.flowService.executeJob(credential, token, name,
 				description, instanceId, user.getId(), user.getEmail());
 
-		logger.info("After calling execute Job");
+		logger.info("Finish calling execute Job");
 		return job;
 
 	}
@@ -505,15 +527,17 @@ public class TasksServiceImpl {
 	 * @return Map containing {@link Component}s to {@link Properties}.
 	 */
 	public Map<Component, List<Property>> loadFlowComponents(Flow flow) {
+		
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 		Map<Component, List<Property>> componentsToPropertyLists = flowService
-				.getAllComponentsAndPropertyDataTypes(flow.getUri());
+				.getAllComponentsAndPropertyDataTypes(credential,flow.getUri());
 
 		for (List<Property> properties : componentsToPropertyLists.values()) {
 			Collections.sort(properties);
 		}
 		
 		//prepopulate the credential field
-		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		
 		String credentialString = credential.getUserID() + ":"
 				+ new String(credential.getPassword());
 		replacePropertyValue(componentsToPropertyLists, CREDENTIALS, credentialString);

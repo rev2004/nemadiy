@@ -300,7 +300,7 @@ public class TasksServiceTest {
 		}
 		context.checking(new Expectations() {
 			{
-				oneOf(flowService).getAllComponentsAndPropertyDataTypes(flow1.getUri());
+				oneOf(flowService).getAllComponentsAndPropertyDataTypes(credentials,flow1.getUri());
 				will(returnValue(fullMaps));
 				
 			}

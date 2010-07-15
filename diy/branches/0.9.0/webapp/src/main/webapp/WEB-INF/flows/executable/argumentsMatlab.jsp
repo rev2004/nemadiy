@@ -5,6 +5,38 @@
 		<title>fill the arguments</title>
 		<script type="text/javascript" src="<c:url value='/scripts/add.js'/>"></script>
  <meta name="heading" content="Create Executable Profile: Step 2 of 3"/>
+ <script type="text/javascript">
+ //from phpMyAdmin
+ function insertAtCursor(myField, prefix,myValueField,orderField) {
+	 myValue=myValueField.options[myValueField.selectedIndex].value;
+	 orderValue=orderField.options[orderField.selectedIndex].value;
+	 if (myValue!="") {
+		 myValue="'"+prefix+orderValue+"{"+myValue+"}'";
+	 }
+	 insertStrAtCursor(myField,myValue);
+	};
+function insertStrAtCursor(myField,myValue) {
+		 
+		//IE support
+		if (document.selection) {
+		myField.focus();
+		sel = document.selection.createRange();
+		sel.text = myValue;
+		}
+		//MOZILLA/NETSCAPE support
+		else if (myField.selectionStart || myField.selectionStart == '0') {
+		var startPos = myField.selectionStart;
+		var endPos = myField.selectionEnd;
+		myField.value = myField.value.substring(0, startPos)
+		+ myValue
+		+ myField.value.substring(endPos, myField.value.length);
+		} else {
+		myField.value += myValue;
+		}
+		myField.focus();
+		};
+	 
+ </script>
 </head>
 <body>
 
@@ -60,15 +92,15 @@
 			disable
 			<form:radiobutton path="logfile" title="no" value="false" />
 		</fieldset>
-		<fieldset id="pt1">
+		<fieldset >
 			<label class="label">log name: </label>
 			<form:input path="log" />
 			(ignored if logfile is disabled)
 		</fieldset>
 
 
-     		<n:argumentsTemplate supportFiles="${supportFiles}" niceParams="${niceParams}" plainTemplate="${matlabTemplate}"></n:argumentsTemplate>
-        
+	<n:argumentsTemplateFunctionCall supportedInputFiles="${supportedInputFiles}" 
+		supportedOutputFiles="${supportedOutputFiles}" niceParams="${niceParams}" plainTemplate="${matlabTemplate}"/>
         <n:argumentPagesSubmitButtons/>
 
 	</form:form>

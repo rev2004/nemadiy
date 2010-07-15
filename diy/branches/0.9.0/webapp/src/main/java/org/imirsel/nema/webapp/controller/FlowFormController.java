@@ -74,13 +74,13 @@ public class FlowFormController extends MultiActionController{
 		Flow flow=this.flowService.getFlow(id);
 		LOGGER.info("get flow"+(flow==null?"null":flow.getName()));
 		ModelAndView mav= new ModelAndView("flow/flowTemplate");
-		
-		List<Component> componentList=flowService.getComponents(flow.getUri());
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		List<Component> componentList=flowService.getComponents(credential,flow.getUri());
 		Collections.sort(componentList);
 		LOGGER.info("componentList: " + componentList.size());
 		TreeMap<Component,Map<String, Property>> map = new TreeMap<Component,Map<String, Property>>();
 		for(int i=0;i<componentList.size();i++){
-			HashMap<String, Property> m=(HashMap<String, Property>)flowService.getComponentPropertyDataType(componentList.get(i), flow.getUri());
+			HashMap<String, Property> m=(HashMap<String, Property>)flowService.getComponentPropertyDataType(credential,componentList.get(i), flow.getUri());
 			map.put(componentList.get(i), new TreeMap<String, Property>(m));
 		}
 		Set<Role> roleList=this.userManager.getCurrentUser().getRoles();

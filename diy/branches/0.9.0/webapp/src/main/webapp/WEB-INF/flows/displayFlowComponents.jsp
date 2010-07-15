@@ -30,10 +30,17 @@ function setIdx(idx)
 		descNode=dojo.byId("description");
 		descNode.value=appendSuffix(descNode.value,suffix);
 	}
+	var taskIdDesc;
+	function changeTaskDesc(taskField){
+		if (taskIdDesc) {taskIdDesc.hide();}
+		var id=taskField.options[taskField.selectedIndex].value;
+		taskIdDesc=dojo.byId("taskIdDesc"+id);
+		taskIdDesc.show();
+	}
 </script> 
 <meta name="heading" content="Edit Task Properties: ${flow.name}" />
 </head>
-
+<body onLoad="changeTaskDesc(dojo.byId('taskIdSelect'));">
 <p>${flow.description}</p>
 
 <div class="actionBox">
@@ -45,23 +52,43 @@ ${messageContext.allMessages}
 		<c:forEach items="${messageContext.allMessages}" var="message"><p >${message}</p></c:forEach>
 	</div>
 </c:if>
+<c:if test="${cloned}">
+    <div class="message">This is a CLONED job of ${flow.name}.</div>
+</c:if>
 
 <br/>
 <div id="formcontainer_job">
   <div class="form_job">
     <form:form commandName="jobForm" id="myForm">
-    <fieldset id="pt1">
+    
+   	 <fieldset id="pt1">
         <label class="label">Mirex Submission Code:</label>
         <form:select id="submissionCode" path="mirexSubmissionCode" onchange="modifyNameDesc();" items="${mirexSubmissions}" itemLabel="hashcode" itemValue="hashcode"  cssStyle="margin-bottom:5px"/>
  
       </fieldset>
-      <fieldset id="pt1">
-        <label class="label">Enter the Job Name:</label>
+      <fieldset >
+        <label class="label">
+        <c:choose>
+        	<c:when test="${cloned}">Copy of:</c:when>
+        	<c:otherwise>Enter the Job Name:</c:otherwise>
+        </c:choose>
+        </label>
         <form:input id="name" path="name" cssStyle="width:200px;"/>
       </fieldset>
       <fieldset id="pt1">
-        <label class="label">Enter the Job Description:</label>
-        <form:input id="description" path="description" cssStyle="width:300px;"/>
+        <label class="label">Enter the Job Description:</label><br/>
+        <div class="surround"><form:textarea rows="4" id="description" path="description" cssStyle="width:80%;"/>
+        </div>
+      </fieldset>
+ 
+       <fieldset>
+        <label class="label">Task Collection:</label>
+        <form:select path="taskId" id="taskIdSelect" 
+        	items="${taskIds}" itemLabel="name" itemValue="id" onchange="changeTaskDesc(this);"/>
+        <div id="taskIdDesc"></div>
+        <c:forEach items="${taskIds}" var="task"> 
+			<div id="taskIdDesc${task.id}" style="display:none;">${task.description};</div>
+		</c:forEach>
       </fieldset>
       <c:forEach items="${componentList}" var="component" varStatus="status">
         <c:if test="${(!component.hidden)&&(not empty componentMap[component])}">
@@ -70,8 +97,7 @@ ${messageContext.allMessages}
           <br/>
           <label class="label">Description</label>: ${component.description}          
          <div style="margin-top: 5px">  <input type="submit" name="_eventId_edit"  onclick="setIdx(${status.index})" value="Edit Properties" /></div>
-           
-   
+          
           </fieldset>
         </c:if>
       </c:forEach>
@@ -85,3 +111,4 @@ ${messageContext.allMessages}
     </form:form>
   </div>
 </div>
+</body>

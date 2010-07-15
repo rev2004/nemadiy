@@ -7,15 +7,18 @@
 	<var name="jobForm" class="org.imirsel.nema.webapp.model.JobForm" />
 	<var name="flow" class="org.imirsel.nema.model.Flow" />
 	<var name="componentList" class="java.util.ArrayList" />
+	<var name="isNewExecutableMap" class="java.util.HashMap"/>
 	
 
 	<input name="flowType" type="java.lang.String" />
 	<input name="flowId" type="java.lang.Integer" />
+	<input name="cloned" type="java.lang.Boolean"/>
 
 	<on-start>
 		<evaluate expression="tasksService.buildUploadPath(externalContext,jobForm.uuid)" />
 		<evaluate expression="jobForm.setFlowId(flowId)" />
 		<set name="flowScope.mirexSubmissions" value="tasksService.getAllMirexSubmissions()"/>
+		<set name="flowScope.taskIds" value="resource.getSupportedTasks()"/>
 	</on-start>
 
 	<view-state id="selectTask" model="jobForm"  >
@@ -28,9 +31,11 @@
 	<view-state id="displayFlowComponents" model="jobForm">
 		<transition on="edit" to="editComponentProperties" >
 			<evaluate expression="tasksService.updateMirexSubmission(componentMap,jobForm.mirexSubmissionCode,mirexSubmissions)"/>
+			<evaluate expression="tasksService.replacePropertyValue(componentMap,'taskID',jobForm.taskId)"/>
 		</transition>
 		<transition on="review" to="reviewTask" >
 			<evaluate expression="tasksService.updateMirexSubmission(componentMap,jobForm.mirexSubmissionCode,mirexSubmissions)"/>
+			<evaluate expression="tasksService.replacePropertyValue(componentMap,'taskID',jobForm.taskId)"/>
 		</transition>
 		<transition on="cancel" to="cleanUp" />
 	</view-state>
@@ -47,12 +52,32 @@
 		</transition>
 		<transition on="cancel" to="displayFlowComponents" />
 	</view-state>
+	
+	<decision-state id="editRemoteServiceComponentProperties">
+		<if test="cloned" then="editRemoteServiceComponentPropertiesCloned" else="editRemoteServiceComponentPropertiesNotCloned"/>
+	</decision-state>
 
-	<view-state id="editRemoteServiceComponentProperties">
+	<view-state id="editRemoteServiceComponentPropertiesCloned">
+		<on-entry>
+			<evaluate expression="tasksService.removeHiddenPropertiesForRemoteDynamicComponent(properties)" result="viewScope.formattedProperties" />
+			<set name="viewScope.executableMetadata" value="tasksService.getExecutableMetadata(properties)"/>
+		</on-entry>
+		<transition on="save" to="displayFlowComponents">
+			<evaluate expression="tasksService.cloneExecutableBundle(requestParameters,executableMetadata,properties,jobForm.uuid,isNewExecutableMap,component)" />
+			
+			<evaluate expression="tasksService.updateProperties(requestParameters,properties)" />
+		</transition>
+		<transition on="cancel" to="displayFlowComponents" />
+	</view-state>
+	
+	
+	
+	<view-state id="editRemoteServiceComponentPropertiesNotCloned">
 		<on-entry>
 			<evaluate expression="tasksService.removeHiddenPropertiesForRemoteDynamicComponent(properties)" result="viewScope.formattedProperties" />
 		</on-entry>
 		<transition on="save" to="displayFlowComponents">
+			
 			<evaluate expression="tasksService.updateProperties(requestParameters,properties)" />
 		</transition>
 		<transition on="next" to="generateExecutable">
@@ -79,10 +104,12 @@
 		<evaluate expression="jobForm.templateMap.clear()" />
 		<set name="flowScope.flow" value="flowService.getFlow(jobForm.flowId)" />
 		<set name="flowScope.componentMap" value="tasksService.loadFlowComponents(flow)" />
+		<evaluate expression="tasksService.prepareModel(jobForm,componentMap,flow,cloned)"/>
 		<set name="flowScope.componentList" value="tasksService.extractComponentList(componentMap)" />
+		<set name="isNewExecutableMap" value="tasksService.generateIsNewExecutableMap(componentList)"/>
 		<set name="flowScope.jobForm.name" value="flow.name">
 			<attribute name="name" value="lastStep" />
-		</set>
+		</set>		
 		<transition on="lastStep.success" to="displayFlowComponents" />
 	</action-state>
 
@@ -90,7 +117,7 @@
 		<input name="executableBundleInput" value="tasksService.findBundle(jobForm.executableMap[flowScope.component],properties)"
 			type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<input name="executableTemplateInput" value="jobForm.templateMap[flowScope.component]" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
-
+		<input name="taskId" value="jobForm.taskId"/>
 		<output name="executableTemplate" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
 		<output name="executableBundle" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 		<transition on="success" to="addExecutableSuccess">
@@ -103,6 +130,7 @@
 	</subflow-state>
 
 	<action-state id="editComponentProperties">
+		
 		<evaluate expression="tasksService.getRoles()" result="flowScope.userRoles" />
 		<evaluate expression="componentList.get(requestParameters.idx)" result="flowScope.component" />
 		<set name="flowScope.properties" value="componentMap[flowScope.component]" />
@@ -136,7 +164,7 @@
 	</decision-state>
 
 	<decision-state id="startPoint">
-		<if test="jobForm.flowId==null" then="selectTask" else="getTemplate" />
+		<if test="(jobForm.flowId==null) or (cloned==null) or (!cloned)" then="selectTask" else="getTemplate" />
 	</decision-state>
 
 	<end-state id="jobdetail" view="externalRedirect:contextRelative:/get/JobManager.jobDetail?id=#{flowScope.job.id}" />
@@ -147,7 +175,5 @@
 		<transition on-exception="org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException" to="runError" />
 	</global-transitions>
 
-	<on-end>
-		<evaluate expression="tasksService.clearBundles(jobForm.executableMap)" />
-	</on-end>
+	
 </flow>

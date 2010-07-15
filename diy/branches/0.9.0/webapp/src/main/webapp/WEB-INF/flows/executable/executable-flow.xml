@@ -10,9 +10,11 @@
 
 	<input name="executableBundleInput" type="org.imirsel.nema.webapp.model.UploadedExecutableBundle" />
 	<input name="executableTemplateInput" type="org.imirsel.nema.model.VanillaPredefinedCommandTemplate" />
+	<input name="taskId"/>
 
 	<on-start>
-		<set name="flowScope.supportedFiles" value="resource.getSupportedFileDataTypes()" />
+		<set name="flowScope.supportedInputFiles" value="resource.getSupportedInputFileDataTypes(taskId)" />
+		<set name="flowScope.supportedOutputFiles" value="resource.getSupportedOutputFileDataTypes(taskId)" />
 		<set name="flowScope.supportedOs" value="resource.getSupportedOperatingSystems()" />
 		<set name="flowScope.executable" value="executableService.setExecutable(executableBundleInput)" />
 		<evaluate
@@ -28,7 +30,7 @@
 		<transition on="cancel" to="cancel" validate="false"/>
 	</view-state>
 
-	<view-state id="argumentsPlain">
+	<view-state id="argumentsPlain" model="plainTemplate">
 	    <on-entry>
 			<set name="flashScope.niceParams" value="executableService.getNiceParams(plainTemplate.params)" type="org.imirsel.nema.webapp.model.NiceParams" />
 		</on-entry>

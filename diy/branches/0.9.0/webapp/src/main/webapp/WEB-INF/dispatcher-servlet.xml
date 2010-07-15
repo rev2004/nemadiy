@@ -21,10 +21,16 @@
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
 			<props>
+				<prop key="java.lang.IllegalArgumentException">
+					illegalArgument
+				</prop>
 				<prop key="org.springframework.dao.DataAccessException">
 					dataAccessFailure
                 </prop>
 				<prop key="org.springframework.remoting.RemoteConnectFailureException">
+					remoteAccessFailure
+                </prop>
+                <prop key="org.springframework.remoting.RemoteAccessException">
 					remoteAccessFailure
                 </prop>
 				<prop key="org.springframework.remoting.RemoteLookupFailureException">
@@ -124,6 +130,7 @@
 		<property name="flowService" ref="realFlowService" />
 		<property name="artifactService" ref="contentRepositoryClient"/>
 		<property name="methodNameResolver" ref="flowMethodResolver" />
+		<property name="userManager" ref="userManager"/>
 	</bean>
 
 
@@ -306,7 +313,7 @@
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 
 		<!-- one of the properties available; the maximum file size in bytes -->
-		<property name="maxUploadSize" value="10000000" />
+		<property name="maxUploadSize" value="100000000" />
 	</bean>
 	<!-- View Resolver for JSPs -->
 	<bean id="viewResolver"

@@ -69,6 +69,7 @@ public class UploadedExecutableBundleValidator {
       }
 
       // Validate that an executable file has been specified
+      if(uploadedExecutable.getType() != ExecutableType.MATLAB){
       if (null==uploadedExecutable.getExecutableName() || 
             "".equals(uploadedExecutable.getExecutableName())) {
          messages.addMessage(new MessageBuilder().error().source("executableName")
@@ -76,6 +77,7 @@ public class UploadedExecutableBundleValidator {
                      "You must specify the " + getExeFileType(uploadedExecutable) + " in the supplied archive.")
                .build());
          return;
+      }
       }
       
       

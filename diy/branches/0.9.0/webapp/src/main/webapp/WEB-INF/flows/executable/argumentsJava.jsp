@@ -66,8 +66,8 @@
 	</fieldset>	
 	
 
-	<n:argumentsTemplate supportFiles="${supportFiles}" niceParams="${niceParams}" plainTemplate="${javaTemplate}"></n:argumentsTemplate>
-   
+	<n:argumentsTemplateFunctionCall supportedInputFiles="${supportedInputFiles}" 
+		supportedOutputFiles="${supportedOutputFiles}" niceParams="${niceParams}" plainTemplate="${javaTemplate}"/>
     <n:argumentPagesSubmitButtons/>
 
 </form:form>

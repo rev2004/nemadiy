@@ -447,7 +447,18 @@
 			<scope>compile</scope>
 
 			<exclusions>
-
+				<exclusion>
+					<groupId>org.imirsel</groupId>
+					<artifactId>nema-contentrepository-service</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.imirsel</groupId>
+					<artifactId>nema-contentrepository-service-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.imirsel</groupId>
+					<artifactId>nema-contentrepository-service-core</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-context</artifactId>
