@@ -26,7 +26,7 @@ import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
 
 
 /**
- * Chord file type where chords are specified in the number format.
+ * MultiF0 Note tracking  file type consists of onsets, offsets and F0 values.
  * 
  * @author mert.bay@gmail.com
  * @author kris.west@gmail.com
