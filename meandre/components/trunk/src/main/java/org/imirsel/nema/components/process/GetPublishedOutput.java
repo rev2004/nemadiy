@@ -27,11 +27,11 @@ import org.meandre.core.ComponentExecutionException;
  * @author kris.west@gmail.com
  * @since 0.4.0
  */
-@Component(creator = "Kris West", description = "Takes the collection ID and " +
-		"pushes the names, paths for the publised results for the collection " +
-		"and associated groundtruth", 
+@Component(creator = "Kris West", description = "Takes a task ID and submission " +
+		"code, retrieves published results on the task for that submission code " +
+		"and outputs them.", 
 		name = "GetPublishedOutput",
-		resources={"../../../../RepositoryProperties.properties"},
+		resources={"../../../../../RepositoryProperties.properties"},
 		tags = "publish results repository", firingPolicy = Component.FiringPolicy.all)
 public class GetPublishedOutput extends NemaComponent {
 
