@@ -50,6 +50,7 @@ public abstract class ContentRepositoryBase extends NemaComponent implements Rem
 	private String token;
 	
 	
+	@Override
 	public void initialize(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
@@ -87,11 +88,13 @@ public abstract class ContentRepositoryBase extends NemaComponent implements Rem
 
 
 
+	@Override
 	public void execute(ComponentContext context) throws ComponentExecutionException,ComponentContextException{
 		this.executeNema(context);
 	}
 	
 	
+	@Override
 	public void dispose(ComponentContextProperties componentContextProperties) 
 	throws ComponentContextException{
 		super.dispose(componentContextProperties);
@@ -139,7 +142,7 @@ public abstract class ContentRepositoryBase extends NemaComponent implements Rem
 			throw new IOException("File " + file.getAbsolutePath() + " could not be read.");
 		}
 		NemaContentRepositoryFile nemaResult = createNemaContentRepositoryFile(file, this.getAbsoluteProcessWorkingDirectory(),model);
-		ResourcePath rrp=this.resultStorageService.saveResultFile(this.getCredentials(), nemaResult);
+		ResourcePath rrp=ContentRepositoryBase.resultStorageService.saveResultFile(this.getCredentials(), nemaResult);
 		return rrp;
 	}
 
