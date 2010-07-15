@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import org.imirsel.nema.analytics.util.process.CommandLineExecutorImpl;
 import org.imirsel.nema.annotations.BooleanDataType;
 import org.imirsel.nema.annotations.StringDataType;
-import org.imirsel.nema.artifactservice.ArtifactManagerImpl;
 import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.role.RoleAdmin;
 import org.meandre.annotations.Component;
@@ -34,6 +33,7 @@ import org.meandre.core.ComponentExecutionException;
  * @author Andreas F. Ehmann and Kris West
  * @deprecated
  */
+@Deprecated
 @Component(creator="Andreas F. Ehmann", description="Runs external code " +
 		"using the process builder. This module accepts one File input.", 
 		name="RunBinaryOneInputComponent",
@@ -117,6 +117,7 @@ import org.meandre.core.ComponentExecutionException;
 	 *
 	 * @param ccp The properties associated to a component context
 	 */
+	@Override
 	public void initialize (ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException{
 		super.initialize(ccp);
 		
@@ -137,6 +138,7 @@ import org.meandre.core.ComponentExecutionException;
 	 *         access was detected
 
 	 */
+	@Override
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
 		//File inFile = (File)cc.getDataComponentFromInput(DATA_INPUT_1);
 		commandFormattingStr = String.valueOf(cc.getProperty(DATA_PROPERTY_FORMATSTRING));
@@ -197,6 +199,7 @@ import org.meandre.core.ComponentExecutionException;
 	 * @param ccp The properties associated to a component context
 	 * @throws ComponentContextException 
 	 */
+	@Override
 	public void dispose (ComponentContextProperties ccp) throws ComponentContextException {
 		super.dispose(ccp);
 		if(executor != null) {

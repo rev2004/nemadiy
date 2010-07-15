@@ -2,24 +2,18 @@ package org.imirsel.nema.components.process;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.imirsel.nema.components.NemaComponent;
-import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.fileTypes.NemaFileType;
-import org.imirsel.nema.model.util.FileConversionUtil;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
-import org.meandre.annotations.ComponentOutput;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -137,7 +131,7 @@ public class OmenOutputPublisher extends NemaComponent {
 				NemaTrackList trackList = it.next();
 				List<File> files = expectedPaths.get(trackList);
 				for (Iterator<File> it2 = files.iterator(); it2.hasNext();) {
-					File file = (File) it2.next();
+					File file = it2.next();
 					fileToTrackList.put(file, trackList);
 				}
 			}

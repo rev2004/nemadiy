@@ -4,8 +4,6 @@ package org.imirsel.nema.components.process;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
@@ -25,8 +23,6 @@ import net.jini.core.lookup.ServiceItem;
 import net.jini.core.lookup.ServiceMatches;
 import net.jini.core.lookup.ServiceRegistrar;
 import net.jini.core.lookup.ServiceTemplate;
-import net.jini.lookup.entry.Name;
-
 import org.apache.jackrabbit.rmi.client.ClientRepositoryFactory;
 import org.imirsel.nema.annotations.StringDataType;
 import org.imirsel.nema.components.NemaComponent;
@@ -112,6 +108,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	private String memoryProfile;
 	
 	
+	@Override
 	public void initialize(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
@@ -169,6 +166,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 
 
 
+	@Override
 	public void execute(ComponentContext context) throws ComponentExecutionException,ComponentContextException{
 		try{
 		processTemplate = (ProcessTemplate)context.getDataComponentFromInput(DATA_IN_1);
@@ -187,6 +185,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	}
 	
 	
+	@Override
 	public void dispose(ComponentContextProperties componentContextProperties) 
 	throws ComponentContextException{
 		super.dispose(componentContextProperties);
@@ -414,7 +413,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 			throw new IOException("File " + file.getAbsolutePath() + " could not be read.");
 		}
 		NemaContentRepositoryFile nemaResult = createNemaContentRepositoryFile(file, this.getAbsoluteProcessWorkingDirectory(),model);
-		ResourcePath rrp=this.resultStorageService.saveResultFile(this.getCredentials(), nemaResult);
+		ResourcePath rrp=RemoteExecutorBase.resultStorageService.saveResultFile(this.getCredentials(), nemaResult);
 		return rrp;
 	}
 

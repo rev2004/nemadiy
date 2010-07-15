@@ -80,6 +80,7 @@ public class ProfileToProcessTemplateComponent extends NemaComponent {
 	
 
 
+	@Override
 	public void initialize(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
