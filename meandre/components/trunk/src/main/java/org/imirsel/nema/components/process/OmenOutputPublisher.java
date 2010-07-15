@@ -63,6 +63,7 @@ public class OmenOutputPublisher extends NemaComponent {
 	public void initialize(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
+		getLogger().info("Initialized " + this.getClass().getName());
 	}
 
 	@Override
@@ -75,7 +76,7 @@ public class OmenOutputPublisher extends NemaComponent {
 	@Override
 	public void execute(ComponentContext cc)
 			throws ComponentExecutionException, ComponentContextException {
-		cc.getOutputConsole().println("In output reader -execute");
+		getLogger().fine("In output publisher -execute");
 		if(task == null && cc.isInputAvailable(DATA_IN_NEMATASK)){
 			task = (NemaTask)cc.getDataComponentFromInput(DATA_IN_NEMATASK);
 			getLogger().fine("got task");
@@ -153,9 +154,10 @@ public class OmenOutputPublisher extends NemaComponent {
 						File path = new File(it.next().getResourcePath());
 						NemaTrackList trackList = fileToTrackList.remove(path);
 						if(trackList != null){
-							getLogger().fine("Received file: " + path.getAbsolutePath() + ", expecting " + fileToTrackList.size() + " further files.");
 							//save to repository DB here
 							client.publishResultForTask(task.getId(), trackList.getId(), subCode, subName, path.getAbsolutePath(), fileType);
+							getLogger().fine("Published file: " + path.getAbsolutePath() + ", expecting " + fileToTrackList.size() + " further files.");
+							
 						}else{
 							String msg = "Received unexpected file: " + path.getAbsolutePath() + ", waiting on " + fileToTrackList.size() + " files. Paths expected but not yet received: ";
 							for (Iterator<File> iterator = fileToTrackList.keySet().iterator(); iterator.hasNext();) {
