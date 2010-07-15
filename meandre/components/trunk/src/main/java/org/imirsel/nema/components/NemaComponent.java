@@ -203,5 +203,21 @@ public abstract class NemaComponent implements ExecutableComponent {
 	public String getPublicResourceDirectory(){
 		return this.publicResourceDirectory;
 	}
+
+	/**
+	 * 
+	 * @return execution instance id
+	 */
+	public String getExecutionInstanceID() {
+		return executionInstanceID;
+	}
+
+	/**
+	 * 
+	 * @return flow execution instance id
+	 */
+	public String getFlowExecutionInstanceID() {
+		return flowExecutionInstanceID;
+	}
 	
 }
