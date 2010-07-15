@@ -60,7 +60,7 @@ public class MultiF0EstEvaluationIntegrationTest extends BaseManagerTestCase{
         singleSetTask.setDescription("single fold task description");
         singleSetTask.setDatasetId(1);
         singleSetTask.setSubjectTrackMetadataId(11);
-        singleSetTask.setSubjectTrackMetadataName(NemaDataConstants.MELODY_EXTRACTION_DATA);
+        singleSetTask.setSubjectTrackMetadataName(NemaDataConstants.MULTI_F0_EST_DATA);
         
         twoSetTask = new NemaTask();
         twoSetTask.setId(2);
@@ -68,7 +68,7 @@ public class MultiF0EstEvaluationIntegrationTest extends BaseManagerTestCase{
         twoSetTask.setDescription("two fold task description");
         twoSetTask.setDatasetId(2);
         twoSetTask.setSubjectTrackMetadataId(11);
-        twoSetTask.setSubjectTrackMetadataName(NemaDataConstants.MELODY_EXTRACTION_DATA);
+        twoSetTask.setSubjectTrackMetadataName(NemaDataConstants.MULTI_F0_EST_DATA);
         
         singleSetDataset = new NemaDataset();
         singleSetDataset.setId(singleSetTask.getDatasetId());

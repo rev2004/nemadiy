@@ -59,16 +59,16 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 	public void setUp() throws Exception {
 		task = new NemaTask();
         task.setId(-1);
-        task.setName("test name");
-        task.setDescription("test description");
+        task.setName("Classification evaluator test");
+        task.setDescription("Test of the classificaiton evaluator and result renderer");
         task.setDatasetId(10);
         task.setSubjectTrackMetadataId(1);
         task.setSubjectTrackMetadataName(NemaDataConstants.CLASSIFICATION_GENRE);
         
         dataset = new NemaDataset();
         dataset.setId(task.getDatasetId());
-        dataset.setName("dataset name");
-        dataset.setDescription("some description");
+        dataset.setName("Test genre dataset");
+        dataset.setDescription("Test genre dataset");
         
         File resultsDirectory = new File("src/test/resources/classification/HNOS1");
         MultipleTrackEvalFileType reader = new ClassificationTextFile(task.getSubjectTrackMetadataName());
