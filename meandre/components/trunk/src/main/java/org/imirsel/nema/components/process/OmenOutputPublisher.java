@@ -76,10 +76,10 @@ public class OmenOutputPublisher extends NemaComponent {
 	@Override
 	public void execute(ComponentContext cc)
 			throws ComponentExecutionException, ComponentContextException {
-		getLogger().fine("In output publisher -execute");
+		getLogger().info("In output publisher -execute");
 		if(task == null && cc.isInputAvailable(DATA_IN_NEMATASK)){
 			task = (NemaTask)cc.getDataComponentFromInput(DATA_IN_NEMATASK);
-			getLogger().fine("got task");
+			getLogger().info("got task");
 			if(subCode != null){
 				RepositoryClientInterface client = null;
 				try {
@@ -99,11 +99,11 @@ public class OmenOutputPublisher extends NemaComponent {
 		}
 		if(fileType == null && cc.isInputAvailable(DATA_IN_OUTPUT_TYPE)){
 			fileType = (Class<NemaFileType>)cc.getDataComponentFromInput(DATA_IN_OUTPUT_TYPE);
-			getLogger().fine("got output type");
+			getLogger().info("got output type");
 		}
 		if(subCode == null && cc.isInputAvailable(DATA_IN_SUBMISSION_CODE)){
 			subCode = (String)cc.getDataComponentFromInput(DATA_IN_SUBMISSION_CODE);
-			getLogger().fine("got submission code: " + subCode);
+			getLogger().info("got submission code: " + subCode);
 			if(task != null){
 				RepositoryClientInterface client = null;
 				try {
@@ -122,8 +122,8 @@ public class OmenOutputPublisher extends NemaComponent {
 			}
 		}
 		if(subName == null && cc.isInputAvailable(DATA_IN_SUBMISSION_NAME)){
-			subCode = (String)cc.getDataComponentFromInput(DATA_IN_SUBMISSION_NAME);
-			getLogger().fine("got submission name: " + subName);
+			subName = (String)cc.getDataComponentFromInput(DATA_IN_SUBMISSION_NAME);
+			getLogger().info("got submission name: " + subName);
 		}
 		if(expectedPaths == null && cc.isInputAvailable(DATA_IN_EXPECTED_OUTPUTS)){
 			expectedPaths = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_IN_EXPECTED_OUTPUTS);
@@ -136,14 +136,14 @@ public class OmenOutputPublisher extends NemaComponent {
 					fileToTrackList.put(file, trackList);
 				}
 			}
-			getLogger().fine("The output expected size: " + fileToTrackList.size());
+			getLogger().info("The output expected size: " + fileToTrackList.size());
 		}
 		//when we are configured start receiving process artifacts
 		if(task != null && fileType != null && expectedPaths != null && subCode != null && subName != null){
 			
 			RepositoryClientInterface client = null;
 			
-			getLogger().fine("Receiving a process artifact");
+			getLogger().info("Receiving a process artifact");
 			if(cc.isInputAvailable(DATA_IN_PROCESS_ARTIFACTS)){
 				List<ProcessArtifact> in = (List<ProcessArtifact>)cc.getDataComponentFromInput(DATA_IN_PROCESS_ARTIFACTS);
 				cc.getOutputConsole().println("The process artifact: " + in.size() + "  " + in.get(0).getResourcePath());
@@ -156,7 +156,7 @@ public class OmenOutputPublisher extends NemaComponent {
 						if(trackList != null){
 							//save to repository DB here
 							client.publishResultForTask(task.getId(), trackList.getId(), subCode, subName, path.getAbsolutePath(), fileType);
-							getLogger().fine("Published file: " + path.getAbsolutePath() + ", expecting " + fileToTrackList.size() + " further files.");
+							getLogger().info("Published file: " + path.getAbsolutePath() + ", expecting " + fileToTrackList.size() + " further files.");
 							
 						}else{
 							String msg = "Received unexpected file: " + path.getAbsolutePath() + ", waiting on " + fileToTrackList.size() + " files. Paths expected but not yet received: ";
@@ -189,7 +189,7 @@ public class OmenOutputPublisher extends NemaComponent {
 			
 			
 		}else{
-			getLogger().info("Waiting on getting the process artifact list to receive -rest of the parameters are all good.");
+			getLogger().info("Waiting on config parameters before receiving process artifacts.");
 		}
 		
 		
