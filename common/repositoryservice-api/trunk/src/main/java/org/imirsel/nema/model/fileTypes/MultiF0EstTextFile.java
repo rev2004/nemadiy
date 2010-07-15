@@ -23,7 +23,7 @@ public class MultiF0EstTextFile extends SingleTrackEvalFileTypeImpl {
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";
 	public static final DecimalFormat FORMAT_DEC = new DecimalFormat("0.0000");
-	public static final String TYPE_NAME = "Melody (single F0) text file";
+	public static final String TYPE_NAME = "MultiF0 text file";
 	
 	/**
 	 * Constructor
@@ -39,7 +39,7 @@ public class MultiF0EstTextFile extends SingleTrackEvalFileTypeImpl {
 	public NemaData readFile(File theFile)
 			throws IllegalArgumentException, FileNotFoundException, IOException {
 
-		/* Read a space-delimited melody text file as a 2D string array */
+		/* Read a space-delimited multiF0 text file as a 2D string array */
 		String[][] multiF0EstDataStrArray = DeliminatedTextFileUtilities.loadDelimTextData(theFile, READ_DELIMITER, -1);
 		int nrows = multiF0EstDataStrArray.length;
 		int ncols = multiF0EstDataStrArray[0].length;
