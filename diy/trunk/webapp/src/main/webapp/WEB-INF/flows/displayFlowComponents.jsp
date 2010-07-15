@@ -77,7 +77,8 @@ ${messageContext.allMessages}
       </fieldset>
       <fieldset id="pt1">
         <label class="label">Enter the Job Description:</label><br/>
-        <form:textarea rows="4" id="description" path="description" cols="70"/>
+        <div class="surround"><form:textarea rows="4" id="description" path="description" cssStyle="width:80%;"/>
+        </div>
       </fieldset>
  
        <fieldset>

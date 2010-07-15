@@ -805,7 +805,7 @@ public class TasksServiceImpl {
 		
 		String des=flow.getDescription();
 		if (des==null) des="";
-		if (cloned) {des="Clone of \""+flow.getName()+"("+flow.getUri()+")\"\n"+des;}
+		if (cloned) {des="Clone of \""+flow.getName()+"\"\n"+des;}
 		jobForm.setDescription(des);
 		Property taskId=searchProperty(componentMap,"taskID");
 		if (taskId!=null){
