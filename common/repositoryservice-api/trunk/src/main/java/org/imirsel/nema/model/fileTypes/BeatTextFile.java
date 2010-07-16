@@ -103,7 +103,9 @@ public class BeatTextFile extends SingleTrackEvalFileTypeImpl {
                 }
                 NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
                 obj.setMetadata(NemaDataConstants.BEAT_TRACKING_DATA, outputData);
-                obj.setMetadata(NemaDataConstants.BEAT_TRACKING_ANNOTATORS, annotators);                
+                if(annotators != null) {
+                	obj.setMetadata(NemaDataConstants.BEAT_TRACKING_ANNOTATORS, annotators);
+                }
                 return obj;
                 
             }else{
