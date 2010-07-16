@@ -163,6 +163,6 @@
 </form>
 </fieldset>
 
- <textarea id="meandreConsole" cols='89' rows='30' readonly="readonly">(getting console...)</textarea></div>
+ <textarea id="meandreConsole" style="width:90%;" rows='30' readonly="readonly">(getting console...)</textarea></div>
 </body>
 
