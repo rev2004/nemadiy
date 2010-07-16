@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.imirsel.nema.analytics.evaluation.beat.BeatResultRenderer;
 import org.imirsel.nema.analytics.evaluation.chord.ChordEvaluator;
 import org.imirsel.nema.analytics.evaluation.chord.ChordResultRenderer;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
@@ -40,6 +41,7 @@ public class ResultRendererFactory {
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.TEMPO_EXTRACTION_DATA, TempoResultRenderer.class);
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, StructureResultRenderer.class);
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.ONSET_DETECTION_DATA, OnsetResultRenderer.class);
+		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.BEAT_TRACKING_DATA, BeatResultRenderer.class);
 		
 			//classification tasks
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, ClassificationResultRenderer.class);
