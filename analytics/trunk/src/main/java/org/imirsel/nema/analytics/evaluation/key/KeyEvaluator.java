@@ -321,13 +321,13 @@ public class KeyEvaluator extends EvaluatorImpl {
 		/* 
 		 * Calculate summary/overall evaluation results. Populate a summary NemaData object with 
 		 * the evaluations, and return it */		
-		overallPerf = CORRECT_SCORE*overallCorrect 
-					+ FIFTH_SCORE*overallPerfectFifths 
-					+ RELATIVE_SCORE*overallRelative 
-					+ PARALLEL_SCORE*overallParallel 
-					+ MISSED_SCORE*overallErrors;
+		overallPerf = CORRECT_SCORE*(double)overallCorrect 
+					+ FIFTH_SCORE*(double)overallPerfectFifths 
+					+ RELATIVE_SCORE*(double)overallRelative 
+					+ PARALLEL_SCORE*(double)overallParallel 
+					+ MISSED_SCORE*(double)overallErrors;
 
-		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE, overallPerf);
+		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE, overallPerf/(double)numExamples);
 		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_CORRECT, (double)overallCorrect/(double)numExamples);
 		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_PERFECT_FIFTH_ERROR, (double)overallPerfectFifths/(double)numExamples);
 		outObj.setMetadata(NemaDataConstants.KEY_DETECTION_RELATIVE_ERROR, (double)overallRelative/(double)numExamples);
