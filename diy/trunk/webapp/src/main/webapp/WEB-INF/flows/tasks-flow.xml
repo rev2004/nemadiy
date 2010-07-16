@@ -156,6 +156,7 @@
 		<evaluate expression="tasksService.clearBundles(jobForm.executableMap)" />
 		<evaluate expression="jobForm.executableMap.clear()" />
 		<evaluate expression="jobForm.templateMap.clear()" />
+		<set name="cloned" value="false"/>
 		<transition to="selectTask" />
 	</action-state>
 
