@@ -12,7 +12,8 @@
 
 <input type="text" id="contrib-search" value="search for contributors"/>
 <div id="search-results"></div>
-<p>Can't find the person you're looking for? <a href="<c:url value='/get/MirexManager/addContributor.frag'/>">Create a new Contributor Profile</a> for them.</p>
+<p>Can't find the person you're looking for? 
+<a href="<c:url value='/get/MirexManager/addContributor.frag'/>">Create a new Contributor Profile</a> for them.</p>
 <input type="button" onclick="window.close()" value="Close Window"/>
 </div>
 </body>

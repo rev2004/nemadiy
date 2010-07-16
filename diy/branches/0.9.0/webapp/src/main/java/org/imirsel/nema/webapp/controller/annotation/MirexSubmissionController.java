@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
+ * Controllers related to Mirex Submission
  * @author gzhu1
  *
  */
@@ -66,7 +67,7 @@ public class MirexSubmissionController {
 	
 	@RequestMapping(value="addContributor.frag",method=RequestMethod.POST)
 	public ModelAndView processSubmit(@ModelAttribute("contributor")Contributor contributor){
-		mirexContributorDictionary.add(contributor);
+		contributor=mirexContributorDictionary.add(contributor);
 		return new ModelAndView("mirex/addContributorSuccess","contributor",contributor);
 		
 	}
@@ -88,7 +89,7 @@ public class MirexSubmissionController {
 		}else {
 			submissions=mirexSubmissionDao.getSubmissions(user);
 		}
-		ModelAndView mav=new ModelAndView("/mirex/submissions","submissions",submissions);
+		ModelAndView mav=new ModelAndView("/mirex/submissionList","submissions",submissions);
 		return mav;
 	}
 	

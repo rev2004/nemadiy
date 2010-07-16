@@ -16,8 +16,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -73,6 +76,7 @@ public class MirexSubmission  implements Serializable {
 	private Date updateTime;
 	private Date createTime;
 	private List<Contributor> contributors;
+	private List<MirexNote> notes;
 	private User user;
 	private MirexTask mirexTask;
 	private String url;
@@ -121,7 +125,7 @@ public class MirexSubmission  implements Serializable {
 	public void setPrivateNote(String note) {
 		this.privateNote = note;
 	}
-	@Column(name="privateNote")
+	@Column(name="privateNote",length=2000)
 	public String getPrivateNote() {
 		return privateNote;
 	}
@@ -134,7 +138,7 @@ public class MirexSubmission  implements Serializable {
 	public void setReadme(String readme) {
 		this.readme = readme;
 	}
-	@Column(name="publicNote",length=30000)
+	@Column(name="publicNote",length=2000)
 	public String getPublicNote() {
 		return publicNote;
 	}
@@ -154,20 +158,35 @@ public class MirexSubmission  implements Serializable {
 	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="updateTime",insertable=false,updatable=false)
+	@Column(name="updateTime")
 	public Date getUpdateTime() {
 		return updateTime;
 	}
 	public void setContributors(List<Contributor> contributors) {
 		this.contributors = contributors;
 	}
+	
 	@ManyToMany(cascade=CascadeType.MERGE)
+	@OrderColumn
 	public List<Contributor> getContributors() {
 		return contributors;
 	}
 	public void addContributor(Contributor contributor){
 		if (contributors==null) {contributors=new ArrayList<Contributor>();}
 		contributors.add(contributor);
+	}
+	
+	public void setNotes(List<MirexNote> notes) {
+		this.notes = notes;
+	}
+	@OneToMany(cascade={CascadeType.PERSIST,CascadeType.MERGE},mappedBy="submission")
+	@OrderColumn
+	public List<MirexNote> getNotes() {
+		return notes;
+	}
+	
+	public void addNote(MirexNote note){
+		this.notes.add(note);
 	}
 	
 	public void setUser(User user) {
@@ -197,6 +216,7 @@ public class MirexSubmission  implements Serializable {
 	public Date getCreateTime() {
 		return createTime;
 	}
+	@Column(name="createTime",updatable=false)
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}

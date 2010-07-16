@@ -45,7 +45,9 @@ public class MirexSubmissionDaoHibernate extends GenericDaoHibernate<MirexSubmis
 	@Override
 	public MirexSubmission save(MirexSubmission submission){
 		
-		if (submission.getId()==null) submission.setCreateTime(new Date());
+		if (submission.getId()==null) {
+			submission.setCreateTime(new Date());
+		}
 		submission.setUpdateTime(new Date());
 		return super.save(submission);
 		
