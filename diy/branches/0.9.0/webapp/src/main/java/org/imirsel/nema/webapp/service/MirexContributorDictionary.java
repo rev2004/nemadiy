@@ -13,7 +13,7 @@ import org.imirsel.nema.model.Contributor;
  */
 public interface MirexContributorDictionary extends Dictionary<Contributor,Long>{
    Contributor find(Long id);
-   void add(Contributor contributor);
+   Contributor add(Contributor contributor);
    void refresh();
    List<Contributor> findSimilar(String str);
 }

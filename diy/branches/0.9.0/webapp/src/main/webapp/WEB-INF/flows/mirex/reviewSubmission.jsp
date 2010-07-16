@@ -5,7 +5,7 @@
 </head>
 <body>
 
-	<form:form modelAttribute="submission" >
+	<form:form  >
 	    <fieldset>
 	        <label class="label">Name: </label>${submission.name}
 	    </fieldset>
@@ -14,13 +14,15 @@
 		</fieldset>
 		<fieldset >
 			<label class="label">Readme: </label><br/>
-			<textarea readonly  rows="15" cols="60"  style="text-align:left;">
-			 ${submission.readme}
-			</textarea>
+			<div class="surround">
+				<textarea readonly  rows="15" style="text-align:left;width:80%;">
+			 		${submission.readme}
+				</textarea>
+			</div>
 		</fieldset>
 	
 		<fieldset id="button">
-            <input type="submit" name="_eventId_review" value="Review" />
+            <input type="submit" name="_eventId_save" value="Save" />
 			<input type="submit" name="_eventId_edit" value="Edit" />
 		</fieldset>
 		

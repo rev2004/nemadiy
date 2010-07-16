@@ -31,9 +31,10 @@ public class MirexContributorDictionaryDaoImpl implements
 		refresh();
 	}
 
-	public void add(Contributor contributor) {
+	public Contributor add(Contributor contributor) {
 		contributor = dao.save(contributor);
 		map.put(contributor.getId(), contributor);
+		return contributor;
 	}
 
 	public void refresh() {

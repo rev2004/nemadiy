@@ -15,6 +15,7 @@
 	<div class="surround"><label class="required">From(year):</label><form:input path="startYear" size="5"/>
 		<label class="required">To:</label><form:input path="startYear" size="5"/></div>
 	<div class="surround"><label class="fixed ">Email:</label><form:input path="email"/></div>
+	<div class="surround"><label class="fixed ">Phone:</label><form:input path="phone"/></div>
 	<div class="surround"><label class="fixed ">Street Address:</label><form:input path="address.streetLine1"/></div>
 	<div class="surround"><label class="fixed ">Street Address 2:</label><form:input path="address.streetLine2"/></div>
 	<div class="surround"><label class="fixed ">Street Address 3:</label><form:input path="address.streetLine3"/></div>
