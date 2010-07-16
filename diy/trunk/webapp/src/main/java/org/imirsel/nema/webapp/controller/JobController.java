@@ -266,7 +266,7 @@ public class JobController extends MultiActionController {
 		} finally {
 			in.close();
 		}
-
+/*TODO COMMENT for broken API
 		if (dataset_id != -1) {
 			RepositoryClientInterface client = this.getRepositoryClient();
 			try {
@@ -276,7 +276,7 @@ public class JobController extends MultiActionController {
 				this.repositoryClientConnectionPool.returnToPool(client);
 			}
 		}
-
+*/
 		ModelAndView mav = new ModelAndView("job/job");
 		mav.addObject("jobForSubmission", success);
 		mav.addObject(Constants.JOB, job);
@@ -374,7 +374,7 @@ public class JobController extends MultiActionController {
 		String submissionName = submission.getName();
 
 		RepositoryClientInterface rci = null;
-
+		/*TODO COMMENT for broken API
 		try {
 			rci = this.getRepositoryClient();
 			List<NemaPublishedResult> resultList = rci
@@ -395,6 +395,7 @@ public class JobController extends MultiActionController {
 
 		}
 		this.submissionManager.removeSubmission(submissionId);
+*/
 		return new ModelAndView(new RedirectView("JobManager.getSubmissions",
 				true));
 	}
