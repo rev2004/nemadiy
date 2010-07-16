@@ -44,11 +44,12 @@ public class MirexTaskDictionaryImpl implements MirexTaskDictionary {
 	 * Note: Input task object should not has the id field set, it should be left for DAO to set 
 	 * 		in order to avoid clash.  
 	 */
-	public void add(MirexTask task) {
+	public MirexTask add(MirexTask task) {
 		
 		task=dao.save(task);
 		//It is important to merge/save the task first because Id is generated during the process
 		map.put(task.getId(),task);
+		return task;
 		
 	}
 

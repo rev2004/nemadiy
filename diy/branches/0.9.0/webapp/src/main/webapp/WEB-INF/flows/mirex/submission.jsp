@@ -11,8 +11,9 @@
 	  addContributor = function (id) {
 			var x = dojo.byId("newContributor");
 			x.value=id;
-			document.forms['myform']._eventId="refresh";
-			document.forms['myform'].submit();
+			myform=document.forms['myform'];
+			dojo.create('input',{type:'hidden',name:'_eventId_refresh',value:'refresh'},myform);
+			myform.submit();
 		}
 
 		
@@ -28,7 +29,7 @@
 	        </div>
 	        <div > 
 	        	<label class="label">Mirex Tasks: </label>
-	        	<select name="mirexTaskId">
+	        	<select name="mirexTask">
 	        	 	<c:forEach items="${mirexTaskSet}" var="task">
 	        	 	  <option value="${task.id}">${task.fullname}</option>
 	        	 	</c:forEach> 
@@ -37,7 +38,7 @@
 	    </fieldset>
 		<fieldset id="contributor">
 			<c:forEach items="${submission.contributors}" var="contributor" varStatus="status">
-			 	<div id="contributor${status.indexc}">
+			 	<div id="contributor${status.index}" class="surround">
 				   ${status.index+1}, ${contributor.lastname},${contributor.firstname} 
 			   		<img src=<c:url value="/images/delete.png"/> onclick="removeContributor(${status.index})"></img>
 			   		<input type="hidden" value="${contributor.id}" name="contributor"/>
@@ -62,7 +63,8 @@
 		</fieldset>
 		</c:if>
 		<fieldset id="button">
-            <input type="submit" name="_eventId_review" value="Review" />
+           
+            <input type="submit" name="_eventId_save" value="Save" />
 			<input type="submit" name="_eventId_clear" value="Clear" />
 		</fieldset>
 		

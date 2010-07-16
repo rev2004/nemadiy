@@ -1,6 +1,7 @@
 package org.imirsel.nema.webapp.webflow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -11,12 +12,13 @@ import org.imirsel.nema.model.Contributor;
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.MirexTask;
 import org.imirsel.nema.model.MirexSubmission.SubmissionStatus;
+import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.util.StringUtil;
 import org.imirsel.nema.webapp.service.MirexContributorDictionary;
 import org.imirsel.nema.webapp.service.MirexTaskDictionary;
 import org.springframework.webflow.core.collection.ParameterMap;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
+
 
 public class MirexSubmissionServiceImpl {
 
@@ -32,6 +34,7 @@ public class MirexSubmissionServiceImpl {
 	private MirexTaskDictionary mirexTaskDictionary;
 	private MirexContributorDictionary mirexContributorDictionary;
 	private MirexSubmissionDao mirexSubmissionDao;
+	private UserManager userManager;
 	
 	public void setMirexTaskDictionary(MirexTaskDictionary mirexTaskDictionary) {
 		this.mirexTaskDictionary = mirexTaskDictionary;
@@ -46,6 +49,10 @@ public class MirexSubmissionServiceImpl {
 		this.mirexSubmissionDao = mirexSubmissionDao;
 	}
 	
+	public void setUserManager(UserManager userManager) {
+		this.userManager = userManager;
+	}
+
 	public List<MirexTask> mirexTaskSet() {
 		return mirexTaskDictionary.findAllActive();
 	}
@@ -58,8 +65,8 @@ public class MirexSubmissionServiceImpl {
 		submission.setMirexTask(mirexTaskDictionary.find(taskId));
 		if (contributorIds != null) {
 			List<Contributor> list=new ArrayList<Contributor>();
-			for (long id : contributorIds) {
-				list.add(mirexContributorDictionary.find(id));
+			for (Long id : contributorIds) {
+				if (id!=null) {list.add(mirexContributorDictionary.find(id));}
 			}
 			submission.setContributors(list);
 		}
@@ -68,6 +75,7 @@ public class MirexSubmissionServiceImpl {
 	public MirexSubmission save(MirexSubmission submission){
 		submission.setHashcode(hashcodeGenerate(submission.getContributors()));
 		submission.setStatus(SubmissionStatus.READY_FOR_RUN);
+		submission.setUser(userManager.getCurrentUser());
 		return mirexSubmissionDao.save(submission);
 	}
 	
