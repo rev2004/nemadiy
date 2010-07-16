@@ -193,7 +193,7 @@ public class KeyEvaluator extends EvaluatorImpl {
 			if (mapToPrimaryEquivalents(rawData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(rawGtData[0].toLowerCase())) == 0) {
  
 				/* Check if modes also match. If yes, correct key. If not, parallel major/minor error */ 
-				if (rawData[1].compareTo(rawGtData[1]) == 0) {
+				if (rawData[1].toLowerCase().compareTo(rawGtData[1].toLowerCase()) == 0) {
                     correct++;
                     overallCorrect++;
                     perf = CORRECT_SCORE;
@@ -217,10 +217,10 @@ public class KeyEvaluator extends EvaluatorImpl {
                         
                     	/* find indices on the minor circle-of-fifths */
                         for (int m=0;m<MINOR_CIRCLE.length;m++) {
-                            if(mapToPrimaryEquivalents(rawData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MINOR_CIRCLE[m])) == 0) {
+                            if(mapToPrimaryEquivalents(rawData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MINOR_CIRCLE[m]).toLowerCase()) == 0) {
                                 detIdx = m;
                             }
-                            if(mapToPrimaryEquivalents(rawGtData[0].toLowerCase()).compareTo(this.mapToPrimaryEquivalents(MINOR_CIRCLE[m])) == 0) {
+                            if(mapToPrimaryEquivalents(rawGtData[0].toLowerCase()).compareTo(this.mapToPrimaryEquivalents(MINOR_CIRCLE[m]).toLowerCase()) == 0) {
                                 gtIdx = m;
                             }
                         }
@@ -229,10 +229,10 @@ public class KeyEvaluator extends EvaluatorImpl {
                     {
                     	/* find indices on the major circle-of-fifths */
                         for (int m=0;m<MAJOR_CIRCLE.length;m++) {
-                            if(mapToPrimaryEquivalents(rawData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MAJOR_CIRCLE[m])) == 0) {
+                            if(mapToPrimaryEquivalents(rawData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MAJOR_CIRCLE[m]).toLowerCase()) == 0) {
                                 detIdx = m;
                             }
-                            if(mapToPrimaryEquivalents(rawGtData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MAJOR_CIRCLE[m])) == 0) {
+                            if(mapToPrimaryEquivalents(rawGtData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MAJOR_CIRCLE[m]).toLowerCase()) == 0) {
                                 gtIdx = m;
                             }
                         }
@@ -268,11 +268,11 @@ public class KeyEvaluator extends EvaluatorImpl {
                     	 * find index into the minor circle-of-fifths for the result tonic, and the index
                     	 * into the major circle-of-fifths for the ground-truth tonic 
                     	 */
-                        for (int m=0;m<MAJOR_CIRCLE.length;m++) {
-                            if(mapToPrimaryEquivalents(rawData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MINOR_CIRCLE[m])) == 0) {
+                        for (int m=0;m<MINOR_CIRCLE.length;m++) {
+                            if(mapToPrimaryEquivalents(rawData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MINOR_CIRCLE[m]).toLowerCase()) == 0) {
                                 detIdx = m;
                             }
-                            if(mapToPrimaryEquivalents(rawGtData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MAJOR_CIRCLE[m])) == 0) {
+                            if(mapToPrimaryEquivalents(rawGtData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MAJOR_CIRCLE[m]).toLowerCase()) == 0) {
                                 gtIdx = m;
                             }
                         }
@@ -284,10 +284,10 @@ public class KeyEvaluator extends EvaluatorImpl {
                     	 * into the minor circle-of-fifths for the ground-truth tonic 
                     	 */
                         for (int m=0;m<MAJOR_CIRCLE.length;m++) {
-                            if(mapToPrimaryEquivalents(rawData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MAJOR_CIRCLE[m])) == 0) {
+                            if(mapToPrimaryEquivalents(rawData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MAJOR_CIRCLE[m]).toLowerCase()) == 0) {
                                 detIdx = m;
                             }
-                            if(mapToPrimaryEquivalents(rawGtData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MINOR_CIRCLE[m])) == 0) {
+                            if(mapToPrimaryEquivalents(rawGtData[0].toLowerCase()).compareTo(mapToPrimaryEquivalents(MINOR_CIRCLE[m]).toLowerCase()) == 0) {
                                 gtIdx = m;
                             }
                         }
