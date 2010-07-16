@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-@RequestMapping("/MirexManager.addContributor.frag")
+@RequestMapping("/MirexManager")
 @SessionAttributes("contributor")
 public class ContributorFormController {
 
@@ -30,18 +30,5 @@ public class ContributorFormController {
 		this.mirexContributorDictionary = mirexContributorDictionary;
 	}
 
-	@RequestMapping(method=RequestMethod.GET)
-	public ModelAndView setupForm(ModelMap model){
-		Contributor contributor=new Contributor();
-		contributor.setUrl("http://");
-		//model.addAttribute("contributor",contributor);
-		return new ModelAndView("mirex/contributorForm","contributor",contributor);
-	}
 	
-	@RequestMapping(method=RequestMethod.POST)
-	public ModelAndView processSubmit(@ModelAttribute("contributor")Contributor contributor){
-		mirexContributorDictionary.add(contributor);
-		return new ModelAndView("mirex/addContributorSuccess","contributor",contributor);
-		
-	}
 }

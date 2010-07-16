@@ -16,6 +16,8 @@ import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.service.MirexContributorDictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,6 +55,21 @@ public class MirexSubmissionController {
 	}
 
 
+	
+	@RequestMapping(value="addContributor.frag", method=RequestMethod.GET)
+	public ModelAndView setupForm(ModelMap model){
+		Contributor contributor=new Contributor();
+		contributor.setUrl("http://");
+		//model.addAttribute("contributor",contributor);
+		return new ModelAndView("mirex/contributorForm","contributor",contributor);
+	}
+	
+	@RequestMapping(value="addContributor.frag",method=RequestMethod.POST)
+	public ModelAndView processSubmit(@ModelAttribute("contributor")Contributor contributor){
+		mirexContributorDictionary.add(contributor);
+		return new ModelAndView("mirex/addContributorSuccess","contributor",contributor);
+		
+	}
 
 	@RequestMapping(value="/contributorList.json",method=RequestMethod.GET)
 	ModelAndView findContirubutor(@RequestParam("str") String str){
