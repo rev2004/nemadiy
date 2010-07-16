@@ -52,6 +52,7 @@ import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
  * 
  * @author kumaramit01
  * @since 0.4.0
+ * note: comment some code about submission controllers for changing API in upstream at 0.7.0. 
  */
 public class JobController extends MultiActionController {
 
@@ -266,7 +267,7 @@ public class JobController extends MultiActionController {
 		} finally {
 			in.close();
 		}
-
+		/*TODO Comment for broken API
 		if (dataset_id != -1) {
 			RepositoryClientInterface client = this.getRepositoryClient();
 			try {
@@ -276,7 +277,7 @@ public class JobController extends MultiActionController {
 				this.repositoryClientConnectionPool.returnToPool(client);
 			}
 		}
-
+		*/
 		ModelAndView mav = new ModelAndView("job/job");
 		mav.addObject("jobForSubmission", success);
 		mav.addObject(Constants.JOB, job);
@@ -374,7 +375,7 @@ public class JobController extends MultiActionController {
 		String submissionName = submission.getName();
 
 		RepositoryClientInterface rci = null;
-
+/*TODO Comment for broken API
 		try {
 			rci = this.getRepositoryClient();
 			List<NemaPublishedResult> resultList = rci
@@ -395,6 +396,7 @@ public class JobController extends MultiActionController {
 
 		}
 		this.submissionManager.removeSubmission(submissionId);
+*/
 		return new ModelAndView(new RedirectView("JobManager.getSubmissions",
 				true));
 	}

@@ -44,7 +44,7 @@
 		<level value="WARN" />
 	</logger>
 	<logger name="org.springframework.web.servlet.mvc">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>
 	<logger name="org.springframework.web.servlet.handler">
 		<level value="INFO" />
@@ -56,13 +56,13 @@
 		<level value="DEBUG" />
 	</logger>
 	<logger name="org.imirsel.nema.webapp.webflow">
-		<level value="TRACE" />
+		<level value="INFO" />
 	</logger>
 	<logger name="org.imirsel.nema.webapp.taglib"><level value="INFO"/></logger>
 	<logger name="org.imirsel.nema.webapp.filter.StaticFilter">
 		<level value="INFO" />
 	</logger>
-	<logger name="org.dbunit"><level value="DEBUG"/> </logger>
+	<logger name="org.dbunit"><level value="WARN"/> </logger>
 
 	<root>
 		<level value="WARN" />

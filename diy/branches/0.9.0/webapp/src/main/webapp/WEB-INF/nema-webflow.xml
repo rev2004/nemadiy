@@ -44,7 +44,8 @@
 		class="org.imirsel.nema.webapp.webflow.MirexSubmissionServiceImpl"
 		p:mirexContributorDictionary-ref="mirexContributorDictionary"
 		p:mirexSubmissionDao-ref="mirexSubmissionDao"
-		p:mirexTaskDictionary-ref="mirexTaskDictionary">
+		p:mirexTaskDictionary-ref="mirexTaskDictionary"
+		p:userManager-ref="userManager">
 	</bean>
 
 
