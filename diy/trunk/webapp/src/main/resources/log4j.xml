@@ -53,7 +53,7 @@
 		<level value="INFO" />
 	</logger>
 	<logger name="org.imirsel.nema.webapp">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>
 	<logger name="org.imirsel.nema.webapp.webflow">
 		<level value="DEBUG" />
