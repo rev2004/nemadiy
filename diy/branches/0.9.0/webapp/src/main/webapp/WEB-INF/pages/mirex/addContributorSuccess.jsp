@@ -10,8 +10,10 @@
 </script></head>
 <body>
 
- <input type="button" onclick="window.location.href='submissions.contributor.search.php';" value="Search for other contributors"/>
-	<input type="button" onclick="window.location.href='submissions.contributor.create.php';" value="Create a new contributor record"/>
+ 	<input type="button" onclick="window.location.href='<c:url value='/subpage/contributor'/>';" 
+ 		value="Search for other contributors"/>
+	<input type="button" onclick="window.location.href='<c:url value='/get/MirexManager/addContributor.frag'/>';" 
+		value="Create a new contributor record"/>
 	<input type="button" onclick="window.close()" value="Close Window"/>
 </body>
 </html>
