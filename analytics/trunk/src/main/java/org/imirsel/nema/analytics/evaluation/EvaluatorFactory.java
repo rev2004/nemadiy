@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.imirsel.nema.analytics.evaluation.beat.BeatEvaluator;
 import org.imirsel.nema.analytics.evaluation.chord.ChordEvaluator;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
 import org.imirsel.nema.analytics.evaluation.key.KeyEvaluator;
@@ -36,6 +37,7 @@ public class EvaluatorFactory {
 		EVALUATOR_REGISTRY.put(NemaDataConstants.TEMPO_EXTRACTION_DATA, TempoEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, StructureEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.ONSET_DETECTION_DATA, OnsetEvaluator.class);
+		EVALUATOR_REGISTRY.put(NemaDataConstants.BEAT_TRACKING_DATA, BeatEvaluator.class);
 		
 			//classification tasks
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, ClassificationEvaluator.class);
