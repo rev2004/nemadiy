@@ -63,7 +63,7 @@ public class TempoTextFile extends SingleTrackEvalFileTypeImpl {
 			if(tempoDataStrArray[0][i].equalsIgnoreCase("nan")){
 				tempoDataStrArray[0][i]= "NaN";
 			}
-			tempoData[i] = Double.valueOf(tempoDataStrArray[0][i].toUpperCase());
+			tempoData[i] = Double.valueOf(tempoDataStrArray[0][i]);
 		}
 		NemaData obj = new NemaData(PathAndTagCleaner.convertFileToMIREX_ID(theFile));
 		obj.setMetadata(NemaDataConstants.TEMPO_EXTRACTION_DATA, tempoData);
