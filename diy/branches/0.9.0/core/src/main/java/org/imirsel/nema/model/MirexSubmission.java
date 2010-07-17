@@ -167,7 +167,7 @@ public class MirexSubmission  implements Serializable {
 	}
 	
 	@ManyToMany(cascade=CascadeType.MERGE)
-	@OrderColumn
+	@OrderColumn(name="contributor_rank")
 	public List<Contributor> getContributors() {
 		return contributors;
 	}
@@ -180,7 +180,7 @@ public class MirexSubmission  implements Serializable {
 		this.notes = notes;
 	}
 	@OneToMany(cascade={CascadeType.PERSIST,CascadeType.MERGE},mappedBy="submission")
-	@OrderColumn
+	@OrderColumn(name="note_order")
 	public List<MirexNote> getNotes() {
 		return notes;
 	}
