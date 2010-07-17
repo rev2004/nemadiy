@@ -134,8 +134,8 @@ public class BeatEvaluator extends EvaluatorImpl {
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/beat/resources/be_params.m", destFile);
 		destFile = new File(evalTempDir.getAbsolutePath() + File.separator + "be_pScore.m");
 		CopyFileFromClassPathToDisk.copy("/org/imirsel/nema/analytics/evaluation/beat/resources/be_pScore.m", destFile);
-		File matlabPath = new File("C:\\MATLAB\\R2009b\\bin\\win64\\MATLAB.exe");
-		//File matlabPath = new File("matlab");
+		//File matlabPath = new File("C:\\MATLAB\\R2009b\\bin\\win64\\MATLAB.exe");
+		File matlabPath = new File("matlab");
 		String evalCommand = "be_mirexWrapper";
 		
 		/* Begin track by track evaluation */
