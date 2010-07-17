@@ -2,7 +2,8 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/webflow
-        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+        start-state="checkSuperUser">
 
 	<var name="submission" class="org.imirsel.nema.model.MirexSubmission" />
 	<on-start>
@@ -26,9 +27,19 @@
 		<transition on="clear" to="submission"></transition>
 	</view-state>
 	<view-state id="reviewSubmission" >
-		
 		<transition on="edit" to="submission"></transition>
 	</view-state>
+	<view-state id="submissionAdmin" model="submission">
+		<binder>
+			<binding property="status" required="true"/>
+		</binder>
+		<transition on="save" to="success">
+		</transition>
+	</view-state>
+	<decision-state id="checkSuperUser" >
+		<if  test="mirexSubmissionService.isSuperUser()" 
+			then="submission" else="submissionAdmin"/>
+	</decision-state>
 
 	<end-state id="success" view="externalRedirect:contextRelative:/"/>
 </flow>
