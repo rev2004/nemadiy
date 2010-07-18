@@ -32,4 +32,9 @@ label.required{
 {
  float:right;
 }
-
+div.fixHeightBox
+{
+	border-style:groove;
+	max-height:150px;
+	overflow:auto;
+	}

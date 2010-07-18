@@ -87,4 +87,9 @@
 		<function-class>org.imirsel.nema.util.StringUtil</function-class>
 		<function-signature>java.util.String displayNameConvert(java.lang.String)</function-signature>
 	</function>
+	<function>
+		<name>shorten</name>
+		<function-class>org.imirsel.nema.util.StringUtil</function-class>
+		<function-signature>java.util.String shorten(java.lang.String,java.lang.Integer)</function-signature>
+	</function>
 </taglib>

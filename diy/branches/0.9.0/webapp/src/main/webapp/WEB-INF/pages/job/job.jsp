@@ -18,7 +18,7 @@
  	        onSuccess: function(fillConsole){
  	 	        var text=fillConsole.responseText;
  	 	      	var scrollPosition=$('meandreConsole').scrollTop;
- 	 	      	var oldSize=$('meandreConsole').value.length;
+ 	 	      	var oldSize=$('meandreConsole').innerHTML.length;
  	 	      	if (text.length-oldSize>10){
  	 	      		$('meandreConsole').innerHTML=text;
  	 	      		$('meandreConsole').scrollTop=scrollPosition;
@@ -149,8 +149,7 @@
 </fieldset>
 </div>
 <fieldset >
-	
-	<form id="submitForm"  style="display:none;" action="<c:url value='/get/JobManager.selectJobForSubmission'/>" method="post" class="myleft"><input
+	<form id="submitForm"  style="display:none;" action="<c:url value='/get/JobManager.selectJobForSubmission'/>" method="post" class="myleft surround"><input
 	name="jobId" type="hidden" value="${job.id}" />
 		<input  name="submit" tabindex="6" value="Select As Submission"	type="submit" />
 	</form>
@@ -158,12 +157,14 @@
 <form id="theform" action="<c:url value='/get/JobManager.jobAction'/>" method="post"><input name="id"
 	type="hidden" value="${job.id}" />
 	<input id="abortButton" name="submit" tabindex="6" value="Abort This Job" type="submit" style="display:none;"/>
-	  <input type="button" value="Clone" class="mycenter" onclick="window.location.assign('<c:url value='/get/task?flowId=${job.flow.id}&cloned=true'/>')"/>
+	  <input type="button" value="Clone"  onclick="window.location.assign('<c:url value='/get/task?flowId=${job.flow.id}&cloned=true'/>')"/>
 	<input  tabindex="6" name="submit" value="Delete This Job" type="submit" class="myright"/>
 </form>
 </fieldset>
 
 
- <textarea readonly id="console" cols='89' rows='100'>(getting console...)</textarea></div>
+ 	<div class="fixHeightBox" style="max-height:600px; min-height:100px;" id="meandreConsole" >(getting console...)
+ 	</div>
+ </div>
 </body>
 

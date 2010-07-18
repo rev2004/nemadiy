@@ -3,9 +3,11 @@ package org.imirsel.nema.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.imirsel.nema.model.MirexNote;
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.MirexTask;
 import org.imirsel.nema.model.User;
+import org.imirsel.nema.model.MirexNote.NoteType;
 import org.imirsel.nema.model.MirexSubmission.SubmissionStatus;
 import org.junit.Test;
 import org.springframework.dao.DataAccessException;
@@ -22,6 +24,11 @@ public class MirexSubmissionDaoTest extends BaseDaoTestCase{
 		MirexSubmission submission=new MirexSubmission();
 		User user=userDao.get(-1L);
 		MirexTask task=mirexTaskDao.get(1L);
+		MirexNote note=new MirexNote();
+		note.setAuthor(user);
+		note.setContent("test");
+		note.setSubmission(submission);
+		note.setType(NoteType.PUBLIC);
 		submission.setMirexTask(task);
 		submission.setUser(user);
 		submission.setHashcode("ABCD1");

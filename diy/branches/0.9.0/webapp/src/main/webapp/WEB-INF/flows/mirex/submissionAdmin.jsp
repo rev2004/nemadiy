@@ -3,22 +3,19 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<meta name="heading" content="Mirex Submission"/>
 	<script type="text/javascript">
-	  function removeContributor(index){
-		  node=dojo.byId("contributor"+index);
-		  node.parentNode.removeChild(node);
-	  };
-	  
-	  addContributor = function (id) {
-			var x = dojo.byId("newContributor");
-			x.value=id;
-			myform=document.forms['myform'];
-			dojo.create('input',{type:'hidden',name:'_eventId_refresh',value:'refresh'},myform);
-			myform.submit();
+		function switchToLong(index){
+			var longNote=dojo.byId("longNote"+index);
+			var shortNote=dojo.byId("shortNote"+index);
+			longNote.show();
+			shortNote.hide();
+		}
+		function switchToShort(index){
+			var longNote=dojo.byId("longNote"+index);
+			var shortNote=dojo.byId("shortNote"+index);
+			longNote.hide();
+			shortNote.show();
 		}
 
-		
-
-			  
 	</script>
 </head>
 <body>
@@ -46,9 +43,43 @@
 		</fieldset>
 		<fieldset>
 			<label class="label">Status:</label>
-			<form:select path="status" />
+			<form:select path="status" items="${submissionStatusSet }"/>
 		</fieldset>
-		
+		<c:forEach items="${submission.notes}" var="note" varStatus="status">
+			
+				<fieldset>
+				<div id="shortNote${status.index}">
+					<div class="surround">by: ${note.author.username} 
+					 ${note.createTime }
+					 <img src="<c:url value='/images/plus.gif'/>" onclick="switchToLong(${status.index});"/>
+					 </div>
+					<div style="border-style:1;"  class="fixHeightBox">
+						<c:out value="${render:shorten(note.content,30)}" escapeXml="true"/>
+					</div>
+				</div>
+				<div id="longNote${status.index}" style="display:none;">
+					<div class="surround">by: ${note.author.username} 
+					 ${note.createTime }
+					 <img src="<c:url value='/images/minus.gif'/>" onclick="switchToShort(${status.index});"/>
+					 </div>
+					<div style="border-style:1;" class="fixHeightBox">
+						<pre><c:out value="${note.content}" escapeXml="true" /></pre>
+					</div>
+				</div>
+				</fieldset>
+
+			
+		</c:forEach>
+		<fieldset>
+		<div>
+		<select name="noteType" class="surround">
+			<c:forEach items="${noteTypes}" var="type">
+				<option value=${type}>${type}</option>
+			</c:forEach>		
+		</select>
+		</div>
+		<textarea name="mirexNote" style="width:80%;" rows="10"></textarea>
+		</fieldset>
 		<fieldset id="button">
             <input type="submit" name="_eventId_save" value="Save" />
 		</fieldset>
