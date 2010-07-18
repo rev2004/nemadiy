@@ -103,8 +103,8 @@
       <value><![CDATA[private note]]></value>
       <value><![CDATA[public note]]></value>
       <value>readme</value>
-      <value>STARTED</value>
-      <value><![CDATA[2010-01-01 00:00:00.0]]></value>
+      <value>REVIEWED</value>
+      <value><![CDATA[2010-07-18 02:05:56.0]]></value>
       <null/>
       <value>1</value>
       <value>-1</value>
@@ -160,6 +160,19 @@
     <column>author_id</column>
     <column>submission_id</column>
     <column>note_order</column>
+    <row>
+      <value>10</value>
+      <value><![CDATA[this has been reviewed 
+
+
+
+OK]]></value>
+      <value><![CDATA[2010-07-18 02:05:56.0]]></value>
+      <value>PUBLIC</value>
+      <value>-2</value>
+      <value>1</value>
+      <value>0</value>
+    </row>
   </table>
   <table name="mirex_profile">
     <column>id</column>
