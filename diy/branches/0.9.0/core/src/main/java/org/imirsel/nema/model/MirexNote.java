@@ -15,7 +15,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Model for notes in mirex submission
@@ -82,8 +84,8 @@ public class MirexNote implements Serializable{
 		this.type = type;
 	}
 	
-	@ManyToOne
-	@JoinColumn(insertable=false, updatable=false, nullable=false)
+	@ManyToOne 
+	@JoinColumn(name="submission_id",insertable=false, updatable=false,nullable=true)
 	public MirexSubmission getSubmission() {
 		return submission;
 	}
@@ -111,6 +113,16 @@ public class MirexNote implements Serializable{
 	public String getContent() {
 		return content;
 	}
+	
+	
+	
+	
+	@Transient
+	public boolean isUserVisible(){
+		return ((type==NoteType.AUTO_PUBLIC)||(type==NoteType.PUBLIC)||(type==NoteType.USER));
+	}
+	
+	
 	
 	
 	@Override

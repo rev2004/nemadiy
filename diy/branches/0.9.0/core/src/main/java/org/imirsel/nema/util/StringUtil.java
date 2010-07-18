@@ -62,4 +62,20 @@ public class StringUtil {
 	public static boolean isEmpty(String str){
 		return (str==null)||("".equals(str));
 	}
+	
+	/**
+	 * Return a short version of the str, only first "length", or the full string.  
+	 * A null string will return "".  
+	 * @param str
+	 * @param length
+	 * @return
+	 */
+	public static String shorten(String str,Integer length){
+		str=nonNull(str);
+		if (str.length()>length){
+			return str.substring(0, length)+"...";
+		}else {
+			return str;
+		}
+	}
 }

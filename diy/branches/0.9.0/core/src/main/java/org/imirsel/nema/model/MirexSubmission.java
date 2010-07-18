@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -166,7 +167,7 @@ public class MirexSubmission  implements Serializable {
 		this.contributors = contributors;
 	}
 	
-	@ManyToMany(cascade=CascadeType.MERGE)
+	@ManyToMany(cascade=CascadeType.MERGE,fetch=FetchType.EAGER)
 	@OrderColumn(name="contributor_rank")
 	public List<Contributor> getContributors() {
 		return contributors;
@@ -179,14 +180,19 @@ public class MirexSubmission  implements Serializable {
 	public void setNotes(List<MirexNote> notes) {
 		this.notes = notes;
 	}
-	@OneToMany(cascade={CascadeType.PERSIST,CascadeType.MERGE},mappedBy="submission")
+	@OneToMany(cascade={CascadeType.PERSIST,CascadeType.MERGE},fetch=FetchType.EAGER)
 	@OrderColumn(name="note_order")
+	@JoinColumn(name="submission_id")
 	public List<MirexNote> getNotes() {
 		return notes;
 	}
 	
 	public void addNote(MirexNote note){
+		if (this.notes==null) {
+			this.notes=new ArrayList<MirexNote>();
+		}
 		this.notes.add(note);
+		
 	}
 	
 	public void setUser(User user) {

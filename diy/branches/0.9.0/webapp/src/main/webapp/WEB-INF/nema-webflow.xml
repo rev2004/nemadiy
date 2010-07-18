@@ -45,7 +45,8 @@
 		p:mirexContributorDictionary-ref="mirexContributorDictionary"
 		p:mirexSubmissionDao-ref="mirexSubmissionDao"
 		p:mirexTaskDictionary-ref="mirexTaskDictionary"
-		p:userManager-ref="userManager">
+		p:userManager-ref="userManager"
+		p:mirexNoteDao-ref="mirexNoteDao">
 	</bean>
 
 

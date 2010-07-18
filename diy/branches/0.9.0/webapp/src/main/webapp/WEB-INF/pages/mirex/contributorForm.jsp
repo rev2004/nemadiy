@@ -13,7 +13,7 @@
 	<div class="surround"><label class="fixed ">Unit/Lab:</label><form:input path="unit"/></div>
 	<div class="surround"><label class="fixed required">URL:</label><form:input path="url" size="25" /></div>
 	<div class="surround"><label class="required">From(year):</label><form:input path="startYear" size="5"/>
-		<label class="required">To:</label><form:input path="startYear" size="5"/></div>
+		<label class="required">To:</label><form:input path="endYear" size="5"/></div>
 	<div class="surround"><label class="fixed ">Email:</label><form:input path="email"/></div>
 	<div class="surround"><label class="fixed ">Phone:</label><form:input path="phone"/></div>
 	<div class="surround"><label class="fixed ">Street Address:</label><form:input path="address.streetLine1"/></div>
