@@ -132,6 +132,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String DELETE_PUBLISHED_RESULT_FOR_TASK_AND_SUB_CODE = "DELETE FROM published_task_results WHERE task_id=? AND submission_code=?";
     private PreparedStatement deletePublishedResultForTaskAndSubmission;
 
+    public static final String DELETE_PUBLISHED_RESULT_FOR_SET_AND_SUB_CODE = "DELETE FROM published_task_results WHERE set_id=? AND submission_code=?";
+    private PreparedStatement deletePublishedResultForSetAndSubmission;
     
     //cached types maps
     public static final String GET_TRACK_METADATA_TYPES = "SELECT * FROM track_metadata_definitions";
@@ -201,6 +203,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         getPublishedResultsForTaskAndSubmission = dbCon.con.prepareStatement(GET_PUBLISHED_RESULTS_FOR_TASK_AND_SUBMISSION);
         deletePublishedResult = dbCon.con.prepareStatement(DELETE_PUBLISHED_RESULT);
         deletePublishedResultForTaskAndSubmission = dbCon.con.prepareStatement(DELETE_PUBLISHED_RESULT_FOR_TASK_AND_SUB_CODE);
+        deletePublishedResultForSetAndSubmission = dbCon.con.prepareStatement(DELETE_PUBLISHED_RESULT_FOR_SET_AND_SUB_CODE);
         initTypesMaps();
     }
     
@@ -1178,6 +1181,12 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     	deletePublishedResultForTaskAndSubmission.setInt(1, task_id);
     	deletePublishedResultForTaskAndSubmission.setString(2, submissionCode);
         deletePublishedResultForTaskAndSubmission.execute();
+    }
+    
+    public void deletePublishedResultsForSetAndSubmission(int set_id, String submissionCode) throws SQLException{
+    	deletePublishedResultForSetAndSubmission.setInt(1, set_id);
+    	deletePublishedResultForSetAndSubmission.setString(2, submissionCode);
+    	deletePublishedResultForSetAndSubmission.execute();
     }
 
     public void deletePublishedResult(NemaPublishedResult result) throws SQLException{

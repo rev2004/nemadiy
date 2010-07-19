@@ -27,6 +27,7 @@ import org.imirsel.nema.model.fileTypes.ClassificationTextFile;
 import org.imirsel.nema.model.fileTypes.KeyTextFile;
 import org.imirsel.nema.model.fileTypes.MelodyTextFile;
 import org.imirsel.nema.model.fileTypes.MultiF0EstTextFile;
+import org.imirsel.nema.model.fileTypes.MultiF0NtTextFile;
 import org.imirsel.nema.model.fileTypes.MultipleTrackEvalFileType;
 import org.imirsel.nema.model.fileTypes.NemaFileType;
 import org.imirsel.nema.model.fileTypes.OnsetTextFile;
@@ -83,14 +84,15 @@ public class FileConversionUtil {
 			rawAudioTypeList.add(TrackListTextFile.class);
 			
 			//these are tasks where individual audio files are used as input... i.e. there is no list file
-			
+
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.MELODY_EXTRACTION_DATA, rawAudioTypeList);
+			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.MULTI_F0_EST_DATA, rawAudioTypeList);
+			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.MULTI_F0_NT_DATA, rawAudioTypeList);
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.KEY_DETECTION_DATA, rawAudioTypeList);
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.TEMPO_EXTRACTION_DATA, rawAudioTypeList);
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.ONSET_DETECTION_DATA, rawAudioTypeList);
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.BEAT_TRACKING_DATA, rawAudioTypeList);
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, rawAudioTypeList);
-			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.MULTI_F0_EST_DATA, rawAudioTypeList);
 			
 			//chord systems can have a training stage so may need to handle opaque files
 			List<Class<? extends NemaFileType>> chordTypeList = new ArrayList<Class<? extends NemaFileType>>(3);
@@ -169,10 +171,15 @@ public class FileConversionUtil {
 			outputTypeList.add(BeatTextFile.class);
 			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.BEAT_TRACKING_DATA, outputTypeList);
 			
-			//Multi-F0
+			//Multi-F0 Est
 			outputTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
 			outputTypeList.add(MultiF0EstTextFile.class);
 			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.MULTI_F0_EST_DATA, outputTypeList);
+			
+			//Multi-F0 NT
+			outputTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
+			outputTypeList.add(MultiF0NtTextFile.class);
+			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.MULTI_F0_NT_DATA, outputTypeList);
 			
 			//Tempo
 			outputTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
@@ -196,6 +203,7 @@ public class FileConversionUtil {
 			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.ONSET_DETECTION_DATA, OnsetTextFile.class);
 			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.BEAT_TRACKING_DATA, BeatTextFile.class);
 			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.MULTI_F0_EST_DATA, MultiF0EstTextFile.class);
+			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.MULTI_F0_NT_DATA, MultiF0NtTextFile.class);
 			REPOSITORY_METADATA_FILE_TYPE_REGISTRY.put(NemaDataConstants.TEMPO_EXTRACTION_DATA, TempoTextFile.class);
 			
 			//none needed for classification tasks just insert metadata into the field named by the key as a string

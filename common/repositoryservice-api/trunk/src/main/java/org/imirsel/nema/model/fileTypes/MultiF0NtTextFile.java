@@ -28,7 +28,7 @@ import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
  * 
  * @author mert.bay@gmail.com
  * @author kris.west@gmail.com
- * @since 0.1.0
+ * @since 0.4.0
  */
 public class MultiF0NtTextFile extends SingleTrackEvalFileTypeImpl {
 
