@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
-
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.util.DeliminatedTextFileUtilities;
@@ -15,7 +14,7 @@ import org.imirsel.nema.model.util.PathAndTagCleaner;
  * MultiF0Est  text file type.
  * 
  * @author mertbay@gmail.com
- * @since 0.1.0
+ * @since 0.4.0
  *
  */
 public class MultiF0EstTextFile extends SingleTrackEvalFileTypeImpl {
@@ -23,7 +22,7 @@ public class MultiF0EstTextFile extends SingleTrackEvalFileTypeImpl {
 	public static final String READ_DELIMITER = "\\s+";
 	public static final String WRITE_DELIMITER = "\t";
 	public static final DecimalFormat FORMAT_DEC = new DecimalFormat("0.0000");
-	public static final String TYPE_NAME = "MultiF0 text file";
+	public static final String TYPE_NAME = "MultiF0 Estimation text file";
 	
 	/**
 	 * Constructor

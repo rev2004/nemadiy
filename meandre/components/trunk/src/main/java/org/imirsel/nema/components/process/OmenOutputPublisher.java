@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
@@ -71,6 +73,26 @@ public class OmenOutputPublisher extends NemaComponent {
 	throws ComponentContextException {
 		super.dispose(ccp);
 	}
+	
+	private void clearOutExistingResults(Set<NemaTrackList> sets, String submissionCode){
+		RepositoryClientInterface client = null;
+		try {
+			client = RepositoryClientConnectionPool.getInstance().getFromPool();
+			//clear out existing results for this task-submission code pair
+			getLogger().info("deleting existing published results for submission code " + subCode + " on task " + task.getId() + " (" + task.getName() + ")");
+			for (NemaTrackList set:sets){
+				client.deletePublishedResultForSetAndSubmission(set.getId(),submissionCode);
+				getLogger().fine("done set " + set.getId());
+			}
+		} catch (Exception e) {
+			throw new ComponentExecutionException("Exception in "
+					+ this.getClass().getName(), e);
+		}finally{
+			if(client!=null){
+				RepositoryClientConnectionPool.getInstance().returnToPool(client);
+			}
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -80,22 +102,6 @@ public class OmenOutputPublisher extends NemaComponent {
 		if(task == null && cc.isInputAvailable(DATA_IN_NEMATASK)){
 			task = (NemaTask)cc.getDataComponentFromInput(DATA_IN_NEMATASK);
 			getLogger().info("got task");
-			if(subCode != null){
-				RepositoryClientInterface client = null;
-				try {
-					client = RepositoryClientConnectionPool.getInstance().getFromPool();
-					//clear out existing results for this task-submission code pair
-					getLogger().info("deleting existing published results for submission code " + subCode + " on task " + task.getId() + " (" + task.getName() + ")");
-					client.deletePublishedResultsForTaskAndSubmission(task.getId(),subCode);
-				} catch (Exception e) {
-					throw new ComponentExecutionException("Exception in "
-							+ this.getClass().getName(), e);
-				}finally{
-					if(client!=null){
-						RepositoryClientConnectionPool.getInstance().returnToPool(client);
-					}
-				}
-			}
 		}
 		if(fileType == null && cc.isInputAvailable(DATA_IN_OUTPUT_TYPE)){
 			fileType = (Class<NemaFileType>)cc.getDataComponentFromInput(DATA_IN_OUTPUT_TYPE);
@@ -104,22 +110,6 @@ public class OmenOutputPublisher extends NemaComponent {
 		if(subCode == null && cc.isInputAvailable(DATA_IN_SUBMISSION_CODE)){
 			subCode = (String)cc.getDataComponentFromInput(DATA_IN_SUBMISSION_CODE);
 			getLogger().info("got submission code: " + subCode);
-			if(task != null){
-				RepositoryClientInterface client = null;
-				try {
-					client = RepositoryClientConnectionPool.getInstance().getFromPool();
-					//clear out existing results for this task-submission code pair
-					getLogger().info("deleting existing published results for submission code " + subCode + " on task " + task.getId() + " (" + task.getName() + ")");
-					client.deletePublishedResultsForTaskAndSubmission(task.getId(),subCode);
-				} catch (Exception e) {
-					throw new ComponentExecutionException("Exception in "
-							+ this.getClass().getName(), e);
-				}finally{
-					if(client!=null){
-						RepositoryClientConnectionPool.getInstance().returnToPool(client);
-					}
-				}
-			}
 		}
 		if(subName == null && cc.isInputAvailable(DATA_IN_SUBMISSION_NAME)){
 			subName = (String)cc.getDataComponentFromInput(DATA_IN_SUBMISSION_NAME);
@@ -140,6 +130,8 @@ public class OmenOutputPublisher extends NemaComponent {
 		}
 		//when we are configured start receiving process artifacts
 		if(task != null && fileType != null && expectedPaths != null && subCode != null && subName != null){
+
+			clearOutExistingResults(expectedPaths.keySet(),subCode);
 			
 			RepositoryClientInterface client = null;
 			

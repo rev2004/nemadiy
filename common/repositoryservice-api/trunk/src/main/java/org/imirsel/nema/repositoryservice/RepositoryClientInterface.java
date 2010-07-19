@@ -538,11 +538,22 @@ public interface RepositoryClientInterface {
      * Deletes a published result records from the DB with specific task and 
      * submission code values..
      *
-     * @param task_id The id of the results to delete.
+     * @param task_id The task id of the results to delete.
      * @param submissionCode The submission code of the results to delete.
      * @throws SQLException
      */
     public void deletePublishedResultsForTaskAndSubmission(int task_id, String submissionCode) throws SQLException;
+    
+    /**
+     * Deletes a published result records from the DB with specific set_id and 
+     * submission code values. Used to ensure that ffeatures aren't deleted
+     * when classificaiton results are published for the same submission code.
+     *
+     * @param set_id The set (tracklist) id of the results to delete.
+     * @param submissionCode The submission code of the results to delete.
+     * @throws SQLException
+     */
+    public void deletePublishedResultsForSetAndSubmission(int set_id, String submissionCode) throws SQLException;
     
     /**
      * Deletes a published result record from the DB.
