@@ -831,7 +831,7 @@
 		</profile>
 	</profiles>
 	<properties>
-		<spring.webflow.version>2.1.0.RELEASE</spring.webflow.version>
+		<spring.webflow.version>2.1.1.RELEASE</spring.webflow.version>
 		
 	</properties>
 </project>
