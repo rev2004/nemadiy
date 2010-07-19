@@ -12,6 +12,7 @@
                 <value>classpath:mail.properties</value>
                 <value>classpath:flowservice.properties</value>
                 <value>classpath:contentrepositoryservice.properties</value>
+                <value>classpath:executorservice.properties</value>
             </list>
         </property>
     </bean>
