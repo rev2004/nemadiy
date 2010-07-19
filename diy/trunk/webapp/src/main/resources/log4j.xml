@@ -35,7 +35,9 @@
 	<logger name="org.hibernate">
 		<level value="WARN" />
 	</logger>
-
+	<logger name="org.springframework.beans.factory">
+		<level value="WARN" />
+	</logger>
 	<!--
 		logger name="org.hibernate.SQL"> <level value="DEBUG"/> </logger
 	-->
@@ -58,7 +60,9 @@
 	<logger name="org.imirsel.nema.webapp.webflow">
 		<level value="DEBUG" />
 	</logger>
-	<logger name="org.imirsel.nema.webapp.taglib"><level value="INFO"/></logger>
+	<logger name="org.imirsel.nema.webapp.taglib">
+		<level value="INFO" />
+	</logger>
 	<logger name="org.imirsel.nema.webapp.filter.StaticFilter">
 		<level value="INFO" />
 	</logger>

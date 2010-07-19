@@ -13,7 +13,8 @@
 
 	<import resource="nema-webflow.xml" />
 	
-    <context:property-placeholder location="classpath:contentrepositoryservice.properties,classpath:flowservice.properties" />
+    <context:property-placeholder location="classpath:contentrepositoryservice.properties,
+    	classpath:flowservice.properties,classpath:executorservice.properties" />
 	
 
 	<bean id="exceptionResolver"
