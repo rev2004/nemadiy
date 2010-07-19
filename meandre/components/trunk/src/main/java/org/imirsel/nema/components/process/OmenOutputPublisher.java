@@ -74,14 +74,14 @@ public class OmenOutputPublisher extends NemaComponent {
 		super.dispose(ccp);
 	}
 	
-	private void clearOutExistingResults(Set<NemaTrackList> sets, String submissionCode){
+	private void clearOutExistingResults(Set<NemaTrackList> sets, String submissionCode) throws ComponentExecutionException{
 		RepositoryClientInterface client = null;
 		try {
 			client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			//clear out existing results for this task-submission code pair
 			getLogger().info("deleting existing published results for submission code " + subCode + " on task " + task.getId() + " (" + task.getName() + ")");
 			for (NemaTrackList set:sets){
-				client.deletePublishedResultForSetAndSubmission(set.getId(),submissionCode);
+				client.deletePublishedResultsForSetAndSubmission(set.getId(),submissionCode);
 				getLogger().fine("done set " + set.getId());
 			}
 		} catch (Exception e) {
