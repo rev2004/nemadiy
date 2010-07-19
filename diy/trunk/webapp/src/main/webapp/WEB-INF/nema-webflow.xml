@@ -30,11 +30,11 @@
 		p:commandLineFormatter-ref="commandLineFormatter" p:resourceServiceType-ref="resource" />
 	<bean id="jiniService"
 		class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl">
-		<constructor-arg value="nema.lis.uiuc.edu"/>
+		<constructor-arg value="${lookupService.host}"/>
 	</bean>
 	<bean id="jcrService"
 		class="org.imirsel.nema.webapp.service.impl.JcrServiceImpl">
-		<constructor-arg value="rmi://nema.lis.uiuc.edu:2099/jackrabbit.repository"/>
+		<constructor-arg value="${contentrepository.url}"/>
 	</bean>
 	<bean id="resource"
 		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl" 
