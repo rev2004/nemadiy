@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.dao.MirexSubmission;
 import org.imirsel.nema.model.Job;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,6 +16,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 public class MeandreConsoleDaoJdbc implements MeandreConsoleDao {
 
+	static protected Log logger = LogFactory.getLog(MeandreConsoleDao.class);
 	private SimpleJdbcTemplate simpleJdbcTemplate;
 
 	public void setDataSource(DataSource dataSource) {
@@ -22,8 +25,9 @@ public class MeandreConsoleDaoJdbc implements MeandreConsoleDao {
 
 	@Override
 	public void clearConsole(Job job) {
-		// TODO Auto-generated method stub
-
+//		final String deleteSql="delete from meandre_job_console where job_ID= ?";
+//		int count=this.simpleJdbcTemplate.update(deleteSql, job.getExecutionInstanceId());
+//		logger.info("Console entries of job ("+job.getName()+") has been deleted. Total count:"+count);
 	}
 
 	@Override
