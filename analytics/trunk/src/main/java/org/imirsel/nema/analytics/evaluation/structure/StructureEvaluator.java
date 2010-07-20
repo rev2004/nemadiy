@@ -191,7 +191,7 @@ public class StructureEvaluator extends EvaluatorImpl {
 		
 		for(NemaData data:dataList){
 			gtData = trackIDToGT.get(data.getId());
-			filePrefix = jobID + "_" + testSet.getId() + "_" + data.getId();
+			filePrefix = testSet.getId() + "_" + data.getId();
 			
 			algFileName = evalTempDir.getAbsolutePath() + File.separator + "alg_" + filePrefix + ".txt";
 			gtFileName = evalTempDir.getAbsolutePath() + File.separator + "gt_" + filePrefix + ".txt";
