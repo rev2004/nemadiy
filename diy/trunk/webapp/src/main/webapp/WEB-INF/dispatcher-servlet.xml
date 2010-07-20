@@ -160,6 +160,7 @@
 		<property name="submissionManager" ref="submissionManager" />
 		<property name="userManager" ref="userManager" />
 		<property name="methodNameResolver" ref="jobMethodResolver" />
+		<property name="consoleUtil" ref="meandreConsoleUtil"></property>
 	</bean>
 
 
@@ -185,6 +186,9 @@
                 /JobManager.getServerStatus.json=getServerStatus
                 /JobManager.getNemaStatus.json=getNemaStatus
                 /JobManager.getNotification.json=getNotification
+                
+                
+                /JobManager.dumpConsole=dumpConsole
             </value>
 		</property>
 	</bean>

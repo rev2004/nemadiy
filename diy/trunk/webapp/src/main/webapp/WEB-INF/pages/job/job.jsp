@@ -148,9 +148,10 @@
 </div>
 
 <fieldset >
-	<form id="submitForm"  style="display:none;" action="<c:url value='/get/JobManager.selectJobForSubmission'/>" method="post" class="myleft surround"><input
+	<form id="submitForm"  style="display:none;" action="<c:url value='/get/JobManager.selectJobForSubmission'/>" method="post" class="myleft "><input
 	name="jobId" type="hidden" value="${job.id}" />
 		<input  name="submit" tabindex="6" value="Select As Submission"	type="submit" />
+		  <input type="button" value="Download Log"  onclick="window.location.assign('<c:url value='/get/JobManager.getConsole?jobId=${job.id}'/>')"/>
 	</form>
 
 <form id="theform" action="<c:url value='/get/JobManager.jobAction'/>" method="post"><input name="id"
@@ -161,7 +162,9 @@
 </form>
 </fieldset>
 
- 	<div class="fixHeightBox" style="max-height:600px; min-height:100px;" id="meandreConsole" >(getting console...)
+ 	<div class="fixHeightBox" style="max-height:300px;height:300px;" >
+ 		<pre id="meandreConsole">(getting console...)
+ 		</pre>
  	</div>
  </div>
 </body>
