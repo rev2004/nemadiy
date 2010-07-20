@@ -23,6 +23,8 @@ import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
+import org.imirsel.nema.meandre.util.ConsoleUtil;
+import org.imirsel.nema.meandre.util.MeandreConsoleDao;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
 import org.imirsel.nema.model.JobResult;
@@ -60,6 +62,16 @@ public class JobController extends MultiActionController {
 	private FlowService flowService = null;
 	private SubmissionManager submissionManager = null;
 	private RepositoryClientConnectionPool repositoryClientConnectionPool;
+	private MeandreConsoleDao meandreConsoleDao;
+	private ConsoleUtil consoleUtil;
+
+	public void setConsoleUtil(ConsoleUtil consoleUtil) {
+		this.consoleUtil = consoleUtil;
+	}
+
+	public void setMeandreConsoleDao(MeandreConsoleDao meandreConsoleDao) {
+		this.meandreConsoleDao = meandreConsoleDao;
+	}
 
 	public void setSubmissionManager(SubmissionManager submissionManager) {
 		this.submissionManager = submissionManager;
@@ -266,17 +278,13 @@ public class JobController extends MultiActionController {
 		} finally {
 			in.close();
 		}
-/*TODO COMMENT for broken API
-		if (dataset_id != -1) {
-			RepositoryClientInterface client = this.getRepositoryClient();
-			try {
-				client.publishResultForDataset(dataset_id, username,
-						submissionName, path);
-			} finally {
-				this.repositoryClientConnectionPool.returnToPool(client);
-			}
-		}
-*/
+		/*
+		 * TODO COMMENT for broken API if (dataset_id != -1) {
+		 * RepositoryClientInterface client = this.getRepositoryClient(); try {
+		 * client.publishResultForDataset(dataset_id, username, submissionName,
+		 * path); } finally {
+		 * this.repositoryClientConnectionPool.returnToPool(client); } }
+		 */
 		ModelAndView mav = new ModelAndView("job/job");
 		mav.addObject("jobForSubmission", success);
 		mav.addObject(Constants.JOB, job);
@@ -340,11 +348,9 @@ public class JobController extends MultiActionController {
 		String uri = req.getRequestURI();
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
 			mav = new ModelAndView("jsonView");
-			ConverterToMap<Job> converter= new ConverterToMapJobLong();
-			mav.addObject(Constants.JOB,converter.convertToMap(job));
+			ConverterToMap<Job> converter = new ConverterToMapJobLong();
+			mav.addObject(Constants.JOB, converter.convertToMap(job));
 			mav.addObject("resultSet", resultSet);
-
-			
 
 		} else {
 			mav = new ModelAndView("job/job");
@@ -374,28 +380,17 @@ public class JobController extends MultiActionController {
 		String submissionName = submission.getName();
 
 		RepositoryClientInterface rci = null;
-		/*TODO COMMENT for broken API
-		try {
-			rci = this.getRepositoryClient();
-			List<NemaPublishedResult> resultList = rci
-					.getPublishedResultsForDataset(username);
-			if (!resultList.isEmpty()) {
-				int id = -1;
-				for (NemaPublishedResult pr : resultList) {
-					if (pr.getName().equals(submissionName)) {
-						id = pr.getId();
-					}
-				}
-				if (id != -1) {
-					rci.deletePublishedResult(id);
-				}
-			}
-		} finally {
-			this.getRepositoryClientConnectionPool().returnToPool(rci);
-
-		}
-		this.submissionManager.removeSubmission(submissionId);
-*/
+		/*
+		 * TODO COMMENT for broken API try { rci = this.getRepositoryClient();
+		 * List<NemaPublishedResult> resultList = rci
+		 * .getPublishedResultsForDataset(username); if (!resultList.isEmpty())
+		 * { int id = -1; for (NemaPublishedResult pr : resultList) { if
+		 * (pr.getName().equals(submissionName)) { id = pr.getId(); } } if (id
+		 * != -1) { rci.deletePublishedResult(id); } } } finally {
+		 * this.getRepositoryClientConnectionPool().returnToPool(rci);
+		 * 
+		 * } this.submissionManager.removeSubmission(submissionId);
+		 */
 		return new ModelAndView(new RedirectView("JobManager.getSubmissions",
 				true));
 	}
@@ -446,47 +441,48 @@ public class JobController extends MultiActionController {
 		ModelAndView mav = null;
 		String uri = (req != null) ? req.getRequestURI() : "";
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
-//			XStream xstream = provideXstream();
-//			// XStream xstream = new XStream();//new JettisonMappedXmlDriver());
-//			// xstream.registerLocalConverter(Job.class,"submitTimestamp",new
-//			// LenientDateConverter());
-//			// xstream.registerLocalConverter(Job.class,"startTimestamp",new
-//			// LenientDateConverter());
-//			// xstream.registerConverter(new
-//			// LenientDateConverter(),XStream.PRIORITY_VERY_HIGH);
-//			xstream.addDefaultImplementation(Date.class,
-//					java.sql.Timestamp.class);
-//			xstream.setMode(XStream.NO_REFERENCES);
-//			// xstream.omitField(Job.class,"flow" );
-//			// xstream.omitField(Job.class, "results");
-//			xstream.alias(Constants.JOBLIST, List.class);
-//			xstream.registerConverter(new ShortJobConverter(),
-//					XStream.PRIORITY_VERY_HIGH);
+			// XStream xstream = provideXstream();
+			// // XStream xstream = new XStream();//new
+			// JettisonMappedXmlDriver());
+			// // xstream.registerLocalConverter(Job.class,"submitTimestamp",new
+			// // LenientDateConverter());
+			// // xstream.registerLocalConverter(Job.class,"startTimestamp",new
+			// // LenientDateConverter());
+			// // xstream.registerConverter(new
+			// // LenientDateConverter(),XStream.PRIORITY_VERY_HIGH);
+			// xstream.addDefaultImplementation(Date.class,
+			// java.sql.Timestamp.class);
+			// xstream.setMode(XStream.NO_REFERENCES);
+			// // xstream.omitField(Job.class,"flow" );
+			// // xstream.omitField(Job.class, "results");
+			// xstream.alias(Constants.JOBLIST, List.class);
+			// xstream.registerConverter(new ShortJobConverter(),
+			// XStream.PRIORITY_VERY_HIGH);
 
 			// fake test
-//			Date date = new Date(System.currentTimeMillis());
-//			Date date2 = new java.sql.Timestamp(System.currentTimeMillis());
-//			Job job = new Job();
-//			job.setName("test job");
-//			job.setId(100L);
-//			job.setFlow(new Flow());
-//			job.setScheduleTimestamp(date);
-//			job.setEndTimestamp(date2);
-//			job.setStartTimestamp(date);
-//			job.setSubmitTimestamp(date2);
-//			job.setResults(null);
-//			List<Job> list = new ArrayList<Job>();
-//			Job job2 = jobs.get(1);
-//			list.add(job);
-//			list.add(job);
-//			list.add(jobs.get(1));
+			// Date date = new Date(System.currentTimeMillis());
+			// Date date2 = new java.sql.Timestamp(System.currentTimeMillis());
+			// Job job = new Job();
+			// job.setName("test job");
+			// job.setId(100L);
+			// job.setFlow(new Flow());
+			// job.setScheduleTimestamp(date);
+			// job.setEndTimestamp(date2);
+			// job.setStartTimestamp(date);
+			// job.setSubmitTimestamp(date2);
+			// job.setResults(null);
+			// List<Job> list = new ArrayList<Job>();
+			// Job job2 = jobs.get(1);
+			// list.add(job);
+			// list.add(job);
+			// list.add(jobs.get(1));
 
-			//res.setContentType("application/json");
-			//res.getWriter().write(xstream.toXML(jobs));
-			
+			// res.setContentType("application/json");
+			// res.getWriter().write(xstream.toXML(jobs));
 
-			ConverterToList<Job> converter=new ConverterToList<Job>();
-			mav=new ModelAndView("jsonView",Constants.JOBLIST,converter.convertToList(jobs, new ConverterToMapJob()));
+			ConverterToList<Job> converter = new ConverterToList<Job>();
+			mav = new ModelAndView("jsonView", Constants.JOBLIST, converter
+					.convertToList(jobs, new ConverterToMapJob()));
 			// mav =new ModelAndView("jsonView",Constants.JOBLIST,jobs);
 		} else {
 			mav = new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
@@ -494,8 +490,6 @@ public class JobController extends MultiActionController {
 
 		return mav;
 	}
-
-
 
 	/**
 	 * Returns list of notifications for the user
@@ -547,22 +541,24 @@ public class JobController extends MultiActionController {
 		String _jobId = request.getParameter("jobId");
 		long jobId = Long.parseLong(_jobId);
 		Job job = this.flowService.getJob(jobId);
+		response.setContentType("text/plain");
 
-		String text = this.flowService.getConsole(job);
-		
 		try {
-			response.setContentType("text/plain");
-			response.getOutputStream().println(text);
+			if (job.isDone()) {
+				response.getOutputStream().print(consoleUtil.findConsole(job));
+			} else {
+				String text = this.flowService.getConsole(job);
+				response.getOutputStream().println(text);
+			}
 		} catch (IOException e) {
-			logger.error(e,e);
+			logger.error(e, e);
 		}
+
 		return null;
 	}
 
-	
-
 	/**
-	 * Query for the satus of servers 
+	 * Query for the satus of servers
 	 */
 	public ModelAndView getServerStatus(HttpServletRequest req,
 			HttpServletResponse res) throws IOException {
@@ -570,34 +566,32 @@ public class JobController extends MultiActionController {
 				.getWorkerStatus();
 		MeandreServerProxyConfig head = flowService.getHeadConfig();
 		List<Job> scheduledJobs = flowService.getScheduledJobs();
-		
-		
+
 		ModelAndView mav;
 		String uri = (req != null) ? req.getRequestURI() : "";
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
-			
-			
+
 			mav = new ModelAndView("jsonView");
-			
-			ConverterToList<Job> converter1=new ConverterToList<Job>();
-			mav.addObject("scheduledJobs",converter1.convertToList(scheduledJobs, new ConverterToMapJob()));
-			
-			ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>> converter2
-				=new ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>>();
-			mav.addObject("workers",converter2.convertToList(workers.entrySet(), new ConverterToMapServer()));
-			mav.addObject("anotherWorkers",workers);
-		
-			ConverterToMapServerConfig converter3=new ConverterToMapServerConfig();
-			mav.addObject("head",converter3.convertToMap(head));
-			
-			
+
+			ConverterToList<Job> converter1 = new ConverterToList<Job>();
+			mav.addObject("scheduledJobs", converter1.convertToList(
+					scheduledJobs, new ConverterToMapJob()));
+
+			ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>> converter2 = new ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>>();
+			mav.addObject("workers", converter2.convertToList(workers
+					.entrySet(), new ConverterToMapServer()));
+			mav.addObject("anotherWorkers", workers);
+
+			ConverterToMapServerConfig converter3 = new ConverterToMapServerConfig();
+			mav.addObject("head", converter3.convertToMap(head));
+
 		} else {
 			mav = new ModelAndView("job/serverStatus");
 			mav.addObject("workers", workers.entrySet());
 			mav.addObject("head", head);
 			mav.addObject("scheduledJobs", scheduledJobs);
 		}
-	
+
 		return mav;
 	}
 
@@ -627,6 +621,31 @@ public class JobController extends MultiActionController {
 		return mav;
 	}
 
+	public ModelAndView dumpConsole(HttpServletRequest req,
+			HttpServletResponse rep) {
+
+		Map<Job,String> dumpResult=new HashMap<Job,String>();
+		List<Job> jobs = flowService.getUserJobs(userManager.getCurrentUser()
+				.getId());
+		for (Job job : jobs) {
+			if (job.isDone()) {
+				try{
+				consoleUtil.dumpConsoleToFile(job);
+				dumpResult.put(job,"successfully dumped");
+				}catch(IllegalArgumentException e){
+					dumpResult.put(job,e.getMessage());
+				}	catch(Exception e){
+					dumpResult.put(job,"error in dumping");
+				}
+			}else{
+				dumpResult.put(job,"not finished yet, no dump");
+			}
+		}
+		
+		ModelAndView mav=new ModelAndView("job/dumpResult","dumpResult",dumpResult);
+		return mav;
+	}
+
 	private String processUrl(String url, String hostName) {
 		String identifier = "published_resources/nema";
 		int index = url.indexOf(identifier);
@@ -639,7 +658,4 @@ public class JobController extends MultiActionController {
 		return repositoryClientConnectionPool.getFromPool();
 	}
 
-
-	
-	
 }

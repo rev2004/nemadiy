@@ -20,4 +20,7 @@
 		<property name="refreshStubOnConnectFailure" value="true" />
 	</bean>
 	
+	
+	<bean id="meandreConsoleUtil" class="org.imirsel.nema.meandre.util.ConsoleUtil"
+		p:dao-ref="meandreConsoleDao" p:folder="console"/>
 </beans>

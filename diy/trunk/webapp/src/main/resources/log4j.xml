@@ -54,7 +54,7 @@
 	<logger name="org.springframework.webflow">
 		<level value="INFO" />
 	</logger>
-	<logger name="org.imirsel.nema.webapp">
+	<logger name="org.imirsel.nema">
 		<level value="INFO" />
 	</logger>
 	<logger name="org.imirsel.nema.webapp.webflow">
