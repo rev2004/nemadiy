@@ -557,7 +557,6 @@ public class TagAffinityEvaluator extends EvaluatorImpl{
 //            File plotFile = new File(plotDir.getAbsolutePath() + File.separator + "overall.png");
 //            overallROCPlot.writeChartToFile(plotFile,600,600);
 
-
             //compute AUC-ROC 
             double auc = computeAreaUnderROCCurve(anROCpointSequence);
             overallAUC_ROC = auc;
