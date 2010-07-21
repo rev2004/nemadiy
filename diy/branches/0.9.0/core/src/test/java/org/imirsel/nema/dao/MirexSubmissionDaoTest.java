@@ -33,6 +33,7 @@ public class MirexSubmissionDaoTest extends BaseDaoTestCase{
 		submission.setUser(user);
 		submission.setHashcode("ABCD1");
 		submission.setStatus(SubmissionStatus.READY_FOR_RUN);
+		submission.addNote(note);
 		submission=dao.save(submission);
 		flush();
 		assertEquals(5, dao.getAll().size());
