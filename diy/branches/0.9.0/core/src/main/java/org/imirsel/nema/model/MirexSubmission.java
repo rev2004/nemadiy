@@ -164,7 +164,7 @@ public class MirexSubmission  implements Serializable {
 	public void setNotes(List<MirexNote> notes) {
 		this.notes = notes;
 	}
-	@OneToMany(cascade={CascadeType.PERSIST,CascadeType.MERGE},fetch=FetchType.EAGER)
+	@OneToMany(cascade={CascadeType.ALL},fetch=FetchType.EAGER)
 	@OrderColumn(name="note_order")
 	@JoinColumn(name="submission_id",nullable=false)
 	public List<MirexNote> getNotes() {

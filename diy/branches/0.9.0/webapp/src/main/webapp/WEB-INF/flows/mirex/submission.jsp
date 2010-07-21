@@ -54,14 +54,7 @@
 		<fieldset>
 			<label class="label">Status:</label>${submission.status}
 		</fieldset>
-		<c:if test="${not empty submission.publicNote}">
-		<fieldset >
-			<label class="label">Note: </label><br/>
-			<textarea readonly  rows="15" cols="60"  style="text-align:left;">
-			 ${submission.publicNote}
-			</textarea>
-		</fieldset>
-		</c:if>
+		
 		<fieldset id="button">
            
             <input type="submit" name="_eventId_save" value="Save" />
