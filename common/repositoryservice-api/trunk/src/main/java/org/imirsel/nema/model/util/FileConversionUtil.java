@@ -36,6 +36,8 @@ import org.imirsel.nema.model.fileTypes.OpaqueFileFormat;
 import org.imirsel.nema.model.fileTypes.RawAudioFile;
 import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
 import org.imirsel.nema.model.fileTypes.StructureTextFile;
+import org.imirsel.nema.model.fileTypes.TagAffinityTextFile;
+import org.imirsel.nema.model.fileTypes.TagClassificationTextFile;
 import org.imirsel.nema.model.fileTypes.TempoTextFile;
 import org.imirsel.nema.model.fileTypes.TrackListTextFile;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
@@ -104,7 +106,7 @@ public class FileConversionUtil {
 			
 			//classification tasks
 			//has a training stage so may need to handle opaque files
-			List<Class<? extends NemaFileType>> classificationTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
+			List<Class<? extends NemaFileType>> classificationTypeList = new ArrayList<Class<? extends NemaFileType>>(4);
 			classificationTypeList.add(TrackListTextFile.class);
 			classificationTypeList.add(ClassificationTextFile.class);
 			classificationTypeList.add(OpaqueFileFormat.class);
@@ -115,6 +117,19 @@ public class FileConversionUtil {
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, classificationTypeList);
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, classificationTypeList);
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, classificationTypeList);
+			
+			//tag classification tasks
+			//has a training stage so may need to handle opaque files
+			List<Class<? extends NemaFileType>> tagClassificationTypeList = new ArrayList<Class<? extends NemaFileType>>(4);
+			tagClassificationTypeList.add(TrackListTextFile.class);
+			tagClassificationTypeList.add(TagClassificationTextFile.class);
+			tagClassificationTypeList.add(OpaqueFileFormat.class);
+			tagClassificationTypeList.add(OpaqueDirectoryFormat.class);
+			
+			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.TAG_CLASSIFICATIONS, tagClassificationTypeList);
+			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.TAG_MAJORMINER, tagClassificationTypeList);
+			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.TAG_MOOD, tagClassificationTypeList);
+			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.TAG_TAGATUNE, tagClassificationTypeList);
 			
 			//arguments that take opaque file formats (files we don't know how to read but can move around - e.g. model files)
 			List<Class<? extends NemaFileType>> opaqueTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
@@ -155,6 +170,18 @@ public class FileConversionUtil {
 			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, outputTypeList);
 			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, outputTypeList);
 			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, outputTypeList);
+			
+			//tag classification tasks
+			//has a training stage so may need to handle opaque files
+			outputTypeList = new ArrayList<Class<? extends NemaFileType>>(3);
+			outputTypeList.add(TagClassificationTextFile.class);
+			outputTypeList.add(TagAffinityTextFile.class);
+			outputTypeList.add(OpaqueFileFormat.class);
+			outputTypeList.add(OpaqueDirectoryFormat.class);
+			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.TAG_CLASSIFICATIONS, outputTypeList);
+			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.TAG_MAJORMINER, outputTypeList);
+			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.TAG_MOOD, outputTypeList);
+			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.TAG_TAGATUNE, outputTypeList);
 			
 			//Structure
 			outputTypeList = new ArrayList<Class<? extends NemaFileType>>(1);
