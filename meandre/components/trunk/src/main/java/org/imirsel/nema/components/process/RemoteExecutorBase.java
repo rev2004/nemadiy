@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -32,6 +34,7 @@ import org.imirsel.nema.contentrepository.client.ContentRepositoryService;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
 import org.imirsel.nema.contentrepository.client.ResultStorageService;
 import org.imirsel.nema.model.DynamicType;
+import org.imirsel.nema.model.MemoryTypeEntry;
 import org.imirsel.nema.model.NemaContentRepositoryFile;
 import org.imirsel.nema.model.OsType;
 import org.imirsel.nema.model.ProcessArtifact;
@@ -42,6 +45,7 @@ import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.ResultType;
 import org.imirsel.nema.monitor.process.NemaProcess;
 import org.imirsel.nema.monitor.process.RecordStreamProcessMonitor;
+import org.imirsel.nema.service.executor.MemoryProfile;
 import org.imirsel.nema.service.executor.ProcessExecutorService;
 import org.imirsel.nema.service.executor.RemoteProcessMonitor;
 import org.meandre.annotations.ComponentInput;
@@ -53,8 +57,6 @@ import org.meandre.core.ComponentExecutionException;
 
 import com.healthmarketscience.rmiio.RemoteOutputStream;
 import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
-
-// TODO: Move to org.imirsel.components.process package
 
 /** Base Class for Remote Nema Components
  * 
@@ -72,26 +74,26 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	@ComponentProperty(defaultValue = "Unix Like", description = "operating system", name = "_os")
 	private static final String PROPERTY_2 ="_os";
 
-	
+
 	@ComponentProperty(defaultValue = "test:test", description = "Credentials to Login to the content repository", name = "_credentials")
 	private static final String PROPERTY_4="_credentials";
 
-	
+
 	@ComponentProperty(defaultValue = "rmi://nema-dev.lis.illinois.edu:/..", description = "Content Repository URI", name = "_contentRepositoryUri")
 	private static final String PROPERTY_5="_contentRepositoryUri";
 
 	@ComponentProperty(description="lookupHost", name="_lookupHost", defaultValue = "nema.lis.uiuc.edu")
 	private static final String PROPERTY_6 ="_lookupHost";
-	
-	@StringDataType(valueList={"any","small","medium","large","largest"}, labelList={"any","small ~ 2GB shared","medium ~3GB shared","large ~6GB Shared","largest ~14 GB Shared"})
+
+	@StringDataType(valueList={"any","small","medium","large","largest"}, labelList={"any","small < 4GB shared"," 4< medium < 8 GB shared","8 < large < 16 GB Shared","largest > 16 GB Shared"})
 	@ComponentProperty(description="Memory usage pattern suggested for the binary", name="_preferredMemoryProfile", defaultValue = "medium")
 	private static final String PROPERTY_7 ="_preferredMemoryProfile";
-	
-	
+
+
 	@ComponentInput(description="process template", name="processTemplate")
 	private static final String DATA_IN_1 ="processTemplate";
-	
-	
+
+
 	private ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor> processMonitorMap = 
 		new ConcurrentHashMap<NemaProcess,RecordStreamProcessMonitor>();
 
@@ -106,49 +108,49 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	private String flowInstanceId;
 	private String token;
 	private String memoryProfile;
-	
-	
+
+
 	@Override
 	public void initialize(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
 		try{
-		String group= ccp.getProperty(PROPERTY_1);
-		String os= ccp.getProperty(PROPERTY_2);
-		String _credentials = ccp.getProperty(PROPERTY_4);
-		String contentRepositoryUri = ccp.getProperty(PROPERTY_5);
-		String lookupHost = ccp.getProperty(PROPERTY_6);
-		String _memoryProfile = ccp.getProperty(PROPERTY_7);
-		
-		this.componentContextProperties = ccp;
-		this.flowInstanceId = ccp.getFlowExecutionInstanceID();
-		this.token = getToken(ccp.getFlowExecutionInstanceID());
-		this.setGroup(group);
-		this.setOS(os);
-		this.setLookupHost(lookupHost);
-		this.setMemoryProfile(_memoryProfile);
-		setCredentials(parseCredentials(_credentials));
-		
-		synchronized(RemoteExecutorBase.class){
-		if(resultStorageService==null){
-			ClientRepositoryFactory factory = new ClientRepositoryFactory();
-			Repository repository;
-			repository = factory.getRepository(contentRepositoryUri);
-			ContentRepositoryService crs = new ContentRepositoryService();
-			crs.setRepository(repository);
-			resultStorageService = crs;
-		}
-		}
+			String group= ccp.getProperty(PROPERTY_1);
+			String os= ccp.getProperty(PROPERTY_2);
+			String _credentials = ccp.getProperty(PROPERTY_4);
+			String contentRepositoryUri = ccp.getProperty(PROPERTY_5);
+			String lookupHost = ccp.getProperty(PROPERTY_6);
+			String _memoryProfile = ccp.getProperty(PROPERTY_7);
+
+			this.componentContextProperties = ccp;
+			this.flowInstanceId = ccp.getFlowExecutionInstanceID();
+			this.token = getToken(ccp.getFlowExecutionInstanceID());
+			this.setGroup(group);
+			this.setOS(os);
+			this.setLookupHost(lookupHost);
+			this.setMemoryProfile(_memoryProfile);
+			setCredentials(parseCredentials(_credentials));
+
+			synchronized(RemoteExecutorBase.class){
+				if(resultStorageService==null){
+					ClientRepositoryFactory factory = new ClientRepositoryFactory();
+					Repository repository;
+					repository = factory.getRepository(contentRepositoryUri);
+					ContentRepositoryService crs = new ContentRepositoryService();
+					crs.setRepository(repository);
+					resultStorageService = crs;
+				}
+			}
 		}catch(Exception ex){
 			throw new ComponentExecutionException(ex);
 		}
-		
-		
-			this.initializeNema(ccp);	
-		
+
+
+		this.initializeNema(ccp);	
+
 	}
-	
-	private String getToken(String flowExecutionInstanceID) {
+
+	public String getToken(String flowExecutionInstanceID) {
 		String[] splits = flowExecutionInstanceID.split("/");
 		String token = flowExecutionInstanceID;
 		if(splits.length !=0){
@@ -169,43 +171,43 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	@Override
 	public void execute(ComponentContext context) throws ComponentExecutionException,ComponentContextException{
 		try{
-		processTemplate = (ProcessTemplate)context.getDataComponentFromInput(DATA_IN_1);
-		try {
-			this.processExecutorService = findExecutorService();
-			if(this.processExecutorService==null){
-				context.getLogger().info("Error could not find the executor service");
-			}else{
-				context.getLogger().info("process executor id: "+this.processExecutorService.getId() + " " + this.processExecutorService.getIpAddress());
+			processTemplate = (ProcessTemplate)context.getDataComponentFromInput(DATA_IN_1);
+			try {
+				this.processExecutorService = findExecutorService();
+				if(this.processExecutorService==null){
+					context.getLogger().info("Error could not find the executor service");
+				}else{
+					context.getLogger().info("process executor id: "+this.processExecutorService.getId() + " " + this.processExecutorService.getIpAddress());
+				}
+			} catch (RemoteException e) {
+				throw new ComponentExecutionException(e);
+			}}finally{
+				this.executeNema(context);
 			}
-		} catch (RemoteException e) {
-			throw new ComponentExecutionException(e);
-		}}finally{
-		this.executeNema(context);
-		}
 	}
-	
-	
+
+
 	@Override
 	public void dispose(ComponentContextProperties componentContextProperties) 
 	throws ComponentContextException{
 		super.dispose(componentContextProperties);
 		this.disposeNema(componentContextProperties);
 	}
-	
-	
+
+
 	public abstract void initializeNema(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException;
-	
-	
+
+
 	public abstract void executeNema(ComponentContext componentContext) 
 	throws ComponentExecutionException, ComponentContextException;
-	
-	
+
+
 	public abstract void disposeNema(ComponentContextProperties componentContextProperties) 
 	throws ComponentContextException;
-	
-	
-	
+
+
+
 	private SimpleCredentials parseCredentials(String credentialsString) throws ComponentExecutionException {
 		String[] splits = credentialsString.split(":");
 		String username = splits[0];
@@ -215,8 +217,8 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		}
 		return new SimpleCredentials(username,password.toCharArray());
 	}
-	
-	
+
+
 	private ProcessExecutorService findExecutorService() throws RemoteException{
 		LookupLocator locator=null;
 		try {
@@ -235,62 +237,135 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 			e1.printStackTrace();
 		}
 		System.out.println("PROCESS TEMPLATE: " + this.getProcessTemplate().getName() + "  " + this.getProcessTemplate().getId());
-		
+
 		//Name name = new Name(this.getProcessTemplate().getName());
 		//getLogger().info("Profile Name is: " + this.getProcessTemplate().getName());
-		
+
 		DynamicType dynamicType = new DynamicType();
 		OsType osType = new OsType(this.getOS());
 		ResourceGroupEntry rgt = new ResourceGroupEntry(this.getGroup());
-		
+
+		List<Entry> attrList = new ArrayList<Entry>();
+
+		attrList.add(osType);
+		attrList.add(rgt);
+		attrList.add(dynamicType);
+		MemoryProfile memoryProfile = MemoryProfile.SMALL;
+
+		if(this.memoryProfile.equalsIgnoreCase("any")){
+			memoryProfile = null;
+		}else{
+			memoryProfile=MemoryProfile.toMemoryProfile(this.memoryProfile);
+		}
 		ProcessExecutorService executorService=null;
+		ProcessExecutorService serviceFound =null;
+
+		if(memoryProfile==null){
+			System.out.println("---> NOT SPECIFIED");
+			serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList,memoryProfile);
+		}else if(memoryProfile == MemoryProfile.LARGEST){
+			System.out.println("---> LARGEST");
+			serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList,memoryProfile);
+		}else if(memoryProfile == MemoryProfile.LARGE){
+			System.out.println("---> LARGE");
+			serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList,memoryProfile);
+			if(serviceFound==null){
+				System.out.println("---> LARGER->LARGEST");
+				serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList, MemoryProfile.LARGEST);
+			}
+		}else if(memoryProfile == MemoryProfile.MEDIUM){
+			System.out.println("---> MEDIUM");
+			serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList,memoryProfile);
+			if(serviceFound==null){
+				System.out.println("---> MEDIUM ->LARGE");
+				serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList, MemoryProfile.LARGE);
+			}
+			if(serviceFound==null){
+				System.out.println("---> MEDIUM ->LARGEST");
+				serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList, MemoryProfile.LARGEST);
+			}
+		}else if(memoryProfile == MemoryProfile.SMALL){
+			System.out.println("---> SMALL");
+			serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList,memoryProfile);
+			if(serviceFound==null){
+				System.out.println("---> SMALL -> MEDIUM");
+				serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList, MemoryProfile.MEDIUM);
+			}
+			if(serviceFound==null){
+				System.out.println("---> SMALL->LARGE");
+				serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList, MemoryProfile.LARGE);
+			}
+			if(serviceFound==null){
+				System.out.println("---> SMALL ->LARGEST");
+				serviceFound = findBestExecutorWithMemoryProfile(registrar,attrList, MemoryProfile.LARGEST);
+			}
+		}
+
+
+
+
+
+		if(serviceFound==null){
+			throw new RemoteException("Suitable Service not found " + this.getProcessTemplate().getName());
+		}
+		executorService = serviceFound;
+		this.getLogger().info("Selecting: " + executorService.toString() + " for the execution. ");
+
+
+
+		return executorService;
+
+	}
+
+	private ProcessExecutorService findBestExecutorWithMemoryProfile(ServiceRegistrar registrar,
+			List<Entry> attrList, MemoryProfile memoryProfile) throws RemoteException {
+		Entry[] attrs = null;
+		if(memoryProfile!=null){
+			MemoryTypeEntry mte=new MemoryTypeEntry(memoryProfile.getName());
+			attrs = new Entry[attrList.size()+1];
+			attrs=attrList.toArray(new Entry[]{});
+			attrs[attrs.length-1] = mte;
+			this.getLogger().info("Looking for the process executor with memory profile: " + memoryProfile.getName());
+			this.getLogger().info("The search entries are: ");
+			
+			for(Entry e: attrs){
+				this.getLogger().info("---> "+e.toString());
+			}
+		}else{
+			this.getLogger().info("Looking for the process executor with any memory profile -no choice");
+			attrs=attrList.toArray(new Entry[]{});
+		}
 		
-		/*Entry[] attrList = new Entry[]{name};
+		
+
 		Class<ProcessExecutorService>[] classes = new Class[1]; 
 		classes[0] = ProcessExecutorService.class;
-		ServiceTemplate template = new ServiceTemplate(null,classes,attrList);
-				ServiceMatches serviceMatches=registrar.lookup(template,10);
-				ProcessExecutorService serviceFound=null;
-			*/
-		
-		Entry[] attrList = new Entry[]{osType,rgt,dynamicType};
-		Class<ProcessExecutorService>[] classes = new Class[1]; 
-		classes[0] = ProcessExecutorService.class;
-		ServiceTemplate template = new ServiceTemplate(null,classes,attrList);
+		ServiceTemplate template = new ServiceTemplate(null,classes,attrs);
 		ServiceMatches serviceMatches=registrar.lookup(template,10);
 		ProcessExecutorService serviceFound=null;
+		if(serviceMatches.totalMatches>0){
+			getLogger().info("Found:  " + serviceMatches.totalMatches);
+			int min = Integer.MAX_VALUE;
+			for(ServiceItem item:serviceMatches.items){
+				ProcessExecutorService pes = (ProcessExecutorService)item.service;
+				this.getLogger().info("Number of processes running: "+pes.numProcesses());
+				if(min> pes.numProcesses()){
+					serviceFound =  pes;
+					min= pes.numProcesses();
+				}
+			}
 
-		
-				if(serviceMatches.totalMatches>0){
-					getLogger().info("Found:  " + serviceMatches.totalMatches);
-					int min = Integer.MAX_VALUE;
-					for(ServiceItem item:serviceMatches.items){
-						ProcessExecutorService pes = (ProcessExecutorService)item.service;
-						System.out.println("Number of processes running: "+pes.numProcesses());
-						if(min> pes.numProcesses()){
-							serviceFound =  pes;
-							min= pes.numProcesses();
-						}
-					}
-					
-					
-				}else{
-					getLogger().info("NO PROCESS EXECUTOR SERVICE FOUND: " );
-				}
-				
-				if(serviceFound==null){
-					throw new RemoteException("Suitable Service not found " + this.getProcessTemplate().getName());
-				}
-				executorService = serviceFound;
-				this.getLogger().info("Selecting: " + executorService.toString() + " for the execution. ");
-				
-			
-		
-		return executorService;
-		
+
+		}else{
+			getLogger().info("NO PROCESS EXECUTOR SERVICE FOUND: " );
+
+
+
+		}
+		return serviceFound;
 	}
-	
-	
+
+
 	/**Wait for the process to finish before continuing. This method
 	 * blocks.
 	 * 
@@ -302,25 +377,25 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		rpm.getLatch().await();
 		getLogger().info("latch unlatched -run another process now\n");
 	}
-	
-	
+
+
 	/** Returns the process result. <b>Call this method after waiting for the process to finish</b>.
 	 * This method will return null if the process has not finished or if the process does not
 	 * produce any result.
 	 * 
 	 * @return the result produced by the process as a list of {@link ProcessArtifact}
- 	 */
+	 */
 	public final List<ProcessArtifact> getResult(NemaProcess nemaProcess){
 		RecordStreamProcessMonitor rpm =this.getProcessMonitor(nemaProcess);
 		if(rpm==null){
 			getLogger().severe("Calling getResults on a process that does not have the RemoteProcessMonitor " +
-					"\n Either the process finished, or was aborted.");
+			"\n Either the process finished, or was aborted.");
 			return null;
 		}
 		return rpm.getResultQueue().poll();
 	}
-	
-	
+
+
 	/** Starts the execution of the remote process.
 	 * 
 	 * @param processExecutionProperties
@@ -344,9 +419,9 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 			this.processMonitorMap.put(np, rpm);
 			return np;
 		}
-		
+
 	}
-	
+
 	/** Remove the process monitor from the hashmap
 	 * 
 	 * @param process
@@ -354,7 +429,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 	public final void cleanProcess(NemaProcess process){
 		this.processMonitorMap.remove(process);
 	}
-	
+
 	/** Aborts the remote process.
 	 * 
 	 * @param process
@@ -372,9 +447,9 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		getLogger().info("Abort success: " + success);
 		return success;
 	}
-	
-	
-	
+
+
+
 	/**Dispatches abort process message to all the processes this component is running.
 	 *  This method is called by the dispose method
 	 */
@@ -396,7 +471,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		}
 		this.processMonitorMap.clear();
 	}
-	
+
 	/**Save the file to the content repository
 	 * 
 	 * @param file
@@ -417,30 +492,30 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		return rrp;
 	}
 
-	
 
 
-	
+
+
 	private RecordStreamProcessMonitor createRemoteProcessMonitor() throws RemoteException{
 		BlockingQueue<List<ProcessArtifact>> resultQueue = new LinkedBlockingQueue<List<ProcessArtifact>>();
 		Queue<NemaProcess> processQueue = new ConcurrentLinkedQueue<NemaProcess>();
 		CountDownLatch latch = new CountDownLatch(1);
 		RemoteOutputStream ros = new SimpleRemoteOutputStream(this.componentContextProperties.getOutputConsole());
 		RecordStreamProcessMonitor remoteProcessMonitor = null;
-		
+
 		remoteProcessMonitor = new RecordStreamProcessMonitor(latch, ros,resultQueue,processQueue);
 		remoteProcessMonitor.setLogger(getLogger()); 
-		
+
 		return remoteProcessMonitor;
 	}
-	
-	
+
+
 	private RecordStreamProcessMonitor getProcessMonitor(NemaProcess nemaProcess){
 		return this.processMonitorMap.get(nemaProcess);
 	}
-	
-	
-	
+
+
+
 
 	private void setCredentials(SimpleCredentials credentials) {
 		this.credentials = credentials;
@@ -487,7 +562,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		return processExecutorService;
 	}
 
-	
+
 
 
 	private NemaContentRepositoryFile createNemaContentRepositoryFile(File file, String relativeLoc, String model) throws IOException {
@@ -496,11 +571,11 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		byte[] fileContent= null;
 		CompressionUtils cutils= CompressionUtils.getInstanceOf();
 		fileContent = cutils.compress(path,relativeLoc);
-		
+
 		if(fileContent==null){
 			throw new RuntimeException("file byte contents size is null " + path);
 		}
-		
+
 		nemaResult.setExecutionId(this.token);
 		nemaResult.setFileContent(fileContent);
 		String parentPath=file.getParent();
@@ -514,7 +589,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		}
 		String resultLoc = file.getCanonicalPath();
 		int loc=resultLoc.indexOf(relativeLoc);
-		
+
 		if(loc!=-1){
 			if(relativeLoc!=null){
 				parentPath = resultLoc.substring(loc+relativeLoc.length());
