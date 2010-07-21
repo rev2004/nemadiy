@@ -9,7 +9,7 @@ import java.util.logging.Level;
 public class MatlabExecutorImpl extends ProcessExecutorImpl {
 	
 	protected String matlabArgs = "-nodesktop -nosplash";
-	protected File matlabBin = new File("matlab");
+	protected File matlabBin = new File("/share/apps/matlab/bin/matlab");
 	protected String functionName;
 	protected boolean isRunning = false;
 	protected Process process;
