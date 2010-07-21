@@ -26,7 +26,7 @@ import org.imirsel.nema.analytics.evaluation.*;
 import org.imirsel.nema.model.*;
 
 /**
- * Classification evaluation and result rendering.
+ * Classification evaluation.
  * 
  * @author kris.west@gmail.com
  * @since 0.1.0
