@@ -13,7 +13,10 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
+import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisBarChartPlotItem;
 import org.imirsel.nema.model.NemaData;
+import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.logging.AnalyticsLogFormatter;
@@ -128,7 +131,7 @@ public abstract class ResultRendererImpl implements ResultRenderer {
 	
 	/**
 	 * Default method of writing result CSV files per fold, for each system. 
-	 * Uses the declared per-track metrics and results keys to produce a 
+	 * Uses the declared per-fold metrics and results keys to produce a 
 	 * per-fold result table for each system.
 	 * 
 	 * @param numJobs The number of jobs.
@@ -193,6 +196,31 @@ public abstract class ResultRendererImpl implements ResultRenderer {
 			jobIDToTgz.put(jobId, IOUtil.tarAndGzip(jobIDToResultDir.get(jobId)));
 		}
 		return jobIDToTgz;
+	}
+	
+	/**
+	 * Plots bar chart of a performance score over all jobs.
+	 * 
+	 * @param metric   The metric to summarize as a bar chart.
+	 * @param results  The results Object containing the data to plot.
+	 * @return         a PageItem that will produce the plot.
+	 */
+	protected static PageItem plotSummaryOverMetric(
+			NemaEvaluationResultSet results, String metric) {
+
+		List<String> seriesNames = new ArrayList<String>();
+		List<Double> seriesVals = new ArrayList<Double>();
+		for(String jobId:results.getJobIdToOverallEvaluation().keySet()){
+			NemaData eval = results.getJobIdToOverallEvaluation().get(jobId);
+			seriesNames.add(results.getJobName(jobId));
+			seriesVals.add(eval.getDoubleMetadata(metric));
+		}
+		
+		String name = metric + "_summary";
+		String caption = metric;
+		ProtovisBarChartPlotItem chart = new ProtovisBarChartPlotItem(name, caption, seriesNames, seriesVals);
+		
+		return chart;
 	}
 
 	/**

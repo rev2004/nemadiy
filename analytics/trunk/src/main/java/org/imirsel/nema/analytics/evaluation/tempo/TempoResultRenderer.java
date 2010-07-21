@@ -178,11 +178,11 @@ public class TempoResultRenderer extends ResultRendererImpl {
 
 		NemaData resultSummary = results.getJobIdToOverallEvaluation().get(jobId);
 
-		Map<String,Double> values = new HashMap<String, Double>();
-		values.put(NemaDataConstants.TEMPO_EXTRACTION_P_SCORE, resultSummary.getDoubleMetadata(NemaDataConstants.TEMPO_EXTRACTION_P_SCORE));
-		values.put(NemaDataConstants.TEMPO_EXTRACTION_ONE_CORRECT, resultSummary.getDoubleMetadata(NemaDataConstants.TEMPO_EXTRACTION_ONE_CORRECT));
-		values.put(NemaDataConstants.TEMPO_EXTRACTION_TWO_CORRECT, resultSummary.getDoubleMetadata(NemaDataConstants.TEMPO_EXTRACTION_TWO_CORRECT));
-		
+//		Map<String,Double> values = new HashMap<String, Double>();
+//		values.put(NemaDataConstants.TEMPO_EXTRACTION_P_SCORE, resultSummary.getDoubleMetadata(NemaDataConstants.TEMPO_EXTRACTION_P_SCORE));
+//		values.put(NemaDataConstants.TEMPO_EXTRACTION_ONE_CORRECT, resultSummary.getDoubleMetadata(NemaDataConstants.TEMPO_EXTRACTION_ONE_CORRECT));
+//		values.put(NemaDataConstants.TEMPO_EXTRACTION_TWO_CORRECT, resultSummary.getDoubleMetadata(NemaDataConstants.TEMPO_EXTRACTION_TWO_CORRECT));
+//		
 
 		List<String> seriesNames = new ArrayList<String>();
 		List<Double> seriesVals = new ArrayList<Double>();

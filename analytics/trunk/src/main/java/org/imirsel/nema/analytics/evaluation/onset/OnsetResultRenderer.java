@@ -63,13 +63,13 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 		List<String> classNames = (List<String>)aggregateEval.getMetadata(NemaDataConstants.ONSET_DETECTION_CLASSES);
 		
 		File perClassFMeasureCsv = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassFMeasure.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE_BY_CLASS),perClassFMeasureCsv);
+		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassArrays(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE_BY_CLASS),perClassFMeasureCsv);
 		
 		File perClassPrecisionCsv = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassPrecision.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.ONSET_DETECTION_AVG_PRECISION_BY_CLASS),perClassPrecisionCsv);
+		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassArrays(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.ONSET_DETECTION_AVG_PRECISION_BY_CLASS),perClassPrecisionCsv);
 		
 		File perClassRecallCsv = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassRecall.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.ONSET_DETECTION_AVG_RECALL_BY_CLASS),perClassRecallCsv);
+		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassArrays(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.ONSET_DETECTION_AVG_RECALL_BY_CLASS),perClassRecallCsv);
 		
 		/* Write out per track CSV for each system */
 		getLogger().info("Writing out per-system result files...");
@@ -225,21 +225,21 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 			items = new ArrayList<PageItem>();
 				
 			Table perClassFMeasureTable = WriteCsvResultFiles
-					.prepTableDataOverClasses(
+					.prepTableDataOverClassArrays(
 							results.getJobIdToOverallEvaluation(),
 							results.getJobIdToJobName(),
 							classNames,
 							NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE_BY_CLASS);
 
 			Table perClassPrecisionTable = WriteCsvResultFiles
-					.prepTableDataOverClasses(
+					.prepTableDataOverClassArrays(
 							results.getJobIdToOverallEvaluation(),
 							results.getJobIdToJobName(),
 							classNames,
 							NemaDataConstants.ONSET_DETECTION_AVG_PRECISION_BY_CLASS);
 
 			Table perClassRecallTable = WriteCsvResultFiles
-					.prepTableDataOverClasses(
+					.prepTableDataOverClassArrays(
 							results.getJobIdToOverallEvaluation(),
 							results.getJobIdToJobName(),
 							classNames,

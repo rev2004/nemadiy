@@ -92,7 +92,7 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
 		//write out CSV results files
 		getLogger().info("Writing out CSV result files over whole task...");
 		File perClassCSV = new File(outputDir.getAbsolutePath()+ File.separator + "PerClassResults.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT),perClassCSV);
+		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassArrays(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT),perClassCSV);
 		
 		File perFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "PerFoldResults.csv");
 		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(), results.getJobIdToJobName(),NemaDataConstants.CLASSIFICATION_ACCURACY),perFoldCSV);
@@ -102,7 +102,7 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
 		File discountedPerFoldCSV = null;
 		if (results.getOverallEvalMetricsKeys().contains(NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY)){
 		    discountedPerClassCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerClassResults.csv");
-		    WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT),discountedPerClassCSV);
+		    WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassArrays(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT),discountedPerClassCSV);
 		    discountedPerFoldCSV = new File(outputDir.getAbsolutePath() + File.separator + "DiscountedPerFoldResults.csv");
 		    WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY),discountedPerFoldCSV);
 		}
@@ -239,10 +239,10 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
         //do per class page
         {
             items = new ArrayList<PageItem>();
-            Table perClassTable = WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
+            Table perClassTable = WriteCsvResultFiles.prepTableDataOverClassArrays(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
             items.add(new TableItem("acc_class", "Accuracy per Class", perClassTable.getColHeaders(), perClassTable.getRows()));
             if (usingAHierarchy){
-                Table perDiscClassTable = WriteCsvResultFiles.prepTableDataOverClasses(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
+                Table perDiscClassTable = WriteCsvResultFiles.prepTableDataOverClassArrays(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Class", perDiscClassTable.getColHeaders(), perDiscClassTable.getRows()));
             }
             aPage = new Page("acc_per_class", "Accuracy per Class", items, false);

@@ -416,7 +416,7 @@ public class WriteCsvResultFiles {
      * a 1 or 2 dimensional double array giving the accuracies or confusions for each class.
      * @return The prepared table.
      */
-    public static Table prepTableDataOverClasses(Map<String,NemaData> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
+    public static Table prepTableDataOverClassArrays(Map<String,NemaData> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
     	String[][] jobIDandName = new String[numAlgos][];
@@ -451,6 +451,54 @@ public class WriteCsvResultFiles {
             		//discounted types are 1D as there is no residual confusion after discounting
             		row[j+1] = DEC.format(100.0 * jobIDToAggregateEval.get(jobIDandName[j][0]).getDoubleArrayMetadata(metadataKey)[c]);
             	}
+            }
+            rows.add(row);
+        }
+        return new Table(colNames, rows);
+    }
+    
+    /**
+     * Prepares a Table Object representing the specified evaluation metadata, 
+     * where the systems are the columns of the table and the rows are the 
+     * different classes of data in the evaluation.
+     * 
+     * @param jobIDToAggregateEval Map linking jobID to its overall evaluation data Object.
+     * @param jobIDToName Map linking jobID to the Job name to use in the Table for each set of results.
+     * @param classNames A list of the class names used.
+     * @param metadataKey The evaluation metadata type to use. This method expects the metadata to point to
+     * a 1 or 2 dimensional double array giving the accuracies or confusions for each class.
+     * @return The prepared table.
+     */
+    public static Table prepTableDataOverClassMaps(Map<String,NemaData> jobIDToAggregateEval, Map<String,String> jobIDToName, List<String> classNames, String metadataKey) {
+    	//sort systems alphabetically
+    	int numAlgos = jobIDToName.size();
+    	String[][] jobIDandName = new String[numAlgos][];
+    	int idx=0;
+    	String id;
+    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+    		id = it.next();
+    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
+    	}
+    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
+    		public int compare(String[] a, String[] b){
+    			return a[1].compareTo(b[1]);
+    		}
+    	});
+    	
+        String[] colNames = new String[numAlgos + 1];
+        colNames[0] = "Class";
+        for (int i = 0; i < numAlgos; i++) {
+            colNames[i+1] = jobIDandName[i][1];
+        }
+
+        List<String[]> rows = new ArrayList<String[]>();
+        
+        for (int c = 0; c < classNames.size(); c++) {
+            String[] row = new String[numAlgos + 1];
+            row[0] = classNames.get(c).replaceAll(",", " ");
+
+            for (int j = 0 ; j < numAlgos; j++){  
+            	row[j+1] = DEC.format(100.0 * ((Map<String,Double>)jobIDToAggregateEval.get(jobIDandName[j][0]).getMetadata(metadataKey)).get(classNames.get(c)));            	
             }
             rows.add(row);
         }
