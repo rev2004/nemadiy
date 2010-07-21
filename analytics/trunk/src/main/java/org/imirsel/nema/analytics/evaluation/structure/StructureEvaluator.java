@@ -1,11 +1,11 @@
 package org.imirsel.nema.analytics.evaluation.structure;
 
-import java.awt.datatransfer.DataFlavor;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -212,8 +212,16 @@ public class StructureEvaluator extends EvaluatorImpl {
 			//"echo 'evaluating track " + data.getId() + " for job " + jobID + "';\n" + 
 		}
 		evalMFileContent += "exit;\n";
-			
-		String evalFunction = "evaluateJob" + jobID + "Set" + testSet.getId();
+		byte[] jobIdBytes = {1};
+		try {
+			jobIdBytes = jobID.getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String functionID = UUID.nameUUIDFromBytes(jobIdBytes).toString();
+		
+		String evalFunction = "evaluateJob" + functionID + "Set" + testSet.getId();
 		File evalMFile = new File(evalTempDir.getAbsolutePath() + File.separator + evalFunction + ".m");
 		
 		//write out m file
