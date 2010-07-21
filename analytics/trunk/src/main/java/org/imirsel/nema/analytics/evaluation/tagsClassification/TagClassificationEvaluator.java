@@ -46,29 +46,27 @@ public class TagClassificationEvaluator extends EvaluatorImpl{
     protected void setupEvalMetrics() {
     	
 		this.trackEvalMetrics.clear();
-		//no per track metrics... 
+		this.trackEvalMetrics.add(NemaDataConstants.TAG_ACCURACY);
+		this.trackEvalMetrics.add(NemaDataConstants.TAG_POS_ACCURACY);
+		this.trackEvalMetrics.add(NemaDataConstants.TAG_NEG_ACCURACY);
+		this.trackEvalMetrics.add(NemaDataConstants.TAG_PRECISION);
+		this.trackEvalMetrics.add(NemaDataConstants.TAG_RECALL);
+		this.trackEvalMetrics.add(NemaDataConstants.TAG_FMEASURE);
 		
 		this.foldEvalMetrics.clear();
+		this.foldEvalMetrics.add(NemaDataConstants.TAG_ACCURACY);
+		this.foldEvalMetrics.add(NemaDataConstants.TAG_POS_ACCURACY);
+		this.foldEvalMetrics.add(NemaDataConstants.TAG_NEG_ACCURACY);
+		this.foldEvalMetrics.add(NemaDataConstants.TAG_PRECISION);
+		this.foldEvalMetrics.add(NemaDataConstants.TAG_RECALL);
+		this.foldEvalMetrics.add(NemaDataConstants.TAG_FMEASURE);
+		
 		this.foldEvalMetrics.add(NemaDataConstants.TAG_ACCURACY_TAG_MAP);
 		this.foldEvalMetrics.add(NemaDataConstants.TAG_POS_ACCURACY_TAG_MAP);
 		this.foldEvalMetrics.add(NemaDataConstants.TAG_NEG_ACCURACY_TAG_MAP);
 		this.foldEvalMetrics.add(NemaDataConstants.TAG_PRECISION_TAG_MAP);
 		this.foldEvalMetrics.add(NemaDataConstants.TAG_RECALL_TAG_MAP);
 		this.foldEvalMetrics.add(NemaDataConstants.TAG_FMEASURE_TAG_MAP);
-		
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_ACCURACY_TRACK_MAP);
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_POS_ACCURACY_TRACK_MAP);
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_NEG_ACCURACY_TRACK_MAP);
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_PRECISION_TRACK_MAP);
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_RECALL_TRACK_MAP);
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_FMEASURE_TRACK_MAP);
-		
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_ACCURACY_AVERAGE);
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_POS_ACCURACY_AVERAGE);
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_NEG_ACCURACY_AVERAGE);
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_PRECISION_AVERAGE);
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_RECALL_AVERAGE);
-		this.foldEvalMetrics.add(NemaDataConstants.TAG_FMEASURE_AVERAGE);
 		
 		//same as fold metrics
 		this.overallEvalMetrics = this.foldEvalMetrics;
@@ -143,7 +141,6 @@ public class TagClassificationEvaluator extends EvaluatorImpl{
         return results;
     }
     
-
     @SuppressWarnings("unchecked")
 	private void averageFoldMaps(String metric, Collection<NemaData> foldEvals, NemaData aggregateEval){
     	HashMap<String,Double> out = new HashMap<String, Double>();
@@ -191,22 +188,15 @@ public class TagClassificationEvaluator extends EvaluatorImpl{
 		averageFoldMaps(NemaDataConstants.TAG_RECALL_TAG_MAP, perFoldEvaluations,aggregateEval);
 		averageFoldMaps(NemaDataConstants.TAG_FMEASURE_TAG_MAP, perFoldEvaluations,aggregateEval);
 		
-		averageFoldMaps(NemaDataConstants.TAG_ACCURACY_TRACK_MAP, perFoldEvaluations,aggregateEval);
-		averageFoldMaps(NemaDataConstants.TAG_POS_ACCURACY_TRACK_MAP, perFoldEvaluations,aggregateEval);
-		averageFoldMaps(NemaDataConstants.TAG_NEG_ACCURACY_TRACK_MAP, perFoldEvaluations,aggregateEval);
-		averageFoldMaps(NemaDataConstants.TAG_PRECISION_TRACK_MAP, perFoldEvaluations,aggregateEval);
-		averageFoldMaps(NemaDataConstants.TAG_RECALL_TRACK_MAP, perFoldEvaluations,aggregateEval);
-		averageFoldMaps(NemaDataConstants.TAG_FMEASURE_TRACK_MAP, perFoldEvaluations,aggregateEval);
-		
-		averageFoldVals(NemaDataConstants.TAG_ACCURACY_AVERAGE, perFoldEvaluations,aggregateEval);
-		averageFoldVals(NemaDataConstants.TAG_POS_ACCURACY_AVERAGE, perFoldEvaluations,aggregateEval);
-		averageFoldVals(NemaDataConstants.TAG_NEG_ACCURACY_AVERAGE, perFoldEvaluations,aggregateEval);
-		averageFoldVals(NemaDataConstants.TAG_PRECISION_AVERAGE, perFoldEvaluations,aggregateEval);
-		averageFoldVals(NemaDataConstants.TAG_RECALL_AVERAGE, perFoldEvaluations,aggregateEval);
-		averageFoldVals(NemaDataConstants.TAG_FMEASURE_AVERAGE, perFoldEvaluations,aggregateEval);
+		averageFoldVals(NemaDataConstants.TAG_ACCURACY, perFoldEvaluations,aggregateEval);
+		averageFoldVals(NemaDataConstants.TAG_POS_ACCURACY, perFoldEvaluations,aggregateEval);
+		averageFoldVals(NemaDataConstants.TAG_NEG_ACCURACY, perFoldEvaluations,aggregateEval);
+		averageFoldVals(NemaDataConstants.TAG_PRECISION, perFoldEvaluations,aggregateEval);
+		averageFoldVals(NemaDataConstants.TAG_RECALL, perFoldEvaluations,aggregateEval);
+		averageFoldVals(NemaDataConstants.TAG_FMEASURE, perFoldEvaluations,aggregateEval);
 		
         //Store tag names
-		//aggregateEval.setMetadata(NemaDataConstants.TAG_EXPERIMENT_CLASSNAMES, classNames);
+		aggregateEval.setMetadata(NemaDataConstants.TAG_EXPERIMENT_CLASSNAMES, tags);
 		
 		return aggregateEval;
 	}
@@ -240,12 +230,6 @@ public class TagClassificationEvaluator extends EvaluatorImpl{
         HashMap<String, Integer> tag2numPositiveExamples = new HashMap<String, Integer>();
         HashMap<String, Integer> tag2numNegativeExamples = new HashMap<String, Integer>();
         
-        HashMap<String, AtomicInteger> track2truePositive = new HashMap<String, AtomicInteger>();
-        HashMap<String, AtomicInteger> track2falsePositive = new HashMap<String, AtomicInteger>();
-        HashMap<String, AtomicInteger> track2falseNegative = new HashMap<String, AtomicInteger>();
-        HashMap<String, Integer> track2numPositiveExamples = new HashMap<String, Integer>();
-        HashMap<String, Integer> track2numNegativeExamples = new HashMap<String, Integer>();
-        
         int totalTruePositive = 0;
         int totalFalsePositive = 0;
         int totalFalseNegative = 0;
@@ -258,13 +242,6 @@ public class TagClassificationEvaluator extends EvaluatorImpl{
         HashMap<String, Double> tag2Precision = new HashMap<String, Double>();
         HashMap<String, Double> tag2Recall = new HashMap<String, Double>();
         HashMap<String, Double> tag2FMeasure = new HashMap<String, Double>();
-        
-        HashMap<String, Double> track2Accuracy = new HashMap<String, Double>();
-        HashMap<String, Double> track2PosAccuracy = new HashMap<String, Double>();
-        HashMap<String, Double> track2NegAccuracy = new HashMap<String, Double>();
-        HashMap<String, Double> track2Precision = new HashMap<String, Double>();
-        HashMap<String, Double> track2Recall = new HashMap<String, Double>();
-        HashMap<String, Double> track2FMeasure = new HashMap<String, Double>();
         
         double totalAccuracy;
         double totalPosAccuracy;
@@ -286,16 +263,20 @@ public class TagClassificationEvaluator extends EvaluatorImpl{
         	returnedSet = (Set<String>)data.getMetadata(NemaDataConstants.TAG_CLASSIFICATIONS);
         	trueSet = (Set<String>)gtData.getMetadata(NemaDataConstants.TAG_CLASSIFICATIONS);
         	
+        	int tp = 0;
+        	int fp = 0;
+        	int fn = 0;
+        	
         	for (Iterator<String> it = returnedSet.iterator(); it.hasNext();) {
                 tag = it.next();
                 if (trueSet.contains(tag)) {
                     totalTruePositive++;
                     incrementTagCount(tag2truePositive, tag);
-                    incrementTagCount(track2truePositive, id);
+                    tp++;
                 } else {
                     totalFalsePositive++;
                     incrementTagCount(tag2falsePositive, tag);
-                    incrementTagCount(track2falsePositive, id);
+                    fp++;
                 }
             }
             remainder = new HashSet<String>(trueSet);
@@ -304,27 +285,9 @@ public class TagClassificationEvaluator extends EvaluatorImpl{
                 tag = it.next();
                 totalFalseNegative++;
                 incrementTagCount(tag2falseNegative, tag);
-                incrementTagCount(track2falseNegative, id);
+                fn++;
             }
-        }
-        
-      //compute per track stats
-        getLogger().fine("Computing per track statistics...");
-        for (Iterator<NemaData> it = theData.iterator(); it.hasNext();) {
-            id = it.next().getId();
-            //fill in any gaps in maps
-            if (!track2truePositive.containsKey(id)) {
-                track2truePositive.put(id, new AtomicInteger(0));
-            }
-            if (!track2falsePositive.containsKey(id)) {
-                track2falsePositive.put(id, new AtomicInteger(0));
-            }
-            if (!track2falseNegative.containsKey(id)) {
-                track2falseNegative.put(id, new AtomicInteger(0));
-            }
-            int tp = track2truePositive.get(id).intValue();
-            int fp = track2falsePositive.get(id).intValue();
-            int fn = track2falseNegative.get(id).intValue();
+
             int tn = tags.size() - (tp + fp + fn);
             
             double accuracy = (double) (tp + tn) / (double) tags.size();
@@ -343,17 +306,20 @@ public class TagClassificationEvaluator extends EvaluatorImpl{
             if ((precision == 0.0)||(recall == 0)){
                 fMeasure = 0.0;
             }
-            track2Accuracy.put(id, accuracy);
-            track2PosAccuracy.put(id, posAccuracy);
-            track2NegAccuracy.put(id, negAccuracy);
-            track2Precision.put(id, precision);
-            track2Recall.put(id, recall);
-            track2FMeasure.put(id, fMeasure);
+            
+
+            data.setMetadata(NemaDataConstants.TAG_ACCURACY, accuracy);
+            data.setMetadata(NemaDataConstants.TAG_POS_ACCURACY, posAccuracy);
+            data.setMetadata(NemaDataConstants.TAG_NEG_ACCURACY, negAccuracy);
+            data.setMetadata(NemaDataConstants.TAG_PRECISION, precision);
+            data.setMetadata(NemaDataConstants.TAG_RECALL, precision);
+            data.setMetadata(NemaDataConstants.TAG_FMEASURE, fMeasure);
+            
             
             int numPositivesExamples = tp + fn;
             int numNegativeExamples = tn + fp;
-            track2numPositiveExamples.put(id,numPositivesExamples);
-            track2numNegativeExamples.put(id, numNegativeExamples);
+            data.setMetadata(NemaDataConstants.TAG_NUM_POSITIVE_EXAMPLES, numPositivesExamples);
+            data.setMetadata(NemaDataConstants.TAG_NUM_NEGATIVE_EXAMPLES, numNegativeExamples);
         }
         
         
@@ -432,22 +398,22 @@ public class TagClassificationEvaluator extends EvaluatorImpl{
         outObj.setMetadata(NemaDataConstants.TAG_RECALL_TAG_MAP, tag2Recall);
         outObj.setMetadata(NemaDataConstants.TAG_FMEASURE_TAG_MAP, tag2FMeasure);
         
-        outObj.setMetadata(NemaDataConstants.TAG_ACCURACY_TRACK_MAP, track2Accuracy);
-        outObj.setMetadata(NemaDataConstants.TAG_POS_ACCURACY_TRACK_MAP, track2PosAccuracy);
-        outObj.setMetadata(NemaDataConstants.TAG_NEG_ACCURACY_TRACK_MAP, track2NegAccuracy);
-        outObj.setMetadata(NemaDataConstants.TAG_PRECISION_TRACK_MAP, track2Precision);
-        outObj.setMetadata(NemaDataConstants.TAG_RECALL_TRACK_MAP, track2Recall);
-        outObj.setMetadata(NemaDataConstants.TAG_FMEASURE_TRACK_MAP, track2FMeasure);
-        
-        outObj.setMetadata(NemaDataConstants.TAG_ACCURACY_AVERAGE, totalAccuracy);
-        outObj.setMetadata(NemaDataConstants.TAG_POS_ACCURACY_AVERAGE, totalPosAccuracy);
-        outObj.setMetadata(NemaDataConstants.TAG_NEG_ACCURACY_AVERAGE, totalNegAccuracy);
-        outObj.setMetadata(NemaDataConstants.TAG_PRECISION_AVERAGE, totalPrecision);
-        outObj.setMetadata(NemaDataConstants.TAG_RECALL_AVERAGE, totalRecall);
-        outObj.setMetadata(NemaDataConstants.TAG_FMEASURE_AVERAGE, totalFmeasure);
+        outObj.setMetadata(NemaDataConstants.TAG_ACCURACY, totalAccuracy);
+        outObj.setMetadata(NemaDataConstants.TAG_POS_ACCURACY, totalPosAccuracy);
+        outObj.setMetadata(NemaDataConstants.TAG_NEG_ACCURACY, totalNegAccuracy);
+        outObj.setMetadata(NemaDataConstants.TAG_PRECISION, totalPrecision);
+        outObj.setMetadata(NemaDataConstants.TAG_RECALL, totalRecall);
+        outObj.setMetadata(NemaDataConstants.TAG_FMEASURE, totalFmeasure);
         
         outObj.setMetadata(NemaDataConstants.TAG_NUM_POSITIVE_EXAMPLES_MAP, tag2numPositiveExamples);
         outObj.setMetadata(NemaDataConstants.TAG_NUM_NEGATIVE_EXAMPLES_MAP, tag2numNegativeExamples);
+        
+        int totalNumPositivesExamples = totalTruePositive + totalFalseNegative;
+        int totalNumNegativeExamples = totalTrueNegative + totalFalsePositive;
+        outObj.setMetadata(NemaDataConstants.TAG_NUM_POSITIVE_EXAMPLES, totalNumPositivesExamples);
+        outObj.setMetadata(NemaDataConstants.TAG_NUM_NEGATIVE_EXAMPLES, totalNumNegativeExamples);
+        
+        outObj.setMetadata(NemaDataConstants.TAG_EXPERIMENT_CLASSNAMES, tags);
         
         return outObj;
     }
