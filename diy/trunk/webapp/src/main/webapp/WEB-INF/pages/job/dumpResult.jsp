@@ -3,7 +3,6 @@
 <title>
 <fmt:message key="joblist.title"/>
 </title>
-<meta http-equiv="refresh" content="10" />
 <meta name="heading" content="Console Dump Result"/>
 </head>
 <body>

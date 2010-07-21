@@ -76,13 +76,13 @@ public class ConsoleUtil {
 
 					dao.clearConsole(job);
 					logger.info("Dump the console of Job ("
-							+ job.getFlow().getUri() + ") into file "
+							+ job.getName() + ") into file "
 							+ filename);
 				} else {
 					logger.error("job " + job.getFlow().getUri()
 							+ " has already been dumped to " + filename);
 					throw new IllegalArgumentException("job "
-							+ job.getFlow().getUri()
+							+ job.getName()
 							+ " has already been dumped to " + filename);
 
 				}
@@ -95,7 +95,7 @@ public class ConsoleUtil {
 	public String findConsole(Job job) {
 		if (job.isDone()) {
 			String filename = generateFileName(job);
-
+			logger.debug("start to read console of Job:"+job.getName());
 			StringBuilder text = new StringBuilder();
 			String NL = System.getProperty("line.separator");
 			Scanner scanner;
@@ -113,6 +113,7 @@ public class ConsoleUtil {
 				} finally {
 					scanner.close();
 				}
+				logger.debug("finish reading console of Job:"+job.getName());
 			} catch (FileNotFoundException e) {
 				text.append("file " + filename + " does not exist");
 				logger.error(e, e);
@@ -120,6 +121,22 @@ public class ConsoleUtil {
 			return text.toString();
 		} else {
 			return null;
+		}
+	}
+	
+	public void deleteConsole(Job job){
+		String filename = generateFileName(job);
+		if (job.isDone()){
+			File file = new File(filename);
+			if (file.exists()) {
+				file.delete();
+				logger.info("delete the console file of job "+job.getName());
+			}
+			
+		}else{
+			throw new IllegalArgumentException("console of job "
+					+ job.getName()
+					+ " is not done and not dumped" );
 		}
 	}
 
