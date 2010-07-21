@@ -219,9 +219,9 @@ public class StructureEvaluator extends EvaluatorImpl {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String functionID = UUID.nameUUIDFromBytes(jobIdBytes).toString();
+		//String functionID = UUID.nameUUIDFromBytes(jobIdBytes).toString();
 		
-		String evalFunction = "evaluateJob" + functionID + "Set" + testSet.getId();
+		String evalFunction = "evaluateJobSet" + testSet.getId();
 		File evalMFile = new File(evalTempDir.getAbsolutePath() + File.separator + evalFunction + ".m");
 		
 		//write out m file
