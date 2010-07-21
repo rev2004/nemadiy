@@ -85,7 +85,7 @@ public class MirexNote implements Serializable{
 	}
 	
 	@ManyToOne 
-	@JoinColumn(name="submission_id",insertable=false, updatable=false,nullable=true)
+	@JoinColumn(name="submission_id",insertable=false, updatable=false,nullable=false)
 	public MirexSubmission getSubmission() {
 		return submission;
 	}
