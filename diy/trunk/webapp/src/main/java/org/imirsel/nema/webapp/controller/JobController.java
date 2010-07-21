@@ -417,6 +417,9 @@ public class JobController extends MultiActionController {
 			flowService.deleteJob(job.getId());
 			logger.info("deleting flow: " + job.getFlow().getUri());
 			flowService.removeFlow(job.getFlow().getUri());
+			if (job.isDone()) {
+				consoleUtil.deleteConsole(job);
+			}
 		}
 		// , Constants.JOB, job
 		return new ModelAndView(
