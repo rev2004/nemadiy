@@ -1,5 +1,9 @@
 package org.imirsel.nema.model;
 
+import java.util.HashMap;
+import java.util.List;
+
+
 public class NemaDataConstants {
 
     //Metadata key constants
@@ -95,47 +99,46 @@ public class NemaDataConstants {
      * the form of a {@code HashSet<String>}. */
     public static final String TAG_EXPERIMENT_CLASSNAMES = "Tag Classification Experiment Classnames";
     
-    public static final String TAG_ACCURACY_TAG_MAP = "Tag classification tag accuracies";
-    public static final String TAG_POS_ACCURACY_TAG_MAP = "Tag classification positive example tag accuracies";
-    public static final String TAG_NEG_ACCURACY_TAG_MAP = "Tag classification negative example tag accuracy";
-    public static final String TAG_PRECISION_TAG_MAP = "Tag classification tag precision";
-    public static final String TAG_RECALL_TAG_MAP = "Tag classification tag recall";
-    public static final String TAG_FMEASURE_TAG_MAP = "Tag classification tag fMeasure";
+    //track metrics
+    //double
+    public static final String TAG_ACCURACY = "Tag classification accuracy";
+    public static final String TAG_POS_ACCURACY = "Tag classification positive example accuracy";
+    public static final String TAG_NEG_ACCURACY = "Tag classification negative example accuracy";
+    public static final String TAG_PRECISION = "Tag classification precision";
+    public static final String TAG_RECALL = "Tag classification recall";
+    public static final String TAG_FMEASURE = "Tag classification fMeasure";
     
-    public static final String TAG_ACCURACY_TRACK_MAP = "Tag classification track accuracies";
-    public static final String TAG_POS_ACCURACY_TRACK_MAP = "Tag classification positive example track accuracies";
-    public static final String TAG_NEG_ACCURACY_TRACK_MAP = "Tag classification negative example track accuracy";
-    public static final String TAG_PRECISION_TRACK_MAP = "Tag classification track precision";
-    public static final String TAG_RECALL_TRACK_MAP = "Tag classification track recall";
-    public static final String TAG_FMEASURE_TRACK_MAP = "Tag classification track fMeasure";
-    
-    public static final String TAG_ACCURACY_AVERAGE = "Tag classification average accuracy";
-    public static final String TAG_POS_ACCURACY_AVERAGE = "Tag classification positive example average accuracy";
-    public static final String TAG_NEG_ACCURACY_AVERAGE = "Tag classification negative example average accuracy";
-    public static final String TAG_PRECISION_AVERAGE = "Tag classification average precision";
-    public static final String TAG_RECALL_AVERAGE = "Tag classification average recall";
-    public static final String TAG_FMEASURE_AVERAGE = "Tag classification average fMeasure";
-    
-
+    //fold and overall metrics
+    //Tag name -> score (Map<String,Double>)
+    public static final String TAG_ACCURACY_TAG_MAP = "Tag classification per-tag accuracy";
+    public static final String TAG_POS_ACCURACY_TAG_MAP = "Tag classification positive example per-tag accuracy";
+    public static final String TAG_NEG_ACCURACY_TAG_MAP = "Tag classification negative example per-tag accuracy";
+    public static final String TAG_PRECISION_TAG_MAP = "Tag classification per-tag precision";
+    public static final String TAG_RECALL_TAG_MAP = "Tag classification per-tag recall";
+    public static final String TAG_FMEASURE_TAG_MAP = "Tag classification per-tag fMeasure";
     
     
+    /** double[] - Precision at N scores for tags predicted */
+    public static final String TAG_AFFINITY_PRECISION_AT_N = "Tag classification affinity precision at N tags";
+    /** int[] - number of results precision at N scores were calculated at */
+    public static final String TAG_AFFINITY_PRECISION_AT_N_LEVELS = "Tag classification affinity precision at N test levels";
+    /** double - Area Under Curve - Receiver Operating Characteristic Curve */
+    public static final String TAG_AFFINITY_AUC_ROC = "Tag classification affinity AUC-ROC";
+    /** List<double[]> - Receiver Operating Characteristic Curve data*/
+    public static final String TAG_AFFINITY_ROC_DATA = "Tag classification affinity ROC data points";
+    /** Map<String, Double>() - tag name to Area Under Curve - Receiver Operating Characteristic Curve */
+    public static final String TAG_AFFINITY_AUC_ROC_MAP = "Tag classification affinity per-tag AUC-ROC map";
+    /** Map<String, List<double[]>> - tag name to Receiver Operating Characteristic Curve data*/
+    public static final String TAG_AFFINITY_ROC_DATA_MAP = "Tag classification affinity per-tag ROC data points map";
     
-    public static final String TAG_AFFINITY_AUC_ROC = "Tag classification affinity tag AUC-ROC map";
-    public static final String TAG_AFFINITY_ROC_DATA = "Tag classification affinity tag ROC data points map";
-    public static final String TAG_AFFINITY_CLIP_AUC_ROC = "Tag classification affinity clip AUC-ROC map";
-    public static final String TAG_AFFINITY_CLIP_ROC_DATA = "Tag classification affinity clip ROC data points map";
-    public static final String TAG_AFFINITY_OVERALL_AUC_ROC = "Tag classification affinity overall AUC-ROC";
-    public static final String TAG_AFFINITY_OVERALL_ROC_DATA = "Tag classification affinity overall ROC data points";
-    public static final String TAG_AFFINITY_TAG_AFFINITY_DATAPOINTS = "Tag classification affinity data points map";
     
-    public static final String TAG_AFFINITY_CLIP_PRECISION_AT_N = "Tag classification affinity clip precision at N map";
-    public static final String TAG_AFFINITY_OVERALL_PRECISION_AT_N = "Tag classification affinity overall precision at N";
     
+    
+    //fold and overall statistics
     public static final String TAG_NUM_POSITIVE_EXAMPLES_MAP = "Tag classification number of positive examples map";
     public static final String TAG_NUM_NEGATIVE_EXAMPLES_MAP = "Tag classification number of negative examples map";
-    
-    public static final String TAG_OVERALL_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples overall";
-    public static final String TAG_OVERALL_NUM_NEGATIVE_EXAMPLES = "Tag classification number of negative examples overall";
+    public static final String TAG_NUM_POSITIVE_EXAMPLES = "Tag classification number of positive examples overall";
+    public static final String TAG_NUM_NEGATIVE_EXAMPLES = "Tag classification number of negative examples overall";
     
     
     // Melody Extraction Evaluator Constants

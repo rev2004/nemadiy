@@ -10,8 +10,11 @@ import org.imirsel.nema.analytics.evaluation.chord.ChordEvaluator;
 import org.imirsel.nema.analytics.evaluation.classification.ClassificationEvaluator;
 import org.imirsel.nema.analytics.evaluation.key.KeyEvaluator;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyEvaluator;
+import org.imirsel.nema.analytics.evaluation.multif0.MultiF0EstEvaluator;
 import org.imirsel.nema.analytics.evaluation.onset.OnsetEvaluator;
 import org.imirsel.nema.analytics.evaluation.structure.StructureEvaluator;
+import org.imirsel.nema.analytics.evaluation.tagsClassification.TagAffinityEvaluator;
+import org.imirsel.nema.analytics.evaluation.tagsClassification.TagClassificationEvaluator;
 import org.imirsel.nema.analytics.evaluation.tempo.TempoEvaluator;
 import org.imirsel.nema.analytics.evaluation.tempo.TempoResultRenderer;
 import org.imirsel.nema.model.NemaDataConstants;
@@ -38,6 +41,13 @@ public class EvaluatorFactory {
 		EVALUATOR_REGISTRY.put(NemaDataConstants.STRUCTURE_SEGMENTATION_DATA, StructureEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.ONSET_DETECTION_DATA, OnsetEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.BEAT_TRACKING_DATA, BeatEvaluator.class);
+		EVALUATOR_REGISTRY.put(NemaDataConstants.MULTI_F0_EST_DATA, MultiF0EstEvaluator.class);
+//		EVALUATOR_REGISTRY.put(NemaDataConstants.MULTI_F0_NT_DATA, MultiF0NTEvaluator.class);
+		
+		//tag tasks
+		EVALUATOR_REGISTRY.put(NemaDataConstants.TAG_CLASSIFICATIONS, TagClassificationEvaluator.class);
+		EVALUATOR_REGISTRY.put(NemaDataConstants.TAG_AFFINITY_MAP, TagAffinityEvaluator.class);
+		
 		
 			//classification tasks
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_ALBUM, ClassificationEvaluator.class);
@@ -50,24 +60,16 @@ public class EvaluatorFactory {
 	public static Evaluator getEvaluator(String metadataKey,
 			NemaTask task,
             NemaDataset dataset,
-//            File outputDir,
-//            File workingDir, 
             List<NemaTrackList> trainingSets,
-			List<NemaTrackList> testSets//,
-//            boolean performMatlabStatSigTests,
-//            File matlabPath
+			List<NemaTrackList> testSets
             ) throws InstantiationException, IllegalAccessException, FileNotFoundException{
 		
 		Class<? extends Evaluator> evalClass = EVALUATOR_REGISTRY.get(metadataKey);
 		Evaluator out = evalClass.newInstance();
 		out.setTask(task);
 		out.setDataset(dataset);
-//		out.setOutputDir(outputDir);
-//		out.setWorkingDir(workingDir);
 		out.setTrainingSets(trainingSets);
 		out.setTestSets(testSets);
-//		out.setPerformMatlabStatSigTests(performMatlabStatSigTests);
-//		out.setMatlabPath(matlabPath);
 		
 		return out;
 	}
