@@ -71,8 +71,6 @@ public class MirexSubmission  implements Serializable {
 	private String hashcode="";
 	private String name;
 	private String readme;
-	private String publicNote;
-	private String privateNote;
 	private SubmissionStatus status=SubmissionStatus.UNKNOWN;
 	private Date updateTime;
 	private Date createTime;
@@ -123,15 +121,7 @@ public class MirexSubmission  implements Serializable {
 		this.name = name;
 	}
 	
-	public void setPrivateNote(String note) {
-		this.privateNote = note;
-	}
-	@Column(name="privateNote",length=2000)
-	public String getPrivateNote() {
-		return privateNote;
-	}
-	
-	
+
 	@Column(name="readme",length=30000)
 	public String getReadme() {
 		return readme;
@@ -139,13 +129,7 @@ public class MirexSubmission  implements Serializable {
 	public void setReadme(String readme) {
 		this.readme = readme;
 	}
-	@Column(name="publicNote",length=2000)
-	public String getPublicNote() {
-		return publicNote;
-	}
-	public void setPublicNote(String publicNote) {
-		this.publicNote = publicNote;
-	}
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name="status",nullable=false)
 	public SubmissionStatus getStatus() {
@@ -182,7 +166,7 @@ public class MirexSubmission  implements Serializable {
 	}
 	@OneToMany(cascade={CascadeType.PERSIST,CascadeType.MERGE},fetch=FetchType.EAGER)
 	@OrderColumn(name="note_order")
-	@JoinColumn(name="submission_id")
+	@JoinColumn(name="submission_id",nullable=false)
 	public List<MirexNote> getNotes() {
 		return notes;
 	}
@@ -192,7 +176,7 @@ public class MirexSubmission  implements Serializable {
 			this.notes=new ArrayList<MirexNote>();
 		}
 		this.notes.add(note);
-		
+		note.setSubmission(this);
 	}
 	
 	public void setUser(User user) {
@@ -208,7 +192,7 @@ public class MirexSubmission  implements Serializable {
 	public void setMirexTask(MirexTask mirexTask) {
 		this.mirexTask = mirexTask;
 	}
-	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToOne
 	public MirexTask getMirexTask() {
 		return mirexTask;
 	}
