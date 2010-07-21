@@ -43,8 +43,8 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 	@ComponentProperty(defaultValue = "rmi://nema.lis.uiuc.edu:2099/jackrabbit.repository", description = "Component Repository RMI", name = "contentrepositoryUri")
 	private static final String PROPERTY_1 = "contentrepositoryUri";
 	
-	@ComponentProperty(defaultValue = "test:test", description = "Content Repository Credential", name = "_credential")
-	private static final String PROPERTY_2 = "_credential";
+	@ComponentProperty(defaultValue = "test:test", description = "Content Repository Credential", name = "_credentials")
+	private static final String PROPERTY_2 = "_credentials";
 	
 	@ComponentInput(description = "The process artifact list with the jcr uri.", name = "listProcessArtifactIn")
 	private static final String DATA_IN_1 ="listProcessArtifactIn";
