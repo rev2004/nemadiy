@@ -29,8 +29,9 @@ public class NemaEvaluationResultSet {
 	
 	private List<NemaTrackList> trainingSetTrackLists;
 	private List<NemaTrackList> testSetTrackLists;
-	
+
 	private Map<String,String> jobIdToJobName;
+	private Map<String,NemaSubmission> jobIdToSubmissionDetails;
 	private Map<String,NemaData> jobIdToOverallEvaluation;
 	private Map<String,Map<NemaTrackList,NemaData>> jobIdToPerFoldEvaluation;
 	private Map<String,Map<NemaTrackList,List<NemaData>>> jobIdToPerTrackEvaluationAndResults;
@@ -709,6 +710,14 @@ public class NemaEvaluationResultSet {
 	 */
 	public Map<String,NemaData> getTrackIDToGT() {
 		return trackIDToGT;
+	}
+
+	public void setJobIdToSubmissionDetails(Map<String,NemaSubmission> jobIdToSubmissionDetails) {
+		this.jobIdToSubmissionDetails = jobIdToSubmissionDetails;
+	}
+
+	public Map<String,NemaSubmission> getJobIdToSubmissionDetails() {
+		return jobIdToSubmissionDetails;
 	}
 
 	
