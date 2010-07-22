@@ -28,15 +28,15 @@ import org.meandre.core.ComponentExecutionException;
  * @since 0.4.0
  */
 @Component(creator = "Kris West", description = "Takes a task ID and submission " +
-		"code, retrieves published results on the task for that submission code " +
+		"code, retrieves published results on a specific set for that submission code " +
 		"and outputs them.", 
 		name = "GetPublishedOutput",
 		resources={"../../../../../RepositoryProperties.properties"},
 		tags = "publish results repository", firingPolicy = Component.FiringPolicy.all)
 public class GetPublishedOutput extends NemaComponent {
 
-	@ComponentInput(description = "NemaTask Object defining the task.", name = "NemaTask")
-	public final static String DATA_INPUT_NEMATASK = "NemaTask";
+	@ComponentInput(description = "A Map with NemaTrackList keys for which published resources should be retrieved (map values are ignored).", name = "NemaTrackListMap")
+	public final static String DATA_INPUT_NEMATRACKLISTMAP = "NemaTrackListMap";
 	
 	@ComponentInput(description = "The submission code of the results to be retrieved.", name = "submissionCode")
 	public final static String DATA_INPUT_SUBMISSION_CODE = "submissionCode";
@@ -58,7 +58,7 @@ public class GetPublishedOutput extends NemaComponent {
 	@Override
 	public void execute(ComponentContext ccp)
 	throws ComponentExecutionException, ComponentContextException {
-		NemaTask task = (NemaTask)ccp.getDataComponentFromInput(DATA_INPUT_NEMATASK);
+		Map<NemaTrackList,? extends Object> trackListMap = (Map<NemaTrackList,? extends Object>)ccp.getDataComponentFromInput(DATA_INPUT_NEMATRACKLISTMAP);
 		String submissionCode = (String)ccp.getDataComponentFromInput(DATA_INPUT_SUBMISSION_CODE);
 		
 		RepositoryClientInterface client = null;
@@ -66,23 +66,26 @@ public class GetPublishedOutput extends NemaComponent {
 		try{
 			client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			
-
-			ccp.getOutputConsole().println("Retrieving published outputs for task: " + task.getId() + ", submission code: " + submissionCode);
-			
-			List<NemaPublishedResult> resultList = client.getPublishedResultsForTaskAndSubmissionCode(task.getId(), submissionCode);
-			
 			Map<Integer,List<File>> trackListIdToFiles = new HashMap<Integer,List<File>>();
 			
-			for (NemaPublishedResult thisResult:resultList ){	
-				int setId = thisResult.getSetId();
-				String path = thisResult.getResult_path();
-				List<File> files = trackListIdToFiles.get(setId);
-				if (files == null){
-					files = new ArrayList<File>();
-					trackListIdToFiles.put(setId, files);
-				}
-				files.add(new File(path));
-			}	
+			
+			for(NemaTrackList list:trackListMap.keySet()){
+				ccp.getOutputConsole().println("Retrieving published outputs for set id: " + list.getId());
+				List<NemaPublishedResult> resultList = client.getPublishedResultsForTrackList(list.getId());
+				for (NemaPublishedResult thisResult:resultList ){	
+					int setId = thisResult.getSetId();
+					if(thisResult.getSubmissionCode().equals(submissionCode)){
+						String path = thisResult.getResult_path();
+						List<File> files = trackListIdToFiles.get(setId);
+						if (files == null){
+							files = new ArrayList<File>();
+							trackListIdToFiles.put(setId, files);
+						}
+						files.add(new File(path));
+					}
+				}	
+				
+			}
 			
 			output = new HashMap<NemaTrackList,List<File>>(trackListIdToFiles.size());
 			for (Iterator<Integer> iterator = trackListIdToFiles.keySet().iterator(); iterator.hasNext();) {
