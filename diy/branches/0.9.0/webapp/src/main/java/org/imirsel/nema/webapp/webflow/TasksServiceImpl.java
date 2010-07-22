@@ -256,7 +256,7 @@ public class TasksServiceImpl {
 
 		Set<Flow> flowSet = this.flowService.getFlowTemplates();
 		List<Flow> list = new ArrayList<Flow>();
-		if (flowType != null) {
+		if ((flowType != null)&&(flowType!=Flow.FlowType.UNKNOWN)) {
 			for (Flow flow : flowSet) {
 				if ((flow.getType().equals(flowType)))
 					list.add(flow);

@@ -79,6 +79,7 @@ public class MirexSubmission  implements Serializable {
 	private User user;
 	private MirexTask mirexTask;
 	private String url;
+	private String resourcePath;
 
 	public MirexSubmission() {
 		super();
@@ -210,6 +211,16 @@ public class MirexSubmission  implements Serializable {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+	
+	public void setResourcePath(String resource) {
+		this.resourcePath = resource;
+	}
+	public String getResourcePath() {
+		return resourcePath;
+	}
+	
+	
+	
 	@Override
 	public boolean equals(Object o) {
 		if (this==o) {return true;}
