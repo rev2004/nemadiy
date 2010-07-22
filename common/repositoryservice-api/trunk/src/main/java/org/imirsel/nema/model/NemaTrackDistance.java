@@ -64,7 +64,6 @@ public class NemaTrackDistance implements Comparable<NemaTrackDistance>{
 		return true;
 	}
 
-	@Override
 	public int compareTo(NemaTrackDistance o) {
 		if (distance<o.distance){
 			return -1;

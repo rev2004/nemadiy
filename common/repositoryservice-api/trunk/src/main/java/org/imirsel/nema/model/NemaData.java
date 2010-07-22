@@ -463,7 +463,6 @@ public class NemaData implements Serializable, Comparable<NemaData>{
      *  @param o The NemaData to compare this Object with.
      *  @return An integer indicating equality or ordering.
      */
-	@Override
 	public int compareTo(NemaData o) {
 		return this.getId().compareTo(o.getId());
 	}
