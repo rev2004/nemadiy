@@ -1,5 +1,6 @@
 package org.imirsel.nema.analytics.evaluation.key;
 
+import java.awt.JobAttributes;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -100,8 +101,12 @@ public class KeyResultRenderer extends ResultRendererImpl {
 			items = new ArrayList<PageItem>();
 			Table summaryTable = WriteCsvResultFiles.prepSummaryTable(
 					results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), results.getOverallEvalMetricsKeys());
+			
 			items.add(new TableItem("summary_results", "Summary Results",
 					summaryTable.getColHeaders(), summaryTable.getRows()));
+			
+			items.add(plotOverallMetricBarChart(NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE, results, NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE, NemaDataConstants.KEY_DETECTION_WEIGHTED_SCORE));
+			
 			aPage = new Page("summary", "Summary", items, false);
 			resultPages.add(aPage);
 		}
@@ -113,15 +118,16 @@ public class KeyResultRenderer extends ResultRendererImpl {
 				items = new ArrayList<PageItem>();
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				
+				/* Plot summary result bar chart for each system */
+				PageItem plot = plotSummaryForJob(jobId, results);
+				items.add(plot);
+				
 				/* Add per track table */
 				Table perTrackTable = WriteCsvResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, results.getTrackEvalMetricsAndResultsKeys());
 				items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_results", results.getJobName(jobId)
 						+ " Per Track Results", perTrackTable.getColHeaders(),
 						perTrackTable.getRows()));
 
-				/* Plot summary result bar chart for each system */
-				PageItem plot = plotSummaryForJob(jobId, results);
-				items.add(plot);
 				
 //				
 //				
@@ -215,5 +221,7 @@ public class KeyResultRenderer extends ResultRendererImpl {
 		
 		return chart;
 	}
+	
+	
 
 }
