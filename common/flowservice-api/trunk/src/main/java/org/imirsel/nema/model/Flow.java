@@ -27,7 +27,7 @@ import org.hibernate.annotations.Proxy;
 @Proxy(lazy = false)
 public class Flow implements Serializable {
 	public enum FlowType {
-		INHERITS("Inherits"), FEATURE_EXTRACTION("Feature Extraction"), CLASSIFICATION(
+		UNKNOWN("Unknown"),INHERITS("Inherits"), FEATURE_EXTRACTION("Feature Extraction"), CLASSIFICATION(
 				"Classification"), EVALUATION("Evaluation"), ANALYSIS(
 				"Analysis");
 		String name;
@@ -54,7 +54,7 @@ public class Flow implements Serializable {
         	} else if (typeName.equals(ANALYSIS.getName())) {
         		return ANALYSIS;
         	} else {
-        		return null;
+        		return UNKNOWN;
         	}
         }
 	}
