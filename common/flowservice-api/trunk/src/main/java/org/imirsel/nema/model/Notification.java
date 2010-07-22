@@ -151,7 +151,7 @@ public class Notification implements Serializable {
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
-	@Column(name="errorMessage")
+	@Column(name="errorMessage",length=20000000)
 	public String getErrorMessage() {
 		return errorMessage;
 	}
