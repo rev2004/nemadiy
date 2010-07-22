@@ -138,15 +138,21 @@
 				<td><label class="label">Finish Time</label></td><td>:</td>
 				<td id="job.endTimestamp">${job.endTimestamp}</td>
 			</tr>
+			<tr>
+				<td colspan="3">
+					<a target="_blank" href="http://${head.host}:${head.port}/services/jobs/job_console.html?uri=${job.executionInstanceId}">Meandre Console</a>
+				</td>
+			</tr>
 		</table>
 		
+				
 		
 		
 		<div id="result" style="display:none; margin-top:5em;margin-bottom:auto;text-align:center;" >
 					Explore Results 
 					<div id="resultContent" ></div>
 		</div>
-
+		
 </fieldset>
 </div>
 
