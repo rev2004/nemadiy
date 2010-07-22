@@ -356,6 +356,9 @@ public class JobController extends MultiActionController {
 			mav = new ModelAndView("job/job");
 			mav.addObject(Constants.JOB, job);
 			mav.addObject("resultSet", resultSet);
+			
+			MeandreServerProxyConfig head = flowService.getHeadConfig();
+			mav.addObject("head",head);
 		}
 
 		return mav;
