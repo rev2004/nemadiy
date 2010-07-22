@@ -17,17 +17,26 @@
 		    <Item name="MyJobs" title="Job List" page="/get/JobManager.getUserJobs" width="120"/>
 		    <Item name="PrepareJob" title="Prepare New Job" page="/get/task" width="120"/>		    
             <Item name="MySubmissions" title="Mirex Submissions" page="/get/JobManager.getSubmissions" width="120"/>
+        	<Item name="SubmissionList" title="menu.mirex.submissions" page="/get/MirexManager/submissions"  width="120" />
+        	<Item name="AddSubmission" title="menu.mirex.add" page="/get/mirex" width="120"/>
             <!-- <Item name="flowTemplate" title="Create w/ Template" page="get/task" width="120"/>-->
             <!--  Add this back later when grouping is needed... <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/task?type=extraction" width="120"/> -->
             <!--  Add this back later when grouping is needed... <Item name="JobTypeClassification" title="Classification" page="/get/task?type=classification" width="120"/> -->
      	    <!--  Add this back later when grouping is needed... <Item name="JobTypeEvaluation" title="Evaluation" page="/get/task?type=evaluation" width="120"/> -->
             <!--  Add this back later when grouping is needed... <Item name="JobTypeAnalysis" title="Analysis" page="/get/task?type=analysis" width="120"/> -->
      	</Menu>
-   
+   		<Menu title="test"></Menu>
+   		<Menu name="MirexMenu" title="MIREX" description="Mirex Menu" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/MirexManager/submissions" >
+         	<Item name="SubmissionList" title="menu.mirex.submissions" page="/get/MirexManager/submissions"  width="120" />
+        	<Item name="AddSubmission" title="menu.mirex.add" page="/get/mirex" width="120"/>
+        </Menu>
+        
    
         <Menu name="UserMenu" title="menu.user" description="User Menu" page="/userform.html" roles="ROLE_ADMIN,ROLE_USER"/>
    
    	
+   		
+        
         <Menu name="AdminMenu" title="menu.admin" description="Admin Menu" roles="ROLE_ADMIN" width="120" page="/admin/users.html">
          	<Item name="ServerStatus" title="menu.serverStatus" page="/get/JobManager.getServerStatus"  width="120" />
             <Item name="ViewUsers" title="menu.admin.users" page="/admin/users.html"  width="120" />
