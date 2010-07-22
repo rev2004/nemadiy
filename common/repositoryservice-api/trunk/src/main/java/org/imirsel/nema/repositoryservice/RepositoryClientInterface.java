@@ -15,6 +15,7 @@ import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
+import org.imirsel.nema.model.NemaSubmission;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.NemaTrack;
@@ -734,5 +735,12 @@ public interface RepositoryClientInterface {
      */
     public int getSiteId(String siteName);
 
-
+    /** 
+     * Returns details on a submission code from the MIREX submissions DB.
+     * 
+     * @param submissionCode The submission code to retrieve details for.
+     * @return NemaSubmission model encoding data on the submission.
+     * @throws SQLException
+     */
+    public NemaSubmission getSubmissionDetails(String submissionCode) throws SQLException;
 }
