@@ -76,17 +76,10 @@ public class TempoResultRenderer extends ResultRendererImpl {
 		Page aPage;
 
 		Map<NemaTrackList,List<NemaData>> sysResults;
-		/* Do intro page to describe task */
-		{
-			items = new ArrayList<PageItem>();
-			Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),
-					results.getDataset());
-			items.add(new TableItem("task_description", "Task Description",
-					descriptionTable.getColHeaders(), descriptionTable
-					.getRows()));
-			aPage = new Page("intro", "Introduction", items, false);
-			resultPages.add(aPage);
-		}
+		//do intro page to describe task
+        {
+        	resultPages.add(createIntroHtmlPage(results));
+        }
 
 		/* Do summary page */
 		{

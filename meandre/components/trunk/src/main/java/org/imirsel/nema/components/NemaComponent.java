@@ -39,7 +39,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 	private String resultLocationDirectoryAbsolutePath=null;
 	private String commonLocationDirectory=null;
 	private String commonLocationDirectoryAbsolutePath=null;
-	
+	private PrintStream outputConsole=null;
 	
 	/**
 	 * Marks the cout as null after flushing and releases the resources.
@@ -74,7 +74,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 		executionInstanceID = componentContextProperties.getExecutionInstanceID();
 		publicResourceDirectory = componentContextProperties.getPublicResourcesDirectory();
 		
-		getLogger().setLevel(Level.FINEST);
+		//getLogger().setLevel(Level.FINEST);
 		synchronized(NemaComponent.class){
 			nemaResourceDirectory =publicResourceDirectory+ File.separator+"nema";
 			if(!(new File(nemaResourceDirectory)).exists()){
@@ -112,8 +112,8 @@ public abstract class NemaComponent implements ExecutableComponent {
 				throw new ComponentContextException("Failed to get common storage directory paths",e);
 			}
 			
-			
-			addLogDestination(componentContextProperties.getOutputConsole());
+			outputConsole = componentContextProperties.getOutputConsole();
+			addLogDestination(outputConsole);
 			getLogger().info("Initialized logging for " + this.getClass().getName());
 		}
 	}

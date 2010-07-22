@@ -81,7 +81,7 @@ public class GetPublishedOutputsForTask extends NemaComponent {
 					jobResults = new HashMap<Integer, List<File>>();
 					subCodeTotrackListIdToFiles.put(subCode,jobResults);
 					String subName = thisResult.getName();
-					jobIdToJobName.put(subCode,subName);
+					jobIdToJobName.put(subCode,subCode);
 				}
 				
 				List<File> files = jobResults.get(setId);

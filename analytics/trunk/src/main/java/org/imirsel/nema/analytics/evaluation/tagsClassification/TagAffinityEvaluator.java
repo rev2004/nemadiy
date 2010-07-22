@@ -31,7 +31,7 @@ public class TagAffinityEvaluator extends EvaluatorImpl{
 
 
 	private Set<String> tags = null;
-	private int[] precisionPoints = new int[]{3,6,9,12,15};
+	public static final int[] PRECISION_POINTS = new int[]{3,6,9,12,15};
     
     /**
 	 * Constructor (no arg - task, dataset, output and working dirs, training
@@ -205,7 +205,7 @@ public class TagAffinityEvaluator extends EvaluatorImpl{
 		
 		//precision at N
 		averageFoldDoubleArrays(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N, perFoldEvaluations,aggregateEval);
-		aggregateEval.setMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS, precisionPoints);
+		aggregateEval.setMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS, PRECISION_POINTS);
 		//overall AUC-ROC
 		averageFoldDoubleVals(NemaDataConstants.TAG_AFFINITY_AUC_ROC, perFoldEvaluations,aggregateEval);
 		//per tag AUC-ROC
@@ -308,7 +308,7 @@ public class TagAffinityEvaluator extends EvaluatorImpl{
         List<AffinityDataPoint> tmpClipROCPointList;
         List<AffinityDataPoint> overallROCPointList = new ArrayList<AffinityDataPoint>();
         
-        double[] avgPrecisionAtN = new double[precisionPoints.length];
+        double[] avgPrecisionAtN = new double[PRECISION_POINTS.length];
         
         
         getLogger().fine("Computing per track evaluations...");
@@ -380,7 +380,7 @@ public class TagAffinityEvaluator extends EvaluatorImpl{
             //addROCpoint(anROCpointSequence, 0.0, 0.0);
             int pointCount = 0;
             int currentN = 0;
-            double[] precisions = new double[precisionPoints.length];
+            double[] precisions = new double[PRECISION_POINTS.length];
             for (Iterator<AffinityDataPoint> it2 = tmpClipROCPointList.iterator(); it2.hasNext();) {
                 dataPoint = it2.next();
                 pointCount++;
@@ -394,18 +394,18 @@ public class TagAffinityEvaluator extends EvaluatorImpl{
                 }
                 
                 //compute precision at N scores
-                if (currentN < precisionPoints.length && pointCount == precisionPoints[currentN]){
+                if (currentN < PRECISION_POINTS.length && pointCount == PRECISION_POINTS[currentN]){
                     precisions[currentN] = truePositives / (double)(truePositives + falsePositives);
                     currentN++;
                 }
             }
             
             //store precision at N for each clip
-            for (int i = 0; i < precisionPoints.length; i++){
+            for (int i = 0; i < PRECISION_POINTS.length; i++){
                 avgPrecisionAtN[i] += precisions[i];
             }
             data.setMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N, precisions);
-            data.setMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS, precisionPoints);
+            data.setMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS, PRECISION_POINTS);
             
             if (anROCpointSequence.size() == 0){
                 addROCpoint(anROCpointSequence, 0.0, 0.0);
@@ -424,7 +424,7 @@ public class TagAffinityEvaluator extends EvaluatorImpl{
         }
         
         outObj.setMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N, avgPrecisionAtN);
-        outObj.setMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS, precisionPoints);
+        outObj.setMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS, PRECISION_POINTS);
         
 
         //compute AUC-ROC for each tag

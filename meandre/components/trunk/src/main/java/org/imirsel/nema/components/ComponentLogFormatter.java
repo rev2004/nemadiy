@@ -5,7 +5,9 @@ import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * 
@@ -62,9 +64,10 @@ public class ComponentLogFormatter extends Formatter {
 				StringWriter sw = new StringWriter();
 				PrintWriter pw = new PrintWriter(sw);
 				record.getThrown().printStackTrace(pw);
-				pw.close();
 				sb.append(sw.toString());
+				pw.close();
 			} catch (Exception ex) {
+				Logger.getLogger(ComponentLogFormatter.class.getName()).log(Level.SEVERE, "Failed to append exception details to log",ex);
 			}
 		}
 		sb.append(lineSeparator);

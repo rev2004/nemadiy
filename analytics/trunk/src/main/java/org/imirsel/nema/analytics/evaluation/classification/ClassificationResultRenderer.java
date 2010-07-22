@@ -22,10 +22,12 @@ import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
 import org.imirsel.nema.analytics.evaluation.vis.ConfusionMatrixPlot;
+import org.imirsel.nema.model.NemaContributor;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.NemaSubmission;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.util.IOUtil;
@@ -192,7 +194,7 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
     	
     	throw new UnsupportedOperationException("No analysis result rendering facilities are implemented for classification!");
 	}
-
+    
 	private void writeHtmlResultPages(boolean usingAHierarchy,
 			NemaEvaluationResultSet results, List<String> classNames,
 			Map<String, File> jobIDToOverallConfFile, File perClassCSV,
@@ -213,11 +215,7 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
 
         //do intro page to describe task
         {
-        	items = new ArrayList<PageItem>();
-	        Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),results.getDataset());
-	        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
-	        aPage = new Page("intro", "Introduction", items, false);
-	        resultPages.add(aPage);
+        	resultPages.add(createIntroHtmlPage(results));
         }
         
         //do summary page
