@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,11 +14,16 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
+import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisBarChartPlotItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.Table;
+import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
+import org.imirsel.nema.model.NemaContributor;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.NemaSubmission;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.logging.AnalyticsLogFormatter;
 import org.imirsel.nema.model.util.IOUtil;
@@ -283,5 +289,56 @@ public abstract class ResultRendererImpl implements ResultRenderer {
 		}
 	}
 	
-
+	protected Page createIntroHtmlPage(NemaEvaluationResultSet results){
+    	List<PageItem> items = new ArrayList<PageItem>();
+        Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),results.getDataset());
+        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
+        
+        
+        Map<String,NemaSubmission> subDetails = results.getJobIdToSubmissionDetails();
+        List<String[]> rows = new ArrayList<String[]>();
+        String[] colNames;
+        if (subDetails == null){
+        	colNames = new String[2];
+    	    colNames[0] = "Job ID";
+    	    colNames[1] = "Job name";
+    	    List<String> jobIDs = new ArrayList<String>(results.getJobIds());
+    	    Collections.sort(jobIDs);
+    	    for(String job:jobIDs){
+    	    	rows.add(new String[]{job,results.getJobName(job)});
+    	    }
+        }else{
+        	colNames = new String[4];
+    	    colNames[0] = "Submission code";
+    	    colNames[1] = "Submission name";
+    	    colNames[2] = "Abstract PDF";
+    	    colNames[3] = "Contributors";
+    	
+        	List<String> jobIDs = new ArrayList<String>(results.getJobIds());
+    	    Collections.sort(jobIDs);
+    	    for(String job:jobIDs){
+    	    	NemaSubmission sub = subDetails.get(job);
+    	    	if(sub == null){
+    	    		rows.add(new String[]{job,results.getJobName(job),"",""});
+    	    	}else{
+    	    		String contrib = "";
+    	    		for(Iterator<NemaContributor> personIt = sub.getContributors().iterator(); personIt.hasNext();){
+    	    			NemaContributor person = personIt.next();
+    	    			contrib += "<a href=\"" + person.getAffiliationUrl() + "\">" + 
+    	    			person.getFirstName() + " " + person.getLastName() + "</a>";
+    	    			if(personIt.hasNext()){
+    	    				contrib += ", ";
+    	    			}
+    	    		}
+    	    		
+    	    		rows.add(new String[]{job,sub.getSubmissionName(),"<a href=\"" + sub.getAbstractUrl() + "\">PDF</a>",contrib});
+    	    	}
+    	    }
+    	    
+        }
+        items.add(new TableItem("legend", "Legend", colNames, rows));
+        
+	    
+        return new Page("intro", "Introduction", items, false);
+    }
 }

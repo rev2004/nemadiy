@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.imirsel.nema.analytics.evaluation.EvaluatorImpl;
 import org.imirsel.nema.model.NemaData;
@@ -20,6 +22,8 @@ public class OnsetEvaluator extends EvaluatorImpl {
 
 	private static final double TOLERANCE = 0.05;
 
+	private List<String> classList = null;
+	
 	/**
 	 * Constructor (no arg - task, dataset, output and working dirs, training
 	 * and test sets must be set manually).
@@ -38,6 +42,25 @@ public class OnsetEvaluator extends EvaluatorImpl {
 		String jobName;
 		int numJobs = jobIDToFoldResults.size();
 
+		classList = new ArrayList<String>();
+		
+		// First determine number of unique classes/instrumentations
+		for(NemaData gtData:this.getGroundTruth()){
+			if (gtData.hasMetadata(NemaDataConstants.ONSET_DETECTION_CLASS)) {
+				String className = gtData.getStringMetadata(NemaDataConstants.ONSET_DETECTION_CLASS);
+				if (!classList.contains(className)) {
+					classList.add(className);
+				}	
+			} else {
+				String className = "Unclassified";
+				if (!classList.contains(className)) {
+					classList.add(className);
+				}
+				
+			}
+		}
+		
+		
 		/* Check all systems have just one result set */
 		Map<NemaTrackList,List<NemaData>> sysResults;
 
@@ -50,6 +73,9 @@ public class OnsetEvaluator extends EvaluatorImpl {
 		NemaEvaluationResultSet results = getEmptyEvaluationResultSet();
 
 		{
+			/* keep track of the classes */
+			Set<String> classNames = null;
+			
 			/* Perform the evaluations on all jobIds (systems) */
 			Map<String, Map<NemaTrackList,NemaData>> jobIdToFoldEvaluation = new HashMap<String, Map<NemaTrackList,NemaData>>(numJobs);
 			for (Iterator<String> it = jobIDToFoldResults.keySet().iterator(); it.hasNext();) {
@@ -61,6 +87,19 @@ public class OnsetEvaluator extends EvaluatorImpl {
 					//make sure we use the evaluators copy of the track list
 					NemaTrackList trackList = testSets.get(testSets.indexOf(trackIt.next()));
 					NemaData result = evaluateResultFold(jobId, trackList, sysResults.get(trackList));
+					
+					//check classes here - must be same across all folds/jobs
+					List<String> classes = (List<String>)result.getMetadata(NemaDataConstants.ONSET_DETECTION_CLASSES);
+					if(classNames == null){
+						classNames = new HashSet<String>(classes);
+					}else{
+						if (!classNames.containsAll(classes)){
+							throw new IllegalArgumentException("");
+						}
+					}
+					
+					
+					
 					foldEvals.put(trackList, result);
 				}
 				jobIdToFoldEvaluation.put(jobId, foldEvals);
@@ -80,7 +119,7 @@ public class OnsetEvaluator extends EvaluatorImpl {
 				metricsArray.add(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE_BY_CLASS);
 				metricsArray.add(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION_BY_CLASS);
 				metricsArray.add(NemaDataConstants.ONSET_DETECTION_AVG_RECALL_BY_CLASS);
-				NemaData overall = averageFoldMetrics(jobId, foldEvals.values(), metricsSingle, metricsArray, NemaDataConstants.ONSET_DETECTION_CLASSES);
+				NemaData overall = averageFoldMetrics(jobId, foldEvals.values(), metricsSingle, metricsArray, classList, NemaDataConstants.ONSET_DETECTION_CLASSES);
 				jobIdToOverallEvaluation.put(jobId, overall);
 			}
 
@@ -100,24 +139,8 @@ public class OnsetEvaluator extends EvaluatorImpl {
 
 		int numExamples = checkFoldResultsAreComplete(jobID, testSet, dataList);
 
-		ArrayList<String> classList = new ArrayList<String>();
 		NemaData gtData;
-		// First determine number of unique classes/instrumentations
-		for(NemaData data:dataList){
-			gtData = trackIDToGT.get(data.getId());
-			if (gtData.hasMetadata(NemaDataConstants.ONSET_DETECTION_CLASS)) {
-				String className = gtData.getStringMetadata(NemaDataConstants.ONSET_DETECTION_CLASS);
-				if (!classList.contains(className)) {
-					classList.add(className);
-				}	
-			} else {
-				String className = "Unclassified";
-				if (!classList.contains(className)) {
-					classList.add(className);
-				}
-				
-			}
-		}
+		
 		Collections.sort(classList);
 		
 		// Compute number of classes. We will create also a class "Total" hence the +1 if there are no distinct classes
@@ -417,10 +440,10 @@ public class OnsetEvaluator extends EvaluatorImpl {
 
 	}
 	
-	public NemaData averageFoldMetrics(String jobId, Collection<NemaData> perFoldEvaluations, List<String> metricsSingle, List<String> metricsArray, String classesKey){
+	public NemaData averageFoldMetrics(String jobId, Collection<NemaData> perFoldEvaluations, List<String> metricsSingle, List<String> metricsArray, List<String> classes, String classesKey){
 		NemaData[] foldData = perFoldEvaluations.toArray(new NemaData[perFoldEvaluations.size()]);
 		NemaData overall = new NemaData(jobId);
-		ArrayList<String> classes = new ArrayList<String>();
+		//ArrayList<String> classes = new ArrayList<String>();
 		for (Iterator<String> metricIt = metricsSingle.iterator(); metricIt.hasNext();) {
 			String metric = metricIt.next();
 			double accum = 0.0;
@@ -435,7 +458,7 @@ public class OnsetEvaluator extends EvaluatorImpl {
 			double[] accum = null;
 			for (int i = 0; i < foldData.length; i++) {
 				double[] metricArr = foldData[i].getDoubleArrayMetadata(metric);
-				classes = (ArrayList<String>)foldData[i].getMetadata(classesKey);
+				//classes = (ArrayList<String>)foldData[i].getMetadata(classesKey);
 				if (accum == null) {
 					accum = metricArr;
 				} else {

@@ -138,18 +138,10 @@ public class ChordResultRenderer extends ResultRendererImpl {
 		List<PageItem> items;
 		Page aPage;
 
-		// do intro page to describe task
-		{
-			getLogger().info("Creating intro page...");
-			items = new ArrayList<PageItem>();
-			Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results
-					.getTask(), results.getDataset());
-			items.add(new TableItem("task_description", "Task Description",
-					descriptionTable.getColHeaders(), descriptionTable
-							.getRows()));
-			aPage = new Page("intro", "Introduction", items, false);
-			resultPages.add(aPage);
-		}
+		//do intro page to describe task
+        {
+        	resultPages.add(createIntroHtmlPage(results));
+        }
 
 		// do per system pages
 		{
@@ -211,19 +203,10 @@ public class ChordResultRenderer extends ResultRendererImpl {
 		List<PageItem> items;
 		Page aPage;
 
-		// do intro page to describe task
-		{
-			getLogger().info("Creating intro page...");
-			items = new ArrayList<PageItem>();
-			Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results
-					.getTask(), results.getDataset());
-			items.add(new TableItem("task_description", "Task Description",
-					descriptionTable.getColHeaders(), descriptionTable
-							.getRows()));
-			aPage = new Page("intro", "Introduction", items, false);
-			resultPages.add(aPage);
-		}
-
+		//do intro page to describe task
+        {
+        	resultPages.add(createIntroHtmlPage(results));
+        }
 		// do summary page
 		{
 			getLogger().info("Creating summary page...");

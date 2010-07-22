@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.NemaSubmission;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 
@@ -150,7 +151,7 @@ public interface Evaluator {
      */
 	public Collection<NemaData> getGroundTruth();
 
-		/**
+	/**
      * Adds a set of results to the evaluation. For a single iteration experiment add a single
      * result per jobID. For a multi-iteration experiment add results per iteration (in order) for 
      * each system (it doesn't matter if results from different systems are shuffled together but 
@@ -163,6 +164,21 @@ public interface Evaluator {
      * @param fold The NemaTrackList Object defining the test set that the results relate to.
      */
     public void addResults(String systemName, String jobID, NemaTrackList fold, List<NemaData> results);
+    
+    /**
+     * Adds a set of results to the evaluation. For a single iteration experiment add a single
+     * result per jobID. For a multi-iteration experiment add results per iteration (in order) for 
+     * each system (it doesn't matter if results from different systems are shuffled together but 
+     * the results for each system must be added in order).
+     * 
+     * @param submissionDetails Details of the submission that apply to the 
+     * system (for printing on result output).
+     * @param jobID Primary key for systems, can be a unique system name or URI for flow/config of
+     * job that produced results. Used in encoded results.
+     * @param results A <code>List</code> of <code>EvaluationDataObjects</code>.
+     * @param fold The NemaTrackList Object defining the test set that the results relate to.
+     */
+    public void addResults(NemaSubmission submissionDetails, String jobID, NemaTrackList fold, List<NemaData> results) throws IllegalArgumentException;
     
     /**
      * Returns the logger in use. Can be used to change the logging verbosity 

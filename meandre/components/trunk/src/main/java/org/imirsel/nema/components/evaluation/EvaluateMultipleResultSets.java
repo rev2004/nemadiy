@@ -31,6 +31,7 @@ import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.NemaSubmission;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 
@@ -62,8 +63,8 @@ import org.imirsel.nema.model.NemaTrackList;
 	@ComponentInput(description = "Map of String jobID to Map of NemaTrackList to List of NemaData Objects defining each test set (with predictions from the algorithm).", name = "TestSets")
 	public final static String DATA_INPUT_TEST_SETS_MAP = "TestSets";
 
-	@ComponentInput(description = "Map of String jobID to the names of the systems being evaluated (used in rendering results). ", name = "SystemNames")
-	public final static String DATA_INPUT_SYSTEM_NAMES = "SystemNames";
+	@ComponentInput(description = "Map of String jobID to the submission details of the systems being evaluated (used in rendering results). ", name = "SubmissionDetails")
+	public final static String DATA_INPUT_SUBMISSION_DETAILS = "SubmissionDetails";
 	
 	//OUTPUTS
 	@ComponentOutput(description="Evaluation results model encoding all the data evaluated and the evaluation metrics, suitable for use with the RenderResultSet component.", name="Evaluation results")
@@ -100,7 +101,8 @@ import org.imirsel.nema.model.NemaTrackList;
 		List<NemaData> gtList = (List<NemaData>)cc.getDataComponentFromInput(DATA_INPUT_GROUNDTRUTH_LIST);
 //		Map<NemaTrackList,List<NemaData>> trainSets = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TRAIN_SETS);
 		Map<String,Map<NemaTrackList,List<NemaData>>> jobIdToTestSets = (Map<String,Map<NemaTrackList,List<NemaData>>>)cc.getDataComponentFromInput(DATA_INPUT_TEST_SETS_MAP);
-		Map<String,String> systemIDToName =  (Map<String,String>)cc.getDataComponentFromInput(DATA_INPUT_SYSTEM_NAMES);
+		
+		Map<String,NemaSubmission> systemIDToSubmissionDetails =  (Map<String,NemaSubmission>)cc.getDataComponentFromInput(DATA_INPUT_SUBMISSION_DETAILS);
 		
 		try{
 			
@@ -149,9 +151,9 @@ import org.imirsel.nema.model.NemaTrackList;
 		        		throw new ComponentExecutionException("Did not receive results for fold " + 
 		        				testSet.getFoldNumber() + "(" + testSet.getId() + ") of dataset " + 
 		        				dataset.getName() + "(" + dataset.getId() + ") for system " + 
-		        				systemIDToName.get(jobId) + "(" + jobId + ")");
+		        				systemIDToSubmissionDetails.get(jobId) + "(" + jobId + ")");
 		        	}
-					eval.addResults(systemIDToName.get(jobId), jobId, testSet, results);
+					eval.addResults(systemIDToSubmissionDetails.get(jobId), jobId, testSet, results);
 				}
 	        }
 	        

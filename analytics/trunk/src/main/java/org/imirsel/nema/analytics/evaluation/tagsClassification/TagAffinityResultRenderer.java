@@ -30,13 +30,13 @@ import org.imirsel.nema.model.util.IOUtil;
  * @author kris.west@gmail.com
  * @since 0.4.0
  */
-public class TagClassificationResultRenderer extends ResultRendererImpl {
+public class TagAffinityResultRenderer extends ResultRendererImpl {
 
-	public TagClassificationResultRenderer() {
+	public TagAffinityResultRenderer() {
 		super();
 	}
 
-	public TagClassificationResultRenderer(File workingDir, File outputDir) {
+	public TagAffinityResultRenderer(File workingDir, File outputDir) {
 		super(workingDir, outputDir);
 	}
 	
@@ -58,6 +58,16 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		getLogger().info("Writing out CSV result files...");
 		/* Write out summary CSV */
 		//write out results summary CSV
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		File summaryCSV = writeOverallResultsCSV(results);
 		
 		//write out summaries for each metric over folds

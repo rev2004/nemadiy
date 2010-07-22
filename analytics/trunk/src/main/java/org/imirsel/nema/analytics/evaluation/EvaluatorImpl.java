@@ -21,6 +21,7 @@ import java.util.logging.StreamHandler;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.NemaSubmission;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
@@ -41,6 +42,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 	protected Map<String,NemaData> trackIDToGT;
 	protected Map<String,Map<NemaTrackList,List<NemaData>>> jobIDToFoldResults;
 	protected Map<String,String> jobIDToName;
+	protected Map<String,NemaSubmission> jobIDToSubmissionDetails;
 	protected NemaTask task;
 	protected NemaDataset dataset;
 	protected List<NemaTrackList> trainingSets;
@@ -49,6 +51,10 @@ public abstract class EvaluatorImpl implements Evaluator {
 	protected List<String> overallEvalMetrics;
 	protected List<String> foldEvalMetrics;
 	protected List<String> trackEvalMetrics;
+	
+	private boolean appendJobIds = false;
+	private boolean addSequenceNumbers = false;
+	private static final int JOBID_LENGTH_THRESHOLD = 10;
 	
 	public EvaluatorImpl(){
 		_logger = Logger.getLogger(this.getClass().getName());
@@ -64,6 +70,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 		foldEvalMetrics = new ArrayList<String>();
 		trackEvalMetrics = new ArrayList<String>();
 		setupEvalMetrics();
+		jobIDToSubmissionDetails = null;
 	}
 	
 	protected abstract void setupEvalMetrics();
@@ -88,7 +95,12 @@ public abstract class EvaluatorImpl implements Evaluator {
     	if(trackIDToGT == null){
     		getLogger().warning("Ground-truth was not set before result set was created. Ground-truth will not be available in the results Object!");
     	}
-    	return new NemaEvaluationResultSet(dataset, task, trainingSets, testSets, getOverallEvalMetricsKeys(), getFoldEvalMetricsKeys(), getTrackEvalMetricKeys(), trackIDToGT);
+    	NemaEvaluationResultSet results = new NemaEvaluationResultSet(dataset, task, trainingSets, testSets, getOverallEvalMetricsKeys(), getFoldEvalMetricsKeys(), getTrackEvalMetricKeys(), trackIDToGT);
+    	if(jobIDToSubmissionDetails != null){
+    		results.setJobIdToSubmissionDetails(jobIDToSubmissionDetails);
+    	}
+    	
+    	return results;
     }
 	
 	public List<String> getOverallEvalMetricsKeys() {
@@ -237,7 +249,31 @@ public abstract class EvaluatorImpl implements Evaluator {
 		NemaData data;
 		String metaKey = getTask().getSubjectTrackMetadataName();
 		
-		jobIDToName.put(jobID, systemName);
+		//check name is unique, if not either append job IDs to job name 
+			//or if they are too long use sequence numbers instead
+		if (addSequenceNumbers){
+			
+		}else{
+			if(appendJobIds){
+				if(jobID.length() > JOBID_LENGTH_THRESHOLD){
+					addSequenceNumbers = true;
+					//adjust those already received
+				}
+			}else if(jobIDToName.values().contains(systemName)){
+				if(jobID.length() > JOBID_LENGTH_THRESHOLD){
+					addSequenceNumbers = true;
+					//adjust those already received
+				}else{
+					appendJobIds = true;
+					//adjust those already received
+				}
+				
+			}else{
+				jobIDToName.put(jobID, systemName);
+			}
+		}
+		
+		
 		for(Iterator<NemaData> it = results.iterator(); it.hasNext();){
 			data = it.next();
 			if (!data.hasMetadata(metaKey)) {
@@ -263,6 +299,14 @@ public abstract class EvaluatorImpl implements Evaluator {
 		}
 		NemaTrackList testSet = testSets.get(testSetIdx);
 		resultList.put(testSet,results);
+	}
+	
+	public void addResults(NemaSubmission submissionDetails, String jobID, NemaTrackList fold, List<NemaData> results) throws IllegalArgumentException{
+		addResults(submissionDetails.getSubmissionName(),jobID,fold,results);
+		if(jobIDToSubmissionDetails == null){
+			jobIDToSubmissionDetails = new HashMap<String, NemaSubmission>();
+			jobIDToSubmissionDetails.put(jobID, submissionDetails);
+		}
 	}
 	
 

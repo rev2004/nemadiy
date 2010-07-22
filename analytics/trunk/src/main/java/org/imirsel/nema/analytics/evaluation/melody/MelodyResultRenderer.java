@@ -110,17 +110,10 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 		Page aPage;
 		int numJobs = results.getJobIds().size();
 
-		/* Do intro page to describe task */
-		{
-			items = new ArrayList<PageItem>();
-			Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),
-					results.getDataset());
-			items.add(new TableItem("task_description", "Task Description",
-					descriptionTable.getColHeaders(), descriptionTable
-							.getRows()));
-			aPage = new Page("intro", "Introduction", items, false);
-			resultPages.add(aPage);
-		}
+		//do intro page to describe task
+        {
+        	resultPages.add(createIntroHtmlPage(results));
+        }
 
 		/* Do summary page */
 		{
@@ -228,17 +221,10 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 		Page aPage;
 		int numJobs = results.getJobIdToPerTrackEvaluationAndResults().size();
 
-		/* Do intro page to describe task */
-		{
-			items = new ArrayList<PageItem>();
-			Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),
-					results.getDataset());
-			items.add(new TableItem("task_description", "Task Description",
-					descriptionTable.getColHeaders(), descriptionTable
-							.getRows()));
-			aPage = new Page("intro", "Introduction", items, false);
-			analysisPages.add(aPage);
-		}
+		//do intro page to describe task
+        {
+        	analysisPages.add(createIntroHtmlPage(results));
+        }
 
 		/* Do per system pages */
 		{

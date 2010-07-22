@@ -3,9 +3,11 @@ package org.imirsel.nema.components.process;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 import org.imirsel.nema.components.NemaComponent;
 import org.imirsel.nema.model.NemaTask;
@@ -60,12 +62,14 @@ public class OmenOutputPublisher extends NemaComponent {
 	Map<File,NemaTrackList> fileToTrackList = null;
 	String subCode = null;
 	String subName = null;
+	List<List<ProcessArtifact>> inputBuffer = null;
 	
 	@Override
 	public void initialize(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
-		getLogger().info("Initialized " + this.getClass().getName());
+		cc.getOutputConsole().println("Initialized " + this.getClass().getName());
+		inputBuffer = new LinkedList<List<ProcessArtifact>>();
 	}
 
 	@Override
@@ -74,15 +78,15 @@ public class OmenOutputPublisher extends NemaComponent {
 		super.dispose(ccp);
 	}
 	
-	private void clearOutExistingResults(Set<NemaTrackList> sets, String submissionCode) throws ComponentExecutionException{
+	private void clearOutExistingResults(Set<NemaTrackList> sets, String submissionCode, ComponentContext cc) throws ComponentExecutionException{
 		RepositoryClientInterface client = null;
 		try {
 			client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			//clear out existing results for this task-submission code pair
-			getLogger().info("deleting existing published results for submission code " + subCode + " on task " + task.getId() + " (" + task.getName() + ")");
+			cc.getOutputConsole().println("deleting existing published results for submission code " + subCode + " on task " + task.getId() + " (" + task.getName() + ")");
 			for (NemaTrackList set:sets){
 				client.deletePublishedResultsForSetAndSubmission(set.getId(),submissionCode);
-				getLogger().fine("done set " + set.getId());
+				cc.getOutputConsole().println("done set " + set.getId());
 			}
 		} catch (Exception e) {
 			throw new ComponentExecutionException("Exception in "
@@ -98,22 +102,25 @@ public class OmenOutputPublisher extends NemaComponent {
 	@Override
 	public void execute(ComponentContext cc)
 			throws ComponentExecutionException, ComponentContextException {
-		getLogger().info("In output publisher -execute");
+		cc.getOutputConsole().println("In output publisher -execute");
 		if(task == null && cc.isInputAvailable(DATA_IN_NEMATASK)){
 			task = (NemaTask)cc.getDataComponentFromInput(DATA_IN_NEMATASK);
-			getLogger().info("got task");
+			cc.getOutputConsole().println("got task");
 		}
 		if(fileType == null && cc.isInputAvailable(DATA_IN_OUTPUT_TYPE)){
 			fileType = (Class<NemaFileType>)cc.getDataComponentFromInput(DATA_IN_OUTPUT_TYPE);
-			getLogger().info("got output type");
+			cc.getOutputConsole().println("got output type");
 		}
 		if(subCode == null && cc.isInputAvailable(DATA_IN_SUBMISSION_CODE)){
 			subCode = (String)cc.getDataComponentFromInput(DATA_IN_SUBMISSION_CODE);
-			getLogger().info("got submission code: " + subCode);
+			cc.getOutputConsole().println("got submission code: " + subCode);
+			if (expectedPaths != null){
+				clearOutExistingResults(expectedPaths.keySet(),subCode, cc);
+			}
 		}
 		if(subName == null && cc.isInputAvailable(DATA_IN_SUBMISSION_NAME)){
 			subName = (String)cc.getDataComponentFromInput(DATA_IN_SUBMISSION_NAME);
-			getLogger().info("got submission name: " + subName);
+			cc.getOutputConsole().println("got submission name: " + subName);
 		}
 		if(expectedPaths == null && cc.isInputAvailable(DATA_IN_EXPECTED_OUTPUTS)){
 			expectedPaths = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_IN_EXPECTED_OUTPUTS);
@@ -126,18 +133,29 @@ public class OmenOutputPublisher extends NemaComponent {
 					fileToTrackList.put(file, trackList);
 				}
 			}
-			getLogger().info("The output expected size: " + fileToTrackList.size());
+			cc.getOutputConsole().println("The output expected size: " + fileToTrackList.size());
+			if (subCode != null){
+				clearOutExistingResults(expectedPaths.keySet(),subCode,cc);
+			}
 		}
-		//when we are configured start receiving process artifacts
+		
+		
+		//buffer inputs
+		if(cc.isInputAvailable(DATA_IN_PROCESS_ARTIFACTS)){
+			List<ProcessArtifact> in = (List<ProcessArtifact>)cc.getDataComponentFromInput(DATA_IN_PROCESS_ARTIFACTS);
+			inputBuffer.add(in);
+		}
+		
+		//when we are configured start processing process artifacts
 		if(task != null && fileType != null && expectedPaths != null && subCode != null && subName != null){
-
-			clearOutExistingResults(expectedPaths.keySet(),subCode);
 			
 			RepositoryClientInterface client = null;
 			
-			getLogger().info("Receiving a process artifact");
-			if(cc.isInputAvailable(DATA_IN_PROCESS_ARTIFACTS)){
-				List<ProcessArtifact> in = (List<ProcessArtifact>)cc.getDataComponentFromInput(DATA_IN_PROCESS_ARTIFACTS);
+			while(!inputBuffer.isEmpty()){
+				List<ProcessArtifact> in = inputBuffer.remove(0);
+				
+				cc.getOutputConsole().println("Receiving a process artifact");
+			
 				cc.getOutputConsole().println("The process artifact: " + in.size() + "  " + in.get(0).getResourcePath());
 				try {
 					client = RepositoryClientConnectionPool.getInstance().getFromPool();
@@ -148,14 +166,14 @@ public class OmenOutputPublisher extends NemaComponent {
 						if(trackList != null){
 							//save to repository DB here
 							client.publishResultForTask(task.getId(), trackList.getId(), subCode, subName, path.getAbsolutePath(), fileType);
-							getLogger().info("Published file: " + path.getAbsolutePath() + ", expecting " + fileToTrackList.size() + " further files.");
+							cc.getOutputConsole().println("Published file: " + path.getAbsolutePath() + ", expecting " + fileToTrackList.size() + " further files.");
 							
 						}else{
 							String msg = "Received unexpected file: " + path.getAbsolutePath() + ", waiting on " + fileToTrackList.size() + " files. Paths expected but not yet received: ";
 							for (Iterator<File> iterator = fileToTrackList.keySet().iterator(); iterator.hasNext();) {
 								msg += "\t" + iterator.next().getAbsolutePath() + "\n";
 							}
-							getLogger().warning(msg);
+							cc.getOutputConsole().println(msg);
 						}
 						if (fileToTrackList.isEmpty()){
 							//we have all the files expected so reset
@@ -175,13 +193,10 @@ public class OmenOutputPublisher extends NemaComponent {
 					}
 				}
 				
-			}else{
-				getLogger().info("Process Artifact input is not available yet.");
 			}
 			
-			
 		}else{
-			getLogger().info("Waiting on config parameters before receiving process artifacts.");
+			cc.getOutputConsole().println("Waiting on config parameters before receiving process artifacts.");
 		}
 		
 		
