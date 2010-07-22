@@ -341,4 +341,25 @@ public abstract class ResultRendererImpl implements ResultRenderer {
 	    
         return new Page("intro", "Introduction", items, false);
     }
+	
+	/**
+	 * Plots bar chart of an overall metric for all jobs.
+	 * 
+	 * @param jobId    the jobId we wish to plot results for.
+	 * @param results  The results Object containing the data to plot.
+	 * @return         a PageItem that will produce the plot.
+	 */
+	protected static PageItem plotOverallMetricBarChart(String metric,
+			NemaEvaluationResultSet results, String name, String caption) {
+
+		List<String> seriesNames = new ArrayList<String>();
+		List<Double> seriesVals = new ArrayList<Double>();
+		
+		for(String jobId:results.getJobIds()){
+			seriesNames.add(results.getJobName(jobId));
+			seriesVals.add(results.getJobIdToOverallEvaluation().get(jobId).getDoubleMetadata(metric));
+		}
+		
+		return new ProtovisBarChartPlotItem(name, caption, seriesNames, seriesVals);
+	}
 }
