@@ -88,6 +88,11 @@ public class TempoResultRenderer extends ResultRendererImpl {
 					results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), results.getOverallEvalMetricsKeys());
 			items.add(new TableItem("summary_results", "Summary Results",
 					summaryTable.getColHeaders(), summaryTable.getRows()));
+			
+			items.add(plotOverallMetricBarChart(NemaDataConstants.TEMPO_EXTRACTION_P_SCORE, results, NemaDataConstants.TEMPO_EXTRACTION_P_SCORE, NemaDataConstants.TEMPO_EXTRACTION_P_SCORE));
+			items.add(plotOverallMetricBarChart(NemaDataConstants.TEMPO_EXTRACTION_ONE_CORRECT, results, NemaDataConstants.TEMPO_EXTRACTION_ONE_CORRECT, NemaDataConstants.TEMPO_EXTRACTION_ONE_CORRECT));
+			items.add(plotOverallMetricBarChart(NemaDataConstants.TEMPO_EXTRACTION_TWO_CORRECT, results, NemaDataConstants.TEMPO_EXTRACTION_TWO_CORRECT, NemaDataConstants.TEMPO_EXTRACTION_TWO_CORRECT));
+			
 			aPage = new Page("summary", "Summary", items, false);
 			resultPages.add(aPage);
 		}
