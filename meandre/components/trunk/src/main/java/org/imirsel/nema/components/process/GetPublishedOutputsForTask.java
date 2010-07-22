@@ -67,6 +67,8 @@ public class GetPublishedOutputsForTask extends NemaComponent {
 		Map<String,String> jobIdToJobName = null;
 		try{
 			client = RepositoryClientConnectionPool.getInstance().getFromPool();
+			ccp.getOutputConsole().println("Retrieving published outputs for task: " + task.getId());
+			
 			List<NemaPublishedResult> resultList = client.getPublishedResultsForTask(task.getId());
 			
 			Map<String,Map<Integer,List<File>>> subCodeTotrackListIdToFiles = new HashMap<String,Map<Integer,List<File>>>();

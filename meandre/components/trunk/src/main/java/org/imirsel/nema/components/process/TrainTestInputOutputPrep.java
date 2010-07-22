@@ -113,18 +113,18 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		Map<NemaTrackList,List<NemaData>> testDataToProcess = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TESTING_DATA);
 		Map<NemaTrackList,List<File>> resourceDataToProcess = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_INPUT_RESOURCE_DIR);
 
-		getLogger().fine("Getting command formatting string...");
+		cc.getOutputConsole().println("Getting command formatting string...");
 		CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
 		String commandlineFormat = cTemplate.getCommandLineFormatter();
-		getLogger().fine("Parsing command formatting string: " + commandlineFormat);
+		cc.getOutputConsole().println("Parsing command formatting string: " + commandlineFormat);
 		if (commandlineFormat.contains("\n")){
 			commandlineFormat = commandlineFormat.replaceAll("\n", " ");
-			getLogger().warning("Comamnd format string contained new line characters. These were replaced with spaces");
+			cc.getOutputConsole().println("Comamnd format string contained new line characters. These were replaced with spaces");
 		}
 		
 		//parse and extract I/O classes and parameters
 		CommandLineFormatParser formatModel = new CommandLineFormatParser(commandlineFormat);
-		getLogger().fine("Format string parsed as: " + formatModel.toConfigString());
+		cc.getOutputConsole().println("Format string parsed as: " + formatModel.toConfigString());
 		
 		String args = "Number of command argument parts: " + formatModel.getArguments().size() + "\n"; 
 		int count = 0;
@@ -148,7 +148,7 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		
 		HashSet<NemaMetadataEntry> encodingConstraintTraining = new HashSet<NemaMetadataEntry>();
 		if(propertiesTraining != null) {
-			getLogger().fine("Processing audio encoding for training properties...");
+			cc.getOutputConsole().println("Processing audio encoding for training properties...");
 			
 			for (Iterator<String> iterator = propertiesTraining.keySet().iterator(); iterator.hasNext();) {
 				String key = iterator.next();
@@ -158,12 +158,12 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 				}
 			}
 		}else {
-			getLogger().fine("No audio encoding properties for testing to process...");
+			cc.getOutputConsole().println("No audio encoding properties for testing to process...");
 		}
 		
 		HashSet<NemaMetadataEntry> encodingConstraintTesting = new HashSet<NemaMetadataEntry>();
 		if(propertiesTest != null) {
-			getLogger().fine("Processing audio encoding for testing properties...");
+			cc.getOutputConsole().println("Processing audio encoding for testing properties...");
 			
 			for (Iterator<String> iterator = propertiesTest.keySet().iterator(); iterator.hasNext();) {
 				String key = iterator.next();
@@ -173,11 +173,11 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 				}
 			}
 		}else {
-			getLogger().info("No audio encoding properties for testing to process...");
+			cc.getOutputConsole().println("No audio encoding properties for testing to process...");
 		}
 		
 		
-		getLogger().fine("Resolving tracks to audio paths...");
+		cc.getOutputConsole().println("Resolving tracks to audio paths...");
 		
 		//resolve tracks using repository
 		RepositoryClientInterface client = null;
@@ -201,7 +201,7 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 			}
 		}
 		
-		getLogger().fine("Preparing process training input files...");
+		cc.getOutputConsole().println("Preparing process training input files...");
 		Map<NemaTrackList,List<File>> inputTrainingPaths = null;
 		try {
 			inputTrainingPaths = FileConversionUtil.prepareProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, trainDataToProcess, inputTypeTraining);
@@ -209,7 +209,7 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 			throw new ComponentExecutionException(e);
 		}
 		
-		getLogger().fine("Preparing process test input files...");
+		cc.getOutputConsole().println("Preparing process test input files...");
 		Map<NemaTrackList,List<File>> inputTestPaths = null;
 		try {
 			inputTestPaths = FileConversionUtil.prepareProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, testDataToProcess, inputTypeTest);
@@ -217,7 +217,7 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 			throw new ComponentExecutionException(e);
 		}
 		
-		getLogger().fine("Preparing resource directory...");
+		cc.getOutputConsole().println("Preparing resource directory...");
 		
 		//throw exception if more than one resource as we don't yet know what to do with that
 		File resource = null;
@@ -231,14 +231,14 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 			}
 			resource = resourceDataToProcess.get(0).get(0);
 		}else{
-			getLogger().fine("No resources found to use");
+			cc.getOutputConsole().println("No resources found to use");
 		}
 		
 		
 		
 		
 		
-		getLogger().info("Preparing process output file names...");
+		cc.getOutputConsole().println("Preparing process output file names...");
 		//prepare output file names
 		Class<? extends NemaFileType> outputType1 = formatModel.getOutputType(1);
 		Map<String,String> outputProperties1 = formatModel.getOutputProperties(1);
@@ -256,7 +256,7 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		
 		Map<NemaTrackList,List<File>> outputFiles = FileConversionUtil.createOutputFileNames(
 				testDataToProcess, inputTypeTest, outputTypeInstance, new File(getAbsoluteResultLocationForJob()));
-		getLogger().info("got process output files spanning " + outputFiles.size() + " sites");
+		cc.getOutputConsole().println("got process output files spanning " + outputFiles.size() + " sites");
 		
 		
 		

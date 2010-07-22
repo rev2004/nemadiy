@@ -99,19 +99,19 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 		pTemplate = (ProcessTemplate)cc.getDataComponentFromInput(DATA_INPUT_TEMPLATE);
 		Map<NemaTrackList,List<NemaData>> dataToProcess = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_DATA);
 
-		getLogger().info("Getting command formatting string...");
+		cc.getOutputConsole().println("Getting command formatting string...");
 		//get command formatting string and parse
 		CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
 		String commandlineFormat = cTemplate.getCommandLineFormatter();
 		getLogger().info("Parsing command formatting string: " + commandlineFormat);
 		if (commandlineFormat.contains("\n")){
 			commandlineFormat = commandlineFormat.replaceAll("\n", " ");
-			getLogger().warning("Comamnd format string contained new line characters. These were replaced with spaces");
+			cc.getOutputConsole().println("Command format string contained new line characters. These were replaced with spaces");
 		}
 		
 		//parse and extract I/O classes and parameters
 		CommandLineFormatParser formatModel = new CommandLineFormatParser(commandlineFormat);
-		getLogger().info("Format string parsed as: " + formatModel.toConfigString());
+		cc.getOutputConsole().println("Format string parsed as: " + formatModel.toConfigString());
 		
 		String args = "Number of command argument parts: " + formatModel.getArguments().size() + "\n"; 
 		int count = 0;
@@ -119,7 +119,7 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 			CommandArgument arg = iterator.next();
 			args += "\t" + count++ + ": " + arg.toConfigString() + "\n";  
 		}
-		getLogger().info(args);
+		cc.getOutputConsole().println(args);
 		
 		//Extract constraints from inputs
 		//only dealing with input 1 as this is a 1 input component
@@ -129,7 +129,7 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 		HashSet<NemaMetadataEntry> encodingConstraint = new HashSet<NemaMetadataEntry>();
 		String propsString = "";
 		if(properties1 != null) {
-			getLogger().info("Processing audio encoding properties...");
+			cc.getOutputConsole().println("Processing audio encoding properties...");
 			
 			for (Iterator<String> iterator = properties1.keySet().iterator(); iterator.hasNext();) {
 				String key = iterator.next();
@@ -143,10 +143,10 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 				}
 			}
 		}else {
-			getLogger().info("No audio encoding properties to process...");
+			cc.getOutputConsole().println("No audio encoding properties to process...");
 		}
 		
-		getLogger().info("Resolving tracks to audio paths...");
+		cc.getOutputConsole().println("Resolving tracks to audio paths...");
 		
 		//resolve tracks using repository
 		RepositoryClientInterface client = null;
@@ -163,7 +163,7 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 		
 		
 		
-		getLogger().info("Preparing process input files...");
+		cc.getOutputConsole().println("Preparing process input files...");
 		//retrieve list of audio files to process - other types not currently supported (as they have to written and marshalled over)
 		  //subdivided by site
 		Map<String,Map<NemaTrackList,List<String>>> siteToInputPaths = null;
@@ -172,11 +172,11 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 		} catch (Exception e) {
 			throw new ComponentExecutionException(e);
 		}
-		getLogger().info("got process input files spanning " + siteToInputPaths.size() + " sites");
+		cc.getOutputConsole().println("got process input files spanning " + siteToInputPaths.size() + " sites");
 		
 		
 		if(!inputType1.equals(RawAudioFile.class)) { // audio files are never distributed and don't go into JCR
-			getLogger().info("Saving locally created input files to JCR...");
+			cc.getOutputConsole().println("Saving locally created input files to JCR...");
 			//save to JCR and replace path with JCR URI.
 			for(Iterator<String> siteIt = siteToInputPaths.keySet().iterator(); siteIt.hasNext();){
 				String site = siteIt.next();
@@ -205,11 +205,11 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 						}
 					}
 				}
-				getLogger().info("Saved " + JcrForSite + " of " + totalForSite + " input files for site '" + site + "' to the JCR");
+				cc.getOutputConsole().println("Saved " + JcrForSite + " of " + totalForSite + " input files for site '" + site + "' to the JCR");
 			}
 		}
 		
-		getLogger().info("Preparing process output file names...");
+		cc.getOutputConsole().println("Preparing process output file names...");
 		//prepare per site output file names
 		Class<? extends NemaFileType> outputType1 = formatModel.getOutputType(1);
 		Map<String,String> outputProperties1 = formatModel.getOutputProperties(1);
@@ -227,7 +227,7 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 		
 		Map<String,Map<NemaTrackList,List<File>>> siteToOutputFiles = FileConversionUtil.createOMENOutputFileNames(
 				dataToProcess, inputType1, outputTypeInstance, ExecutorConstants.REMOTE_PATH_TOKEN);
-		getLogger().info("got process output files spanning " + siteToOutputFiles.size() + " sites");
+		cc.getOutputConsole().println("got process output files spanning " + siteToOutputFiles.size() + " sites");
 		
 		//merge into overall output files
 		Map<NemaTrackList,List<File>> overallOutputFiles = new HashMap<NemaTrackList, List<File>>();

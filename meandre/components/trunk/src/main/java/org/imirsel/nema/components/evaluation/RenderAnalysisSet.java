@@ -91,7 +91,7 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 		    renderer.renderAnalysis(analyses);
 			// output the raw results for reprocessing or storage in the repository
 			cc.pushDataComponentToOutput(DATA_OUTPUT_ANALYSIS_RESULTS, analyses);
-	        this.getLogger().info("Rendering Complete\n" +
+			cc.getOutputConsole().println("Rendering Complete\n" +
 	        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
 	    } catch (Exception e) {
 			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when rendering the results!",e);

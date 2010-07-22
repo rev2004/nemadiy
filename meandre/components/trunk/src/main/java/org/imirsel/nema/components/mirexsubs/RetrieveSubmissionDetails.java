@@ -58,10 +58,10 @@ public class RetrieveSubmissionDetails extends NemaComponent {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void execute(ComponentContext componentContext)
+	public void execute(ComponentContext cc)
 			throws ComponentExecutionException, ComponentContextException {
 		
-		Map<String,? extends Object> input = (Map<String,? extends Object>)componentContext.getDataComponentFromInput(DATA_INPUT_SUB_CODE_MAP);
+		Map<String,? extends Object> input = (Map<String,? extends Object>)cc.getDataComponentFromInput(DATA_INPUT_SUB_CODE_MAP);
 		List<String> subs = new ArrayList<String>(input.keySet());
 		Map<String,NemaSubmission> out = new HashMap<String, NemaSubmission>();
 		
@@ -71,6 +71,7 @@ public class RetrieveSubmissionDetails extends NemaComponent {
 			client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			for (Iterator<String> iterator = subs.iterator(); iterator.hasNext();) {
 				String subCode = iterator.next();
+				cc.getOutputConsole().println("Retrieving submission details for: " + subCode);
 				NemaSubmission sub = client.getSubmissionDetails(subCode);
 				out.put(subCode,sub);
 			}
@@ -82,8 +83,9 @@ public class RetrieveSubmissionDetails extends NemaComponent {
 				RepositoryClientConnectionPool.getInstance().returnToPool(client);
 			}
 		}
-		
-		componentContext.pushDataComponentToOutput(DATA_OUT_SUB_DATA_MAP, out);
+
+		cc.getOutputConsole().println("Done retrieving submission details");
+		cc.pushDataComponentToOutput(DATA_OUT_SUB_DATA_MAP, out);
 	}
 
 }
