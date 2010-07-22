@@ -63,7 +63,7 @@ public class TaskSelector extends NemaComponent {
 		super.initialize(ccp);
 		taskID = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_TASK_ID));
 
-		getLogger().info("Task ID " + taskID + " is selected.");
+		ccp.getOutputConsole().println("Task ID " + taskID + " is selected.");
 	}
 
 	@Override

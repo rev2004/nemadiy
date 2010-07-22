@@ -147,7 +147,7 @@ import org.imirsel.nema.model.NemaTrackList;
 			// output the raw results dir for reprocessing or storage in the repository
 			cc.pushDataComponentToOutput(DATA_OUTPUT_ANALYSIS_RESULTS, analysisOutput);
 			
-	        this.getLogger().info("Packaging Complete");
+			cc.getOutputConsole().println("Packaging Complete");
 			
 	    } catch (Exception e) {
 			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when performing the packaging!",e);

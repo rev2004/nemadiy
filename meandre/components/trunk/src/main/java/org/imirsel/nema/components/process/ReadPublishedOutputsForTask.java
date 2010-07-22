@@ -80,6 +80,9 @@ public class ReadPublishedOutputsForTask extends NemaComponent {
 		Map<String,Class<NemaFileType>> typeNameToClassCache = null;
 		try{
 			client = RepositoryClientConnectionPool.getInstance().getFromPool();
+			
+			ccp.getOutputConsole().println("Retrieving published outputs for task: " + task.getId());
+			
 			List<NemaPublishedResult> resultList = client.getPublishedResultsForTask(task.getId());
 			
 			Map<String,Map<Integer,List<File>>> subCodeTotrackListIdToFiles = new HashMap<String,Map<Integer,List<File>>>();
@@ -133,7 +136,7 @@ public class ReadPublishedOutputsForTask extends NemaComponent {
 						throw new ComponentExecutionException("Failed to retreive NemaTrackList id: " + trackListId);
 					}
 					if(!testSets.containsKey(trackList)){
-						getLogger().info("Ignoring data for set " + trackListId + " from job " + jobId + " as it was not in the list of test sets.");
+						ccp.getOutputConsole().println("Ignoring data for set " + trackListId + " from job " + jobId + " as it was not in the list of test sets.");
 						continue;
 					}
 					List<File> filesToRead = trackListIdToFiles.get(trackListId);

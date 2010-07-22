@@ -112,13 +112,13 @@ public class OmenOutputReader extends NemaComponent {
 					File path = new File(it.next().getResourcePath());
 					
 					if(toReceive.remove(path)){
-						getLogger().info("Received file: " + path.getAbsolutePath() + ", waiting on " + toReceive.size() + " files.");
+						cc.getOutputConsole().println("Received file: " + path.getAbsolutePath() + ", waiting on " + toReceive.size() + " files.");
 					}else{
 						String msg = "Received unexpected file: " + path.getAbsolutePath() + ", waiting on " + toReceive.size() + " files. Paths expected but not yet received: ";
 						for (Iterator<File> iterator = toReceive.iterator(); iterator.hasNext();) {
 							msg += "\t" + iterator.next().getAbsolutePath() + "\n";
 						}
-						getLogger().warning(msg);
+						cc.getOutputConsole().println(msg);
 					}
 					if (toReceive.isEmpty()){
 						//we have all the files expected read and output

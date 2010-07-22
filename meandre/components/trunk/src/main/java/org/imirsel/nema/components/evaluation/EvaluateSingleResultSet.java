@@ -132,7 +132,7 @@ import org.imirsel.nema.model.NemaTrackList;
 			    }
 		    	Collections.sort(testSetList,trackListComp);   
 		    }
-		    this.getLogger().info("Initializing evaluation toolset for metadata type: " + task.getSubjectTrackMetadataName());
+		    cc.getOutputConsole().println("Initializing evaluation toolset for metadata type: " + task.getSubjectTrackMetadataName());
 	        Evaluator eval = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, trainSetList, testSetList);
 	        eval.addLogDestination(getLogDestination());
 	        
@@ -158,7 +158,7 @@ import org.imirsel.nema.model.NemaTrackList;
 			// output the raw results dir for reprocessing or storage in the repository
 			cc.pushDataComponentToOutput(DATA_OUTPUT_EVAL_RESULTS, evalOutput);
 			
-	        this.getLogger().info("Evaluation Complete");
+			cc.getOutputConsole().println("Evaluation Complete");
 			
 	    } catch (Exception e) {
 			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when performing the evaluation!",e);
