@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import org.imirsel.nema.repositoryservice.*;
 import org.imirsel.nema.model.*;
 import org.imirsel.nema.model.fileTypes.NemaFileType;
+import org.imirsel.nema.repository.RepositoryProperties;
 
 /**
  * 
@@ -135,6 +136,14 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String DELETE_PUBLISHED_RESULT_FOR_SET_AND_SUB_CODE = "DELETE FROM published_task_results WHERE set_id=? AND submission_code=?";
     private PreparedStatement deletePublishedResultForSetAndSubmission;
     
+    
+    // MIREX submissions database
+    public static final String GET_SUBMISSION_NAME_FOR_SUBMISSION_CODE = "SELECT mirexsubs.mirex_Submissions.sub_Name FROM mirexsubs.mirex_Submissions WHERE mirex_Submissions.sub_Hashcode='CRVRC3'";
+    public static final String GET_SUBMISSION_CONTRIBUTORS_FOR_SUBMISSION_CODE = "SELECT mirexsubs.mirex_Profiles.*,mirexsubs.mirex_Submission_Contributors.sub_Rank FROM mirexsubs.mirex_Submissions, mirexsubs.mirex_Submission_Contributors, mirexsubs.mirex_Profiles WHERE mirex_Submissions.sub_Hashcode='?' AND mirex_Submissions.sub_ID=mirex_Submission_Contributors.sub_ID AND mirex_Submission_Contributors.sub_ContributorID=mirex_Profiles.profile_ID ORDER BY mirex_Submission_Contributors.sub_Rank";
+    //public static final String GET_SUBMISSION_PDF_FOR_SUBMISSION_CODE = "";
+    
+    
+    
     //cached types maps
     public static final String GET_TRACK_METADATA_TYPES = "SELECT * FROM track_metadata_definitions";
     public static final String GET_FILE_METADATA_TYPES = "SELECT * FROM file_metadata_definitions";
@@ -162,7 +171,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
      * @throws SQLException
      */
     public RepositoryClientImpl() throws SQLException{
-        //setup DB connection
+        //setup DB connection 
         dbCon = new DatabaseConnector(
                 RepositoryProperties.getProperty(RepositoryProperties.DB_NAME),
                 RepositoryProperties.getProperty(RepositoryProperties.DB_LOCATOR),
@@ -410,7 +419,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public NemaTrackList getTrackList(int setId) throws SQLException{
         List<Map<String, String>> results = executeStatement(getTrackList, setId);
         if(results.size() > 0){
-            return buildNEMATrackList(results.get(0));
+        	NemaTrackList out = buildNEMATrackList(results.get(0));
+        	List<NemaTrack> tracks = getTracks(out);
+        	out.setTracks(tracks);
+            return out;
         }else{
             return null;
         }
@@ -428,6 +440,10 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         List<NemaTrackList> aSetList;
         for (Iterator<NemaTrackList> it = setList.iterator(); it.hasNext();){
             NemaTrackList nemaSet = it.next();
+            //resolve its tracks
+            List<NemaTrack> tracks = getTracks(nemaSet);
+            nemaSet.setTracks(tracks);
+            
             aSetList = sortMap.get(nemaSet.getFoldNumber());
             if (aSetList == null){
                 aSetList = new ArrayList<NemaTrackList>();
@@ -1030,6 +1046,28 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         }
         return retVal;
     }
+    
+    private NemaContributor buildNEMAContributor(Map<String, String> map){
+        return new NemaContributor(
+        		map.get("profile_Title"),
+        		map.get("profile_Fname"),
+        		map.get("profile_Lname"),
+        		map.get("profile_URL"),
+        		map.get("profile_Organization"),
+        		map.get("profile_Department"),
+				map.get("profile_Unit")
+        		);
+    }
+    private List<NemaContributor> buildNEMAContributor(List<Map<String, String>> maps){
+        List<NemaContributor> retVal = null;
+        if(maps != null) {
+            retVal = new ArrayList<NemaContributor>(maps.size());
+            for(Map<String, String> data : maps) {
+                retVal.add(buildNEMAContributor(data));
+            }
+        }
+        return retVal;
+    }
 
 
     private NemaMetadataEntry buildNEMAMetadataEntry(Map<String, String> map, Map<Integer,String> typesMap){
@@ -1218,6 +1256,29 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 		}
 	}
 
+	public String getSubmissionNameForSubmissionCode(String subCode) throws SQLException {
+		PreparedStatement getName = dbCon.con.prepareStatement(GET_SUBMISSION_NAME_FOR_SUBMISSION_CODE);
+		getName.setString(1,subCode);
+		ResultSet rs = getName.executeQuery();
+		if(rs.next()){
+			return rs.getString(1);
+		}
+		return null;
+	}
 
-
+	public List<NemaContributor> getSubmissionContributorsForSubmissionCode(String subCode) throws SQLException {
+		PreparedStatement getContrib = dbCon.con.prepareStatement(GET_SUBMISSION_CONTRIBUTORS_FOR_SUBMISSION_CODE);
+		getContrib.setString(1,subCode);
+		List<Map<String,String>> data = executePreparedStatement(getContrib);
+		return buildNEMAContributor(data);
+	}
+	
+	public NemaSubmission getSubmissionDetails(String subCode) throws SQLException {
+		String subName = getSubmissionNameForSubmissionCode(subCode);
+		List<NemaContributor> contributors = getSubmissionContributorsForSubmissionCode(subCode);
+		String abstractUrl = "http://www.music-ir.org/mirex/abstracts/2010/" + subCode + ".pdf";
+		return new NemaSubmission(subCode, subName, contributors, abstractUrl);
+				
+	}
+	
 }
