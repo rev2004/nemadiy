@@ -68,7 +68,7 @@ public class OmenOutputPublisher extends NemaComponent {
 	public void initialize(ComponentContextProperties ccp)
 	throws ComponentExecutionException, ComponentContextException {
 		super.initialize(ccp);
-		cc.getOutputConsole().println("Initialized " + this.getClass().getName());
+		ccp.getOutputConsole().println("Initialized " + this.getClass().getName());
 		inputBuffer = new LinkedList<List<ProcessArtifact>>();
 	}
 
