@@ -32,12 +32,14 @@ function updateServerStatus(){
 						
 					var workersJsonStore = new dojo.data.ItemFileReadStore({ data:serverStoreData });
 					var workerGrid=dijit.byId("workerGrid");
+					//dojo.byId("workerGrid").style.height=(50+30*data.workers.length)+"px";
 					workerGrid.setStore(workersJsonStore);
 					workerGrid.update();
 
 
 
 					jobGridContainer=dojo.byId('jobGridNode');
+					//jobGridContainer.style.height=(50+30*data.scheduledJobs.length)+"px";
 					if (data.scheduledJobs.length==0){
 						dojo.style('noJobInQueue','display',"" );
 						dojo.style('jobGridNode','display',"none" );
@@ -114,9 +116,9 @@ dojo.addOnLoad(startGrids);
  <label class="label">Head Server</label>: ${head.host}:${head.port}
 <p></p>
 
-<div id="serverGridNode" style="height:150px;width:45em;text-align:center;" class="mycenter">
+<div id="serverGridNode" style="width:45em;text-align:center;" class="mycenter">
 <label class="label center">Computation Nodes</label><p></p>
- <table dojoType="dojox.grid.DataGrid"  id="workerGrid" style="width: 100%;height:70%;  border-style:groove;" >
+ <table dojoType="dojox.grid.DataGrid"  autoHeight="8" id="workerGrid" style="width: 100%; border-style:groove;" >
             <thead>
                 <tr>
                     <th width="10em" field="host">
@@ -135,9 +137,9 @@ dojo.addOnLoad(startGrids);
             </thead>
         </table>
  </div>
-<div style="height:100px;"><p>        </p>
+<div style="height:auto;"><p>        </p>
  <div id="noJobInQueue" style="width:70%;right-margin:auto;left-margin:auto;">No Jobs are in Queue.</div>
-<div id="jobGridNode" style="height:100px;width:45em;text-align:center;" class="mycenter">
+<div id="jobGridNode" style="width:45em;text-align:center;" class="mycenter">
 
 	<label class="label ">Jobs in Queue</label>
 	<p>   </p>
