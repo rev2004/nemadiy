@@ -248,6 +248,7 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				String formattedArgs = formatModel.toFormattedString();
 				pep.setCommandLineFlags(formattedArgs);
 			
+			
 				cc.getOutputConsole().println("Executing process... " + (i+1) + " of " + inputs1ForFold.size() + " for fold " + foldCount + " of " + inputPaths.size());
 				NemaProcess nemaProcess=null;
 				try {
@@ -296,6 +297,9 @@ public class OmenRemoteExecutor extends RemoteExecutorBase {
 				
 				// cleanup the process
 				this.cleanProcess(nemaProcess);
+				if(cc.isFlowAborting()){
+					throw new ComponentExecutionException("Flow is aborting");
+				}
 				
 			}	
 		}
