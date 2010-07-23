@@ -64,44 +64,35 @@ public class GetPublishedOutput extends NemaComponent {
 		
 		Map<NemaTrackList,? extends Object> trackListMap = (Map<NemaTrackList,? extends Object>)ccp.getDataComponentFromInput(DATA_INPUT_NEMATRACKLISTMAP);
 		
-		ccp.getOutputConsole().println("Got " + trackListMap.size() + " track lists to retrieve published output for...");
 		
 		String submissionCode = (String)ccp.getDataComponentFromInput(DATA_INPUT_SUBMISSION_CODE);
+		
+		ccp.getOutputConsole().println("Got " + trackListMap.size() + " track lists to retrieve published output for submission code '" + submissionCode + "'" );
 		
 		RepositoryClientInterface client = null;
 		Map<NemaTrackList,List<File>> output = null;
 		try{
 			client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			
-			Map<Integer,List<File>> trackListIdToFiles = new HashMap<Integer,List<File>>();
-			
+//			Map<Integer,List<File>> trackListIdToFiles = new HashMap<Integer,List<File>>();
+			output = new HashMap<NemaTrackList,List<File>>(trackListMap.size());
 			
 			for(NemaTrackList list:trackListMap.keySet()){
 				ccp.getOutputConsole().println("Retrieving published outputs for set id: " + list.getId());
 				List<NemaPublishedResult> resultList = client.getPublishedResultsForTrackList(list.getId());
+				ccp.getOutputConsole().println("...got " + resultList.size() + " paths for set id: " + list.getId());
+				
+				List<File> files = new ArrayList<File>();
+				output.put(list, files);
+				
 				for (NemaPublishedResult thisResult:resultList ){	
-					int setId = thisResult.getSetId();
 					if(thisResult.getSubmissionCode().equals(submissionCode)){
 						String path = thisResult.getResult_path();
-						List<File> files = trackListIdToFiles.get(setId);
-						if (files == null){
-							files = new ArrayList<File>();
-							trackListIdToFiles.put(setId, files);
-						}
 						files.add(new File(path));
 					}
 				}	
 				
-			}
-			
-			output = new HashMap<NemaTrackList,List<File>>(trackListIdToFiles.size());
-			for (Iterator<Integer> iterator = trackListIdToFiles.keySet().iterator(); iterator.hasNext();) {
-				int trackListId = iterator.next();
-				NemaTrackList trackList = client.getTrackList(trackListId);
-				if(trackList == null){
-					throw new ComponentExecutionException("Failed to retreive NemaTrackList id: " + trackListId);
-				}
-				output.put(trackList,trackListIdToFiles.get(trackList));
+				ccp.getOutputConsole().println("...filtered to " + files.size() + " paths for submission code '" + submissionCode + "'");	
 			}
 			
 		} catch (SQLException e) {
