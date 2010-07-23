@@ -58,7 +58,14 @@ public class GetPublishedOutput extends NemaComponent {
 	@Override
 	public void execute(ComponentContext ccp)
 	throws ComponentExecutionException, ComponentContextException {
+		
+
+		ccp.getOutputConsole().println("Executing GetPublishedOutput...");
+		
 		Map<NemaTrackList,? extends Object> trackListMap = (Map<NemaTrackList,? extends Object>)ccp.getDataComponentFromInput(DATA_INPUT_NEMATRACKLISTMAP);
+		
+		ccp.getOutputConsole().println("Got " + trackListMap.size() + " track lists to retrieve published output for...");
+		
 		String submissionCode = (String)ccp.getDataComponentFromInput(DATA_INPUT_SUBMISSION_CODE);
 		
 		RepositoryClientInterface client = null;
@@ -107,6 +114,7 @@ public class GetPublishedOutput extends NemaComponent {
 		}
 
 		ccp.pushDataComponentToOutput(DATA_OUT_OUTPUT_FILES_MAP, output);
+		ccp.getOutputConsole().println("done executing GetPublishedOutput...");
 	}
 	
 	
