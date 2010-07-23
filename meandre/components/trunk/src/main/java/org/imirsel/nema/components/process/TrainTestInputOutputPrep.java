@@ -275,11 +275,11 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		
 		cc.pushDataComponentToOutput(DATA_OUT_OUTPUT_TYPE, outputType1);
 		
-		cc.pushDataComponentToOutput(DATA_INPUT_TRAINING_DATA, inputTrainingPaths);
+		cc.pushDataComponentToOutput(DATA_OUT_TRAINING_INPUT_FILES_MAP, inputTrainingPaths);
 		
-		cc.pushDataComponentToOutput(DATA_INPUT_TESTING_DATA, inputTestPaths);
+		cc.pushDataComponentToOutput(DATA_OUT_TESTING_INPUT_FILES_MAP, inputTestPaths);
 		
-		cc.pushDataComponentToOutput(DATA_INPUT_RESOURCE_DIR, resource);
+		cc.pushDataComponentToOutput(DATA_OUT_RESOURCE_DIR, resource);
 		
 		cc.pushDataComponentToOutput(DATA_OUT_OUTPUT_FILES_MAP, outputFiles);
 		
