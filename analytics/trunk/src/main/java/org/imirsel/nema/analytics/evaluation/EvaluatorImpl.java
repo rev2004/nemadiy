@@ -305,8 +305,8 @@ public abstract class EvaluatorImpl implements Evaluator {
 		addResults(submissionDetails.getSubmissionCode(),jobID,fold,results);
 		if(jobIDToSubmissionDetails == null){
 			jobIDToSubmissionDetails = new HashMap<String, NemaSubmission>();
-			jobIDToSubmissionDetails.put(jobID, submissionDetails);
 		}
+		jobIDToSubmissionDetails.put(jobID, submissionDetails);
 	}
 	
 
