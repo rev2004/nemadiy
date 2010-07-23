@@ -71,8 +71,11 @@ public class RetrieveSubmissionDetails extends NemaComponent {
 			client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			for (Iterator<String> iterator = subs.iterator(); iterator.hasNext();) {
 				String subCode = iterator.next();
-				cc.getOutputConsole().println("Retrieving submission details for: " + subCode);
+				cc.getOutputConsole().println("Retrieving submission details for '" + subCode + "'");
 				NemaSubmission sub = client.getSubmissionDetails(subCode);
+				if (sub == null){
+					cc.getOutputConsole().println("\n\nERROR: Failed to retrieve submission details for '" + subCode + "'"); 
+				}
 				out.put(subCode,sub);
 			}
 		}catch(SQLException e){
