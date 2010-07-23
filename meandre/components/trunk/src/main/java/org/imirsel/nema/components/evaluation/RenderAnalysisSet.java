@@ -32,7 +32,7 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
  * @author kris.west@gmail.com
  */
 @Component(creator="Kris West", description="Converts analysis sets into analysis reports, including the performance of any required plotting operations.", 
-		name="RenderResultSet",
+		name="RenderAnalysisSet",
 		tags="evaluation comparison reporting")
 	public class RenderAnalysisSet extends NemaComponent {
 
