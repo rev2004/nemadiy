@@ -107,19 +107,22 @@ for i=1:length(beats),
     else
         
         if or(i==1,b==1), % either first beat or first annotation, look forward on both
-
-            if (and((abs(a/(anns(b+1)-anns(b)))<p), ...
-                    (abs(1-((beats(i+1)-beats(i))/(anns(b+1)-anns(b))))<t)));
-                checkanns(b) = 1;
-                cond = 1;
+            if ( ( (b+1) <= length(anns) ) && ( (i+1) <= length(beats) ) )
+                if (and((abs(a/(anns(b+1)-anns(b)))<p), ...
+                        (abs(1-((beats(i+1)-beats(i))/(anns(b+1)-anns(b))))<t)));
+                    checkanns(b) = 1;
+                    cond = 1;
+                end
             end
 
         else % not first beat or first annotation, so can look backwards
-
-            if (and((abs(a/(anns(b)-anns(b-1)))<p), ...
-                    (abs(1-((beats(i)-beats(i-1))/(anns(b)-anns(b-1))))<t)));
-                checkanns(b) = 1;
-                cond = 1;
+            
+            if ( ( (b-1) >= 1 ) && ( (i-1) >= 1 ) )
+                if (and((abs(a/(anns(b)-anns(b-1)))<p), ...
+                        (abs(1-((beats(i)-beats(i-1))/(anns(b)-anns(b-1))))<t)));
+                    checkanns(b) = 1;
+                    cond = 1;
+                end
             end
 
         end
