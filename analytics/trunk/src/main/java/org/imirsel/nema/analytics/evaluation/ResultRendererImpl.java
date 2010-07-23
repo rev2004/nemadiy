@@ -314,6 +314,8 @@ public abstract class ResultRendererImpl implements ResultRenderer {
     	    colNames[2] = "Abstract PDF";
     	    colNames[3] = "Contributors";
     	
+    	    System.out.println("\n\nCreating legend table\n\n");
+    	    
         	List<String> jobIDs = new ArrayList<String>(results.getJobIds());
     	    Collections.sort(jobIDs);
     	    for(String job:jobIDs){
@@ -324,7 +326,7 @@ public abstract class ResultRendererImpl implements ResultRenderer {
     	    		String contrib = "";
     	    		for(Iterator<NemaContributor> personIt = sub.getContributors().iterator(); personIt.hasNext();){
     	    			NemaContributor person = personIt.next();
-    	    			contrib += "<a href=\"" + person.getAffiliationUrl() + "\">" + 
+    	    			contrib += "<a href=\\\"" + person.getAffiliationUrl() + "\\\">" + 
     	    			person.getFirstName() + " " + person.getLastName() + "</a>";
     	    			if(personIt.hasNext()){
     	    				contrib += ", ";
