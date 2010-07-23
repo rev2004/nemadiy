@@ -179,12 +179,12 @@ public class NemaDataConstants {
     public static final String KEY_DETECTION_PERFECT_FIFTH_ERROR = "Perfect Fifth Error(s)";
     public static final String KEY_DETECTION_RELATIVE_ERROR = "Relative Major/Minor Error(s)";
     public static final String KEY_DETECTION_PARALLEL_ERROR = "Parallel Major/Minor Error(s)";
-    public static final String KEY_DETECTION_ERROR = "Pure Non-disconounted Error(s)";
+    public static final String KEY_DETECTION_ERROR = "Pure Non-discounted Error(s)";
     
     // Tempo Extraction Evaluator Constants
     public static final String TEMPO_EXTRACTION_DATA = "Two predominant tempi, and the salience of the first reported tempo";
     public static final String TEMPO_EXTRACTION_P_SCORE ="Tempo P-Score";
-    public static final String TEMPO_EXTRACTION_ONE_CORRECT = "Atleast One Tempo Correct";
+    public static final String TEMPO_EXTRACTION_ONE_CORRECT = "At least One Tempo Correct";
     public static final String TEMPO_EXTRACTION_TWO_CORRECT = "Both Tempi Correct";    
     
     // Chord Estimation Evaluator Constants
