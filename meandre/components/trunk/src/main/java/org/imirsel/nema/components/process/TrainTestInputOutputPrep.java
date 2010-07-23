@@ -237,10 +237,10 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 			if (resourceDataToProcess.size() > 1)
 			{
 				throw new ComponentExecutionException("Received resources for more than one trackList to copy, this is not curently supported");
-			}else if(resourceDataToProcess.get(0).size() > 1){
+			}else if(resourceDataToProcess.values().iterator().next().size() > 1){
 				throw new ComponentExecutionException("Received more than one resource to copy, this is not curently supported");
 			}
-			resource = resourceDataToProcess.get(0).get(0);
+			resource = resourceDataToProcess.values().iterator().next().get(0);
 		}else{
 			cc.getOutputConsole().println("No resources found to use");
 		}
