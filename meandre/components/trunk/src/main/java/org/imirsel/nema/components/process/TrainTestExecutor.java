@@ -322,7 +322,9 @@ public class TrainTestExecutor extends RemoteExecutorBase {
 				
 				// cleanup the process
 				this.cleanProcess(nemaProcess);
-				
+				if(cc.isFlowAborting()){
+					throw new ComponentExecutionException("Flow is aborting");
+				}
 			}	
 		}
 	}

@@ -139,8 +139,8 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		Class<? extends NemaFileType> inputTypeTraining = formatModel.getInputType(1);
 		Map<String,String> propertiesTraining = formatModel.getInputProperties(1);
 		
-		Class<? extends NemaFileType> inputTypeTest = formatModel.getInputType(1);
-		Map<String,String> propertiesTest = formatModel.getInputProperties(1);
+		Class<? extends NemaFileType> inputTypeTest = formatModel.getInputType(2);
+		Map<String,String> propertiesTest = formatModel.getInputProperties(2);
 		
 		//don't care about type of resources, just copy 'em over and pass on the path
 //		Class<? extends NemaFileType> inputTypeResources = formatModel.getInputType(1);
