@@ -104,7 +104,7 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		NemaTask task = null;
 		ProcessTemplate pTemplate = null;
 		
-		getLogger().fine("Getting inputs...");
+		cc.getOutputConsole().println("Executing TrainTestInputOutputPrep...");
 		
 		//get inputs
 		task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
@@ -113,6 +113,17 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		Map<NemaTrackList,List<NemaData>> testDataToProcess = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TESTING_DATA);
 		Map<NemaTrackList,List<File>> resourceDataToProcess = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_INPUT_RESOURCE_DIR);
 
+		cc.getOutputConsole().println("TrainTestInputOutputPrep received:\n" +
+				"\t" + trainDataToProcess.size() + " training sets\n" +
+				"\t" + testDataToProcess.size() + " testing sets\n" + 
+				"\t" + resourceDataToProcess.size() + " resource file sets.");
+		
+		String rsc = "Resource file sets contain:\n";
+		for(NemaTrackList list:resourceDataToProcess.keySet()){
+			rsc += "\tid: " + list.getId() + "\t" + resourceDataToProcess.get(list).size() + " paths\n";
+		}
+		cc.getOutputConsole().println(rsc);
+		
 		cc.getOutputConsole().println("Getting command formatting string...");
 		CommandLineTemplate cTemplate = pTemplate.getCommandLineTemplate();
 		String commandlineFormat = cTemplate.getCommandLineFormatter();
