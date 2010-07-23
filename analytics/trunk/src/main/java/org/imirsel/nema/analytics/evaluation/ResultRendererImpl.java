@@ -333,7 +333,7 @@ public abstract class ResultRendererImpl implements ResultRenderer {
     	    			}
     	    		}
     	    		
-    	    		rows.add(new String[]{job,sub.getSubmissionName(),"<a href=\"" + sub.getAbstractUrl() + "\">PDF</a>",contrib});
+    	    		rows.add(new String[]{job,sub.getSubmissionName(),"<a href=\\\"" + sub.getAbstractUrl() + "\\\">PDF</a>",contrib});
     	    	}
     	    }
     	    
