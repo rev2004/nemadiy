@@ -73,7 +73,7 @@ public class TableItem extends PageItem{
                 if(c > 0){
                     out += ", ";
                 }
-                out += "\"" + colNames[c] + "\":\"" + rowVals[c] + "\"";
+                out += "\"" + colNames[c] + "\":\"" + rowVals[c].replaceAll("\"", "\\\"") + "\"";
             }
             out += " }";
             if (it.hasNext()){

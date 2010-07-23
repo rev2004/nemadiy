@@ -302,7 +302,7 @@ public abstract class EvaluatorImpl implements Evaluator {
 	}
 	
 	public void addResults(NemaSubmission submissionDetails, String jobID, NemaTrackList fold, List<NemaData> results) throws IllegalArgumentException{
-		addResults(submissionDetails.getSubmissionName(),jobID,fold,results);
+		addResults(submissionDetails.getSubmissionCode(),jobID,fold,results);
 		if(jobIDToSubmissionDetails == null){
 			jobIDToSubmissionDetails = new HashMap<String, NemaSubmission>();
 			jobIDToSubmissionDetails.put(jobID, submissionDetails);
