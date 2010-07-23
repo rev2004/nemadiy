@@ -139,7 +139,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     
     // MIREX submissions database
     public static final String GET_SUBMISSION_NAME_FOR_SUBMISSION_CODE = "SELECT mirexsubs.mirex_Submissions.sub_Name FROM mirexsubs.mirex_Submissions WHERE mirex_Submissions.sub_Hashcode=?";
-    public static final String GET_SUBMISSION_CONTRIBUTORS_FOR_SUBMISSION_CODE = "SELECT mirexsubs.mirex_Profiles.*,mirexsubs.mirex_Submission_Contributors.sub_Rank FROM mirexsubs.mirex_Submissions, mirexsubs.mirex_Submission_Contributors, mirexsubs.mirex_Profiles WHERE mirex_Submissions.sub_Hashcode='?' AND mirex_Submissions.sub_ID=mirex_Submission_Contributors.sub_ID AND mirex_Submission_Contributors.sub_ContributorID=mirex_Profiles.profile_ID ORDER BY mirex_Submission_Contributors.sub_Rank";
+    public static final String GET_SUBMISSION_CONTRIBUTORS_FOR_SUBMISSION_CODE = "SELECT mirexsubs.mirex_Profiles.*,mirexsubs.mirex_Submission_Contributors.sub_Rank FROM mirexsubs.mirex_Submissions, mirexsubs.mirex_Submission_Contributors, mirexsubs.mirex_Profiles WHERE mirex_Submissions.sub_Hashcode=? AND mirex_Submissions.sub_ID=mirex_Submission_Contributors.sub_ID AND mirex_Submission_Contributors.sub_ContributorID=mirex_Profiles.profile_ID ORDER BY mirex_Submission_Contributors.sub_Rank";
     //public static final String GET_SUBMISSION_PDF_FOR_SUBMISSION_CODE = "";
     
     
