@@ -2,21 +2,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<meta name="heading" content="Mirex Submission"/>
-	<script type="text/javascript">
-		function switchToLong(index){
-			var longNote=dojo.byId("longNote"+index);
-			var shortNote=dojo.byId("shortNote"+index);
-			longNote.show();
-			shortNote.hide();
-		}
-		function switchToShort(index){
-			var longNote=dojo.byId("longNote"+index);
-			var shortNote=dojo.byId("shortNote"+index);
-			longNote.hide();
-			shortNote.show();
-		}
-
-	</script>
+	<script type="text/javascript" src="<c:url value='/scripts/switch.js'/>" ></script>
 </head>
 <body>
 	<form:form modelAttribute="submission" id="myform">
@@ -42,16 +28,15 @@
 			</div>
 		</fieldset>
 		<fieldset>
-			<label class="label">Status:</label>
-			<form:select path="status" items="${submissionStatusSet }"/>
+			<label class="label">Status:</label>${submission.status}
 		</fieldset>
 		<c:forEach items="${submission.notes}" var="note" varStatus="status">
-			
 				<fieldset>
 				<div id="shortNote${status.index}">
 					<div class="surround">by: ${note.author.username} 
 					 ${note.createTime }
-					 <img src="<c:url value='/images/plus.gif'/>" onclick="switchToLong(${status.index});"/>
+					 <img src="<c:url value='/images/plus.gif'/>" 
+					 	onclick="switch('shortNote${status.index}','longNote${status.index}');"/>
 					 </div>
 					<div style="border-style:1;"  class="fixHeightBox">
 						<c:out value="${render:shorten(note.content,30)}" escapeXml="true"/>
@@ -60,7 +45,8 @@
 				<div id="longNote${status.index}" style="display:none;">
 					<div class="surround">by: ${note.author.username} 
 					 ${note.createTime }
-					 <img src="<c:url value='/images/minus.gif'/>" onclick="switchToShort(${status.index});"/>
+					 <img src="<c:url value='/images/minus.gif'/>" 
+					 onclick="switch('longNote${status.index}','shortNote${status.index}')"/>
 					 </div>
 					<div style="border-style:1;" class="fixHeightBox">
 						<pre><c:out value="${note.content}" escapeXml="true" /></pre>
@@ -71,13 +57,7 @@
 			
 		</c:forEach>
 		<fieldset>
-		<div>
-		<select name="noteType" class="surround">
-			<c:forEach items="${noteTypes}" var="type">
-				<option value=${type}>${type}</option>
-			</c:forEach>		
-		</select>
-		</div>
+			<legend>Note:</legend>
 		<textarea name="mirexNote" style="width:80%;" rows="10"></textarea>
 		</fieldset>
 		<fieldset id="button">
