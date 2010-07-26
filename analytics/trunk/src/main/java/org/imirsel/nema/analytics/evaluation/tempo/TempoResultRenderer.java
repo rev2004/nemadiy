@@ -29,6 +29,10 @@ public class TempoResultRenderer extends ResultRendererImpl {
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
 
+		/* Write out leaderboard CSV file */
+		getLogger().info("Writing out leaderboard CSV...");
+		File leaderboardCSV = this.writeLeaderBoardCSVFile(NemaDataConstants.TEMPO_EXTRACTION_P_SCORE, results, false);
+		
 		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");
 		File summaryCsv = writeOverallResultsCSV(results);

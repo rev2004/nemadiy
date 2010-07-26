@@ -47,6 +47,9 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
 		String jobId;
 		
+		/* Write out leaderboard CSV file */
+		getLogger().info("Writing out leaderboard CSV...");
+		File leaderboardCSV = this.writeLeaderBoardCSVFile(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE, results, false);
 		
 		/* Write out summary CSV and per-class CSV */
 		getLogger().info("Writing out CSV result files over whole task...");

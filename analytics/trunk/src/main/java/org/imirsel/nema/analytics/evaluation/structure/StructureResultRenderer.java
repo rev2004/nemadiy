@@ -44,6 +44,10 @@ public class StructureResultRenderer extends ResultRendererImpl {
 	public void renderResults(NemaEvaluationResultSet results) throws IOException {
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
+		
+		/* Write out leaderboard CSV file */
+		getLogger().info("Writing out leaderboard CSV...");
+		File leaderboardCSV = this.writeLeaderBoardCSVFile(NemaDataConstants.STRUCTURE_SEGMENTATION_PWF, results, false);
 
 		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");

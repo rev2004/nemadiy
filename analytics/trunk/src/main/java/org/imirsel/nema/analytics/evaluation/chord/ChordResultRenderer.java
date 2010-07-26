@@ -54,6 +54,10 @@ public class ChordResultRenderer extends ResultRendererImpl {
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
 
+		/* Write out leaderboard CSV file */
+		getLogger().info("Writing out leaderboard CSV...");
+		File leaderboardCSV = this.writeLeaderBoardCSVFile(NemaDataConstants.CHORD_WEIGHTED_AVERAGE_OVERLAP_RATIO, results, false);
+		
 		/* Write out summary CSV */
 		getLogger().info("Writing out CSV result files over whole task...");
 		File overlapCsv = new File(outputDir.getAbsolutePath() + File.separator
