@@ -262,6 +262,75 @@ public class WriteCsvResultFiles {
     
     /**
      * Prepares a Table Object representing the specified evaluation metadata, 
+     * where the systems are the columns of the table and the rows are the 
+     * different tracks in the evaluation.
+     * 
+     * This version assumes that the metadata column is a double[] rather than
+     * a single double and that only a single column of the array is of interest.
+
+     * @param testSets  An ordered list of the test sets.
+	 * @param jobIDToFoldEval Map of job ID to a Map of test set to the 
+	 * evaluation results for that particular fold of the experiment, encoded
+	 * as a NemaData Object.
+	 * @param jobIDToName Map of job ID to job name.
+	 * @param metricKey The String key of the metric to write out.
+	 * @param arrayColumn The column of the metric array to write out.
+	 * @return The prepared Table.
+     */
+    public static Table prepTableDataOverFoldsAndSystems(
+    		List<NemaTrackList> testSets, 
+    		Map<String, Map<NemaTrackList,NemaData>> jobIDToFoldEval, 
+    		Map<String,String> jobIDToName, 
+    		String metricKey, int arrayColumn
+    	) {
+    	//sort systems alphabetically
+    	int numAlgos = jobIDToName.size();
+    	String[][] jobIDandName = new String[numAlgos][];
+    	int idx=0;
+    	String id;
+    	for(Iterator<String> it = jobIDToName.keySet().iterator();it.hasNext();){
+    		id = it.next();
+    		jobIDandName[idx++] = new String[]{id, jobIDToName.get(id)};
+    	}
+    	Arrays.sort(jobIDandName, new Comparator<String[]>(){
+    		public int compare(String[] a, String[] b){
+    			return a[1].compareTo(b[1]);
+    		}
+    	});
+    	
+    	//set column names
+    	int numCols = numAlgos + 1;
+        String[] colNames = new String[numCols];
+        colNames[0] = "Fold";
+        for (int i = 0; i < numAlgos; i++) {
+            colNames[i+1] = jobIDandName[i][1];
+        }
+
+        //count number of rows to produce
+        int numFolds = jobIDToFoldEval.get(jobIDandName[0][0]).size();
+        
+        
+        //produce rows (assume but check that results are ordered the same for each system)
+        List<String[]> rows = new ArrayList<String[]>();
+        int fold = 0;
+        String[] row;
+        NemaData data;
+        for(int f=0;f<numFolds;f++){
+        	NemaTrackList foldList = testSets.get(fold);
+            row = new String[numCols];
+        	row[0] = "" + fold;
+        	for(int i=0;i<numAlgos;i++){
+        		data = jobIDToFoldEval.get(jobIDandName[i][0]).get(foldList);
+        		row[i+1] = "" + DEC.format(data.getDoubleArrayMetadata(metricKey)[arrayColumn]);
+        	}
+        	rows.add(row);
+        }
+        
+        return new Table(colNames, rows);
+    }
+    
+    /**
+     * Prepares a Table Object representing the specified evaluation metadata, 
      * where the metrics are the columns of the table and the rows are the 
      * different tracks in the evaluation.
      * 
@@ -321,8 +390,9 @@ public class WriteCsvResultFiles {
     }
     
     /**
-     * Prepares a Table Object representing the specified evaluation metadata, where the metrics are the columns
-     * of the table and the rows are the different tracks in the evaluation.
+     * Prepares a Table Object representing the specified evaluation metadata, 
+     * where the metrics are the columns of the table and the rows are the 
+     * different folds in the evaluation.
      * 
      * @param testSets An ordered list of the test sets.
      * @param foldEval Map of test set to the evaluation results for that 
