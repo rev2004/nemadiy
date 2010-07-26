@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 
-import org.imirsel.nema.analytics.evaluation.Evaluator;
-import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
@@ -42,7 +40,7 @@ import org.imirsel.nema.model.NemaTrackList;
  * @author kris.west@gmail.com
  */
 @Component(creator="Kris West", description="Packages multi-fold analysis results from a single system", 
-		name="PackageAnalysisResults",
+		name="PackageSingleAnalysisResult",
 		tags="analysis")
 		public class PackageSingleAnalysisResult extends NemaComponent {
 

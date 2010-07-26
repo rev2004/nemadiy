@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 
-import org.imirsel.nema.analytics.evaluation.Evaluator;
-import org.imirsel.nema.analytics.evaluation.EvaluatorFactory;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
