@@ -41,14 +41,14 @@ import org.meandre.core.ComponentExecutionException;
  * @since 0.3.0
  */
 @Component(creator = "Kris West", description = "This component takes a process " +
-		"template for a classifier train and classify binary, models that represent " +
-		"the training data and test queries to process with it, resolves the data to file system " +
+		"template for a classifier classify binary, models that represent " +
+		"the test queries to process with it, resolves the data to file system " +
 		"paths and prepares a set of input and output files that will be used. Finally, " +
-		"a model representing a resource directory (which may be empty or contain feature " +
-		"feature files produced by another job) is also taken as input so that it can be " +
-		"made available to the process. ",
-		name = "TrainTestInputOutputPrep", tags = "profile process execution")
-public class TrainTestInputOutputPrep extends ContentRepositoryBase{
+		"a model representing a resource paths (which may be empty or contain feature " +
+		"feature and/or model files produced by another job) is also taken as " +
+		"input so that they can be made available to the process. ",
+		name = "TestOnlyInputOutputPrep", tags = "profile process execution")
+public class TestOnlyInputOutputPrep extends ContentRepositoryBase{
 	
 	private static String DEFAULT_SITE = "imirsel";
 	
@@ -58,14 +58,11 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 	@ComponentInput(description = "Process Template", name = "processTemplate")
 	private static final String DATA_INPUT_TEMPLATE ="processTemplate";
 
-	@ComponentInput(description = "Map of NemaTrackList to List of NemaData Objects defining each training track list (encoding required metadata).", name = "$i1: TrainingDataToProcess")
-	public final static String DATA_INPUT_TRAINING_DATA = "$i1: TrainingDataToProcess";
-
-	@ComponentInput(description = "Map of NemaTrackList to List of NemaData Objects defining each test track list (with no extra metadata).", name = "$i2: TestDataToProcess")
-	public final static String DATA_INPUT_TESTING_DATA = "$i2: TestDataToProcess";
+	@ComponentInput(description = "Map of NemaTrackList to List of NemaData Objects defining each test track list (with no extra metadata).", name = "$i1: TestDataToProcess")
+	public final static String DATA_INPUT_TESTING_DATA = "$i1: TestDataToProcess";
 	
-	@ComponentInput(description = "Map of NemaTrackList to List of File Objects defining each defining resources that will be made available in working directory for the process.", name = "$i3: Resources")
-	public final static String DATA_INPUT_RESOURCE_DIR = "$i3: Resources";
+	@ComponentInput(description = "Map of NemaTrackList to List of File Objects each defining resources that will be made available to the process.", name = "$i2: Resources")
+	public final static String DATA_INPUT_RESOURCE_DIR = "$i2: Resources";
 
 	@ComponentOutput(description = "Process template to be used to perform executions.", name = "processTemplate")
 	private static final String DATA_OUT_PROCESS_TEMPLATE ="processTemplate";
@@ -73,14 +70,11 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 	@ComponentOutput(description = "Class representing the output file type that is to be read.", name = "FileType")
 	private static final String DATA_OUT_OUTPUT_TYPE ="FileType";
 
-	@ComponentOutput(description = "Training Input files map", name = "$i1: TrainingInputFilesMap")
-	private static final String DATA_OUT_TRAINING_INPUT_FILES_MAP ="$i1: TrainingInputFilesMap";
+	@ComponentOutput(description = "Testing Input files map", name = "$i1: TestingInputFilesMap")
+	private static final String DATA_OUT_TESTING_INPUT_FILES_MAP ="$i1: TestingInputFilesMap";
 	
-	@ComponentOutput(description = "Testing Input files map", name = "$i2: TestingInputFilesMap")
-	private static final String DATA_OUT_TESTING_INPUT_FILES_MAP ="$i2: TestingInputFilesMap";
-	
-	@ComponentOutput(description = "Resource directory path where the required resources have been made available", name = "$i3: ResourceDir")
-	private static final String DATA_OUT_RESOURCE_DIR ="$i3: ResourceDir";
+	@ComponentOutput(description = "Resource directory path where the required resources have been made available", name = "$i2: ResourcePaths")
+	private static final String DATA_OUT_RESOURCE_PATHS ="$i2: ResourcePaths";
 
 	@ComponentOutput(description = "Output files map", name = "outputFilesMap")
 	private static final String DATA_OUT_OUTPUT_FILES_MAP ="outputFilesMap";
@@ -109,12 +103,10 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		//get inputs
 		task = (NemaTask)cc.getDataComponentFromInput(DATA_INPUT_NEMATASK);
 		pTemplate = (ProcessTemplate)cc.getDataComponentFromInput(DATA_INPUT_TEMPLATE);
-		Map<NemaTrackList,List<NemaData>> trainDataToProcess = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TRAINING_DATA);
 		Map<NemaTrackList,List<NemaData>> testDataToProcess = (Map<NemaTrackList,List<NemaData>>)cc.getDataComponentFromInput(DATA_INPUT_TESTING_DATA);
 		Map<NemaTrackList,List<File>> resourceDataToProcess = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_INPUT_RESOURCE_DIR);
 
 		cc.getOutputConsole().println("TrainTestInputOutputPrep received:\n" +
-				"\t" + trainDataToProcess.size() + " training sets\n" +
 				"\t" + testDataToProcess.size() + " testing sets\n" + 
 				"\t" + resourceDataToProcess.size() + " resource file sets.");
 		
@@ -147,30 +139,13 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		
 		//Extract constraints from inputs
 		//only dealing with input 1 as this is a 1 input component
-		Class<? extends NemaFileType> inputTypeTraining = formatModel.getInputType(1);
-		Map<String,String> propertiesTraining = formatModel.getInputProperties(1);
 		
-		Class<? extends NemaFileType> inputTypeTest = formatModel.getInputType(2);
-		Map<String,String> propertiesTest = formatModel.getInputProperties(2);
+		Class<? extends NemaFileType> inputTypeTest = formatModel.getInputType(1);
+		Map<String,String> propertiesTest = formatModel.getInputProperties(1);
 		
 		//don't care about type of resources, just copy 'em over and pass on the path
 //		Class<? extends NemaFileType> inputTypeResources = formatModel.getInputType(1);
 //		Map<String,String> propertiesResources = formatModel.getInputProperties(1);
-		
-		HashSet<NemaMetadataEntry> encodingConstraintTraining = new HashSet<NemaMetadataEntry>();
-		if(propertiesTraining != null) {
-			cc.getOutputConsole().println("Processing audio encoding for training properties...");
-			
-			for (Iterator<String> iterator = propertiesTraining.keySet().iterator(); iterator.hasNext();) {
-				String key = iterator.next();
-				String val = propertiesTraining.get(key);
-				if (!val.trim().equals("")) {
-					encodingConstraintTraining.add(new NemaMetadataEntry(key, val));
-				}
-			}
-		}else {
-			cc.getOutputConsole().println("No audio encoding properties for testing to process...");
-		}
 		
 		HashSet<NemaMetadataEntry> encodingConstraintTesting = new HashSet<NemaMetadataEntry>();
 		if(propertiesTest != null) {
@@ -194,11 +169,6 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		RepositoryClientInterface client = null;
 		try {
 			client = RepositoryClientConnectionPool.getInstance().getFromPool();
-			try {
-				client.resolveTracksToFiles(trainDataToProcess,encodingConstraintTraining);
-			}catch(Exception e){
-				throw new ComponentExecutionException("Exception occured while resolving training tracks to files using properties: " + encodingConstraintTraining,e);
-			}
 			try{
 				client.resolveTracksToFiles(testDataToProcess,encodingConstraintTesting);
 			}catch(Exception e){
@@ -212,14 +182,6 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 			}
 		}
 		
-		cc.getOutputConsole().println("Preparing process training input files...");
-		Map<NemaTrackList,List<File>> inputTrainingPaths = null;
-		try {
-			inputTrainingPaths = FileConversionUtil.prepareProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, trainDataToProcess, inputTypeTraining);
-		} catch (Exception e) {
-			throw new ComponentExecutionException(e);
-		}
-		
 		cc.getOutputConsole().println("Preparing process test input files...");
 		Map<NemaTrackList,List<File>> inputTestPaths = null;
 		try {
@@ -228,24 +190,7 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 			throw new ComponentExecutionException(e);
 		}
 		
-		cc.getOutputConsole().println("Preparing resource directory...");
-		
-		//throw exception if more than one resource as we don't yet know what to do with that
-		File resource = null;
-		if (resourceDataToProcess.size() > 0)
-		{
-			if (resourceDataToProcess.size() > 1)
-			{
-				throw new ComponentExecutionException("Received resources for more than one trackList to copy, this is not curently supported");
-			}else if(resourceDataToProcess.values().iterator().next().size() > 1){
-				throw new ComponentExecutionException("Received more than one resource to copy, this is not curently supported");
-			}
-			resource = resourceDataToProcess.values().iterator().next().get(0);
-		}else{
-			cc.getOutputConsole().println("No resources found to use");
-		}
-		
-		
+		cc.getOutputConsole().println("Preparing resource paths...");
 		
 		
 		
@@ -275,11 +220,9 @@ public class TrainTestInputOutputPrep extends ContentRepositoryBase{
 		
 		cc.pushDataComponentToOutput(DATA_OUT_OUTPUT_TYPE, outputType1);
 		
-		cc.pushDataComponentToOutput(DATA_OUT_TRAINING_INPUT_FILES_MAP, inputTrainingPaths);
-		
 		cc.pushDataComponentToOutput(DATA_OUT_TESTING_INPUT_FILES_MAP, inputTestPaths);
 		
-		cc.pushDataComponentToOutput(DATA_OUT_RESOURCE_DIR, resource);
+		cc.pushDataComponentToOutput(DATA_OUT_RESOURCE_PATHS, resourceDataToProcess);
 		
 		cc.pushDataComponentToOutput(DATA_OUT_OUTPUT_FILES_MAP, outputFiles);
 		
