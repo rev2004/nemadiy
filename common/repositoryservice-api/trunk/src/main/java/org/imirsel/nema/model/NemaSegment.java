@@ -31,6 +31,7 @@ public class NemaSegment implements Comparable<NemaSegment>{
 			this.offset = 0;
 		}
 		this.label = label;
+		this.label.replaceAll("\"", "");
 	}
 	
 	public NemaSegment(double onset, double offset){
@@ -87,6 +88,7 @@ public class NemaSegment implements Comparable<NemaSegment>{
 
 	public void setLabel(String label) {
 		this.label = label;
+		this.label.replaceAll("\"", "");
 	}
 	
 	public int compareTo(NemaSegment o) {
