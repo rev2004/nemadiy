@@ -48,8 +48,8 @@ public class TestOnlyExecutor extends RemoteExecutorBase {
 	@ComponentInput(description = "Testing Input files map (Map<NemaTrackList,List<File>>)", name = "$i1: TestingInputFilesMap")
 	private static final String DATA_IN_TESTING_INPUT_FILES_MAP ="$i1: TestingInputFilesMap";
 	
-	@ComponentInput(description = "Map of Resource directory paths where the required resources have been made available (Map<NemaTrackList,List<File>>)", name = "$i2: ResourceDirs")
-	private static final String DATA_IN_RESOURCE_DIR ="$i2: ResourceDir";
+	@ComponentInput(description = "Map of Resource directory paths where the required resources have been made available (Map<NemaTrackList,List<File>>)", name = "$i2: ResourcePaths")
+	private static final String DATA_IN_RESOURCE_DIR ="$i2: ResourcePaths";
 	
 	@ComponentInput(description = "Map of NemaTrackList to List of NemaData Objects File Objects representing the paths that output files should be written to.", name = "OutputPaths")
 	public final static String DATA_IN_OUTPUT_PATHS = "OutputPaths";
@@ -189,6 +189,10 @@ public class TestOnlyExecutor extends RemoteExecutorBase {
 			}
 			
 			//check we either have one resource path per fold or same number as test files
+			if(inputsResourcesForFold == null){
+				throw new ComponentExecutionException("The resource paths for test set " + testSet.getId() + " were null!");
+			}
+			
 			if(inputsResourcesForFold.size() != 1){
 				if(inputsResourcesForFold.size() != inputs1ForFold.size()){
 					throw new ComponentExecutionException("The number of resource paths (" + inputsResourcesForFold.size() + ") for test set " + testSet.getId() + " was not 1 or equal to the number of test inputs (" + inputs1ForFold.size() + ")");
