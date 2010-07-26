@@ -54,6 +54,10 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
+		
+		/* Write out leaderboard CSV file */
+		getLogger().info("Writing out leaderboard CSV...");
+		File leaderboardCSV = this.writeLeaderBoardCSVFile(NemaDataConstants.TAG_FMEASURE, results, false);
 
 		getLogger().info("Writing out CSV result files...");
 		/* Write out summary CSV */

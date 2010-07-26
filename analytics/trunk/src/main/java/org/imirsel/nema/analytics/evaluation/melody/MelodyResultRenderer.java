@@ -42,6 +42,10 @@ public class MelodyResultRenderer extends ResultRendererImpl {
 	public void renderResults(NemaEvaluationResultSet results) throws IOException {
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
+		
+		/* Write out leaderboard CSV file */
+		getLogger().info("Writing out leaderboard CSV...");
+		File leaderboardCSV = this.writeLeaderBoardCSVFile(NemaDataConstants.MELODY_OVERALL_ACCURACY, results, false);
 
 //		/* Plot melody transcription against GT for each track result for each system */
 //		getLogger().info("Plotting transcriptions...");

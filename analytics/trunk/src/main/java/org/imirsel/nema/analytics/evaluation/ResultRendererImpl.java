@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -363,5 +365,116 @@ public abstract class ResultRendererImpl implements ResultRenderer {
 		}
 		
 		return new ProtovisBarChartPlotItem(name, caption, seriesNames, seriesVals);
+	}
+	
+	/**
+	 * Writes out a leaderboard CSV file giving ranks for each submission on a 
+	 * chosen metric.
+	 * @param metric The metric to use.
+	 * @param results The results Object to retrieve data from.
+	 * @param lowerIsBetter A flag inidcating whether results should be ranked
+	 * on the metric such that a lower score is better than a higher score.
+	 * @return File representing the path that the CSV file was written to. 
+	 * @throws IOException
+	 * @since 0.4.0
+	 */
+	protected File writeLeaderBoardCSVFile(String metric,
+			NemaEvaluationResultSet results, boolean lowerIsBetter) throws
+			IOException{
+
+		File leaderboardCsv = new File(outputDir.getAbsolutePath() + File.separator + "leaderbaord.csv");
+
+		DecimalFormat DEC = new DecimalFormat("0.0000");
+		
+		
+        //collect and sort raw data
+        List<Object[]> dataRows = new ArrayList<Object[]>();
+        String jobId;
+        for (Iterator<String> it = results.getJobIdToOverallEvaluation().keySet().iterator();it.hasNext();) {
+        	jobId = it.next();
+        	dataRows.add(new Object[]{jobId, results.getJobIdToOverallEvaluation().get(jobId).getDoubleMetadata(metric)});
+        }
+        
+        Comparator<Object[]> rowCompare;
+        if (lowerIsBetter){
+        	rowCompare = new Comparator<Object[]>() {
+            	public int compare(Object[] o1, Object[] o2) {
+            		double diff = (Double)o1[1] - (Double)o2[1];
+            		if (diff>0){
+            			return 1;
+            		}else if(diff<0){
+            			return -1;
+            		}else{
+            			return 0;
+            		}
+            	}
+    		};
+        }else{
+        	rowCompare = new Comparator<Object[]>() {
+            	public int compare(Object[] o1, Object[] o2) {
+            		double diff = (Double)o1[1] - (Double)o2[1];
+            		if (diff>0){
+            			return -1;
+            		}else if(diff<0){
+            			return 1;
+            		}else{
+            			return 0;
+            		}
+            	}
+    		};
+        }
+        Collections.sort(dataRows,rowCompare);
+        
+        // create the table
+		String[] colNames = new String[4];
+        colNames[0] = "Rank";
+        colNames[1] = "SubID";
+        colNames[2] = "Participants";
+        colNames[3] = metric;
+        
+        Map<String,NemaSubmission> subDetails = results.getJobIdToSubmissionDetails();
+        
+        List<String[]> rows = new ArrayList<String[]>();
+        Object[] data;
+        String[] row;
+        double score;
+        String scoreString, lastScoreString = "";
+        int rank = 0;
+        for (Iterator<Object[]> it = dataRows.iterator();it.hasNext();) {
+        	data = it.next();
+        	jobId = (String)data[0];
+        	score = (Double)data[1];
+        	scoreString = DEC.format(score);
+        	row = new String[4];
+        	if (!scoreString.equals(lastScoreString)){
+        		rank++;
+        	}
+        	row[0] = "" + rank;
+        	row[1] = jobId;
+        	if(subDetails == null){
+        		row[2] = results.getJobName(jobId);
+        	}else{
+        		NemaSubmission sub = subDetails.get(jobId);
+        		String particpants = "";
+        		for(Iterator<NemaContributor> contribIt = sub.getContributors().iterator(); contribIt.hasNext();){
+        			particpants += contribIt.next().getLastName();
+        			if(contribIt.hasNext()){
+        				particpants += ", ";
+        			}
+        		}
+        		row[2] = particpants;
+        	}
+        	row[3] = scoreString;
+        	
+            rows.add(row);
+        }
+        
+        //create table
+        Table theTable = new Table(colNames, rows);
+		
+		//write table to CSV file
+        WriteCsvResultFiles.writeTableToCsv(theTable, leaderboardCsv);
+        
+		return leaderboardCsv;
 	}
 }

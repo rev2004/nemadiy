@@ -66,6 +66,10 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
 			jobIDToResultDir.put(jobId, sysDir);
 		}
 		
+		/* Write out leaderboard CSV file */
+		getLogger().info("Writing out leaderboard CSV...");
+		File leaderboardCSV = this.writeLeaderBoardCSVFile(NemaDataConstants.CLASSIFICATION_ACCURACY, results, false);
+		
 		//plot confusion matrices for each fold
 		getLogger().info("Plotting confusion matrices for each fold for each job");
 		Map<String,File[]> jobIDToFoldConfFileList = new HashMap<String,File[]>(numJobs);
