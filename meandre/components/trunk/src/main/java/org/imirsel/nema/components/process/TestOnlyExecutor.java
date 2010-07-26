@@ -42,7 +42,7 @@ import org.meandre.core.ComponentExecutionException;
 		"multiple executions of a train/test binary using a process template, " +
 		"sets of input training files, input test files and a resource path " +
 		"to feed it and output files for it to produce.",
-		name = "TrainTestExecutor", tags = "profile process execution")
+		name = "TestOnlyExecutor", tags = "profile process execution")
 public class TestOnlyExecutor extends RemoteExecutorBase {
 
 	@ComponentInput(description = "Testing Input files map (Map<NemaTrackList,List<File>>)", name = "$i1: TestingInputFilesMap")
