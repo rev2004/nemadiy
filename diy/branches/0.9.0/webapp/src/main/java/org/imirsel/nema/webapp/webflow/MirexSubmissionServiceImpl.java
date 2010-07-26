@@ -24,7 +24,9 @@ import org.imirsel.nema.model.MirexSubmission.SubmissionStatus;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.util.StringUtil;
 import org.imirsel.nema.webapp.service.MirexContributorDictionary;
+import org.imirsel.nema.webapp.service.MirexSubmissionRepository;
 import org.imirsel.nema.webapp.service.MirexTaskDictionary;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
 
 
@@ -45,6 +47,7 @@ public class MirexSubmissionServiceImpl {
 	private MirexSubmissionDao mirexSubmissionDao;
 	private UserManager userManager;
 	private GenericDao<MirexNote,Long> mirexNoteDao;
+	private MirexSubmissionRepository repository;
 	
 	public void setMirexTaskDictionary(MirexTaskDictionary mirexTaskDictionary) {
 		this.mirexTaskDictionary = mirexTaskDictionary;
@@ -99,6 +102,12 @@ public class MirexSubmissionServiceImpl {
 				if (id!=null) {list.add(mirexContributorDictionary.find(id));}
 			}
 			submission.setContributors(list);
+		}
+		
+		MultipartFile file=params.getMultipartFile("file");
+		if (file!=null){
+			String path=repository.save(file);
+			submission.setResourcePath(path);
 		}
 	}
 	
@@ -194,5 +203,13 @@ public class MirexSubmissionServiceImpl {
 			}
 		}
 		return false;
+	}
+
+	public void setRepository(MirexSubmissionRepository repository) {
+		this.repository = repository;
+	}
+
+	public MirexSubmissionRepository getRepository() {
+		return repository;
 	}
 }
