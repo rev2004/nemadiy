@@ -2,8 +2,12 @@ package org.imirsel.nema.analytics.evaluation.tagsClassification;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +49,250 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 		throw new UnsupportedOperationException("No rendering provided for tag classificaiton without evaluation");
 	}
 	
+	/**
+	 * Writes per track csv files for each system containing AUC-ROC and
+	 * precision-at-n scores.
+	 *
+	 * @param numJobs The number of jobs.
+	 * @param jobIDToResultDir Map of job ID to result directory to write to.
+	 * @return A map of job ID to the CSV file created for it.
+	 * @throws IOException
+	 */
+	protected Map<String, File> writePerTrackSystemResultCSVs(
+			NemaEvaluationResultSet results,
+			Map<String, File> jobIDToResultDir) throws IOException {
+		String jobId;
+		Map<String, File> jobIDToPerFoldCSV = new HashMap<String, File>(jobIDToResultDir.size());
+		for (Iterator<String> it = results.getJobIds().iterator(); it
+				.hasNext();) {
+			jobId = it.next();
+			
+			File sysDir = jobIDToResultDir.get(jobId);
+			File foldCSV = new File(sysDir.getAbsolutePath() + File.separator + "per_track_results.csv");
+			WriteCsvResultFiles.writeTableToCsv(prepTableDataOverTracks(results, jobId),
+					foldCSV);
+			jobIDToPerFoldCSV.put(jobId, foldCSV);
+		}
+		return jobIDToPerFoldCSV;
+	}
+	
+
+	/**
+     * Prepares a Table Object representing the AUC-ROC and Precision-at-N 
+     * scores per tracks, where the metrics are the columns of the table and the 
+     * rows are the different tracks in the evaluation.
+     * 
+     * @param testSets An ordered list of the test sets.
+     * @param foldEval Map of test set to the evaluation results for that 
+     * particular fold of the experiment, encoded as a NemaData Object.
+	 * @return The prepared Table.
+     */
+    private Table prepTableDataOverTracks(NemaEvaluationResultSet results, String jobId) {
+    	DecimalFormat DEC = new DecimalFormat("0.0000");
+		int[] precisionAtNLevels = results.getOverallEvaluation(jobId).getIntArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS);
+		
+		//set column names
+    	int numMetrics = 1 + precisionAtNLevels.length;
+    	int numCols = numMetrics + 2;
+        String[] colNames = new String[numCols];
+        colNames[0] = "Fold";
+        colNames[1] = "Track";
+        colNames[2] = NemaDataConstants.TAG_AFFINITY_AUC_ROC;
+        for (int i = 0; i < precisionAtNLevels.length; i++) {
+        	colNames[i+3] = NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N.replaceAll("N", ""+precisionAtNLevels[i]);
+		}
+
+      //count number of rows to produce
+        int numTracks = 0;
+        Map<NemaTrackList,List<NemaData>> perTrackResults = results.getPerTrackEvaluationAndResults(jobId);
+        for (Iterator<List<NemaData>> iterator = perTrackResults.values().iterator(); iterator.hasNext();) {
+			List<NemaData> list = iterator.next();
+			numTracks += list.size();
+		}
+        
+        List<NemaTrackList> sets = results.getTestSetTrackLists();
+        int numFolds = sets.size();
+        Collections.sort(sets,new Comparator<NemaTrackList>(){
+			public int compare(NemaTrackList o1, NemaTrackList o2) {
+				return o1.getFoldNumber() - o2.getFoldNumber();
+			}
+        });
+        
+        
+        //produce rows (assume but check that results are ordered the same for each system)
+        List<String[]> rows = new ArrayList<String[]>();
+        int foldNum = 0;
+        NemaTrackList foldList = sets.get(foldNum);
+        int foldTrackCount = 0;
+        int actualRowCount = 0;
+        String[] row;
+        NemaData data;
+        while(actualRowCount < numTracks){
+        	if (foldTrackCount == perTrackResults.get(foldList).size()){
+        		foldNum++;
+        		foldList = sets.get(foldNum);
+        		foldTrackCount = 0;
+        	}
+        	row = new String[numCols];
+        	row[0] = "" + foldList.getFoldNumber();
+        	data = perTrackResults.get(foldList).get(foldTrackCount);
+        	row[1] = data.getId();
+        	row[2] = DEC.format(data.getDoubleMetadata(NemaDataConstants.TAG_AFFINITY_AUC_ROC));
+        	double[] scores = data.getDoubleArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N);
+        	for (int i = 0; i < precisionAtNLevels.length; i++) {
+        		row[i+3] = DEC.format(scores[i]);
+        	}
+        	rows.add(row);
+
+        	actualRowCount++;
+        	foldTrackCount++;
+        }
+        
+        return new Table(colNames, rows);
+    }
+    
+    /**
+	 * Writes per fold csv files for each system containing AUC-ROC and
+	 * precision-at-n scores.
+	 * 
+	 * @param numJobs The number of jobs.
+	 * @param jobIDToResultDir Map of job ID to result directory to write to.
+	 * @return A map of job ID to the CSV file created for it.
+	 * @throws IOException
+	 */
+	protected Map<String, File> writePerFoldSystemResultCSVs(
+			NemaEvaluationResultSet results,
+			Map<String, File> jobIDToResultDir) throws IOException {
+		String jobId;
+		Map<String, File> jobIDToPerFoldCSV = new HashMap<String, File>(jobIDToResultDir.size());
+		for (Iterator<String> it = results.getJobIds().iterator(); it
+				.hasNext();) {
+			jobId = it.next();
+			
+			File sysDir = jobIDToResultDir.get(jobId);
+			File foldCSV = new File(sysDir.getAbsolutePath() + File.separator + "per_fold_results.csv");
+			WriteCsvResultFiles.writeTableToCsv(prepTableDataOverFolds(results, jobId),
+					foldCSV);
+			jobIDToPerFoldCSV.put(jobId, foldCSV);
+		}
+		return jobIDToPerFoldCSV;
+	}
+	
+
+	/**
+     * Prepares a Table Object representing the AUC-ROC and Precision-at-N 
+     * scores per fold, where the metrics are the columns of the table and the 
+     * rows are the different folds in the evaluation.
+     * 
+     * @param testSets An ordered list of the test sets.
+     * @param foldEval Map of test set to the evaluation results for that 
+     * particular fold of the experiment, encoded as a NemaData Object.
+	 * @return The prepared Table.
+     */
+    private Table prepTableDataOverFolds(NemaEvaluationResultSet results, String jobId) {
+    	DecimalFormat DEC = new DecimalFormat("0.0000");
+		int[] precisionAtNLevels = results.getOverallEvaluation(jobId).getIntArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS);
+		
+		//set column names
+    	int numMetrics = 1 + precisionAtNLevels.length;
+    	int numCols = numMetrics + 1;
+        String[] colNames = new String[numCols];
+        colNames[0] = "Fold";
+        colNames[1] = NemaDataConstants.TAG_AFFINITY_AUC_ROC;
+        for (int i = 0; i < precisionAtNLevels.length; i++) {
+        	colNames[i+2] = NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N.replaceAll("N", ""+precisionAtNLevels[i]);
+		}
+
+        //count number of rows to produce
+        List<NemaTrackList> sets = results.getTestSetTrackLists();
+        int numFolds = sets.size();
+        Collections.sort(sets,new Comparator<NemaTrackList>(){
+			public int compare(NemaTrackList o1, NemaTrackList o2) {
+				return o1.getFoldNumber() - o2.getFoldNumber();
+			}
+        });
+        
+        
+        //produce rows (assume but check that results are ordered the same for each system)
+        List<String[]> rows = new ArrayList<String[]>(numFolds);
+        String[] row;
+        NemaData eval;
+        NemaTrackList set;
+        for(int f=0;f<numFolds;f++){
+        	set = sets.get(f);
+        	eval = results.getPerFoldEvaluation(jobId).get(set);
+        	row = new String[numCols];
+        	row[0] = "" + f;
+        	row[1] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.TAG_AFFINITY_AUC_ROC));
+        	double[] scores = eval.getDoubleArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N);
+        	for (int i = 0; i < precisionAtNLevels.length; i++) {
+        		row[i+2] = DEC.format(scores[i]);
+        	}
+        	rows.add(row);
+        }
+        
+        return new Table(colNames, rows);
+    }
+	
+	/**
+	 * Default method of writing overall result summary CSV file. Uses the 
+	 * declared overall metric keys to produce a summary result table.
+	 * 
+	 * @param results Result set to get per-track, per-system result data from.
+	 * @return File Object representing the CSV created.
+	 * @throws IOException
+	 */
+	protected File writeOverallResultsCSV(NemaEvaluationResultSet results)
+			throws IOException {
+		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
+		WriteCsvResultFiles.writeTableToCsv(
+				prepOverallResultsTable(results),
+				summaryCsv
+			);
+		return summaryCsv;
+	}
+	
+	/**
+	 * Creates an overall summary Table with the AUC-ROC and Precision-at-N data. 
+	 * 
+	 * @param results Result set to result data from.
+	 * @return Table Object representing the data.
+	 * @throws IOException
+	 */
+	private Table prepOverallResultsTable(NemaEvaluationResultSet results)
+			throws IOException {
+		DecimalFormat DEC = new DecimalFormat("0.0000");
+		int[] precisionAtNLevels = results.getOverallEvaluation(results.getJobIds().iterator().next()).getIntArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS);
+		int numCols = 2 + precisionAtNLevels.length;
+        String[] colNames = new String[numCols];
+        colNames[0] = "Algorithm";
+        colNames[1] = NemaDataConstants.TAG_AFFINITY_AUC_ROC;
+        for (int i = 0; i < precisionAtNLevels.length; i++) {
+        	colNames[i+2] = NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N.replaceAll("N", ""+precisionAtNLevels[i]);
+		}
+        
+        List<String[]> rows = new ArrayList<String[]>();
+        
+        NemaData eval;
+		String jobId;
+		String jobName;
+        for (Iterator<String> it = results.getJobIdToOverallEvaluation().keySet().iterator();it.hasNext();) {
+        	jobId = it.next();
+        	jobName = results.getJobName(jobId);
+        	eval = results.getOverallEvaluation(jobId);
+        	String[] row = new String[numCols];
+        	row[0] = jobName;
+        	row[1] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.TAG_AFFINITY_AUC_ROC));
+        	double[] scores = eval.getDoubleArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N);
+        	for (int i = 0; i < precisionAtNLevels.length; i++) {
+        		row[i+2] = DEC.format(scores[i]);
+        	}
+            rows.add(row);
+        }
+
+        return new Table(colNames, rows);
+	}
+	
 	@Override
 	public void renderResults(NemaEvaluationResultSet results)
 			throws IOException {
@@ -55,78 +303,48 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
 
+		List<File> overallCSVs = new ArrayList<File>();
+
+		/* Write out leaderboard CSV file */
+		getLogger().info("Writing out leaderboard CSV...");
+		File leaderboardCSV = this.writeLeaderBoardCSVFile(NemaDataConstants.TAG_AFFINITY_AUC_ROC, results, false);
+		overallCSVs.add(leaderboardCSV);
+		
 		getLogger().info("Writing out CSV result files...");
 		/* Write out summary CSV */
 		//write out results summary CSV
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		File summaryCSV = writeOverallResultsCSV(results);
+		overallCSVs.add(summaryCSV);
 		
+		
+		List<File> foldCSVs = new ArrayList<File>();
 		//write out summaries for each metric over folds
-		//acc
-		File accCSV = new File(outputDir.getAbsolutePath() + File.separator + "accuracyByFold.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_ACCURACY),accCSV);
+		//AUC-ROC
+		File aucRocCsv = new File(outputDir.getAbsolutePath() + File.separator + "accuracyByFold.csv");
+		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_AFFINITY_AUC_ROC),aucRocCsv);
+		foldCSVs.add(aucRocCsv);
 		
-		//fmeasure
-		File fmeasureCSV = new File(outputDir.getAbsolutePath() + File.separator + "fmeasureByFold.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_FMEASURE),fmeasureCSV);
-		
-		//precision
-		File precisionCSV = new File(outputDir.getAbsolutePath() + File.separator + "precisionByFold.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_PRECISION),precisionCSV);
-		
-		//recall
-		File recallCSV = new File(outputDir.getAbsolutePath() + File.separator + "recallByFold.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_RECALL),recallCSV);
-		
-		//positive example acc
-		File posExAccCSV = new File(outputDir.getAbsolutePath() + File.separator + "positiveExampleAccuracyByFold.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_POS_ACCURACY),posExAccCSV);
-
-		//negative example acc
-		File negExAccCSV = new File(outputDir.getAbsolutePath() + File.separator + "negativeExampleAccuracyByFold.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_NEG_ACCURACY),negExAccCSV);
-		
-		File[] foldCSVs = new File[]{accCSV,fmeasureCSV,precisionCSV,recallCSV,posExAccCSV,negExAccCSV};
+		//precision-at-N
+			//very ugly way of getting precision at N levels
+		int[] precisionAtNLevels = results.getOverallEvaluation(results.getJobIds().iterator().next()).getIntArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS);
+		for (int i = 0; i < precisionAtNLevels.length; i++) {
+			File precCSV = new File(outputDir.getAbsolutePath() + File.separator + "precision-at-" + precisionAtNLevels[i] + ".csv");
+			WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N,i),precCSV);
+			foldCSVs.add(precCSV);
+		}
 		
 		
 		//write out summaries for each metric over tags
 		//get tag names
 		List<String> tags = new ArrayList<String>((Collection<String>)results.getJobIdToOverallEvaluation().values().iterator().next().getMetadata(NemaDataConstants.TAG_EXPERIMENT_CLASSNAMES));
 
-		//acc
-		File accTagCSV = new File(outputDir.getAbsolutePath() + File.separator + "accuracyByTag.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_ACCURACY_TAG_MAP),accTagCSV);
+		//AUC-ROC
+		File aucRocTagCSV = new File(outputDir.getAbsolutePath() + File.separator + "AUCROCByTag.csv");
+		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_AFFINITY_AUC_ROC_MAP),aucRocTagCSV);
 		
-		//fmeasure
-		File fmeasureTagCSV = new File(outputDir.getAbsolutePath() + File.separator + "fmeasureByTag.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_FMEASURE_TAG_MAP),fmeasureTagCSV);
 		
-		//precision
-		File precisionTagCSV = new File(outputDir.getAbsolutePath() + File.separator + "precisionByTag.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_PRECISION_TAG_MAP),precisionTagCSV);
-		
-		//recall
-		File recallTagCSV = new File(outputDir.getAbsolutePath() + File.separator + "recallByTag.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_RECALL_TAG_MAP),recallTagCSV);
-		
-		//positive example acc
-		File posExAccTagCSV = new File(outputDir.getAbsolutePath() + File.separator + "positiveExampleAccuracyByTag.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_POS_ACCURACY_TAG_MAP),posExAccTagCSV);
-
-		//negative example acc
-		File negExAccTagCSV = new File(outputDir.getAbsolutePath() + File.separator + "negativeExampleAccuracyByTag.csv");
-		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_NEG_ACCURACY_TAG_MAP),negExAccTagCSV);
-		
-		File[] tagCSVs = new File[]{accTagCSV,fmeasureTagCSV,precisionTagCSV,recallTagCSV,posExAccTagCSV,negExAccTagCSV};
+		List<File> tagCSVs = new ArrayList<File>();
+		tagCSVs.add(aucRocTagCSV);
 		
 		//write out per system: folds and metrics
 		Map<String, File> jobIDToPerFoldCSV = writePerFoldSystemResultCSVs(
@@ -137,43 +355,57 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 				results, jobIDToResultDir);
 		
 
-		// perform statistical tests
-		/* Do we need to stats tests? */
-		boolean performStatSigTests = true;
-		if (numJobs < 2) {
-			performStatSigTests = false;
-		}
+		
+		
+		
+		//TODO: do Friedmans with AUCROC (per tag and per-fold), Precision at N (all levels)
+//		
+//		
+//		// perform statistical tests
+//		/* Do we need to stats tests? */
+//		boolean performStatSigTests = true;
+//		if (numJobs < 2) {
+//			performStatSigTests = false;
+//		}
+//
+//		File friedmanFmeasureFoldTablePNG = null;
+//		File friedmanFmeasureFoldTable = null;
+//		File friedmanFmeasureTagTablePNG = null;
+//		File friedmanFmeasureTagTable = null;
+//
+//		//stats test on fmeasure by tag
+//		//stats test fmeasure by track
+//		if (getPerformMatlabStatSigTests() && performStatSigTests) {
+//			getLogger().info("Performing Friedman's tests in Matlab...");
+//
+//			File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir,
+//					fmeasureCSV, 0, 2, 1, numJobs, getMatlabPath());
+//			friedmanFmeasureFoldTablePNG = tmp[0];
+//			friedmanFmeasureFoldTable = tmp[1];
+//
+//			tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, fmeasureTagCSV, 0,
+//					2, 1, numJobs, getMatlabPath());
+//			friedmanFmeasureTagTablePNG = tmp[0];
+//			friedmanFmeasureTagTable = tmp[1];
+//		}
+//
+//		/* Create tar-balls of individual result directories */
+//		getLogger().info("Preparing evaluation data tarballs...");
+//		Map<String, File> jobIDToTgz = compressResultDirectories(jobIDToResultDir);
 
-		File friedmanFmeasureFoldTablePNG = null;
-		File friedmanFmeasureFoldTable = null;
-		File friedmanFmeasureTagTablePNG = null;
-		File friedmanFmeasureTagTable = null;
-
-		//stats test on fmeasure by tag
-		//stats test fmeasure by track
-		if (getPerformMatlabStatSigTests() && performStatSigTests) {
-			getLogger().info("Performing Friedman's tests in Matlab...");
-
-			File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir,
-					fmeasureCSV, 0, 2, 1, numJobs, getMatlabPath());
-			friedmanFmeasureFoldTablePNG = tmp[0];
-			friedmanFmeasureFoldTable = tmp[1];
-
-			tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, fmeasureTagCSV, 0,
-					2, 1, numJobs, getMatlabPath());
-			friedmanFmeasureTagTablePNG = tmp[0];
-			friedmanFmeasureTagTable = tmp[1];
-		}
-
-		/* Create tar-balls of individual result directories */
-		getLogger().info("Preparing evaluation data tarballs...");
-		Map<String, File> jobIDToTgz = compressResultDirectories(jobIDToResultDir);
-
+		
+		
+		
+		
+		
+		
+		//TODO make a real report
+		
 		// write result HTML pages
-		writeHtmlResultPages(performStatSigTests, results, tags, summaryCSV, foldCSVs,
-				tagCSVs, jobIDToPerTrackCSV, jobIDToPerFoldCSV, friedmanFmeasureFoldTablePNG,
-				friedmanFmeasureFoldTable, friedmanFmeasureTagTablePNG,
-				friedmanFmeasureTagTable, jobIDToTgz);
+//		writeHtmlResultPages(performStatSigTests, results, tags, summaryCSV, foldCSVs,
+//				tagCSVs, jobIDToPerTrackCSV, jobIDToPerFoldCSV, friedmanFmeasureFoldTablePNG,
+//				friedmanFmeasureFoldTable, friedmanFmeasureTagTablePNG,
+//				friedmanFmeasureTagTable, jobIDToTgz);
 	}
 
 	private void writeHtmlResultPages(boolean performStatSigTests,
