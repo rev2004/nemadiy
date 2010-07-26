@@ -43,8 +43,7 @@ import org.imirsel.nema.model.NemaTrackList;
  */
 @Component(creator="Kris West", description="Evaluates multi-fold results from multiple systems", 
 		name="EvaluateMultipleResultSets",
-		tags="evaluation",
-		dependency={"commons-compress-1.0.jar","jfreechart-1.0.9.jar","jcommon-1.0.12.jar"})
+		tags="evaluation")
 		public class EvaluateMultipleResultSets extends NemaComponent {
 
 	//INPUTS
