@@ -119,17 +119,17 @@ public class NemaDataConstants {
     
     
     /** double[] - Precision at N scores for tags predicted */
-    public static final String TAG_AFFINITY_PRECISION_AT_N = "Tag classification affinity precision at N tags";
+    public static final String TAG_AFFINITY_PRECISION_AT_N = "Tag affinity precision at N tags";
     /** int[] - number of results precision at N scores were calculated at */
-    public static final String TAG_AFFINITY_PRECISION_AT_N_LEVELS = "Tag classification affinity precision at N test levels";
+    public static final String TAG_AFFINITY_PRECISION_AT_N_LEVELS = "Tag affinity precision at N test levels";
     /** double - Area Under Curve - Receiver Operating Characteristic Curve */
-    public static final String TAG_AFFINITY_AUC_ROC = "Tag classification affinity AUC-ROC";
+    public static final String TAG_AFFINITY_AUC_ROC = "Tag affinity AUC-ROC";
     /** List<double[]> - Receiver Operating Characteristic Curve data*/
-    public static final String TAG_AFFINITY_ROC_DATA = "Tag classification affinity ROC data points";
+    public static final String TAG_AFFINITY_ROC_DATA = "Tag affinity ROC data points";
     /** Map<String, Double>() - tag name to Area Under Curve - Receiver Operating Characteristic Curve */
-    public static final String TAG_AFFINITY_AUC_ROC_MAP = "Tag classification affinity per-tag AUC-ROC map";
+    public static final String TAG_AFFINITY_AUC_ROC_MAP = "Tag affinity per-tag AUC-ROC map";
     /** Map<String, List<double[]>> - tag name to Receiver Operating Characteristic Curve data*/
-    public static final String TAG_AFFINITY_ROC_DATA_MAP = "Tag classification affinity per-tag ROC data points map";
+    public static final String TAG_AFFINITY_ROC_DATA_MAP = "Tag affinity per-tag ROC data points map";
     
     
     
