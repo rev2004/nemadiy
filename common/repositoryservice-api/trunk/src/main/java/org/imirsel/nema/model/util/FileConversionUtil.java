@@ -744,6 +744,7 @@ public class FileConversionUtil {
 		String metadataType = task.getSubjectTrackMetadataName();
 		Class<? extends SingleTrackEvalFileType> readerClass = REPOSITORY_METADATA_FILE_TYPE_REGISTRY.get(metadataType);
 		if (readerClass == null){
+			//a classification task has no repository file type
 			for (Iterator<String> it = trackToMeta.keySet().iterator(); it.hasNext();){
 	            String id = it.next();
 	            NemaData aTrack = new NemaData(id);
@@ -929,7 +930,7 @@ public class FileConversionUtil {
 			File outputDirectory
 			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
 		//mint a file or directory path
-		File outputLocation = new File(outputDirectory.getAbsolutePath() + File.separator + "train-set-" + fold.getId());
+		File outputLocation = new File(outputDirectory.getAbsolutePath() + File.separator + "set-" + fold.getId());
 		if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
 			SingleTrackEvalFileType typeInstance = (SingleTrackEvalFileType)fileType.newInstance();
 			//create dir to store files

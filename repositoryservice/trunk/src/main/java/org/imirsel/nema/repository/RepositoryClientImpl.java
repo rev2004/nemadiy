@@ -136,6 +136,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     public static final String DELETE_PUBLISHED_RESULT_FOR_SET_AND_SUB_CODE = "DELETE FROM published_task_results WHERE set_id=? AND submission_code=?";
     private PreparedStatement deletePublishedResultForSetAndSubmission;
     
+    public static final String GET_TRACK_METADATA_ID_FOR_VALUE = "SELECT id FROM track_metadata WHERE metadata_type_id=? AND VALUE=?";
+    private PreparedStatement getTrackMetadataIdForValue;
+    
     
     // MIREX submissions database
     public static final String GET_SUBMISSION_NAME_FOR_SUBMISSION_CODE = "SELECT mirexsubs.mirex_Submissions.sub_Name FROM mirexsubs.mirex_Submissions WHERE mirex_Submissions.sub_Hashcode=?";
@@ -199,6 +202,8 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
         getAllTrackMetadataSpecific = dbCon.con.prepareStatement(GET_ALL_TRACK_METADATA_SPECIFIC_QUERY);
         getTracklistFiles = dbCon.con.prepareStatement(GET_TRACKLIST_FILES);
         
+        getTrackMetadataIdForValue = dbCon.con.prepareStatement(GET_TRACK_METADATA_ID_FOR_VALUE);
+
         getAllTracks = dbCon.con.prepareStatement(GET_ALL_TRACKS);
         getFileMeta = dbCon.con.prepareStatement(GET_FILE_METADATA);
         
@@ -268,6 +273,22 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
             tracks.add(rs.getString(1));
         }
         return tracks;
+    }
+    
+    public int getTrackMetadataIdForValue(int metadataTypeId, String value) throws SQLException{
+    	getTrackMetadataIdForValue.setInt(1, metadataTypeId);
+    	getTrackMetadataIdForValue.setString(2, value);
+    	ResultSet r = getTrackMetadataIdForValue.executeQuery();
+    	if(r.next()){
+    		int val = r.getInt(1);
+    		if(r.next()){
+    			Logger.getLogger(RepositoryClientImpl.class.getName()).log(Level.WARNING, 
+    					"There were more than one ids for the given type (" + metadataTypeId + ") and value (" + value + ")");
+    		}
+    		return val;
+    	}else{
+    		return -1;
+    	}
     }
 
     public Map<Integer,Map<String,Integer>> getFileMetadataValueIDs() throws SQLException{
