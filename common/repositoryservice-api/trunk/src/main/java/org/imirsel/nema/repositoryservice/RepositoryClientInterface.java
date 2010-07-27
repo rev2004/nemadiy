@@ -597,6 +597,17 @@ public interface RepositoryClientInterface {
     public Map<Integer,List<NemaMetadataEntry>> getFileMetadata(List<NemaFile> files) throws SQLException;
 
     /**
+     * Retrieve the id of specified value of a particular metadata type or -1
+     * if it does not exist.
+     * @param metadataTypeId The metadata type id to query.
+     * @param value The value to query.
+     * @return The id of the metadata value for specified type or -1 if it does
+     * not exist.
+     * @throws SQLException
+     */
+    public int getTrackMetadataIdForValue(int metadataTypeId, String value) throws SQLException;
+    
+    /**
      * Retrieve Track metadata values for a specified Track id.
      * @param trackId The ID of the track to get metadata values for.
      * @return A List of the metdata values, represented as <code><NemaMetadataEntry/code> Objects, for the track id.

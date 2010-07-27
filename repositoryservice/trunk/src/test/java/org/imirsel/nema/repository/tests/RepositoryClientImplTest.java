@@ -21,8 +21,14 @@ import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
+import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.NemaTrackList;
+import org.imirsel.nema.model.fileTypes.ChordShortHandTextFile;
+import org.imirsel.nema.model.fileTypes.ClassificationTextFile;
+import org.imirsel.nema.model.fileTypes.NemaFileType;
+import org.imirsel.nema.model.fileTypes.TrackListTextFile;
+import org.imirsel.nema.model.util.FileConversionUtil;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repository.RepositoryClientImpl;
 import org.imirsel.nema.repository.RepositoryProperties;
@@ -64,18 +70,6 @@ public class RepositoryClientImplTest extends BaseManagerTestCase {
 		rci.close();
 	}
 
-	// TODO this shoulf be in the client somewhere rather than the test
-	private List<NemaData> getTestData(int trackListId,
-			RepositoryClientInterface client) throws SQLException {
-		List<NemaData> featExtractList;
-		featExtractList = new ArrayList<NemaData>();
-		List<NemaTrack> tracks = client.getTracks(trackListId);
-		for (Iterator<NemaTrack> iterator = tracks.iterator(); iterator
-				.hasNext();) {
-			featExtractList.add(new NemaData(iterator.next().getId()));
-		}
-		return featExtractList;
-	}
 
 	@Test
 	public final void testGetDatasets() {
@@ -466,4 +460,109 @@ public class RepositoryClientImplTest extends BaseManagerTestCase {
 		}
 	}
 	
+	@Test
+	public final void testChordFileGeneration() throws Exception{
+		int taskID = 17;
+		File tmpDir = File.createTempFile("chord", "shorthand");
+		tmpDir.delete();
+		tmpDir.mkdirs();
+		prepareTaskDataFiles(taskID,tmpDir,TrackListTextFile.class,ChordShortHandTextFile.class,TrackListTextFile.class);
+	}
+	
+	@Test
+	public final void testTrainTestFileGeneration() throws Exception{
+        int taskID = 8;
+        File tmpDir = File.createTempFile("classification", "mood");
+        tmpDir.delete();
+        tmpDir.mkdir();
+        
+        prepareTaskDataFiles(taskID,tmpDir,TrackListTextFile.class,ClassificationTextFile.class,TrackListTextFile.class);
+	}
+	
+	
+	public final void prepareTaskDataFiles(int taskID, File tmpDir, Class<? extends NemaFileType> featExtractFileType, Class<? extends NemaFileType> trainingFileType, Class<? extends NemaFileType> testFileType) throws Exception{
+		NemaTask task = null;
+		NemaDataset dataset = null;
+		Map<NemaTrackList,List<NemaData>> featExtractMap = new HashMap<NemaTrackList, List<NemaData>>(1);;
+		Map<NemaTrackList,List<NemaData>> trainingSets = new HashMap<NemaTrackList,List<NemaData>>();
+		Map<NemaTrackList,List<NemaData>> testSets = new HashMap<NemaTrackList,List<NemaData>>();
+		
+		task = clientImpl.getTask(taskID);
+		if(task == null){
+			throw new Exception("Task id " + taskID + " was not found in the repository!");
+		}
+        dataset = clientImpl.getDataset(task.getDatasetId());
+        if(dataset == null){
+			throw new Exception("Dataset id " + task.getDatasetId() + 
+					" was not found in the repository but was linked from task ID: " + taskID + " in the repository!");
+		}
+
+        //produce feature extraction list
+        NemaTrackList featExtractSet = clientImpl.getDatasetSubset(dataset.getId());
+        List<NemaData> featExtractList = getTestData(dataset.getSubsetTrackListId(), clientImpl);
+        
+        featExtractMap.put(featExtractSet, featExtractList);
+//        
+//        //produce Ground-truth list
+//        gtList = getGroundtruthData(clientImpl, task, dataset.getSubsetTrackListId(), task.getSubjectTrackMetadataId());
+//        
+        //produce experiment sets
+        List<List<NemaTrackList>> sets = clientImpl.getExperimentTrackLists(dataset);
+        for (Iterator<List<NemaTrackList>> it = sets.iterator(); it.hasNext();){
+            List<NemaTrackList> list = it.next();
+            
+            String trackListType;
+            for (Iterator<NemaTrackList> it1 = list.iterator(); it1.hasNext();){
+                NemaTrackList trackList = it1.next();
+                trackListType = trackList.getTrackListTypeName();
+
+                if (trackListType.equalsIgnoreCase("test")){
+                	testSets.put(trackList,getTestData(trackList.getId(), clientImpl));
+                }else{
+                	trainingSets.put(trackList,getGroundtruthData(clientImpl, task, trackList.getId(), task.getSubjectTrackMetadataId()));
+                }
+            }
+        }
+        
+        //resolve training sets
+        clientImpl.resolveTracksToFiles(trainingSets, null);
+        clientImpl.resolveTracksToFiles(testSets, null);
+        clientImpl.resolveTracksToFiles(featExtractMap, null);
+        
+      //prepare training set files
+        System.out.println("Outputting to: " + tmpDir.getAbsolutePath());
+        File feat = new File(tmpDir.getAbsolutePath() + File.separator + "featExtract");
+        feat.mkdir();
+        FileConversionUtil.prepareProcessInput(feat, task, featExtractMap, featExtractFileType);
+        
+        File train = new File(tmpDir.getAbsolutePath() + File.separator + "train");
+        train.mkdir();
+        FileConversionUtil.prepareProcessInput(train, task, trainingSets, trainingFileType);
+        
+        File test = new File(tmpDir.getAbsolutePath() + File.separator + "test");
+        test.mkdir();
+        FileConversionUtil.prepareProcessInput(test, task, testSets, testFileType);
+	}
+	
+	
+	private List<NemaData> getTestData(int trackListId, RepositoryClientInterface client) throws SQLException {
+		getLogger().info("Retrieving test data for track list: " + trackListId);
+        List<NemaData> list = new ArrayList<NemaData>();
+		List<String> tracks = client.getTrackIDs(trackListId);
+		for (Iterator<String> iterator = tracks.iterator(); iterator.hasNext();) {
+			list.add(new NemaData(iterator.next()));
+		}
+		getLogger().info("Got " + list.size() + " tracks for track list: " + trackListId);
+        return list;
+	}
+	
+	private List<NemaData> getGroundtruthData(RepositoryClientInterface client, NemaTask task, int tracklist_id, int metadata_id) throws SQLException, IOException, IllegalArgumentException, InstantiationException, IllegalAccessException{
+        getLogger().info("Retrieving ground-truth data for track list: " + tracklist_id);
+        List<String> tracks = client.getTrackIDs(tracklist_id);
+        getLogger().info("Got " + tracks.size() + " tracks for track list: " + tracklist_id);
+        Map<String,List<NemaMetadataEntry>> trackToMeta = client.getTrackMetadataByID(tracks, metadata_id);
+        List<NemaData> out = FileConversionUtil.convertMetadataToGroundtruthModel(trackToMeta, task);
+        getLogger().info("Returning " + out.size() + " metadata Objects for track list: " + tracklist_id);
+        return out;
+    }
 }

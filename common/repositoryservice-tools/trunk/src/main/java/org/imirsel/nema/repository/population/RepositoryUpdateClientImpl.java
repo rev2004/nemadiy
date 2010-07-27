@@ -104,7 +104,16 @@ public class RepositoryUpdateClientImpl extends RepositoryClientImpl implements 
     }
 
     public int insertTrackMeta(int metadata_type_id, String value) throws SQLException{
+    	
+    	//no longer have unique index on values (as they are text blobs), so check if it exists first
+    	int id = getTrackMetadataIdForValue(metadata_type_id, value);
+    	if (id != -1){
+    		logger.log(Level.INFO, "The value (" + value + ") already exists in DB for type(" + metadata_type_id + "), returning its id (" + id + ")");
+            return id;
+    	}
+    	
         logger.info("Inserting Track metadata value: " + metadata_type_id + "=" + value);
+        
         insertTrackMeta.setInt(1, metadata_type_id);
         insertTrackMeta.setString(2, value);
         insertTrackMeta.executeUpdate();

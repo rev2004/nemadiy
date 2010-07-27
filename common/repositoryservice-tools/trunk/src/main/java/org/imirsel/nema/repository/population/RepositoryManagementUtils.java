@@ -590,8 +590,8 @@ public class RepositoryManagementUtils {
 	            metaId = client.getTrackMetadataID(metadatatype);
 	        }
 	        ClassificationTextFile reader = new ClassificationTextFile(metadatatype);
-	        Map<String,String> map = reader.readClassificationFile(listFile);
-	        logger.info("got data for " + map.size() + " tracks");
+	        List<NemaData> data = reader.readFile(listFile);
+	        logger.info("got data for " + data.size() + " tracks");
 	
 	        int togo = 10;
 	            while(togo > 0){
@@ -604,12 +604,12 @@ public class RepositoryManagementUtils {
 	            }
 	        }
 	
-	        String track;
+            NemaData track;
 	        int valId;
-	        for (Iterator<String> it = map.keySet().iterator(); it.hasNext();){
+	        for (Iterator<NemaData> it = data.iterator(); it.hasNext();){
 	            track = it.next();
-	            valId = client.insertTrackMeta(metaId, map.get(track));
-	            client.insertTrackMetaLink(track, valId);
+	            valId = client.insertTrackMeta(metaId, track.getStringMetadata(metadatatype));
+	            client.insertTrackMetaLink(track.getId(), valId);
 	        }
 	        client.endTransation();
         }catch (Exception ex){
