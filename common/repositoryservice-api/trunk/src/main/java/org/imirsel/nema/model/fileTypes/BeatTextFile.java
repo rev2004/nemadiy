@@ -123,7 +123,11 @@ public class BeatTextFile extends SingleTrackEvalFileTypeImpl {
 		BufferedWriter output = null;
 		double[][] onsetData = data.get2dDoubleArrayMetadata(NemaDataConstants.BEAT_TRACKING_DATA);
 		int nrows = onsetData.length;
-		int ncols = onsetData[0].length;
+		int ncols=0;
+		if(onsetData.length!=0){
+		ncols = onsetData[0].length;
+		}
+	
 		String[][] theData = new String[nrows][ncols];
 		String[] annotators = null;
 		if(data.hasMetadata(NemaDataConstants.BEAT_TRACKING_ANNOTATORS)) {
