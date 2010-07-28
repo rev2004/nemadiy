@@ -205,6 +205,10 @@ final public class ContentRepositoryService implements ArtifactService, ResultSt
 
 	private Node createResultPathNodes(NemaContentRepositoryFile nemaResult, Node resultDirNode) {
 		String resultPath = nemaResult.getPath();
+		if(resultPath==null){
+			return resultDirNode;
+		}
+		
 		// get rid of the filename
 		int fileNameIndex=resultPath.lastIndexOf("/");
 		if(fileNameIndex!=-1){
