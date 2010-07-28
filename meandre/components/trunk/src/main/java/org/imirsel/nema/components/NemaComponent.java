@@ -85,12 +85,9 @@ public abstract class NemaComponent implements ExecutableComponent {
 			processWorkingDirectory = nemaResourceDirectory + File.separator + jobId;
 			File file = new File(processWorkingDirectory);
 			file.mkdir();
-			try {
-				processWorkingDirectoryAbsolutePath = file.getCanonicalPath();
-				processWorkingDirectory = file.getPath();
-			} catch (IOException e) {
-				throw new ComponentContextException("Failed to get process working directory paths",e);
-			}
+			processWorkingDirectoryAbsolutePath = file.getAbsolutePath();
+			processWorkingDirectory = file.getPath();
+		
 			
 			resultLocationDirectory= processWorkingDirectory + File.separator + "results";
 			File file1 = new File(resultLocationDirectory);
