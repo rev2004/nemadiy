@@ -543,13 +543,13 @@ public class FileConversionUtil {
 			*/
 			if(OpaqueDirectoryFormat.class.isAssignableFrom(outputFileTypeInstance.getClass())){
 				//directory
-				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
+				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + "-out");
 				foldDir.mkdirs();
 				list.add(foldDir);
 				
 			}else if(OpaqueFileFormat.class.isAssignableFrom(outputFileTypeInstance.getClass())){
 				//create directory of metadata or new raw audio files
-				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
+				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + "-out");
 				foldDir.mkdirs();
 				List<NemaData> data = executionData.get(testSet);
 				for (Iterator<NemaData> nemaDataIt = data.iterator(); nemaDataIt
@@ -563,7 +563,7 @@ public class FileConversionUtil {
 			}else if(!MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) && 
 					MultipleTrackEvalFileType.class.isAssignableFrom(inputType)){
 				//directory
-				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
+				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + "-out");
 				foldDir.mkdirs();
 				list.add(foldDir);
 				
@@ -573,7 +573,7 @@ public class FileConversionUtil {
 				
 				if (SingleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
 					//create directory of metadata or new raw audio files
-					File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId());
+					File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + "-out");
 					foldDir.mkdirs();
 					
 					
@@ -587,7 +587,7 @@ public class FileConversionUtil {
 				}else if(MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
 					//create one output file per fold
 					list = new ArrayList<File>(1);
-					File newPath = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + outputFileTypeInstance.getFilenameExtension());
+					File newPath = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + "-out" + outputFileTypeInstance.getFilenameExtension());
 					list.add(newPath);
 				}
 			}
@@ -640,7 +640,7 @@ public class FileConversionUtil {
 			List<NemaData> data = executionData.get(testSet);
 			
 			//create directory of metadata or new raw audio files
-			File foldDir = new File(outputDirectory + File.separator +"set-" + testSet.getId());
+			File foldDir = new File(outputDirectory + File.separator +"set-" + testSet.getId() + "-out");
 			foldDir.mkdirs();
 			
 			//divide data according to sites
