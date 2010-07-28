@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.imirsel.nema.analytics.evaluation.*;
 import org.imirsel.nema.model.*;
+import org.imirsel.nema.model.util.PathAndTagCleaner;
 
 /**
  * Classification evaluation.
@@ -76,6 +77,15 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 		//same as overall metrics - single fold experiment format
 		this.foldEvalMetrics = this.overallEvalMetrics;
 	}
+    
+    private void standardizeGtClassnames(){
+    	String type = this.getTask().getSubjectTrackMetadataName();
+    	
+    	//standardise class names
+    	for(NemaData d:this.getGroundTruth()){
+    		d.setMetadata(type, PathAndTagCleaner.cleanTag(d.getStringMetadata(type)));
+    	}
+    }
     
     /**
      * Initializes the class names list from the ground-truth.
@@ -269,8 +279,13 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     	int numJobs = jobIDToFoldResults.size();
         String jobId, jobName;
         
+        //standardize GT class names
+        standardizeGtClassnames();
+        
         //check that all systems have the same number of results
         checkFolds();
+        
+        
         
 		/* prepare NemaEvaluationResultSet*/
 		NemaEvaluationResultSet results = getEmptyEvaluationResultSet();
@@ -313,8 +328,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         
         return results;
     }
-    
-    
 
 	@Override
 	protected NemaData averageFoldMetrics(String jobId, Collection<NemaData> perFoldEvaluations) {
@@ -430,6 +443,13 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 
     
     public NemaData evaluateResultFold(String jobID, NemaTrackList testSet, List<NemaData> theData) {
+    	String type = getTask().getSubjectTrackMetadataName();
+        
+    	//standardise class names
+    	for(NemaData d:theData){
+    		d.setMetadata(type, PathAndTagCleaner.cleanTag(d.getStringMetadata(type)));
+    	}
+    	
     	if(classNames == null){
     		initClassNames();
     	}        
@@ -451,7 +471,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
     	
     	
     	boolean usingAHierarchy = hierarchyFile != null;
-        String type = getTask().getSubjectTrackMetadataName();
         
         int errors = 0;
         int[][] confusion = new int[classNames.size()][classNames.size()];

@@ -60,7 +60,7 @@ public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
         	path = new File(pathStr);
             trackID = PathAndTagCleaner.convertFileToMIREX_ID(path);
             obj = new NemaData(trackID);
-            obj.setMetadata(getMetadataType(), data.get(pathStr));
+            obj.setMetadata(getMetadataType(), PathAndTagCleaner.cleanTag(data.get(pathStr)));
             obj.setMetadata(NemaDataConstants.PROP_FILE_LOCATION, path.getAbsolutePath());
             examples.add(obj);
         }
@@ -88,7 +88,7 @@ public class ClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
 					identifier = obj.getId();
 					noFileLocation++;
 				}
-				writer.write(identifier + WRITE_DELIMITER + obj.getStringMetadata(getMetadataType()));
+				writer.write(identifier + WRITE_DELIMITER + PathAndTagCleaner.cleanTag(obj.getStringMetadata(getMetadataType())));
 				writer.newLine();
 			}
 			
