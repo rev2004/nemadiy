@@ -4,10 +4,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +61,8 @@ public class WriteCsvResultFiles {
 	    rows.add(new String[]{"Dataset ID","" + dataset.getId()});
 	    rows.add(new String[]{"Dataset Name",""+dataset.getName()});
 	    rows.add(new String[]{"Dataset Description",""+dataset.getDescription()});
+	    DateFormat format = SimpleDateFormat.getDateTimeInstance();
+	    rows.add(new String[]{"Date report generated",""+format.format(new Date())});
 	    
 	    return new Table(colNames, rows);
 	}

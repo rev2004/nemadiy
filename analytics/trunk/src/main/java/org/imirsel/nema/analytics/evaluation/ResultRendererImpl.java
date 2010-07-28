@@ -294,8 +294,7 @@ public abstract class ResultRendererImpl implements ResultRenderer {
 	protected Page createIntroHtmlPage(NemaEvaluationResultSet results){
     	List<PageItem> items = new ArrayList<PageItem>();
         Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),results.getDataset());
-        items.add(new TableItem("task_description", "Task Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
-        
+        items.add(new TableItem("description", "Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
         
         Map<String,NemaSubmission> subDetails = results.getJobIdToSubmissionDetails();
         List<String[]> rows = new ArrayList<String[]>();
