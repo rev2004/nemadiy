@@ -54,6 +54,7 @@ public class ResultRendererFactory {
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, ClassificationResultRenderer.class);
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, ClassificationResultRenderer.class);
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, ClassificationResultRenderer.class);
+		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.CLASSIFICATION_MOOD, ClassificationResultRenderer.class);
 	}
 	
 	public static ResultRenderer getRenderer(String metadataKey,
