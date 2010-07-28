@@ -78,7 +78,7 @@ public class TestOnlyExecutor extends RemoteExecutorBase {
 		String group = this.getGroup();
 		
 		
-		Map<NemaTrackList,List<File>> inputTestPaths = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_IN_TESTING_INPUT_FILES_MAP);
+		Map<NemaTrackList,List<String>> inputTestPaths = (Map<NemaTrackList,List<String>>)cc.getDataComponentFromInput(DATA_IN_TESTING_INPUT_FILES_MAP);
 		Map<NemaTrackList,List<File>>  resourcePaths = (Map<NemaTrackList,List<File>> )cc.getDataComponentFromInput(DATA_IN_RESOURCE_DIR);
 			
 		Map<NemaTrackList,List<File>> outputPaths = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_IN_OUTPUT_PATHS);
@@ -141,7 +141,7 @@ public class TestOnlyExecutor extends RemoteExecutorBase {
 		int executionTotal = 0;
 		for (Iterator<NemaTrackList> setIt = inputTestPaths.keySet().iterator(); setIt.hasNext();) {
 			NemaTrackList testSet = setIt.next();
-			List<File> inputs1ForFold = inputTestPaths.get(testSet);
+			List<String> inputs1ForFold = inputTestPaths.get(testSet);
 			executionTotal += inputs1ForFold.size();
 		}
 		
@@ -171,7 +171,7 @@ public class TestOnlyExecutor extends RemoteExecutorBase {
 			String scratch = ExecutorConstants.REMOTE_PATH_SCRATCH_TOKEN;
 	
 			cc.getOutputConsole().println("Performing executions for fold " + testSet.getFoldNumber() + ", test set " + testSet.getId());
-			List<File> inputs1ForFold = inputTestPaths.get(testSet);
+			List<String> inputs1ForFold = inputTestPaths.get(testSet);
 			List<File> inputsResourcesForFold = resourcePaths.get(testSet);
 			
 			List<File> outputs1ForFold = outputPaths.get(testSet);
@@ -201,7 +201,7 @@ public class TestOnlyExecutor extends RemoteExecutorBase {
 			
 			//execute for this fold, once per input file
 			File resourcePath;
-			File inputTestPath;
+			String inputTestPath;
 			File outputFile;
 			for (int i=0;i<inputs1ForFold.size();i++) {
 				inputTestPath = inputs1ForFold.get(i);
@@ -220,14 +220,14 @@ public class TestOnlyExecutor extends RemoteExecutorBase {
 				cc.getOutputConsole().println("Running for the output file: " + outputFile);
 				formatModel.clearPreparedPaths();
 				
-				formatModel.setPreparedPathForInput(1, inputTestPath.getAbsolutePath());
+				formatModel.setPreparedPathForInput(1, inputTestPath);
 				formatModel.setPreparedPathForInput(2, resourcePath.getAbsolutePath());
 				
 				//set scratch dir path
 				formatModel.setPreparedPathForScratchDir(scratch);
 				
 				//add input file as process artifact (if its is a JCR URI rather than path it will be resolved before execution)
-				ProcessArtifact paTestInput = new ProcessArtifact(inputTestPath.getAbsolutePath(), "File", inputType1.getClass().getName());
+				ProcessArtifact paTestInput = new ProcessArtifact(inputTestPath, "File", inputType1.getClass().getName());
 				ProcessArtifact paResourceInput;
 				if (resourcePath.isDirectory()){
 					paResourceInput = new ProcessArtifact(resourcePath.getAbsolutePath(), "Directory", OpaqueDirectoryFormat.class.getName());
