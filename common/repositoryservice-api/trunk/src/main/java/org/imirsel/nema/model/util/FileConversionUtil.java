@@ -340,14 +340,14 @@ public class FileConversionUtil {
 	 * @throws IOException Thrown if there is a problem writing the files to
 	 * disk.
 	 */
-	public static Map<NemaTrackList,List<File>> prepareProcessInput(
+	public static Map<NemaTrackList,List<String>> prepareProcessInput(
 			File outputDirectory, 
 			NemaTask task,
 			Map<NemaTrackList,List<NemaData>> executionData, 
 			Class<? extends NemaFileType> fileType
 			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
 		
-		Map<NemaTrackList,List<File>> out = null;
+		Map<NemaTrackList,List<String>> out = null;
 		if (SingleTrackEvalFileType.class.isAssignableFrom(fileType)) {
 			if(fileType.equals(RawAudioFile.class)) {
 				//use raw audio files
@@ -359,24 +359,28 @@ public class FileConversionUtil {
 				  //specified file (e.g. QBT writes out timestamps of users 
 				  //tap times which are used as queries - this may eventually 
 				  //happen in other tasks)
-				out = new HashMap<NemaTrackList,List<File>>(executionData.size());
+				out = new HashMap<NemaTrackList,List<String>>(executionData.size());
 				for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator
 						.hasNext();) {
 					NemaTrackList testSet = iterator.next();
 					File dir = writeGroundTruthDataFileOrDirectory(testSet,executionData.get(testSet),task, fileType, outputDirectory);
 					List<File> files = Arrays.asList(dir.listFiles());
-					out.put(testSet, files);
+					List<String> paths = new ArrayList<String>(files.size());
+					for(File file:files){
+						paths.add(file.getPath());
+					}
+					out.put(testSet, paths);
 				}
 			}
 		}else if(MultipleTrackEvalFileType.class.isAssignableFrom(fileType)) {
-			out = new HashMap<NemaTrackList,List<File>>(executionData.size());
+			out = new HashMap<NemaTrackList,List<String>>(executionData.size());
 			for (Iterator<NemaTrackList> iterator = executionData.keySet().iterator(); iterator
 			.hasNext();) {
 				NemaTrackList testSet = iterator.next();
 				File file = writeGroundTruthDataFileOrDirectory(testSet,executionData.get(testSet),task, fileType, outputDirectory);
-				List<File> list = new ArrayList<File>(1);
-				list.add(file);
-				out.put(testSet, list);
+				List<String> paths = new ArrayList<String>(1);
+				paths.add(file.getPath());
+				out.put(testSet, paths);
 			}
 		}
 		return out;
@@ -526,7 +530,7 @@ public class FileConversionUtil {
 			Map<NemaTrackList,List<NemaData>> executionData, 
 			Class<? extends NemaFileType> inputType,
 			NemaFileType outputFileTypeInstance,
-			File outputDirectory
+			String outputDirectory
 			) {
 		
 		Map<NemaTrackList,List<File>> out = new HashMap<NemaTrackList,List<File>>(executionData.size());
@@ -543,13 +547,13 @@ public class FileConversionUtil {
 			*/
 			if(OpaqueDirectoryFormat.class.isAssignableFrom(outputFileTypeInstance.getClass())){
 				//directory
-				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + "-out");
+				File foldDir = new File(outputDirectory + File.separator +"set-" + testSet.getId() + "-out");
 				foldDir.mkdirs();
 				list.add(foldDir);
 				
 			}else if(OpaqueFileFormat.class.isAssignableFrom(outputFileTypeInstance.getClass())){
 				//create directory of metadata or new raw audio files
-				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + "-out");
+				File foldDir = new File(outputDirectory + File.separator +"set-" + testSet.getId() + "-out");
 				foldDir.mkdirs();
 				List<NemaData> data = executionData.get(testSet);
 				for (Iterator<NemaData> nemaDataIt = data.iterator(); nemaDataIt
@@ -563,7 +567,7 @@ public class FileConversionUtil {
 			}else if(!MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass()) && 
 					MultipleTrackEvalFileType.class.isAssignableFrom(inputType)){
 				//directory
-				File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + "-out");
+				File foldDir = new File(outputDirectory + File.separator +"set-" + testSet.getId() + "-out");
 				foldDir.mkdirs();
 				list.add(foldDir);
 				
@@ -573,7 +577,7 @@ public class FileConversionUtil {
 				
 				if (SingleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
 					//create directory of metadata or new raw audio files
-					File foldDir = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + "-out");
+					File foldDir = new File(outputDirectory + File.separator +"set-" + testSet.getId() + "-out");
 					foldDir.mkdirs();
 					
 					
@@ -587,7 +591,7 @@ public class FileConversionUtil {
 				}else if(MultipleTrackEvalFileType.class.isAssignableFrom(outputFileTypeInstance.getClass())) {
 					//create one output file per fold
 					list = new ArrayList<File>(1);
-					File newPath = new File(outputDirectory.getAbsolutePath() + File.separator +"set-" + testSet.getId() + "-out" + outputFileTypeInstance.getFilenameExtension());
+					File newPath = new File(outputDirectory + File.separator +"set-" + testSet.getId() + "-out" + outputFileTypeInstance.getFilenameExtension());
 					list.add(newPath);
 				}
 			}
@@ -962,7 +966,7 @@ public class FileConversionUtil {
 	}
 	
 	/**
-	 * Retrieves a A Map of NemaTrackList to a List of File Objects representing
+	 * Retrieves a A Map of NemaTrackList to a List of String paths representing
 	 * the resources referred to in the lists of NemaData Objects in the input 
 	 * data-structure.
 	 * 
@@ -975,7 +979,7 @@ public class FileConversionUtil {
 	 * @param task The task that the data relates (only required for 
 	 * classification file types).
 	 * @param outputDirectory The directory to write the data files to.
-	 * @return A Map of NemaTrackList to a List of File Objects representing
+	 * @return A Map of NemaTrackList to a List of String paths representing
 	 * the resources.
 	 * @throws IllegalArgumentException Thrown if an unknown sub-interface of 
 	 * NemaFileType is received.
@@ -986,20 +990,20 @@ public class FileConversionUtil {
 	 * @throws FileNotFoundException Thrown if a file or directory cannot be 
 	 * found or created.
 	 */
-	public static Map<NemaTrackList,List<File>> getResourceFilesList(
+	public static Map<NemaTrackList,List<String>> getResourceFilesList(
 			Map<NemaTrackList,List<NemaData>> testData, 
 			NemaTask task, 
 			File outputDirectory
 			) throws IllegalArgumentException, FileNotFoundException, IOException, InstantiationException, IllegalAccessException{
-		Map<NemaTrackList,List<File>> out = new HashMap<NemaTrackList,List<File>>();
+		Map<NemaTrackList,List<String>> out = new HashMap<NemaTrackList,List<String>>();
 		
 		for (Iterator<NemaTrackList> iterator = testData.keySet().iterator(); iterator.hasNext();) {
 			NemaTrackList testSet = iterator.next();
 			List<NemaData> data = testData.get(testSet);
-			List<File> paths = new ArrayList<File>(data.size());
+			List<String> paths = new ArrayList<String>(data.size());
 			for (Iterator<NemaData> iterator2 = data.iterator(); iterator2
 					.hasNext();) {
-				paths.add(new File(iterator2.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION)));
+				paths.add(iterator2.next().getStringMetadata(NemaDataConstants.PROP_FILE_LOCATION));
 			}
 			out.put(testSet,paths);
 		}
