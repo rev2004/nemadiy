@@ -64,6 +64,9 @@ public class TestOnlyInputOutputPrep extends ContentRepositoryBase{
 	@ComponentInput(description = "Map of NemaTrackList to List of File Objects each defining resources that will be made available to the process.", name = "$i2: Resources")
 	public final static String DATA_INPUT_RESOURCE_DIR = "$i2: Resources";
 
+	@ComponentOutput(description = "Map of NemaTrackList to List of File Objects defining expected output files.", name = "expectedOutput")
+	private static final String DATA_OUT_EXPECTED_OUTPUTS ="expectedOutput";
+
 	@ComponentOutput(description = "Process template to be used to perform executions.", name = "processTemplate")
 	private static final String DATA_OUT_PROCESS_TEMPLATE ="processTemplate";
 
@@ -183,15 +186,42 @@ public class TestOnlyInputOutputPrep extends ContentRepositoryBase{
 		}
 		
 		cc.getOutputConsole().println("Preparing process test input files...");
-		Map<NemaTrackList,List<File>> inputTestPaths = null;
+		Map<NemaTrackList,List<String>> inputTestPaths = null;
 		try {
 			inputTestPaths = FileConversionUtil.prepareProcessInput(new File(getAbsoluteProcessWorkingDirectory()), task, testDataToProcess, inputTypeTest);
 		} catch (Exception e) {
 			throw new ComponentExecutionException(e);
 		}
 		
-		cc.getOutputConsole().println("Preparing resource paths...");
-		
+		if(!inputTypeTest.equals(RawAudioFile.class)) { // audio files are never distributed and don't go into JCR
+			cc.getOutputConsole().println("Saving locally created test files to JCR...");
+			//save to JCR and replace path with JCR URI.
+				int JcrForSite = 0;
+				int totalForSite = 0;
+				for(Iterator<List<String>> listIt = inputTestPaths.values().iterator(); listIt.hasNext();){
+					List<String> pathList = listIt.next();
+					for(int i = 0;i<pathList.size();i++){
+						String path = pathList.get(i);
+						File aFile = new File(path);
+						if (aFile.exists()){
+							//is a local file that can go into JCR
+							try {
+								ResourcePath URI = saveFileToContentRepository(aFile, inputTypeTest.getName());
+								pathList.set(i, URI.getURIAsString());
+								JcrForSite++;
+							} catch (IOException e) {
+								throw new ComponentExecutionException("Failed to save file: " + aFile.getAbsolutePath() + " to the JCR", e);
+							} catch (ContentRepositoryServiceException e) {
+								throw new ComponentExecutionException("Failed to save file: " + aFile.getAbsolutePath() + " to the JCR", e);
+							}
+						}else{
+							getLogger().warning("Path '" + path + "' did not exist, assuming it is a path available at remote site");
+						}
+					}
+				
+				cc.getOutputConsole().println("Saved " + JcrForSite + " of " + totalForSite + " input files to the JCR");
+			}
+		}
 		
 		
 		cc.getOutputConsole().println("Preparing process output file names...");
@@ -211,9 +241,25 @@ public class TestOnlyInputOutputPrep extends ContentRepositoryBase{
 		}
 		
 		Map<NemaTrackList,List<File>> outputFiles = FileConversionUtil.createOutputFileNames(
-				testDataToProcess, inputTypeTest, outputTypeInstance, new File(getAbsoluteResultLocationForJob()));
-		cc.getOutputConsole().println("got process output files spanning " + outputFiles.size() + " sites");
+				testDataToProcess, inputTypeTest, outputTypeInstance, ExecutorConstants.REMOTE_PATH_TOKEN);
 		
+		Map<NemaTrackList,List<File>> overallOutputFiles = new HashMap<NemaTrackList, List<File>>();
+		for (Iterator<NemaTrackList> setIt = outputFiles.keySet().iterator(); setIt.hasNext();) {
+			NemaTrackList set = setIt.next();
+			overallOutputFiles.put(set, new ArrayList<File>());
+		}
+		
+		for (Iterator<NemaTrackList> setIt = outputFiles.keySet().iterator(); setIt.hasNext();) {
+			NemaTrackList set = setIt.next();
+			List<File> setRemoteFiles = outputFiles.get(set);
+			List<File> setLocalFiles = overallOutputFiles.get(set);
+			for (Iterator<File> it = setRemoteFiles.iterator();it.hasNext();)
+			{
+				File file = it.next();
+				File localFile = new File(file.getPath().replaceFirst(ExecutorConstants.REMOTE_PATH_TOKEN, getAbsoluteResultLocationForJob()));
+				setLocalFiles.add(localFile);
+			}
+		}
 		
 		
 		cc.pushDataComponentToOutput(DATA_OUT_PROCESS_TEMPLATE, pTemplate);
@@ -225,6 +271,7 @@ public class TestOnlyInputOutputPrep extends ContentRepositoryBase{
 		cc.pushDataComponentToOutput(DATA_OUT_RESOURCE_PATHS, resourceDataToProcess);
 		
 		cc.pushDataComponentToOutput(DATA_OUT_OUTPUT_FILES_MAP, outputFiles);
-		
+
+		cc.pushDataComponentToOutput(DATA_OUT_EXPECTED_OUTPUTS, overallOutputFiles);
 	}
 }
