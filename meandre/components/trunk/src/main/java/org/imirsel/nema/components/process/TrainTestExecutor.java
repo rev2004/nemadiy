@@ -82,8 +82,8 @@ public class TrainTestExecutor extends RemoteExecutorBase {
 		
 		
 		
-		Map<NemaTrackList,List<File>> inputTrainingPaths = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_IN_TRAINING_INPUT_FILES_MAP);
-		Map<NemaTrackList,List<File>> inputTestPaths = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_IN_TESTING_INPUT_FILES_MAP);
+		Map<NemaTrackList,List<String>> inputTrainingPaths = (Map<NemaTrackList,List<String>>)cc.getDataComponentFromInput(DATA_IN_TRAINING_INPUT_FILES_MAP);
+		Map<NemaTrackList,List<String>> inputTestPaths = (Map<NemaTrackList,List<String>>)cc.getDataComponentFromInput(DATA_IN_TESTING_INPUT_FILES_MAP);
 		File resource = (File)cc.getDataComponentFromInput(DATA_IN_RESOURCE_DIR);
 			
 		Map<NemaTrackList,List<File>> outputPaths = (Map<NemaTrackList,List<File>>)cc.getDataComponentFromInput(DATA_IN_OUTPUT_PATHS);
@@ -146,7 +146,7 @@ public class TrainTestExecutor extends RemoteExecutorBase {
 		int executionTotal = 0;
 		for (Iterator<NemaTrackList> setIt = inputTrainingPaths.keySet().iterator(); setIt.hasNext();) {
 			NemaTrackList trainSet = setIt.next();
-			List<File> inputs1ForFold = inputTrainingPaths.get(trainSet);
+			List<String> inputs1ForFold = inputTrainingPaths.get(trainSet);
 			executionTotal += inputs1ForFold.size();
 		}
 		
@@ -185,8 +185,8 @@ public class TrainTestExecutor extends RemoteExecutorBase {
 			String scratch = ExecutorConstants.REMOTE_PATH_SCRATCH_TOKEN;
 	
 			cc.getOutputConsole().println("Performing executions for fold " + trainSet.getFoldNumber() + ", train set " + trainSet.getId() + ", test set " + testSet.getId());
-			List<File> inputs1ForFold = inputTrainingPaths.get(trainSet);
-			List<File> inputs2ForFold = inputTestPaths.get(testSet);
+			List<String> inputs1ForFold = inputTrainingPaths.get(trainSet);
+			List<String> inputs2ForFold = inputTestPaths.get(testSet);
 			List<File> outputs1ForFold = outputPaths.get(testSet);
 			if(outputs1ForFold == null){
 				String msg = "No output paths were found for test set " + testSet.getId() + " however inputs were available. ";
@@ -202,8 +202,8 @@ public class TrainTestExecutor extends RemoteExecutorBase {
 			}
 			
 			//execute for this fold, once per input file
-			File inputTrainPath;
-			File inputTestPath;
+			String inputTrainPath;
+			String inputTestPath;
 			File outputFile;
 			for (int i=0;i<inputs1ForFold.size();i++) {
 				inputTrainPath = inputs1ForFold.get(i);
@@ -217,16 +217,16 @@ public class TrainTestExecutor extends RemoteExecutorBase {
 				cc.getOutputConsole().println("Running for the output file: " + outputFile);
 				formatModel.clearPreparedPaths();
 				
-				formatModel.setPreparedPathForInput(1, inputTrainPath.getAbsolutePath());
-				formatModel.setPreparedPathForInput(2, inputTestPath.getAbsolutePath());
+				formatModel.setPreparedPathForInput(1, inputTrainPath);
+				formatModel.setPreparedPathForInput(2, inputTestPath);
 				formatModel.setPreparedPathForInput(3, resource.getAbsolutePath());
 				
 				//set scratch dir path
 				formatModel.setPreparedPathForScratchDir(scratch);
 				
 				//add input file as process artifact (if its is a JCR URI rather than path it will be resolved before execution)
-				ProcessArtifact paTrainInput = new ProcessArtifact(inputTrainPath.getAbsolutePath(), "File", inputType1.getClass().getName());
-				ProcessArtifact paTestInput = new ProcessArtifact(inputTestPath.getAbsolutePath(), "File", inputType1.getClass().getName());
+				ProcessArtifact paTrainInput = new ProcessArtifact(inputTrainPath, "File", inputType1.getClass().getName());
+				ProcessArtifact paTestInput = new ProcessArtifact(inputTestPath, "File", inputType1.getClass().getName());
 				ProcessArtifact paResourceInput;
 				if (resource.isDirectory()){
 					paResourceInput = new ProcessArtifact(resource.getAbsolutePath(), "Directory", inputType1.getClass().getName());
