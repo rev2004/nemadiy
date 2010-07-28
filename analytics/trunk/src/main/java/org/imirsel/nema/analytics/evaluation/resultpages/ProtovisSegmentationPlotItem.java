@@ -63,7 +63,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 			int count = 0;
 			for (Iterator<NemaSegment> it = data.iterator(); it.hasNext();) {
 				seg = it.next();
-				out += "{o: " + TIMESTAMP_FORMAT.format(seg.getOnset()) + ", f: " + TIMESTAMP_FORMAT.format(seg.getOffset()) + ", l: \"" + seg.getLabel() + "\", a: " + count%2 + "}";
+				out += "{o: " + TIMESTAMP_FORMAT.format(seg.getOnset()) + ", f: " + TIMESTAMP_FORMAT.format(seg.getOffset()) + ", l: \"" + seg.getLabel().replaceAll("\"", "") + "\", a: " + count%2 + "}";
 				count++;
 				if(it.hasNext()){
 					out +=",\n";
