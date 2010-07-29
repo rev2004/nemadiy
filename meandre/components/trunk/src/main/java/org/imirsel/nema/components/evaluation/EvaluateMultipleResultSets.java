@@ -150,7 +150,7 @@ import org.imirsel.nema.model.NemaTrackList;
 		        		throw new ComponentExecutionException("Did not receive results for fold " + 
 		        				testSet.getFoldNumber() + "(" + testSet.getId() + ") of dataset " + 
 		        				dataset.getName() + "(" + dataset.getId() + ") for system " + 
-		        				systemIDToSubmissionDetails.get(jobId) + "(" + jobId + ")");
+		        				systemIDToSubmissionDetails.get(jobId).getSubmissionCode() + "(" + jobId + ")");
 		        	}
 					eval.addResults(systemIDToSubmissionDetails.get(jobId), jobId, testSet, results);
 				}
