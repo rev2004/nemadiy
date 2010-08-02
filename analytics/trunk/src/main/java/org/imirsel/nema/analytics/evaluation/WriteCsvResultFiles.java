@@ -458,7 +458,11 @@ public class WriteCsvResultFiles {
 		for (Iterator<String[]> iterator = rows.iterator(); iterator.hasNext();) {
 			String[] row = iterator.next();
 			for (int i = 0; i < cols; i++) {
-		    	csv += row[i];
+				if(row[i].contains(",")){
+					csv += "\"" + row[i] + "\"";
+				}else{
+					csv += row[i];
+				}
 		        if (i<cols-1){
 		        	csv += ",";
 		        }
