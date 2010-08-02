@@ -177,6 +177,12 @@ public class ChordEvaluator extends EvaluatorImpl{
         
         	// Create grid for the system
         	int lnSys = (int)(Math.ceil(GRID_RESOLUTION*systemChords.get(systemChords.size()-1).getOffset()));
+        	// for debugging
+        /*	if (lnSys<lnGT){
+        		double last_offGT = gtChords.get(gtChords.size()-1).getOffset();
+        		systemChords.get(systemChords.size()-1).setOffset(last_offGT);
+            	lnSys = (int)(Math.ceil(GRID_RESOLUTION*systemChords.get(systemChords.size()-1).getOffset()));
+        	}*/
         	double overlap_score;
         	if (lnSys == 0 ){
         		//they get nothing for this file!
@@ -188,9 +194,8 @@ public class ChordEvaluator extends EvaluatorImpl{
         	}else{
         	
 
-	        		int[][] gridSys = new int[lnSys][];	
-	//        	System.out.println("ln Sys " + lnSys + " last offset " + systemChords.get(systemChords.size()-1).getOffset());
-	//        	System.out.println("System chords length " + systemChords.size());
+        		int[][] gridSys = new int[lnSys][]; // comment in later
+        		//int[][] gridSys = new int[lnGT][];         		//for debugging
 	        	for (int i = 0; i < systemChords.size(); i++) {
 	        		NemaChord currentChord = systemChords.get(i);
 	        		int onset_index = (int)(currentChord.getOnset()*GRID_RESOLUTION);
@@ -203,7 +208,8 @@ public class ChordEvaluator extends EvaluatorImpl{
 	        			}
 	        		}
 				}
-	        	
+	        		
+	        		
 	        	
 	        	int lnOverlap = Math.min(lnGT, lnSys);
 	        	//int[] overlaps = new int[lnOverlap]; 
@@ -220,13 +226,17 @@ public class ChordEvaluator extends EvaluatorImpl{
 	//        		if(sysFrame == null){
 	//        			getLogger().warning("System chord Null at " +i + "-ith frame");
 	//        		}
-	        	//	overlap_total +=  calcOverlap(gtFrame,sysFrame);        	
+	        	//	overlap_total +=  calcOverlap(gtFrame,sysFrame);    
+	        		//debugging purposes
+	        		//end debugging
 	        		overlap_total +=  calcOverlapTriads(gtFrame,sysFrame);        	
 
 	        	}
 	        	
 	        	//set eval metrics on input obj for track
 	        	overlap_score = (double)overlap_total / (double)lnGT;
+	        	
+	        	
         	}
         	weightedAverageOverlapAccum += overlap_score*lnGT;	
         	overlapAccum += overlap_score;
@@ -265,18 +275,25 @@ public class ChordEvaluator extends EvaluatorImpl{
     }
     
     private int calcOverlapTriads(int[] gt, int[] sys) {
-    	if (gt == null || sys == null || gt.length!=sys.length){
+    	
+    	
+    	if (gt == null || sys == null ){
     		return 0;
     	}
-    		
+    	else if (gt.length==1 && sys.length==1) {
+    		if (gt[0]==24 && sys[0]==24){
+    			return 1;
+    		}
+    		else{
+    			return 0;
+    		}
+    			
+    	}   		
     	else {
     		int match_ctr=0;
     		for (int i = 0; i < sys.length; i++) {
-    			for (int j=0; j < gt.length; j++){
-    				if(sys[i]==gt[j]){
-    					match_ctr++;
-    					continue;
-    				}
+    			if(involves(sys[i],gt)){
+    				match_ctr++;
     			}
 			}
     		int threshold = 3;
@@ -293,5 +310,17 @@ public class ChordEvaluator extends EvaluatorImpl{
     	}
     }
     
+    private boolean involves(int key, int[] set){
+    	
+    	for (int i=0; i< set.length; i++){
+    		if (set[i]==key){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    
+
     
 }
