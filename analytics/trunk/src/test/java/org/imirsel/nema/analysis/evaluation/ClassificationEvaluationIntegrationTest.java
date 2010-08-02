@@ -135,15 +135,13 @@ public class ClassificationEvaluationIntegrationTest extends BaseManagerTestCase
 	@Test
 	public void testEvaluateGT1AndHNOS1()  throws IllegalArgumentException, IOException, InstantiationException, IllegalAccessException{ 
 		File groundTruthFile = new File("src/test/resources/classification/audiolatin.all.gt.txt");
-		File hierarchyFile = null;
 		File resultsDirectory1 = new File("src/test/resources/classification/GT1");
-		String	systemName1 = "GT1-System";
+		String	systemName1 = "GT1";
 		File resultsDirectory2 = new File("src/test/resources/classification/HNOS1");
-		String	systemName2 = "HNOS1-System";
+		String	systemName2 = "HNOS1";
 		Evaluator evaluator = null;
 		ResultRenderer renderer = null;
 		
-		//evaluator = new ClassificationEvaluator(task, dataset, outputDirectory, workingDirectory, testSets, testSets, false, null, hierarchyFile);
 		evaluator = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, null, testSets);
 		renderer = ResultRendererFactory.getRenderer(task.getSubjectTrackMetadataName(), outputDirectory, workingDirectory, false, null);
 		

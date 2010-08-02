@@ -19,24 +19,18 @@ import org.imirsel.nema.analytics.evaluation.resultpages.FileListItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.ImageItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Page;
 import org.imirsel.nema.analytics.evaluation.resultpages.PageItem;
+import org.imirsel.nema.analytics.evaluation.resultpages.ProtovisConfusionMatrixPlotItem;
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
-import org.imirsel.nema.analytics.evaluation.vis.ConfusionMatrixPlot;
-import org.imirsel.nema.model.NemaContributor;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
-import org.imirsel.nema.model.NemaSubmission;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.NemaTrackList;
 import org.imirsel.nema.model.util.IOUtil;
 
 public class ClassificationResultRenderer extends ResultRendererImpl {
-
-	private static final String CONF_MAT_PLOT_EXTENSION = ".conf.png";
-    private static final int CONF_MAT_HEIGHT = 850;
-    private static final int CONF_MAT_WIDTH = 900;
 
     private static final DecimalFormat dec = new DecimalFormat("0.00");
     private static final String BIG_DIVIDER =    "================================================================================\n";
@@ -70,25 +64,25 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
 		getLogger().info("Writing out leaderboard CSV...");
 		File leaderboardCSV = this.writeLeaderBoardCSVFile(NemaDataConstants.CLASSIFICATION_ACCURACY, results, false);
 		
-		//plot confusion matrices for each fold
-		getLogger().info("Plotting confusion matrices for each fold for each job");
-		Map<String,File[]> jobIDToFoldConfFileList = new HashMap<String,File[]>(numJobs);
-		for(Iterator<String> it = results.getJobIds().iterator(); it.hasNext();){
-			jobId = it.next();
-			Map<NemaTrackList,NemaData> evalList = results.getPerFoldEvaluation(jobId);
-			File[] foldConfFiles = plotConfusionMatricesForAllFolds(results,jobId, evalList);
-			jobIDToFoldConfFileList.put(jobId,foldConfFiles);
-		}
-		
-		//plot aggregate confusion for each job
-		getLogger().info("Plotting overall confusion matrices for each job");
-		Map<String,File> jobIDToOverallConfFile = new HashMap<String,File>(numJobs);
-		for(Iterator<String> it = results.getJobIds().iterator(); it.hasNext();){
-			jobId = it.next();
-			NemaData aggregateEval = results.getOverallEvaluation(jobId);
-			File overallConfFile = plotAggregatedConfusionForJob(results,jobId, aggregateEval);
-		    jobIDToOverallConfFile.put(jobId, overallConfFile);
-		}
+//		//plot confusion matrices for each fold
+//		getLogger().info("Plotting confusion matrices for each fold for each job");
+//		Map<String,File[]> jobIDToFoldConfFileList = new HashMap<String,File[]>(numJobs);
+//		for(Iterator<String> it = results.getJobIds().iterator(); it.hasNext();){
+//			jobId = it.next();
+//			Map<NemaTrackList,NemaData> evalList = results.getPerFoldEvaluation(jobId);
+//			File[] foldConfFiles = plotConfusionMatricesForAllFolds(results,jobId, evalList);
+//			jobIDToFoldConfFileList.put(jobId,foldConfFiles);
+//		}
+//		
+//		//plot aggregate confusion for each job
+//		getLogger().info("Plotting overall confusion matrices for each job");
+//		Map<String,File> jobIDToOverallConfFile = new HashMap<String,File>(numJobs);
+//		for(Iterator<String> it = results.getJobIds().iterator(); it.hasNext();){
+//			jobId = it.next();
+//			NemaData aggregateEval = results.getOverallEvaluation(jobId);
+//			File overallConfFile = plotAggregatedConfusionForJob(results,jobId, aggregateEval);
+//		    jobIDToOverallConfFile.put(jobId, overallConfFile);
+//		}
 		
 		//retrieve class names from eval data
 		jobId = results.getJobIds().iterator().next();
@@ -161,7 +155,7 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
 		Map<String,File> jobIDToReportFile = new HashMap<String,File>(numJobs);
 		for (Iterator<String> it = results.getJobIdToJobName().keySet().iterator();it.hasNext();) {
 			jobId = it.next();
-			File reportFile = new File(outputDir.getAbsolutePath() + File.separator + jobId + File.separator + "report.txt");
+			File reportFile = new File(jobIDToResultDir.get(jobId).getAbsolutePath() + File.separator + "report.txt");
 			writeSystemTextReport(results, jobId, results.getJobIdToJobName().get(jobId), usingAHierarchy, reportFile);
 			jobIDToReportFile.put(jobId, reportFile);
 		}
@@ -178,7 +172,7 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
 		//write result HTML pages
 		getLogger().info("Creating result HTML files...");
 		writeHtmlResultPages(usingAHierarchy, results, classNames,
-				jobIDToOverallConfFile, perClassCSV, perFoldCSV,
+				perClassCSV, perFoldCSV,
 				discountedPerClassCSV, discountedPerFoldCSV,
 				friedmanClassTablePNG, friedmanClassTable,
 				friedmanFoldTablePNG, friedmanFoldTable,
@@ -201,7 +195,7 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
     
 	private void writeHtmlResultPages(boolean usingAHierarchy,
 			NemaEvaluationResultSet results, List<String> classNames,
-			Map<String, File> jobIDToOverallConfFile, File perClassCSV,
+			File perClassCSV,
 			File perFoldCSV, File discountedPerClassCSV,
 			File discountedPerFoldCSV, File friedmanClassTablePNG,
 			File friedmanClassTable, File friedmanFoldTablePNG,
@@ -234,6 +228,7 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
 			}
 	        Table summaryTable = WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),metrics);
 	        items.add(new TableItem("summary_results", "Summary Results", summaryTable.getColHeaders(), summaryTable.getRows()));
+	        
 	        aPage = new Page("summary", "Summary", items, false);
 	        resultPages.add(aPage);
         }
@@ -255,11 +250,12 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
         {
             items = new ArrayList<PageItem>();
             Table perFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.CLASSIFICATION_ACCURACY);
-            items.add(new TableItem("acc_class", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
+            items.add(new TableItem("acc_fold", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
             if (usingAHierarchy){
                 Table perDiscFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.CLASSIFICATION_DISCOUNTED_ACCURACY);
-                items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
+                items.add(new TableItem("disc_acc_fold", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
             }
+            
             aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);
             resultPages.add(aPage);
         }
@@ -279,16 +275,32 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
             resultPages.add(aPage);
         }
 
-        //do confusion matrices
+      //do overall confusion matrices
         List<String> sortedJobIDs = new ArrayList<String>(results.getJobIds());
         Collections.sort(sortedJobIDs);
         {
             items = new ArrayList<PageItem>();
             
-            for (int i = 0; i < numJobs; i++){
-                items.add(new ImageItem("confusion_" + i, sortedJobIDs.get(i), IOUtil.makeRelative(jobIDToOverallConfFile.get(sortedJobIDs.get(i)), outputDir)));
+	        for (int i = 0; i < numJobs; i++){
+	        	String jobId = sortedJobIDs.get(i);
+                items.add(plotAggregatedConfusionForJob(results, jobId, results.getOverallEvaluation(jobId)));
             }
-            aPage = new Page("confusion", "Confusion Matrices", items, true);
+	        
+            aPage = new Page("overall_confusion", "Overall Confusion Matrices", items, true);
+            resultPages.add(aPage);
+        }
+        
+      //do per-fold confusion matrices
+        {
+            items = new ArrayList<PageItem>();
+            
+	        //add per-fold confusion matrices
+	        for (int i = 0; i < numJobs; i++){
+	        	String jobId = sortedJobIDs.get(i);
+                items.addAll(plotConfusionMatricesForAllFolds(results, jobId, results.getPerFoldEvaluation(jobId)));
+            }
+	        
+            aPage = new Page("per_fold_confusion", "Per-fold Confusion Matrices", items, true);
             resultPages.add(aPage);
         }
 
@@ -346,32 +358,29 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
         Page.writeResultPages(results.getTask().getName(), outputDir, resultPages);
 	}
 
-	private File plotAggregatedConfusionForJob(NemaEvaluationResultSet results, String jobID, NemaData aggregateEval) {
-		return plotConfusionMatrix(results, jobID, aggregateEval, "overall", " - overall");
+	private PageItem plotAggregatedConfusionForJob(NemaEvaluationResultSet results, String jobID, NemaData aggregateEval) {
+		return plotConfusionMatrix(results, jobID, aggregateEval, " - overall");
 	}
 
-	private File[] plotConfusionMatricesForAllFolds(NemaEvaluationResultSet results, String jobID, Map<NemaTrackList, NemaData> evals) {
-		int numFolds = results.getTestSetTrackLists().size();
-		File[] foldConfFiles = new File[numFolds];
-		new File(outputDir.getAbsolutePath() + File.separator + jobID).mkdirs();
-		int count = 0;
+	private List<PageItem> plotConfusionMatricesForAllFolds(NemaEvaluationResultSet results, String jobID, Map<NemaTrackList, NemaData> evals) {
+		List<PageItem> foldPlots = new ArrayList<PageItem>();
 		for(Iterator<NemaTrackList> foldIt = results.getTestSetTrackLists().iterator();foldIt.hasNext();){
 			NemaTrackList testSet = foldIt.next();
 			NemaData eval = evals.get(testSet);
-			File plotFile = plotConfusionMatrix(results, jobID, eval, (""+testSet.getFoldNumber()), " - fold " + testSet.getFoldNumber());
-		    foldConfFiles[count++] = plotFile;
+			foldPlots.add(plotConfusionMatrix(results, jobID, eval, " - fold " + testSet.getFoldNumber()));
 		}
-		return foldConfFiles;
+		return foldPlots;
 	}
 
 	@SuppressWarnings("unchecked")
-	private File plotConfusionMatrix(NemaEvaluationResultSet results, String jobID, NemaData eval, String fileNameComp, String titleComp) {
+	private PageItem plotConfusionMatrix(NemaEvaluationResultSet results, String jobId, NemaData eval, String titleComp) {
 		double[][] confusion = eval.get2dDoubleArrayMetadata(NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
 		List<String> classNames = (List<String>)eval.getMetadata(NemaDataConstants.CLASSIFICATION_EXPERIMENT_CLASSNAMES);
-		File plotFile = new File(outputDir.getAbsolutePath() + File.separator + jobID + File.separator + fileNameComp + CONF_MAT_PLOT_EXTENSION);
-		ConfusionMatrixPlot plot = new ConfusionMatrixPlot(results.getTask().getName() + " - " + results.getJobName(jobID) + titleComp, (String[])classNames.toArray(new String[classNames.size()]), confusion);
-		plot.writeChartToFile(plotFile, CONF_MAT_WIDTH, CONF_MAT_HEIGHT);
-		return plotFile;
+		
+		String name = results.getJobName(jobId) + "_" + titleComp + "_conf_matrix";
+		String caption = results.getJobName(jobId) + " " + titleComp + " confusion matrix";
+		
+		return new ProtovisConfusionMatrixPlotItem(name, caption, classNames, confusion);
 	}
 	
 	/**

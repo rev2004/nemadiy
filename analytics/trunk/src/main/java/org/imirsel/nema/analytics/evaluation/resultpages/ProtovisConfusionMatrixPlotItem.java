@@ -103,7 +103,7 @@ public class ProtovisConfusionMatrixPlotItem extends PageItem{
 				i + "\n" +
 				i + "/* Sort out color scale  */\n" +
 				i + "var fill = pv.dict(cols, function(f) pv.Scale.linear()\n" +
-				i + "\t.domain(0, 100)\n" +
+				i + "\t.domain(0, 1)\n" +
 				i + "\t.range(\"white\", \"black\"));\n" +
 				i + "\n" +
 				i + "/* The cell dimensions. */\n" +
@@ -128,7 +128,7 @@ public class ProtovisConfusionMatrixPlotItem extends PageItem{
 				i + "\t.strokeStyle(\"white\")\n" +
 				i + "\t.lineWidth(1)\n" +
 				i + "\t.antialias(false)\n" +
-				i + "\t.title(function(d, f) d.Name + \" vs \" + f + \": \" + d[f] + \"%\");\n" +
+				i + "\t.title(function(d, f) d.Name + \" vs \" + f + \": \" + (d[f]*100).toFixed(2) + \"%\");\n" +
 				i + "\n" +
 				i + "vis.add(pv.Label)\n" +
 				i + "\t.data(cols)\n" +

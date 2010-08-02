@@ -219,6 +219,7 @@ public class WriteCsvResultFiles {
     		Map<String,String> jobIDToName, 
     		String metricKey
     	) {
+    	
     	//sort systems alphabetically
     	int numAlgos = jobIDToName.size();
     	String[][] jobIDandName = new String[numAlgos][];
@@ -248,13 +249,12 @@ public class WriteCsvResultFiles {
         
         //produce rows (assume but check that results are ordered the same for each system)
         List<String[]> rows = new ArrayList<String[]>();
-        int fold = 0;
         String[] row;
         NemaData data;
         for(int f=0;f<numFolds;f++){
-        	NemaTrackList foldList = testSets.get(fold);
+        	NemaTrackList foldList = testSets.get(f);
             row = new String[numCols];
-        	row[0] = "" + fold;
+        	row[0] = "" + foldList.getFoldNumber();
         	for(int i=0;i<numAlgos;i++){
         		data = jobIDToFoldEval.get(jobIDandName[i][0]).get(foldList);
         		row[i+1] = "" + DEC.format(data.getDoubleMetadata(metricKey));

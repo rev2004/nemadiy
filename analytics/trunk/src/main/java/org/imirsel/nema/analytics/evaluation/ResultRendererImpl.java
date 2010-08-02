@@ -381,7 +381,7 @@ public abstract class ResultRendererImpl implements ResultRenderer {
 			NemaEvaluationResultSet results, boolean lowerIsBetter) throws
 			IOException{
 
-		File leaderboardCsv = new File(outputDir.getAbsolutePath() + File.separator + "leaderbaord.csv");
+		File leaderboardCsv = new File(outputDir.getAbsolutePath() + File.separator + "leaderboard.csv");
 
 		DecimalFormat DEC = new DecimalFormat("0.0000");
 		
