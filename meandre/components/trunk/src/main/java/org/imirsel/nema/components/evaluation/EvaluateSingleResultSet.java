@@ -149,7 +149,7 @@ import org.imirsel.nema.model.NemaTrackList;
 	        				dataset.getName() + "(" + dataset.getId() + ") for system " + 
 	        				systemName + "(" + systemID + ")");
 	        	}
-				eval.addResults(systemName, systemID, testSet, results);
+				eval.addResults(systemName, systemName, testSet, results);
 			}
 	        
 			//perform evaluation
