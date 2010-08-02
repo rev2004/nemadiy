@@ -58,6 +58,13 @@ public class ProtovisConfusionMatrixTest {
 				{7.99,0.64,4.44,15.02,6.43,1.59,5.23,1.29,17.76}
 		};
 		
+		//divide down as we moved to 0-1 scale
+		for (int i = 0; i < seriesVals.length; i++) {
+			for (int j = 0; j < seriesVals[i].length; j++) {
+				seriesVals[i][j] = seriesVals[i][j] / 100.0;
+			}
+		}
+		
 		String name = "dummy_conf_mat";
 		String caption = "Dummy Job: Comfusion Matrix";
 		ProtovisConfusionMatrixPlotItem chart = new ProtovisConfusionMatrixPlotItem(name, caption, seriesNames, seriesVals);

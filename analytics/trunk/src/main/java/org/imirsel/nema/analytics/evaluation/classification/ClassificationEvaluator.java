@@ -285,8 +285,6 @@ public class ClassificationEvaluator extends EvaluatorImpl{
         //check that all systems have the same number of results
         checkFolds();
         
-        
-        
 		/* prepare NemaEvaluationResultSet*/
 		NemaEvaluationResultSet results = getEmptyEvaluationResultSet();
 
@@ -321,6 +319,7 @@ public class ClassificationEvaluator extends EvaluatorImpl{
 			/* Populate NemaEvaluationResultSet */
 			for (Iterator<String> it = jobIDToName.keySet().iterator(); it.hasNext();) {
 				jobId = it.next();
+				getLogger().info("Populating results output for jobID: " + jobId);
 				jobName = jobIDToName.get(jobId);
 				results.addCompleteResultSet(jobId, jobName, jobIdToOverallEvaluation.get(jobId), jobIdToFoldEvaluation.get(jobId), jobIDToFoldResults.get(jobId));
 			}

@@ -249,30 +249,31 @@ public abstract class EvaluatorImpl implements Evaluator {
 		NemaData data;
 		String metaKey = getTask().getSubjectTrackMetadataName();
 		
-		//check name is unique, if not either append job IDs to job name 
-			//or if they are too long use sequence numbers instead
-		if (addSequenceNumbers){
-			
-		}else{
-			if(appendJobIds){
-				if(jobID.length() > JOBID_LENGTH_THRESHOLD){
-					addSequenceNumbers = true;
-					//adjust those already received
-				}
-			}else if(jobIDToName.values().contains(systemName)){
-				if(jobID.length() > JOBID_LENGTH_THRESHOLD){
-					addSequenceNumbers = true;
-					//adjust those already received
-				}else{
-					appendJobIds = true;
-					//adjust those already received
-				}
-				
-			}else{
-				jobIDToName.put(jobID, systemName);
-			}
-		}
+//		//check name is unique, if not either append job IDs to job name 
+//			//or if they are too long use sequence numbers instead
+//		if (addSequenceNumbers){
+//			
+//		}else{
+//			if(appendJobIds){
+//				if(jobID.length() > JOBID_LENGTH_THRESHOLD){
+//					addSequenceNumbers = true;
+//					//adjust those already received
+//				}
+//			}else if(jobIDToName.values().contains(systemName)){
+//				if(jobID.length() > JOBID_LENGTH_THRESHOLD){
+//					addSequenceNumbers = true;
+//					//adjust those already received
+//				}else{
+//					appendJobIds = true;
+//					//adjust those already received
+//				}
+//				
+//			}else{
+//				jobIDToName.put(jobID, systemName);
+//			}
+//		}
 		
+		jobIDToName.put(jobID, systemName);
 		
 		for(Iterator<NemaData> it = results.iterator(); it.hasNext();){
 			data = it.next();
