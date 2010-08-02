@@ -2,8 +2,10 @@ package org.imirsel.nema.analytics.evaluation;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -472,7 +474,7 @@ public class WriteCsvResultFiles {
 		
 		BufferedWriter output = null;
 		try {
-		    output = new BufferedWriter(new FileWriter(outputFile));
+		    output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF8"));
 		    output.write(csv);
 		}finally{
 			try {
