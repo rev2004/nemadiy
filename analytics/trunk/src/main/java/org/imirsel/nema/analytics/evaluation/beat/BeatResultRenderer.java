@@ -492,20 +492,26 @@ public class BeatResultRenderer extends ResultRendererImpl {
 			//iterate through systems
 			for (int i = 0; i < transcripts.length; i++) {
 				NemaData nemaData = transcripts[i];
-				Object rawDataObj = nemaData.getMetadata(NemaDataConstants.BEAT_TRACKING_DATA);
-				if(rawDataObj != null){
-					double[][] rawData2D = (double[][]) rawDataObj;
-					double[] rawData = new double[rawData2D.length];
-					for (int j = 0; j < rawData.length; j++) {
-						rawData[j] = rawData2D[j][0];
+				if(nemaData == null){
+					getLogger().warning("No data from " + jobNames.get(i) + " for track " + trackId + " (wasn't returned)");
+				}else{
+					Object rawDataObj = nemaData.getMetadata(NemaDataConstants.BEAT_TRACKING_DATA);
+					if(rawDataObj != null){
+						double[][] rawData2D = (double[][]) rawDataObj;
+						double[] rawData = new double[rawData2D.length];
+						for (int j = 0; j < rawData.length; j++) {
+							rawData[j] = rawData2D[j][0];
+							
+							endTimeSecs = Math.max(rawData[j], endTimeSecs);
+						}
 						
-						endTimeSecs = Math.max(rawData[j], endTimeSecs);
+						
+						series.put(jobNames.get(i), rawData);
+						seriesNames.add(jobNames.get(i));
+						isGroundtruth.add(false);
+					}else{
+						getLogger().warning("No data from " + jobNames.get(i) + " for track " + trackId + " (had no beat data)");
 					}
-					
-					
-					series.put(jobNames.get(i), rawData);
-					seriesNames.add(jobNames.get(i));
-					isGroundtruth.add(false);
 				}
 			}
 			
