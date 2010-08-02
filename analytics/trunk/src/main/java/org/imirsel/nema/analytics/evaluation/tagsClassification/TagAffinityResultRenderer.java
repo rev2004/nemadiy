@@ -111,7 +111,7 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 		}
         
         List<NemaTrackList> sets = results.getTestSetTrackLists();
-        int numFolds = sets.size();
+//        int numFolds = sets.size();
         Collections.sort(sets,new Comparator<NemaTrackList>(){
 			public int compare(NemaTrackList o1, NemaTrackList o2) {
 				return o1.getFoldNumber() - o2.getFoldNumber();
@@ -303,34 +303,37 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 		getLogger().info("Creating system result directories...");
 		Map<String, File> jobIDToResultDir = makeSystemResultDirs(results);
 
-		List<File> overallCSVs = new ArrayList<File>();
+//		List<File> overallCSVs = new ArrayList<File>();
 
 		/* Write out leaderboard CSV file */
 		getLogger().info("Writing out leaderboard CSV...");
 		File leaderboardCSV = this.writeLeaderBoardCSVFile(NemaDataConstants.TAG_AFFINITY_AUC_ROC, results, false);
-		overallCSVs.add(leaderboardCSV);
+//		overallCSVs.add(leaderboardCSV);
 		
 		getLogger().info("Writing out CSV result files...");
 		/* Write out summary CSV */
 		//write out results summary CSV
 		File summaryCSV = writeOverallResultsCSV(results);
-		overallCSVs.add(summaryCSV);
+//		overallCSVs.add(summaryCSV);
+		
 		
 		
 		List<File> foldCSVs = new ArrayList<File>();
 		//write out summaries for each metric over folds
 		//AUC-ROC
-		File aucRocCsv = new File(outputDir.getAbsolutePath() + File.separator + "accuracyByFold.csv");
+		File aucRocCsv = new File(outputDir.getAbsolutePath() + File.separator + "AUCROCByFold.csv");
 		WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_AFFINITY_AUC_ROC),aucRocCsv);
 		foldCSVs.add(aucRocCsv);
 		
 		//precision-at-N
 			//very ugly way of getting precision at N levels
 		int[] precisionAtNLevels = results.getOverallEvaluation(results.getJobIds().iterator().next()).getIntArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS);
+		List<File> precisionAtNFiles = new ArrayList<File>(precisionAtNLevels.length);
 		for (int i = 0; i < precisionAtNLevels.length; i++) {
 			File precCSV = new File(outputDir.getAbsolutePath() + File.separator + "precision-at-" + precisionAtNLevels[i] + ".csv");
 			WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N,i),precCSV);
 			foldCSVs.add(precCSV);
+			precisionAtNFiles.add(precCSV);
 		}
 		
 		
@@ -355,70 +358,79 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 				results, jobIDToResultDir);
 		
 
-		
-		
-		
-		//TODO: do Friedmans with AUCROC (per tag and per-fold), Precision at N (all levels)
-//		
-//		
-//		// perform statistical tests
-//		/* Do we need to stats tests? */
-//		boolean performStatSigTests = true;
-//		if (numJobs < 2) {
-//			performStatSigTests = false;
-//		}
-//
-//		File friedmanFmeasureFoldTablePNG = null;
-//		File friedmanFmeasureFoldTable = null;
-//		File friedmanFmeasureTagTablePNG = null;
-//		File friedmanFmeasureTagTable = null;
-//
-//		//stats test on fmeasure by tag
-//		//stats test fmeasure by track
-//		if (getPerformMatlabStatSigTests() && performStatSigTests) {
-//			getLogger().info("Performing Friedman's tests in Matlab...");
-//
-//			File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir,
-//					fmeasureCSV, 0, 2, 1, numJobs, getMatlabPath());
-//			friedmanFmeasureFoldTablePNG = tmp[0];
-//			friedmanFmeasureFoldTable = tmp[1];
-//
-//			tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, fmeasureTagCSV, 0,
-//					2, 1, numJobs, getMatlabPath());
-//			friedmanFmeasureTagTablePNG = tmp[0];
-//			friedmanFmeasureTagTable = tmp[1];
-//		}
-//
-//		/* Create tar-balls of individual result directories */
-//		getLogger().info("Preparing evaluation data tarballs...");
-//		Map<String, File> jobIDToTgz = compressResultDirectories(jobIDToResultDir);
+		// perform statistical tests
+		/* Do we need to stats tests? */
+		boolean performStatSigTests = true;
+		if (numJobs < 2) {
+			performStatSigTests = false;
+		}
 
+		File friedmanAUCROCperTagPNG = null;
+		File friedmanAUCROCperTagTable = null;
 		
+		File friedmanAUCROCperFoldPNG = null;
+		File friedmanAUCROCperFoldTable = null;
+
+		List<File> friedmanPrecisionAtNPNGs = null;
+		List<File> friedmanPrecisionAtNTables = null;
 		
-		
-		
-		
-		
-		//TODO make a real report
+		if (getPerformMatlabStatSigTests() && performStatSigTests) {
+			getLogger().info("Performing Friedman's tests in Matlab...");
+
+			File[] tmp =  null;
+			
+			tmp = FriedmansAnovaTkHsd.performFriedman(outputDir,
+					aucRocTagCSV, 0, 2, 1, numJobs, getMatlabPath());
+			friedmanAUCROCperTagPNG = tmp[0];
+			friedmanAUCROCperTagTable = tmp[1];
+
+			tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, aucRocCsv, 0,
+					2, 1, numJobs, getMatlabPath());
+			friedmanAUCROCperFoldPNG = tmp[0];
+			friedmanAUCROCperFoldTable = tmp[1];
+			
+			
+			
+			friedmanPrecisionAtNPNGs = new ArrayList<File>(precisionAtNLevels.length);
+			friedmanPrecisionAtNTables = new ArrayList<File>(precisionAtNLevels.length);
+			
+			for (int i = 0; i < precisionAtNLevels.length; i++) {
+				File csv = precisionAtNFiles.get(i);
+				tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, csv, 0,
+						2, 1, numJobs, getMatlabPath());
+				friedmanPrecisionAtNPNGs.add(tmp[0]);
+				friedmanPrecisionAtNTables.add(tmp[1]);
+			}
+		}
+
+		/* Create tar-balls of individual result directories */
+		getLogger().info("Preparing evaluation data tarballs...");
+		Map<String, File> jobIDToTgz = compressResultDirectories(jobIDToResultDir);
+
 		
 		// write result HTML pages
-//		writeHtmlResultPages(performStatSigTests, results, tags, summaryCSV, foldCSVs,
-//				tagCSVs, jobIDToPerTrackCSV, jobIDToPerFoldCSV, friedmanFmeasureFoldTablePNG,
-//				friedmanFmeasureFoldTable, friedmanFmeasureTagTablePNG,
-//				friedmanFmeasureTagTable, jobIDToTgz);
+		writeHtmlResultPages(performStatSigTests, results, tags, summaryCSV, foldCSVs,
+				tagCSVs, jobIDToPerTrackCSV, jobIDToPerFoldCSV, 
+				friedmanAUCROCperFoldPNG, friedmanAUCROCperFoldTable,
+				friedmanAUCROCperTagPNG, friedmanAUCROCperTagTable,
+				friedmanPrecisionAtNPNGs, friedmanPrecisionAtNTables, 
+				jobIDToTgz);
 	}
 
+	
 	private void writeHtmlResultPages(boolean performStatSigTests,
 			NemaEvaluationResultSet results, List<String> tags,
 			File summaryCsv,
-			File[] foldCSVs,
-			File[] tagCSVs,
+			List<File> foldCSVs,
+			List<File> tagCSVs,
 			Map<String, File> jobIDToPerTrackCSV, 
 			Map<String, File> jobIDToPerFoldCSV, 
-			File friedmanFmeasureFoldTablePNG,
-			File friedmanFmeasureFoldTable, 
-			File friedmanFmeasureTagTablePNG,
-			File friedmanFmeasureTagTable, 
+			File friedmanAUCROCFoldTablePNG,
+			File friedmanAUCROCFoldTable, 
+			File friedmanAUCROCTagTablePNG,
+			File friedmanAUCROCTagTable, 
+			List<File> friedmanPrecisionAtNPNGs,
+			List<File> friedmanPrecisionAtNTables,
 			Map<String, File> jobIDToTgz) {
 
 		int numJobs = results.getJobIds().size();
@@ -448,147 +460,63 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 			items.add(new TableItem("summary_results", "Summary Results",
 					summaryTable.getColHeaders(), summaryTable.getRows()));
 
-			
-			
 			aPage = new Page("summary", "Summary", items, true);
 			resultPages.add(aPage);
-			
 		}
 
-		// do a page per metric
+		
+		
+		
+		
+		
 		getLogger().info("Creating per-metric pages...");
+		//AUC-ROC page
 		{	
 			items = new ArrayList<PageItem>();
 
-			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_ACCURACY));
+			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_AFFINITY_AUC_ROC));
 			
-			Table theFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_ACCURACY);
-			items.add(new TableItem("acc_by_fold",
-					"Accuracy Per Fold",
+			Table theFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_AFFINITY_AUC_ROC);
+			items.add(new TableItem("aucroc_by_fold",
+					"AUCROC Per Fold",
 					theFoldTable.getColHeaders(),
 					theFoldTable.getRows()));
 
-			Table theTagTable = WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_ACCURACY_TAG_MAP);
-			items.add(new TableItem("acc_by_tag",
-					"Accuracy Per Tag", 
+			Table theTagTable = WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_AFFINITY_AUC_ROC_MAP);
+			items.add(new TableItem("aucroc_by_tag",
+					"AUCROC Per Tag", 
 					theTagTable.getColHeaders(), 
 					theTagTable.getRows()));
 			
-			aPage = new Page("accuracy",
-					"Accuracy", items, true);
-			resultPages.add(aPage);
-		}
-		{	
-			items = new ArrayList<PageItem>();
-
-			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_FMEASURE));
-			
-			Table theFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_FMEASURE);
-			items.add(new TableItem("fmeasure_by_fold",
-					"F-measure Per Fold",
-					theFoldTable.getColHeaders(),
-					theFoldTable.getRows()));
-
-			Table theTagTable = WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_FMEASURE_TAG_MAP);
-			items.add(new TableItem("fmeasure_by_tag",
-					"Fmeasure Per Tag", 
-					theTagTable.getColHeaders(), 
-					theTagTable.getRows()));
-			
-			aPage = new Page("fmeasure",
-					"F-measure", items, true);
-			resultPages.add(aPage);
-		}
-		{	
-			items = new ArrayList<PageItem>();
-
-			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_PRECISION));
-			
-			Table theFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_PRECISION);
-			items.add(new TableItem("precision_by_fold",
-					"Precision Per Fold",
-					theFoldTable.getColHeaders(),
-					theFoldTable.getRows()));
-
-			Table theTagTable = WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_PRECISION_TAG_MAP);
-			items.add(new TableItem("precision_by_tag",
-					"Precision Per Tag", 
-					theTagTable.getColHeaders(), 
-					theTagTable.getRows()));
-			
-			aPage = new Page("precision",
-					"Precision", items, true);
-			resultPages.add(aPage);
-		}
-		{	
-			items = new ArrayList<PageItem>();
-
-			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_RECALL));
-			
-			Table theFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_RECALL);
-			items.add(new TableItem("recall_by_fold",
-					"Recall Per Fold",
-					theFoldTable.getColHeaders(),
-					theFoldTable.getRows()));
-
-			Table theTagTable = WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_RECALL_TAG_MAP);
-			items.add(new TableItem("recall_by_tag",
-					"Recall Per Tag", 
-					theTagTable.getColHeaders(), 
-					theTagTable.getRows()));
-			
-			aPage = new Page("recall",
-					"Recall", items, true);
-			resultPages.add(aPage);
-		}
-		{	
-			items = new ArrayList<PageItem>();
-
-			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_POS_ACCURACY));
-			
-			Table theFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_POS_ACCURACY);
-			items.add(new TableItem("pos_ex_acc_by_fold",
-					"Positive Example Accuracy Per Fold",
-					theFoldTable.getColHeaders(),
-					theFoldTable.getRows()));
-
-			Table theTagTable = WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_POS_ACCURACY_TAG_MAP);
-			items.add(new TableItem("pos_ex_acc_by_tag",
-					"Positive Example Accuracy Per Tag", 
-					theTagTable.getColHeaders(), 
-					theTagTable.getRows()));
-			
-			aPage = new Page("pos_ex_accuracy",
-					"Positive Example Accuracy", items, true);
-			resultPages.add(aPage);
-		}
-		{	
-			items = new ArrayList<PageItem>();
-
-			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_NEG_ACCURACY));
-			
-			Table theFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_NEG_ACCURACY);
-			items.add(new TableItem("neg_ex_acc_by_fold",
-					"Negative Example Accuracy Per Fold",
-					theFoldTable.getColHeaders(),
-					theFoldTable.getRows()));
-
-			Table theTagTable = WriteCsvResultFiles.prepTableDataOverClassMaps(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),tags,NemaDataConstants.TAG_NEG_ACCURACY_TAG_MAP);
-			items.add(new TableItem("neg_ex_acc_by_tag",
-					"Negative Example Accuracy Per Tag", 
-					theTagTable.getColHeaders(), 
-					theTagTable.getRows()));
-			
-			aPage = new Page("neg_ex_accuracy",
-					"Negative Example Accuracy", items, true);
+			aPage = new Page("aucroc",
+					"AUCROC", items, true);
 			resultPages.add(aPage);
 		}
 		
+		//Precision-at-N page
+		{	
+			items = new ArrayList<PageItem>();
 
-		
+			int[] precisionAtNLevels = results.getOverallEvaluation(results.getJobIds().iterator().next()).getIntArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS);
+			List<File> precisionAtNFiles = new ArrayList<File>(precisionAtNLevels.length);
+			for (int i = 0; i < precisionAtNLevels.length; i++) {
+				
+				Table thePrecTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(
+						results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N,i);
+				items.add(new TableItem("prec-at-" + precisionAtNLevels[i],
+						"Overall precision-at-" + precisionAtNLevels[i],
+						thePrecTable.getColHeaders(),
+						thePrecTable.getRows()));
+			}
+			
+			aPage = new Page("precisionatn",
+					"Precision-at-N", items, true);
+			resultPages.add(aPage);
+		}
+
 		// do per system pages
 		{
-			getLogger().info("Creating per-system page...");
+			getLogger().info("Creating per-system pages...");
 			for (Iterator<String> it = results.getJobIds().iterator(); it
 					.hasNext();) {
 				jobId = it.next();
@@ -596,20 +524,14 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				systemFoldResults = results.getPerFoldEvaluation(jobId);
 				{
-					Table systemFoldTable = WriteCsvResultFiles
-							.prepTableDataOverFolds(results.getTestSetTrackLists(),
-									systemFoldResults, results
-											.getFoldEvalMetricsKeys());
+					Table systemFoldTable = prepTableDataOverFolds(results,	jobId);
 					items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_per_fold", results
 							.getJobIdToJobName().get(jobId)
 							+ " per fold results", systemFoldTable.getColHeaders(),
 							systemFoldTable.getRows()));
 				}
 				{
-					Table systemTrackTable = WriteCsvResultFiles
-							.prepTableDataOverTracks(
-									results.getTestSetTrackLists(), sysResults,
-									results.getTrackEvalMetricsAndResultsKeys());
+					Table systemTrackTable = prepTableDataOverTracks(results,jobId);
 					items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_per_track", results
 							.getJobIdToJobName().get(jobId)
 							+ " per track results", systemTrackTable
@@ -622,20 +544,27 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 			}
 		}
 		
+		
 		// do significance tests
 		if (getPerformMatlabStatSigTests() && performStatSigTests) {
-			getLogger().info("Performing significance tests...");
+			getLogger().info("Creating significance test pages...");
 			items = new ArrayList<PageItem>();
-			items.add(new ImageItem("friedmanFmeasureFoldTablePNG",
-					"F-measure by Fold: Friedman's ANOVA w/ Tukey Kramer HSD",
-					IOUtil.makeRelative(friedmanFmeasureFoldTablePNG, outputDir)));
-			items
-					.add(new ImageItem(
-							"friedmanFmeasureTagTablePNG",
-							"F-measure by Tag: Friedman's ANOVA w/ Tukey Kramer HSD",
-							IOUtil.makeRelative(
-									friedmanFmeasureTagTablePNG, outputDir)));
-
+			items.add(new ImageItem(
+					"friedmanAUCROCFoldTablePNG",
+					"AUCROC by Fold: Friedman's ANOVA w/ Tukey Kramer HSD",
+					IOUtil.makeRelative(friedmanAUCROCFoldTablePNG, outputDir)));
+			items.add(new ImageItem(
+					"friedmanFmeasureTagTablePNG",
+					"AUCROC by Tag: Friedman's ANOVA w/ Tukey Kramer HSD",
+					IOUtil.makeRelative(friedmanAUCROCTagTablePNG, outputDir)));
+			int[] precisionAtNLevels = results.getOverallEvaluation(results.getJobIds().iterator().next()).getIntArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS);
+			for (int i = 0; i < precisionAtNLevels.length; i++) {
+				items.add(new ImageItem(
+						"friedmanPrecisionAt" + precisionAtNLevels[i] + "PNG",
+						"Precision-at-" + precisionAtNLevels[i] + ": Friedman's ANOVA w/ Tukey Kramer HSD",
+						IOUtil.makeRelative(friedmanPrecisionAtNPNGs.get(i), outputDir)));
+			}
+			
 			aPage = new Page("sig_tests", "Significance Tests", items, true);
 			resultPages.add(aPage);
 		}
@@ -655,16 +584,16 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 
 			//per fold CSVs
 			List<String> perFoldCsvs = new ArrayList<String>(6);
-			for (int i = 0; i < foldCSVs.length; i++) {
-				perFoldCsvs.add(IOUtil.makeRelative(foldCSVs[i], outputDir));
+			for (int i = 0; i < foldCSVs.size(); i++) {
+				perFoldCsvs.add(IOUtil.makeRelative(foldCSVs.get(i), outputDir));
 			}
 			items.add(new FileListItem("perFoldCSVs",
 					"Per-fold CSV result files", perFoldCsvs));
 			
 			//per tag CSVs
 			List<String> perTagCsvs = new ArrayList<String>(6);
-			for (int i = 0; i < tagCSVs.length; i++) {
-				perTagCsvs.add(IOUtil.makeRelative(tagCSVs[i], outputDir));
+			for (int i = 0; i < tagCSVs.size(); i++) {
+				perTagCsvs.add(IOUtil.makeRelative(tagCSVs.get(i), outputDir));
 			}
 			items.add(new FileListItem("perTagCSVs",
 					"Per-tag CSV result files", perTagCsvs));
@@ -687,21 +616,24 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 			if (getPerformMatlabStatSigTests() && performStatSigTests) {
 				// Friedmans tables
 				List<String> sigCSVPaths = new ArrayList<String>(2);
-				sigCSVPaths.add(IOUtil.makeRelative(friedmanFmeasureFoldTable,
-						outputDir));
-				sigCSVPaths.add(IOUtil.makeRelative(
-						friedmanFmeasureTagTable, outputDir));
+				sigCSVPaths.add(IOUtil.makeRelative(friedmanAUCROCFoldTable, outputDir));
+				sigCSVPaths.add(IOUtil.makeRelative(friedmanAUCROCTagTable, outputDir));
+				for (int i = 0; i < friedmanPrecisionAtNTables.size(); i++) {
+					sigCSVPaths.add(IOUtil.makeRelative(friedmanPrecisionAtNTables.get(i), outputDir));
+				}
 
 				items.add(new FileListItem("sigCSVs", "Significance test CSVs",
 						sigCSVPaths));
 
 				// Friedmans plots
 				List<String> sigPNGPaths = new ArrayList<String>(2);
-				sigPNGPaths.add(IOUtil.makeRelative(friedmanFmeasureFoldTablePNG,
-						outputDir));
-				sigPNGPaths.add(IOUtil.makeRelative(
-						friedmanFmeasureTagTablePNG, outputDir));
-
+				sigPNGPaths.add(IOUtil.makeRelative(friedmanAUCROCFoldTablePNG, outputDir));
+				sigPNGPaths.add(IOUtil.makeRelative(friedmanAUCROCTagTablePNG, outputDir));
+				for (int i = 0; i < friedmanPrecisionAtNPNGs.size(); i++) {
+					sigCSVPaths.add(IOUtil.makeRelative(friedmanPrecisionAtNPNGs.get(i), outputDir));
+				}
+				
+				
 				items.add(new FileListItem("sigPNGs",
 						"Significance test plots", sigPNGPaths));
 			}
