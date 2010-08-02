@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.imirsel.nema.analytics.evaluation.*;
 import org.imirsel.nema.model.*;
+import org.imirsel.nema.model.util.ChordConversionUtil;
 
 /**
  * Chord estimation evaluation.
@@ -219,8 +220,9 @@ public class ChordEvaluator extends EvaluatorImpl{
 	//        		if(sysFrame == null){
 	//        			getLogger().warning("System chord Null at " +i + "-ith frame");
 	//        		}
-	        		overlap_total +=  calcOverlap(gtFrame,sysFrame);        	
-	        		
+	        	//	overlap_total +=  calcOverlap(gtFrame,sysFrame);        	
+	        		overlap_total +=  calcOverlapTriads(gtFrame,sysFrame);        	
+
 	        	}
 	        	
 	        	//set eval metrics on input obj for track
@@ -260,5 +262,36 @@ public class ChordEvaluator extends EvaluatorImpl{
 			}
     		return 1;
     	}
-    }    
+    }
+    
+    private int calcOverlapTriads(int[] gt, int[] sys) {
+    	if (gt == null || sys == null || gt.length!=sys.length){
+    		return 0;
+    	}
+    		
+    	else {
+    		int match_ctr=0;
+    		for (int i = 0; i < sys.length; i++) {
+    			for (int j=0; j < gt.length; j++){
+    				if(sys[i]==gt[j]){
+    					match_ctr++;
+    					continue;
+    				}
+    			}
+			}
+    		int threshold = 3;
+    		String chord = ChordConversionUtil.getInstance().convertNoteNumbersToShorthand(gt);
+    		if(chord.contains("dim") || chord.contains("aug")){
+    			threshold = 2;
+    		}
+    		if (match_ctr >=threshold){
+        		return 1;
+    		}
+    		else {
+    			return 0;
+    		}
+    	}
+    }
+    
+    
 }
