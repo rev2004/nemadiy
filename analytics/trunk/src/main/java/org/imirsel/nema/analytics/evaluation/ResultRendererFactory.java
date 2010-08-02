@@ -17,6 +17,7 @@ import org.imirsel.nema.analytics.evaluation.melody.MelodyEvaluator;
 import org.imirsel.nema.analytics.evaluation.melody.MelodyResultRenderer;
 import org.imirsel.nema.analytics.evaluation.onset.OnsetResultRenderer;
 import org.imirsel.nema.analytics.evaluation.structure.StructureResultRenderer;
+import org.imirsel.nema.analytics.evaluation.tagsClassification.TagAffinityResultRenderer;
 import org.imirsel.nema.analytics.evaluation.tagsClassification.TagClassificationResultRenderer;
 import org.imirsel.nema.analytics.evaluation.tempo.TempoResultRenderer;
 import org.imirsel.nema.model.NemaDataConstants;
@@ -46,6 +47,7 @@ public class ResultRendererFactory {
 		
 		//tag
 		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.TAG_CLASSIFICATIONS, TagClassificationResultRenderer.class);
+		RESULT_RENDERER_REGISTRY.put(NemaDataConstants.TAG_AFFINITY_MAP, TagAffinityResultRenderer.class);
 		
 		
 			//classification tasks
