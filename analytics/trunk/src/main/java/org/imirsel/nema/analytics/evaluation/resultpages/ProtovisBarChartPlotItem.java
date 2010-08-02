@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A PageItem implementation for plotting one of more functions over a set of
- * fixed timesteps. Options are provided to downsample the function plotted.
+ * A PageItem implementation for plotting Bar charts.
  * 
  * Implements Javascript rendering using Protovis.
  * 
