@@ -71,15 +71,15 @@ public class RetrieveSubmissionDetails extends NemaComponent {
 			client = RepositoryClientConnectionPool.getInstance().getFromPool();
 			for (Iterator<String> iterator = subs.iterator(); iterator.hasNext();) {
 				String subCode = iterator.next();
-				cc.getOutputConsole().println("Retrieving submission details for '" + subCode + "'");
+				cc.getOutputConsole().println("RetrieveSubmissionDetails: Retrieving submission details for '" + subCode + "'");
 				NemaSubmission sub = client.getSubmissionDetails(subCode);
 				if (sub == null){
-					cc.getOutputConsole().println("\n\nERROR: Failed to retrieve submission details for '" + subCode + "'"); 
+					cc.getOutputConsole().println("\n\nERROR: RetrieveSubmissionDetails: Failed to retrieve submission details for '" + subCode + "'"); 
 				}
 				out.put(subCode,sub);
 			}
 		}catch(SQLException e){
-			throw new ComponentExecutionException("Failed to retrieve submission details!",e);
+			throw new ComponentExecutionException("RetrieveSubmissionDetails: Failed to retrieve submission details!",e);
 			
 		}finally{
 			if (client != null){
@@ -87,8 +87,9 @@ public class RetrieveSubmissionDetails extends NemaComponent {
 			}
 		}
 
-		cc.getOutputConsole().println("Done retrieving submission details");
+		cc.getOutputConsole().println("RetrieveSubmissionDetails: Done retrieving submission details");
 		cc.pushDataComponentToOutput(DATA_OUT_SUB_DATA_MAP, out);
+		cc.getOutputConsole().println("RetrieveSubmissionDetails: Done outputing");
 	}
 
 }
