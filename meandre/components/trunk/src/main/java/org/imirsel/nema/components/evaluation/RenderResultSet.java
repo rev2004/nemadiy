@@ -40,6 +40,7 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 	//PROPERTIES	
 	@ComponentProperty(defaultValue="/share/apps/matlab/bin/matlab", description = "The path to the matlab executable.", name = "Matlab path")
 	public final static String PROPERTY_MATLAB_PATH = "Eval result set";
+	private File matlabPath = null;
 	
 	//INPUTS	
 	@ComponentInput(description = "The evaluation results set to render.", name = "Eval result set")
@@ -60,6 +61,9 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 	@Override
 	public void initialize (ComponentContextProperties ccp) throws ComponentExecutionException, ComponentContextException{
 		super.initialize(ccp);
+		
+		matlabPath = new File(ccp.getProperty(PROPERTY_MATLAB_PATH));
+		ccp.getOutputConsole().println("RenderResultSet: Got matlab path: " + matlabPath.getPath());
 	}
 
 	/** 
@@ -75,8 +79,6 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
 		NemaEvaluationResultSet results = (NemaEvaluationResultSet)cc.getDataComponentFromInput(DATA_INPUT_EVAL_RESULT_SET);
 
-		//TODO: get the matlab path used by some evaluators from somewhere? Perhaps environment variable or props file until we can remove the need for it 
-		File matlabPath = new File(cc.getProperty(PROPERTY_MATLAB_PATH));
 		File procResDir = new File(getAbsoluteResultLocationForJob());
 	    File procWorkingDir = new File(getProcessWorkingDirectory());
 	    String processResultsDirName;
