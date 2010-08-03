@@ -63,7 +63,7 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 		super.initialize(ccp);
 		
 		matlabPath = new File(ccp.getProperty(PROPERTY_MATLAB_PATH));
-		ccp.getOutputConsole().println("RenderResultSet: Got matlab path: " + matlabPath.getPath());
+		
 	}
 
 	/** 
@@ -77,8 +77,12 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 	 */
 	@Override
 	public void execute(ComponentContext cc) throws ComponentExecutionException, ComponentContextException {
+		cc.getOutputConsole().println("RenderResultSet: Got matlab path: " + matlabPath.getPath());
+		
 		NemaEvaluationResultSet results = (NemaEvaluationResultSet)cc.getDataComponentFromInput(DATA_INPUT_EVAL_RESULT_SET);
 
+		cc.getOutputConsole().println("RenderResultSet: Got results: " + results);
+		
 		File procResDir = new File(getAbsoluteResultLocationForJob());
 	    File procWorkingDir = new File(getProcessWorkingDirectory());
 	    String processResultsDirName;
@@ -90,15 +94,19 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 		}
 	
 	    try{
-		    File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
-	        //init renderer
+	    	File rootEvaluationDir = new File(processResultsDirName + File.separator + "evaluation");
+	        
+	    	cc.getOutputConsole().println("RenderResultSet: initializing render for dir: " + rootEvaluationDir.getPath());
+	    		    
+	    	//init renderer
 		    ResultRenderer renderer = ResultRendererFactory.getRenderer(results.getTask().getSubjectTrackMetadataName(), rootEvaluationDir, procWorkingDir, true, matlabPath);
 		    renderer.addLogDestination(getLogDestination());
 			//perform rendering
-		    renderer.renderResults(results);
+		    cc.getOutputConsole().println("RenderResultSet: Performing rendering");
+	    	renderer.renderResults(results);
 			// output the raw results for reprocessing or storage in the repository
 			cc.pushDataComponentToOutput(DATA_OUTPUT_EVAL_RESULTS, results);
-			cc.getOutputConsole().println("Rendering Complete\n" +
+			cc.getOutputConsole().println("RenderResultSet: Rendering Complete\n" +
 	        		"Results written to: " + rootEvaluationDir.getAbsolutePath());
 	    } catch (Exception e) {
 			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when rendering the results!",e);

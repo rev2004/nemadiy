@@ -179,6 +179,7 @@ import org.imirsel.nema.model.NemaTrackList;
 	@Override
 	public void dispose (ComponentContextProperties ccp) throws ComponentContextException {
 		super.dispose(ccp);
+		ccp.getOutputConsole().println("Disposing of EvaluateMultipleResultSets");
 	}
 
 }
