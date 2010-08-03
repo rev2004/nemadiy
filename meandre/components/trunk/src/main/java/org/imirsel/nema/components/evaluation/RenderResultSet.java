@@ -17,6 +17,7 @@ import org.imirsel.nema.analytics.evaluation.ResultRendererFactory;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;
+import org.meandre.annotations.ComponentProperty;
 import org.meandre.core.ComponentContext;
 import org.meandre.core.ComponentContextException;
 import org.meandre.core.ComponentContextProperties;
@@ -36,6 +37,10 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 		tags="evaluation comparison reporting")
 	public class RenderResultSet extends NemaComponent {
 
+	//PROPERTIES	
+	@ComponentProperty(defaultValue="/share/apps/matlab/bin/matlab", description = "The path to the matlab executable.", name = "Matlab path")
+	public final static String PROPERTY_MATLAB_PATH = "Eval result set";
+	
 	//INPUTS	
 	@ComponentInput(description = "The evaluation results set to render.", name = "Eval result set")
 	public final static String DATA_INPUT_EVAL_RESULT_SET = "Eval result set";
@@ -71,7 +76,7 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 		NemaEvaluationResultSet results = (NemaEvaluationResultSet)cc.getDataComponentFromInput(DATA_INPUT_EVAL_RESULT_SET);
 
 		//TODO: get the matlab path used by some evaluators from somewhere? Perhaps environment variable or props file until we can remove the need for it 
-		File matlabPath = new File("/usr/local/bin/matlab");
+		File matlabPath = new File(cc.getProperty(PROPERTY_MATLAB_PATH));
 		File procResDir = new File(getAbsoluteResultLocationForJob());
 	    File procWorkingDir = new File(getProcessWorkingDirectory());
 	    String processResultsDirName;
