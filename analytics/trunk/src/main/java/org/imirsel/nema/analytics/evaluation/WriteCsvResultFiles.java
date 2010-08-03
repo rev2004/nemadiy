@@ -13,9 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.imirsel.nema.analytics.evaluation.resultpages.Table;
 import org.imirsel.nema.model.NemaData;
@@ -155,49 +157,113 @@ public class WriteCsvResultFiles {
             colNames[i+2] = jobIDandName[i][1];
         }
 
+        String firstJob = jobIDandName[0][0];
+        
         //count number of rows to produce
         int numTracks = 0;
-        String firstJob = jobIDandName[0][0];
-        {
-	        Map<NemaTrackList,List<NemaData>> firstResList = jobIDToTrackEval.get(firstJob);
-	        for (Iterator<List<NemaData>> iterator = firstResList.values().iterator(); iterator.hasNext();) {
-				List<NemaData> list = iterator.next();
-				numTracks += list.size();
-			}
+        if(testSets.get(0).getTracks() != null){
+        	for(NemaTrackList testSet:testSets){
+	        	numTracks += testSet.getTracks().size();
+	        }
+        }else{
+        	{
+    	        Map<NemaTrackList,List<NemaData>> firstResList = jobIDToTrackEval.get(firstJob);
+    	        for (Iterator<List<NemaData>> iterator = firstResList.values().iterator(); iterator.hasNext();) {
+    				List<NemaData> list = iterator.next();
+    				numTracks += list.size();
+    			}
+            }
         }
         
-        //produce rows (assume but check that results are ordered the same for each system)
-        List<String[]> rows = new ArrayList<String[]>();
-        int foldNum = 0;
-        NemaTrackList foldList = testSets.get(foldNum);
+        //produce rows 
+        List<String[]> rows = new ArrayList<String[]>(numTracks);
+        int foldNum = -1;
+        NemaTrackList foldList = null;
         int foldTrackCount = 0;
         int actualRowCount = 0;
+        int foldSize = 0;
+        
         String[] row;
-        Map<NemaTrackList,List<NemaData>> firstResList;
         NemaData data;
-        firstResList = jobIDToTrackEval.get(firstJob);
-    	while(actualRowCount < numTracks){
-        	if (foldTrackCount == firstResList.get(foldList).size()){
-        		foldNum++;
-        		foldList  = testSets.get(foldNum);
-        		foldTrackCount = 0;
-        	}
+        
+        if(testSets.get(0).getTracks() == null){
+        	//no canonical track list - use first sub instead
+	        Map<NemaTrackList,List<NemaData>> firstResList = jobIDToTrackEval.get(firstJob);
+	        
+	    	while(actualRowCount < numTracks){
+		    	if (foldTrackCount == foldSize){
+		    		foldNum++;
+		    		foldList  = testSets.get(foldNum);
+		    		foldSize = foldList.getTracks().size();
+		    		foldTrackCount = 0;
+		    	}
+		    	
+		    	row = new String[numCols];
+		    	row[0] = "" + foldList.getFoldNumber();
+		    	row[1] = firstResList.get(foldList).get(foldTrackCount).getId();
+		    	for(int i=0;i<numAlgos;i++){
+		        		data = jobIDToTrackEval.get(jobIDandName[i][0]).get(foldList).get(foldTrackCount);
+		
+		        		if (!data.getId().equals(row[1])){
+		        			
+		        			
+		        			throw new IllegalArgumentException("Results from job ID: " + jobIDandName[i][0] + " are not ordered the same as results from job ID: " + firstJob);
+		        		}
+		        		row[i+2] = "" + DEC.format(data.getDoubleMetadata(metricKey));
+		    	}
+		    	rows.add(row);
+		
+		    	actualRowCount++;
+		    	foldTrackCount++;
+		    }
+        }else{
+        	Map<String,Map<String,NemaData>> jobIdToTrackIdToNemaData = null;
+        	Map<String,NemaData> jobMap;
         	
-        	row = new String[numCols];
-        	row[0] = "" + foldList.getFoldNumber();
-        	row[1] = firstResList.get(foldList).get(foldTrackCount).getId();
-        	for(int i=0;i<numAlgos;i++){
-	        		data = jobIDToTrackEval.get(jobIDandName[i][0]).get(foldList).get(foldTrackCount);
-
-	        		if (!data.getId().equals(row[1])){
-	        			throw new IllegalArgumentException("Results from job ID: " + jobIDandName[i][0] + " are not ordered the same as results from job ID: " + firstJob);
+        	while(actualRowCount < numTracks){
+		    	if (foldTrackCount == foldSize){
+		    		foldNum++;
+		    		foldList  = testSets.get(foldNum);
+		    		foldSize = foldList.getTracks().size();
+		    		foldTrackCount = 0;
+		    		
+		    		//build maps jobID -> trackID -> NemaData
+		    		jobIdToTrackIdToNemaData = new HashMap<String, Map<String,NemaData>>(jobIDToName.size());
+		    		for(int i=0;i<numAlgos;i++){
+		        		List<NemaData> jobFoldList = jobIDToTrackEval.get(jobIDandName[i][0]).get(foldList);
+		        		jobMap = new HashMap<String, NemaData>(jobFoldList.size());
+		        		for (NemaData track:jobFoldList) {
+							jobMap.put(track.getId(), track);
+						}
+		        		jobIdToTrackIdToNemaData.put(jobIDandName[i][0], jobMap);
+		    		}
+		    	}
+		    	
+		    	row = new String[numCols];
+		    	row[0] = "" + foldList.getFoldNumber();
+		    	row[1] = foldList.getTracks().get(foldTrackCount).getId();
+		    	
+		    	for(int i=0;i<numAlgos;i++){
+		    		jobMap = jobIdToTrackIdToNemaData.get(jobIDandName[i][0]);
+		    		
+	        		data = jobMap.get(row[1]);
+	        		
+	        		//if null report and produce dummy result
+        			if (data == null){
+	        			Logger.getLogger(WriteCsvResultFiles.class.getName()).warning(
+	        					"Results from job ID: " + jobIDandName[i][0] + " did not include track: " + row[1] + 
+	        					" for fold " + foldList.getFoldNumber() + " (id=" + foldList.getId() + ")");
+	        			row[i+2] = "0";
+	        		}else{
+	        			row[i+2] = "" + DEC.format(data.getDoubleMetadata(metricKey));
 	        		}
-	        		row[i+2] = "" + DEC.format(data.getDoubleMetadata(metricKey));
-        	}
-        	rows.add(row);
-
-        	actualRowCount++;
-        	foldTrackCount++;
+		    	}
+		    	rows.add(row);
+		
+		    	actualRowCount++;
+		    	foldTrackCount++;
+		    }
+        	
         }
         
         return new Table(colNames, rows);

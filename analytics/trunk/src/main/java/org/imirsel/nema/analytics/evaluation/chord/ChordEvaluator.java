@@ -73,9 +73,9 @@ public class ChordEvaluator extends EvaluatorImpl{
 	        	getLogger().info("Evaluating experiment folds for jobID: " + jobId);
 	        	sysResults = jobIDToFoldResults.get(jobId);
 	        	Map<NemaTrackList,NemaData> foldEvals = new HashMap<NemaTrackList,NemaData>(testSets.size());
-				for (Iterator<NemaTrackList> trackIt = sysResults.keySet().iterator(); trackIt.hasNext();) {
+				for (Iterator<NemaTrackList> trackListIt = sysResults.keySet().iterator(); trackListIt.hasNext();) {
 					//make sure we use the evaluators copy of the track list
-					NemaTrackList trackList = testSets.get(testSets.indexOf(trackIt.next()));
+					NemaTrackList trackList = testSets.get(testSets.indexOf(trackListIt.next()));
 					NemaData result = evaluateResultFold(jobId, trackList, sysResults.get(trackList));
 					foldEvals.put(trackList, result);
 				}
