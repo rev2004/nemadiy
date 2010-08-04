@@ -56,6 +56,8 @@ public class EvaluatorFactory {
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, ClassificationEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, ClassificationEvaluator.class);
 		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_MOOD, ClassificationEvaluator.class);
+		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_MIREX_COMPOSER, ClassificationEvaluator.class);
+		EVALUATOR_REGISTRY.put(NemaDataConstants.CLASSIFICATION_MIREX_GENRE, ClassificationEvaluator.class);
 	}
 	
 	public static Evaluator getEvaluator(String metadataKey,

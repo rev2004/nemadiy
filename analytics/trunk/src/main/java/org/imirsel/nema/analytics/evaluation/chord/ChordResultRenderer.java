@@ -569,12 +569,14 @@ public class ChordResultRenderer extends ResultRendererImpl {
 			
 			for (int i = 0; i < transcripts.length; i++) {
 				NemaData nemaData = transcripts[i];
-				Object rawData = nemaData.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
-				if(rawData != null){
-					List<NemaSegment> rawDataList = (List<NemaSegment>) rawData;
-					endTimeSecs = Math.max(endTimeSecs, rawDataList.get(rawDataList.size()-1).getOffset());
-					series.put(jobNames.get(i), rawDataList);
-					seriesNames.add(jobNames.get(i));
+				if(nemaData != null){
+					Object rawData = nemaData.getMetadata(NemaDataConstants.CHORD_LABEL_SEQUENCE);
+					if(rawData != null){
+						List<NemaSegment> rawDataList = (List<NemaSegment>) rawData;
+						endTimeSecs = Math.max(endTimeSecs, rawDataList.get(rawDataList.size()-1).getOffset());
+						series.put(jobNames.get(i), rawDataList);
+						seriesNames.add(jobNames.get(i));
+					}
 				}
 			}
 			
