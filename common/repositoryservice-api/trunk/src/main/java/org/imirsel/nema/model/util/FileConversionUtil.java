@@ -117,6 +117,8 @@ public class FileConversionUtil {
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, classificationTypeList);
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, classificationTypeList);
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, classificationTypeList);
+			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_MIREX_GENRE, classificationTypeList);
+			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_MIREX_COMPOSER, classificationTypeList);
 			INPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_MOOD,classificationTypeList);
 			
 			//tag classification tasks
@@ -171,6 +173,8 @@ public class FileConversionUtil {
 			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_TITLE, outputTypeList);
 			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_GENRE, outputTypeList);
 			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_COMPOSER, outputTypeList);
+			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_MIREX_GENRE, outputTypeList);
+			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_MIREX_COMPOSER, outputTypeList);
 			OUTPUT_FILE_TYPE_REGISTRY.put(NemaDataConstants.CLASSIFICATION_MOOD, outputTypeList);
 			
 			//tag classification tasks
