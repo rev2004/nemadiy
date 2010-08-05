@@ -1,5 +1,7 @@
 package org.imirsel.nema.webapp.taglib;
 
+import java.util.Date;
+
 import org.displaytag.decorator.TableDecorator;
 import org.imirsel.nema.model.Job;
 
@@ -44,7 +46,12 @@ public class JobDecorator extends TableDecorator {
 			long hr=duration/3600; duration-=hr*3600;
 			long min=(duration/60); duration-=min*60;
 			return String.format("%02d:%02d:%02d",hr,min,duration);
-		}else {
+		}else if (job.isRunning()){
+			Long duration=((new Date()).getTime()-job.getScheduleTimestamp().getTime())/1000;
+			long hr=duration/3600; duration-=hr*3600;
+			long min=(duration/60); duration-=min*60;
+			return String.format("<font color='red'>%02d:%02d:%02d</font>",hr,min,duration);
+		}else{
 			return "";
 		}
 	}

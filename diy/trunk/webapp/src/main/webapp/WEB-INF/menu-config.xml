@@ -15,6 +15,9 @@
 		
 		<Menu name="JobMenu" title="Jobs" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/JobManager.getUserJobs">
 		    <Item name="MyJobs" title="Job List" page="/get/JobManager.getUserJobs" width="120"/>
+		    <Item name="FinishedJobs" title="Job List -Finished" page="/get/JobManager.getUserJobs?type=finished" width="120"/>
+		    <Item name="StoppedJobs" title="Job List -Stopped" page="/get/JobManager.getUserJobs?type=aborted" width="120"/>
+		    <Item name="RunningJobs" title="Job List -Running" page="/get/JobManager.getUserJobs?type=running" width="120"/>
 		    <Item name="PrepareJob" title="Prepare New Job" page="/get/task" width="120"/>		    
             <Item name="MySubmissions" title="Mirex Submissions" page="/get/JobManager.getSubmissions" width="120"/>
             <!-- <Item name="flowTemplate" title="Create w/ Template" page="get/task" width="120"/>-->
