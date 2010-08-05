@@ -6,6 +6,7 @@
 package org.imirsel.nema.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,7 +53,7 @@ public class NemaTrackList implements Serializable {
         this.foldNumber = foldNumber;
         this.tracks = null;
     }
-    
+
     
 
     /**
@@ -74,7 +75,7 @@ public class NemaTrackList implements Serializable {
 		this.foldNumber = foldNumber;
 		this.tracks = tracks;
 	}
-
+    
 	/**
      * Returns the ID of the set.
      * @return the ID.
