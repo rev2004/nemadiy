@@ -13,6 +13,8 @@ defaultorder="descending" id="jobs"  class="table" export="false" pagesize="10"
 decorator="org.imirsel.nema.webapp.taglib.JobDecorator">
   <display:column property="name" escapeXml="true" sortable="true" titleKey="job.name"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
+  <display:column property="flow.submissionCode" escapeXml="true" sortable="true" title="Submission ID"
+        url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
   <display:column property="description" escapeXml="true" sortable="true" titleKey="job.description"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id" maxLength="25"/>
   <display:column property="jobStatus" escapeXml="true" sortable="true" titleKey="job.jobStatus"
@@ -27,7 +29,7 @@ decorator="org.imirsel.nema.webapp.taglib.JobDecorator">
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id" />
   <display:column property="port" escapeXml="true" sortable="true" titleKey="job.port"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
-   <display:column property="duration" escapeXml="true" sortable="true"  title="Duration"
+   <display:column property="duration" escapeXml="false" sortable="true"  title="Duration"
         url="/get/JobManager.jobDetail?from=list" paramId="id" paramProperty="id"/>
 </display:table>
 <script type="text/javascript">
