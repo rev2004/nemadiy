@@ -71,7 +71,9 @@ public class NemaDataConstants {
     public final static String CLASSIFICATION_ALBUM = "Album";
     public final static String CLASSIFICATION_ARTIST = "Artist";
     public final static String CLASSIFICATION_COMPOSER = "Composer";
+    public final static String CLASSIFICATION_MIREX_COMPOSER = "MIREX_composer";
     public final static String CLASSIFICATION_GENRE = "Genre";
+    public final static String CLASSIFICATION_MIREX_GENRE = "MIREX_genre";
     public final static String CLASSIFICATION_TITLE = "Title";
     public final static String CLASSIFICATION_MOOD = "Mood";
     
