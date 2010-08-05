@@ -41,7 +41,7 @@ public class GenerateTaskSubmissionWikiTable {
 				
 				String table = "== General Legend ==\n" +
 						"{| border=\"1\" cellspacing=\"0\" style=\"text-align: left; width: 800px;\"\n" +
-						"\t|- style=\"background: #efefef;\"\n" +
+						"\t|- style=\"background: yellow;\"\n" +
 						"\t! width=\"80\" | Sub code \n" +
 						"\t! width=\"200\" | Submission name \n" +
 						"\t! width=\"80\" style=\"text-align: center;\" | Abstract \n" +
