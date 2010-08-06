@@ -60,6 +60,9 @@
 	<logger name="org.imirsel.nema.meandre">
 		<level value="DEBUG"/>
 	</logger>
+	<logger name="org.imirsel.nema.webapp">
+		<level value="DEBUG"/>
+	</logger>
 	<logger name="org.imirsel.nema.webapp.webflow">
 		<level value="DEBUG" />
 	</logger>
