@@ -63,27 +63,31 @@ public class TableItem extends PageItem{
     
     @Override
     public String getHeadData(){
-        String out = "<script>\n";
-        out += getName() + " = {\n";
-        out += "\ttable: [\n";
-        for (Iterator<String[]> it = dataRows.iterator(); it.hasNext();){
-            String[] rowVals = it.next();
-            out +="\t\t{ ";
-            for (int c = 0; c < colNames.length; c++){
-                if(c > 0){
-                    out += ", ";
-                }
-                out += "\"" + colNames[c] + "\":\"" + rowVals[c].replaceAll("\"", "\\\"") + "\"";
-            }
-            out += " }";
-            if (it.hasNext()){
-                out +=",";
-            }
-            out +="\n";
-        }
-        out += "\t]\n";
-        out += "}\n\n";
-
+    	String out = "<script>\n";
+    	try{
+        	out += getName() + " = {\n";
+	        out += "\ttable: [\n";
+	        for (Iterator<String[]> it = dataRows.iterator(); it.hasNext();){
+	            String[] rowVals = it.next();
+	            out +="\t\t{ ";
+	            for (int c = 0; c < colNames.length; c++){
+	                if(c > 0){
+	                    out += ", ";
+	                }
+	                out += "\"" + colNames[c] + "\":\"" + rowVals[c].replaceAll("\"", "\\\"") + "\"";
+	            }
+	            out += " }";
+	            if (it.hasNext()){
+	                out +=",";
+	            }
+	            out +="\n";
+	        }
+	        out += "\t]\n";
+	        out += "}\n\n";
+    	}catch(Exception e){
+    		throw new IllegalArgumentException("Exception thrown while creating data for table: " + getName() + ", script so far:\n" + out,e);
+    	}
+	        
         out += "YAHOO.util.Event.addListener(window, \"load\", function() {\n" +
                 "\tYAHOO.example.Basic = function() {\n" +
                 "\t\tvar myColumnDefs = [";

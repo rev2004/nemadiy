@@ -259,8 +259,7 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 	 * @return Table Object representing the data.
 	 * @throws IOException
 	 */
-	private Table prepOverallResultsTable(NemaEvaluationResultSet results)
-			throws IOException {
+	private Table prepOverallResultsTable(NemaEvaluationResultSet results){
 		DecimalFormat DEC = new DecimalFormat("0.0000");
 		int[] precisionAtNLevels = results.getOverallEvaluation(results.getJobIds().iterator().next()).getIntArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS);
 		int numCols = 2 + precisionAtNLevels.length;
@@ -453,13 +452,11 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 		{
 			getLogger().info("Creating summary page...");
 			items = new ArrayList<PageItem>();
-			Table summaryTable = WriteCsvResultFiles.prepSummaryTable(results
-					.getJobIdToOverallEvaluation(),
-					results.getJobIdToJobName(), results
-							.getOverallEvalMetricsKeys());
+			Table summaryTable;
+			summaryTable = prepOverallResultsTable(results);
 			items.add(new TableItem("summary_results", "Summary Results",
 					summaryTable.getColHeaders(), summaryTable.getRows()));
-
+		
 			aPage = new Page("summary", "Summary", items, true);
 			resultPages.add(aPage);
 		}

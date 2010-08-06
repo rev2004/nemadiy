@@ -121,6 +121,7 @@ public class Page {
             //write out each page
             aPage = it.next();
             File pageFile = new File(directory.getAbsolutePath() + File.separator + filenames[idx]);
+            Logger.getLogger(Page.class.getName()).info("Producing html for: " + pageFile.getName());
             String pageContent = createPageHTML(set_title, aPage, pages, filenames);
             try{
             	FileUtils.writeStringToFile(pageFile, pageContent, "utf-8");

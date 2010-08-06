@@ -2,8 +2,10 @@ package org.imirsel.nema.analytics.evaluation.tagsClassification;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,106 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 	@Override
 	public void renderAnalysis(NemaEvaluationResultSet results) throws IOException {
 		throw new UnsupportedOperationException("No rendering provided for tag classificaiton without evaluation");
+	}
+	
+	/**
+	 * Produces a summary result table.
+	 * 
+	 * @param results Result set to get per-track, per-system result data from.
+	 * @return File Object representing the CSV created.
+	 * @throws IOException
+	 */
+	protected File writeOverallResultsCSV(NemaEvaluationResultSet results)
+			throws IOException {
+		File summaryCsv = new File(outputDir.getAbsolutePath() + File.separator + "summaryResults.csv");
+		List<String> metrics = new ArrayList<String>();
+		metrics.add(NemaDataConstants.TAG_ACCURACY);
+		metrics.add(NemaDataConstants.TAG_POS_ACCURACY);
+		metrics.add(NemaDataConstants.TAG_NEG_ACCURACY);
+		metrics.add(NemaDataConstants.TAG_PRECISION);
+		metrics.add(NemaDataConstants.TAG_RECALL);
+		metrics.add(NemaDataConstants.TAG_FMEASURE);
+		WriteCsvResultFiles.writeTableToCsv(
+				WriteCsvResultFiles.prepSummaryTable(results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), metrics),
+				summaryCsv
+			);
+		return summaryCsv;
+	}
+	
+	/**
+	 * Default method of writing result CSV files per fold, for each system. 
+	 * Uses the declared per-fold metrics and results keys to produce a 
+	 * per-fold result table for each system.
+	 * 
+	 * @param numJobs The number of jobs.
+	 * @param jobIDToResultDir Map of job ID to result directory to write to.
+	 * @return A map of job ID to the CSV file created for it.
+	 * @throws IOException
+	 */
+	protected Map<String, File> writePerFoldSystemResultCSVs(
+			NemaEvaluationResultSet results,
+			Map<String, File> jobIDToResultDir) throws IOException {
+		String jobId;
+		Map<NemaTrackList, NemaData>  sysFoldResults;
+		Map<String, File> jobIDToPerFoldCSV = new HashMap<String, File>(jobIDToResultDir.size());
+		List<String> metrics = new ArrayList<String>();
+		metrics.add(NemaDataConstants.TAG_ACCURACY);
+		metrics.add(NemaDataConstants.TAG_POS_ACCURACY);
+		metrics.add(NemaDataConstants.TAG_NEG_ACCURACY);
+		metrics.add(NemaDataConstants.TAG_PRECISION);
+		metrics.add(NemaDataConstants.TAG_RECALL);
+		metrics.add(NemaDataConstants.TAG_FMEASURE);
+		for (Iterator<String> it = results.getJobIds().iterator(); it
+				.hasNext();) {
+			jobId = it.next();
+			sysFoldResults = results.getPerFoldEvaluation(jobId);
+			
+			File sysDir = jobIDToResultDir.get(jobId);
+			File foldCSV = new File(sysDir.getAbsolutePath() + File.separator + "per_fold_results.csv");
+			WriteCsvResultFiles.writeTableToCsv(WriteCsvResultFiles
+					.prepTableDataOverFolds(results.getTestSetTrackLists(),sysFoldResults, metrics),
+					foldCSV);
+			jobIDToPerFoldCSV.put(jobId, foldCSV);
+		}
+		return jobIDToPerFoldCSV;
+	}
+	
+	/**
+	 * Default method of writing result CSV files per track, for each system. 
+	 * Uses the declared per-track metrics and results keys to produce a 
+	 * per-track result table for each system.
+	 * 
+	 * @param numJobs The number of jobs.
+	 * @param jobIDToResultDir Map of job ID to result directory to write to.
+	 * @return A map of job ID to the CSV file created for it.
+	 * @throws IOException
+	 */
+	protected Map<String, File> writePerTrackSystemResultCSVs(
+			NemaEvaluationResultSet results,
+			Map<String, File> jobIDToResultDir) throws IOException {
+		String jobId;
+		Map<NemaTrackList, List<NemaData>> sysResults;
+		Map<String, File> jobIDToPerTrackCSV = new HashMap<String, File>(jobIDToResultDir.size());
+		List<String> metrics = new ArrayList<String>();
+		metrics.add(NemaDataConstants.TAG_ACCURACY);
+		metrics.add(NemaDataConstants.TAG_POS_ACCURACY);
+		metrics.add(NemaDataConstants.TAG_NEG_ACCURACY);
+		metrics.add(NemaDataConstants.TAG_PRECISION);
+		metrics.add(NemaDataConstants.TAG_RECALL);
+		metrics.add(NemaDataConstants.TAG_FMEASURE);
+		for (Iterator<String> it = results.getJobIds().iterator(); it
+				.hasNext();) {
+			jobId = it.next();
+			sysResults = results.getPerTrackEvaluationAndResults(jobId);
+			
+			File sysDir = jobIDToResultDir.get(jobId);
+			File trackCSV = new File(sysDir.getAbsolutePath() + File.separator + "per_track_results.csv");
+			WriteCsvResultFiles.writeTableToCsv(
+					WriteCsvResultFiles.prepTableDataOverTracks(results.getTestSetTrackLists(), sysResults, metrics)
+					,trackCSV);
+			jobIDToPerTrackCSV.put(jobId, trackCSV);
+		}
+		return jobIDToPerTrackCSV;
 	}
 	
 	@Override
@@ -198,6 +300,14 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
         {
         	resultPages.add(createIntroHtmlPage(results));
         }
+        
+        List<String> basic_metrics = new ArrayList<String>();
+        basic_metrics.add(NemaDataConstants.TAG_ACCURACY);
+        basic_metrics.add(NemaDataConstants.TAG_POS_ACCURACY);
+        basic_metrics.add(NemaDataConstants.TAG_NEG_ACCURACY);
+        basic_metrics.add(NemaDataConstants.TAG_PRECISION);
+        basic_metrics.add(NemaDataConstants.TAG_RECALL);
+        basic_metrics.add(NemaDataConstants.TAG_FMEASURE);
 
 		// do summary page
 		{
@@ -205,8 +315,7 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 			items = new ArrayList<PageItem>();
 			Table summaryTable = WriteCsvResultFiles.prepSummaryTable(results
 					.getJobIdToOverallEvaluation(),
-					results.getJobIdToJobName(), results
-							.getOverallEvalMetricsKeys());
+					results.getJobIdToJobName(), basic_metrics);
 			items.add(new TableItem("summary_results", "Summary Results",
 					summaryTable.getColHeaders(), summaryTable.getRows()));
 
@@ -360,8 +469,7 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 				{
 					Table systemFoldTable = WriteCsvResultFiles
 							.prepTableDataOverFolds(results.getTestSetTrackLists(),
-									systemFoldResults, results
-											.getFoldEvalMetricsKeys());
+									systemFoldResults, basic_metrics);
 					items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_per_fold", results
 							.getJobIdToJobName().get(jobId)
 							+ " per fold results", systemFoldTable.getColHeaders(),
@@ -371,7 +479,7 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 					Table systemTrackTable = WriteCsvResultFiles
 							.prepTableDataOverTracks(
 									results.getTestSetTrackLists(), sysResults,
-									results.getTrackEvalMetricsAndResultsKeys());
+									basic_metrics);
 					items.add(new TableItem(results.getJobIdToJobName().get(jobId) + "_per_track", results
 							.getJobIdToJobName().get(jobId)
 							+ " per track results", systemTrackTable
