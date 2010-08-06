@@ -143,7 +143,9 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
     // MIREX submissions database
     public static final String GET_SUBMISSION_NAME_FOR_SUBMISSION_CODE = "SELECT mirexsubs.mirex_Submissions.sub_Name FROM mirexsubs.mirex_Submissions WHERE mirex_Submissions.sub_Hashcode=?";
     public static final String GET_SUBMISSION_CONTRIBUTORS_FOR_SUBMISSION_CODE = "SELECT mirexsubs.mirex_Profiles.*,mirexsubs.mirex_Submission_Contributors.sub_Rank FROM mirexsubs.mirex_Submissions, mirexsubs.mirex_Submission_Contributors, mirexsubs.mirex_Profiles WHERE mirex_Submissions.sub_Hashcode=? AND mirex_Submissions.sub_ID=mirex_Submission_Contributors.sub_ID AND mirex_Submission_Contributors.sub_ContributorID=mirex_Profiles.profile_ID ORDER BY mirex_Submission_Contributors.sub_Rank";
-    //public static final String GET_SUBMISSION_PDF_FOR_SUBMISSION_CODE = "";
+    public static final String GET_SUBMISSIONS_PDF_FOR_TASK_CODE = "SELECT sub_Hashcode FROM mirexsubs.mirex_Submissions ms, mirexsubs.mirex_Tasks mt WHERE ms.sub_Task=mt.task_id AND mt.task_Directory=?";
+    
+    
     
     
     
@@ -1298,8 +1300,19 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 		String subName = getSubmissionNameForSubmissionCode(subCode);
 		List<NemaContributor> contributors = getSubmissionContributorsForSubmissionCode(subCode);
 		String abstractUrl = "http://www.music-ir.org/mirex/abstracts/2010/" + subCode + ".pdf";
-		return new NemaSubmission(subCode, subName, contributors, abstractUrl);
-				
+		return new NemaSubmission(subCode, subName, contributors, abstractUrl);		
+	}
+	
+	public List<String> getSubmissionsForTaskCode(String code) throws SQLException{
+		PreparedStatement statement = dbCon.con.prepareStatement(GET_SUBMISSIONS_PDF_FOR_TASK_CODE);
+		statement.setString(1, code);
+		ResultSet r = statement.executeQuery();
+		List<String> out = new ArrayList<String>();
+		while(r.next()){
+			out.add(r.getString(1));
+		}
+		Collections.sort(out);
+		return out;
 	}
 	
 }

@@ -13,12 +13,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.imirsel.nema.model.NemaCollection;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaDataConstants;
 import org.imirsel.nema.model.NemaDataset;
+import org.imirsel.nema.model.NemaEvaluationResultSet;
 import org.imirsel.nema.model.NemaFile;
 import org.imirsel.nema.model.NemaMetadataEntry;
 import org.imirsel.nema.model.NemaTask;
@@ -466,21 +468,36 @@ public class RepositoryClientImplTest extends BaseManagerTestCase {
 		File tmpDir = File.createTempFile("chord", "shorthand");
 		tmpDir.delete();
 		tmpDir.mkdirs();
-		prepareTaskDataFiles(taskID,tmpDir,TrackListTextFile.class,ChordShortHandTextFile.class,TrackListTextFile.class);
+		prepareTaskDataFiles(taskID,tmpDir,TrackListTextFile.class,ChordShortHandTextFile.class,TrackListTextFile.class, null);
 	}
 	
 	@Test
 	public final void testTrainTestFileGeneration() throws Exception{
-        int taskID = 8;
-        File tmpDir = File.createTempFile("classification", "mood");
+//		int taskID = 3;//mixed
+//		int taskID = 4;//latin
+		int taskID = 5;//composer
+//		int taskID = 5;//artist
+//        int taskID = 8;//mood
+        
+        File tmpDir = File.createTempFile("classification", "mixed");
         tmpDir.delete();
         tmpDir.mkdir();
         
-        prepareTaskDataFiles(taskID,tmpDir,TrackListTextFile.class,ClassificationTextFile.class,TrackListTextFile.class);
+        Set<NemaMetadataEntry> constraint = new HashSet<NemaMetadataEntry>();
+        constraint.add(new NemaMetadataEntry("channels", "1"));
+        constraint.add(new NemaMetadataEntry("sample-rate", "22050"));
+        constraint.add(new NemaMetadataEntry("clip-type", "30s"));
+        
+        prepareTaskDataFiles(taskID,tmpDir,TrackListTextFile.class,ClassificationTextFile.class,TrackListTextFile.class, constraint);
 	}
 	
 	
-	public final void prepareTaskDataFiles(int taskID, File tmpDir, Class<? extends NemaFileType> featExtractFileType, Class<? extends NemaFileType> trainingFileType, Class<? extends NemaFileType> testFileType) throws Exception{
+	public final void prepareTaskDataFiles(int taskID, File tmpDir, 
+			Class<? extends NemaFileType> featExtractFileType, 
+			Class<? extends NemaFileType> trainingFileType, 
+			Class<? extends NemaFileType> testFileType,
+			Set<NemaMetadataEntry> constraint
+			) throws Exception{
 		NemaTask task = null;
 		NemaDataset dataset = null;
 		Map<NemaTrackList,List<NemaData>> featExtractMap = new HashMap<NemaTrackList, List<NemaData>>(1);;
@@ -525,9 +542,9 @@ public class RepositoryClientImplTest extends BaseManagerTestCase {
         }
         
         //resolve training sets
-        clientImpl.resolveTracksToFiles(trainingSets, null);
-        clientImpl.resolveTracksToFiles(testSets, null);
-        clientImpl.resolveTracksToFiles(featExtractMap, null);
+        clientImpl.resolveTracksToFiles(trainingSets, constraint);
+        clientImpl.resolveTracksToFiles(testSets, constraint);
+        clientImpl.resolveTracksToFiles(featExtractMap, constraint);
         
       //prepare training set files
         System.out.println("Outputting to: " + tmpDir.getAbsolutePath());
