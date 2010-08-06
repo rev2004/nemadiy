@@ -361,6 +361,7 @@ public class ProtovisSegmentationPlotItem extends PageItem{
 				"\t\t\t\t\t" + getName() + "_interval = setInterval('" + getName() + "_serviceInterval()',500);\n" + 
 				"\t\t\t\t\t\">\n" + 
 				"\t\t\t\t<label for=\"" + getName() + "_button\">Click here to plot the figure</label>\n" +
+				"\t\t\t\t&nbsp;&nbsp;<a href=\"" + getName() + ".js\">download JSON data file</a>\n" + 
 				"\t\t\t</div>\n" + 
 				"\t\t</div>\n<br>\n";
         
