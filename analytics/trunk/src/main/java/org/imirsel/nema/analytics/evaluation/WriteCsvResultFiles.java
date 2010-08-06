@@ -391,7 +391,7 @@ public class WriteCsvResultFiles {
         for(int f=0;f<numFolds;f++){
         	NemaTrackList foldList = testSets.get(fold);
             row = new String[numCols];
-        	row[0] = "" + fold;
+        	row[0] = "" + foldList.getFoldNumber();
         	for(int i=0;i<numAlgos;i++){
         		data = jobIDToFoldEval.get(jobIDandName[i][0]).get(foldList);
         		row[i+1] = "" + DEC.format(data.getDoubleArrayMetadata(metricKey)[arrayColumn]);

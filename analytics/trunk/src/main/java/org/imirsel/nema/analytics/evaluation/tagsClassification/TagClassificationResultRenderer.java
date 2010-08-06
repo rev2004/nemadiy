@@ -251,12 +251,12 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 			getLogger().info("Performing Friedman's tests in Matlab...");
 
 			File[] tmp = FriedmansAnovaTkHsd.performFriedman(outputDir,
-					fmeasureCSV, 0, 2, 1, numJobs, getMatlabPath());
+					fmeasureCSV, 0, 1, 1, numJobs, getMatlabPath());
 			friedmanFmeasureFoldTablePNG = tmp[0];
 			friedmanFmeasureFoldTable = tmp[1];
 
 			tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, fmeasureTagCSV, 0,
-					2, 1, numJobs, getMatlabPath());
+					1, 1, numJobs, getMatlabPath());
 			friedmanFmeasureTagTablePNG = tmp[0];
 			friedmanFmeasureTagTable = tmp[1];
 		}

@@ -55,7 +55,7 @@ public class FriedmansAnovaTkHsd {
         
         //create an m-file to run the test
         String name = CSVResultFile.getName().replaceAll(".csv", "");
-        String evalCommand = name.replaceAll("\\.", "_") + "_friedmanTKHSD";
+        String evalCommand = name.replaceAll("[\\W]", "_") + "_friedmanTKHSD";
         File tempMFile = new File(outputDir.getAbsolutePath() + File.separator + evalCommand + ".m");
         String plotFileName = name + ".friedmanTKHSD.png";
         String matlabPlotPath = outputDir.getAbsolutePath() + File.separator + plotFileName;

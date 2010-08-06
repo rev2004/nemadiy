@@ -380,12 +380,12 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 			File[] tmp =  null;
 			
 			tmp = FriedmansAnovaTkHsd.performFriedman(outputDir,
-					aucRocTagCSV, 0, 2, 1, numJobs, getMatlabPath());
+					aucRocTagCSV, 0, 1, 1, numJobs, getMatlabPath());
 			friedmanAUCROCperTagPNG = tmp[0];
 			friedmanAUCROCperTagTable = tmp[1];
 
 			tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, aucRocCsv, 0,
-					2, 1, numJobs, getMatlabPath());
+					1, 1, numJobs, getMatlabPath());
 			friedmanAUCROCperFoldPNG = tmp[0];
 			friedmanAUCROCperFoldTable = tmp[1];
 			
@@ -397,7 +397,7 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 			for (int i = 0; i < precisionAtNLevels.length; i++) {
 				File csv = precisionAtNFiles.get(i);
 				tmp = FriedmansAnovaTkHsd.performFriedman(outputDir, csv, 0,
-						2, 1, numJobs, getMatlabPath());
+						1, 1, numJobs, getMatlabPath());
 				friedmanPrecisionAtNPNGs.add(tmp[0]);
 				friedmanPrecisionAtNTables.add(tmp[1]);
 			}
