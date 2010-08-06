@@ -14,12 +14,12 @@ import org.junit.Test;
 
 public class TestDataListFileGenerator {
 
-	static int datasetID = 10;
+	static int datasetID = 49;
 	static String bitRate = "";
 	static String channels = "1";
-	static String clip_type = null;
+	static String clip_type = "full";
 	static String encoding = "wav";
-	static String sample_rate = "22050";
+	static String sample_rate = "44100";
 	static String delim = "\t";
 	
 	private static final Logger logger = Logger.getLogger(TestDataListFileGenerator.class.getName());
