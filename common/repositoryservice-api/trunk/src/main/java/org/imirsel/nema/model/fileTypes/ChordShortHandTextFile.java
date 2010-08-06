@@ -71,7 +71,7 @@ public class ChordShortHandTextFile extends SingleTrackEvalFileTypeImpl {
 				Logger.getLogger(ChordShortHandTextFile.class.getName()).log(Level.SEVERE, "Failed to convert chord format in file: " + theFile.getAbsolutePath(), e);
 				throw e;
 			}
-			chords.add(new NemaChord(onset, offset, notes));
+			chords.add(new NemaChord(onset, offset, notes, shorthand));
 		}
 		Collections.sort(chords);
 		

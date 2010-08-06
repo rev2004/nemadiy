@@ -28,6 +28,12 @@ public class NemaChord extends NemaSegment{
 		this.notes = notes;
 	}
 	
+	public NemaChord(double onset, double offset, final int[] notes, String label){
+		super(onset,offset);
+		this.notes = notes;
+		this.label = label;
+	}
+	
 	/**
 	 * Compute hashcode using only the notes (not onset/offest times).
 	 * @return hashCode
@@ -39,7 +45,13 @@ public class NemaChord extends NemaSegment{
 
 	@Override
 	public String toString() {
-		return onset + "\t" + offset + "\t" + ChordConversionUtil.getInstance().convertNoteNumbersToShorthand(notes);
+		String out = onset + "\t" + offset + "\t";
+		if (label == null){
+			out += ChordConversionUtil.getInstance().convertNoteNumbersToShorthand(notes);;
+		}else{
+			out += label;
+		}
+		return out;
 	}
 	
 	public static NemaChord fromString(String chordString){
@@ -83,10 +95,14 @@ public class NemaChord extends NemaSegment{
 	}
 
 	public String getLabel() {
-		return ChordConversionUtil.getInstance().convertNoteNumbersToShorthand(this.notes);
+		if (label == null){
+			return ChordConversionUtil.getInstance().convertNoteNumbersToShorthand(notes);
+		}else{
+			return label;
+		}
 	}
 	
 	public void setLabel(String label){
-		throw new UnsupportedOperationException("Setting labels for NemaChord is not supported!");
+		this.label = label; 
 	}
 }
