@@ -222,13 +222,14 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
         	set = sets.get(f);
         	eval = results.getPerFoldEvaluation(jobId).get(set);
         	row = new String[numCols];
-        	row[0] = "" + f;
+        	row[0] = "" + set.getFoldNumber();
         	row[1] = DEC.format(eval.getDoubleMetadata(NemaDataConstants.TAG_AFFINITY_AUC_ROC));
         	double[] scores = eval.getDoubleArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N);
         	for (int i = 0; i < precisionAtNLevels.length; i++) {
         		row[i+2] = DEC.format(scores[i]);
         	}
         	rows.add(row);
+        	f++;
         }
         
         return new Table(colNames, rows);
