@@ -8,7 +8,9 @@ Running Time
 
 <body>
 <c:forEach items="${taskJobMap}" var="item">
-	<label class="label">Task ${item.key.id}:${item.key.name}</label>
+	<c:forEach items="${item.value}" var="flowJob">
+	<label class="label">Task ${item.key.id}:${item.key.name}</label><br/>
+	<label class="label">Flow ${flowJob.key.id}:${flowJob.key.name}</label>
 	<div>${item.key.description }</div>
 	<table border="1" >
 	<thead>
@@ -18,13 +20,14 @@ Running Time
 	
 	</tr>
 	</thead>
-	<c:forEach items="${item.value}" var="job">
+	<c:forEach items="${flowJob.value}" var="codeJob">
 	<tr>
-	  <td>${job.flow.submissionCode}</td>
-	  <td>${duration[job]}</td>
-	  <td><a href="<c:url value='/get/JobManager.jobDetail?id=${job.id}'/>">detail</a></td>
+	  <td>${codeJob.value.flow.submissionCode}</td>
+	  <td>${duration[codeJob.value]}</td>
+	  <td><a href="<c:url value='/get/JobManager.jobDetail?id=${codeJob.value.id}'/>">detail</a></td>
 	</tr>
 	</c:forEach>
-	<table></table>
+	</table>
+	</c:forEach>
 </c:forEach>
 </body>
