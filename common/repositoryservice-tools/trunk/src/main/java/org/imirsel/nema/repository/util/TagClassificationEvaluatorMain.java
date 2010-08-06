@@ -14,7 +14,6 @@ import org.imirsel.nema.analytics.evaluation.tagsClassification.TagClassificatio
 import org.imirsel.nema.analytics.evaluation.tagsClassification.TagClassificationResultRenderer;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
-import org.imirsel.nema.model.fileTypes.ClassificationTextFile;
 import org.imirsel.nema.model.fileTypes.MultipleTrackEvalFileType;
 import org.imirsel.nema.model.fileTypes.TagClassificationTextFile;
 
