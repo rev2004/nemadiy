@@ -57,13 +57,14 @@ public class TagAffinityEvaluator extends EvaluatorImpl{
 		this.foldEvalMetrics.add(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N);
 		this.foldEvalMetrics.add(NemaDataConstants.TAG_AFFINITY_AUC_ROC);
 		this.trackEvalMetrics.add(NemaDataConstants.TAG_AFFINITY_ROC_DATA);
-		
-		//per tag maps
 		this.foldEvalMetrics.add(NemaDataConstants.TAG_AFFINITY_AUC_ROC_MAP);
 		this.foldEvalMetrics.add(NemaDataConstants.TAG_AFFINITY_ROC_DATA_MAP);
 		
-		//same as fold metrics
-		this.overallEvalMetrics = this.foldEvalMetrics;
+
+		this.overallEvalMetrics.clear();
+		this.overallEvalMetrics.add(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N);
+		this.overallEvalMetrics.add(NemaDataConstants.TAG_AFFINITY_AUC_ROC);
+		this.overallEvalMetrics.add(NemaDataConstants.TAG_AFFINITY_AUC_ROC_MAP);
 	}
     
     @SuppressWarnings("unchecked")
@@ -205,9 +206,12 @@ public class TagAffinityEvaluator extends EvaluatorImpl{
 		
 		//precision at N
 		averageFoldDoubleArrays(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N, perFoldEvaluations,aggregateEval);
+		
 		aggregateEval.setMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS, PRECISION_POINTS);
+		
 		//overall AUC-ROC
 		averageFoldDoubleVals(NemaDataConstants.TAG_AFFINITY_AUC_ROC, perFoldEvaluations,aggregateEval);
+		
 		//per tag AUC-ROC
 		averageFoldMaps(NemaDataConstants.TAG_AFFINITY_AUC_ROC_MAP, perFoldEvaluations,aggregateEval);
 		
