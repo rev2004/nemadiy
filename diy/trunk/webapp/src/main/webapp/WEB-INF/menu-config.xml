@@ -20,6 +20,7 @@
 		    <Item name="RunningJobs" title="Job List -Running" page="/get/JobManager.getUserJobs?type=running" width="120"/>
 		    <Item name="PrepareJob" title="Prepare New Job" page="/get/task" width="120"/>		    
             <Item name="MySubmissions" title="Mirex Submissions" page="/get/JobManager.getSubmissions" width="120"/>
+            <Item name="Runtime" title="Job Runtime" page="/get/JobManager.runTime" width="120"/>
             <!-- <Item name="flowTemplate" title="Create w/ Template" page="get/task" width="120"/>-->
             <!--  Add this back later when grouping is needed... <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/task?type=extraction" width="120"/> -->
             <!--  Add this back later when grouping is needed... <Item name="JobTypeClassification" title="Classification" page="/get/task?type=classification" width="120"/> -->
