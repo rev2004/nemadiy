@@ -211,14 +211,18 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
         List<PageItem> items;
         Page aPage;
 
-        //do intro page to describe task
+		TableItem legendTable = createLegendTable(results);
+		
+		//do intro page to describe task
         {
-        	resultPages.add(createIntroHtmlPage(results));
+        	resultPages.add(createIntroHtmlPage(results,legendTable));
         }
         
         //do summary page
         {
 	        items = new ArrayList<PageItem>();
+	        items.add(legendTable);
+
 	        List<String> metrics = new ArrayList<String>();
 			metrics.add(NemaDataConstants.CLASSIFICATION_ACCURACY);
 			metrics.add(NemaDataConstants.CLASSIFICATION_NORMALISED_ACCURACY);
@@ -236,19 +240,23 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
         //do per class page
         {
             items = new ArrayList<PageItem>();
+            items.add(legendTable);
+
             Table perClassTable = WriteCsvResultFiles.prepTableDataOverClassArrays(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_CONFUSION_MATRIX_PERCENT);
             items.add(new TableItem("acc_class", "Accuracy per Class", perClassTable.getColHeaders(), perClassTable.getRows()));
             if (usingAHierarchy){
                 Table perDiscClassTable = WriteCsvResultFiles.prepTableDataOverClassArrays(results.getJobIdToOverallEvaluation(),results.getJobIdToJobName(),classNames,NemaDataConstants.CLASSIFICATION_DISCOUNT_CONFUSION_VECTOR_PERCENT);
                 items.add(new TableItem("disc_acc_class", "Discounted Accuracy per Class", perDiscClassTable.getColHeaders(), perDiscClassTable.getRows()));
             }
-            aPage = new Page("acc_per_class", "Accuracy per Class", items, false);
+            aPage = new Page("acc_per_class", "Accuracy per Class", items, true);
             resultPages.add(aPage);
         }
 
         //do per fold page
         {
             items = new ArrayList<PageItem>();
+            items.add(legendTable);
+
             Table perFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(), results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.CLASSIFICATION_ACCURACY);
             items.add(new TableItem("acc_fold", "Accuracy per Fold", perFoldTable.getColHeaders(), perFoldTable.getRows()));
             if (usingAHierarchy){
@@ -256,13 +264,15 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
                 items.add(new TableItem("disc_acc_fold", "Discounted Accuracy per Fold", perDiscFoldTable.getColHeaders(), perDiscFoldTable.getRows()));
             }
             
-            aPage = new Page("acc_per_fold", "Accuracy per Fold", items, false);
+            aPage = new Page("acc_per_fold", "Accuracy per Fold", items, true);
             resultPages.add(aPage);
         }
         
         //do significance tests
         if (performStatSigTests){
             items = new ArrayList<PageItem>();
+            items.add(legendTable);
+
             items.add(new ImageItem("friedmanClassTablePNG", "Accuracy Per Class: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanClassTablePNG, outputDir)));
             items.add(new ImageItem("friedmanFoldTablePNG", "Accuracy Per Fold: Friedman's ANOVA w/ Tukey Kramer HSD", IOUtil.makeRelative(friedmanFoldTablePNG, outputDir)));
             if(friedmanDiscountClassTable != null){
@@ -280,7 +290,8 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
         Collections.sort(sortedJobIDs);
         {
             items = new ArrayList<PageItem>();
-            
+            items.add(legendTable);
+
 	        for (int i = 0; i < numJobs; i++){
 	        	String jobId = sortedJobIDs.get(i);
                 items.add(plotAggregatedConfusionForJob(results, jobId, results.getOverallEvaluation(jobId)));
@@ -293,7 +304,8 @@ public class ClassificationResultRenderer extends ResultRendererImpl {
       //do per-fold confusion matrices
         {
             items = new ArrayList<PageItem>();
-            
+            items.add(legendTable);
+
 	        //add per-fold confusion matrices
 	        for (int i = 0; i < numJobs; i++){
 	        	String jobId = sortedJobIDs.get(i);

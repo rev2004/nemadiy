@@ -142,9 +142,11 @@ public class ChordResultRenderer extends ResultRendererImpl {
 		List<PageItem> items;
 		Page aPage;
 
+		TableItem legendTable = createLegendTable(results);
+		
 		//do intro page to describe task
         {
-        	resultPages.add(createIntroHtmlPage(results));
+        	resultPages.add(createIntroHtmlPage(results,legendTable));
         }
 
 		// do per system pages
@@ -154,6 +156,10 @@ public class ChordResultRenderer extends ResultRendererImpl {
 					.hasNext();) {
 				jobId = it.next();
 				items = new ArrayList<PageItem>();
+				TableItem filtLegend = filterLegendTable(legendTable, jobId);
+				if(filtLegend != null){
+					items.add(filtLegend);
+				}
 				
 				/* Plot chord transcription against GT for each track result for each system */
 				getLogger().info("\tplotting chords for " + results.getJobIdToJobName().get(jobId) +"...");
@@ -173,6 +179,8 @@ public class ChordResultRenderer extends ResultRendererImpl {
 		{
 			getLogger().info("Creating comparison plots page...");
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
+
 			PageItem[] plots = plotTranscriptionForAllJobs(results);
 			for (int i = 0; i < plots.length; i++) {
 				items.add(plots[i]);
@@ -207,14 +215,17 @@ public class ChordResultRenderer extends ResultRendererImpl {
 		List<PageItem> items;
 		Page aPage;
 
+		TableItem legendTable = createLegendTable(results);
+		
 		//do intro page to describe task
         {
-        	resultPages.add(createIntroHtmlPage(results));
+        	resultPages.add(createIntroHtmlPage(results,legendTable));
         }
 		// do summary page
 		{
 			getLogger().info("Creating summary page...");
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 			Table summaryTable = WriteCsvResultFiles.prepSummaryTable(results
 					.getJobIdToOverallEvaluation(),
 					results.getJobIdToJobName(), results
@@ -229,6 +240,7 @@ public class ChordResultRenderer extends ResultRendererImpl {
 		{
 			getLogger().info("Creating per-metric page...");
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 
 			Table weightedOverlapTablePerFold = WriteCsvResultFiles
 					.prepTableDataOverFoldsAndSystems(
@@ -273,6 +285,10 @@ public class ChordResultRenderer extends ResultRendererImpl {
 					.hasNext();) {
 				jobId = it.next();
 				items = new ArrayList<PageItem>();
+				TableItem filtLegend = filterLegendTable(legendTable, jobId);
+				if(filtLegend != null){
+					items.add(filtLegend);
+				}
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				systemFoldResults = results.getPerFoldEvaluation(jobId);
 				{
@@ -315,6 +331,7 @@ public class ChordResultRenderer extends ResultRendererImpl {
 			{
 				getLogger().info("Creating comparison plots page...");
 				items = new ArrayList<PageItem>();
+				items.add(legendTable);
 				PageItem[] plots = plotTranscriptionForAllJobs(results);
 				for (int i = 0; i < plots.length; i++) {
 					items.add(plots[i]);
@@ -329,6 +346,7 @@ public class ChordResultRenderer extends ResultRendererImpl {
 		if (getPerformMatlabStatSigTests() && performStatSigTests) {
 			getLogger().info("Performing significance tests...");
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 			items.add(new ImageItem("friedmanOverlapTablePNG",
 					"Chord Overlap: Friedman's ANOVA w/ Tukey Kramer HSD",
 					IOUtil.makeRelative(friedmanOverlapTablePNG, outputDir)));

@@ -121,9 +121,11 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 		Page aPage;
 		int numJobs = results.getJobIds().size();
 
+		TableItem legendTable = createLegendTable(results);
+		
 		//do intro page to describe task
         {
-        	resultPages.add(createIntroHtmlPage(results));
+        	resultPages.add(createIntroHtmlPage(results,legendTable));
         }
 
 		/* Do per system pages */
@@ -187,15 +189,18 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 		Page aPage;
 		int numJobs = results.getJobIds().size();
 
+		TableItem legendTable = createLegendTable(results);
+		
 		//do intro page to describe task
         {
-        	resultPages.add(createIntroHtmlPage(results));
+        	resultPages.add(createIntroHtmlPage(results,legendTable));
         }
 
 		/* Do summary page */
 		{
 			items = new ArrayList<PageItem>();
-			
+			items.add(legendTable);
+
 			List<String> metrics = new ArrayList<String>();
 			metrics.add(NemaDataConstants.ONSET_DETECTION_AVG_FMEASURE);
 			metrics.add(NemaDataConstants.ONSET_DETECTION_AVG_PRECISION);
@@ -212,7 +217,8 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 		/* Do per class page */
 		{
 			items = new ArrayList<PageItem>();
-				
+			items.add(legendTable);
+
 			Table perClassFMeasureTable = WriteCsvResultFiles
 					.prepTableDataOverClassArrays(
 							results.getJobIdToOverallEvaluation(),
@@ -257,6 +263,10 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 					.hasNext();) {
 				jobId = it.next();
 				items = new ArrayList<PageItem>();
+				TableItem filtLegend = filterLegendTable(legendTable, jobId);
+				if(filtLegend != null){
+					items.add(filtLegend);
+				}
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				
 				/* Add per track table */
@@ -286,6 +296,7 @@ public class OnsetResultRenderer extends ResultRendererImpl {
 			{
 				getLogger().info("Creating comparison plots page...");
 				items = new ArrayList<PageItem>();
+				items.add(legendTable);
 				PageItem[] plots = plotTranscriptionForAllJobs(results);
 				for (int i = 0; i < plots.length; i++) {
 					items.add(plots[i]);

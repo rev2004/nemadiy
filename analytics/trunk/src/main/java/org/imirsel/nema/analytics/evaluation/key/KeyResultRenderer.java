@@ -1,10 +1,8 @@
 package org.imirsel.nema.analytics.evaluation.key;
 
-import java.awt.JobAttributes;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -96,13 +94,16 @@ public class KeyResultRenderer extends ResultRendererImpl {
 
 		Map<NemaTrackList,List<NemaData>> sysResults;
 		
+		TableItem legendTable = createLegendTable(results);
+		
 		//do intro page to describe task
         {
-        	resultPages.add(createIntroHtmlPage(results));
+        	resultPages.add(createIntroHtmlPage(results,legendTable));
         }
 		/* Do summary page */
 		{
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 			Table summaryTable = WriteCsvResultFiles.prepSummaryTable(
 					results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), results.getOverallEvalMetricsKeys());
 			
@@ -120,6 +121,10 @@ public class KeyResultRenderer extends ResultRendererImpl {
 			for (Iterator<String> it = results.getJobIds().iterator(); it.hasNext();) {
 				jobId = it.next();
 				items = new ArrayList<PageItem>();
+				TableItem filtLegend = filterLegendTable(legendTable, jobId);
+				if(filtLegend != null){
+					items.add(filtLegend);
+				}
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				
 				/* Plot summary result bar chart for each system */

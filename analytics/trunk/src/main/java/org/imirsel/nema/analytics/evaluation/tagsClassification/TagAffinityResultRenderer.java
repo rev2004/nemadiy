@@ -444,15 +444,18 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 		List<PageItem> items;
 		Page aPage;
 
+		TableItem legendTable = createLegendTable(results);
+		
 		//do intro page to describe task
         {
-        	resultPages.add(createIntroHtmlPage(results));
+        	resultPages.add(createIntroHtmlPage(results,legendTable));
         }
 
 		// do summary page
 		{
 			getLogger().info("Creating summary page...");
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 			Table summaryTable;
 			summaryTable = prepOverallResultsTable(results);
 			items.add(new TableItem("summary_results", "Summary Results",
@@ -471,7 +474,7 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 		//AUC-ROC page
 		{	
 			items = new ArrayList<PageItem>();
-
+			items.add(legendTable);
 			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_AFFINITY_AUC_ROC));
 			
 			Table theFoldTable = WriteCsvResultFiles.prepTableDataOverFoldsAndSystems(results.getTestSetTrackLists(),results.getJobIdToPerFoldEvaluation(),results.getJobIdToJobName(),NemaDataConstants.TAG_AFFINITY_AUC_ROC);
@@ -494,7 +497,7 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 		//Precision-at-N page
 		{	
 			items = new ArrayList<PageItem>();
-
+			items.add(legendTable);
 			int[] precisionAtNLevels = results.getOverallEvaluation(results.getJobIds().iterator().next()).getIntArrayMetadata(NemaDataConstants.TAG_AFFINITY_PRECISION_AT_N_LEVELS);
 			List<File> precisionAtNFiles = new ArrayList<File>(precisionAtNLevels.length);
 			for (int i = 0; i < precisionAtNLevels.length; i++) {
@@ -519,6 +522,10 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 					.hasNext();) {
 				jobId = it.next();
 				items = new ArrayList<PageItem>();
+				TableItem filtLegend = filterLegendTable(legendTable, jobId);
+				if(filtLegend != null){
+					items.add(filtLegend);
+				}
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				systemFoldResults = results.getPerFoldEvaluation(jobId);
 				{
@@ -547,6 +554,7 @@ public class TagAffinityResultRenderer extends ResultRendererImpl {
 		if (getPerformMatlabStatSigTests() && performStatSigTests) {
 			getLogger().info("Creating significance test pages...");
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 			items.add(new ImageItem(
 					"friedmanAUCROCFoldTablePNG",
 					"AUCROC by Fold: Friedman's ANOVA w/ Tukey Kramer HSD",
