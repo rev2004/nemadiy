@@ -1,20 +1,12 @@
 package org.imirsel.nema.repository.util;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Level;
-
-import org.apache.log4j.Logger;
-import org.imirsel.nema.analytics.evaluation.resultpages.TableItem;
 import org.imirsel.nema.model.NemaContributor;
 import org.imirsel.nema.model.NemaSubmission;
 import org.imirsel.nema.repository.RepositoryClientImpl;
-import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
 
 public class GenerateTaskSubmissionWikiTable {
 

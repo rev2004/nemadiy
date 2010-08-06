@@ -43,7 +43,7 @@ public class TagAffinityEvaluatorMain extends AbstractEvaluatorMain{
 
 	@Override
 	public List<NemaData> readGTFile(File path) throws IOException{
-		MultipleTrackEvalFileType reader = new TagAffinityTextFile();
+		MultipleTrackEvalFileType reader = new TagClassificationTextFile();
 		reader.getLogger().setLevel(Level.WARNING);
 		return reader.readFile(path);
 	}
