@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
@@ -500,7 +501,20 @@ public class JobController extends MultiActionController {
 		long userId = user.getId();
 		logger.debug("start to list the jobs of   " + user.getUsername());
 		List<Job> allJobs = flowService.getUserJobs(userId);
-
+		
+		Set<JobStatus> filterSet = new HashSet<JobStatus>();
+		filterSet.add(JobStatus.FINISHED);filterSet.add(JobStatus.ABORTED);
+		
+		Collections.sort(allJobs,
+				new Comparator<Job>(){
+					@Override
+					public int compare(Job o1, Job o2) {
+						Date o1Time=(o1.getScheduleTimestamp()==null?new Date():o1.getScheduleTimestamp());
+						Date o2Time=(o2.getScheduleTimestamp()==null?new Date():o2.getScheduleTimestamp());
+						return o1Time.compareTo(o2Time);
+					}
+		});
+		
 		String type = req.getParameter("type");
 		// Set<JobStatus> filterSet=new HashSet<JobStatus>();
 		List<NemaTask> tasks = null;
@@ -509,16 +523,16 @@ public class JobController extends MultiActionController {
 		} catch (SQLException e) {
 			logger.error(e, e);
 		}
-		Map<NemaTask, List<Job>> taskJobMap = new HashMap<NemaTask, List<Job>>();
+		Map<NemaTask,Map<Flow,Map<String,Job>>> taskJobMap = new HashMap<NemaTask, Map<Flow,Map<String,Job>>> ();
 		Map<Integer, NemaTask> taskMap = new HashMap<Integer, NemaTask>();
 		for (NemaTask task : tasks) {
-			taskJobMap.put(task, new ArrayList<Job>());
+			taskJobMap.put(task, new HashMap<Flow,Map<String,Job>>());
 			taskMap.put(task.getId(), task);
 		}
 		List<Job> jobs = new ArrayList<Job>();
 		Map<Job, String> duration = new HashMap<Job, String>();
 		for (Job job : allJobs) {
-			if ((job.getJobStatus() == JobStatus.FINISHED)
+			if ((filterSet.contains(job.getJobStatus()))
 					&& (!"NON-SUBMISSION".equalsIgnoreCase(job.getFlow()
 							.getSubmissionCode()))
 					&& (job.getEndTimestamp()!=null)) {
@@ -531,9 +545,14 @@ public class JobController extends MultiActionController {
 				Property taskId = searchProperty(componentMap, "taskID");
 				if (taskId != null) {
 					try {
-						taskJobMap
+						Map<Flow,Map<String,Job>> flowJobMap=taskJobMap
 								.get(taskMap.get(Integer.parseInt(taskId
-										.getValue()))).add(job);
+										.getValue())));
+						Flow template=findTemplate(job.getFlow());
+						if (!flowJobMap.containsKey(template)){
+							flowJobMap.put(template, new TreeMap<String,Job>());
+						}
+						flowJobMap.get(template).put(job.getFlow().getSubmissionCode(), job);
 						Long interval = (job.getEndTimestamp().getTime() - job
 								.getSubmitTimestamp().getTime()) / 1000;
 						long hr = interval / 3600;
@@ -554,21 +573,7 @@ public class JobController extends MultiActionController {
 		for (NemaTask task : tasks) {
 			if (taskJobMap.get(task).isEmpty()) {
 				taskJobMap.remove(task);
-			} else {
-				Collections.sort(taskJobMap.get(task), new Comparator<Job>() {
-
-					@Override
-					public int compare(Job o1, Job o2) {
-
-						return o1
-								.getFlow()
-								.getSubmissionCode()
-								.compareToIgnoreCase(
-										o2.getFlow().getSubmissionCode());
-					}
-
-				});
-			}
+			} 
 		}
 
 		saveRuntimeOnFiles(taskJobMap, duration);
@@ -582,13 +587,14 @@ public class JobController extends MultiActionController {
 
 	final static String STOREPATH = "runtime";
 
-	private void saveRuntimeOnFiles(Map<NemaTask, List<Job>> taskJobMap,
+	private void saveRuntimeOnFiles(Map<NemaTask, Map<Flow,Map<String,Job>>> taskJobMap,
 			Map<Job, String> duration) {
 		try {
 			BufferedWriter wiki = new BufferedWriter(new FileWriter(STOREPATH
 					+ File.separator + "wiki.txt"));
 			
 			for (NemaTask task : taskJobMap.keySet()) {
+				for (Flow flow:taskJobMap.get(task).keySet()){
 				wiki.append("'''Task ")
 					.append(String.valueOf(task.getId()))
 					.append("'''")
@@ -599,30 +605,45 @@ public class JobController extends MultiActionController {
 				wiki.append(":")
 					.append(task.getDescription());
 				wiki.newLine();
+				wiki.append(":'''Flow ")
+					.append(String.valueOf(flow.getId()))
+					.append("''' -")
+					.append(flow.getName());
+				wiki.newLine();
 				wiki.append("<csv>")
 					.append("2010/runtime/task")
 					.append(String.valueOf(task.getId()))
+					.append("flow")
+					.append(String.valueOf(flow.getId()))
 					.append(".csv")
 					.append("</csv>");
 				wiki.newLine();
 				wiki.newLine();
 				
 				BufferedWriter taskCsv = new BufferedWriter(new FileWriter(STOREPATH
-						+ File.separator + "task"+task.getId()+".csv"));
+						+ File.separator + "task"+task.getId()+"flow"+flow.getId()+".csv"));
 				taskCsv.append("*Submission Code,Runtime");
 				taskCsv.newLine();
-				for (Job job:taskJobMap.get(task)){
+				for (Job job:taskJobMap.get(task).get(flow).values()){
 					taskCsv.append(job.getFlow().getSubmissionCode())
 							.append(',')
 							.append(duration.get(job));
 					taskCsv.newLine();
 				}
 				taskCsv.close();
-			}
+			}}
 			wiki.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	private Flow findTemplate(Flow flow){
+		if (flow.isTemplate()||(flow.getInstanceOf()==null)||(flow.getInstanceOf()==flow)){
+			return flow;
+		}else {
+			return findTemplate(flow.getInstanceOf());
 		}
 	}
 
