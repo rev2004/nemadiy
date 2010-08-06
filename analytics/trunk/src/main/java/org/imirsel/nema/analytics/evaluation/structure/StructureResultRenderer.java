@@ -94,9 +94,11 @@ public class StructureResultRenderer extends ResultRendererImpl {
 		List<PageItem> items;
 		Page aPage;
 		
+		TableItem legendTable = createLegendTable(results);
+		
 		//do intro page to describe task
         {
-        	resultPages.add(createIntroHtmlPage(results));
+        	resultPages.add(createIntroHtmlPage(results,legendTable));
         }
 
 		/* Do per system pages */
@@ -105,6 +107,10 @@ public class StructureResultRenderer extends ResultRendererImpl {
 					.hasNext();) {
 				jobId = it.next();
 				items = new ArrayList<PageItem>();
+				TableItem filtLegend = filterLegendTable(legendTable, jobId);
+				if(filtLegend != null){
+					items.add(filtLegend);
+				}
 				
 				/* Plot structure segmentation against GT for each track result for each system */
 				PageItem[] plots = plotTranscriptionForJob(jobId, results);
@@ -122,6 +128,7 @@ public class StructureResultRenderer extends ResultRendererImpl {
 		{
 			getLogger().info("Creating comparison plots page...");
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 			PageItem[] plots = plotTranscriptionForAllJobs(results);
 			for (int i = 0; i < plots.length; i++) {
 				items.add(plots[i]);
@@ -154,14 +161,17 @@ public class StructureResultRenderer extends ResultRendererImpl {
 		Page aPage;
 		int numJobs = results.getJobIds().size();
 
+		TableItem legendTable = createLegendTable(results);
+		
 		//do intro page to describe task
         {
-        	resultPages.add(createIntroHtmlPage(results));
+        	resultPages.add(createIntroHtmlPage(results,legendTable));
         }
         
 		/* Do summary page */
 		{
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 			Table summaryTable = WriteCsvResultFiles.prepSummaryTable(
 					results.getJobIdToOverallEvaluation(), results.getJobIdToJobName(), results.getOverallEvalMetricsKeys());
 			items.add(new TableItem("summary_results", "Summary Results",
@@ -176,6 +186,10 @@ public class StructureResultRenderer extends ResultRendererImpl {
 					.hasNext();) {
 				jobId = it.next();
 				items = new ArrayList<PageItem>();
+				TableItem filtLegend = filterLegendTable(legendTable, jobId);
+				if(filtLegend != null){
+					items.add(filtLegend);
+				}
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				
 				/* Add per track table */
@@ -204,6 +218,7 @@ public class StructureResultRenderer extends ResultRendererImpl {
 		{
 			getLogger().info("Creating comparison plots page...");
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 			PageItem[] plots = plotTranscriptionForAllJobs(results);
 			for (int i = 0; i < plots.length; i++) {
 				items.add(plots[i]);

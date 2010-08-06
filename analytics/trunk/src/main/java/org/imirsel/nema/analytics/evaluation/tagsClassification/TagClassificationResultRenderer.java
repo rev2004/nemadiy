@@ -296,9 +296,11 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		List<PageItem> items;
 		Page aPage;
 
+		TableItem legendTable = createLegendTable(results);
+		
 		//do intro page to describe task
         {
-        	resultPages.add(createIntroHtmlPage(results));
+        	resultPages.add(createIntroHtmlPage(results,legendTable));
         }
         
         List<String> basic_metrics = new ArrayList<String>();
@@ -313,6 +315,8 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		{
 			getLogger().info("Creating summary page...");
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
+
 			Table summaryTable = WriteCsvResultFiles.prepSummaryTable(results
 					.getJobIdToOverallEvaluation(),
 					results.getJobIdToJobName(), basic_metrics);
@@ -330,6 +334,7 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		getLogger().info("Creating per-metric pages...");
 		{	
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 
 			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_ACCURACY));
 			
@@ -351,6 +356,7 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		}
 		{	
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 
 			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_FMEASURE));
 			
@@ -372,6 +378,7 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		}
 		{	
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 
 			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_PRECISION));
 			
@@ -393,6 +400,7 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		}
 		{	
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 
 			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_RECALL));
 			
@@ -414,6 +422,7 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		}
 		{	
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 
 			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_POS_ACCURACY));
 			
@@ -435,6 +444,7 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		}
 		{	
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 
 			items.add(plotSummaryOverMetric(results,NemaDataConstants.TAG_NEG_ACCURACY));
 			
@@ -464,6 +474,10 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 					.hasNext();) {
 				jobId = it.next();
 				items = new ArrayList<PageItem>();
+				TableItem filtLegend = filterLegendTable(legendTable, jobId);
+				if(filtLegend != null){
+					items.add(filtLegend);
+				}
 				sysResults = results.getPerTrackEvaluationAndResults(jobId);
 				systemFoldResults = results.getPerFoldEvaluation(jobId);
 				{
@@ -496,6 +510,7 @@ public class TagClassificationResultRenderer extends ResultRendererImpl {
 		if (getPerformMatlabStatSigTests() && performStatSigTests) {
 			getLogger().info("Performing significance tests...");
 			items = new ArrayList<PageItem>();
+			items.add(legendTable);
 			items.add(new ImageItem("friedmanFmeasureFoldTablePNG",
 					"F-measure by Fold: Friedman's ANOVA w/ Tukey Kramer HSD",
 					IOUtil.makeRelative(friedmanFmeasureFoldTablePNG, outputDir)));

@@ -291,12 +291,33 @@ public abstract class ResultRendererImpl implements ResultRenderer {
 		}
 	}
 	
-	protected Page createIntroHtmlPage(NemaEvaluationResultSet results){
+	protected Page createIntroHtmlPage(NemaEvaluationResultSet results, TableItem legendTable){
     	List<PageItem> items = new ArrayList<PageItem>();
         Table descriptionTable = WriteCsvResultFiles.prepTaskTable(results.getTask(),results.getDataset());
         items.add(new TableItem("description", "Description", descriptionTable.getColHeaders(), descriptionTable.getRows()));
         
-        Map<String,NemaSubmission> subDetails = results.getJobIdToSubmissionDetails();
+        items.add(legendTable);
+        
+        return new Page("intro", "Introduction", items, false);
+    }
+	
+	protected TableItem filterLegendTable(TableItem table, String jobId){
+		List<String[]> rows = table.getDataRows();
+        String[] colNames = table.getColNames();
+        
+        List<String[]> filtRows = new ArrayList<String[]>(1);
+        for(String[] row:rows){
+        	if (row[0].equals(jobId)){
+        		filtRows.add(row);
+        		return new TableItem(table.getName() + "_" + jobId, table.getCaption(), colNames, filtRows);
+        	}
+        }
+        getLogger().warning("Failed to filter legend table for jobId: "+ jobId);
+		return null;
+	}
+
+	protected TableItem createLegendTable(NemaEvaluationResultSet results) {
+		Map<String,NemaSubmission> subDetails = results.getJobIdToSubmissionDetails();
         List<String[]> rows = new ArrayList<String[]>();
         String[] colNames;
         if (subDetails == null){
@@ -339,11 +360,8 @@ public abstract class ResultRendererImpl implements ResultRenderer {
     	    }
     	    
         }
-        items.add(new TableItem("legend", "Legend", colNames, rows));
-        
-	    
-        return new Page("intro", "Introduction", items, false);
-    }
+        return new TableItem("legend", "Legend", colNames, rows);
+	}
 	
 	/**
 	 * Plots bar chart of an overall metric for all jobs.
