@@ -51,7 +51,7 @@ public class TagClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
 		int nrows = tagData.length;
         
         for(int r = 0; r < nrows; r++) {
-            String aPath = tagData[r][0].trim();
+        	String aPath = tagData[r][0].trim();
             if(aPath.equals("")){
                 throw new IllegalArgumentException("Error: an empty track name was read from file: " + theFile.getAbsolutePath());
             }
@@ -62,7 +62,7 @@ public class TagClassificationTextFile extends MultipleTrackEvalFileTypeImpl {
             allTags.add(tagName);
             
             //if three col format, ignore anything marked with a 0
-            if (tagData[r].length > 2){
+            if (tagData[r].length > 2 && tagData[r][2] != null){
             	if (tagData[r][2].trim().equals("0")){
             		continue;
             	}

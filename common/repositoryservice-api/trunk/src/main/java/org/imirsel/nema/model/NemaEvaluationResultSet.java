@@ -215,7 +215,7 @@ public class NemaEvaluationResultSet {
 		for (Iterator<String> iterator = overallEvalMetrics.iterator(); iterator.hasNext();) {
 			String key = iterator.next();
 			if(!overallEval.hasMetadata(key)){
-				throw new IllegalArgumentException("Expected overall evaluation to contain metric '" + key + "', but it was not found!");
+				throw new IllegalArgumentException("Expected overall evaluation to contain metric '" + key + "', but it was not found for jobId: " + jobId);
 			}
 		}
 		
@@ -225,7 +225,7 @@ public class NemaEvaluationResultSet {
 			for (Iterator<String> iterator = foldEvalMetrics.iterator(); iterator.hasNext();) {
 				String key = iterator.next();
 				if(!eval.hasMetadata(key)){
-					throw new IllegalArgumentException("Expected per-fold evaluation to contain metric '" + key + "', but it was not found!");
+					throw new IllegalArgumentException("Expected per-fold evaluation to contain metric '" + key + "', but it was not found for jobId: " + jobId);
 				}
 			}
 		}
@@ -239,7 +239,7 @@ public class NemaEvaluationResultSet {
 				for (Iterator<String> metricIterator = trackEvalMetricsAndResults.iterator(); metricIterator.hasNext();) {
 					String key = metricIterator.next();
 					if(!trackData.hasMetadata(key)){
-						throw new IllegalArgumentException("Expected per-track evaluation for '" + trackData.getId() + "' to contain metric '" + key + "' but it was not found!");
+						throw new IllegalArgumentException("Expected per-track evaluation for '" + trackData.getId() + "' to contain metric '" + key + "' but it was not found for jobId: " + jobId);
 					}
 				}
 			}
