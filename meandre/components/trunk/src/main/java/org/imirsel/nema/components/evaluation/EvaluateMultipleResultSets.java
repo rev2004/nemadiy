@@ -132,11 +132,12 @@ import org.imirsel.nema.model.NemaTrackList;
 			    }
 		    	Collections.sort(testSetList,trackListComp);   
 		    }
-		    cc.getOutputConsole().println("Initializing evaluation toolset for metadata type: " + task.getSubjectTrackMetadataName());
+		    cc.getOutputConsole().println("EvaluateMultipleResultSets: Initializing evaluation toolset for metadata type: " + task.getSubjectTrackMetadataName());
 	        Evaluator eval = EvaluatorFactory.getEvaluator(task.getSubjectTrackMetadataName(), task, dataset, trainSetList, testSetList);
 	        eval.addLogDestination(getLogDestination());
 	        
 	        //add the ground-truth
+	        cc.getOutputConsole().println("EvaluateMultipleResultSets: received metadata for " + gtList.size() + " tracks");
 	        eval.setGroundTruth(gtList);
 	        
 	        //add the result to the evaluator
@@ -162,7 +163,7 @@ import org.imirsel.nema.model.NemaTrackList;
 			// output the raw results dir for reprocessing or storage in the repository
 			cc.pushDataComponentToOutput(DATA_OUTPUT_EVAL_RESULTS, evalOutput);
 			
-			cc.getOutputConsole().println("Evaluation Complete");
+			cc.getOutputConsole().println("EvaluateMultipleResultSets: Evaluation Complete");
 	        
 	    } catch (Exception e) {
 			ComponentExecutionException ex = new ComponentExecutionException("Exception occured when performing the evaluation!",e);

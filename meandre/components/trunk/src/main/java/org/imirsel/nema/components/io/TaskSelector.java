@@ -85,11 +85,15 @@ public class TaskSelector extends NemaComponent {
 	
 	
 	private List<NemaData> getGroundtruthData(RepositoryClientInterface client, NemaTask task, int tracklist_id, int metadata_id) throws SQLException, IOException, IllegalArgumentException, InstantiationException, IllegalAccessException{
-        getLogger().info("Retrieving ground-truth data and file paths for track list: " + tracklist_id);
         List<String> tracks = client.getTrackIDs(tracklist_id);
         
         Map<String,List<NemaMetadataEntry>> trackToMeta = client.getTrackMetadataByID(tracks, metadata_id);
-        return FileConversionUtil.convertMetadataToGroundtruthModel(trackToMeta, task);
+        getLogger().info("Got ground-truth data for " + trackToMeta.size() + " tracks");
+        
+        List<NemaData> gt = FileConversionUtil.convertMetadataToGroundtruthModel(trackToMeta, task);
+        getLogger().info("Returning " + gt.size() + " NemaData Objects representing the " + tracks.size() + " tracks");
+        
+        return gt;
     }
 
 
@@ -114,8 +118,23 @@ public class TaskSelector extends NemaComponent {
 				throw new ComponentExecutionException("Dataset id " + task.getDatasetId() + 
 						" was not found in the repository but was linked from task ID: " + taskID + " in the repository!");
 			}
+	        
 	        //produce Ground-truth list
-	        gtList = getGroundtruthData(client, task, dataset.getSubsetTrackListId(), task.getSubjectTrackMetadataId());
+	        ccp.getOutputConsole().println("TaskSelector: Retrieving ground-truth data and file paths for track list: " + dataset.getSubsetTrackListId() + ", subject metadata id: " + task.getSubjectTrackMetadataId());
+	        
+	        List<String> tracks = client.getTrackIDs(dataset.getSubsetTrackListId());
+	        ccp.getOutputConsole().println("TaskSelector: Got " + tracks.size() + " tracks for set " + dataset.getSubsetTrackListId());
+	        
+	        Map<String,List<NemaMetadataEntry>> trackToMeta = client.getTrackMetadataByID(tracks, task.getSubjectTrackMetadataId());
+	        ccp.getOutputConsole().println("TaskSelector: Got ground-truth data for " + trackToMeta.size() + " tracks");
+	        
+	        gtList = FileConversionUtil.convertMetadataToGroundtruthModel(trackToMeta, task);
+	        ccp.getOutputConsole().println("TaskSelector: Returning " + gtList.size() + " NemaData Objects representing the " + tracks.size() + " tracks");
+	        
+	        
+//	        gtList = getGroundtruthData(client, task, dataset.getSubsetTrackListId(), task.getSubjectTrackMetadataId());
+	        
+	        ccp.getOutputConsole().println("TaskSelector: Retrieved GT data for " + gtList.size() + " ids");
 	        
 	        //produce experiment sets
 	        List<List<NemaTrackList>> sets = client.getExperimentTrackLists(dataset);

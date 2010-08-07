@@ -39,7 +39,7 @@ import org.imirsel.nema.model.NemaEvaluationResultSet;
 
 	//PROPERTIES	
 	@ComponentProperty(defaultValue="/share/apps/matlab/bin/matlab", description = "The path to the matlab executable.", name = "Matlab path")
-	public final static String PROPERTY_MATLAB_PATH = "Eval result set";
+	public final static String PROPERTY_MATLAB_PATH = "Matlab path";
 	private File matlabPath = null;
 	
 	//INPUTS	
