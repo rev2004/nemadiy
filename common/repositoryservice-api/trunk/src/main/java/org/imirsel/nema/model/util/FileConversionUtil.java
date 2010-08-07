@@ -792,7 +792,6 @@ public class FileConversionUtil {
 	        		aTrack = reader.readFile(temp);
 	        		aTrack.setMetadata(NemaDataConstants.PROP_ID, id);
 	            	
-	            	out.add(aTrack);
 	            	if(meta_list.size() > 1) {
 	            		//use only first value and print warning
 	            		Logger.getLogger(FileConversionUtil.class.getName()).warning("Found " + meta_list.size() + " " + metadataType + " metadata records for id '" + id + "', using only first value");
