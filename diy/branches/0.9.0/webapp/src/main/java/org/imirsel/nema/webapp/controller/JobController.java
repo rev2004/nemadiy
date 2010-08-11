@@ -1,18 +1,26 @@
 package org.imirsel.nema.webapp.controller;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
+import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,11 +31,16 @@ import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
+import org.imirsel.nema.meandre.util.ConsoleUtil;
+import org.imirsel.nema.meandre.util.MeandreConsoleDao;
+import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
+import org.imirsel.nema.model.Job.JobStatus;
 import org.imirsel.nema.model.JobResult;
-import org.imirsel.nema.model.NemaPublishedResult;
+import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.Notification;
+import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.Submission;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
@@ -41,12 +54,13 @@ import org.imirsel.nema.webapp.json.ConverterToMapJob;
 import org.imirsel.nema.webapp.json.ConverterToMapJobLong;
 import org.imirsel.nema.webapp.json.ConverterToMapServer;
 import org.imirsel.nema.webapp.json.ConverterToMapServerConfig;
+import org.imirsel.nema.webapp.service.ResourceTypeService;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
+import edu.emory.mathcs.backport.java.util.Arrays;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * 
@@ -61,6 +75,17 @@ public class JobController extends MultiActionController {
 	private FlowService flowService = null;
 	private SubmissionManager submissionManager = null;
 	private RepositoryClientConnectionPool repositoryClientConnectionPool;
+	private MeandreConsoleDao meandreConsoleDao;
+	private ConsoleUtil consoleUtil;
+	private ResourceTypeService resourceTypeService;
+
+	public void setConsoleUtil(ConsoleUtil consoleUtil) {
+		this.consoleUtil = consoleUtil;
+	}
+
+	public void setMeandreConsoleDao(MeandreConsoleDao meandreConsoleDao) {
+		this.meandreConsoleDao = meandreConsoleDao;
+	}
 
 	public void setSubmissionManager(SubmissionManager submissionManager) {
 		this.submissionManager = submissionManager;
@@ -205,9 +230,8 @@ public class JobController extends MultiActionController {
 		if (thisSubmission == null) {
 			Submission s = this.submissionManager.saveSubmission(submission);
 			if (s != null) {
-				logger
-						.info("submission not found -adding new submission the id is "
-								+ s.getId());
+				logger.info("submission not found -adding new submission the id is "
+						+ s.getId());
 				success = true;
 			}
 		} else {
@@ -247,8 +271,8 @@ public class JobController extends MultiActionController {
 				+ "datasetid.txt";
 
 		URL url = new URL(dataSetResultUrl);
-		BufferedReader in = new BufferedReader(new InputStreamReader(url
-				.openStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+				url.openStream()));
 
 		String _dataset_id_str = "-1";
 
@@ -278,6 +302,7 @@ public class JobController extends MultiActionController {
 			}
 		}
 		*/
+
 		ModelAndView mav = new ModelAndView("job/job");
 		mav.addObject("jobForSubmission", success);
 		mav.addObject(Constants.JOB, job);
@@ -341,16 +366,17 @@ public class JobController extends MultiActionController {
 		String uri = req.getRequestURI();
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
 			mav = new ModelAndView("jsonView");
-			ConverterToMap<Job> converter= new ConverterToMapJobLong();
-			mav.addObject(Constants.JOB,converter.convertToMap(job));
+			ConverterToMap<Job> converter = new ConverterToMapJobLong();
+			mav.addObject(Constants.JOB, converter.convertToMap(job));
 			mav.addObject("resultSet", resultSet);
-
-			
 
 		} else {
 			mav = new ModelAndView("job/job");
 			mav.addObject(Constants.JOB, job);
 			mav.addObject("resultSet", resultSet);
+
+			MeandreServerProxyConfig head = flowService.getHeadConfig();
+			mav.addObject("head", head);
 		}
 
 		return mav;
@@ -396,6 +422,7 @@ public class JobController extends MultiActionController {
 
 		}
 		this.submissionManager.removeSubmission(submissionId);
+
 */
 		return new ModelAndView(new RedirectView("JobManager.getSubmissions",
 				true));
@@ -423,6 +450,9 @@ public class JobController extends MultiActionController {
 			flowService.deleteJob(job.getId());
 			logger.info("deleting flow: " + job.getFlow().getUri());
 			flowService.removeFlow(job.getFlow().getUri());
+			if (job.isDone()) {
+				consoleUtil.deleteConsole(job);
+			}
 		}
 		// , Constants.JOB, job
 		return new ModelAndView(
@@ -442,52 +472,37 @@ public class JobController extends MultiActionController {
 		logger.debug("getting user " + user.getUsername());
 		long userId = user.getId();
 		logger.debug("start to list the jobs of   " + user.getUsername());
-		List<Job> jobs = flowService.getUserJobs(userId);
+		List<Job> allJobs = flowService.getUserJobs(userId);
+
+		String type = req.getParameter("type");
+		Set<JobStatus> filterSet = new HashSet<JobStatus>();
+		if ("running".equalsIgnoreCase(type)) {
+			filterSet.add(JobStatus.SCHEDULED);
+			filterSet.add(JobStatus.SUBMITTED);
+			filterSet.add(JobStatus.STARTED);
+		} else if ("aborted".equalsIgnoreCase(type)) {
+			filterSet.add(JobStatus.ABORTED);
+			filterSet.add(JobStatus.FAILED);
+
+		} else if ("finished".equalsIgnoreCase(type)) {
+			filterSet.add(JobStatus.FINISHED);
+		} else {
+			filterSet.addAll((Arrays.asList(JobStatus.values())));
+		}
+		List<Job> jobs = new ArrayList<Job>();
+		for (Job job : allJobs) {
+			if (filterSet.contains(job.getJobStatus())) {
+				jobs.add(job);
+			}
+		}
 
 		ModelAndView mav = null;
 		String uri = (req != null) ? req.getRequestURI() : "";
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
-//			XStream xstream = provideXstream();
-//			// XStream xstream = new XStream();//new JettisonMappedXmlDriver());
-//			// xstream.registerLocalConverter(Job.class,"submitTimestamp",new
-//			// LenientDateConverter());
-//			// xstream.registerLocalConverter(Job.class,"startTimestamp",new
-//			// LenientDateConverter());
-//			// xstream.registerConverter(new
-//			// LenientDateConverter(),XStream.PRIORITY_VERY_HIGH);
-//			xstream.addDefaultImplementation(Date.class,
-//					java.sql.Timestamp.class);
-//			xstream.setMode(XStream.NO_REFERENCES);
-//			// xstream.omitField(Job.class,"flow" );
-//			// xstream.omitField(Job.class, "results");
-//			xstream.alias(Constants.JOBLIST, List.class);
-//			xstream.registerConverter(new ShortJobConverter(),
-//					XStream.PRIORITY_VERY_HIGH);
 
-			// fake test
-//			Date date = new Date(System.currentTimeMillis());
-//			Date date2 = new java.sql.Timestamp(System.currentTimeMillis());
-//			Job job = new Job();
-//			job.setName("test job");
-//			job.setId(100L);
-//			job.setFlow(new Flow());
-//			job.setScheduleTimestamp(date);
-//			job.setEndTimestamp(date2);
-//			job.setStartTimestamp(date);
-//			job.setSubmitTimestamp(date2);
-//			job.setResults(null);
-//			List<Job> list = new ArrayList<Job>();
-//			Job job2 = jobs.get(1);
-//			list.add(job);
-//			list.add(job);
-//			list.add(jobs.get(1));
-
-			//res.setContentType("application/json");
-			//res.getWriter().write(xstream.toXML(jobs));
-			
-
-			ConverterToList<Job> converter=new ConverterToList<Job>();
-			mav=new ModelAndView("jsonView",Constants.JOBLIST,converter.convertToList(jobs, new ConverterToMapJob()));
+			ConverterToList<Job> converter = new ConverterToList<Job>();
+			mav = new ModelAndView("jsonView", Constants.JOBLIST,
+					converter.convertToList(jobs, new ConverterToMapJob()));
 			// mav =new ModelAndView("jsonView",Constants.JOBLIST,jobs);
 		} else {
 			mav = new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
@@ -496,7 +511,179 @@ public class JobController extends MultiActionController {
 		return mav;
 	}
 
+	public ModelAndView getRunningTime(HttpServletRequest req,
+			HttpServletResponse res) throws IOException {
 
+		User user = userManager.getCurrentUser();
+		logger.debug("getting user " + user.getUsername());
+		long userId = user.getId();
+		logger.debug("start to list the jobs of   " + user.getUsername());
+		List<Job> allJobs = flowService.getUserJobs(userId);
+		
+		Set<JobStatus> filterSet = new HashSet<JobStatus>();
+		filterSet.add(JobStatus.FINISHED);filterSet.add(JobStatus.ABORTED);
+		
+		Collections.sort(allJobs,
+				new Comparator<Job>(){
+					@Override
+					public int compare(Job o1, Job o2) {
+						Date o1Time=(o1.getScheduleTimestamp()==null?new Date():o1.getScheduleTimestamp());
+						Date o2Time=(o2.getScheduleTimestamp()==null?new Date():o2.getScheduleTimestamp());
+						return o1Time.compareTo(o2Time);
+					}
+		});
+		
+		String type = req.getParameter("type");
+		// Set<JobStatus> filterSet=new HashSet<JobStatus>();
+		List<NemaTask> tasks = null;
+		try {
+			tasks = resourceTypeService.getSupportedTasks();
+		} catch (SQLException e) {
+			logger.error(e, e);
+		}
+		Map<NemaTask,Map<Flow,Map<String,Job>>> taskJobMap = new HashMap<NemaTask, Map<Flow,Map<String,Job>>> ();
+		Map<Integer, NemaTask> taskMap = new HashMap<Integer, NemaTask>();
+		for (NemaTask task : tasks) {
+			taskJobMap.put(task, new HashMap<Flow,Map<String,Job>>());
+			taskMap.put(task.getId(), task);
+		}
+		List<Job> jobs = new ArrayList<Job>();
+		Map<Job, String> duration = new HashMap<Job, String>();
+		for (Job job : allJobs) {
+			if ((filterSet.contains(job.getJobStatus()))
+					&& (!"NON-SUBMISSION".equalsIgnoreCase(job.getFlow()
+							.getSubmissionCode()))
+					&& (job.getEndTimestamp()!=null)) {
+
+				SimpleCredentials credential = userManager
+						.getCurrentUserCredentials();
+				Map<Component, List<Property>> componentMap = flowService
+						.getAllComponentsAndPropertyDataTypes(credential, job
+								.getFlow().getUri());
+				Property taskId = searchProperty(componentMap, "taskID");
+				if (taskId != null) {
+					try {
+						Map<Flow,Map<String,Job>> flowJobMap=taskJobMap
+								.get(taskMap.get(Integer.parseInt(taskId
+										.getValue())));
+						Flow template=findTemplate(job.getFlow());
+						if (!flowJobMap.containsKey(template)){
+							flowJobMap.put(template, new TreeMap<String,Job>());
+						}
+						flowJobMap.get(template).put(job.getFlow().getSubmissionCode(), job);
+						Long interval = (job.getEndTimestamp().getTime() - job
+								.getSubmitTimestamp().getTime()) / 1000;
+						long hr = interval / 3600;
+						interval -= hr * 3600;
+						long min = (interval / 60);
+						interval -= min * 60;
+						duration.put(job, String.format("%02d:%02d:%02d", hr,
+								min, interval));
+						logger.debug("save run time of job " + job.getId()
+								+ " (" + job.getName());
+					} catch (NumberFormatException e) {
+						logger.error(e, e);
+					}
+				}
+			}
+		}
+
+		for (NemaTask task : tasks) {
+			if (taskJobMap.get(task).isEmpty()) {
+				taskJobMap.remove(task);
+			} 
+		}
+
+		saveRuntimeOnFiles(taskJobMap, duration);
+
+		ModelAndView mav = new ModelAndView("job/runTime");
+		mav.addObject("taskJobMap", taskJobMap);
+		mav.addObject("duration", duration);
+
+		return mav;
+	}
+
+	final static String STOREPATH = "runtime";
+
+	private void saveRuntimeOnFiles(Map<NemaTask, Map<Flow,Map<String,Job>>> taskJobMap,
+			Map<Job, String> duration) {
+		try {
+			BufferedWriter wiki = new BufferedWriter(new FileWriter(STOREPATH
+					+ File.separator + "wiki.txt"));
+			
+			for (NemaTask task : taskJobMap.keySet()) {
+				for (Flow flow:taskJobMap.get(task).keySet()){
+				wiki.append("'''Task ")
+					.append(String.valueOf(task.getId()))
+					.append("'''")
+					.append(" (")
+					.append(task.getName())
+					.append(")");
+				wiki.newLine();
+				wiki.append(":")
+					.append(task.getDescription());
+				wiki.newLine();
+				wiki.append(":'''Flow ")
+					.append(String.valueOf(flow.getId()))
+					.append("''' -")
+					.append(flow.getName());
+				wiki.newLine();
+				wiki.append("<csv>")
+					.append("2010/runtime/task")
+					.append(String.valueOf(task.getId()))
+					.append("flow")
+					.append(String.valueOf(flow.getId()))
+					.append(".csv")
+					.append("</csv>");
+				wiki.newLine();
+				wiki.newLine();
+				
+				BufferedWriter taskCsv = new BufferedWriter(new FileWriter(STOREPATH
+						+ File.separator + "task"+task.getId()+"flow"+flow.getId()+".csv"));
+				taskCsv.append("*Submission Code,Runtime");
+				taskCsv.newLine();
+				for (Job job:taskJobMap.get(task).get(flow).values()){
+					taskCsv.append(job.getFlow().getSubmissionCode())
+							.append(',')
+							.append(duration.get(job));
+					taskCsv.newLine();
+				}
+				taskCsv.close();
+			}}
+			wiki.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private Flow findTemplate(Flow flow){
+		if (flow.isTemplate()||(flow.getInstanceOf()==null)||(flow.getInstanceOf()==flow)){
+			return flow;
+		}else {
+			return findTemplate(flow.getInstanceOf());
+		}
+	}
+
+	private Property searchProperty(
+			Map<Component, List<Property>> componentMap, String name) {
+		for (List<Property> list : componentMap.values()) {
+			Property prop = findProperty(list, name);
+			if (prop != null)
+				return prop;
+		}
+		return null;
+	}
+
+	private Property findProperty(Collection<Property> properties, String name) {
+		if (name != null) {
+			for (Property property : properties) {
+				if (name.equals(property.getName()))
+					return property;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Returns list of notifications for the user
@@ -548,22 +735,24 @@ public class JobController extends MultiActionController {
 		String _jobId = request.getParameter("jobId");
 		long jobId = Long.parseLong(_jobId);
 		Job job = this.flowService.getJob(jobId);
+		response.setContentType("text/plain");
 
-		String text = this.flowService.getConsole(job);
-		
 		try {
-			response.setContentType("text/plain");
-			response.getOutputStream().println(text);
+			if (job.isDone()) {
+				response.getOutputStream().print(consoleUtil.findConsole(job));
+			} else {
+				String text = this.flowService.getConsole(job);
+				response.getOutputStream().println(text);
+			}
 		} catch (IOException e) {
-			logger.error(e,e);
+			logger.error(e, e);
 		}
+
 		return null;
 	}
 
-	
-
 	/**
-	 * Query for the satus of servers 
+	 * Query for the satus of servers
 	 */
 	public ModelAndView getServerStatus(HttpServletRequest req,
 			HttpServletResponse res) throws IOException {
@@ -571,34 +760,32 @@ public class JobController extends MultiActionController {
 				.getWorkerStatus();
 		MeandreServerProxyConfig head = flowService.getHeadConfig();
 		List<Job> scheduledJobs = flowService.getScheduledJobs();
-		
-		
+
 		ModelAndView mav;
 		String uri = (req != null) ? req.getRequestURI() : "";
 		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
-			
-			
+
 			mav = new ModelAndView("jsonView");
-			
-			ConverterToList<Job> converter1=new ConverterToList<Job>();
-			mav.addObject("scheduledJobs",converter1.convertToList(scheduledJobs, new ConverterToMapJob()));
-			
-			ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>> converter2
-				=new ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>>();
-			mav.addObject("workers",converter2.convertToList(workers.entrySet(), new ConverterToMapServer()));
-			mav.addObject("anotherWorkers",workers);
-		
-			ConverterToMapServerConfig converter3=new ConverterToMapServerConfig();
-			mav.addObject("head",converter3.convertToMap(head));
-			
-			
+
+			ConverterToList<Job> converter1 = new ConverterToList<Job>();
+			mav.addObject("scheduledJobs", converter1.convertToList(
+					scheduledJobs, new ConverterToMapJob()));
+
+			ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>> converter2 = new ConverterToList<Entry<MeandreServerProxyConfig, MeandreServerProxyStatus>>();
+			mav.addObject("workers", converter2.convertToList(
+					workers.entrySet(), new ConverterToMapServer()));
+			mav.addObject("anotherWorkers", workers);
+
+			ConverterToMapServerConfig converter3 = new ConverterToMapServerConfig();
+			mav.addObject("head", converter3.convertToMap(head));
+
 		} else {
 			mav = new ModelAndView("job/serverStatus");
 			mav.addObject("workers", workers.entrySet());
 			mav.addObject("head", head);
 			mav.addObject("scheduledJobs", scheduledJobs);
 		}
-	
+
 		return mav;
 	}
 
@@ -628,6 +815,32 @@ public class JobController extends MultiActionController {
 		return mav;
 	}
 
+	public ModelAndView dumpConsole(HttpServletRequest req,
+			HttpServletResponse rep) {
+
+		Map<Job, String> dumpResult = new HashMap<Job, String>();
+		List<Job> jobs = flowService.getUserJobs(userManager.getCurrentUser()
+				.getId());
+		for (Job job : jobs) {
+			if (job.isDone()) {
+				try {
+					consoleUtil.dumpConsoleToFile(job);
+					dumpResult.put(job, "successfully dumped");
+				} catch (IllegalArgumentException e) {
+					dumpResult.put(job, e.getMessage());
+				} catch (Exception e) {
+					dumpResult.put(job, "error in dumping");
+				}
+			} else {
+				dumpResult.put(job, "not finished yet, no dump");
+			}
+		}
+
+		ModelAndView mav = new ModelAndView("job/dumpResult", "dumpResult",
+				dumpResult);
+		return mav;
+	}
+
 	private String processUrl(String url, String hostName) {
 		String identifier = "published_resources/nema";
 		int index = url.indexOf(identifier);
@@ -640,7 +853,8 @@ public class JobController extends MultiActionController {
 		return repositoryClientConnectionPool.getFromPool();
 	}
 
+	public void setResourceTypeService(ResourceTypeService resourceTypeService) {
+		this.resourceTypeService = resourceTypeService;
+	}
 
-	
-	
 }

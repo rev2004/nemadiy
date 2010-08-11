@@ -13,7 +13,7 @@
   <c:forEach items="${formattedProperties}" var="property">
   	<c:if test="${true}"> <%--c:if test="${not fn:startsWith(property.name,'_') }"> --%>
     <fieldset id="pt1">
-    <label for="jobname" class="label">  ${render:displayName(property.name)}: </label>
+    <label  class="label">  ${render:displayName(property.name)}: </label>
     <render:property roles="${userRoles}"
             component="${component.instanceUri}" value="${property}"
             class="cssClass" />
@@ -23,7 +23,9 @@
   </c:forEach>
   
      <fieldset id="pt1">
-    <label for="jobname" class="label"> Command Line: </label>
+     <div><label class="label">Type Name: </label>${executableMetadata.typeName}</div><br/>
+     <div><label class="label">Executable Name: </label>${executableMetadata.executableName}</div><br/>
+    <label  class="label"> Command Line: </label>
     <div class="surround">
 	<textarea name="commandLine" rows="5" style="width:80%;" >${executableMetadata.commandLineFlags}</textarea>
 	</div>

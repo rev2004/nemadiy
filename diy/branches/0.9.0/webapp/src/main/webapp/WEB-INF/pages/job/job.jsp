@@ -7,8 +7,6 @@
 
 	
      new PeriodicalExecuter(updateJob,10);
-
-
 	
 	consoleUpdater=new PeriodicalExecuter(updateConsole,10);
  	function updateConsole(){
@@ -26,7 +24,7 @@
  	        }
  	  	  })//Ajax.Request
  	};
-     
+
 	function updateJob(pe){
   	  new Ajax.Request("<c:url value='/get/JobManager.jobDetail.json'/>",{
         method:'get',
@@ -42,7 +40,7 @@
        		$('job.endTimestamp').innerHTML=checkNull(json.job.endTimestamp);
        		$('job.name').innerHTML=json.job.name;
        		if (json.job.description) {$('job.description').innerHTML=json.job.description;}
-       		if (json.job.status.toLowerCase()=="finished") {$('submitForm').show();}
+   
        		if ((json.job.status.toLowerCase()=="finished")&&($('resultContent').empty())){
            		$('result').show();           		
            		if (json.resultSet.root!=null){
@@ -65,14 +63,17 @@
        			(	(json.job.status.toLowerCase()=="finished")||
        	       		(json.job.status.toLowerCase()=="aborted")|| 
        	       		(json.job.status.toLowerCase()=="failed"));    
-       		if ((jobDone)&&(pe!=null)) {
-           		pe.stop();
+       		if (jobDone) {
+           		$('deleteButton').show();
+           		$('downloadConsoleButton').show();
+           		$('abortButton').hide();
+        		if (json.job.status.toLowerCase()=="finished") {$('submitForm').show();}
+           		if (pe) {
+               		pe.stop();
+           		}
            		consoleUpdater.stop();
            		updateConsole();
-           		
            	};
-       		if (json.job.status.toLowerCase()=="started") {$('abortButton').show();} 
-       		else {$('abortButton').hide();}		
     	}//onSuccess
 		
     });
@@ -137,33 +138,46 @@
 				<td><label class="label">Finish Time</label></td><td>:</td>
 				<td id="job.endTimestamp">${job.endTimestamp}</td>
 			</tr>
+			<tr>
+				<td colspan="3">
+					<a target="_blank" href="http://${head.host}:${head.port}/services/jobs/job_console.html?uri=${job.executionInstanceId}">Meandre Console</a>
+				</td>
+			</tr>
 		</table>
 		
+				
 		
 		
 		<div id="result" style="display:none; margin-top:5em;margin-bottom:auto;text-align:center;" >
 					Explore Results 
 					<div id="resultContent" ></div>
 		</div>
-
+		
 </fieldset>
 </div>
+
 <fieldset >
-	<form id="submitForm"  style="display:none;" action="<c:url value='/get/JobManager.selectJobForSubmission'/>" method="post" class="myleft surround"><input
+
+	<form id="submitForm"  style="display:none;" action="<c:url value='/get/JobManager.selectJobForSubmission'/>" method="post" class="myleft "><input
 	name="jobId" type="hidden" value="${job.id}" />
 		<input  name="submit" tabindex="6" value="Select As Submission"	type="submit" />
+		 
 	</form>
 
-<form id="theform" action="<c:url value='/get/JobManager.jobAction'/>" method="post"><input name="id"
-	type="hidden" value="${job.id}" />
-	<input id="abortButton" name="submit" tabindex="6" value="Abort This Job" type="submit" style="display:none;"/>
-	  <input type="button" value="Clone"  onclick="window.location.assign('<c:url value='/get/task?flowId=${job.flow.id}&cloned=true'/>')"/>
-	<input  tabindex="6" name="submit" value="Delete This Job" type="submit" class="myright"/>
+
+<form id="theform" action="<c:url value='/get/JobManager.jobAction'/>" method="post">
+	<input name="id" type="hidden" value="${job.id}" />
+	 <input id="downloadConsoleButton" style="display: none;" type="button" 
+	 	value="Download Log"  onclick="window.location.assign('<c:url value='/get/JobManager.getConsole?jobId=${job.id}'/>')"/>
+	<input id="abortButton" name="submit" tabindex="6" value="Abort This Job" type="submit" />
+	<input type="button" value="Clone"  onclick="window.location.assign('<c:url value='/get/task?flowId=${job.flow.id}&cloned=true'/>')"/>
+	<input  id="deleteButton" style="display:none;" tabindex="6" name="submit" value="Delete This Job" type="submit" class="myright"/>
 </form>
 </fieldset>
 
-
- 	<div class="fixHeightBox" style="max-height:600px; min-height:100px;" id="meandreConsole" >(getting console...)
+ 	<div class="fixHeightBox" style="max-height:300px;height:300px;" >
+ 		<pre id="meandreConsole">(getting console...)
+ 		</pre>
  	</div>
  </div>
 </body>

@@ -20,8 +20,17 @@
 		<property name="refreshStubOnConnectFailure" value="true" />
 	</bean>
 	
+
 	<bean id="mirexContributorDictionary" class="org.imirsel.nema.webapp.service.impl.MirexContributorDictionaryDaoImpl"
 	p:dao-ref="contributorDao"/>
 	<bean id="mirexTaskDictionary" class="org.imirsel.nema.webapp.service.impl.MirexTaskDictionaryImpl"
 	p:dao-ref="mirexTaskDao"/>
+
+	
+	<bean id="meandreConsoleUtil" class="org.imirsel.nema.meandre.util.ConsoleUtil"
+		p:dao-ref="meandreConsoleDao" p:folder="console"/>
+	<bean id="resourceTypeService"
+		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl" 
+		p:repositoryClientConnectionPool-ref="repositoryClientConnectionPool"/>
+
 </beans>

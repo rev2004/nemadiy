@@ -156,7 +156,7 @@ public class UploadedExecutableBundle extends ExecutableBundle {
 		if (super.getType() == ExecutableType.JAVA) {
 			containsExecutable = nemaZipFile.containsClass(getExecutableName());
 		} else if (super.getType()==ExecutableType.MATLAB){
-			containsExecutable =nemaZipFile.containsExt(".m");
+			containsExecutable =nemaZipFile.containsExt(".m")||nemaZipFile.containsExt(".p");
 		}	else {
 			containsExecutable = nemaZipFile.containsFile(getExecutableName());
 		}
