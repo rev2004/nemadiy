@@ -46,17 +46,20 @@
 		p:mirexSubmissionDao-ref="mirexSubmissionDao"
 		p:mirexTaskDictionary-ref="mirexTaskDictionary"
 		p:userManager-ref="userManager"
-		p:mirexNoteDao-ref="mirexNoteDao">
+		p:mirexNoteDao-ref="mirexNoteDao"
+		p:jiniService-ref="jiniService" p:jcrService-ref="jcrService"
+		 />
+	<bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
+		p:commandLineFormatter-ref="commandLineFormatter" p:resourceServiceType-ref="resource" />
+	<bean id="jiniService"
+		class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl">
+		<constructor-arg value="${lookupService.host}"/>
 	</bean>
-
-
-
-	<bean id="jiniService" class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl">
-		<constructor-arg value="nema.lis.uiuc.edu" />
+	<bean id="jcrService"
+		class="org.imirsel.nema.webapp.service.impl.JcrServiceImpl">
+		<constructor-arg value="${contentrepository.url}"/>
 	</bean>
-	<bean id="jcrService" class="org.imirsel.nema.webapp.service.impl.JcrServiceImpl">
-		<constructor-arg value="rmi://nema.lis.uiuc.edu:2099/jackrabbit.repository" />
-	</bean>
+	
 	<bean id="resource"
 		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl" 
 		p:repositoryClientConnectionPool-ref="repositoryClientConnectionPool"/>

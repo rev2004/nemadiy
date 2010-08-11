@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< .working
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	default-lazy-init="false"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -10,13 +11,19 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
+
+	default-lazy-init="false">
+
 	<import resource="nema-webflow.xml" />
 	
-    <context:property-placeholder location="classpath:contentrepositoryservice.properties,classpath:flowservice.properties" />
-	<context:component-scan base-package="org.imirsel.nema.webapp.controller.annotation"></context:component-scan>	
 	<mvc:annotation-driven/>
 	<mvc:view-controller path="/subpage/*" />
 	
+	<context:property-placeholder
+		location="classpath:contentrepositoryservice.properties,
+    	classpath:flowservice.properties,classpath:executorservice.properties" />
+
+
 	<bean id="exceptionResolver"
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
@@ -30,7 +37,7 @@
 				<prop key="org.springframework.remoting.RemoteConnectFailureException">
 					remoteAccessFailure
                 </prop>
-                <prop key="org.springframework.remoting.RemoteAccessException">
+				<prop key="org.springframework.remoting.RemoteAccessException">
 					remoteAccessFailure
                 </prop>
 				<prop key="org.springframework.remoting.RemoteLookupFailureException">
@@ -54,50 +61,44 @@
 		class="org.imirsel.nema.repository.RepositoryClientConnectionPool">
 
 	</bean>
-	
-	
-	 <!-- content repository to store the executable bundle -->
-    <bean id="contentRepositoryClient" 
-    	class="org.imirsel.nema.contentrepository.client.ContentRepositoryService">
-    	<property name="repository" ref="remoteContentRepository"/>
-    </bean>
-    
-    <bean id="remoteContentRepository" factory-bean="clientRepositoryFactory" 
-     factory-method="getRepository">
-     	<constructor-arg value="${contentrepository.url}"/>
-     </bean>
-    
-    <bean id="clientRepositoryFactory" 
-    class="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory"/>
-    <!-- End of content repository beans -->
-    
+	<bean id="resourceTypeService"
+		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl">
+		<property name="repositoryClientConnectionPool" ref="repositoryClientConnectionPool" />
+	</bean>
+
+	<!-- content repository to store the executable bundle -->
+	<bean id="contentRepositoryClient"
+		class="org.imirsel.nema.contentrepository.client.ContentRepositoryService">
+		<property name="repository" ref="remoteContentRepository" />
+	</bean>
+
+	<bean id="remoteContentRepository" factory-bean="clientRepositoryFactory"
+		factory-method="getRepository">
+		<constructor-arg value="${contentrepository.url}" />
+	</bean>
+
+	<bean id="clientRepositoryFactory"
+		class="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory" />
+	<!-- End of content repository beans -->
 
 
-	<!--  Job Scheduler for checking the validity of MeandreProxy -->
-	<!--
-		<bean id="checkMeandreProxyAvailability"
-		class="org.imirsel.nema.webapp.jobs.CheckMeandreProxyAvailability">
-		<property name="meandreProxyWrapper" ref="meandreProxy"/> </bean>
 
-
-		<bean id="jobDetail"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="checkMeandreProxyAvailability"/>
-		<property name="targetMethod" value="checkAvailability"/> <property
-		name="concurrent" value="false"/> </bean> <bean id="trigger"
-		class="org.springframework.scheduling.quartz.CronTriggerBean">
-		<property name="jobDetail" ref="jobDetail"/> <property
-		name="cronExpression" value="*/20 * * * * ?"/> </bean> <bean
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
-		lazy-init="false"> <property name="triggers"> <ref bean="trigger" />
-		</property> </bean>
-	-->
-	<!--  job scheduler end -->
+	<!-- Job Scheduler for checking the validity of MeandreProxy -->
+	<!-- <bean id="checkMeandreProxyAvailability" class="org.imirsel.nema.webapp.jobs.CheckMeandreProxyAvailability"> 
+		<property name="meandreProxyWrapper" ref="meandreProxy"/> </bean> <bean id="jobDetail" 
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> 
+		<property name="targetObject" ref="checkMeandreProxyAvailability"/> <property 
+		name="targetMethod" value="checkAvailability"/> <property name="concurrent" 
+		value="false"/> </bean> <bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerBean"> 
+		<property name="jobDetail" ref="jobDetail"/> <property name="cronExpression" 
+		value="*/20 * * * * ?"/> </bean> <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean" 
+		lazy-init="false"> <property name="triggers"> <ref bean="trigger" /> </property> 
+		</bean> -->
+	<!-- job scheduler end -->
 	<bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
 
-		<!--<property name="serviceUrl" value="${diy.flowservice.location}"/>-->
-		<property name="serviceUrl"
-			value="${flowservice.location}" />
+		<!--<property name="serviceUrl" value="${diy.flowservice.location}"/> -->
+		<property name="serviceUrl" value="${flowservice.location}" />
 
 		<property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService" />
 		<property name="refreshStubOnConnectFailure" value="true" />
@@ -128,9 +129,9 @@
 	<bean id="flowController"
 		class="org.imirsel.nema.webapp.controller.FlowServiceController">
 		<property name="flowService" ref="realFlowService" />
-		<property name="artifactService" ref="contentRepositoryClient"/>
+		<property name="artifactService" ref="contentRepositoryClient" />
 		<property name="methodNameResolver" ref="flowMethodResolver" />
-		<property name="userManager" ref="userManager"/>
+		<property name="userManager" ref="userManager" />
 	</bean>
 
 
@@ -162,6 +163,8 @@
 		<property name="submissionManager" ref="submissionManager" />
 		<property name="userManager" ref="userManager" />
 		<property name="methodNameResolver" ref="jobMethodResolver" />
+		<property name="consoleUtil" ref="meandreConsoleUtil"></property>
+		<property name="resourceTypeService" ref="resourceTypeService"></property>
 	</bean>
 
 
@@ -178,15 +181,19 @@
 				/JobManager.jobDetail=getJobDetail
 				/JobManager.jobAction=doJobAction
 				/JobManager.selectJobForSubmission=selectJobForSubmission
-				
+				/JobManager.runTime=getRunningTime
+
 				/JobManager.getServerStatus=getServerStatus
 
 				/JobManager.jobDetail.json=getJobDetail
 				/JobManager.getUserJobs.json=getUserJobs
 				/JobManager.getSubmissions.json=getSubmissions
-                /JobManager.getServerStatus.json=getServerStatus
-                /JobManager.getNemaStatus.json=getNemaStatus
-                /JobManager.getNotification.json=getNotification
+				/JobManager.getServerStatus.json=getServerStatus
+				/JobManager.getNemaStatus.json=getNemaStatus
+				/JobManager.getNotification.json=getNotification
+
+
+				/JobManager.dumpConsole=dumpConsole
             </value>
 		</property>
 	</bean>
@@ -248,11 +255,8 @@
 		<property name="templateName" value="accountCreated.vm" />
 	</bean>
 
-	<!--
-		Add additional controller beans here <bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="maxUploadSize" value="2097152"/> </bean>
-	-->
+	<!-- Add additional controller beans here <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
+		<property name="maxUploadSize" value="2097152"/> </bean> -->
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="ApplicationResources" />
@@ -277,10 +281,8 @@
 		</property>
 		<property name="order" value="0" />
 	</bean>
-	<!--
-		Dispatches requests mapped to
-		org.springframework.web.servlet.mvc.Controller implementations
-	-->
+	<!-- Dispatches requests mapped to org.springframework.web.servlet.mvc.Controller 
+		implementations -->
 
 	<bean
 		class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
@@ -290,7 +292,7 @@
 	</bean>
 
 
-	<!--  Try to insert the handler for Spring WebFlow -->
+	<!-- Try to insert the handler for Spring WebFlow -->
 
 	<!-- Enables FlowHandler URL mapping -->
 	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">

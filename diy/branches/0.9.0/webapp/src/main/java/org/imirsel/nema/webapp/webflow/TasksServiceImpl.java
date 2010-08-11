@@ -458,7 +458,7 @@ public class TasksServiceImpl {
 		Flow instance = new Flow();
 		instance.setCreatorId(userId);
 		instance.setDateCreated(new Date());
-		instance.setInstanceOf(flow);
+		instance.setInstanceOf(findTemplate(flow));
 		instance.setKeyWords(flow.getKeyWords());
 		instance.setName(name);
 		instance.setTemplate(false);
@@ -466,8 +466,7 @@ public class TasksServiceImpl {
 		instance.setType(flow.getType());
 		instance.setTypeName(flow.getTypeName());
 		instance.setSubmissionCode(mirexSubmissionCode);
-		logger
-				.info("Getting current user's credentials to send them to the flowservice");
+		logger.info("Getting current user's credentials to send them to the flowservice");
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
 
 		instance = this.flowService.createNewFlow(credential, instance,
@@ -489,6 +488,14 @@ public class TasksServiceImpl {
 		logger.info("Finish calling execute Job");
 		return job;
 
+	}
+	
+	private Flow findTemplate(Flow flow){
+		if (flow.isTemplate()||(flow.getInstanceOf()==null)||(flow.getInstanceOf()==flow)){
+			return flow;
+		}else {
+			return findTemplate(flow.getInstanceOf());
+		}
 	}
 
 	/**
