@@ -193,33 +193,44 @@ public class TestOnlyInputOutputPrep extends ContentRepositoryBase{
 			throw new ComponentExecutionException(e);
 		}
 		
+		
 		if(!inputTypeTest.equals(RawAudioFile.class)) { // audio files are never distributed and don't go into JCR
 			cc.getOutputConsole().println("Saving locally created test files to JCR...");
 			//save to JCR and replace path with JCR URI.
-				int JcrForSite = 0;
-				int totalForSite = 0;
-				for(Iterator<List<String>> listIt = inputTestPaths.values().iterator(); listIt.hasNext();){
-					List<String> pathList = listIt.next();
-					for(int i = 0;i<pathList.size();i++){
-						String path = pathList.get(i);
-						File aFile = new File(path);
-						if (aFile.exists()){
-							//is a local file that can go into JCR
-							try {
-								ResourcePath URI = saveFileToContentRepository(aFile, inputTypeTest.getName());
-								pathList.set(i, URI.getURIAsString());
-								JcrForSite++;
-							} catch (IOException e) {
-								throw new ComponentExecutionException("Failed to save file: " + aFile.getAbsolutePath() + " to the JCR", e);
-							} catch (ContentRepositoryServiceException e) {
-								throw new ComponentExecutionException("Failed to save file: " + aFile.getAbsolutePath() + " to the JCR", e);
-							}
-						}else{
-							getLogger().warning("Path '" + path + "' did not exist, assuming it is a path available at remote site");
-						}
+			int siteNumFiles = 0;
+			for(Iterator<List<String>> listIt = inputTestPaths.values().iterator(); listIt.hasNext();){
+				List<String> pathList = listIt.next();
+				for(int i = 0;i<pathList.size();i++){
+					if (new File(pathList.get(i)).exists()){
+						siteNumFiles++;
 					}
+				}
+			}
+			
+			int doneForSite = 0;
+			
+			for(Iterator<List<String>> listIt = inputTestPaths.values().iterator(); listIt.hasNext();){
+				List<String> pathList = listIt.next();
+				for(int i = 0;i<pathList.size();i++){
+					String path = pathList.get(i);
+					File aFile = new File(path);
+					if (aFile.exists()){
+						//is a local file that can go into JCR
+						try {
+							ResourcePath URI = saveFileToContentRepository(aFile, inputTypeTest.getName());
+							pathList.set(i, URI.getURIAsString());
+							doneForSite++;
+						} catch (IOException e) {
+							throw new ComponentExecutionException("Failed to save file: " + aFile.getAbsolutePath() + " to the JCR", e);
+						} catch (ContentRepositoryServiceException e) {
+							throw new ComponentExecutionException("Failed to save file: " + aFile.getAbsolutePath() + " to the JCR", e);
+						}
+					}else{
+						getLogger().warning("Path '" + path + "' did not exist, assuming it is a path available at remote site");
+					}
+				}
 				
-				cc.getOutputConsole().println("Saved " + JcrForSite + " of " + totalForSite + " input files to the JCR");
+				cc.getOutputConsole().println("Saved " + doneForSite + " of " + siteNumFiles + " input files to the JCR");
 			}
 		}
 		

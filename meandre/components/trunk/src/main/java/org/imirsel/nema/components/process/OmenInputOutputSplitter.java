@@ -178,14 +178,29 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 		if(!inputType1.equals(RawAudioFile.class)) { // audio files are never distributed and don't go into JCR
 			cc.getOutputConsole().println("Saving locally created input files to JCR...");
 			//save to JCR and replace path with JCR URI.
+			
+			
+			
 			for(Iterator<String> siteIt = siteToInputPaths.keySet().iterator(); siteIt.hasNext();){
 				String site = siteIt.next();
-				int JcrForSite = 0;
-				int totalForSite = 0;
 				Map<NemaTrackList,List<String>> siteMap = siteToInputPaths.get(site);
+				
+				int siteNumFiles = 0;
 				for(Iterator<List<String>> listIt = siteMap.values().iterator(); listIt.hasNext();){
 					List<String> pathList = listIt.next();
-					totalForSite += pathList.size();
+					for(int i = 0;i<pathList.size();i++){
+						if (new File(pathList.get(i)).exists()){
+							siteNumFiles++;
+						}
+					}
+				}
+				
+				int doneForSite = 0;
+				
+				
+				for(Iterator<List<String>> listIt = siteMap.values().iterator(); listIt.hasNext();){
+					List<String> pathList = listIt.next();
+
 					for(int i = 0;i<pathList.size();i++){
 						String path = pathList.get(i);
 						File aFile = new File(path);
@@ -194,7 +209,7 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 							try {
 								ResourcePath URI = saveFileToContentRepository(aFile, inputType1.getName());
 								pathList.set(i, URI.getURIAsString());
-								JcrForSite++;
+								doneForSite++;
 							} catch (IOException e) {
 								throw new ComponentExecutionException("Failed to save file: " + aFile.getAbsolutePath() + " to the JCR", e);
 							} catch (ContentRepositoryServiceException e) {
@@ -205,7 +220,7 @@ public class OmenInputOutputSplitter extends ContentRepositoryBase{
 						}
 					}
 				}
-				cc.getOutputConsole().println("Saved " + JcrForSite + " of " + totalForSite + " input files for site '" + site + "' to the JCR");
+				cc.getOutputConsole().println("Saved " + doneForSite + " of " + siteNumFiles + " input files for site '" + site + "' to the JCR");
 			}
 		}
 		
