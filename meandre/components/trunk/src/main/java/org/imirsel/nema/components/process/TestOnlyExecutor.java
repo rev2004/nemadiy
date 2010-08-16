@@ -164,7 +164,6 @@ public class TestOnlyExecutor extends RemoteExecutorBase {
 		
 		//setup Process Execution Properties for each execution
 		int executionCount = 0;
-		int foldCount = 0;
 		for (int s=0;s<testSets.size();s++) {
 			NemaTrackList testSet = testSets.get(s);
 			//scratch dir -this gets created at the executor end
@@ -274,7 +273,7 @@ public class TestOnlyExecutor extends RemoteExecutorBase {
 				String formattedArgs = formatModel.toFormattedString();
 				pep.setCommandLineFlags(formattedArgs);
 			
-				cc.getOutputConsole().println("Executing process... " + (i+1) + " of " + inputs1ForFold.size() + " for fold " + foldCount + " of " + testSets.size());
+				cc.getOutputConsole().println("Executing process... " + (i+1) + " of " + inputs1ForFold.size() + " for fold " + i + " of " + testSets.size());
 				NemaProcess nemaProcess=null;
 				try {
 					nemaProcess=this.executeProcess(pep);

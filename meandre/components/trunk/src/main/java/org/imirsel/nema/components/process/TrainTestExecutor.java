@@ -177,7 +177,6 @@ public class TrainTestExecutor extends RemoteExecutorBase {
 		
 		//setup Process Execution Properties for each execution
 		int executionCount = 0;
-		int foldCount = 0;
 		for (int s=0;s<trainSets.size();s++) {
 			NemaTrackList trainSet = trainSets.get(s);
 			NemaTrackList testSet = testSets.get(s);
@@ -274,7 +273,7 @@ public class TrainTestExecutor extends RemoteExecutorBase {
 				String formattedArgs = formatModel.toFormattedString();
 				pep.setCommandLineFlags(formattedArgs);
 			
-				cc.getOutputConsole().println("Executing process... " + (i+1) + " of " + inputs1ForFold.size() + " for fold " + foldCount + " of " + trainSets.size());
+				cc.getOutputConsole().println("Executing process... " + (i+1) + " of " + inputs1ForFold.size() + " for fold " + i + " of " + trainSets.size());
 				NemaProcess nemaProcess=null;
 				try {
 					nemaProcess=this.executeProcess(pep);
