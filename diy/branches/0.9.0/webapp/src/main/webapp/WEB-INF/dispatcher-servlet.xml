@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< .working
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	default-lazy-init="false"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -11,8 +10,6 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-
-	default-lazy-init="false">
 
 	<import resource="nema-webflow.xml" />
 	
@@ -174,6 +171,7 @@
 			<value>
 				/JobManager.getConsole=getConsole
 				/JobManager.getUserJobs=getUserJobs
+                                
 				/JobManager.getSubmissions=getSubmissions
 				/JobManager.getAllSubmissions=getAllSubmissions
 				/JobManager.submissionAction=submissionAction
