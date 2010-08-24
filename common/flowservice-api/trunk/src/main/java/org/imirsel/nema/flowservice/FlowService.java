@@ -97,6 +97,24 @@ public interface FlowService {
 	 */
    public Job getJob(long jobId);
 
+    /**
+         * Return all {@link Job}s owned by the specified user for certain taskId
+         * @param userId Unique ID of the user whose {@link Job}s will be returned.
+         * @param taskId taskId for specific dataset/task
+         * @return
+         * @since 0.9.0
+         */
+   public List<Job> getJobsByTaskId(long userId,long taskId);
+
+        /**
+         * Return all {@link Job}s owned by the specified user with keyword.
+         * @param userId Unique ID of the user whose {@link Job}s will be returned.
+         * @param keyword  keyword to filter the list (job name, keyword, description, flow name, ...)
+         * @return
+         * @since 0.9.0
+         */
+   public List<Job> getUserJobs(long userId,String keyword);
+
 	/**
 	 * Return all {@link Job}s owned by the specified user.
 	 * 
