@@ -55,7 +55,7 @@ CREATE TABLE `app_user` (
 
 LOCK TABLES `app_user` WRITE;
 /*!40000 ALTER TABLE `app_user` DISABLE KEYS */;
-INSERT INTO `app_user` VALUES (-2,'\0','\0','\0','kumaramit01@gmail.com','','Kumar','Amit','b2cebd873228d3e6753d9b39195730694e3d1bbc','Amit.','admin',2),(-1,'\0','\0','\0','kumaramit01@gmail.com','','Tomcat','User','12dea96fec20593566ab75692c9949596833adc9','A male kitty.','user',1);
+INSERT INTO `app_user` VALUES (-2,'\0','\0','\0','amitku@uiuc.edu','','Kumar','Amit','b2cebd873228d3e6753d9b39195730694e3d1bbc','Amit.','admin',2),(-1,'\0','\0','\0','kumaramit01@gmail.com','','Tomcat','User','12dea96fec20593566ab75692c9949596833adc9','A male kitty.','user',1);
 /*!40000 ALTER TABLE `app_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
