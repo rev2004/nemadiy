@@ -470,8 +470,17 @@ public class JobController extends MultiActionController {
         logger.debug("start to list the jobs of   " + user.getUsername());
 
         String keyword = req.getParameter("keyword");
+        boolean isTaskIdFiltered = false;
+        Long taskId = null;
+        try {
+            taskId = Long.valueOf(req.getParameter("taskId"));
+            if (taskId!=-100L) {isTaskIdFiltered = true;}
+        } catch (NumberFormatException e) {
+        }
         List<Job> allJobs;
-        if ((keyword != null) && (keyword.length() > 0)) {
+        if (isTaskIdFiltered) {
+            allJobs = flowService.getJobsByTaskId(userId, taskId);
+        } else if ((keyword != null) && (keyword.length() > 0)) {
             allJobs = flowService.getUserJobs(userId, keyword);
         } else {
             allJobs = flowService.getUserJobs(userId);
@@ -510,11 +519,14 @@ public class JobController extends MultiActionController {
         } else {
             mav = new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
         }
-
+        try {
+            List<NemaTask> tasks = resourceTypeService.getSupportedTasks();
+            mav.addObject("taskIds", tasks);
+        } catch (SQLException e) {
+            logger.error(e, e);
+        }
         return mav;
     }
-
-
 
     public ModelAndView getRunningTime(HttpServletRequest req,
             HttpServletResponse res) throws IOException {

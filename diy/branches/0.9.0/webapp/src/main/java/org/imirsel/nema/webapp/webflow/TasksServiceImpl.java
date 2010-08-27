@@ -412,7 +412,7 @@ public class TasksServiceImpl {
 	 * @throws MeandreServerException
 	 */
 	public Job run(Flow flow, Map<Component, List<Property>> componentMap,
-			String name, String description, String mirexSubmissionCode)
+			String name, String description, String mirexSubmissionCode,int taskId)
 			throws MeandreServerException {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 
@@ -466,9 +466,10 @@ public class TasksServiceImpl {
 		instance.setType(flow.getType());
 		instance.setTypeName(flow.getTypeName());
 		instance.setSubmissionCode(mirexSubmissionCode);
-		logger.info("Getting current user's credentials to send them to the flowservice");
+                instance.setTaskId((long)taskId);
+		
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-
+                logger.info("Getting current user's credentials to send them to the flowservice:"+credential.getUserID());
 		instance = this.flowService.createNewFlow(credential, instance,
 				paramMap, templateFlowUri, user.getId());
 
@@ -718,6 +719,123 @@ public class TasksServiceImpl {
 		return list;
 	}
 
+        	/**
+	 * Find the Executable Bundle from the content repository using the properties's profile as the path
+	 * @param properties
+	 * @return
+	 * @throws ContentRepositoryServiceException
+	 * @throws InvalidResourcePathException
+	 */
+	public ExecutableMetadata getExecutableMetadata(List<Property> properties) throws ContentRepositoryServiceException, InvalidResourcePathException{
+		Property executable=findProperty(properties, EXECUTABLE_URL);
+		ResourcePath path=getRepositoryResourcePath(executable.getValue());
+		SimpleCredentials credential = userManager.getCurrentUserCredentials();
+		ExecutableMetadata meta=artifactService.getBundleMetadata(credential, path);
+
+		return meta;
+	}
+
+	/**
+	 * If the commandlineflag ("commandLine" in request) is changed, duplicate the executable bundle ,
+	 * send it over to content repository, update the property with the new resource path, and change the newExecutable flag with true.
+	 * If it is already the new executable, the previous one in content repository is removed.
+	 * @param parameters
+	 * @param meta Original executable metadata.
+	 * @param properties Modified.  The Executable_URL is replaced with the new one if command line is changed
+	 * @param uuid
+	 * @param newExecutable   The map of flags, with component as key.  {@see generateIsNewExecutableMap}
+	 * @param component
+	 * @throws InvalidResourcePathException
+	 * @throws ContentRepositoryServiceException
+	 */
+	public void cloneExecutableBundle(ParameterMap parameters, ExecutableMetadata meta,List<Property> properties,UUID uuid,Map<Component,Boolean> newExecutable, Component component)
+		throws InvalidResourcePathException, ContentRepositoryServiceException{
+		String commandLine=parameters.get("commandLine");
+		if (!meta.getCommandLineFlags().equals(commandLine)){
+			Property executableProp=findProperty(properties, EXECUTABLE_URL);
+			SimpleCredentials credential = userManager.getCurrentUserCredentials();
+			ResourcePath path=getRepositoryResourcePath(executableProp.getValue());
+			ExecutableBundle executable=artifactService.getExecutableBundle(credential, path);
+
+			if (newExecutable.get(component)){
+				deleteExecutableFromRepository(path, credential);
+			}else {
+				newExecutable.put(component,true);
+			}
+
+			executable.setCommandLineFlags(commandLine);
+			ResourcePath newPath=artifactService.saveExecutableBundle(credential, uuid.toString(), executable);
+			logger.info("Saved executable bundle at "+newPath.getURIAsString());
+			executableProp.setValue(newPath.getURIAsString());
+
+		}
+	}
+
+
+
+	private RepositoryResourcePath getRepositoryResourcePath(final String jcrUri)
+			                        throws InvalidResourcePathException {
+			                String split[] = jcrUri.split(":");
+			                if (split.length != 3) {
+			                        throw new InvalidResourcePathException(
+			                                        "The resource path is of the format protocol:workspace:nodepath");
+			                }
+			                String protocol = split[0];
+			                String workspace = split[1];
+			                String path = split[2];
+			                // get rid of the first two slashes
+			                path = path.substring(2);
+			                RepositoryResourcePath rrp = new RepositoryResourcePath(protocol,workspace, path);
+			                return rrp;
+    }
+
+
+	/**
+	 * Generate the map of flags, with component as key.
+	 *
+	 * 	 	True if  it is already the new executable bundle that should be removed from content repository.
+	 * 		False if the executable bundle is the old one that should be kept in the content repository.
+
+	 * @param components
+	 * @return
+	 */
+	public Map<Component,Boolean> generateIsNewExecutableMap(Collection<Component> components){
+		Map<Component,Boolean> map=new HashMap<Component,Boolean>();
+		for (Component component:components){
+			map.put(component, false);
+		}
+		return map;
+	}
+
+
+	public void prepareModel(JobForm jobForm,Map<Component,List<Property>> componentMap,Flow flow,Boolean cloned){
+		if (cloned==null) {cloned=false;}
+
+		String des=flow.getDescription();
+		if (des==null) des="";
+		if (cloned) {des="Clone of \""+flow.getName()+"\"\n"+des;}
+		jobForm.setDescription(des);
+		Property taskId=searchProperty(componentMap,"taskID");
+		if (taskId!=null){
+		try{
+			jobForm.setTaskId(Integer.parseInt(taskId.getValue()));
+		}catch(NumberFormatException e){
+			jobForm.setTaskId(0);
+		}
+		}
+		Property mirexSub=searchProperty(componentMap,MIREX_SUBMISSION_CODE);
+		if (mirexSub!=null) {jobForm.setMirexSubmissionCode(mirexSub.getValue());}
+
+	}
+
+	private Property searchProperty(Map<Component,List<Property>> componentMap,String name){
+		for (List<Property> list:componentMap.values()){
+			Property prop=findProperty(list, name);
+			if (prop!=null) return prop;
+		}
+		return null;
+	}
+	
 	public void setMirexSubmissionDao(ExternalMirexSubmissionDao mirexSubmissionDao) {
 		this.mirexSubmissionDao = mirexSubmissionDao;
 	}
