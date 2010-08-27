@@ -142,7 +142,7 @@
 	</action-state>
 
 	<action-state id="run">
-		<evaluate expression="tasksService.run(flow,componentMap,jobForm.name,jobForm.description,jobForm.mirexSubmissionCode)" result="flowScope.job" />
+		<evaluate expression="tasksService.run(flow,componentMap,jobForm.name,jobForm.description,jobForm.mirexSubmissionCode,jobForm.taskId)" result="flowScope.job" />
 		<transition on="success" to="checkRunResult" />
 
 	</action-state>

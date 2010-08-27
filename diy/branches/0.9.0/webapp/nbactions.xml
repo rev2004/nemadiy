@@ -7,7 +7,8 @@
                 <goal>jetty:run</goal>
             </goals>
             <properties>
-                <env>production</env>
+                <env>test</env>
+                <maven.test.skip>true</maven.test.skip>
             </properties>
         </action>
         <action>
@@ -19,6 +20,30 @@
             </goals>
             <properties>
                 <env>production</env>
+            </properties>
+        </action>
+        <action>
+            <actionName>debug</actionName>
+            <goals>
+                <goal>jetty:run</goal>
+            </goals>
+            <properties>
+                
+                
+                
+                <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
+                
+                
+                
+                <maven.test.skip>true</maven.test.skip>
+                
+                
+                
+                <jpda.listen>maven</jpda.listen>
+                
+                
+                
+                <env>test</env>
             </properties>
         </action>
     </actions>
