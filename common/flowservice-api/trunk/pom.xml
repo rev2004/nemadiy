@@ -90,11 +90,7 @@
 
 
 	<dependencies>
-		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>${jpa.version}</version>
-		</dependency>
+		
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -131,9 +127,8 @@
 	</dependencies>
 
 	<properties>
-		<hibernate.annotations.version>3.3.0.ga</hibernate.annotations.version>
-		<hibernate.version>3.2.6.ga</hibernate.version>
-		<jpa.version>1.0</jpa.version>
+		<hibernate.annotations.version>3.5.1-Final</hibernate.annotations.version>
+		<hibernate.version>3.5.1-Final</hibernate.version>
 	</properties>
 
 	<profiles>
