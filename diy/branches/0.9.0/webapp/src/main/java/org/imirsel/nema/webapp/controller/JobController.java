@@ -479,9 +479,9 @@ public class JobController extends MultiActionController {
         }
         List<Job> allJobs;
         if (isTaskIdFiltered) {
-            allJobs = flowService.getJobsByTaskId(userId, taskId);
+            allJobs = flowService.getUserJobsByTaskId(userId, taskId);
         } else if ((keyword != null) && (keyword.length() > 0)) {
-            allJobs = flowService.getUserJobs(userId, keyword);
+            allJobs = flowService.getUserJobsByKeyword(userId, keyword);
         } else {
             allJobs = flowService.getUserJobs(userId);
         }
