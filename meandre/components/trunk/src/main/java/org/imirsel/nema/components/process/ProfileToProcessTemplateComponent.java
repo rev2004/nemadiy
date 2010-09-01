@@ -125,17 +125,16 @@ public class ProfileToProcessTemplateComponent extends NemaComponent {
 		try {
 			locator = new LookupLocator("jini://"+host);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RemoteException(e.getMessage());
 		}
 		ServiceRegistrar registrar=null;
 		try {
 			registrar= locator.getRegistrar();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			throw new RemoteException(e1.getMessage());
 		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			throw new RemoteException(e1.getMessage());
 		}
 		
 		DynamicType dynamicType = new DynamicType();
