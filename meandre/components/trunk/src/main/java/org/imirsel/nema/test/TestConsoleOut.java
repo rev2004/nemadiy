@@ -2,6 +2,7 @@ package org.imirsel.nema.test;
 
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.logging.Level;
 
 import org.imirsel.nema.components.NemaComponent;
 import org.meandre.core.ComponentContext;
@@ -41,6 +42,7 @@ public class TestConsoleOut extends NemaComponent {
 	public void execute(ComponentContext ccp)
 			throws ComponentExecutionException, ComponentContextException {
 		addLogDestination(ccp.getOutputConsole());
+		this.getLogger().setLevel(Level.ALL);
 		String text = (String) ccp.getDataComponentFromInput(DATA_INPUT_1);
 		int number = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_2));
 		int wtime = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_3));
