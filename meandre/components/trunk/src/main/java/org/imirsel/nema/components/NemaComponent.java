@@ -76,6 +76,9 @@ public abstract class NemaComponent implements ExecutableComponent {
 		
 		//getLogger().setLevel(Level.FINEST);
 		synchronized(NemaComponent.class){
+			outputConsole = componentContextProperties.getOutputConsole();
+			addLogDestination(outputConsole);
+			
 			nemaResourceDirectory =publicResourceDirectory+ File.separator+"nema";
 			if(!(new File(nemaResourceDirectory)).exists()){
 				File file = new File(nemaResourceDirectory);
@@ -114,8 +117,6 @@ public abstract class NemaComponent implements ExecutableComponent {
 				throw new ComponentContextException("Failed to get common storage directory paths",e);
 			}
 			
-			outputConsole = componentContextProperties.getOutputConsole();
-			addLogDestination(outputConsole);
 			getLogger().info("Initialized logging for " + this.getClass().getName());
 		}
 	}
