@@ -40,6 +40,7 @@ public class TestConsoleOut extends NemaComponent {
 
 	public void execute(ComponentContext ccp)
 			throws ComponentExecutionException, ComponentContextException {
+		addLogDestination(ccp.getOutputConsole());
 		String text = (String) ccp.getDataComponentFromInput(DATA_INPUT_1);
 		int number = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_2));
 		int wtime = Integer.valueOf(ccp.getProperty(DATA_PROPERTY_3));
