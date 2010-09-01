@@ -85,7 +85,12 @@ public abstract class NemaComponent implements ExecutableComponent {
 			processWorkingDirectory = nemaResourceDirectory + File.separator + jobId;
 			File file = new File(processWorkingDirectory);
 			file.mkdir();
-			processWorkingDirectoryAbsolutePath = file.getAbsolutePath();
+			try {
+				processWorkingDirectoryAbsolutePath = file.getCanonicalPath();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			processWorkingDirectory = file.getPath();
 		
 			
@@ -130,7 +135,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 	 */
 	public Logger getLogger() {
 		if (_logger == null){
-			_logger = Logger.getLogger(this.getClass().getName() + "-" + executionInstanceID);
+			_logger = Logger.getLogger(this.getClass().getName());
 		}
 		return _logger;
 	}
