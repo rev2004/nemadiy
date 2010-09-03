@@ -142,7 +142,7 @@ ul#primary-nav li li li:hover ul,
 ul#primary-nav li.over ul,
 ul#primary-nav li li.over ul {display:block;}
 ul#primary-nav li li li.over ul { display: block; } /* The magic */
-ul#primary-nav li.menubar { background: transparent url(../../images/arrow.gif) right center no-repeat; }
+ul#primary-nav li.menubar { background: transparent url(../../images/arrow.gif) right center no-repeat; z-index: 20100;}
 ul#primary-nav li:hover,
 ul#primary-nav li.over { background-color: #fff }
 ul#primary-nav li a:hover { color: #E2144A; }

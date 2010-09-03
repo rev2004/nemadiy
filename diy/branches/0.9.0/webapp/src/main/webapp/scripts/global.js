@@ -334,7 +334,7 @@ window.onload = function() {
         for (var i=0; i<navItems.length; i++) {
             if (navItems[i].className == "menubar") {
                 navItems[i].onmouseover=function() { this.className += " over"; }
-                navItems[i].onmouseout=function() { this.className = "menubar"; }
+                 navItems[i].onmouseout=function() { var el=this; window.setTimeout(function(){el.className = "menubar"; },200);}
             }
         }
     }
