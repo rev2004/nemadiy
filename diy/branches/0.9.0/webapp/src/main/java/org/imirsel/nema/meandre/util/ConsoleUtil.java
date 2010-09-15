@@ -6,14 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.model.Job;
 
 public class ConsoleUtil {
@@ -45,9 +42,11 @@ public class ConsoleUtil {
 
 				File file = new File(filename);
 				if (!file.exists()) {
-					List<ConsoleEntry> entries = dao.getEntry(job);
+                                        logger.debug("start to dump job" + job.getName() + " into file "
+							+ filename);
 					FileWriter fstream = new FileWriter(file);
 					BufferedWriter out = new BufferedWriter(fstream);
+
 					out.append("Job ").append(job.getName());
 					out.newLine();
 					out.append("ID:").append(job.getId().toString());
@@ -64,13 +63,10 @@ public class ConsoleUtil {
 					out.append("*******************************");
 					out.newLine();
 
-					for (ConsoleEntry entry : entries) {
-						out.append("[").append(entry.getTimeStamp().toString())
-								.append("]"); 
-						out.newLine();
-						out.append(entry.getLine());
-						out.newLine();
-					}
+                                        ConsoleRowHandler handler=new ConsoleRowHandler();
+					handler.setWriter(out);
+
+                                        dao.handleEntry(job, handler);
 
 					out.close();
 
