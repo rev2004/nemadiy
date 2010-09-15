@@ -2,7 +2,8 @@ package org.imirsel.nema.model;
 
 import java.io.Serializable;
 
-/** Component is represented using this bean
+/** 
+ * Represents a Meandre flow component.
  * 
  * @author kumaramit01
  * @since 0.5.0
