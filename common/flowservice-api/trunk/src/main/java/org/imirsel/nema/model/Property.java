@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
 
-/**Component Property is represented using this bean
+/**
+ * Represents a Meandre component property.
  * 
  * @author kumaramit01
  * @since 0.5.0

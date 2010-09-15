@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<title>NEMA Flow Service API Overview</title>
+</head>
+<body>
+<p>Interfaces and classes that define and implement the NEMA Flow Service API.</p>
+
+<p>Author: Andrew Shirk (<a href="mailto:shirk@illinois.edu">shirk@illinois.edu</a>)</p>
+
+<h1>Purpose</h1>
+
+<p>
+NEMA uses the Meandre framework to implement and execute workflow processes.
+Meandre, however, lacks load balancing, job scheduling, and robust job 
+monitoring services. The NEMA Flow Service implements these features as an 
+abstraction layer that runs, as a Java RMI service, in front of a collection
+of Meandre servers.
+</p>
+
+<p>
+The NEMA Flow Service also has operations for returning descriptions of the 
+Meandre flow templates, components and properties that are installed on the
+Meandre servers. This removes the need for clients to have direct access to
+the Meandre cluster.
+</p>
+
+<p>The API project is small, containing only the model classes and the service
+interface itself.</p>
+
+</body>
+</html>
