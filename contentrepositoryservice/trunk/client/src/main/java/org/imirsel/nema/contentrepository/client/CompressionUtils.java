@@ -98,7 +98,7 @@ public class CompressionUtils {
 		        String processedName = decompressLocation + File.separator+entry.getName();
 		        if(entry.isDirectory()) {
 		          // Assume directories are stored parents first then children.
-		          logger.fine("Extracting directory: " + processedName);
+		          System.out.println("Extracting directory: " + processedName);
 		          // This is not robust, just for demonstration purposes.
 		          File directoryFile = new File(decompressLocation,entry.getName());
 		          boolean success=directoryFile.mkdirs();
@@ -108,7 +108,7 @@ public class CompressionUtils {
 		          continue;
 		        }
 
-		       logger.info("Extracting file: " +processedName);
+		       System.out.println("Extracting file: " +processedName);
 		       copyInputStream(zipFile.getInputStream(entry),processedName);
 		         
 		         fileList.add(processedName);
@@ -172,7 +172,7 @@ public class CompressionUtils {
 		List<String> fileList = new ArrayList<String>();
 		File sourceFile = new File(fileLocation);
 		getFileList(fileLocation, fileList);
-		logger.info("Files: " + fileList.size());
+		System.out.println("Files: " + fileList.size());
 		byte[] buffer = new byte[1024];
 		String zipfileName = sourceFile.getName() + ".zip";
 		File zipFilePath = new File(tempLocation, zipfileName);
@@ -180,23 +180,28 @@ public class CompressionUtils {
 		try {
 			FileOutputStream fos = new FileOutputStream(zipFilePath);
 			zos = new ZipOutputStream(fos);
-			logger.info("Output to Zip : " + zipFilePath);
+			System.out.println("Output to Zip : " + zipFilePath);
 			for (String file : fileList) {
 				File currentFile = new File(file);
-				String entryName = currentFile.getAbsolutePath();
+				String entryName = currentFile.getCanonicalPath();
 				if(relativeTo!=null){
-					int indexRelativePath = entryName.indexOf(relativeTo);
+					File relativeToFile = new File(relativeTo);
+					String relativeToCanonicalPath = relativeToFile.getCanonicalPath();
+					int indexRelativePath = entryName.indexOf(relativeToCanonicalPath);
+					System.out.println("Finding the path relative to " + relativeToCanonicalPath);
+					System.out.println("Entry Path is: " + entryName);
 					if(indexRelativePath!=-1){
-						entryName= entryName.substring(indexRelativePath+relativeTo.length());
+						entryName= entryName.substring(indexRelativePath+relativeToCanonicalPath.length());
 					}
+					System.out.println("Entry Name after making it relative: " + entryName);
 				}
-				logger.info("entry name is: " + entryName);
+				System.out.println("entry name is: " + entryName);
 				if (currentFile.isDirectory()) {
-					logger.fine("File Added : " + file);
+					System.out.println("File Added : " + file);
 					ZipEntry ze = new ZipEntry(entryName + "/");
 					zos.putNextEntry(ze);
 				} else if (currentFile.isFile()) {
-					logger.fine("File Added : " + file);
+					System.out.println("File Added : " + file);
 					ZipEntry ze = new ZipEntry(entryName);
 					zos.putNextEntry(ze);
 					FileInputStream in = new FileInputStream(file);
@@ -225,6 +230,9 @@ public class CompressionUtils {
 		long length = file.length();
 		if (length > Integer.MAX_VALUE) {
 			// File is too large
+		}
+		if(length<=0){
+			return null;
 		}
 		// Create the byte array to hold the data
 		byte[] bytes = new byte[(int) length];
