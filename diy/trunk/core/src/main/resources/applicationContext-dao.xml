@@ -51,11 +51,7 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     
-    <bean id="mirexSubmissionDao"
-    	class="org.imirsel.nema.dao.hibernate.MirexSubmissionDaoHibernate">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-
+    
     <!-- If you want to be able to do simple CRUD for new domain objects without 
         having to cast, you don't have create a Dao interface and implementation 
         for that domain object, you simply have to do the following.  
@@ -74,8 +70,7 @@
 
     <!-- Add new DAOs here -->
 
-    <bean id="externalMirexSubmissionDao"
-    	class="org.imirsel.nema.dao.jdbc.MirexSubmissionDaoJdbc">
+    <bean id="mirexSubmissionDao" class="org.imirsel.nema.dao.jdbc.MirexSubmissionDaoJdbc">
     	<property name="dataSource" ref="mirexSubmissionDataSource"/>
     </bean>
 </beans>

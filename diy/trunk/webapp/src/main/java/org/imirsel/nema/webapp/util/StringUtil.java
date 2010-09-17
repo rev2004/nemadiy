@@ -12,29 +12,6 @@ package org.imirsel.nema.webapp.util;
 public class StringUtil {
 
 	/**
-	 * An enhanced comparing method for String, return true, if they are same or both null.  
-	 * @param str1
-	 * @param str2
-	 * @return
-	 */
-	static public boolean same(String str1,String str2){
-		if (str1==null){
-			if (str2==null) return true;
-			else return false;
-		}else return str1.equals(str2);
-	}
-	
-	/**
-	 * 
-	 * @param str
-	 * @return "" is str==null, itself otherwise
-	 */
-	static public String nonNull(String str){
-		if (str==null) return "";
-		else return str;
-	}
-	
-	/**
 	 * Convert a java variable name style string into a more display friendly
 	 * string. For example: "redDogHTML"->"Red Dog HTML"
 	 * 

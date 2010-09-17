@@ -7,7 +7,5 @@
         <mapping class="org.imirsel.nema.model.Role"/>
         <mapping class="org.imirsel.nema.model.PreferenceValue"/>
         <mapping class="org.imirsel.nema.model.Submission"/>
-        <mapping class="org.imirsel.nema.model.MirexSubmission"/>
-        <mapping class="org.imirsel.nema.model.Contributor"/>
     </session-factory>
 </hibernate-configuration>
