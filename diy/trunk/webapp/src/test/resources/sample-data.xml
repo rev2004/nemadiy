@@ -3,43 +3,288 @@
   <table name="app_user">
     <column>id</column>
     <column>version</column>
+    <column>account_expired</column>
     <column>account_enabled</column>
-    <column>password</column>
+    <column>account_locked</column>
+    <column>credentials_expired</column>
     <column>username</column>
-    <column>email</column>
+    <column>password</column>
     <column>password_hint</column>
     <column>first_name</column>
     <column>last_name</column>
-    <column>account_expired</column>
-    <column>account_locked</column>
-    <column>credentials_expired</column>
+    <column>email</column>
     <row>
       <value>-2</value>
       <value>2</value>
+      <value>false</value>
       <value>true</value>
-      <value>b2cebd873228d3e6753d9b39195730694e3d1bbc</value>
+      <value>false</value>
+      <value>false</value>
       <value>admin</value>
-      <value>matt@raibledesigns.com</value>
+      <value>b2cebd873228d3e6753d9b39195730694e3d1bbc</value>
       <value><![CDATA[Not a female kitty.]]></value>
-      <value>Matt</value>
-      <value>Raible</value>
-      <value>false</value>
-      <value>false</value>
-      <value>false</value>
+      <value>Amit</value>
+      <value>Kumar</value>
+      <value>amitku@uiuc.edu</value>
     </row>
     <row>
       <value>-1</value>
       <value>1</value>
+      <value>false</value>
       <value>true</value>
-      <value>12dea96fec20593566ab75692c9949596833adc9</value>
+      <value>false</value>
+      <value>false</value>
       <value>user</value>
-      <value>matt_raible@yahoo.com</value>
+      <value>12dea96fec20593566ab75692c9949596833adc9</value>
       <value><![CDATA[A male kitty.]]></value>
       <value>Tomcat</value>
       <value>User</value>
+      <value>matt_raible@yahoo.com</value>
+    </row>
+  </table>
+  <table name="mirex_task">
+    <column>id</column>
+    <column>url</column>
+    <column>name</column>
+    <column>active</column>
+    <column>description</column>
+    <column>fullname</column>
+    <row>
+      <value>1</value>
+      <null/>
+      <value>QBT</value>
+      <value>true</value>
+      <null/>
+      <value><![CDATA[Query By Tapping]]></value>
+    </row>
+    <row>
+      <value>2</value>
+      <null/>
+      <value>QBSH</value>
+      <value>true</value>
+      <null/>
+      <value><![CDATA[Query By Singing and Humming]]></value>
+    </row>
+    <row>
+      <value>3</value>
+      <null/>
+      <value>Chord</value>
+      <value>true</value>
+      <null/>
+      <value><![CDATA[Chord Description]]></value>
+    </row>
+    <row>
+      <value>4</value>
+      <null/>
+      <value>Melody</value>
       <value>false</value>
-      <value>false</value>
-      <value>false</value>
+      <null/>
+      <value><![CDATA[Melody Finding]]></value>
+    </row>
+  </table>
+  <table name="mirex_submission">
+    <column>id</column>
+    <column>url</column>
+    <column>hashcode</column>
+    <column>createTime</column>
+    <column>updateTime</column>
+    <column>readme</column>
+    <column>name</column>
+    <column>status</column>
+    <column>mirexTask_id</column>
+    <column>user_id</column>
+    <row>
+      <value>1</value>
+      <null/>
+      <value>ABC1</value>
+      <value><![CDATA[1992-07-01 18:25:10.0]]></value>
+      <value><![CDATA[2010-07-18 02:05:56.0]]></value>
+      <value>readme</value>
+      <value><![CDATA[submission 1]]></value>
+      <value>REVIEWED</value>
+      <value>1</value>
+      <value>-1</value>
+    </row>
+    <row>
+      <value>2</value>
+      <null/>
+      <value>ABC2</value>
+      <value><![CDATA[1985-07-11 18:25:19.0]]></value>
+      <value><![CDATA[1999-10-01 00:00:00.0]]></value>
+      <value>readme</value>
+      <value><![CDATA[submission 2]]></value>
+      <value>FINISHED</value>
+      <value>1</value>
+      <value>-1</value>
+    </row>
+    <row>
+      <value>3</value>
+      <null/>
+      <value>EF</value>
+      <value><![CDATA[2003-07-10 18:25:35.0]]></value>
+      <value><![CDATA[2005-03-01 12:34:00.0]]></value>
+      <value>readme</value>
+      <value><![CDATA[submission 3]]></value>
+      <value>UNKNOWN</value>
+      <value>2</value>
+      <value>-2</value>
+    </row>
+    <row>
+      <value>4</value>
+      <null/>
+      <value>GZ</value>
+      <value><![CDATA[2010-07-01 18:24:50.0]]></value>
+      <value><![CDATA[2010-07-12 18:24:41.0]]></value>
+      <value>readme</value>
+      <value><![CDATA[submission 4]]></value>
+      <value>REVIEWED</value>
+      <value>3</value>
+      <value>-2</value>
+    </row>
+  </table>
+  <table name="mirex_note">
+    <column>id</column>
+    <column>type</column>
+    <column>createTime</column>
+    <column>content</column>
+    <column>submission_id</column>
+    <column>author_id</column>
+    <column>note_order</column>
+    <row>
+      <value>10</value>
+      <value>PUBLIC</value>
+      <value><![CDATA[2010-07-18 02:05:56.0]]></value>
+      <value><![CDATA[this has been reviewed 
+
+
+
+OK]]></value>
+      <value>1</value>
+      <value>-2</value>
+      <value>0</value>
+    </row>
+  </table>
+  <table name="mirex_profile">
+    <column>id</column>
+    <column>url</column>
+    <column>startYear</column>
+    <column>endYear</column>
+    <column>phone</column>
+    <column>title</column>
+    <column>address_streat_2</column>
+    <column>address_streat_3</column>
+    <column>address_streat_1</column>
+    <column>address_postcode</column>
+    <column>address_country</column>
+    <column>address_city</column>
+    <column>address_region</column>
+    <column>department</column>
+    <column>unit</column>
+    <column>firstname</column>
+    <column>lastname</column>
+    <column>orgnization</column>
+    <column>email</column>
+    <column>creator_id</column>
+    <row>
+      <value>1</value>
+      <value>http://nema.lis.uiuc.edu</value>
+      <value>2000</value>
+      <value>2010</value>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <value>USA</value>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <value>Nema</value>
+      <value>Imirsel</value>
+      <value>UIUC</value>
+      <null/>
+      <value>-1</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>http://imirsel.lis.uiuc.edu</value>
+      <value>2009</value>
+      <value>now</value>
+      <value>2173331000</value>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <value>USA</value>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <value>Imirsel</value>
+      <value>Imirsel</value>
+      <value>UI</value>
+      <null/>
+      <value>-1</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>http://imirsel.lis.uiuc.edu</value>
+      <value>2009</value>
+      <value>now</value>
+      <value>2173331000</value>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <value>USA</value>
+      <null/>
+      <null/>
+      <null/>
+      <null/>
+      <value>Nemadiy</value>
+      <value>Imirsel</value>
+      <value>Imirsel</value>
+      <null/>
+      <value>-2</value>
+    </row>
+  </table>
+  <table name="mirex_submission_mirex_profile">
+    <column>mirex_submission_id</column>
+    <column>contributors_id</column>
+    <column>contributor_rank</column>
+    <row>
+      <value>1</value>
+      <value>1</value>
+      <value>0</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>1</value>
+      <value>0</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>2</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>3</value>
+      <value>0</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>1</value>
+      <value>1</value>
+    </row>
+    <row>
+      <value>4</value>
+      <value>2</value>
+      <value>0</value>
     </row>
   </table>
   <table name="preference_value">
@@ -101,51 +346,56 @@
       <value>ROLE_ADMIN</value>
       <value><![CDATA[Administrator role (can edit Users)]]></value>
     </row>
+    <row>
+      <value>1</value>
+      <value>MIREX_RUNNER</value>
+      <value><![CDATA[Runner of Mirex]]></value>
+    </row>
   </table>
   <table name="submission">
     <column>id</column>
+    <column>dateCreated</column>
     <column>name</column>
     <column>type</column>
-    <column>dateCreated</column>
     <column>jobId</column>
     <column>userId</column>
     <row>
       <value>1</value>
+      <null/>
       <value>one</value>
       <value>Inherits</value>
-      <null/>
       <value>1</value>
       <value>-2</value>
     </row>
     <row>
       <value>2</value>
+      <null/>
       <value>one</value>
       <value><![CDATA[Feature Extraction]]></value>
-      <null/>
       <value>2</value>
       <value>-2</value>
     </row>
     <row>
       <value>3</value>
+      <null/>
       <value>one</value>
       <value>Classification</value>
-      <null/>
       <value>3</value>
       <value>-2</value>
     </row>
     <row>
       <value>4</value>
+      <null/>
       <value>one</value>
       <value>Evaluation</value>
-      <null/>
       <value>4</value>
       <value>-2</value>
     </row>
     <row>
       <value>5</value>
+      <null/>
       <value>one</value>
       <value>Analysis</value>
-      <null/>
       <value>5</value>
       <value>-2</value>
     </row>

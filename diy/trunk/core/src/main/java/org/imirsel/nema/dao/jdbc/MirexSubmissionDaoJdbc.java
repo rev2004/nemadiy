@@ -9,8 +9,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.imirsel.nema.dao.MirexSubmission;
-import org.imirsel.nema.dao.MirexSubmissionDao;
+import org.imirsel.nema.dao.ExternalMirexSubmissionDao;
+import org.imirsel.nema.model.MirexSubmission;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  * @author gzhu1
  *
  */
-public class MirexSubmissionDaoJdbc implements MirexSubmissionDao{
+public class MirexSubmissionDaoJdbc implements ExternalMirexSubmissionDao{
 
 	private SimpleJdbcTemplate simpleJdbcTemplate;
 	

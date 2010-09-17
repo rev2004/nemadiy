@@ -24,8 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
 import org.imirsel.nema.contentrepository.client.ArtifactService;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
-import org.imirsel.nema.dao.MirexSubmission;
-import org.imirsel.nema.dao.MirexSubmissionDao;
+import org.imirsel.nema.dao.ExternalMirexSubmissionDao;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
@@ -34,6 +33,7 @@ import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.InvalidResourcePathException;
 import org.imirsel.nema.model.Job;
+import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
@@ -71,7 +71,7 @@ public class TasksServiceImpl {
 	private String uploadDirectory;
 	private String physicalDir;
 	private String webDir;
-	private MirexSubmissionDao mirexSubmissionDao;
+	private ExternalMirexSubmissionDao mirexSubmissionDao;
 
 	// Component properties that should be hidden.
 	final static String REMOTE_COMPONENT = "_remoteDynamicComponent";
@@ -256,7 +256,7 @@ public class TasksServiceImpl {
 
 		Set<Flow> flowSet = this.flowService.getFlowTemplates();
 		List<Flow> list = new ArrayList<Flow>();
-		if (flowType != null) {
+		if ((flowType != null)&&(flowType!=Flow.FlowType.UNKNOWN)) {
 			for (Flow flow : flowSet) {
 				if ((flow.getType().equals(flowType)))
 					list.add(flow);
@@ -412,7 +412,7 @@ public class TasksServiceImpl {
 	 * @throws MeandreServerException
 	 */
 	public Job run(Flow flow, Map<Component, List<Property>> componentMap,
-			String name, String description, String mirexSubmissionCode)
+			String name, String description, String mirexSubmissionCode,int taskId)
 			throws MeandreServerException {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 
@@ -467,8 +467,10 @@ public class TasksServiceImpl {
 		instance.setTypeName(flow.getTypeName());
 		instance.setSubmissionCode(mirexSubmissionCode);
 		logger.info("Getting current user's credentials to send them to the flowservice");
+                instance.setTaskId((long)taskId);
+		
 		SimpleCredentials credential = userManager.getCurrentUserCredentials();
-
+                logger.info("Getting current user's credentials to send them to the flowservice:"+credential.getUserID());
 		instance = this.flowService.createNewFlow(credential, instance,
 				paramMap, templateFlowUri, user.getId());
 
@@ -835,7 +837,7 @@ public class TasksServiceImpl {
 		return null;
 	}
 	
-	public void setMirexSubmissionDao(MirexSubmissionDao mirexSubmissionDao) {
+	public void setMirexSubmissionDao(ExternalMirexSubmissionDao mirexSubmissionDao) {
 		this.mirexSubmissionDao = mirexSubmissionDao;
 	}
 	public void setJcrService(JcrService jcrService) {

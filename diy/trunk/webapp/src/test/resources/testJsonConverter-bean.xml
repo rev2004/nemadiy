@@ -42,14 +42,14 @@
 	
 
 
-	<bean id="mockMeandreServerProxyConfig" class="MockMeandreServerProxyConfig" scope="prototype">
+	<bean id="mockMeandreServerProxyConfig" class="org.imirsel.nema.webapp.mock.MockMeandreServerProxyConfig" scope="prototype">
 		<property name="username" value="user1"></property>
 		<property name="password" value="password1"></property>
 		<property name="port" value="12345"></property>
 		<property name="host" value="nema-c-1"></property>
 		<property name="maxConcurrentJobs" value="2"></property>
 	</bean>
-<bean id="mockMeandreServerProxyConfig2" class="MockMeandreServerProxyConfig" scope="prototype">
+<bean id="mockMeandreServerProxyConfig2" class="org.imirsel.nema.webapp.mock.MockMeandreServerProxyConfig" scope="prototype">
 		<property name="username" value="user3"></property>
 		<property name="password" value="password1"></property>
 		<property name="port" value="10000"></property>

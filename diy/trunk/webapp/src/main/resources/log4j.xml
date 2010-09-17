@@ -64,7 +64,7 @@
 		<level value="DEBUG"/>
 	</logger>
 	<logger name="org.imirsel.nema.webapp.webflow">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>
 	<logger name="org.imirsel.nema.webapp.taglib">
 		<level value="INFO" />
@@ -72,6 +72,7 @@
 	<logger name="org.imirsel.nema.webapp.filter.StaticFilter">
 		<level value="INFO" />
 	</logger>
+	<logger name="org.dbunit"><level value="WARN"/> </logger>
 
 	<root>
 		<level value="WARN" />

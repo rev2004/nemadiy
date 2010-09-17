@@ -61,6 +61,12 @@ public class Constants {
      * The name of the User role, as specified in web.xml
      */
     public static final String USER_ROLE = "ROLE_USER";
+    
+    /**
+     * The name of the Mirex runner role, as specified in database
+     */
+    public static final String MIREX_RUNNER_ROLE = "MIREX_RUNNER";
+    
 
     /**
      * The name of the user's role list, a request-scoped attribute

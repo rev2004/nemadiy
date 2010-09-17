@@ -40,7 +40,7 @@
        		$('job.endTimestamp').innerHTML=checkNull(json.job.endTimestamp);
        		$('job.name').innerHTML=json.job.name;
        		if (json.job.description) {$('job.description').innerHTML=json.job.description;}
-   
+   			
        		if ((json.job.status.toLowerCase()=="finished")&&($('resultContent').empty())){
            		$('result').show();           		
            		if (json.resultSet.root!=null){
@@ -74,6 +74,8 @@
            		consoleUpdater.stop();
            		updateConsole();
            	};
+           	if (json.job.status.toLowerCase()=="started") {$('abortButton').show();} 
+       		else {$('abortButton').hide();}	
     	}//onSuccess
 		
     });
