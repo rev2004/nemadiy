@@ -1,4 +1,3 @@
-package org.imirsel.nema.webapp.mock;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
 
 

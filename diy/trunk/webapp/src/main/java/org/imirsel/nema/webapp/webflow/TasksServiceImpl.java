@@ -24,7 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.annotations.parser.beans.DataTypeBean;
 import org.imirsel.nema.contentrepository.client.ArtifactService;
 import org.imirsel.nema.contentrepository.client.ContentRepositoryServiceException;
-import org.imirsel.nema.dao.ExternalMirexSubmissionDao;
+import org.imirsel.nema.dao.MirexSubmission;
+import org.imirsel.nema.dao.MirexSubmissionDao;
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.model.Component;
@@ -33,7 +34,6 @@ import org.imirsel.nema.model.ExecutableMetadata;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.InvalidResourcePathException;
 import org.imirsel.nema.model.Job;
-import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.Property;
 import org.imirsel.nema.model.RepositoryResourcePath;
 import org.imirsel.nema.model.ResourcePath;
@@ -71,7 +71,7 @@ public class TasksServiceImpl {
 	private String uploadDirectory;
 	private String physicalDir;
 	private String webDir;
-	private ExternalMirexSubmissionDao mirexSubmissionDao;
+	private MirexSubmissionDao mirexSubmissionDao;
 
 	// Component properties that should be hidden.
 	final static String REMOTE_COMPONENT = "_remoteDynamicComponent";

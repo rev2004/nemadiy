@@ -1,14 +1,21 @@
+/**
+ * 
+ */
 package org.imirsel.nema.dao;
 
 import java.util.List;
 
-import org.imirsel.nema.model.MirexSubmission;
-import org.imirsel.nema.model.Contributor;
-import org.imirsel.nema.model.User;
-
-public interface MirexSubmissionDao extends GenericDao<MirexSubmission,Long>{
-
-	public List<MirexSubmission> getSubmissions(User user);
-	public List<MirexSubmission> getSubmissions(Contributor contributor);
+/**
+ * DAO to access the mirex submissions
+ * Note: strictly Read-Only 
+ * @author gzhu1
+ *
+ */
+public interface MirexSubmissionDao {
+	
+	List<MirexSubmission> getAllSubmissions();
+	
+	MirexSubmission getSubmissionById(long id);
+	MirexSubmission getSubmissionByHashcode(String hashcode);
 
 }

@@ -99,10 +99,10 @@ public class ComponentPropertyTagAlt  extends SimpleTagSupport implements Dynami
 					logger.debug("1");
 					if(sd.getValueList()!=null){
 						if(sd.getValueList().length>0){
-							logger.debug("2");
+							System.out.println("2");
 							htmlWidget=createSelectBox(property.getName(),cssWriter.toString(),property.getDefaultValue(),sd.getLabelList(),sd.getValueList(),property.getValue(), sd.isHidden());
 						}else{
-							logger.debug("2-other");
+							System.out.println("2-other");
 							htmlWidget=createInputBox(property.getName(),"text",cssWriter.toString(),property.getDefaultValue(),property.getValue(), sd.isHidden());
 						}
 					}else{
@@ -199,9 +199,9 @@ public class ComponentPropertyTagAlt  extends SimpleTagSupport implements Dynami
 		if(hidden){
 			return " ";
 		}
-		logger.debug("name: " + name );
-		logger.debug("Label List len: " + labelList.length );
-		logger.debug("Value List len: " + valueList.length );
+		System.out.println("name: " + name );
+		System.out.println("Label List len: " + labelList.length );
+		System.out.println("Value List len: " + valueList.length );
 		
 		
 		
