@@ -4,6 +4,13 @@ label.label {
 label.name {
 	
 }
+label.fixed{
+	float:left;
+	width:12em;
+	}
+label.required{
+	font-weight:bold;
+	}
 .surround{
 	margin:5px;
 }

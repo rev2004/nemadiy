@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.StringTokenizer;
+import java.util.Map.Entry;
 
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +68,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
  * 
  * @author kumaramit01
  * @since 0.4.0
+ * note: comment some code about submission controllers for changing API in upstream at 0.7.0. 
  */
 public class JobController extends MultiActionController {
 
@@ -448,142 +451,158 @@ public class JobController extends MultiActionController {
 	 * @param response
 	 * @return
 	 */
-	public ModelAndView getUserJobs(HttpServletRequest req,
-			HttpServletResponse res) throws IOException {
-		User user = userManager.getCurrentUser();
-		logger.debug("getting user " + user.getUsername());
-		long userId = user.getId();
-		logger.debug("start to list the jobs of   " + user.getUsername());
-		List<Job> allJobs = flowService.getUserJobs(userId);
+  public ModelAndView getUserJobs(HttpServletRequest req,
+            HttpServletResponse res) throws IOException {
+        User user = userManager.getCurrentUser();
+        logger.debug("getting user " + user.getUsername());
+        long userId = user.getId();
+        logger.debug("start to list the jobs of   " + user.getUsername());
 
-		String type = req.getParameter("type");
-		Set<JobStatus> filterSet = new HashSet<JobStatus>();
-		if ("running".equalsIgnoreCase(type)) {
-			filterSet.add(JobStatus.SCHEDULED);
-			filterSet.add(JobStatus.SUBMITTED);
-			filterSet.add(JobStatus.STARTED);
-		} else if ("aborted".equalsIgnoreCase(type)) {
-			filterSet.add(JobStatus.ABORTED);
-			filterSet.add(JobStatus.FAILED);
+        String keyword = req.getParameter("keyword");
+        boolean isTaskIdFiltered = false;
+        Long taskId = null;
+        try {
+            taskId = Long.valueOf(req.getParameter("taskId"));
+            if (taskId!=-100L) {isTaskIdFiltered = true;}
+        } catch (NumberFormatException e) {
+        }
+        List<Job> allJobs;
+        if (isTaskIdFiltered) {
+            allJobs = flowService.getUserJobsByTaskId(userId, taskId);
+        } else if ((keyword != null) && (keyword.length() > 0)) {
+            allJobs = flowService.getUserJobsByKeyword(userId, keyword);
+        } else {
+            allJobs = flowService.getUserJobs(userId);
+        }
 
-		} else if ("finished".equalsIgnoreCase(type)) {
-			filterSet.add(JobStatus.FINISHED);
-		} else {
-			filterSet.addAll((Arrays.asList(JobStatus.values())));
-		}
-		List<Job> jobs = new ArrayList<Job>();
-		for (Job job : allJobs) {
-			if (filterSet.contains(job.getJobStatus())) {
-				jobs.add(job);
-			}
-		}
+        String type = req.getParameter("type");
+        Set<JobStatus> filterSet = new HashSet<JobStatus>();
+        if ("running".equalsIgnoreCase(type)) {
+            filterSet.add(JobStatus.SCHEDULED);
+            filterSet.add(JobStatus.SUBMITTED);
+            filterSet.add(JobStatus.STARTED);
+        } else if ("aborted".equalsIgnoreCase(type)) {
+            filterSet.add(JobStatus.ABORTED);
+            filterSet.add(JobStatus.FAILED);
 
-		ModelAndView mav = null;
-		String uri = (req != null) ? req.getRequestURI() : "";
-		if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
+        } else if ("finished".equalsIgnoreCase(type)) {
+            filterSet.add(JobStatus.FINISHED);
+        } else {
+            filterSet.addAll((Arrays.asList(JobStatus.values())));
+        }
+        List<Job> jobs = new ArrayList<Job>();
+        for (Job job : allJobs) {
+            if (filterSet.contains(job.getJobStatus())) {
+                jobs.add(job);
+            }
+        }
 
-			ConverterToList<Job> converter = new ConverterToList<Job>();
-			mav = new ModelAndView("jsonView", Constants.JOBLIST,
-					converter.convertToList(jobs, new ConverterToMapJob()));
-			// mav =new ModelAndView("jsonView",Constants.JOBLIST,jobs);
-		} else {
-			mav = new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
-		}
+        ModelAndView mav = null;
+        String uri = (req != null) ? req.getRequestURI() : "";
+        if (uri.substring(uri.length() - 4).equalsIgnoreCase("json")) {
 
-		return mav;
-	}
+            ConverterToList<Job> converter = new ConverterToList<Job>();
+            mav = new ModelAndView("jsonView", Constants.JOBLIST,
+                    converter.convertToList(jobs, new ConverterToMapJob()));
+            // mav =new ModelAndView("jsonView",Constants.JOBLIST,jobs);
+        } else {
+            mav = new ModelAndView("job/jobList", Constants.JOBLIST, jobs);
+        }
+        try {
+            List<NemaTask> tasks = resourceTypeService.getSupportedTasks();
+            mav.addObject("taskIds", tasks);
+        } catch (SQLException e) {
+            logger.error(e, e);
+        }
+        return mav;
+    }
 
-	public ModelAndView getRunningTime(HttpServletRequest req,
-			HttpServletResponse res) throws IOException {
+public ModelAndView getRunningTime(HttpServletRequest req,
+            HttpServletResponse res) throws IOException {
 
-		User user = userManager.getCurrentUser();
-		logger.debug("getting user " + user.getUsername());
-		long userId = user.getId();
-		logger.debug("start to list the jobs of   " + user.getUsername());
-		List<Job> allJobs = flowService.getUserJobs(userId);
-		
-		Set<JobStatus> filterSet = new HashSet<JobStatus>();
-		filterSet.add(JobStatus.FINISHED);filterSet.add(JobStatus.ABORTED);
-		
-		Collections.sort(allJobs,
-				new Comparator<Job>(){
-					@Override
-					public int compare(Job o1, Job o2) {
-						Date o1Time=(o1.getScheduleTimestamp()==null?new Date():o1.getScheduleTimestamp());
-						Date o2Time=(o2.getScheduleTimestamp()==null?new Date():o2.getScheduleTimestamp());
-						return o1Time.compareTo(o2Time);
-					}
-		});
-		
-		String type = req.getParameter("type");
-		// Set<JobStatus> filterSet=new HashSet<JobStatus>();
-		List<NemaTask> tasks = null;
-		try {
-			tasks = resourceTypeService.getSupportedTasks();
-		} catch (SQLException e) {
-			logger.error(e, e);
-		}
-		Map<NemaTask,Map<Flow,Map<String,Job>>> taskJobMap = new HashMap<NemaTask, Map<Flow,Map<String,Job>>> ();
-		Map<Integer, NemaTask> taskMap = new HashMap<Integer, NemaTask>();
-		for (NemaTask task : tasks) {
-			taskJobMap.put(task, new HashMap<Flow,Map<String,Job>>());
-			taskMap.put(task.getId(), task);
-		}
-		List<Job> jobs = new ArrayList<Job>();
-		Map<Job, String> duration = new HashMap<Job, String>();
-		for (Job job : allJobs) {
-			if ((filterSet.contains(job.getJobStatus()))
-					&& (!"NON-SUBMISSION".equalsIgnoreCase(job.getFlow()
-							.getSubmissionCode()))
-					&& (job.getEndTimestamp()!=null)) {
+        User user = userManager.getCurrentUser();
+        logger.debug("getting user " + user.getUsername());
+        long userId = user.getId();
+        logger.debug("start to list the jobs of   " + user.getUsername());
+        List<Job> allJobs = flowService.getUserJobs(userId);
 
-				SimpleCredentials credential = userManager
-						.getCurrentUserCredentials();
-				Map<Component, List<Property>> componentMap = flowService
-						.getAllComponentsAndPropertyDataTypes(credential, job
-								.getFlow().getUri());
-				Property taskId = searchProperty(componentMap, "taskID");
-				if (taskId != null) {
-					try {
-						Map<Flow,Map<String,Job>> flowJobMap=taskJobMap
-								.get(taskMap.get(Integer.parseInt(taskId
-										.getValue())));
-						Flow template=findTemplate(job.getFlow());
-						if (!flowJobMap.containsKey(template)){
-							flowJobMap.put(template, new TreeMap<String,Job>());
-						}
-						flowJobMap.get(template).put(job.getFlow().getSubmissionCode(), job);
-						Long interval = (job.getEndTimestamp().getTime() - job
-								.getSubmitTimestamp().getTime()) / 1000;
-						long hr = interval / 3600;
-						interval -= hr * 3600;
-						long min = (interval / 60);
-						interval -= min * 60;
-						duration.put(job, String.format("%02d:%02d:%02d", hr,
-								min, interval));
-						logger.debug("save run time of job " + job.getId()
-								+ " (" + job.getName());
-					} catch (NumberFormatException e) {
-						logger.error(e, e);
-					}
-				}
-			}
-		}
+        Set<JobStatus> filterSet = new HashSet<JobStatus>();
+        filterSet.add(JobStatus.FINISHED);
+        filterSet.add(JobStatus.ABORTED);
 
-		for (NemaTask task : tasks) {
-			if (taskJobMap.get(task).isEmpty()) {
-				taskJobMap.remove(task);
-			} 
-		}
+        Collections.sort(allJobs,
+                new Comparator<Job>() {
 
-		saveRuntimeOnFiles(taskJobMap, duration);
+                    @Override
+                    public int compare(Job o1, Job o2) {
+                        Date o1Time = (o1.getScheduleTimestamp() == null ? new Date() : o1.getScheduleTimestamp());
+                        Date o2Time = (o2.getScheduleTimestamp() == null ? new Date() : o2.getScheduleTimestamp());
+                        return o1Time.compareTo(o2Time);
+                    }
+                });
 
-		ModelAndView mav = new ModelAndView("job/runTime");
-		mav.addObject("taskJobMap", taskJobMap);
-		mav.addObject("duration", duration);
+        String type = req.getParameter("type");
+        // Set<JobStatus> filterSet=new HashSet<JobStatus>();
+        List<NemaTask> tasks = null;
+        try {
+            tasks = resourceTypeService.getSupportedTasks();
+        } catch (SQLException e) {
+            logger.error(e, e);
+        }
+        Map<NemaTask, Map<Flow, Map<String, Job>>> taskJobMap = new HashMap<NemaTask, Map<Flow, Map<String, Job>>>();
+        Map<Integer, NemaTask> taskMap = new HashMap<Integer, NemaTask>();
+        for (NemaTask task : tasks) {
+            taskJobMap.put(task, new HashMap<Flow, Map<String, Job>>());
+            taskMap.put(task.getId(), task);
+        }
+        List<Job> jobs = new ArrayList<Job>();
+        Map<Job, String> duration = new HashMap<Job, String>();
+        for (Job job : allJobs) {
+            if ((filterSet.contains(job.getJobStatus()))
+                    && (!"NON-SUBMISSION".equalsIgnoreCase(job.getFlow().getSubmissionCode()))
+                    && (job.getEndTimestamp() != null)) {
 
-		return mav;
-	}
+                SimpleCredentials credential = userManager.getCurrentUserCredentials();
+                Map<Component, List<Property>> componentMap = flowService.getAllComponentsAndPropertyDataTypes(credential, job.getFlow().getUri());
+                Property taskId = searchProperty(componentMap, "taskID");
+                if (taskId != null) {
+                    try {
+                        Map<Flow, Map<String, Job>> flowJobMap = taskJobMap.get(taskMap.get(Integer.parseInt(taskId.getValue())));
+                        Flow template = findTemplate(job.getFlow());
+                        if (!flowJobMap.containsKey(template)) {
+                            flowJobMap.put(template, new TreeMap<String, Job>());
+                        }
+                        flowJobMap.get(template).put(job.getFlow().getSubmissionCode(), job);
+                        Long interval = (job.getEndTimestamp().getTime() - job.getSubmitTimestamp().getTime()) / 1000;
+                        long hr = interval / 3600;
+                        interval -= hr * 3600;
+                        long min = (interval / 60);
+                        interval -= min * 60;
+                        duration.put(job, String.format("%02d:%02d:%02d", hr,
+                                min, interval));
+                        logger.debug("save run time of job " + job.getId()
+                                + " (" + job.getName());
+                    } catch (NumberFormatException e) {
+                        logger.error(e, e);
+                    }
+                }
+            }
+        }
+
+        for (NemaTask task : tasks) {
+            if (taskJobMap.get(task).isEmpty()) {
+                taskJobMap.remove(task);
+            }
+        }
+
+        saveRuntimeOnFiles(taskJobMap, duration);
+
+        ModelAndView mav = new ModelAndView("job/runTime");
+        mav.addObject("taskJobMap", taskJobMap);
+        mav.addObject("duration", duration);
+
+        return mav;
+    }
 
 	final static String STOREPATH = "runtime";
 
@@ -732,6 +751,8 @@ public class JobController extends MultiActionController {
 
 		return null;
 	}
+
+	
 
 	/**
 	 * Query for the satus of servers

@@ -6,7 +6,7 @@
 	<groupId>org.imirsel</groupId>
 	<artifactId>nema</artifactId>
 	<packaging>pom</packaging>
-	<version>0.7.0-SNAPSHOT</version>
+	<version>0.9.0-SNAPSHOT</version>
 	<name>Nema  Modular Application</name>
 	<url>http://nema-dev.lis.illinois.edu/development/${pom.artifactId}</url>
 
@@ -437,8 +437,8 @@
 		
 		<!-- NEMA Dependencies   -->
 		<imirsel-nema-annotations.version>0.7.0-SNAPSHOT</imirsel-nema-annotations.version>
-	    <contentrepository-client.version>0.0.4-SNAPSHOT</contentrepository-client.version>
-		<imirsel-nema-core.version>0.7.0-SNAPSHOT</imirsel-nema-core.version>
+                <contentrepository-client.version>0.0.4-SNAPSHOT</contentrepository-client.version>
+		<imirsel-nema-core.version>0.9.0-SNAPSHOT</imirsel-nema-core.version>
 		<imirsel-meandre-client.version>0.8.0-SNAPSHOT</imirsel-meandre-client.version>
 		<flowservice.version>0.9.0-SNAPSHOT</flowservice.version>
 		<repositoryservice.version>0.4.0-SNAPSHOT</repositoryservice.version>
@@ -475,6 +475,7 @@
 		<jdbc.version>5.1.6</jdbc.version>
 		<jdbc.driverClassName>${diy.jdbc.driverClassName}</jdbc.driverClassName>
 		<jdbc.url>${diy.jdbc.url}</jdbc.url>
+		<jdbc.test.url>${diy.test.jdbc.url}</jdbc.test.url>
 		<jdbc.username>${diy.jdbc.username}</jdbc.username>
 		<jdbc.password>${diy.jdbc.password}</jdbc.password>
 
@@ -494,14 +495,13 @@
 		<displaytag.version>1.1.1</displaytag.version>
 		<dwr.version>2.0.1</dwr.version>
 		<ehcache.version>1.4.1</ehcache.version>
-		<hibernate.annotations.version>3.3.0.ga</hibernate.annotations.version>
-		<hibernate.version>3.2.6.ga</hibernate.version>
+		<hibernate.annotations.version>3.5.1-Final</hibernate.annotations.version>
+		<hibernate.version>3.5.1-Final</hibernate.version>
 		<javamail.version>1.4</javamail.version>
-		<jpa.version>1.0</jpa.version>
 		<jstl.version>1.1.2</jstl.version>
 		<log4j.version>1.2.13</log4j.version>
 		<oscache.version>2.3</oscache.version>
-		<sitemesh.version>2.2.1</sitemesh.version>
+		<sitemesh.version>2.4.1</sitemesh.version>
 		<spring.security.version>2.0.1</spring.security.version>
 		<springmodules.validation.version>0.8</springmodules.validation.version>
 		<struts.menu.version>2.4.3</struts.menu.version>

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.imirsel</groupId>
 		<artifactId>nema</artifactId>
-		<version>0.7.0-SNAPSHOT</version>
+		<version>0.9.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>org.imirsel</groupId>
@@ -47,6 +47,7 @@
 				name="/home/gzhu1/tools/workspace/nema-diy/webapp/src/main/webapp/WEB-INF"> <include name="*.xml" /> <include
 				name="**/*.xml" /> <include name="**/**/*.xml" /> </dir> </configuration> </plugin>
 			-->
+			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>dbunit-maven-plugin</artifactId>
@@ -61,6 +62,7 @@
 					<type>${dbunit.operation.type}</type>
 					<schema>${dbunit.schema}</schema>
 					<skip>${maven.test.skip}</skip>
+					<ordered>true</ordered>
 				</configuration>
 				<executions>
 					<execution>
@@ -297,6 +299,16 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>

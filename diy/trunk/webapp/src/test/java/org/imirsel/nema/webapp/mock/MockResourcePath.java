@@ -57,8 +57,8 @@ public class MockResourcePath implements ResourcePath {
 
 	@Override
 	public String getURIAsString() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return getProtocol()+":"+ getWorkspace() +"://"+getPath();
 	}
 
 	
