@@ -8,51 +8,64 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.imirsel.nema.dao.MirexSubmission;
 import org.imirsel.nema.model.Job;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 public class MeandreConsoleDaoJdbc implements MeandreConsoleDao {
 
-	static protected Log logger = LogFactory.getLog(MeandreConsoleDao.class);
-	private SimpleJdbcTemplate simpleJdbcTemplate;
+    static protected Log logger = LogFactory.getLog(MeandreConsoleDao.class);
+    private SimpleJdbcTemplate simpleJdbcTemplate;
 
-	public void setDataSource(DataSource dataSource) {
-		this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
-	}
+    public void setDataSource(DataSource dataSource) {
+        this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+    }
 
-	@Override
-	public void clearConsole(Job job) {
+    @Override
+    public void clearConsole(Job job) {
 //		final String deleteSql="delete from meandre_job_console where job_ID= ?";
 //		int count=this.simpleJdbcTemplate.update(deleteSql, job.getExecutionInstanceId());
 //		logger.info("Console entries of job ("+job.getName()+") has been deleted. Total count:"+count);
-	}
+    }
+    
+    
+     final String sqlGetList = "select print,ts from meandre_job_console where job_ID = ?";
 
-	@Override
-	public List<ConsoleEntry> getEntry(final Job job) {
-		final String sqlGetList = "select print,ts from meandre_job_console where job_ID = ?";
-		RowMapper<ConsoleEntry> mapper = new RowMapper<ConsoleEntry>() {
-			public ConsoleEntry mapRow(ResultSet rs, int rowNum)
-					throws SQLException {
-				ConsoleEntry entry = new ConsoleEntry();
-				entry.setLine(rs.getString("print"));
-				entry.setTimeStamp(rs.getTimestamp("ts"));
-				return entry;
-			}
-		};
+    @Override
+    public List<ConsoleEntry> getEntry(final Job job) {
+       
+        RowMapper<ConsoleEntry> mapper = new RowMapper<ConsoleEntry>() {
 
-		return this.simpleJdbcTemplate.query(sqlGetList, mapper,job.getExecutionInstanceId());
-	}
+            public ConsoleEntry mapRow(ResultSet rs, int rowNum)
+                    throws SQLException {
+                ConsoleEntry entry = new ConsoleEntry();
+                entry.setLine(rs.getString("print"));
+                entry.setTimeStamp(rs.getTimestamp("ts"));
+                return entry;
+            }
+        };
 
-	@Override
-	public List<ConsoleEntry> getEntry(Job job, int maxCount) {
-		List<ConsoleEntry> list = getEntry(job);
-		if ((list != null) && (list.size() > maxCount)) {
-			return list.subList(list.size() - maxCount, list.size() - 1);
-		} else
-			return list;
-	}
+        return this.simpleJdbcTemplate.query(sqlGetList, mapper, job.getExecutionInstanceId());
+    }
 
+    @Override
+    public List<ConsoleEntry> getEntry(Job job, int maxCount) {
+        List<ConsoleEntry> list = getEntry(job);
+        if ((list != null) && (list.size() > maxCount)) {
+            return list.subList(list.size() - maxCount, list.size() - 1);
+        } else {
+            return list;
+        }
+    }
+
+    @Override
+    public void handleEntry(Job job, RowCallbackHandler handler) {
+        
+        this.simpleJdbcTemplate.getJdbcOperations().query(
+                sqlGetList, handler,job.getExecutionInstanceId());
+       
+
+    }
 }
