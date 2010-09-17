@@ -1,79 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-       http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/aop 
-       http://www.springframework.org/schema/aop/spring-aop.xsd
-       http://www.springframework.org/schema/context 
-       http://www.springframework.org/schema/context/spring-context.xsd"
-
+       xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
 	default-lazy-init="false">
 
-	<import resource="nema-webflow.xml" />
+    <import resource="nema-webflow.xml" />
 
-	<context:property-placeholder
+    <context:property-placeholder
 		location="classpath:contentrepositoryservice.properties,
     	classpath:flowservice.properties,classpath:executorservice.properties" />
-	<context:component-scan base-package="org.imirsel.nema.webapp.controller.annotation"></context:component-scan>	
-	<mvc:annotation-driven/>
-	<mvc:view-controller path="/subpage/*" />
+    <context:component-scan base-package="org.imirsel.nema.webapp.controller.annotation"></context:component-scan>
+    <mvc:annotation-driven/>
+    <mvc:view-controller path="/subpage/*" />
 
-	<bean id="exceptionResolver"
+    <bean id="exceptionResolver"
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-		<property name="exceptionMappings">
-			<props>
-				<prop key="java.lang.IllegalArgumentException">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="java.lang.IllegalArgumentException">
 					illegalArgument
-				</prop>
-				<prop key="org.springframework.dao.DataAccessException">
+                </prop>
+                <prop key="org.springframework.dao.DataAccessException">
 					dataAccessFailure
                 </prop>
-				<prop key="org.springframework.remoting.RemoteConnectFailureException">
+                <prop key="org.springframework.remoting.RemoteConnectFailureException">
 					remoteAccessFailure
                 </prop>
-				<prop key="org.springframework.remoting.RemoteAccessException">
+                <prop key="org.springframework.remoting.RemoteAccessException">
 					remoteAccessFailure
                 </prop>
-				<prop key="org.springframework.remoting.RemoteLookupFailureException">
+                <prop key="org.springframework.remoting.RemoteLookupFailureException">
 					remoteAccessFailure
                 </prop>
-				<prop key="org.imirsel.meandre.client.TransmissionException">
+                <prop key="org.imirsel.meandre.client.TransmissionException">
 					transmissionFailure
                 </prop>
-				<prop key="org.meandre.webapp.CorruptedFlowException">
+                <prop key="org.meandre.webapp.CorruptedFlowException">
 					flowCreationFailure
                 </prop>
-				<prop key="org.meandre.webapp.MeandreCommunicationException">
+                <prop key="org.meandre.webapp.MeandreCommunicationException">
 					transmissionFailure
                 </prop>
-			</props>
-		</property>
-	</bean>
+            </props>
+        </property>
+    </bean>
 
 
-	<bean id="repositoryClientConnectionPool"
+    <bean id="repositoryClientConnectionPool"
 		class="org.imirsel.nema.repository.RepositoryClientConnectionPool">
 
-	</bean>
-	<bean id="resourceTypeService"
+    </bean>
+    <bean id="resourceTypeService"
 		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl">
-		<property name="repositoryClientConnectionPool" ref="repositoryClientConnectionPool" />
-	</bean>
+        <property name="repositoryClientConnectionPool" ref="repositoryClientConnectionPool" />
+    </bean>
 
 	<!-- content repository to store the executable bundle -->
-	<bean id="contentRepositoryClient"
+    <bean id="contentRepositoryClient"
 		class="org.imirsel.nema.contentrepository.client.ContentRepositoryService">
-		<property name="repository" ref="remoteContentRepository" />
-	</bean>
+        <property name="repository" ref="remoteContentRepository" />
+    </bean>
 
-	<bean id="remoteContentRepository" factory-bean="clientRepositoryFactory"
+    <bean id="remoteContentRepository" factory-bean="clientRepositoryFactory"
 		factory-method="getRepository">
-		<constructor-arg value="${contentrepository.url}" />
-	</bean>
+        <constructor-arg value="${contentrepository.url}" />
+    </bean>
 
-	<bean id="clientRepositoryFactory"
+    <bean id="clientRepositoryFactory"
 		class="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory" />
 	<!-- End of content repository beans -->
 
@@ -91,51 +90,51 @@
 		lazy-init="false"> <property name="triggers"> <ref bean="trigger" /> </property> 
 		</bean> -->
 	<!-- job scheduler end -->
-	<bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
+    <bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
 
 		<!--<property name="serviceUrl" value="${diy.flowservice.location}"/> -->
-		<property name="serviceUrl" value="${flowservice.location}" />
+        <property name="serviceUrl" value="${flowservice.location}" />
 
-		<property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService" />
-		<property name="refreshStubOnConnectFailure" value="true" />
-	</bean>
+        <property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService" />
+        <property name="refreshStubOnConnectFailure" value="true" />
+    </bean>
 
 	<!-- flow controller -->
-	<bean id="flowFormController" class="org.imirsel.nema.webapp.controller.FlowFormController">
-		<property name="flowService" ref="realFlowService" />
-		<property name="userManager" ref="userManager" />
-		<property name="uploadDirectory" value="resources" />
-		<property name="methodNameResolver" ref="flowFormMethodResolver" />
+    <bean id="flowFormController" class="org.imirsel.nema.webapp.controller.FlowFormController">
+        <property name="flowService" ref="realFlowService" />
+        <property name="userManager" ref="userManager" />
+        <property name="uploadDirectory" value="resources" />
+        <property name="methodNameResolver" ref="flowFormMethodResolver" />
 
-	</bean>
+    </bean>
 
-	<bean id="flowFormMethodResolver"
+    <bean id="flowFormMethodResolver"
 		class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
-		<property name="mappings">
-			<value>
+        <property name="mappings">
+            <value>
 				/FlowFormManager.saveFlow=saveflow
 				/FlowFormManager.getFlowTemplate=flowtemplate
             </value>
-		</property>
-	</bean>
+        </property>
+    </bean>
 
 
 
 	<!-- flow controller -->
-	<bean id="flowController"
+    <bean id="flowController"
 		class="org.imirsel.nema.webapp.controller.FlowServiceController">
-		<property name="flowService" ref="realFlowService" />
-		<property name="artifactService" ref="contentRepositoryClient" />
-		<property name="methodNameResolver" ref="flowMethodResolver" />
-		<property name="userManager" ref="userManager" />
-	</bean>
+        <property name="flowService" ref="realFlowService" />
+        <property name="artifactService" ref="contentRepositoryClient" />
+        <property name="methodNameResolver" ref="flowMethodResolver" />
+        <property name="userManager" ref="userManager" />
+    </bean>
 
 
 
-	<bean id="flowMethodResolver"
+    <bean id="flowMethodResolver"
 		class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
-		<property name="mappings">
-			<value>
+        <property name="mappings">
+            <value>
 				/FlowManager.getFlowList=getTemplateFlows
 				/FlowManager.getTemplateFlows=getTemplateFlows
 
@@ -147,25 +146,25 @@
 				/FlowManager.getComponentDataType.json=getComponentDataType
 				/FlowManager.getComponentList.json=getComponentList
             </value>
-		</property>
-	</bean>
+        </property>
+    </bean>
 
 	<!-- job controller -->
-	<bean id="jobController" class="org.imirsel.nema.webapp.controller.JobController">
-		<property name="repositoryClientConnectionPool" ref="repositoryClientConnectionPool" />
-		<property name="flowService" ref="realFlowService" />
-		<property name="submissionManager" ref="submissionManager" />
-		<property name="userManager" ref="userManager" />
-		<property name="methodNameResolver" ref="jobMethodResolver" />
-		<property name="consoleUtil" ref="meandreConsoleUtil"></property>
-		<property name="resourceTypeService" ref="resourceTypeService"></property>
-	</bean>
+    <bean id="jobController" class="org.imirsel.nema.webapp.controller.JobController">
+        <property name="repositoryClientConnectionPool" ref="repositoryClientConnectionPool" />
+        <property name="flowService" ref="realFlowService" />
+        <property name="submissionManager" ref="submissionManager" />
+        <property name="userManager" ref="userManager" />
+        <property name="methodNameResolver" ref="jobMethodResolver" />
+        <property name="consoleUtil" ref="meandreConsoleUtil"></property>
+        <property name="resourceTypeService" ref="resourceTypeService"></property>
+    </bean>
 
 
-	<bean id="jobMethodResolver"
+    <bean id="jobMethodResolver"
 		class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
-		<property name="mappings">
-			<value>
+        <property name="mappings">
+            <value>
 				/JobManager.getConsole=getConsole
 				/JobManager.getUserJobs=getUserJobs
 				/JobManager.getSubmissions=getSubmissions
@@ -189,78 +188,78 @@
 
 				/JobManager.dumpConsole=dumpConsole
             </value>
-		</property>
-	</bean>
+        </property>
+    </bean>
 
-	<bean id="filenameController"
+    <bean id="filenameController"
 		class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />
 
 
-	<bean id="passwordHintController"
+    <bean id="passwordHintController"
 		class="org.imirsel.nema.webapp.controller.PasswordHintController">
-		<property name="userManager" ref="userManager" />
-		<property name="messageSource" ref="messageSource" />
-		<property name="mailEngine" ref="mailEngine" />
-		<property name="message" ref="mailMessage" />
-	</bean>
+        <property name="userManager" ref="userManager" />
+        <property name="messageSource" ref="messageSource" />
+        <property name="mailEngine" ref="mailEngine" />
+        <property name="message" ref="mailMessage" />
+    </bean>
 
-	<bean id="reloadController" class="org.imirsel.nema.webapp.controller.ReloadController" />
+    <bean id="reloadController" class="org.imirsel.nema.webapp.controller.ReloadController" />
 
-	<bean id="signupController" class="org.imirsel.nema.webapp.controller.SignupController">
-		<property name="validator" ref="beanValidator" />
-		<property name="formView" value="signup" />
-		<property name="successView" value="redirect:welcome.jsp" />
-		<property name="userManager" ref="userManager" />
-		<property name="roleManager" ref="roleManager" />
-		<property name="preferenceValueManager" ref="preferenceValueManager" />
-		<property name="mailEngine" ref="mailEngine" />
-		<property name="message" ref="mailMessage" />
-		<property name="templateName" value="accountCreated.vm" />
-	</bean>
+    <bean id="signupController" class="org.imirsel.nema.webapp.controller.SignupController">
+        <property name="validator" ref="beanValidator" />
+        <property name="formView" value="signup" />
+        <property name="successView" value="redirect:welcome.jsp" />
+        <property name="userManager" ref="userManager" />
+        <property name="roleManager" ref="roleManager" />
+        <property name="preferenceValueManager" ref="preferenceValueManager" />
+        <property name="mailEngine" ref="mailEngine" />
+        <property name="message" ref="mailMessage" />
+        <property name="templateName" value="accountCreated.vm" />
+    </bean>
 
-	<bean id="userController" class="org.imirsel.nema.webapp.controller.UserController">
-		<property name="userManager" ref="userManager" />
-	</bean>
+    <bean id="userController" class="org.imirsel.nema.webapp.controller.UserController">
+        <property name="userManager" ref="userManager" />
+    </bean>
 
-	<bean id="userControllerAction" class="org.imirsel.nema.webapp.controller.users.UserController">
-		<property name="userManager" ref="userManager" />
-		<property name="methodNameResolver" ref="usersMethodResolver" />
-		<property name="passwordEncoder" ref="passwordEncoder" />
-	</bean>
+    <bean id="userControllerAction" class="org.imirsel.nema.webapp.controller.users.UserController">
+        <property name="userManager" ref="userManager" />
+        <property name="methodNameResolver" ref="usersMethodResolver" />
+        <property name="passwordEncoder" ref="passwordEncoder" />
+    </bean>
 
-	<bean id="usersMethodResolver"
+    <bean id="usersMethodResolver"
 		class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
-		<property name="mappings">
-			<value>
+        <property name="mappings">
+            <value>
 				/UserManager.login.json=login
             </value>
-		</property>
-	</bean>
+        </property>
+    </bean>
 
-	<bean id="userFormController" class="org.imirsel.nema.webapp.controller.UserFormController">
-		<property name="validator" ref="beanValidator" />
-		<property name="formView" value="userForm" />
-		<property name="successView" value="redirect:users.html" />
-		<property name="cancelView" value="redirect:welcome.jsp" />
-		<property name="userManager" ref="userManager" />
-		<property name="roleManager" ref="roleManager" />
-		<property name="mailEngine" ref="mailEngine" />
-		<property name="message" ref="mailMessage" />
-		<property name="templateName" value="accountCreated.vm" />
-	</bean>
+    <bean id="userFormController" class="org.imirsel.nema.webapp.controller.UserFormController">
+        <property name="validator" ref="beanValidator" />
+        <property name="formView" value="userForm" />
+        <property name="successView" value="redirect:users.html" />
+        <property name="cancelView" value="redirect:welcome.jsp" />
+        <property name="userManager" ref="userManager" />
+        <property name="roleManager" ref="roleManager" />
+        <property name="mailEngine" ref="mailEngine" />
+        <property name="message" ref="mailMessage" />
+        <property name="templateName" value="accountCreated.vm" />
+    </bean>
 
 	<!-- Add additional controller beans here <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
 		<property name="maxUploadSize" value="2097152"/> </bean> -->
-	<bean id="messageSource"
+    <bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basename" value="ApplicationResources" />
-		<property name="useCodeAsDefaultMessage" value="true" />
-	</bean>
+        <property name="basename" value="ApplicationResources" />
+        <property name="useCodeAsDefaultMessage" value="true" />
+    </bean>
 
-	<bean id="urlMapping"
+    <bean id="urlMapping"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property name="mappings">
-			<value>
+        <property name="mappings">
+            <value>
 				/UserManager.*=userControllerAction
 				/JobManager.*=jobController
 				/FlowManager.*=flowController
@@ -272,52 +271,52 @@
 				/passwordHint.html=passwordHintController
 				/*.jsp=viewResolver
             </value>
-		</property>
-		<property name="order" value="0" />
-	</bean>
+        </property>
+        <property name="order" value="0" />
+    </bean>
 	<!-- Dispatches requests mapped to org.springframework.web.servlet.mvc.Controller 
 		implementations -->
 
-	<bean
+    <bean
 		class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
-	<bean
+    <bean
 		class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">
-		<property name="order" value="1" />
-	</bean>
+        <property name="order" value="1" />
+    </bean>
 
 
 	<!-- Try to insert the handler for Spring WebFlow -->
 
 	<!-- Enables FlowHandler URL mapping -->
-	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
-		<property name="flowExecutor" ref="flowExecutor" />
-	</bean>
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
+        <property name="flowExecutor" ref="flowExecutor" />
+    </bean>
 
-	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping">
-		<property name="flowRegistry" ref="flowRegistry" />
-		<property name="order" value="2" />
-	</bean>
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping">
+        <property name="flowRegistry" ref="flowRegistry" />
+        <property name="order" value="2" />
+    </bean>
 
 
 	<!-- View Resolver for json and other stuff -->
 
-	<bean id="xmlResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
-		<property name="order" value="1" />
-	</bean>
+    <bean id="xmlResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
+        <property name="order" value="1" />
+    </bean>
 	<!-- Vuew ?Resolver for multipart -->
-	<bean id="multipartResolver"
+    <bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 
 		<!-- one of the properties available; the maximum file size in bytes -->
-		<property name="maxUploadSize" value="100000000" />
-	</bean>
+        <property name="maxUploadSize" value="100000000" />
+    </bean>
 	<!-- View Resolver for JSPs -->
-	<bean id="viewResolver"
+    <bean id="viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="requestContextAttribute" value="rc" />
-		<property name="viewClass"
+        <property name="requestContextAttribute" value="rc" />
+        <property name="viewClass"
 			value="org.springframework.web.servlet.view.JstlView" />
-		<property name="prefix" value="/WEB-INF/pages/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
+        <property name="prefix" value="/WEB-INF/pages/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
 </beans>
