@@ -617,10 +617,17 @@ public class TasksServiceImpl {
 					.getNativeRequest();
 			String subDir = uploadDirectory + "/" + req.getRemoteUser() + "/"
 					+ uuid + "/";
+			System.out.println("Before getting context - real path :" + context);
+			
+			if(context!=null){
+				System.out.println("Context is not null. Getting the physical directory :");
 			physicalDir = context.getRealPath(subDir);
 			// Create the directory if it doesn't exist
 			if (!physicalDir.endsWith(File.separator)) {
 				physicalDir = physicalDir + File.separator;
+			}
+			}else{
+				System.out.println("Error: -We will recover from this");
 			}
 
 			webDir = "http://" + req.getServerName() + ":"
