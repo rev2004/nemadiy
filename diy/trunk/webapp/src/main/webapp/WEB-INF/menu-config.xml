@@ -7,32 +7,31 @@
      
      
       	
-	    <Menu name="welcomeMenu" title="welcomeMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/welcome.jsp"/>
+        <Menu name="welcomeMenu" title="welcomeMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/welcome.jsp"/>
 		
 		
 		<!--  Add this back later when working... <Menu name="MirexMenu" title="mirexMenu.title" roles="ROLE_ADMIN,ROLE_USER" page="/get/task?flowId=10"/> -->
 		
 		
-		<Menu name="JobMenu" title="Jobs" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/JobManager.getUserJobs">
-		    <Item name="MyJobs" title="Job List" page="/get/JobManager.getUserJobs" width="120"/>
-		    <Item name="FinishedJobs" title="Job List -Finished" page="/get/JobManager.getUserJobs?type=finished" width="120"/>
-		    <Item name="StoppedJobs" title="Job List -Stopped" page="/get/JobManager.getUserJobs?type=aborted" width="120"/>
-		    <Item name="RunningJobs" title="Job List -Running" page="/get/JobManager.getUserJobs?type=running" width="120"/>
-		    <Item name="PrepareJob" title="Prepare New Job" page="/get/task" width="120"/>		    
-            <Item name="MySubmissions" title="Mirex Submissions" page="/get/JobManager.getSubmissions" width="120"/>
-        	<Item name="SubmissionList" title="menu.mirex.submissions" page="/get/MirexManager/submissions"  width="120" />
-        	<Item name="AddSubmission" title="menu.mirex.add" page="/get/mirex" width="120"/>
-        	 <Item name="Runtime" title="Job Runtime" page="/get/JobManager.runTime" width="120"/>
+        <Menu name="JobMenu" title="Jobs" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/JobManager.getUserJobs">
+            <Item name="MyJobs" title="Job List" page="/get/JobManager.getUserJobs" width="120"/>
+            <Item name="FinishedJobs" title="Job List -Finished" page="/get/JobManager.getUserJobs?type=finished" width="120"/>
+            <Item name="StoppedJobs" title="Job List -Stopped" page="/get/JobManager.getUserJobs?type=aborted" width="120"/>
+            <Item name="RunningJobs" title="Job List -Running" page="/get/JobManager.getUserJobs?type=running" width="120"/>
+            <Item name="PrepareJob" title="Prepare New Job" page="/get/task" width="120"/>
+            <Item name="SubmissionList" title="menu.mirex.submissions" page="/get/MirexManager/submissions"  width="120" />
+            <Item name="AddSubmission" title="menu.mirex.add" page="/get/mirex" width="120"/>
+            <Item name="Runtime" title="Job Runtime" page="/get/JobManager.runTime" width="120"/>
             <!-- <Item name="flowTemplate" title="Create w/ Template" page="get/task" width="120"/>-->
             <!--  Add this back later when grouping is needed... <Item name="JobTypeExtraction" title="Feature Extraction" page="/get/task?type=extraction" width="120"/> -->
             <!--  Add this back later when grouping is needed... <Item name="JobTypeClassification" title="Classification" page="/get/task?type=classification" width="120"/> -->
      	    <!--  Add this back later when grouping is needed... <Item name="JobTypeEvaluation" title="Evaluation" page="/get/task?type=evaluation" width="120"/> -->
             <!--  Add this back later when grouping is needed... <Item name="JobTypeAnalysis" title="Analysis" page="/get/task?type=analysis" width="120"/> -->
-     	</Menu>
-   		<Menu title="test"></Menu>
-   		<Menu name="MirexMenu" title="MIREX" description="Mirex Menu" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/MirexManager/submissions" >
-         	<Item name="SubmissionList" title="menu.mirex.submissions" page="/get/MirexManager/submissions"  width="120" />
-        	<Item name="AddSubmission" title="menu.mirex.add" page="/get/mirex" width="120"/>
+        </Menu>
+
+        <Menu name="MirexMenu" title="MIREX" description="Mirex Menu" roles="ROLE_ADMIN,ROLE_USER" width="60" page="/get/MirexManager/submissions" >
+            <Item name="SubmissionList" title="menu.mirex.submissions" page="/get/MirexManager/submissions"  width="120" />
+            <Item name="AddSubmission" title="menu.mirex.add" page="/get/mirex" width="120"/>
         </Menu>
         
    
@@ -41,7 +40,7 @@
    
    	
         <Menu name="AdminMenu" title="menu.admin" description="Admin Menu" roles="ROLE_ADMIN" width="120" page="/admin/users.html">
-         	<Item name="ServerStatus" title="menu.serverStatus" page="/get/JobManager.getServerStatus"  width="120" />
+            <Item name="ServerStatus" title="menu.serverStatus" page="/get/JobManager.getServerStatus"  width="120" />
             <Item name="ViewUsers" title="menu.admin.users" page="/admin/users.html"  width="120" />
             <Item name="ViewSubmissions" title="menu.admin.submissions" page="/get/JobManager.getAllSubmissions"  width="120" />
             <Item name="ActiveUsers" title="mainMenu.activeUsers" page="/admin/activeUsers.html"  width="120" />
@@ -52,8 +51,8 @@
         </Menu>
 
 		
-		<Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" />
-		<Menu name="MainMenu" title="mainMenu.title" page="/login.jsp" /> 
-		<Menu name="Logout" title="user.logout" page="/logout.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
+        <Menu name="helpMenu" title="helpMenu.title" page="/help.jsp" />
+        <Menu name="MainMenu" title="mainMenu.title" page="/login.jsp" />
+        <Menu name="Logout" title="user.logout" page="/logout.jsp" roles="ROLE_ADMIN,ROLE_USER"/>
     </Menus>
 </MenuConfig>
