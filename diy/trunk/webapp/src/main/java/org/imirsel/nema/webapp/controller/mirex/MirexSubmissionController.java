@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.imirsel.nema.webapp.controller.annotation;
+package org.imirsel.nema.webapp.controller.mirex;
 
 import java.util.List;
 import java.util.Set;

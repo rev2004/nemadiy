@@ -19,7 +19,6 @@
             <Item name="StoppedJobs" title="Job List -Stopped" page="/get/JobManager.getUserJobs?type=aborted" width="120"/>
             <Item name="RunningJobs" title="Job List -Running" page="/get/JobManager.getUserJobs?type=running" width="120"/>
             <Item name="PrepareJob" title="Prepare New Job" page="/get/task" width="120"/>
-            <Item name="SubmissionList" title="menu.mirex.submissions" page="/get/MirexManager/submissions"  width="120" />
             <Item name="AddSubmission" title="menu.mirex.add" page="/get/mirex" width="120"/>
             <Item name="Runtime" title="Job Runtime" page="/get/JobManager.runTime" width="120"/>
             <!-- <Item name="flowTemplate" title="Create w/ Template" page="get/task" width="120"/>-->

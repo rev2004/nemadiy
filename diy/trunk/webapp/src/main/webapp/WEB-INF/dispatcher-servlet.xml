@@ -15,7 +15,7 @@
     <context:property-placeholder
 		location="classpath:contentrepositoryservice.properties,
     	classpath:flowservice.properties,classpath:executorservice.properties" />
-    <context:component-scan base-package="org.imirsel.nema.webapp.controller.annotation"></context:component-scan>
+    <context:component-scan base-package="org.imirsel.nema.webapp.controller"></context:component-scan>
     <mvc:annotation-driven/>
     <mvc:view-controller path="/subpage/*" />
 
@@ -54,7 +54,6 @@
 
     <bean id="repositoryClientConnectionPool"
 		class="org.imirsel.nema.repository.RepositoryClientConnectionPool">
-
     </bean>
     <bean id="resourceTypeService"
 		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl">
@@ -153,7 +152,6 @@
     <bean id="jobController" class="org.imirsel.nema.webapp.controller.JobController">
         <property name="repositoryClientConnectionPool" ref="repositoryClientConnectionPool" />
         <property name="flowService" ref="realFlowService" />
-        <property name="submissionManager" ref="submissionManager" />
         <property name="userManager" ref="userManager" />
         <property name="methodNameResolver" ref="jobMethodResolver" />
         <property name="consoleUtil" ref="meandreConsoleUtil"></property>
@@ -167,20 +165,14 @@
             <value>
 				/JobManager.getConsole=getConsole
 				/JobManager.getUserJobs=getUserJobs
-				/JobManager.getSubmissions=getSubmissions
-				/JobManager.getAllSubmissions=getAllSubmissions
-				/JobManager.submissionAction=submissionAction
-				/JobManager.submissionDetail=submissionDetail
 				/JobManager.jobDetail=getJobDetail
 				/JobManager.jobAction=doJobAction
-				/JobManager.selectJobForSubmission=selectJobForSubmission
 				/JobManager.runTime=getRunningTime
 
 				/JobManager.getServerStatus=getServerStatus
 
 				/JobManager.jobDetail.json=getJobDetail
 				/JobManager.getUserJobs.json=getUserJobs
-				/JobManager.getSubmissions.json=getSubmissions
 				/JobManager.getServerStatus.json=getServerStatus
 				/JobManager.getNemaStatus.json=getNemaStatus
 				/JobManager.getNotification.json=getNotification
