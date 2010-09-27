@@ -9,30 +9,29 @@
 	http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd">
 
 
-	<webflow:flow-executor id="flowExecutor">
+    <webflow:flow-executor id="flowExecutor"/>
 
-	</webflow:flow-executor>
-	<webflow:flow-registry id="flowRegistry" flow-builder-services="builder">
-		<webflow:flow-location path="/WEB-INF/flows/tasks-flow.xml"
+    <webflow:flow-registry id="flowRegistry" flow-builder-services="builder">
+        <webflow:flow-location path="/WEB-INF/flows/tasks-flow.xml"
 			id="task" />
-		<webflow:flow-location path="/WEB-INF/flows/executable/executable-flow.xml"
+        <webflow:flow-location path="/WEB-INF/flows/executable/executable-flow.xml"
 			id="task/executable" />
-		<webflow:flow-location path="/WEB-INF/flows/mirex/mirexSubmission-flow.xml"
+        <webflow:flow-location path="/WEB-INF/flows/mirex/mirexSubmission-flow.xml"
 			id="mirex" />
-	</webflow:flow-registry>
+    </webflow:flow-registry>
 
- <webflow:flow-builder-services development="true" id="builder"/>
+    <webflow:flow-builder-services development="true" id="builder"/>
  
-	<bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
+    <bean id="tasksService" class="org.imirsel.nema.webapp.webflow.TasksServiceImpl"
 		p:flowService-ref="flowService" p:userManager-ref="userManager"
 		p:uploadDirectory="/resources" p:artifactService-ref="contentRepositoryClient"
 		p:mirexSubmissionDao-ref="externalMirexSubmissionDao"
 		p:jiniService-ref="jiniService" p:jcrService-ref="jcrService"
 		 />
-	<bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
+    <bean id="executableService" class="org.imirsel.nema.webapp.webflow.ExecutableServiceImpl"
 		p:commandLineFormatter-ref="commandLineFormatter"
 		p:resourceServiceType-ref="resource" />
-	<bean id="mirexSubmissionService"
+    <bean id="mirexSubmissionService"
 		class="org.imirsel.nema.webapp.webflow.MirexSubmissionServiceImpl"
 		p:mirexContributorDictionary-ref="mirexContributorDictionary"
 		p:mirexSubmissionDao-ref="mirexSubmissionDao"
@@ -40,24 +39,23 @@
 		p:userManager-ref="userManager"
 		p:mirexNoteDao-ref="mirexNoteDao"
                 p:jcrService-ref="jcrService">
-	</bean>
+    </bean>
 
 
 
-	<bean id="jiniService" class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl">
-		<constructor-arg value="${lookupService.host}"/>
-
-	</bean>
-	<bean id="jcrService"
+    <bean id="jiniService" class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl">
+        <constructor-arg value="${lookupService.host}"/>
+    </bean>
+    <bean id="jcrService"
 		class="org.imirsel.nema.webapp.service.impl.JcrServiceImpl">
-		<constructor-arg value="${contentrepository.url}"/>
-	</bean>
-	<bean id="resource"
+        <constructor-arg value="${contentrepository.url}"/>
+    </bean>
+    <bean id="resource"
 		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl" 
 		p:repositoryClientConnectionPool-ref="repositoryClientConnectionPool"/>
-	<bean id="commandLineFormatter"
+    <bean id="commandLineFormatter"
 		class="org.imirsel.nema.contentrepository.client.CommandLineFormatter" />
-	<bean id="executableValidator"
+    <bean id="executableValidator"
 		class="org.imirsel.nema.webapp.webflow.validator.UploadedExecutableBundleValidator" />
 	
 

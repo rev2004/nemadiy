@@ -88,14 +88,17 @@ public class ConsoleUtil {
 		}
 	}
 
-	public String findConsole(Job job) {
+	public String findConsole(Job job) throws FileNotFoundException {
 		if (job.isDone()) {
 			String filename = generateFileName(job);
 			logger.debug("start to read console of Job:"+job.getName());
 			StringBuilder text = new StringBuilder();
 			String NL = System.getProperty("line.separator");
 			Scanner scanner;
+                        File file=new File(filename);
+
 			try {
+
 				scanner = new Scanner(new File(filename));
 
 				try {

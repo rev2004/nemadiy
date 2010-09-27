@@ -4,41 +4,42 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Add Contributor</title>
-         <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dijit/themes/tundra/tundra.css"/>
+        <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dijit/themes/tundra/tundra.css"/>
         <script  djConfig="parseOnLoad:true, isDebug:true" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.xd.js"></script>
-       
+
         <script type="text/javascript">
             startWaiting=false;
             function search(keyword){
-                startWaiting=true;
-                dojo.xhrGet(         {
-                    url : "<c:url value='/get/MirexManager/contributorList.json'/>",
-                    content:{
-                      str:dojo.byId("contrib-search").value
-                    },
-                    handleAs : "json",
-                    load : function(data) {
-                        dojo.byId('search-results').innerHTML="";
-                        contributors=data.contributorList;
-                        for (index in contributors){
-                            person=contributors[index];
-                            str="";
-                            if (person.title){str+=person.title+" ";}
-                            str+=person.lastname+", "+person.firstname;
-                            str+="<input type=button onclick='window.opener.addContributor("+person.id+")' value='Add'></input>"
-                            str+="<br/>";
-                            str+="<small>";
-                            if (person.unit) {str+=person.unit+", ";}
-                            if (person.department) {str+=person.department+", ";}
-                            if (person.organization){str+=person.organization;}
-                            str+="<small> "
-                            dojo.create("div",{innerHTML:str,style : {backgroundColor:"green",borderStyle:"groove"} },"search-results");
+                if ((keyword)&&(keyword.length>1)){
+                    startWaiting=true;
+                    dojo.xhrGet(         {
+                        url : "<c:url value='/get/MirexManager/contributorList.json'/>",
+                        content:{
+                            str:keyword
+                        },
+                        handleAs : "json",
+                        load : function(data) {
+                            dojo.byId('search-results').innerHTML="";
+                            contributors=data.contributorList;
+                            for (index in contributors){
+                                person=contributors[index];
+                                str="";
+                                if (person.title){str+=person.title+" ";}
+                                str+=person.lastname+", "+person.firstname;
+                                str+="<input type=button onclick='window.opener.addContributor("+person.id+")' value='Add'></input>"
+                                str+="<br/>";
+                                str+="<small>";
+                                if (person.unit) {str+=person.unit+", ";}
+                                if (person.department) {str+=person.department+", ";}
+                                if (person.organization){str+=person.organization;}
+                                str+="<small> "
+                                dojo.create("div",{innerHTML:str,style : {backgroundColor:"green",borderStyle:"groove"} },"search-results");
+                            }
                         }
-                    }
 
-                });
-            };
-
+                    });
+                };
+            }
         </script>
     </head>
     <body>
