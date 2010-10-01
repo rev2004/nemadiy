@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<Configure  class="org.mortbay.jetty.webapp.WebAppContext">
+
+   
+    <New id="mirexSubmissionDataSource" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg>jdbc/mirexSubmissionDataSource</Arg>
+        <Arg>
+            <New class="org.apache.commons.dbcp.BasicDataSource">
+                <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
+                <Set name="url">jdbc:mysql://nema.lis.uiuc.edu:3306/mirexsubs?autoReconnect=true</Set>
+                <Set name="username">nema_user</Set>
+                <Set name="password">reduxer101</Set>
+                <Set name="maxActive">100</Set>
+                <Set name="maxWait">1000</Set>
+                <Set name="poolPreparedStatements">true</Set>
+                <Set name="defaultAutoCommit">true</Set>
+            </New>
+        </Arg>
+    </New>
+    <New id="dataSource" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg>jdbc/dataSource</Arg>
+        <Arg>
+            <New class="org.apache.commons.dbcp.BasicDataSource">
+                <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
+                <Set name="url">jdbc:mysql://localhost:3306/diy090?autoReconnect=true</Set>
+                <Set name="username">nema_user</Set>
+                <Set name="password">reduxer101</Set>
+                <Set name="maxActive">100</Set>
+                <Set name="maxWait">1000</Set>
+                <Set name="poolPreparedStatements">true</Set>
+                <Set name="defaultAutoCommit">true</Set>
+            </New>
+        </Arg>
+    </New>
+    <New id="remoteDataSource" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg>remoteDataSource</Arg>
+        <Arg>
+            <New class="org.apache.commons.dbcp.BasicDataSource">
+                <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
+                <Set name="url">jdbc:mysql://nema-dev.lis.illinois.edu:3306/meandrestore070?autoReconnect=true</Set>
+                <Set name="username">nema_user</Set>
+                <Set name="password">reduxer101</Set>
+                <Set name="maxActive">100</Set>
+                <Set name="maxWait">1000</Set>
+                <Set name="poolPreparedStatements">true</Set>
+                <Set name="defaultAutoCommit">true</Set>
+            </New>
+        </Arg>
+    </New>
+    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>jdbc/diy/url</Arg>
+        <Arg type="java.lang.String">jdbc:mysql://nema.lis.uiuc.edu:3306/diy090?autoReconnect=true</Arg>
+        <Arg type="boolean">true</Arg>
+    </New>
+    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>jdbc/meandreStore/url</Arg>
+        <Arg type="java.lang.String">jdbc:mysql://nema-dev.lis.illinois.edu:3306/meandrestore070?autoReconnect=true</Arg>
+        <Arg type="boolean">true</Arg>
+    </New>
+    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>jdbc/mirexSub/url</Arg>
+        <Arg type="java.lang.String">jdbc:mysql://nema.lis.uiuc.edu:3306/mirexsubs?autoReconnect=true</Arg>
+        <Arg type="boolean">true</Arg>
+    </New>
+    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>flowservice/url</Arg>
+        <Arg type="java.lang.String">rmi://nema-dev.lis.illinois.edu:1099/FlowService</Arg>
+        <Arg type="boolean">true</Arg>
+    </New>
+    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>lookupService/url</Arg>
+        <Arg type="java.lang.String">nema-dev.lis.illinois.edu</Arg>
+        <Arg type="boolean">true</Arg>
+    </New>
+    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>contentRepository/url</Arg>
+        <Arg type="java.lang.String">rmi://nema-dev.lis.illinois.edu:2099/jackrabbit.repository</Arg>
+        <Arg type="boolean">true</Arg>
+    </New>
+</Configure>

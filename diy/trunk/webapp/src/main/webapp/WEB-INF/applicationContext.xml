@@ -2,16 +2,18 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:util="http://www.springframework.org/schema/util"
+        xmlns:jee="http://www.springframework.org/schema/jee"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util.xsd"
-	default-lazy-init="true">
+       http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd"
+	default-lazy-init="true" >
 
 	<!-- Add new DAOs here -->
-
+        <jee:jndi-lookup jndi-name="java:comp/env/flowservice/url" id="flowserviceUrl"/>
 	<!-- Add new Managers here -->
 	<bean id="flowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean"
-		p:serviceUrl="${flowservice.location}" p:serviceInterface="org.imirsel.nema.flowservice.FlowService"
+                p:serviceUrl-ref="flowserviceUrl" p:serviceInterface="org.imirsel.nema.flowservice.FlowService"
                 p:refreshStubOnConnectFailure="true" />
                 
 	<bean id="mirexContributorDictionary" class="org.imirsel.nema.webapp.service.impl.MirexContributorDictionaryDaoImpl"
