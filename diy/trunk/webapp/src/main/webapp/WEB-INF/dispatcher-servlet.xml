@@ -89,14 +89,8 @@
 		lazy-init="false"> <property name="triggers"> <ref bean="trigger" /> </property> 
 		</bean> -->
 	<!-- job scheduler end -->
-    <bean id="realFlowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
-
-		<!--<property name="serviceUrl" value="${diy.flowservice.location}"/> -->
-        <property name="serviceUrl" value="${flowservice.location}" />
-
-        <property name="serviceInterface" value="org.imirsel.nema.flowservice.FlowService" />
-        <property name="refreshStubOnConnectFailure" value="true" />
-    </bean>
+    <alias name="flowService" alias="realFlowService"/>
+   
 
 	<!-- flow controller -->
     <bean id="flowFormController" class="org.imirsel.nema.webapp.controller.FlowFormController">
