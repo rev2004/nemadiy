@@ -35,7 +35,7 @@
         </Arg>
     </New>
     <New id="remoteDataSource" class="org.mortbay.jetty.plus.naming.Resource">
-        <Arg>remoteDataSource</Arg>
+        <Arg>jdbc/remoteDataSource</Arg>
         <Arg>
             <New class="org.apache.commons.dbcp.BasicDataSource">
                 <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
@@ -49,21 +49,7 @@
             </New>
         </Arg>
     </New>
-    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
-        <Arg>jdbc/diy/url</Arg>
-        <Arg type="java.lang.String">jdbc:mysql://nema.lis.uiuc.edu:3306/diy090?autoReconnect=true</Arg>
-        <Arg type="boolean">true</Arg>
-    </New>
-    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
-        <Arg>jdbc/meandreStore/url</Arg>
-        <Arg type="java.lang.String">jdbc:mysql://nema-dev.lis.illinois.edu:3306/meandrestore070?autoReconnect=true</Arg>
-        <Arg type="boolean">true</Arg>
-    </New>
-    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
-        <Arg>jdbc/mirexSub/url</Arg>
-        <Arg type="java.lang.String">jdbc:mysql://nema.lis.uiuc.edu:3306/mirexsubs?autoReconnect=true</Arg>
-        <Arg type="boolean">true</Arg>
-    </New>
+   
     <New class="org.mortbay.jetty.plus.naming.EnvEntry">
         <Arg>flowservice/url</Arg>
         <Arg type="java.lang.String">rmi://nema-dev.lis.illinois.edu:1099/FlowService</Arg>
