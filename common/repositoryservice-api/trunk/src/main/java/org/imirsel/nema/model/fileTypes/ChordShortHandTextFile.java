@@ -100,7 +100,7 @@ public class ChordShortHandTextFile extends SingleTrackEvalFileTypeImpl {
 			NemaChord nemaChord;
 			for (Iterator<NemaChord> it = chords.iterator(); it.hasNext();) {
 				nemaChord = it.next();
-				writer.write(nemaChord.getOnset() + WRITE_DELIMITER + nemaChord.getOffset() + WRITE_DELIMITER + ChordConversionUtil.getInstance().convertNoteNumbersToShorthand(nemaChord.getNotes()) + "\n");
+				writer.write(nemaChord.getOnset() + WRITE_DELIMITER + nemaChord.getOffset() + WRITE_DELIMITER + nemaChord.getLabel() + "\n");
 			}
 			getLogger().info(NemaDataConstants.CHORD_LABEL_SEQUENCE + " metadata for " + data.getId() + " written to file: " + theFile.getAbsolutePath());
 		} finally {
