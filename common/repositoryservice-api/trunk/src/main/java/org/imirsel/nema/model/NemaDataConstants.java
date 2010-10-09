@@ -211,6 +211,9 @@ public class NemaDataConstants {
     public static final String STRUCTURE_SEGMENTATION_MEDCLAIM2TRUE = "Median distance from an annotated segment boundary to the closest found boundary";
     public static final String STRUCTURE_SEGMENTATION_MEDTRUE2CLAIM = "Median distance from a found segment boundary to the closest annotated one";
     
+
+    public static final String SALAMI_STRUCTURE_SEGMENTATION_DATA = "SALAMI Structural segmentation";
+    
     //Onset Detection Evaluator Constants
     public static final String ONSET_DETECTION_DATA = "List of onset times";
     public static final String ONSET_DETECTION_CLASS = "Instrumentation class for single file";
