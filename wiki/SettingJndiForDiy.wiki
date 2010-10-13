@@ -30,14 +30,14 @@ Alternatively, one can turn it on in one particular webApp, but that is kind of 
 Create a xml file (myjndi.xml) and put it along with jetty.xml in jetty.home/etc. Or just put it into jetty.xml file. (Please use the content in WEB-INF/local/jetty-env.xml except the root tag `<Configure...>`. )
 {{{
 <Configure  id="Server" class="org.mortbay.jetty.Server">
-<New id="dataSource" class="org.mortbay.jetty.plus.naming.Resource">
-        <Arg>jdbc/dataSource</Arg>
+<New id="mirexSubmissionDataSource" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg>jdbc/mirexSubmissionDataSource</Arg>
         <Arg>
             <New class="org.apache.commons.dbcp.BasicDataSource">
                 <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
-                <Set name="url">jdbc:mysql://localhost:3306/diy090?autoReconnect=true</Set>
-                <Set name="username">user</Set>
-                <Set name="password">pass</Set>
+                <Set name="url">jdbc:mysql://nema.lis.uiuc.edu:3306/mirexsubs?autoReconnect=true</Set>
+                <Set name="username">nema_user</Set>
+                <Set name="password">reduxer101</Set>
                 <Set name="maxActive">100</Set>
                 <Set name="maxWait">1000</Set>
                 <Set name="poolPreparedStatements">true</Set>
@@ -45,14 +45,53 @@ Create a xml file (myjndi.xml) and put it along with jetty.xml in jetty.home/etc
             </New>
         </Arg>
     </New>
-    
+    <New id="dataSource" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg>jdbc/dataSource</Arg>
+        <Arg>
+            <New class="org.apache.commons.dbcp.BasicDataSource">
+                <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
+                <Set name="url">jdbc:mysql://localhost:3306/diy090?autoReconnect=true</Set>
+                <Set name="username">nema_user</Set>
+                <Set name="password">reduxer101</Set>
+                <Set name="maxActive">100</Set>
+                <Set name="maxWait">1000</Set>
+                <Set name="poolPreparedStatements">true</Set>
+                <Set name="defaultAutoCommit">true</Set>
+            </New>
+        </Arg>
+    </New>
+    <New id="remoteDataSource" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg>jdbc/remoteDataSource</Arg>
+        <Arg>
+            <New class="org.apache.commons.dbcp.BasicDataSource">
+                <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
+                <Set name="url">jdbc:mysql://nema-dev.lis.illinois.edu:3306/meandrestore070?autoReconnect=true</Set>
+                <Set name="username">nema_user</Set>
+                <Set name="password">reduxer101</Set>
+                <Set name="maxActive">100</Set>
+                <Set name="maxWait">1000</Set>
+                <Set name="poolPreparedStatements">true</Set>
+                <Set name="defaultAutoCommit">true</Set>
+            </New>
+        </Arg>
+    </New>
+   
     <New class="org.mortbay.jetty.plus.naming.EnvEntry">
         <Arg>flowservice/url</Arg>
-        <Arg type="java.lang.String">rmi://remote.service.call:1099/FlowService</Arg>
+        <Arg type="java.lang.String">rmi://nema-dev.lis.illinois.edu:1099/FlowService</Arg>
         <Arg type="boolean">true</Arg>
     </New>
-.......
-</configure>
+    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>lookupService/url</Arg>
+        <Arg type="java.lang.String">nema-dev.lis.illinois.edu</Arg>
+        <Arg type="boolean">true</Arg>
+    </New>
+    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>contentRepository/url</Arg>
+        <Arg type="java.lang.String">rmi://nema-dev.lis.illinois.edu:2099/jackrabbit.repository</Arg>
+        <Arg type="boolean">true</Arg>
+    </New>
+</Configure>
 }}}
 This will add the resource ("java:comp/env/jdbc/dataSource", "java:comp/env/flowservice/url") in the server level that available to every web applications. Note that "id" attribute in configure tag needs to match "id" attribute in jetty.xml so jetty know they are for the same server. 
 Now instead of starting jetty by "java -jar start.jar", we need to tell jetty to use both the default setting (etc/jetty.xml) and extra xml (myjndi.xml), the command is "java -jar start.jar etc/jetty.xml etc/myjndi.xml". Or we can simply put the content of `<configure>` tag into jetty.xml. Then one can use the same old command "java -jar start.jar".
@@ -70,4 +109,4 @@ mysql-connector-java-5.1.6.jar
 
 Note: maven-jetty-plugins has been set up with an optional jetty-env.xml in a non-default position (WEB-INF/local/jetty-env.xml).  This file has the same jndi setting.  So maven jetty:run will run automatically with jndi resource ready.  But the packed war cannot be run without jndi setting from server or re-point web application setting to this jetty-env.xml.  
 
-Refer to my blog's  [http://zggame.blogspot.com/2010/10/set-optional-jetty-envxml-for-jndi-in.html this post] and [http://zggame.blogspot.com/2010/10/set-optional-jetty-envxml-for-jndi-in.html another one].
+Refer to my blog's  [http://zggame.blogspot.com/2010/10/set-optional-jetty-envxml-for-jndi-in.html this post].
