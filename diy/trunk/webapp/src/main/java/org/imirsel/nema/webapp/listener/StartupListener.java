@@ -8,11 +8,11 @@ import org.imirsel.nema.service.LookupManager;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.security.providers.AuthenticationProvider;
-import org.springframework.security.providers.ProviderManager;
-import org.springframework.security.providers.dao.DaoAuthenticationProvider;
-import org.springframework.security.providers.encoding.PasswordEncoder;
-import org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

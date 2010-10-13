@@ -2,8 +2,8 @@ package org.imirsel.nema.dao;
 
 import org.imirsel.nema.model.Submission;
 import org.imirsel.nema.model.User;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
