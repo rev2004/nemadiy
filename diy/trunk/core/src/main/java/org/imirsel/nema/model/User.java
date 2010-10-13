@@ -1,13 +1,14 @@
 package org.imirsel.nema.model;
 
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -238,11 +239,13 @@ public class User extends BaseObject implements Serializable, UserDetails {
     
     /**
      * @see org.springframework.security.userdetails.UserDetails#getAuthorities()
-     * @return GrantedAuthority[] an array of roles.
+     * @return Collection<GrantedAuthority>
      */
     @Transient
-    public GrantedAuthority[] getAuthorities() {
-        return roles.toArray(new GrantedAuthority[0]);
+    public Collection<GrantedAuthority> getAuthorities() {
+    	Collection<GrantedAuthority> grantedAuthorityCollection = new ArrayList<GrantedAuthority>();
+    	for(Role role:roles){ grantedAuthorityCollection.add(role);}
+    	return grantedAuthorityCollection;
     }
 
     @Version
@@ -401,15 +404,16 @@ public class User extends BaseObject implements Serializable, UserDetails {
                 .append("credentialsExpired", this.credentialsExpired)
                 .append("accountLocked", this.accountLocked);
 
-        GrantedAuthority[] auths = this.getAuthorities();
+        Collection<GrantedAuthority> auths = this.getAuthorities();
         if (auths != null) {
             sb.append("Granted Authorities: ");
-
-            for (int i = 0; i < auths.length; i++) {
+           int i=0; 
+            for (GrantedAuthority auth:auths) {
                 if (i > 0) {
                     sb.append(", ");
                 }
-                sb.append(auths[i].toString());
+                sb.append(auth.toString());
+                i++;
             }
         } else {
             sb.append("No Granted Authorities");

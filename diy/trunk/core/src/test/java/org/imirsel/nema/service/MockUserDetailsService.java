@@ -1,9 +1,9 @@
 package org.imirsel.nema.service;
 
 import org.imirsel.nema.model.User;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UserDetailsService;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.dao.DataAccessException;
 
 public class MockUserDetailsService implements UserDetailsService {

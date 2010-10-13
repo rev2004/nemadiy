@@ -6,7 +6,7 @@
 	<groupId>org.imirsel</groupId>
 	<artifactId>nema</artifactId>
 	<packaging>pom</packaging>
-	<version>0.9.0-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>Nema  Modular Application</name>
 	<url>http://nema-dev.lis.illinois.edu/development/${pom.artifactId}</url>
 
@@ -297,6 +297,7 @@
 			<version>${spring.version}</version>
 			<optional>false</optional>
 		</dependency>
+                <!--
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core-tiger</artifactId>
@@ -312,6 +313,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+                -->
 		<dependency>
 			<groupId>org.subethamail</groupId>
 			<artifactId>subethasmtp-wiser</artifactId>
@@ -446,6 +448,7 @@
 		<!-- Framework dependency versions -->
 		<appfuse.version>2.0.2</appfuse.version>
 		<spring.version>3.0.3.RELEASE</spring.version>
+		<spring.security.version>3.0.3.RELEASE</spring.security.version>
 
 		<!-- Testing dependency versions -->
 		<jmock.version>2.5.1</jmock.version>
@@ -502,7 +505,7 @@
 		<log4j.version>1.2.13</log4j.version>
 		<oscache.version>2.3</oscache.version>
 		<sitemesh.version>2.4.1</sitemesh.version>
-		<spring.security.version>2.0.1</spring.security.version>
+		
 		<springmodules.validation.version>0.8</springmodules.validation.version>
 		<struts.menu.version>2.4.3</struts.menu.version>
 		<urlrewrite.version>3.0.4</urlrewrite.version>

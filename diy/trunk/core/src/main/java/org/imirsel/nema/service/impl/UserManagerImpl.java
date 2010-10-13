@@ -5,12 +5,12 @@ import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserExistsException;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.service.UserService;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.dao.DaoAuthenticationProvider;
-import org.springframework.security.providers.dao.SaltSource;
-import org.springframework.security.providers.encoding.PasswordEncoder;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.dao.SaltSource;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.dao.DataIntegrityViolationException;
 
