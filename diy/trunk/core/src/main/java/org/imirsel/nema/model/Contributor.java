@@ -66,7 +66,7 @@ public class Contributor implements Serializable {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
-	@Column(name="orgnization")
+	@Column(name="organization")
 	public String getOrganization() {
 		return organization;
 	}
