@@ -33,13 +33,10 @@ public class ConsoleUtil {
 	}
 
 	public void dumpConsoleToFile(Job job) {
-
 		if (job.isDone()&&hasEffectiveId(job)) {
-
 			try {
 
 				String filename = generateFileName(job);
-
 				File file = new File(filename);
 				if (!file.exists()) {
                                         logger.debug("start to dump job" + job.getName() + " into file "
@@ -95,12 +92,15 @@ public class ConsoleUtil {
 			StringBuilder text = new StringBuilder();
 			String NL = System.getProperty("line.separator");
 			Scanner scanner;
-                        File file=new File(filename);
-
+			File file = new File(filename);
+			if (!file.exists() || !file.canRead()) {
+				text.append("File: " + filename
+						+ " does not exist or is not readable.");
+				return text.toString();
+			}
 			try {
 
-				scanner = new Scanner(new File(filename));
-
+				scanner = new Scanner(file);
 				try {
 					while (scanner.hasNextLine()) {
 						text.append(scanner.nextLine() + NL);
@@ -156,7 +156,7 @@ public class ConsoleUtil {
 
 		}
 	}
-	private Boolean hasEffectiveId(Job job){
+	private boolean hasEffectiveId(Job job){
 		return (job.getExecutionInstanceId()!=null)&&(job.getExecutionInstanceId()!="");
 	}
 

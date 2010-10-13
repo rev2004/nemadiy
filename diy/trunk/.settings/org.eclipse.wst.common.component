@@ -6,17 +6,12 @@
 <wb-resource deploy-path="/" source-path="/webapp/src/test/java"/>
 <wb-resource deploy-path="/" source-path="/webapp/src/main/resources"/>
 <wb-resource deploy-path="/" source-path="/probes/src/main/java"/>
-<wb-resource deploy-path="/" source-path="/core/src/test/resources"/>
 <wb-resource deploy-path="/" source-path="/core/src/main/java"/>
 <wb-resource deploy-path="/" source-path="/core/src/main/resources"/>
 <wb-resource deploy-path="/" source-path="/webapp/src/main/java"/>
 <wb-resource deploy-path="/" source-path="/probes/src/main/resources"/>
-<wb-resource deploy-path="/" source-path="/core/src/test/java"/>
 <wb-resource deploy-path="/" source-path="/webapp/src/test/resources"/>
 <wb-resource deploy-path="/" source-path="/probes/src/test/java"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/diy-090/diy-090">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/nema-flowservice-api-trunk/nema-flowservice-api-trunk">
             <dependency-type>uses</dependency-type>
         </dependent-module>
