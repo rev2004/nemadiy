@@ -13,7 +13,11 @@
 	<classpathentry kind="src" output="probes/target/classes" path="probes/src/main/java"/>
 	<classpathentry excluding="**" kind="src" output="probes/target/classes" path="probes/src/main/resources"/>
 	<classpathentry kind="src" output="probes/target/test-classes" path="probes/src/test/java"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
