@@ -1,3 +1,4 @@
+#summary Setting Jndi For DIY
 #labels DIY,jndi,jetty
 DIY is set up to get data source and several properties via JNDI. So it is important to set up JNDI service in web container (Jetty, Tomcat, Jboss...) before one can run diy web application. Below I will detailed how to set Jetty with JNDI. 
 
