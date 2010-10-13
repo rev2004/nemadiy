@@ -68,3 +68,5 @@ mysql-connector-java-5.1.6.jar
 
 
 Note: maven-jetty-plugins has been set up with an optional jetty-env.xml in a non-default position (WEB-INF/local/jetty-env.xml).  This file has the same jndi setting.  So maven jetty:run will run automatically with jndi resource ready.  But the packed war cannot be run without jndi setting from server or re-point web application setting to this jetty-env.xml.  
+
+Refer to my blog's  [http://zggame.blogspot.com/2010/10/set-optional-jetty-envxml-for-jndi-in.html this post] and [http://zggame.blogspot.com/2010/10/set-optional-jetty-envxml-for-jndi-in.html another one].
