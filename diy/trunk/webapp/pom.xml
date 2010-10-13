@@ -97,7 +97,7 @@
 
 					<contextPath>/</contextPath>
 					<scanIntervalSeconds>0</scanIntervalSeconds>
-                                        <jettyEnvXml>src/main/webapp/WEB-INF/local/jetty-env.xml</jettyEnvXml>
+                                        <jettyEnvXml>${jetty.setting}</jettyEnvXml>
 					<scanTargetPatterns>
 						<scanTargetPattern>
 							<directory>src/main/webapp/WEB-INF</directory>
