@@ -1,5 +1,6 @@
 package org.imirsel.nema.meandre.util;
 
+import org.imirsel.nema.dao.MeandreConsoleDao;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;

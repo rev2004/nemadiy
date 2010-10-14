@@ -12,32 +12,46 @@ import org.imirsel.nema.webapp.service.Dictionary;
 import org.imirsel.nema.webapp.service.MirexContributorDictionary;
 import org.imirsel.nema.webapp.service.NemaServiceException;
 
+/**
+ * Implement {@link MirexContributorDictionary} with a database back-end via
+ * {@link ContributorDao}.
+ * @author gzhu1
+ */
 public class MirexContributorDictionaryDaoImpl implements
 		MirexContributorDictionary {
 	private ContributorDao dao;
 	private Map<Long, Contributor> map;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.imirsel.nema.webapp.service.MirexTaskDictionary#find(long)
+	/**
+	 * {@inheritDoc }
 	 */
 	public Contributor find(Long id) {
 		return map.get(id);
 	}
 
+        /**
+	 * {@inheritDoc }
+	 */
 	public void setDao(ContributorDao dao) {
 		this.dao = dao;
 		refresh();
 	}
 
+        /**
+	 * {@inheritDoc }
+         *  Note: Input task object should not has the id field set, it should be left for DAO to set
+	 * 		in order to avoid clash.  
+	 */
 	public Contributor add(Contributor contributor) {
 		contributor = dao.save(contributor);
 		map.put(contributor.getId(), contributor);
 		return contributor;
 	}
 
-	public void refresh() {
+	/**
+	 * {@inheritDoc }
+	 */
+        public void refresh() {
 		if (dao == null) {
 			throw new NemaServiceException("Dao needs to be set before using "
 					+ this.getClass().getSimpleName());
@@ -49,6 +63,9 @@ public class MirexContributorDictionaryDaoImpl implements
 		}
 	}
 
+        /**
+	 * {@inheritDoc }
+	 */
 	public List<Contributor> findSimilar(String str) {
 		return dao.findSimilar(str);
 	}

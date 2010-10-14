@@ -30,6 +30,10 @@ import org.imirsel.nema.webapp.service.MirexTaskDictionary;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
 
+/**
+ * Action class for mirex submission flow
+ * @author gzhu1
+ */
 public class MirexSubmissionServiceImpl {
 
     static private Log logger = LogFactory.getLog(MirexSubmissionServiceImpl.class);
@@ -72,14 +76,34 @@ public class MirexSubmissionServiceImpl {
         this.mirexNoteDao = mirexNoteDao;
     }
 
+    public void setRepository(MirexSubmissionRepository repository) {
+        this.repository = repository;
+    }
+
+    public MirexSubmissionRepository getRepository() {
+        return repository;
+    }
+
+    /**
+     *
+     * @return all active mirex tasks
+     */
     public List<MirexTask> mirexTaskSet() {
         return mirexTaskDictionary.findAllActive();
     }
 
+    /**
+     *
+     * @return all possible statuses of any submission
+     */
     public SubmissionStatus[] getSubmissionStatusSet() {
         return SubmissionStatus.values();
     }
 
+    /**
+     *
+     * @return all possible <b>allowed</b> types of mirex note
+     */
     public Collection<NoteType> noteTypeSet() {
         Collection<NoteType> typeSet = new HashSet<NoteType>();
         if (isSuperUser(userManager.getCurrentUser())) {
@@ -91,6 +115,11 @@ public class MirexSubmissionServiceImpl {
         return typeSet;
     }
 
+    /**
+     * Update a submission object with http request parameters.
+     * @param submission
+     * @param params http parameters
+     */
     public void updateSubmission(MirexSubmission submission, ParameterMap params) {
         Long[] contributorIds = (Long[]) params.getArray("contributor",
                 Long.class);
@@ -113,6 +142,11 @@ public class MirexSubmissionServiceImpl {
         }
     }
 
+    /**
+     * Save the submission for the first time,
+     * update its status to {@link SubmissionStatus.READY_FOR_RUN}
+     * and return it with updated status
+     */
     public MirexSubmission saveForFirstTime(MirexSubmission submission) {
 
         User user = userManager.getCurrentUser();
@@ -124,6 +158,12 @@ public class MirexSubmissionServiceImpl {
         return mirexSubmissionDao.save(submission);
     }
 
+    /**
+     * Save the relevant http request parameters into submission for a mirex runner.
+     * @param submission
+     * @param params http reuqest parameters.
+     * @return
+     */
     public MirexSubmission saveForRunner(MirexSubmission submission, ParameterMap params) {
         String noteStr = params.get("mirexNote");
         User user = userManager.getCurrentUser();
@@ -151,6 +191,11 @@ public class MirexSubmissionServiceImpl {
         return mirexSubmissionDao.save(submission);
     }
 
+    /**
+     *
+     * @param id
+     * @return mirex submission with index id
+     */
     public MirexSubmission loadSubmission(Integer id) {
         if (id == null) {
             return new MirexSubmission();
@@ -159,16 +204,12 @@ public class MirexSubmissionServiceImpl {
         }
     }
 
+    /**
+     * @return whether current user a super user (Admin or mirex submission runner)
+     */
     public boolean isSuperUser() {
         User user = userManager.getCurrentUser();
-        Set<Role> roles = user.getRoles();
-        for (Role role : roles) {
-            if ((Constants.MIREX_RUNNER_ROLE.equals(role.getName()))
-                    || (Constants.ADMIN_ROLE.equals(role.getName()))) {
-                return true;
-            }
-        }
-        return false;
+        return isSuperUser(user);
     }
 
     private String hashcodeGenerate(List<Contributor> contributors) {
@@ -202,6 +243,11 @@ public class MirexSubmissionServiceImpl {
         }
     }
 
+    /**
+     * check whether a user is a super user (administrator or mirex runner)
+     * @param user
+     * @return
+     */
     private boolean isSuperUser(User user) {
 
         Set<Role> roles = user.getRoles();
@@ -212,13 +258,5 @@ public class MirexSubmissionServiceImpl {
             }
         }
         return false;
-    }
-
-    public void setRepository(MirexSubmissionRepository repository) {
-        this.repository = repository;
-    }
-
-    public MirexSubmissionRepository getRepository() {
-        return repository;
     }
 }

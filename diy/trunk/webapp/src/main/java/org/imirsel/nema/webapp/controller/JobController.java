@@ -34,7 +34,7 @@ import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
 import org.imirsel.nema.meandre.util.ConsoleUtil;
-import org.imirsel.nema.meandre.util.MeandreConsoleDao;
+import org.imirsel.nema.dao.MeandreConsoleDao;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;

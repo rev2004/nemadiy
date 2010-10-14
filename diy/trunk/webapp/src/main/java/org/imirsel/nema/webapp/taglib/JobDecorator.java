@@ -13,9 +13,16 @@ import org.imirsel.nema.model.Job;
  */
 public class JobDecorator extends TableDecorator {
 
+        /**
+         * @return null
+         */
 	public String getNullValue(){
 		return null;
 	}
+
+        /**
+         * @return html link to abort  the job from current row
+         */
 	public String getAbort(){
 		Job job=(Job)this.getCurrentRowObject();
 		if (job.isRunning()){
@@ -23,25 +30,23 @@ public class JobDecorator extends TableDecorator {
 		}
 		return "Aborted";
 	}
+
+        /**
+         * @return status of the job from current row
+         */
 	public String getStatus(){
 		Job job=(Job)this.getCurrentRowObject();
 		
 		return job.getJobStatus().toString();
 	}
+
+        /**
+         * @return duration of the job from current row
+         */
 	public String getDuration(){
-		/*static final PeriodFormatter formatter = new PeriodFormatterBuilder()
-	     .printZeroAlways()
-	     .appendHours()
-	     .appendSeparator(":")
-	     .printZeroRarely()
-	     .appendMi()
-	     .appendSuffix(" month", " months")
-	     .toFormatter();
-*/
+		
 		Job job=(Job)this.getCurrentRowObject();
 		if (job.getEndTimestamp()!=null){
-	//		Period period=new Period(job.getEndTimestamp().getTime(),job.getScheduleTimestamp().getTime());
-	//		return period.toString();
 			Long duration=(job.getEndTimestamp().getTime()-job.getScheduleTimestamp().getTime())/1000;
 			long hr=duration/3600; duration-=hr*3600;
 			long min=(duration/60); duration-=min*60;
