@@ -28,9 +28,13 @@ public class MirexTaskDictionaryImpl implements MirexTaskDictionary {
 	
 	
 
+        /**
+	 * {@inheritDoc }
+	 */
 	public MirexTask find(Long id) {
 		return map.get(id);
 	}
+
 
 
 	public void setDao(MirexTaskDao dao) {
@@ -54,6 +58,9 @@ public class MirexTaskDictionaryImpl implements MirexTaskDictionary {
 	}
 
 
+        /**
+	 * {@inheritDoc }
+	 */
 	public void refresh() {
 		if (dao==null) {throw new NemaServiceException("MirexTaskDao needs to be set before using MirexTaskDictionary");}
 		List<MirexTask> list=dao.getAll();
@@ -65,6 +72,9 @@ public class MirexTaskDictionaryImpl implements MirexTaskDictionary {
 
 
 
+        /**
+	 * {@inheritDoc }
+	 */
 	public List<MirexTask> getAll() {
 		refresh();
 		List<MirexTask> list=new ArrayList<MirexTask>(map.values());
@@ -73,6 +83,9 @@ public class MirexTaskDictionaryImpl implements MirexTaskDictionary {
 	}
 
 
+        /**
+	 * {@inheritDoc }
+	 */
 	public List<MirexTask> findAllActive() {
 		refresh();
 		List<MirexTask> list=new ArrayList<MirexTask>();

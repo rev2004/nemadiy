@@ -14,7 +14,11 @@ import java.util.Map;
 
 public interface ConverterToMap<T> {
 
-	
+	/**
+         * Convert {@link T} object into a map of (key, value) pairs
+         * @param t
+         * @return
+         */
 	public Map<String,String> convertToMap(T t);
 	
 }

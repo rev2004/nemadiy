@@ -1,10 +1,15 @@
 package org.imirsel.nema.meandre.util;
 
+import org.imirsel.nema.dao.MeandreConsoleDao;
 import java.util.List;
 
 import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.model.Job;
 
+/**
+ * A command line tool for console dumping. 
+ * @author gzhu1
+ */
 public class ConsoleDumpCommand{
 
 	FlowService flowService;
