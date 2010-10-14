@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 /**
@@ -29,11 +31,12 @@ public class MirexNote implements Serializable{
 	
 	
 	/**
-	 * PRIVATE: left by mirexRunner for internal use
-	 * PUBLIC: 	left by mirexRunner for public view
-	 * USER:  	left by user
-	 * AUTO_PUBLIC:		left by system for public view
-	 * AUTO_PRIVATE:	left by system for internal use
+         * <ul>
+	 * <li>PRIVATE: left by mirexRunner for internal use <li/>
+	 * <li>PUBLIC: 	left by mirexRunner for public view <li/>
+	 * <li>USER:  	left by user <li/>
+	 * <li>AUTO_PUBLIC:		left by system for public view<li/>
+	 * <li>AUTO_PRIVATE:	left by system for internal use<li/>
 	 *
 	 */
 	public static enum NoteType{
@@ -97,6 +100,9 @@ public class MirexNote implements Serializable{
 	public void setAuthor(User author) {
 		this.author = author;
 	}
+
+        @Column(updatable=false)
+        @Temporal(TemporalType.TIMESTAMP)
 	public Date getCreateTime() {
 		return createTime;
 	}

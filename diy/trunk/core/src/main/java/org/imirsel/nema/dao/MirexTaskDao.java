@@ -15,8 +15,15 @@ import org.imirsel.nema.model.MirexTask;
 public interface MirexTaskDao extends GenericDao<MirexTask, Long> {
 
 
-	void addMirexTask(MirexTask task);
-	
+
+	/**
+         * Add task into database
+         */
+        void addMirexTask(MirexTask task);
+
+        /**
+         * Find all active tasks
+         */
 	List<MirexTask> findAllActive();
 	
 }
