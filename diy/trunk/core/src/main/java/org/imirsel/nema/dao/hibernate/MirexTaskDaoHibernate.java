@@ -10,6 +10,7 @@ import org.imirsel.nema.dao.MirexTaskDao;
 import org.imirsel.nema.model.MirexTask;
 
 /**
+ * Hibernate implementation of {@link MirexTaskDao}
  * @author gzhu1
  *
  */
@@ -19,13 +20,15 @@ public class MirexTaskDaoHibernate extends GenericDaoHibernate<MirexTask,Long> i
 	public MirexTaskDaoHibernate(){
 		super(MirexTask.class);
 	}
-	/* (non-Javadoc)
-	 * @see org.imirsel.nema.dao.MirexTaskDao#addMirexTask(org.imirsel.nema.model.MirexTask)
-	 */
+	/**
+         * {@inheritDoc }
+         */
 	public void addMirexTask(MirexTask task) {
 			save(task);
 	}
-	
+	/**
+         * {@inheritDoc }
+         */
 	public List<MirexTask> findAllActive() {
 		return getHibernateTemplate().find("find MirexTask where active = ?",true);
 	}

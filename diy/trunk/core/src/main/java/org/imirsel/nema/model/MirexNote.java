@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.imirsel.nema.model;
 
 import java.io.Serializable;

@@ -11,6 +11,7 @@ import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.Contributor;
 
 /**
+ * Hibernate implementation of {@link ContributorDao}
  * @author gzhu1
  *
  */
@@ -18,17 +19,24 @@ public class ContributorDaoHibernate extends GenericDaoHibernate<Contributor, Lo
 		implements ContributorDao {
 	
 
+        /**
+         * {@inheritDoc }
+         */
 	public ContributorDaoHibernate() {
 		super(Contributor.class);
 	}
 
-	
+	/**
+         * {@inheritDoc }
+         */
 	public List<Contributor> getContributors(MirexSubmission submission) {
 		List list = getHibernateTemplate().find("from Contributor where Id=?", submission.getId());
 		  return list;
 	}
 
-
+        /**
+         * {@inheritDoc }
+         */
 	public List<Contributor> findSimilar(String str) {
 		List list = 
 			getHibernateTemplate().find(

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.imirsel.nema.model;
 
 import java.io.Serializable;
@@ -19,6 +16,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.imirsel.nema.util.StringUtil;
 
 /**
+ * Model class for contributors of mirex submissions
  * @author gzhu1
  *
  */
