@@ -11,12 +11,12 @@ import javax.servlet.http.HttpSessionBindingEvent;
 
 import org.imirsel.nema.model.User;
 import org.springframework.security.web.context.HttpSessionContextIntegrationFilter;
-import org.springframework.security.context.SecurityContext;
-import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
-import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationProcessingFilter;
 
 
 /**
