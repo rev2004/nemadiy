@@ -19,9 +19,6 @@ public class ContributorDaoHibernate extends GenericDaoHibernate<Contributor, Lo
 		implements ContributorDao {
 	
 
-        /**
-         * {@inheritDoc }
-         */
 	public ContributorDaoHibernate() {
 		super(Contributor.class);
 	}

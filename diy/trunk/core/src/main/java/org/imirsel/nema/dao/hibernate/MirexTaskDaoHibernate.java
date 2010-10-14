@@ -26,6 +26,7 @@ public class MirexTaskDaoHibernate extends GenericDaoHibernate<MirexTask,Long> i
 	public void addMirexTask(MirexTask task) {
 			save(task);
 	}
+
 	/**
          * {@inheritDoc }
          */

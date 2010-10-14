@@ -13,15 +13,12 @@ public interface ContributorDao extends GenericDao<Contributor,Long>{
 
         /**
          * Find all contributors for a particular mirex submission
-         * @param submission
-         * @return
          */
 	public  List<Contributor> getContributors(MirexSubmission submission);
 
         /**
          * Find all contributors that has keyword
          * @param str keyword to search
-         * @return
          */
 	public List<Contributor> findSimilar(String str);
 

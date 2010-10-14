@@ -201,10 +201,12 @@ public class MirexSubmission  implements Serializable {
 		return url;
 	}
 
-	public Date getCreateTime() {
+        @Column(name="createTime",updatable=false)
+        @Temporal(TemporalType.TIMESTAMP)
+        public Date getCreateTime() {
 		return createTime;
 	}
-	@Column(name="createTime",updatable=false)
+	
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
