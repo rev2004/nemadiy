@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.imirsel.nema.model.Job;
 
-public class ConsoleEntry {
+class ConsoleEntry {
 	private String line;
 	private Date timeStamp;
 	public String getLine() {
