@@ -127,10 +127,12 @@ public class Contributor implements Serializable {
 	public void setEndYear(String endYear) {
 		this.endYear = endYear;
 	}
-	@Column(name="phone")
+	
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+        
+        @Column(name="phone")
 	public String getPhone() {
 		return phone;
 	}
