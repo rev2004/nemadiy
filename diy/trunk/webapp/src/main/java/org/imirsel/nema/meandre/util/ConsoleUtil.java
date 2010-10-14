@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -12,6 +14,8 @@ import java.util.Scanner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.model.Job;
+import org.springframework.jdbc.core.RowCallbackHandler;
+
 
 public class ConsoleUtil {
 
@@ -160,4 +164,37 @@ public class ConsoleUtil {
 		return (job.getExecutionInstanceId()!=null)&&(job.getExecutionInstanceId()!="");
 	}
 
+
+	/**
+	 * Call Back implementation of {@link org.springframework.jdbc.core.JdbcTemplate} to write every row into a {@link BufferedWriter}
+	 * @since 0.9
+	 * @author gzhu1
+	 */
+	class ConsoleRowHandler implements RowCallbackHandler {
+
+	    private BufferedWriter writer;
+
+	    /**
+	     * @param writer the writer to set
+	     */
+	    public void setWriter(BufferedWriter writer) {
+	        this.writer = writer;
+	    }
+
+	    public void processRow(ResultSet rs) throws SQLException {
+	        try {
+	            writer.append("[").append(rs.getString("print")).append("]");
+	            writer.newLine();
+	            writer.append(rs.getString("ts"));
+	            writer.newLine();
+	        } catch (IOException ex) {
+	            logger.error(ex,ex);
+	        }
+
+	    }
+	}
+
 }
+
+
+
