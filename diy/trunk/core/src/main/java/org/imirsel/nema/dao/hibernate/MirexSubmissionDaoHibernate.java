@@ -13,6 +13,7 @@ import org.imirsel.nema.model.MirexTask;
 import org.imirsel.nema.model.User;
 
 /**
+ * Implementation of {@link MirexSubmissionDao} with Hibernate
  * @author gzhu1
  *
  */
@@ -22,26 +23,42 @@ public class MirexSubmissionDaoHibernate extends GenericDaoHibernate<MirexSubmis
 		super(MirexSubmission.class);
 	}
 
+        /**
+         * {@inheritDoc }
+         */
 	public List<MirexSubmission> getSubmissions(User user){
 		 List<MirexSubmission> submissionList = getHibernateTemplate().find("from MirexSubmission sub where sub.user=?", user);
 		  return submissionList;
 	}
-	
+
+        /**
+         * {@inheritDoc }
+         */
 	public List<MirexSubmission> getSubmissions(Contributor contributor){
 		return getHibernateTemplate().find("find MirexSubmission submission where ? member of submission.contributors",contributor);
 	}
 
-	
+	/**
+         * {@inheritDoc }
+         */
 	public List<MirexSubmission> getSubmissions(MirexTask task) {
 		List<MirexSubmission> submissionList = getHibernateTemplate().find("from MirexSubmission sub where sub.mirexTask=?", task);
 		  return submissionList;
 	}
 
+        /**
+         * {@inheritDoc }
+         */
 	public List<MirexSubmission> findByHashcodeBeginning(String code) {
 		List<MirexSubmission> submissionList = getHibernateTemplate().find("from MirexSubmission  where hashcode like ?", code+"%");
 		  return submissionList;
 	}
-	
+
+        /**
+         * Save a submission into database, with correct setting for createTime(first time), or updateTime
+         * @param submission
+         * @return
+         */
 	@Override
 	public MirexSubmission save(MirexSubmission submission){
 		
