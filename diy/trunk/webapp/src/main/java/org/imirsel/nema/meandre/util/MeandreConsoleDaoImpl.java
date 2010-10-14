@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
-public class MeandreConsoleDaoJdbc implements MeandreConsoleDao {
+public class MeandreConsoleDaoImpl implements MeandreConsoleDao {
 
     static protected Log logger = LogFactory.getLog(MeandreConsoleDao.class);
     private SimpleJdbcTemplate simpleJdbcTemplate;

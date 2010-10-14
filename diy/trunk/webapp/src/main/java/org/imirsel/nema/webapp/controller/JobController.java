@@ -9,7 +9,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,11 +43,9 @@ import org.imirsel.nema.model.JobResult;
 import org.imirsel.nema.model.NemaTask;
 import org.imirsel.nema.model.Notification;
 import org.imirsel.nema.model.Property;
-import org.imirsel.nema.model.Submission;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.repository.RepositoryClientConnectionPool;
 import org.imirsel.nema.repositoryservice.RepositoryClientInterface;
-import org.imirsel.nema.service.SubmissionManager;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.jobs.DisplayResultSet;
 import org.imirsel.nema.webapp.json.ConverterToList;
@@ -59,10 +59,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-import edu.emory.mathcs.backport.java.util.Collections;
 
-/**
+
+/** 
  * 
  * @author kumaramit01
  * @since 0.4.0

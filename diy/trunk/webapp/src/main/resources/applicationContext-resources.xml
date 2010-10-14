@@ -24,7 +24,7 @@
     <jee:jndi-lookup jndi-name="java:comp/env/jdbc/mirexSubmissionDataSource" id="mirexSubmissionDataSource" />
     <jee:jndi-lookup jndi-name="java:comp/env/jdbc/dataSource" id="dataSource" />
 
-    <bean id="meandreConsoleDao" class="org.imirsel.nema.meandre.util.MeandreConsoleDaoJdbc">
+    <bean id="meandreConsoleDao" class="org.imirsel.nema.meandre.util.MeandreConsoleDaoImpl">
         <property name="dataSource" ref="remoteDataSource"></property>
     </bean>
 </beans>

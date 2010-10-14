@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
- * Implementation of Spring JDBC template for Mirex 2010 sumission record DAO
+ * Implementation of Spring JDBC template for Mirex 2010 submission record DAO
  * @author gzhu1
  *
  */
@@ -51,16 +51,14 @@ public class MirexSubmissionDaoJdbc implements ExternalMirexSubmissionDao{
 	 * Not implemented, return null
 	 */
 	public MirexSubmission getSubmissionByHashcode(String hashcode) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new java.lang.UnsupportedOperationException("Method not supported: getSubmissionHashcode");
 	}
 
 	/**
 	 * Not implemented, return null
 	 */
 	public MirexSubmission getSubmissionById(long id) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new java.lang.UnsupportedOperationException("Method not supported: getSubmissionById");
 	}
 	
 	

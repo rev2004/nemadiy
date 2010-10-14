@@ -30,15 +30,15 @@ public class ContributorDaoHibernate extends GenericDaoHibernate<Contributor, Lo
          * {@inheritDoc }
          */
 	public List<Contributor> getContributors(MirexSubmission submission) {
-		List list = getHibernateTemplate().find("from Contributor where Id=?", submission.getId());
-		  return list;
+		List<Contributor> list = getHibernateTemplate().find("from Contributor where Id=?", submission.getId());
+		return list;
 	}
 
         /**
          * {@inheritDoc }
          */
 	public List<Contributor> findSimilar(String str) {
-		List list = 
+		List<Contributor> list = 
 			getHibernateTemplate().find(
 					"from Contributor where (firstname like ?) or (lastname like ?) or (orgnization like ?)",
 					fuzzy(str),fuzzy(str),fuzzy(str));

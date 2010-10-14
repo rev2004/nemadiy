@@ -1,6 +1,5 @@
 package org.imirsel.nema.dao;
 
-import org.imirsel.nema.model.Submission;
 import org.imirsel.nema.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
