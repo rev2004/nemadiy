@@ -12,7 +12,8 @@ import org.imirsel.nema.dao.UserDao;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.service.UserExistsException;
 import org.imirsel.nema.service.UserManager;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 
 /**
  * @author gzhu1
