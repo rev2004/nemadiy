@@ -30,8 +30,6 @@ import org.imirsel.nema.flowservice.FlowService;
 import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
-import org.imirsel.nema.meandre.util.ConsoleUtil;
-import org.imirsel.nema.webapp.dao.MeandreConsoleDao;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;
@@ -51,6 +49,7 @@ import org.imirsel.nema.webapp.json.ConverterToMapJob;
 import org.imirsel.nema.webapp.json.ConverterToMapJobLong;
 import org.imirsel.nema.webapp.json.ConverterToMapServer;
 import org.imirsel.nema.webapp.json.ConverterToMapServerConfig;
+import org.imirsel.nema.webapp.service.ConsoleService;
 import org.imirsel.nema.webapp.service.ResourceTypeService;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
@@ -67,19 +66,16 @@ import org.springframework.web.servlet.view.RedirectView;
 public class JobController extends MultiActionController {
 
     static private Log logger = LogFactory.getLog(JobController.class);
+    final static String STOREPATH = "runtime";
+
     private UserManager userManager = null;
     private FlowService flowService = null;
     private RepositoryClientConnectionPool repositoryClientConnectionPool;
-    private MeandreConsoleDao meandreConsoleDao;
-    private ConsoleUtil consoleUtil;
+    private ConsoleService consoleService;
     private ResourceTypeService resourceTypeService;
-
-    public void setConsoleUtil(ConsoleUtil consoleUtil) {
-        this.consoleUtil = consoleUtil;
-    }
-
-    public void setMeandreConsoleDao(MeandreConsoleDao meandreConsoleDao) {
-        this.meandreConsoleDao = meandreConsoleDao;
+  
+    public void setConsoleService(ConsoleService consoleService) {
+        this.consoleService = consoleService;
     }
 
     public FlowService getFlowService() {
@@ -185,7 +181,7 @@ public class JobController extends MultiActionController {
             logger.info("deleting flow: " + job.getFlow().getUri());
             flowService.removeFlow(job.getFlow().getUri());
             if (job.isDone()) {
-                consoleUtil.deleteConsole(job);
+                consoleService.deleteConsole(job);
             }
         }
         // , Constants.JOB, job
@@ -361,7 +357,7 @@ public class JobController extends MultiActionController {
 
         return mav;
     }
-    final static String STOREPATH = "runtime";
+   
 
     private void saveRuntimeOnFiles(Map<NemaTask, Map<Flow, Map<String, Job>>> taskJobMap,
             Map<Job, String> duration) {
@@ -474,7 +470,7 @@ public class JobController extends MultiActionController {
 //                    dump the file, however, problems might arise
 //                    when the new request come before the last dumping finish.
 //                }
-                response.getOutputStream().print(consoleUtil.findConsole(job));
+                response.getOutputStream().print(consoleService.findConsole(job));
             } else {
                 String text = this.flowService.getConsole(job);
                 response.getOutputStream().println(text);
@@ -555,7 +551,7 @@ public class JobController extends MultiActionController {
         for (Job job : jobs) {
             if (job.isDone()) {
                 try {
-                    consoleUtil.dumpConsoleToFile(job);
+                    consoleService.dumpConsoleToFile(job);
                     dumpResult.put(job, "successfully dumped");
                 } catch (IllegalArgumentException e) {
                     dumpResult.put(job, e.getMessage());

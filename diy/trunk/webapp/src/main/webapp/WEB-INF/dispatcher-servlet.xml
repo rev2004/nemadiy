@@ -152,7 +152,7 @@
         <property name="flowService" ref="realFlowService" />
         <property name="userManager" ref="userManager" />
         <property name="methodNameResolver" ref="jobMethodResolver" />
-        <property name="consoleUtil" ref="meandreConsoleUtil"></property>
+        <property name="consoleService" ref="meandreConsoleService"></property>
         <property name="resourceTypeService" ref="resourceTypeService"></property>
     </bean>
 

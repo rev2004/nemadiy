@@ -21,8 +21,8 @@
     <bean id="mirexTaskDictionary" class="org.imirsel.nema.webapp.service.impl.MirexTaskDictionaryImpl"
 	p:dao-ref="mirexTaskDao"/>
 	
-    <bean id="meandreConsoleUtil" class="org.imirsel.nema.meandre.util.ConsoleUtil"
-		p:dao-ref="meandreConsoleDao" p:folder="console"/>
+    <bean id="meandreConsoleService" class="org.imirsel.nema.webapp.service.impl.ConsoleServiceImpl"
+		p:meandreConsoleDao-ref="meandreConsoleDao" p:folder="console"/>
     <bean id="resourceTypeService"
 		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl" 
 		p:repositoryClientConnectionPool-ref="repositoryClientConnectionPool"/>
