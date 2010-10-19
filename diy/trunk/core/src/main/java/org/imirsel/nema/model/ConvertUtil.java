@@ -1,9 +1,8 @@
-package org.imirsel.nema.util;
+package org.imirsel.nema.model;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.imirsel.nema.model.LabelValue;
 
 import java.util.Enumeration;
 import java.util.HashMap;

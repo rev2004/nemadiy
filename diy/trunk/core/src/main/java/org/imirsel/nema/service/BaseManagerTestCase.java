@@ -3,7 +3,7 @@ package org.imirsel.nema.service;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.imirsel.nema.util.ConvertUtil;
+import org.imirsel.nema.model.ConvertUtil;
 import org.springframework.test.AbstractTransactionalDataSourceSpringContextTests;
 
 import java.util.Map;
