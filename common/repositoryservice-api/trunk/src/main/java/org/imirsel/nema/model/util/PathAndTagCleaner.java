@@ -17,7 +17,7 @@ public class PathAndTagCleaner {
 	/**
 	 * 
 	 * @param aFile
-	 * @return
+	 * @return the file name cleaned up
 	 */
 	public static String convertFileToMIREX_ID(File aFile){
         String name = aFile.getName();
@@ -38,7 +38,7 @@ public class PathAndTagCleaner {
     /**
      * 
      * @param tag
-     * @return
+     * @return the cleanedup tag
      */
     public static String cleanTag(String tag){
         return tag.toLowerCase().replaceAll("\\s+", "_").replaceAll("[^a-z0-9]", "");

@@ -442,7 +442,7 @@ public class IOUtil {
      * @param searchDir
      * @param extension
      * @deprecated
-     * @return
+     * @return List of files
      */
     public static List<File> getFilteredPathStrings(File searchDir, String extension) {
         System.out.println("Getting list of files in " + searchDir.getAbsolutePath() + " with extension " + extension);
