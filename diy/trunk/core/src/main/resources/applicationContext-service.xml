@@ -111,10 +111,7 @@
     <bean id="preferenceValueManager" class="org.imirsel.nema.service.impl.PreferenceValueManagerImpl">
         <property name="preferenceValueDao" ref="preferenceValueDao"/>
     </bean>
-    
-    <bean id="submissionManager" class="org.imirsel.nema.service.impl.SubmissionManagerImpl">
-        <property name="submissionDao" ref="submissionDao"/>
-    </bean>
+   
     
     
 

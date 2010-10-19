@@ -1,10 +1,13 @@
-package org.imirsel.nema.meandre.util;
+package org.imirsel.nema.webapp.model;
 
 import java.util.Date;
 
-import org.imirsel.nema.model.Job;
 
-class ConsoleEntry {
+/**
+ * Entry of Meandre Console, (corresponding one record in DB)
+ * @author gzhu1
+ */
+public class ConsoleEntry {
 	private String line;
 	private Date timeStamp;
 	public String getLine() {

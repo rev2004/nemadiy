@@ -1,7 +1,4 @@
-/**
- * 
- */
-package org.imirsel.nema.dao.jdbc;
+package org.imirsel.nema.webapp.dao.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
