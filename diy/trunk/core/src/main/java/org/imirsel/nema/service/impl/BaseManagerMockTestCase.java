@@ -3,7 +3,7 @@ package org.imirsel.nema.service.impl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.imirsel.nema.util.ConvertUtil;
+import org.imirsel.nema.model.ConvertUtil;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.jmock.Mockery;
