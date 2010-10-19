@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.model.Job;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
-
 public class ConsoleUtil {
 
 	static protected Log logger = LogFactory.getLog(ConsoleUtil.class);
