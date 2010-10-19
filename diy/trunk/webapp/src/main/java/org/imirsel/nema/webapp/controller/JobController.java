@@ -1,12 +1,9 @@
 package org.imirsel.nema.webapp.controller;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +31,7 @@ import org.imirsel.nema.flowservice.MeandreServerException;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyConfig;
 import org.imirsel.nema.flowservice.config.MeandreServerProxyStatus;
 import org.imirsel.nema.meandre.util.ConsoleUtil;
-import org.imirsel.nema.dao.MeandreConsoleDao;
+import org.imirsel.nema.webapp.dao.MeandreConsoleDao;
 import org.imirsel.nema.model.Component;
 import org.imirsel.nema.model.Flow;
 import org.imirsel.nema.model.Job;

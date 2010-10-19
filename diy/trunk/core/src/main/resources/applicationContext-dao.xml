@@ -47,11 +47,7 @@
     <bean id="preferenceValueDao" class="org.imirsel.nema.dao.hibernate.PreferenceValueDaoHibernate">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
-    
-    <bean id="submissionDao" class="org.imirsel.nema.dao.hibernate.SubmissionDaoHibernate">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-    
+   
     <bean id="mirexSubmissionDao"
     	class="org.imirsel.nema.dao.hibernate.MirexSubmissionDaoHibernate">
         <property name="sessionFactory" ref="sessionFactory"/>
@@ -87,8 +83,5 @@
 
     <!-- Add new DAOs here -->
 
-    <bean id="externalMirexSubmissionDao"
-    	class="org.imirsel.nema.dao.jdbc.MirexSubmissionDaoJdbc">
-    	<property name="dataSource" ref="mirexSubmissionDataSource"/>
-    </bean>
+    
 </beans>

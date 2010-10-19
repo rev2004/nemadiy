@@ -10,20 +10,21 @@
 	default-lazy-init="true" >
 
 	<!-- Add new DAOs here -->
-        <jee:jndi-lookup jndi-name="java:comp/env/flowservice/url" id="flowserviceUrl"/>
+    <jee:jndi-lookup jndi-name="java:comp/env/flowservice/url" id="flowserviceUrl"/>
 	<!-- Add new Managers here -->
-	<bean id="flowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean"
+    <bean id="flowService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean"
                 p:serviceUrl-ref="flowserviceUrl" p:serviceInterface="org.imirsel.nema.flowservice.FlowService"
                 p:refreshStubOnConnectFailure="true" />
                 
-	<bean id="mirexContributorDictionary" class="org.imirsel.nema.webapp.service.impl.MirexContributorDictionaryDaoImpl"
+    <bean id="mirexContributorDictionary" class="org.imirsel.nema.webapp.service.impl.MirexContributorDictionaryDaoImpl"
 	p:dao-ref="contributorDao"/>
-	<bean id="mirexTaskDictionary" class="org.imirsel.nema.webapp.service.impl.MirexTaskDictionaryImpl"
+    <bean id="mirexTaskDictionary" class="org.imirsel.nema.webapp.service.impl.MirexTaskDictionaryImpl"
 	p:dao-ref="mirexTaskDao"/>
 	
-	<bean id="meandreConsoleUtil" class="org.imirsel.nema.meandre.util.ConsoleUtil"
+    <bean id="meandreConsoleUtil" class="org.imirsel.nema.meandre.util.ConsoleUtil"
 		p:dao-ref="meandreConsoleDao" p:folder="console"/>
-	<bean id="resourceTypeService"
+    <bean id="resourceTypeService"
 		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl" 
 		p:repositoryClientConnectionPool-ref="repositoryClientConnectionPool"/>
+   
 </beans>

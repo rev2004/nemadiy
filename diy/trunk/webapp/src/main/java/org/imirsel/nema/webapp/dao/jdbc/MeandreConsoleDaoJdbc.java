@@ -1,5 +1,7 @@
-package org.imirsel.nema.meandre.util;
+package org.imirsel.nema.webapp.dao.jdbc;
 
+import org.imirsel.nema.webapp.dao.MeandreConsoleDao;
+import org.imirsel.nema.webapp.model.ConsoleEntry;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -11,11 +13,13 @@ import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.model.Job;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
-// Document This
-public class MeandreConsoleDaoImpl implements MeandreConsoleDao {
+/**
+ * Implementation of {@link MeandreConsoleDao} with Spring JDBC template
+ * @author gzhu1
+ */
+public class MeandreConsoleDaoJdbc implements MeandreConsoleDao {
 
     static protected Log logger = LogFactory.getLog(MeandreConsoleDao.class);
     private SimpleJdbcTemplate simpleJdbcTemplate;
@@ -24,6 +28,9 @@ public class MeandreConsoleDaoImpl implements MeandreConsoleDao {
         this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void clearConsole(Job job) {
 //		final String deleteSql="delete from meandre_job_console where job_ID= ?";
@@ -33,7 +40,9 @@ public class MeandreConsoleDaoImpl implements MeandreConsoleDao {
     
     
      final String sqlGetList = "select print,ts from meandre_job_console where job_ID = ?";
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<ConsoleEntry> getEntry(final Job job) {
        
@@ -51,6 +60,9 @@ public class MeandreConsoleDaoImpl implements MeandreConsoleDao {
         return this.simpleJdbcTemplate.query(sqlGetList, mapper, job.getExecutionInstanceId());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<ConsoleEntry> getEntry(Job job, int maxCount) {
         List<ConsoleEntry> list = getEntry(job);
@@ -61,6 +73,9 @@ public class MeandreConsoleDaoImpl implements MeandreConsoleDao {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void handleEntry(Job job, RowCallbackHandler handler) {
         
