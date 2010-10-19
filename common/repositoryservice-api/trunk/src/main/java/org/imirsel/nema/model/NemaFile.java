@@ -116,7 +116,7 @@ public class NemaFile implements Serializable {
 
 	/**
 	 * Returns the site label (denoting at which site the path is valid).
-	 * @return
+	 * @return the file name
 	 */
 	public String getSite() {
 		return site;
