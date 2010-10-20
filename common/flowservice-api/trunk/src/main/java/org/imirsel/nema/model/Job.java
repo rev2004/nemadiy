@@ -139,7 +139,7 @@ public class Job implements Serializable, Cloneable {
 	private String host;
 	private Integer port;
 	private Integer execPort;
-   private Date scheduleTimestamp;
+    private Date scheduleTimestamp;
 	private Date submitTimestamp;
 	private Date startTimestamp;
 	private Date endTimestamp;

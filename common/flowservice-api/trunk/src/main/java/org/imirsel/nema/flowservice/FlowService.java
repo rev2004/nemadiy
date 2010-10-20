@@ -101,7 +101,7 @@ public interface FlowService {
          * Return all {@link Job}s owned by the specified user for certain taskId
          * @param userId Unique ID of the user whose {@link Job}s will be returned.
          * @param taskId taskId for specific dataset/task
-         * @return
+         * @return the List of user jobs
          * @since 0.9.0
          */
    public List<Job> getUserJobsByTaskId(long userId,long taskId);
@@ -110,7 +110,7 @@ public interface FlowService {
          * Return all {@link Job}s owned by the specified user with keyword.
          * @param userId Unique ID of the user whose {@link Job}s will be returned.
          * @param keyword  keyword to filter the list (job name, keyword, description, flow name, ...)
-         * @return
+         * @return List of Jobs
          * @since 0.9.0
          */
    public List<Job> getUserJobsByKeyword(long userId,String keyword);
