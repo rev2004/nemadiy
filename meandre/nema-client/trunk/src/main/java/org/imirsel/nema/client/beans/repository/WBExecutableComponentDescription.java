@@ -132,22 +132,22 @@ public class WBExecutableComponentDescription  {
      * @param resMode 
      */
     public WBExecutableComponentDescription (
-            String sResURI,
-            String sName,
-            String sDescription,
-            String sRights,
-            String sCreator,
-            Date dateCreation,
-            String sRunnable,
-            String sFiringPolicy,
-            String sFormat,
-            Set<String> setContext,
-            String sLocationURI,
-            Set<WBDataPortDescription> setInputs,
-            Set<WBDataPortDescription> setOutputs,
-            WBPropertiesDescriptionDefinition pddProperties,
-            WBTagsDescription tagDesc,
-            String resMode
+            final String sResURI,
+            final String sName,
+            final String sDescription,
+            final String sRights,
+            final String sCreator,
+            final Date dateCreation,
+            final String sRunnable,
+            final String sFiringPolicy,
+            final String sFormat,
+            final Set<String> setContext,
+            final String sLocationURI,
+            final Set<WBDataPortDescription> setInputs,
+            final Set<WBDataPortDescription> setOutputs,
+            final WBPropertiesDescriptionDefinition pddProperties,
+            final WBTagsDescription tagDesc,
+            final String resMode
         ) {
         // Initialization
         this.sResURI = sResURI;
@@ -169,9 +169,9 @@ public class WBExecutableComponentDescription  {
         // Update the mappings
         this.htInputsMap = new HashMap<String, WBDataPortDescription>();
         this.htOutputsMap = new HashMap<String, WBDataPortDescription>();
-        for ( WBDataPortDescription dpd:setInputs )
+        for ( final WBDataPortDescription dpd:setInputs )
             htInputsMap.put(dpd.getResourceURI(), dpd);
-        for ( WBDataPortDescription dpd:setOutputs )
+        for ( final WBDataPortDescription dpd:setOutputs )
             htOutputsMap.put(dpd.getResourceURI(), dpd);
     }
 
@@ -276,7 +276,7 @@ public class WBExecutableComponentDescription  {
      * @param res The resource
      * @return The data port description
      */
-    public WBDataPortDescription getInput ( String res ) {
+    public WBDataPortDescription getInput ( final String res ) {
         return htInputsMap.get(res);
     }
 
@@ -294,7 +294,7 @@ public class WBExecutableComponentDescription  {
      * @param res The resource
      * @return The data port description
      */
-    public WBDataPortDescription getOutput ( String res ) {
+    public WBDataPortDescription getOutput ( final String res ) {
         return htOutputsMap.get(res);
     }
     /** Returns the property descriptions for the described executable component.
