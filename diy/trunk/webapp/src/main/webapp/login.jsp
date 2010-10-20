@@ -5,54 +5,32 @@
     <meta name="heading" content="<fmt:message key='login.heading'/>"/>
     <meta name="menu" content="Login"/>
     <link rel="stylesheet" type="text/css" media="all" href="<c:url value='/styles/${appConfig["csstheme"]}/layout-1col.css'/>" />
+    <link rel="stylesheet" href='<c:url value="/jquery/openid-selector/css/openid.css" />' type="text/css" media="all" />
+    <script type="text/javascript" src="<c:url value="/jquery/jquery.min.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/jquery/openid-selector/js/openid-jquery.js" />"></script>
+  
 </head>
-<body id="login"/>
-
-<form method="post" id="loginForm" action="<c:url value='/j_security_check'/>"
-    onsubmit="saveUsername(this);return validateForm(this)">
-<fieldset style="padding-bottom: 0">
-<ul>
-<c:if test="${param.error != null}">
-    <li class="error">
-        <img src="${ctx}/images/iconWarning.gif" alt="<fmt:message key='icon.warning'/>" class="icon"/>
-        <fmt:message key="errors.password.mismatch"/>
-        <%--${sessionScope.SPRING_SECURITY_LAST_EXCEPTION_KEY.message}--%>
-    </li>
-</c:if>
-    <li>
-       <label for="j_username" class="required desc">
-            <fmt:message key="label.username"/> <span class="req">*</span>
-        </label>
-        <input type="text" class="text medium" name="j_username" id="j_username" tabindex="1" />
-    </li>
-
-    <li>
-        <label for="j_password" class="required desc">
-            <fmt:message key="label.password"/> <span class="req">*</span>
-        </label>
-        <input type="password" class="text medium" name="j_password" id="j_password" tabindex="2" />
-    </li>
-
-<c:if test="${appConfig['rememberMeEnabled']}">
-    <li>
-        <input type="checkbox" class="checkbox" name="_spring_security_remember_me" id="rememberMe" tabindex="3"/>
-        <label for="rememberMe" class="choice"><fmt:message key="login.rememberMe"/></label>
-    </li>
-</c:if>
-    <li>
-        <input type="submit" class="button" name="login" value="<fmt:message key='button.login'/>" tabindex="4" />
-  <%--
-   	 	<p>
-            <fmt:message key="login.signup">
-                <fmt:param><c:url value="/signup.html"/></fmt:param>
-            </fmt:message>
+<body id="login">
+  <script type="text/javascript">
+        $(document).ready(function() {
+            openid.img_path= "<c:url value='/jquery/openid-selector/images/'/>";
+            openid.init("openid_identifier");
+            $("#openid_identifier").focus();
+        });
+    </script>
+<form method="post" id="loginForm" action="<c:url value='/openlogin'/>">
+    <fieldset>
+        <div id="openid_choice">
+            <label for="openid_btns">Please select your account provider:</label>
+            <div id="openid_btns"></div>
+        </div>
+        <div id="openid_input_area">
+        </div>
+        <p>
+            <label for="openid_identifier">Or manually enter your OpenID URL:</label><br/>
+            <input id="openid_identifier" name="openid_identifier" class="openid-identifier" />
+            <input id="openid_submit" type="submit" value="Sign In"/>
         </p>
-   --%>
-    </li>
-</ul>
-</fieldset>
+    </fieldset>
 </form>
-
-<%@ include file="/scripts/login.js"%>
-
-<p><fmt:message key="login.passwordHint"/></p>
+</body>

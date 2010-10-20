@@ -73,7 +73,9 @@
 		<level value="INFO" />
 	</logger>
 	<logger name="org.dbunit"><level value="WARN"/> </logger>
-
+        <logger name="org.springframework.jndi"><level value="DEBUG"/></logger>
+         <logger name="org.springframework.beans"><level value="DEBUG"/></logger>
+         <logger name="org.mortbay.naming"><level value="DEBUG"/></logger>
 	<root>
 		<level value="WARN" />
 		<appender-ref ref="CONSOLE" />
