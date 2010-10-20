@@ -5,15 +5,15 @@
     <meta name="heading" content="<fmt:message key='login.heading'/>"/>
     <meta name="menu" content="Login"/>
     <link rel="stylesheet" type="text/css" media="all" href="<c:url value='/styles/${appConfig["csstheme"]}/layout-1col.css'/>" />
-    <link rel="stylesheet" href='<c:url value="/jquery/openid-selector/css/openid.css" />' type="text/css" media="all" />
-    <script type="text/javascript" src="<c:url value="/jquery/jquery.min.js" />"></script>
-    <script type="text/javascript" src="<c:url value="/jquery/openid-selector/js/openid-jquery.js" />"></script>
+    <link rel="stylesheet" href='<c:url value="/scripts/jquery/openid-selector/css/openid.css" />' type="text/css" media="all" />
+    <script type="text/javascript" src="<c:url value="/scripts/jquery/jquery.min.js" />"></script>
+    <script type="text/javascript" src="<c:url value="/scripts/jquery/openid-selector/js/openid-jquery.js" />"></script>
   
 </head>
 <body id="login">
   <script type="text/javascript">
         $(document).ready(function() {
-            openid.img_path= "<c:url value='/jquery/openid-selector/images/'/>";
+            openid.img_path= "<c:url value='/scripts/jquery/openid-selector/images/'/>";
             openid.init("openid_identifier");
             $("#openid_identifier").focus();
         });
