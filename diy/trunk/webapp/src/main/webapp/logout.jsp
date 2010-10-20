@@ -1,6 +1,6 @@
 <%@ include file="/common/taglibs.jsp"%>
 <%@ page import="javax.servlet.http.Cookie" %>
-<%@ page import="org.springframework.security.ui.rememberme.TokenBasedRememberMeServices" %>
+<%@ page import="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices" %>
 
 <%
 if (request.getSession(false) != null) {
@@ -13,4 +13,4 @@ terminate.setMaxAge(0);
 response.addCookie(terminate);
 %>
 
-<c:redirect url="welcome.jsp"/>
+<c:redirect url="login.jsp"/>
