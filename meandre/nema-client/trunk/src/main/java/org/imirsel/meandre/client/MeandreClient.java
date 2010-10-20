@@ -1198,9 +1198,18 @@ public class MeandreClient extends MeandreBaseClient{
 		return runFlowStreamOutput(sFlowUrl, null, verbose);
 	}
 
+	/** 
+	 * Calls the flow.txt method on the meandre server.
+	 *<p> calls:
+	 * http://<meandre_host>:<meandre_port>/services/execute/flow.txt
+	 * @param sFlowUrl
+	 * @param token
+	 * @param verbose
+	 * @return the inputstream
+	 * @throws TransmissionException
+	 */
 	public InputStream runFlowStreamOutput(String sFlowUrl, String token, boolean verbose)
 	throws TransmissionException {
-
 		String sRestCommand = "services/execute/flow.txt";
 		Set<NameValuePair> nvps = new HashSet<NameValuePair>();
 		nvps.add(new NameValuePair("uri", sFlowUrl));
@@ -1643,8 +1652,11 @@ public class MeandreClient extends MeandreBaseClient{
 
 
 
+	/** Do any cleanup that is required. Currently just a skeleton method.
+	 * 
+	 */
 	public void destroy() {
-		// here  cleanup resources...	
+		
 	}
 
 }

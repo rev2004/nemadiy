@@ -105,18 +105,33 @@ public class MeandreBaseClient{
         _port = serversPort;
     }
 
+    /**
+     * @return the port
+     */
     public int getPort(){
         return _port;
     }
 
+    /**
+     * 
+     * @return the server host
+     */
     public String getServerHost(){
         return _serverHost;
     }
 
+    /**
+     * 
+     * @return the logger
+     */
 	public Logger getLogger(){
 		return logger;
 	}
 
+	/**Set the logger
+	 * 
+	 * @param log
+	 */
 	public void setLogger(Logger log){
 		logger = log;
 	}

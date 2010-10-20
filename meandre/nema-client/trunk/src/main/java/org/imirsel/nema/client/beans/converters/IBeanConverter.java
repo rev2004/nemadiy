@@ -52,6 +52,10 @@ package org.imirsel.nema.client.beans.converters;
  */
 public interface IBeanConverter<SRC, TARGET> {
 
+    /**
+     * @param data
+     * @return TARGET data type
+     */
     public TARGET convert(SRC data);
 
 }

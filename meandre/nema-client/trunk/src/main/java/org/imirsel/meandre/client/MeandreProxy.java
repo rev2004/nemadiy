@@ -91,26 +91,47 @@ public class MeandreProxy extends MeandreClient {
 	}
 
 
+	/**
+	 * @return the username
+	 */
 	public String getUserName() {
 		return this.userName;
 	}
 
+	/**Set the username
+	 * 
+	 * @param userName
+	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
 
+	/**Return the password
+	 * 
+	 * @return password as string
+	 */
 	public String getPassword() {
 		return password;
 	}
-
+	/**Set the password
+	 * 
+	 * @param password
+	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	/**
+	 * 
+	 * @return BaseURL as string
+	 */
 	public String getBaseURL() {
 		return this.baseUrl;
 	}
 
+	/**Set base url
+	 * 
+	 * @param baseURL
+	 */
 	public void setBaseURL(String baseURL) {
 		this.baseUrl = baseURL;
 	}
@@ -598,7 +619,9 @@ public class MeandreProxy extends MeandreClient {
 		return pluginString;
 	}
 
-	
+	/**Cleanup method. Destroys the http client.
+	 * 
+	 */
 	public void detroy(){
 		log.info("destroy MeandreProxy -end of session");
 		this.client.destroy();
