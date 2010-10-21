@@ -65,10 +65,9 @@ public class PreferenceValue extends BaseObject implements Serializable{
 		if (this == o) {
             return true;
         }
-		if((o == null) || (o.getClass() != this.getClass())) return false; 
+		if(!(o instanceof PreferenceValue)) return false; 
 
         final PreferenceValue pref = (PreferenceValue) o;
-        
         if(value==null || key==null || pref.value ==null || pref.key==null){
         	return false;
         }
