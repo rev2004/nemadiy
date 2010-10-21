@@ -473,7 +473,7 @@ public class TasksServiceTest {
 								with(same(user.getId())),with(same(user.getEmail())));
 			}
 		});
-		 tasksService.run(flow1,datatypeMaps,name,description,"name");
+		 tasksService.run(flow1,datatypeMaps,name,description,"name", 0);
 		}catch (MeandreServerException e) {
 			logger.error(e,e);
 		}
