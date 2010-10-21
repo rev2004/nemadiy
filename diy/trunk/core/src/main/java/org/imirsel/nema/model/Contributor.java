@@ -146,7 +146,7 @@ public class Contributor implements Serializable {
 	@Override
 	public	boolean equals(Object o){
 		if (this==o) {return true;}
-		else if ((o==null) || (!(o instanceof Contributor))) {return false;}
+		else if ((!(o instanceof Contributor))) {return false;}
 		else {
 			final Contributor that=(Contributor)o;
 			return (

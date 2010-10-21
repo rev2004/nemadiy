@@ -87,13 +87,11 @@ public class MirexTask implements Serializable,Comparable<MirexTask>{
 	@Override
 	public	boolean equals(Object o){
 		if (this==o) {return true;}
-		else if ((o==null) || (!(o instanceof MirexTask))) {return false;}
+		else if (!(o instanceof MirexTask)) {return false;}
 		else {
 			final MirexTask that=(MirexTask)o;
 			return (
 				StringUtil.same(name,that.getName()));
-			
-					
 		}
 	}
 	

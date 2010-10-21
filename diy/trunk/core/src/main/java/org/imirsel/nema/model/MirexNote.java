@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -145,11 +144,10 @@ public class MirexNote implements Serializable{
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		return true;
+		if (!(obj instanceof MirexNote))
+		return false;
+		
 		MirexNote other = (MirexNote) obj;
 		if (author == null) {
 			if (other.author != null)
