@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
@@ -43,7 +42,7 @@ import org.imirsel.nema.model.ProcessTemplate;
 import org.imirsel.nema.model.ResourceGroupEntry;
 import org.imirsel.nema.model.ResourcePath;
 import org.imirsel.nema.model.ResultType;
-import org.imirsel.nema.monitor.process.NemaProcess;
+import org.imirsel.nema.service.executor.NemaProcess;
 import org.imirsel.nema.monitor.process.RecordStreamProcessMonitor;
 import org.imirsel.nema.service.executor.MemoryProfile;
 import org.imirsel.nema.service.executor.ProcessExecutorService;
@@ -58,8 +57,17 @@ import org.meandre.core.ComponentExecutionException;
 import com.healthmarketscience.rmiio.RemoteOutputStream;
 import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 
-/** Base Class for Remote Nema Components
- * 
+/** Base Class for Remote Nema Components. <br/>This component provides following input properties
+ *  <ol>
+ *  <li>_group: denoting the execution group of machines that it will connet to</li>
+ *  <li>_os: The Operating system requirement</li>
+ *  <li>_credentials: The login/password credentials required</li>
+ *  <li>_contentRepositoryUri: The content repository uri.</li>
+ *  <li>_lookupHost: The lookup host.</li>
+ *  <li>_preferredMemoryProfile: The memory profile.</li>
+ *  </ol>
+ *  <br/>
+ *  and the input processTemplate.
  *
  * @author kumaramit01
  * @since 0.6.0
@@ -307,7 +315,9 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 
 		if(serviceFound==null){
 			throw new RemoteException("Suitable Service not found " + this.getProcessTemplate().getName());
-		}
+		}	
+		
+		
 		executorService = serviceFound;
 		this.getLogger().info("Selecting: " + executorService.toString() + " for the execution. ");
 
@@ -316,6 +326,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		return executorService;
 
 	}
+
 
 	private ProcessExecutorService findBestExecutorWithMemoryProfile(ServiceRegistrar registrar,
 			List<Entry> attrList, MemoryProfile memoryProfile) throws RemoteException {
@@ -338,6 +349,8 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 		
 		
 
+		
+
 		Class<ProcessExecutorService>[] classes = new Class[1]; 
 		classes[0] = ProcessExecutorService.class;
 		ServiceTemplate template = new ServiceTemplate(null,classes,attrs);
@@ -354,6 +367,7 @@ public abstract class RemoteExecutorBase extends NemaComponent implements Remote
 					min= pes.numProcesses();
 				}
 			}
+
 
 
 		}else{

@@ -11,7 +11,7 @@ import org.imirsel.nema.components.InvalidProcessTemplateException;
 import org.imirsel.nema.components.RemoteProcessExecutorComponent;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
-import org.imirsel.nema.monitor.process.NemaProcess;
+import org.imirsel.nema.service.executor.NemaProcess;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
 import org.meandre.annotations.ComponentOutput;

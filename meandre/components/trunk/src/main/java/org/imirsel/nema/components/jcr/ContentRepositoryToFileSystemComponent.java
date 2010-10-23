@@ -153,7 +153,9 @@ public class ContentRepositoryToFileSystemComponent extends NemaComponent {
 		//String fileName=result.getFileName();
 		System.out.println("3");
 		String name=result.getName();
-		System.out.println("DECOMPRESSING: " + name + " size: " + content.length);
+		System.out.println("DECOMPRESSING: " + name + " size: " + content.length + 
+				" File Name: " + result.getFileName() + " path: " +result.getPath() +
+				" Resource Path :"+result.getResourcePath().toString());
 		List<String> fileList=null;
 		try {
 			fileList=cutils.decompress(content, resultLoc, name);

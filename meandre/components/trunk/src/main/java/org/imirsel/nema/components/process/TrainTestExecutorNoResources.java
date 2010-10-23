@@ -24,7 +24,7 @@ import org.imirsel.nema.model.fileTypes.NemaFileType;
 import org.imirsel.nema.model.fileTypes.OpaqueDirectoryFormat; 
 import org.imirsel.nema.model.fileTypes.OpaqueFileFormat;
 import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
-import org.imirsel.nema.monitor.process.NemaProcess;
+import org.imirsel.nema.service.executor.NemaProcess;
 import org.imirsel.nema.service.executor.ExecutorConstants;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
