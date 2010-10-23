@@ -137,6 +137,7 @@ public abstract class NemaComponent implements ExecutableComponent {
 	public Logger getLogger() {
 		if (_logger == null){
 			_logger = Logger.getLogger(this.getClass().getName());
+			_logger.setLevel(Level.ALL);
 		}
 		return _logger;
 	}

@@ -22,7 +22,7 @@ import org.imirsel.nema.model.fileTypes.NemaFileType;
 import org.imirsel.nema.model.fileTypes.OpaqueDirectoryFormat; 
 import org.imirsel.nema.model.fileTypes.OpaqueFileFormat;
 import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
-import org.imirsel.nema.monitor.process.NemaProcess;
+import org.imirsel.nema.service.executor.NemaProcess;
 import org.imirsel.nema.service.executor.ExecutorConstants;
 import org.meandre.annotations.Component;
 import org.meandre.annotations.ComponentInput;
@@ -33,7 +33,7 @@ import org.meandre.core.ComponentContextProperties;
 import org.meandre.core.ComponentExecutionException;
 
 /**
- * TODO: THERE IS  BIG  IN THIS CODE _THE FLOW INSTANCE ID IS SET AS THE ProcessExecutionProperties.id
+ * TODO: THERE IS  BUG  IN THIS CODE _THE FLOW INSTANCE ID IS SET AS THE ProcessExecutionProperties.id
  * which means that there can only be one execution per flow LINE 217 -FIX REQUIRED -FOR AMIT
  * @author kris.west@gmail.com
  * @since 0.3.0

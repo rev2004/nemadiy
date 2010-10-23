@@ -17,7 +17,7 @@ import javax.jcr.SimpleCredentials;
 import org.imirsel.nema.model.ProcessArtifact;
 import org.imirsel.nema.model.ProcessExecutionProperties;
 import org.imirsel.nema.model.ProcessTemplate;
-import org.imirsel.nema.monitor.process.NemaProcess;
+import org.imirsel.nema.service.executor.NemaProcess;
 import org.imirsel.nema.monitor.process.RecordStreamProcessMonitor;
 import org.imirsel.nema.service.executor.ProcessExecutorService;
 import org.imirsel.nema.service.executor.RemoteProcessMonitor;

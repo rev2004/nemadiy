@@ -164,7 +164,7 @@ public abstract class ContentRepositoryBase extends NemaComponent implements Rem
 
 	private NemaContentRepositoryFile createNemaContentRepositoryFile(File file, String relativeLoc, String model) throws IOException {
 		NemaContentRepositoryFile nemaResult = new NemaContentRepositoryFile();
-		String path = file.getCanonicalPath();
+		String path = file.getAbsolutePath();
 		byte[] fileContent= null;
 		CompressionUtils cutils= CompressionUtils.getInstanceOf();
 		fileContent = cutils.compress(path,relativeLoc);
