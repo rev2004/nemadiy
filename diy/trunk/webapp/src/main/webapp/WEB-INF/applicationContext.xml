@@ -26,5 +26,9 @@
     <bean id="resourceTypeService"
 		class="org.imirsel.nema.webapp.service.impl.ResourceTypeServiceImpl" 
 		p:repositoryClientConnectionPool-ref="repositoryClientConnectionPool"/>
+
+    <bean id="openIdAuthFailureHandler" class="org.imirsel.nema.webapp.security.OpenIDAuthenticationFailureHandler">
+        <property name="defaultFailureUrl" value="/login.jsp"/>
+    </bean>
    
 </beans>
