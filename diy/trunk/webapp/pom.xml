@@ -47,7 +47,7 @@
 				name="/home/gzhu1/tools/workspace/nema-diy/webapp/src/main/webapp/WEB-INF"> <include name="*.xml" /> <include
 				name="**/*.xml" /> <include name="**/**/*.xml" /> </dir> </configuration> </plugin>
 			-->
-			
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>dbunit-maven-plugin</artifactId>
@@ -857,6 +857,6 @@
 	</profiles>
 	<properties>
 		<spring.webflow.version>2.1.1.RELEASE</spring.webflow.version>
-		
+
 	</properties>
 </project>

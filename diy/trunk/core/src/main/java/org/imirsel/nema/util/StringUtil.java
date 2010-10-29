@@ -37,7 +37,7 @@ public class StringUtil {
 	 * 
 	 */
 	static public String displayNameConvert(String key) {
-		assert !key.isEmpty() : "key is empty";
+		assert !isEmpty(key) : "key is empty";
 		StringBuilder newkey = new StringBuilder(key.substring(0, 1)
 				.toUpperCase());
 		for (int i = 1; i < key.length(); i++) {
