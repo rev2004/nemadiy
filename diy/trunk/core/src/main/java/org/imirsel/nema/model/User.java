@@ -63,7 +63,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return id;
     }
 
-    @Column(nullable=false,length=50,unique=true)
+    @Column(nullable=false,length=200,unique=true)
     public String getUsername() {
         return username;
     }
