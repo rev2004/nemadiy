@@ -26,7 +26,7 @@
         <li class="info">
             <fmt:message key="signup.message"/>
         </li>
-        <li>***${sessionScope.USER_OPENID_CREDENTIAL}***
+        <li>
             <appfuse:label styleClass="desc" key="user.username"/>
             <c:choose >
                 <c:when test="${empty USER_OPENID_CREDENTIAL}">
@@ -34,9 +34,12 @@
                     <form:input path="username" id="username" cssClass="text large" cssErrorClass="text large error"/>
                 </c:when>
                 <c:otherwise> ${USER_OPENID_CREDENTIAL}
+                    <form:hidden path="username" value="${USER_OPENID_CREDENTIAL}" htmlEscape="false"/>
                 </c:otherwise>
             </c:choose>
         </li>
+        <c:choose>
+        <c:when test="${empty USER_OPENID_CREDENTIAL}">
         <li>
             <div>
                 <div class="left">
@@ -51,11 +54,19 @@
                 </div>
             </div>
         </li>
+
         <li>
             <appfuse:label styleClass="desc" key="user.passwordHint"/>
             <form:errors path="passwordHint" cssClass="fieldError"/>
             <form:input path="passwordHint" id="passwordHint" cssClass="text large" cssErrorClass="text large error"/>
         </li>
+        </c:when>
+        <c:otherwise>
+            <form:hidden path="password" value="${USER_OPENID_CREDENTIAL}*****xxxx" htmlEscape="false"/>
+            <form:hidden path="confirmPassword" value="${USER_OPENID_CREDENTIAL}*****xxxx" htmlEscape="false"/>
+            <form:hidden path="passwordHint" value="openidNoPassNeeded" htmlEscape="false"/>
+        </c:otherwise>
+        </c:choose>
         <li>
             <div class="left">
                 <appfuse:label styleClass="desc" key="user.firstName"/>
@@ -68,6 +79,7 @@
                 <form:input path="lastName" id="lastName" cssClass="text medium" cssErrorClass="text medium error" maxlength="50"/>
             </div>
         </li>
+
         <li>
             <div>
                 <div class="left">
