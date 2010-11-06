@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.dao.GenericDao;
 import org.imirsel.nema.dao.MirexSubmissionDao;
-import org.imirsel.nema.model.Contributor;
+import org.imirsel.nema.model.Profile;
 import org.imirsel.nema.model.MirexNote;
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.MirexTask;
@@ -126,7 +126,7 @@ public class MirexSubmissionServiceImpl {
         Long taskId = params.getLong("mirexTask");
         submission.setMirexTask(mirexTaskDictionary.find(taskId));
         if (contributorIds != null) {
-            List<Contributor> list = new ArrayList<Contributor>();
+            List<Profile> list = new ArrayList<Profile>();
             for (Long id : contributorIds) {
                 if (id != null) {
                     list.add(mirexContributorDictionary.find(id));
@@ -212,9 +212,9 @@ public class MirexSubmissionServiceImpl {
         return isSuperUser(user);
     }
 
-    private String hashcodeGenerate(List<Contributor> contributors) {
+    private String hashcodeGenerate(List<Profile> contributors) {
         StringBuilder code = new StringBuilder();
-        for (Contributor contributor : contributors) {
+        for (Profile contributor : contributors) {
             String lastname = contributor.getLastname();
             if (!StringUtil.isEmpty(lastname)) {
                 code.append(lastname.charAt(0));
