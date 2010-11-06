@@ -2,7 +2,7 @@ package org.imirsel.nema.dao;
 
 import java.util.List;
 
-import org.imirsel.nema.model.Contributor;
+import org.imirsel.nema.model.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ContributorDaoTest extends BaseDaoTestCase {
@@ -14,7 +14,7 @@ public class ContributorDaoTest extends BaseDaoTestCase {
 	}
 	
 	public void testSimilarSearch(){
-		List<Contributor> list=contributorDao.findSimilar("imirsel");
+		List<Profile> list=contributorDao.findSimilar("imirsel");
 		assertEquals(3, list.size());
 		list=contributorDao.findSimilar("Nema");
 		assertEquals(2, list.size());

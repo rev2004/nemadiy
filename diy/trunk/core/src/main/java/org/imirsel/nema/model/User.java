@@ -12,7 +12,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
+import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * This class represents the basic "user" object in AppFuse that allows for authentication
@@ -29,13 +31,8 @@ public class User extends BaseObject implements Serializable, UserDetails {
     private static final long serialVersionUID = 3832626162173359411L;
 
     private Long id;
-    private String username;                    // required
-    private String password;                    // required
-    private String confirmPassword;
-    private String passwordHint;
-    private String firstName;                   // required
-    private String lastName;                    // required
-    private String email;                       // required; unique
+    private String username;
+    private String password;// required
     private Integer version;
     private Set<Role> roles = new HashSet<Role>();
     private boolean enabled;
@@ -43,12 +40,20 @@ public class User extends BaseObject implements Serializable, UserDetails {
     private boolean accountLocked;
     private boolean credentialsExpired;
     private Set<PreferenceValue> preferences = new HashSet<PreferenceValue>();
+    private Profile profile;
+
 
 
     /**
      * Default constructor - creates a new instance with no values set.
+     * Generated a 20-30 random string as the password.
+     * (Real authentication is done through OpenID). 
      */
-    public User() {}
+    public User() {
+        Random random=new Random();
+
+        password=RandomStringUtils.random(random.nextInt(10)+20);
+    }
 
     /**
      * Create a new instance and set the username.
@@ -68,34 +73,20 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return username;
     }
 
-    @Column(nullable=false)
-    public String getPassword() {
-        return password;
+  
+   @Transient
+    public String getFirstName() {
+        return this.profile.getFirstname();
     }
 
     @Transient
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    @Column(name="password_hint")
-    public String getPasswordHint() {
-        return passwordHint;
-    }
-
-    @Column(name="first_name",nullable=false,length=50)
-    public String getFirstName() {
-        return firstName;
-    }
-
-    @Column(name="last_name",nullable=false,length=50)
     public String getLastName() {
-        return lastName;
+        return this.profile.getLastname();
     }
 
-    @Column(nullable=false,unique=true)
+    @Transient
     public String getEmail() {
-        return email;
+        return this.profile.getEmail();
     }
 
   /*  @Column(name="phone_number")
@@ -113,7 +104,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
      */
     @Transient
     public String getFullName() {
-        return firstName + ' ' + lastName;
+        return this.profile.getFirstname() + ' ' + this.profile.getLastname();
     }
 
   /*  @Embedded
@@ -139,23 +130,21 @@ public class User extends BaseObject implements Serializable, UserDetails {
             joinColumns = { @JoinColumn( name="user_id") }
             			 
             		
-    )  
+    )
+
     public Set<PreferenceValue> getPreferences(){
     	return preferences;
     }
     
-    @Transient
     public void addPreference(PreferenceValue pvalue) {
  		preferences.add(pvalue);
 	}
 
-    @Transient
 	public void addPreference(String key, String value) {
     	PreferenceValue pvalue = new PreferenceValue(key,value);
 		preferences.add(pvalue);
 	}
-    
-    @Transient
+
     public String getPreference(String key){
     	for(PreferenceValue pv: preferences){
     		if(pv.getKey().equals(key)){
@@ -165,7 +154,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
     	return null;
     }
     
-    @Transient
+   
 	public boolean updatePreference(String key, String value) {
     	boolean updated=Boolean.FALSE;
     	
@@ -183,7 +172,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
     	return updated;
 	}
  
-    @Transient
+   
     public boolean removePreference(String key){
     	Iterator<PreferenceValue> it =  preferences.iterator();
     	boolean success= Boolean.FALSE;
@@ -288,7 +277,12 @@ public class User extends BaseObject implements Serializable, UserDetails {
     public boolean isCredentialsExpired() {
         return credentialsExpired;
     }
-    
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(unique=true,name="profile_id")
+    public Profile getProfile() {
+        return profile;
+    }
     /**
      * @see org.springframework.security.userdetails.UserDetails#isCredentialsNonExpired()
      */
@@ -305,42 +299,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
         this.username = username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
-    public void setPasswordHint(String passwordHint) {
-        this.passwordHint = passwordHint;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-/*
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-*/
+  
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
@@ -367,6 +326,11 @@ public class User extends BaseObject implements Serializable, UserDetails {
 
     public void setCredentialsExpired(boolean credentialsExpired) {
         this.credentialsExpired = credentialsExpired;
+    }
+  
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
     
     /**
@@ -419,6 +383,18 @@ public class User extends BaseObject implements Serializable, UserDetails {
             sb.append("No Granted Authorities");
         }
         return sb.toString();
+    }
+
+    /**
+     * We are using OpenID to manage authentication.
+     * Local password is not necessary.
+     * This password is generated when user is created and used for later authentication,
+     * for example in repository. 
+     * @return
+     */
+    @Override
+    public String getPassword() {
+        return password;
     }
 
 }

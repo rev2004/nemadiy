@@ -71,7 +71,7 @@ public class MirexSubmission  implements Serializable {
 	private SubmissionStatus status=SubmissionStatus.UNKNOWN;
 	private Date updateTime;
 	private Date createTime;
-	private List<Contributor> contributors;
+	private List<Profile> contributors;
 	private List<MirexNote> notes;
 	private User user;
 	private MirexTask mirexTask;
@@ -145,17 +145,17 @@ public class MirexSubmission  implements Serializable {
 	public Date getUpdateTime() {
 		return updateTime;
 	}
-	public void setContributors(List<Contributor> contributors) {
+	public void setContributors(List<Profile> contributors) {
 		this.contributors = contributors;
 	}
 	
 	@ManyToMany(cascade=CascadeType.MERGE,fetch=FetchType.EAGER)
 	@OrderColumn(name="contributor_rank")
-	public List<Contributor> getContributors() {
+	public List<Profile> getContributors() {
 		return contributors;
 	}
-	public void addContributor(Contributor contributor){
-		if (contributors==null) {contributors=new ArrayList<Contributor>();}
+	public void addContributor(Profile contributor){
+		if (contributors==null) {contributors=new ArrayList<Profile>();}
 		contributors.add(contributor);
 	}
 	

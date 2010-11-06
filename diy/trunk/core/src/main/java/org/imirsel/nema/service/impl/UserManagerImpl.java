@@ -74,31 +74,7 @@ public class UserManagerImpl extends UniversalManagerImpl implements UserManager
 		}
 
 		// Get and prepare password management-related artifacts
-		boolean passwordChanged = false;
-		if (passwordEncoder != null) {
-			// Check whether we have to encrypt (or re-encrypt) the password
-			if (user.getVersion() == null) {
-				// New user, always encrypt
-				passwordChanged = true;
-			} else {
-				// Existing user, check password in DB
-				String currentPassword = dao.getUserPassword(user.getUsername());
-				if (currentPassword == null) {
-					passwordChanged = true;
-				} else {
-					if (!currentPassword.equals(user.getPassword())) {
-						passwordChanged = true;
-					}
-				}
-			}
-
-			// If password was changed (or new user), encrypt it
-			if (passwordChanged) {
-				user.setPassword(passwordEncoder.encodePassword(user.getPassword(), null));
-			}
-		} else {
-			log.warn("PasswordEncoder not set, skipping password encryption...");
-		}
+		
 
 		try {
 			return dao.saveUser(user);
