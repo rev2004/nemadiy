@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.imirsel.nema.Constants;
 import org.imirsel.nema.dao.MirexSubmissionDao;
-import org.imirsel.nema.model.Contributor;
+import org.imirsel.nema.model.Profile;
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
@@ -59,14 +59,14 @@ public class MirexSubmissionController {
 	
 	@RequestMapping(value="addContributor.frag", method=RequestMethod.GET)
 	public ModelAndView setupForm(ModelMap model){
-		Contributor contributor=new Contributor();
+		Profile contributor=new Profile();
 		contributor.setUrl("http://");
 		//model.addAttribute("contributor",contributor);
 		return new ModelAndView("mirex/contributorForm","contributor",contributor);
 	}
 	
 	@RequestMapping(value="addContributor.frag",method=RequestMethod.POST)
-	public ModelAndView processSubmit(@ModelAttribute("contributor")Contributor contributor){
+	public ModelAndView processSubmit(@ModelAttribute("contributor")Profile contributor){
 		contributor=mirexContributorDictionary.add(contributor);
 		return new ModelAndView("mirex/addContributorSuccess","contributor",contributor);
 		
@@ -75,7 +75,7 @@ public class MirexSubmissionController {
 	@RequestMapping(value="/contributorList.json",method=RequestMethod.GET)
 	ModelAndView findContirubutor(@RequestParam("str") String str){
 		ModelAndView mav=new ModelAndView("jsonView");
-		List<Contributor> list=mirexContributorDictionary.findSimilar(str);
+		List<Profile> list=mirexContributorDictionary.findSimilar(str);
 		mav.addObject("contributorList", list);
 		return mav;
 	}

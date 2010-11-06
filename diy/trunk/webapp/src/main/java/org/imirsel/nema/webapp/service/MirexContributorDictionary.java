@@ -5,7 +5,7 @@ package org.imirsel.nema.webapp.service;
 
 import java.util.List;
 
-import org.imirsel.nema.model.Contributor;
+import org.imirsel.nema.model.Profile;
 
 /**
  * A dictionary of mirex contributors.
@@ -13,11 +13,11 @@ import org.imirsel.nema.model.Contributor;
  * @author gzhu1
  *
  */
-public interface MirexContributorDictionary extends Dictionary<Contributor,Long>{
+public interface MirexContributorDictionary extends Dictionary<Profile,Long>{
 
    /**
     * Find contributors with keywords (name, ...)
     * @param str keyword
     */
-   List<Contributor> findSimilar(String str);
+   List<Profile> findSimilar(String str);
 }
