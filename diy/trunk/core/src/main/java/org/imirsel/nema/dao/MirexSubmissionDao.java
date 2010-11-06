@@ -3,7 +3,7 @@ package org.imirsel.nema.dao;
 import java.util.List;
 
 import org.imirsel.nema.model.MirexSubmission;
-import org.imirsel.nema.model.Contributor;
+import org.imirsel.nema.model.Profile;
 import org.imirsel.nema.model.MirexTask;
 import org.imirsel.nema.model.User;
 
@@ -21,7 +21,7 @@ public interface MirexSubmissionDao extends GenericDao<MirexSubmission,Long>{
         /**
          * Get all submissions from a particular user
          */
-	public List<MirexSubmission> getSubmissions(Contributor contributor);
+	public List<MirexSubmission> getSubmissions(Profile contributor);
 
         /**
          * Get all submissions of a particular task
