@@ -28,68 +28,10 @@
         </li>
         <li>
             <appfuse:label styleClass="desc" key="user.username"/>
-            <c:choose >
-                <c:when test="${empty USER_OPENID_CREDENTIAL}">
-                    <form:errors path="username" cssClass="fieldError"/>
-                    <form:input path="username" id="username" cssClass="text large" cssErrorClass="text large error"/>
-                </c:when>
-                <c:otherwise> ${USER_OPENID_CREDENTIAL}
-                    <form:hidden path="username" value="${USER_OPENID_CREDENTIAL}" htmlEscape="false"/>
-                </c:otherwise>
-            </c:choose>
-        </li>
-        <c:choose>
-        <c:when test="${empty USER_OPENID_CREDENTIAL}">
-        <li>
-            <div>
-                <div class="left">
-                    <appfuse:label styleClass="desc" key="user.password"/>
-                    <form:errors path="password" cssClass="fieldError"/>
-                    <form:password path="password" id="password" cssClass="text medium" cssErrorClass="text medium error" showPassword="true"/>
-                </div>
-                <div>
-                    <appfuse:label styleClass="desc" key="user.confirmPassword"/>
-                    <form:errors path="confirmPassword" cssClass="fieldError"/>
-                    <form:password path="confirmPassword" id="confirmPassword" cssClass="text medium" cssErrorClass="text medium error" showPassword="true"/>
-                </div>
-            </div>
-        </li>
+            <form:hidden path="username" value="${USER_OPENID_CREDENTIAL}" htmlEscape="false"/>
+       </li>
+ 
 
-        <li>
-            <appfuse:label styleClass="desc" key="user.passwordHint"/>
-            <form:errors path="passwordHint" cssClass="fieldError"/>
-            <form:input path="passwordHint" id="passwordHint" cssClass="text large" cssErrorClass="text large error"/>
-        </li>
-        </c:when>
-        <c:otherwise>
-            <form:hidden path="password" value="${USER_OPENID_CREDENTIAL}*****xxxx" htmlEscape="false"/>
-            <form:hidden path="confirmPassword" value="${USER_OPENID_CREDENTIAL}*****xxxx" htmlEscape="false"/>
-            <form:hidden path="passwordHint" value="openidNoPassNeeded" htmlEscape="false"/>
-        </c:otherwise>
-        </c:choose>
-        <li>
-            <div class="left">
-                <appfuse:label styleClass="desc" key="user.firstName"/>
-                <form:errors path="firstName" cssClass="fieldError"/>
-                <form:input path="firstName" id="firstName" cssClass="text medium" cssErrorClass="text medium error" maxlength="50"/>
-            </div>
-            <div>
-                <appfuse:label styleClass="desc" key="user.lastName"/>
-                <form:errors path="lastName" cssClass="fieldError"/>
-                <form:input path="lastName" id="lastName" cssClass="text medium" cssErrorClass="text medium error" maxlength="50"/>
-            </div>
-        </li>
-
-        <li>
-            <div>
-                <div class="left">
-                    <appfuse:label styleClass="desc" key="user.email"/>
-                    <form:errors path="email" cssClass="fieldError"/>
-                    <form:input path="email" id="email" cssClass="text medium" cssErrorClass="text medium error"/>
-                </div>
-
-            </div>
-        </li>
         <li class="buttonBar bottom">
             <input type="submit" class="button" name="save" onclick="bCancel=false" value="<fmt:message key="button.register"/>"/>
             <input type="submit" class="button" name="cancel" onclick="bCancel=true" value="<fmt:message key="button.cancel"/>"/>

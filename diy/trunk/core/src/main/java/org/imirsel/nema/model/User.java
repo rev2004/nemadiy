@@ -131,10 +131,22 @@ public class User extends BaseObject implements Serializable, UserDetails {
             			 
             		
     )
-
     public Set<PreferenceValue> getPreferences(){
     	return preferences;
     }
+
+    /**
+     * We are using OpenID to manage authentication.
+     * Local password is not necessary.
+     * This password is generated when user is created and used for later authentication,
+     * for example in repository.
+     * @return
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    
     
     public void addPreference(PreferenceValue pvalue) {
  		preferences.add(pvalue);
@@ -334,6 +346,15 @@ public class User extends BaseObject implements Serializable, UserDetails {
     }
     
     /**
+     * This method is only for Hibernate to populate the object from database,
+     * password is set once the user is created and should not be changed or set 
+     * ever since as the authentication is through OpenId. 
+     * @param password
+     */
+    public void setPassword(String password){
+        this.password=password;
+    }
+    /**
      * {@inheritDoc}
      */
     public boolean equals(Object o) {
@@ -385,16 +406,5 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return sb.toString();
     }
 
-    /**
-     * We are using OpenID to manage authentication.
-     * Local password is not necessary.
-     * This password is generated when user is created and used for later authentication,
-     * for example in repository. 
-     * @return
-     */
-    @Override
-    public String getPassword() {
-        return password;
-    }
 
 }

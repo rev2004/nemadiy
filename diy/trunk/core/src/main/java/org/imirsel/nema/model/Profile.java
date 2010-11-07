@@ -31,6 +31,8 @@ public class Profile implements Serializable {
     private static final long serialVersionUID = 8964695332299396503L;
     private long id;
     private UUID uuid;
+
+
     private String firstname;
     private String lastname;
     private String organization;
@@ -180,6 +182,22 @@ public class Profile implements Serializable {
         this.owner = owner;
     }
 
+    /**
+     * @return the uuid
+     */
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    /**
+     * This method is only for Hibernate to populate the object from database,
+     * password is set once the user is created and should not be changed or set
+     * ever since as the authentication is through OpenId.
+     */
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -214,10 +232,5 @@ public class Profile implements Serializable {
         return sb.toString();
     }
 
-    /**
-     * @return the uuid
-     */
-    public UUID getUuid() {
-        return uuid;
-    }
+    
 }

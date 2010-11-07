@@ -28,7 +28,7 @@
         </form>
     </formset>
 
-  <formset>
+
   <!--
     Define form validation config in validation-forms.xml
   -->
@@ -63,94 +63,5 @@
               </field>
       </form>
       -->
-      <form name="user">
-              <field property="username"
-                     depends="required">
 
-                  <arg0 key="user.username"/>
-              </field>
-              <field property="password"
-                     depends="required,twofields">
-                  <msg
-                    name="twofields"
-                    key="errors.twofields"/>
-
-                  <arg0 key="user.password"/>
-                  <arg1
-                    key="user.confirmPassword"
-                  />
-                  <var>
-                    <var-name>secondProperty</var-name>
-                    <var-value>confirmPassword</var-value>
-                  </var>
-              </field>
-              <field property="confirmPassword"
-                     depends="required">
-
-                  <arg0 key="user.confirmPassword"/>
-              </field>
-              <field property="firstName"
-                     depends="required">
-
-                  <arg0 key="user.firstName"/>
-              </field>
-              <field property="lastName"
-                     depends="required">
-
-                  <arg0 key="user.lastName"/>
-              </field>
-              <!--  <field property="address.city"
-                     depends="required">
-
-                  <arg0 key="user.address.city"/>
-              </field>
-              <field property="address.country"
-                     depends="required">
-
-                  <arg0 key="user.address.country"/>
-              </field>
-              <field property="address.postalCode"
-                     depends="required,mask">
-                  <msg
-                    name="mask"
-                    key="errors.zip"/>
-
-                  <arg0 key="user.address.postalCode"/>
-                  <var>
-                    <var-name>mask</var-name>
-                    <var-value>${zip}</var-value>
-                  </var>
-              </field>
-              <field property="address.province"
-                     depends="required">
-
-                  <arg0 key="user.address.province"/>
-              </field>
-              -->
-              <field property="email"
-                     depends="required,email">
-
-                  <arg0 key="user.email"/>
-              </field>
-              <!-- 
-              <field property="phoneNumber"
-                     depends="mask">
-                  <msg
-                    name="mask"
-                    key="errors.phone"/>
-
-                  <arg0 key="user.phoneNumber"/>
-                  <var>
-                    <var-name>mask</var-name>
-                    <var-value>${phone}</var-value>
-                  </var>
-              </field>
-              -->
-              <field property="passwordHint"
-                     depends="required">
-
-                  <arg0 key="user.passwordHint"/>
-              </field>
-      </form>
-  </formset>
 </form-validation>

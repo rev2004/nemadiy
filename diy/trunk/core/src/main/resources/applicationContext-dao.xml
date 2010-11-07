@@ -57,7 +57,7 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     <bean id="contributorDao"
-    	class="org.imirsel.nema.dao.hibernate.ContributorDaoHibernate">
+    	class="org.imirsel.nema.dao.hibernate.ProfileDaoHibernate">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 

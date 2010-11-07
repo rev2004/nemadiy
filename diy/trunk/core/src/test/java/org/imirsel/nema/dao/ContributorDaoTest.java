@@ -6,10 +6,10 @@ import org.imirsel.nema.model.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ContributorDaoTest extends BaseDaoTestCase {
-	ContributorDao contributorDao;
+	ProfileDao contributorDao;
 
 	@Autowired
-	public void setContributorDao(ContributorDao contributorDao) {
+	public void setContributorDao(ProfileDao contributorDao) {
 		this.contributorDao = contributorDao;
 	}
 	

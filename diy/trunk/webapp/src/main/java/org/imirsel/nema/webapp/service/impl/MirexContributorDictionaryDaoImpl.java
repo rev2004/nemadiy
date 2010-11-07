@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.imirsel.nema.dao.ContributorDao;
+import org.imirsel.nema.dao.ProfileDao;
 import org.imirsel.nema.dao.MirexTaskDao;
 import org.imirsel.nema.model.Profile;
 import org.imirsel.nema.model.MirexTask;
@@ -14,12 +14,12 @@ import org.imirsel.nema.webapp.service.NemaServiceException;
 
 /**
  * Implement {@link MirexContributorDictionary} with a database back-end via
- * {@link ContributorDao}.
+ * {@link ProfileDao}.
  * @author gzhu1
  */
 public class MirexContributorDictionaryDaoImpl implements
 		MirexContributorDictionary {
-	private ContributorDao dao;
+	private ProfileDao dao;
 	private Map<Long, Profile> map;
 
 	/**
@@ -32,7 +32,7 @@ public class MirexContributorDictionaryDaoImpl implements
         /**
 	 * {@inheritDoc }
 	 */
-	public void setDao(ContributorDao dao) {
+	public void setDao(ProfileDao dao) {
 		this.dao = dao;
 		refresh();
 	}
