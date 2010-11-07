@@ -6,20 +6,20 @@ package org.imirsel.nema.dao.hibernate;
 import java.util.List;
 import java.util.Map;
 
-import org.imirsel.nema.dao.ContributorDao;
+import org.imirsel.nema.dao.ProfileDao;
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.Profile;
 
 /**
- * Hibernate implementation of {@link ContributorDao}
+ * Hibernate implementation of {@link ProfileDao}
  * @author gzhu1
  *
  */
-public class ContributorDaoHibernate extends GenericDaoHibernate<Profile, Long>
-		implements ContributorDao {
+public class ProfileDaoHibernate extends GenericDaoHibernate<Profile, Long>
+		implements ProfileDao {
 	
 
-	public ContributorDaoHibernate() {
+	public ProfileDaoHibernate() {
 		super(Profile.class);
 	}
 

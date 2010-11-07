@@ -190,7 +190,6 @@
     <bean id="reloadController" class="org.imirsel.nema.webapp.controller.ReloadController" />
 
     <bean id="signupController" class="org.imirsel.nema.webapp.controller.SignupController">
-        <property name="validator" ref="beanValidator" />
         <property name="formView" value="signup" />
         <property name="successView" value="redirect:welcome.jsp" />
         <property name="userManager" ref="userManager" />
@@ -221,7 +220,6 @@
     </bean>
 
     <bean id="userFormController" class="org.imirsel.nema.webapp.controller.UserFormController">
-        <property name="validator" ref="beanValidator" />
         <property name="formView" value="userForm" />
         <property name="successView" value="redirect:users.html" />
         <property name="cancelView" value="redirect:welcome.jsp" />

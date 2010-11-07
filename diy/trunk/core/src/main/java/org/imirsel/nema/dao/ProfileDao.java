@@ -9,7 +9,7 @@ import org.imirsel.nema.model.Profile;
  * Data Access Object for Contributors of Mirex Submission
  * @author gzhu1
  */
-public interface ContributorDao extends GenericDao<Profile,Long>{
+public interface ProfileDao extends GenericDao<Profile,Long>{
 
         /**
          * Find all contributors for a particular mirex submission
