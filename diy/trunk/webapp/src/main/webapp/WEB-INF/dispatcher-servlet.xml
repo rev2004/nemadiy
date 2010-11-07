@@ -185,13 +185,7 @@
 		class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />
 
 
-    <bean id="passwordHintController"
-		class="org.imirsel.nema.webapp.controller.PasswordHintController">
-        <property name="userManager" ref="userManager" />
-        <property name="messageSource" ref="messageSource" />
-        <property name="mailEngine" ref="mailEngine" />
-        <property name="message" ref="mailMessage" />
-    </bean>
+
 
     <bean id="reloadController" class="org.imirsel.nema.webapp.controller.ReloadController" />
 
@@ -258,7 +252,6 @@
 				/admin/flushCache.html=filenameController
 				/admin/reload.html=reloadController
 				/admin/users.html=userController
-				/passwordHint.html=passwordHintController
 				/*.jsp=viewResolver
             </value>
         </property>

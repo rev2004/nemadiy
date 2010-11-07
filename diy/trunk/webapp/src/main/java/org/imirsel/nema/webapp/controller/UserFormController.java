@@ -123,7 +123,7 @@ public class UserFormController extends BaseFormController {
                                    new Object[] {user.getUsername(), user.getEmail()}, "duplicate user");
 
                 // redisplay the unencrypted passwords
-                user.setPassword(user.getConfirmPassword());
+                //user.setPassword(user.getPassword());
                 // reset the version # to what was passed in
                 user.setVersion(originalVersion);
                 
@@ -211,7 +211,7 @@ public class UserFormController extends BaseFormController {
                 user.addRole(new Role(Constants.USER_ROLE));
             }
 
-            user.setConfirmPassword(user.getPassword());
+            //user.setConfirmPassword(user.getPassword());
 
             return user;
         } else if (request.getParameter("id") != null && !"".equals(request.getParameter("id"))

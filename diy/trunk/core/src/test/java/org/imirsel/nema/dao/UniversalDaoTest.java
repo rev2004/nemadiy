@@ -32,12 +32,12 @@ public class UniversalDaoTest extends BaseDaoTestCase {
         User user = new User();
         // set required fields
         user.setUsername("foo");
-        user.setPassword("bar");
-        user.setFirstName("first");
-        user.setLastName("last");
-        //user.getAddress().setCity("Denver");
-        //user.getAddress().setPostalCode("80465");
-        user.setEmail("foo@bar.com");
+//        user.setPassword("bar");
+//        user.setFirstName("first");
+//        user.setLastName("last");
+//        //user.getAddress().setCity("Denver");
+//        //user.getAddress().setPostalCode("80465");
+//        user.setEmail("foo@bar.com");
 
         // create
         user = (User)universalDao.save(user);

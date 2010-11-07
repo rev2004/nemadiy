@@ -97,8 +97,8 @@ public class UserFormControllerTest extends BaseControllerTestCase {
         // set updated properties first since adding them later will
         // result in multiple parameters with the same name getting sent
         User user = ((UserManager) applicationContext.getBean("userManager")).getUser("-1");
-        user.setConfirmPassword(user.getPassword());
-        user.setLastName("Updated Last Name");
+        //user.setConfirmPassword(user.getPassword());
+        //user.setLastName("Updated Last Name");
         super.objectToRequestParameters(user, request);
         
         mv = c.handleRequest(request, new MockHttpServletResponse());

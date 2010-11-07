@@ -55,7 +55,7 @@ public class UserController extends MultiActionController {
         
         // log user in automatically
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                user.getUsername(), user.getConfirmPassword(), user.getAuthorities());
+                user.getUsername(), user.getPassword(), user.getAuthorities());
         auth.setDetails(user);
         SecurityContextHolder.getContext().setAuthentication(auth);
        ModelAndView mav = new ModelAndView("jsonView");

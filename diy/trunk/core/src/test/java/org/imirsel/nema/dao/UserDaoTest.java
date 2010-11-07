@@ -109,9 +109,9 @@ public class UserDaoTest extends BaseDaoTestCase {
 
     public void testAddAndRemoveUser() throws Exception {
         User user = new User("testuser");
-        user.setPassword("testpass");
-        user.setFirstName("Test");
-        user.setLastName("Last");
+//        user.setPassword("testpass");
+//        user.setFirstName("Test");
+//        user.setLastName("Last");
         /*Address address = new Address();
         address.setCity("Denver");
         address.setProvince("CO");
@@ -119,7 +119,7 @@ public class UserDaoTest extends BaseDaoTestCase {
         address.setPostalCode("80210");
 */
 //        user.setAddress(address);
-        user.setEmail("testuser@appfuse.org");
+//        user.setEmail("testuser@appfuse.org");
  //       user.setWebsite("http://raibledesigns.com");
         
         Role role = rdao.getRoleByName(Constants.USER_ROLE);
