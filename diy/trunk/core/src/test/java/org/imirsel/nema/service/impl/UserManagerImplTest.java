@@ -124,7 +124,7 @@ public class UserManagerImplTest extends BaseManagerMockTestCase {
     public void testUserExistsException() {
         // set expectations
         final User user = new User("admin");
-        user.setEmail("matt@raibledesigns.com");
+        //user.setEmail("matt@raibledesigns.com");
 
         final Exception ex = new DataIntegrityViolationException("");
 

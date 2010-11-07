@@ -89,7 +89,7 @@ public class SignupController extends BaseFormController {
                     new Object[]{user.getUsername(), user.getEmail()}, "duplicate user");
 
             // redisplay the unencrypted passwords
-            user.setPassword(user.getConfirmPassword());
+            //user.setPassword(user.getConfirmPassword());
             return showForm(request, response, errors);
         }
 
@@ -98,7 +98,7 @@ public class SignupController extends BaseFormController {
 
         // log user in automatically
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                user.getUsername(), user.getConfirmPassword(), user.getAuthorities());
+                user.getUsername(), user.getPassword(), user.getAuthorities());
         auth.setDetails(user);
         SecurityContextHolder.getContext().setAuthentication(auth);
 

@@ -40,7 +40,7 @@ public class UserSecurityAdviceTest {
         SecurityContext context = new SecurityContextImpl();
         User user = new User("user");
         user.setId(1L);
-        user.setPassword("password");
+        //user.setPassword("password");
         user.addRole(new Role(Constants.USER_ROLE));
 
         UsernamePasswordAuthenticationToken token =
@@ -77,7 +77,7 @@ public class UserSecurityAdviceTest {
         SecurityContext securityContext = new SecurityContextImpl();
         User user = new User("admin");
         user.setId(2L);
-        user.setPassword("password");
+        //user.setPassword("password");
         user.addRole(new Role(Constants.ADMIN_ROLE));
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities());
@@ -151,7 +151,7 @@ public class UserSecurityAdviceTest {
         SecurityContext securityContext = new SecurityContextImpl();
         User user1 = new User("user");
         user1.setId(1L);
-        user1.setPassword("password");
+        //user1.setPassword("password");
         user1.addRole(new Role(Constants.ADMIN_ROLE));
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(user1.getUsername(), user1.getPassword(), user1.getAuthorities());
