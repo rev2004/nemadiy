@@ -128,8 +128,6 @@ public class User extends BaseObject implements Serializable, UserDetails {
     @JoinTable(
             name="user_prefs",
             joinColumns = { @JoinColumn( name="user_id") }
-            			 
-            		
     )
     public Set<PreferenceValue> getPreferences(){
     	return preferences;

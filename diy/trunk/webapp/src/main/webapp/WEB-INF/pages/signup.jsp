@@ -22,21 +22,36 @@
 <div class="separator"></div>
 
 <form:form commandName="user" method="post" action="signup.html" onsubmit="return validateUser(this)" id="signupForm">
-    <ul>
-        <li class="info">
-            <fmt:message key="signup.message"/>
-        </li>
-        <li>
-            <appfuse:label styleClass="desc" key="user.username"/>
-            <form:hidden path="username" value="${USER_OPENID_CREDENTIAL}" htmlEscape="false"/>
-       </li>
- 
 
-        <li class="buttonBar bottom">
-            <input type="submit" class="button" name="save" onclick="bCancel=false" value="<fmt:message key="button.register"/>"/>
-            <input type="submit" class="button" name="cancel" onclick="bCancel=true" value="<fmt:message key="button.cancel"/>"/>
-        </li>
-    </ul>
+    <div class="info">
+        <fmt:message key="signup.message"/>
+    </div>
+
+
+    <div class="surround"><label class="fixed required">UserName:</label>${USER_OPENID_CREDENTIAL}  </div>
+    <div style="clear:both;"><form:hidden path="username" value="${USER_OPENID_CREDENTIAL}" htmlEscape="false"/></div>
+    <br/>
+    <div class="surround" ><label class="fixed required">First Name:</label><form:input path="profile.firstname"/></div>
+    <div class="surround"><label class="fixed required">Last Name:</label><form:input path="profile.lastname"/></div>
+    <div class="surround"><label class="fixed required">Orgnization:</label><form:input path="profile.organization"/></div>
+    <div class="surround"><label class="fixed ">Department:</label><form:input path="profile.department" /></div>
+    <div class="surround"><label class="fixed ">Unit/Lab:</label><form:input path="profile.unit"/></div>
+    <div class="surround"><label class="fixed ">URL:</label><form:input path="profile.url" size="25" /></div>
+    <div class="surround"><label class="fixed required">From(year):</label><form:input path="profile.startYear" size="5"/>
+        <label class="required">To:</label><form:input path="profile.endYear" size="5"/></div>
+    <div class="surround"><label class="fixed required">Email:</label><form:input path="profile.email"/></div>
+    <div class="surround"><label class="fixed ">Phone:</label><form:input path="profile.phone"/></div>
+    <div class="surround"><label class="fixed ">Street Address:</label><form:input path="profile.address.streetLine1"/></div>
+    <div class="surround"><label class="fixed ">Street Address 2:</label><form:input path="profile.address.streetLine2"/></div>
+    <div class="surround"><label class="fixed ">Street Address 3:</label><form:input path="profile.address.streetLine3"/></div>
+    <div class="surround"><label class="fixed ">City:</label><form:input path="profile.address.city"/></div>
+    <div class="surround"><label class="fixed ">State, Region:</label><form:input path="profile.address.region"/></div>
+    <div class="surround"><label class="fixed ">Postal Code:</label><form:input path="profile.address.postcode"/></div>
+    <div class="surround"><label class="fixed ">Country:</label><form:input path="profile.address.country"/></div>
+    <div class="buttonBar bottom">
+        <input type="submit" class="button" name="save" onclick="bCancel=false" value="<fmt:message key="button.register"/>"/>
+        <input type="submit" class="button" name="cancel" onclick="bCancel=true" value="<fmt:message key="button.cancel"/>"/>
+    </div>
 </form:form>
 
 <script type="text/javascript">

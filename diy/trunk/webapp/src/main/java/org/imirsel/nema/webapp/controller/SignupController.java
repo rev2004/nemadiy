@@ -58,7 +58,7 @@ public class SignupController extends BaseFormController {
         Locale locale = request.getLocale();
         
         user.setEnabled(true);
-
+        user.getProfile().setOwner(user);
         // Set the default user role on this new user
         user.addRole(roleManager.getRole(Constants.USER_ROLE));
         log.debug("getting default preferences");
