@@ -288,7 +288,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return credentialsExpired;
     }
 
-    @OneToOne(cascade=CascadeType.ALL)
+    @OneToOne(cascade={CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(unique=true,name="profile_id")
     public Profile getProfile() {
         return profile;
