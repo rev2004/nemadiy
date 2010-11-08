@@ -12,6 +12,7 @@ import org.imirsel.nema.model.Profile;
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
+import org.imirsel.nema.service.MailEngine;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.webapp.service.MirexContributorDictionary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class MirexSubmissionController {
 
 	
-	MirexContributorDictionary mirexContributorDictionary;
-	MirexSubmissionDao mirexSubmissionDao;
-	UserManager userManager;
+	private MirexContributorDictionary mirexContributorDictionary;
+	private MirexSubmissionDao mirexSubmissionDao;
+	private UserManager userManager;
+        
 	
 	@Autowired
 	public void setMirexContributorDictionary(
@@ -67,6 +69,7 @@ public class MirexSubmissionController {
 	
 	@RequestMapping(value="addContributor.frag",method=RequestMethod.POST)
 	public ModelAndView processSubmit(@ModelAttribute("contributor")Profile contributor){
+                contributor.setOwner(userManager.getCurrentUser());
 		contributor=mirexContributorDictionary.add(contributor);
 		return new ModelAndView("mirex/addContributorSuccess","contributor",contributor);
 		
@@ -104,4 +107,6 @@ public class MirexSubmissionController {
 		}
 		return false;
 	}
+
+    
 }
