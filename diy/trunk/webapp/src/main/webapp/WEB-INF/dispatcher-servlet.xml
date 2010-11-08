@@ -191,7 +191,7 @@
 
     <bean id="signupController" class="org.imirsel.nema.webapp.controller.SignupController">
         <property name="formView" value="signup" />
-        <property name="successView" value="redirect:welcome.jsp" />
+        <property name="successView" value="redirect:index.jsp" />
         <property name="userManager" ref="userManager" />
         <property name="roleManager" ref="roleManager" />
         <property name="preferenceValueManager" ref="preferenceValueManager" />
@@ -222,7 +222,7 @@
     <bean id="userFormController" class="org.imirsel.nema.webapp.controller.UserFormController">
         <property name="formView" value="userForm" />
         <property name="successView" value="redirect:users.html" />
-        <property name="cancelView" value="redirect:welcome.jsp" />
+        <property name="cancelView" value="redirect:index.jsp" />
         <property name="userManager" ref="userManager" />
         <property name="roleManager" ref="roleManager" />
         <property name="mailEngine" ref="mailEngine" />

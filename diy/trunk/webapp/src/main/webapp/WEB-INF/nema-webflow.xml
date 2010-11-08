@@ -38,7 +38,10 @@
 		p:mirexTaskDictionary-ref="mirexTaskDictionary"
 		p:userManager-ref="userManager"
 		p:mirexNoteDao-ref="mirexNoteDao"
-                p:jcrService-ref="jcrService">
+                p:jcrService-ref="jcrService"
+                p:invitationUrl="http://nema.lis.uiuc.edu/diy/invitation.html"
+                p:mailEngine-ref="mailEngine"
+                p:mailSender="zhu.guojun2010@gmail.com">
     </bean>
 
     <bean id="jiniService" class="org.imirsel.nema.webapp.service.impl.JiniServiceImpl">

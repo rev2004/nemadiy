@@ -21,12 +21,14 @@ import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
 import org.imirsel.nema.model.MirexNote.NoteType;
 import org.imirsel.nema.model.MirexSubmission.SubmissionStatus;
+import org.imirsel.nema.service.MailEngine;
 import org.imirsel.nema.service.UserManager;
 import org.imirsel.nema.util.StringUtil;
 import org.imirsel.nema.webapp.service.JcrService;
 import org.imirsel.nema.webapp.service.MirexContributorDictionary;
 import org.imirsel.nema.webapp.service.MirexSubmissionRepository;
 import org.imirsel.nema.webapp.service.MirexTaskDictionary;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.webflow.core.collection.ParameterMap;
 
@@ -37,6 +39,13 @@ import org.springframework.webflow.core.collection.ParameterMap;
 public class MirexSubmissionServiceImpl {
 
     static private Log logger = LogFactory.getLog(MirexSubmissionServiceImpl.class);
+    static protected final String MAIL_TITLE="Invitation for NEMA Signup";
+    static protected final String MAIL_CONTENT
+            ="Hi, <sender> has submitted an algorithm (<submission>) to MIREX. You are one of contributors. "
+            +"Please use the following link (<host>?code=<uuid>) to signup. "
+            +"And you will be able to see the latest update of the submission. \n"
+            +"Sincerely yours\n"
+            +"NEMA team";
 
     static public List<SubmissionStatus> statusList() {
         List<SubmissionStatus> list = Arrays.asList(SubmissionStatus.values());
@@ -50,6 +59,10 @@ public class MirexSubmissionServiceImpl {
     private GenericDao<MirexNote, Long> mirexNoteDao;
     private MirexSubmissionRepository repository;
     private JcrService jcrService;
+    private MailEngine mailEngine;
+    private String mailSender;
+    private String invitationUrl;
+
 
     public void setJcrService(JcrService jcrService) {
         this.jcrService = jcrService;
@@ -144,17 +157,34 @@ public class MirexSubmissionServiceImpl {
 
     /**
      * Save the submission for the first time,
-     * update its status to {@link SubmissionStatus.READY_FOR_RUN}
+     * update its status to {@link SubmissionStatus.READY_FOR_RUN},
+     * send invitation emails to all contributor other than creator,
      * and return it with updated status
      */
     public MirexSubmission saveForFirstTime(MirexSubmission submission) {
 
         User user = userManager.getCurrentUser();
 
-
         submission.setHashcode(hashcodeGenerate(submission.getContributors()));
         submission.setStatus(SubmissionStatus.READY_FOR_RUN);
         submission.setUser(user);
+
+        for (Profile contributor:submission.getContributors()){
+            SimpleMailMessage message=new SimpleMailMessage();
+            message.setFrom(mailSender);
+            message.setSubject(MAIL_TITLE);
+            String content=MAIL_CONTENT;
+            content.replace("<sender>", user.getProfile().getLastname()+", "+user.getProfile().getFirstname());
+            content.replace("<submission>", submission.getName());
+            content.replace("<host>", invitationUrl);
+            if (!contributor.equals(user.getProfile())){
+                message.setTo(contributor.getEmail());
+                String text=new String(content);
+                text.replace("<uuid>", contributor.getUuid().toString());
+                message.setText(text);
+                mailEngine.send(message);
+            }
+        }
         return mirexSubmissionDao.save(submission);
     }
 
@@ -258,5 +288,26 @@ public class MirexSubmissionServiceImpl {
             }
         }
         return false;
+    }
+
+    /**
+     * @param mailEngine the mailEngine to set
+     */
+    public void setMailEngine(MailEngine mailEngine) {
+        this.mailEngine = mailEngine;
+    }
+
+    /**
+     * @param mailSender the mailSender to set
+     */
+    public void setMailSender(String mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    /**
+     * @param invitationUrl the invitationUrl to set
+     */
+    public void setInvitationUrl(String invitationUrl) {
+        this.invitationUrl = invitationUrl;
     }
 }

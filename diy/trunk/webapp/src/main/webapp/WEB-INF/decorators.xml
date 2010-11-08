@@ -8,7 +8,6 @@
         <pattern>/*.js</pattern>
         <pattern>/*.frag</pattern>
         <pattern>*/subpage/*</pattern>
-        <pattern>/login.jsp</pattern>
     </excludes> 
     <decorator name="default" page="default.jsp">
         <pattern>/*</pattern>
