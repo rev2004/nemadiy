@@ -25,6 +25,7 @@ import java.util.List;
 */
 public class UserDaoHibernate extends GenericDaoHibernate<User, Long> implements UserDao, UserDetailsService {
 
+
     /**
      * Constructor that sets the entity to User.class.
      */
@@ -45,7 +46,8 @@ public class UserDaoHibernate extends GenericDaoHibernate<User, Long> implements
      */
     public User saveUser(User user) {
         log.debug("user's id: " + user.getId());
-        getHibernateTemplate().saveOrUpdate(user);
+
+        user=getHibernateTemplate().merge(user);
         // necessary to throw a DataIntegrityViolation and catch it in UserManager
         getHibernateTemplate().flush();
         return user;
@@ -86,6 +88,16 @@ public class UserDaoHibernate extends GenericDaoHibernate<User, Long> implements
         return jdbcTemplate.queryForObject(
                 "select password from " + table.name() + " where username=?", String.class, username);
 
+    }
+
+    /**
+     * Remove a user, but keep the profile associated with it, set its owner to null.
+     */
+    @Override
+    public void remove(Long id){
+        User user=get(id);
+        user.getProfile().setOwner(null);
+        super.remove(id);
     }
     
 }
