@@ -173,9 +173,10 @@ public class MirexSubmissionServiceImpl {
                 message.setFrom(mailSender);
                 message.setSubject(MAIL_TITLE);
                 String content = MAIL_CONTENT;
-                content.replace("<sender>", user.getProfile().getLastname() + ", " + user.getProfile().getFirstname());
-                content.replace("<submission>", submission.getName());
-                content.replace("<host>", invitationUrl);
+                content=content.replace("<sender>", user.getProfile().getLastname() + ", " + user.getProfile().getFirstname());
+                content=content.replace("<submission>", submission.getName());
+                content=content.replace("<host>", invitationUrl);
+                content=content.replace("<uuid>", contributor.getUuid().toString());
                 if (!contributor.equals(user.getProfile())) {
                     message.setTo(contributor.getEmail());
                     String text = new String(content);
