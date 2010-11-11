@@ -1,6 +1,7 @@
 package org.imirsel.nema.dao;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.Profile;
@@ -22,4 +23,12 @@ public interface ProfileDao extends GenericDao<Profile,Long>{
          */
 	public List<Profile> findSimilar(String str);
 
+        /**
+         * 
+         * @param uuid
+         * @return null if cannot find the profile
+         */
+        public Profile findByUuid(UUID uuid);
+
+        
 }
