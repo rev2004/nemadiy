@@ -1,7 +1,7 @@
 <%@ include file="/common/taglibs.jsp"%>
 
 <head>
-    <title>Invitation</title>
+    <title><fmt:message key="login.title"/></title>
     <meta name="heading" content="<fmt:message key='login.heading'/>"/>
     <meta name="menu" content="Login"/>
     <link rel="stylesheet" type="text/css" media="all" href="<c:url value='/styles/${appConfig["csstheme"]}/layout-1col.css'/>" />
@@ -14,7 +14,9 @@
 
 </head>
 <body id="login">
-   
+    <c:if test="not empty greeting">
+        <div class="message" >${greeting}</div>
+    </c:if>
     <script type="text/javascript">
         jQuery.noConflict();
         jQuery(document).ready(function(){

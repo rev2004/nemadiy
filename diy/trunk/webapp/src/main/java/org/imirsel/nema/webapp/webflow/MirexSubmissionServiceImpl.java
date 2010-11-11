@@ -39,13 +39,12 @@ import org.springframework.webflow.core.collection.ParameterMap;
 public class MirexSubmissionServiceImpl {
 
     static private Log logger = LogFactory.getLog(MirexSubmissionServiceImpl.class);
-    static protected final String MAIL_TITLE="Invitation for NEMA Signup";
-    static protected final String MAIL_CONTENT
-            ="Hi, <sender> has submitted an algorithm (<submission>) to MIREX. You are one of contributors. "
-            +"Please use the following link (<host>?code=<uuid>) to signup. "
-            +"And you will be able to see the latest update of the submission. \n"
-            +"Sincerely yours\n"
-            +"NEMA team";
+    static protected final String MAIL_TITLE = "Invitation for NEMA Signup";
+    static protected final String MAIL_CONTENT = "Hi, <sender> has submitted an algorithm (<submission>) to MIREX. You are one of contributors. "
+            + "Please use the following link (<host>?code=<uuid>) to signup. "
+            + "And you will be able to see the latest update of the submission. \n"
+            + "Sincerely yours\n"
+            + "NEMA team";
 
     static public List<SubmissionStatus> statusList() {
         List<SubmissionStatus> list = Arrays.asList(SubmissionStatus.values());
@@ -62,7 +61,6 @@ public class MirexSubmissionServiceImpl {
     private MailEngine mailEngine;
     private String mailSender;
     private String invitationUrl;
-
 
     public void setJcrService(JcrService jcrService) {
         this.jcrService = jcrService;
@@ -169,20 +167,22 @@ public class MirexSubmissionServiceImpl {
         submission.setStatus(SubmissionStatus.READY_FOR_RUN);
         submission.setUser(user);
 
-        for (Profile contributor:submission.getContributors()){
-            SimpleMailMessage message=new SimpleMailMessage();
-            message.setFrom(mailSender);
-            message.setSubject(MAIL_TITLE);
-            String content=MAIL_CONTENT;
-            content.replace("<sender>", user.getProfile().getLastname()+", "+user.getProfile().getFirstname());
-            content.replace("<submission>", submission.getName());
-            content.replace("<host>", invitationUrl);
-            if (!contributor.equals(user.getProfile())){
-                message.setTo(contributor.getEmail());
-                String text=new String(content);
-                text.replace("<uuid>", contributor.getUuid().toString());
-                message.setText(text);
-                mailEngine.send(message);
+        for (Profile contributor : submission.getContributors()) {
+            if ((contributor.getOwner().equals(user))&&(!contributor.equals(user.getProfile()))) {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setFrom(mailSender);
+                message.setSubject(MAIL_TITLE);
+                String content = MAIL_CONTENT;
+                content.replace("<sender>", user.getProfile().getLastname() + ", " + user.getProfile().getFirstname());
+                content.replace("<submission>", submission.getName());
+                content.replace("<host>", invitationUrl);
+                if (!contributor.equals(user.getProfile())) {
+                    message.setTo(contributor.getEmail());
+                    String text = new String(content);
+                    text.replace("<uuid>", contributor.getUuid().toString());
+                    message.setText(text);
+                    mailEngine.send(message);
+                }
             }
         }
         return mirexSubmissionDao.save(submission);

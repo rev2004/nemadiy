@@ -12,8 +12,9 @@ import org.imirsel.nema.model.Profile;
 import org.imirsel.nema.model.MirexSubmission;
 import org.imirsel.nema.model.Role;
 import org.imirsel.nema.model.User;
-import org.imirsel.nema.service.MailEngine;
 import org.imirsel.nema.service.UserManager;
+import org.imirsel.nema.webapp.json.ConverterToList;
+import org.imirsel.nema.webapp.json.ConverterToMapProfile;
 import org.imirsel.nema.webapp.service.MirexContributorDictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -79,7 +80,9 @@ public class MirexSubmissionController {
 	ModelAndView findContirubutor(@RequestParam("str") String str){
 		ModelAndView mav=new ModelAndView("jsonView");
 		List<Profile> list=mirexContributorDictionary.findSimilar(str);
-		mav.addObject("contributorList", list);
+                ConverterToList<Profile> converter = new ConverterToList<Profile>();
+		mav.addObject("contributorList", 
+                        converter.convertToList(list, new ConverterToMapProfile()));
 		return mav;
 	}
 	
