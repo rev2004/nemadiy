@@ -39,7 +39,7 @@
 		p:userManager-ref="userManager"
 		p:mirexNoteDao-ref="mirexNoteDao"
                 p:jcrService-ref="jcrService"
-                p:invitationUrl="http://nema.lis.uiuc.edu/diy/invitation.html"
+                p:invitationUrl="http://nema.lis.uiuc.edu/diy/get/UserManager/invitation"
                 p:mailEngine-ref="mailEngine"
                 p:mailSender="zhu.guojun2010@gmail.com">
     </bean>

@@ -19,26 +19,28 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;
 import java.util.Locale;
+import org.imirsel.nema.model.Profile;
 
 /**
- * Controller to signup new users.
+ * Controller to signup new users. Prepopulate the form with the profile if it is from an invitation.
  *
  * @author <a href="mailto:matt@raibledesigns.com">Matt Raible</a>
  */
 public class SignupController extends BaseFormController {
+
     private RoleManager roleManager;
     private PreferenceValueManager preferenceValueManager;
 
     public PreferenceValueManager getPreferenceValueManager() {
-		return preferenceValueManager;
-	}
+        return preferenceValueManager;
+    }
 
-	public void setPreferenceValueManager(
-			PreferenceValueManager preferenceValueManager) {
-		this.preferenceValueManager = preferenceValueManager;
-	}
+    public void setPreferenceValueManager(
+            PreferenceValueManager preferenceValueManager) {
+        this.preferenceValueManager = preferenceValueManager;
+    }
 
-	public void setRoleManager(RoleManager roleManager) {
+    public void setRoleManager(RoleManager roleManager) {
         this.roleManager = roleManager;
     }
 
@@ -47,34 +49,46 @@ public class SignupController extends BaseFormController {
         setCommandClass(User.class);
     }
 
+    @Override
+    protected Object formBackingObject(HttpServletRequest request) throws Exception {
+        User user;
+        user = (User) super.formBackingObject(request);
+        Profile profile = (Profile) request.getSession().getAttribute("profile");
+        if (profile != null) {
+            user.setProfile(profile);
+        }
+        return user;
+    }
+
     public ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
-                                 Object command, BindException errors)
+            Object command, BindException errors)
             throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("entering 'onSubmit' method...");
         }
 
+
         User user = (User) command;
         Locale locale = request.getLocale();
-        
+
         user.setEnabled(true);
         user.getProfile().setOwner(user);
         // Set the default user role on this new user
         user.addRole(roleManager.getRole(Constants.USER_ROLE));
         log.debug("getting default preferences");
-        List<PreferenceValue> list= preferenceValueManager.getDefaultPreferenceValues();
-        
+        List<PreferenceValue> list = preferenceValueManager.getDefaultPreferenceValues();
+
         if (log.isDebugEnabled()) {
-        	log.debug("Got: " + list.size() + " default preferences");
-        
+            log.debug("Got: " + list.size() + " default preferences");
+
         }
-        
-        for(PreferenceValue pvalue:list){
-        	if (log.isDebugEnabled()) {
+
+        for (PreferenceValue pvalue : list) {
+            if (log.isDebugEnabled()) {
                 log.debug("adding preference: " + pvalue.toString());
             }
 
-        	user.addPreference(pvalue);
+            user.addPreference(pvalue);
         }
 
         try {
@@ -83,7 +97,7 @@ public class SignupController extends BaseFormController {
             // thrown by UserSecurityAdvice configured in aop:advisor userManagerSecurity
             log.warn(ade.getMessage());
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return null; 
+            return null;
         } catch (UserExistsException e) {
             errors.rejectValue("username", "errors.existing.user",
                     new Object[]{user.getUsername(), user.getEmail()}, "duplicate user");
@@ -115,7 +129,7 @@ public class SignupController extends BaseFormController {
         } catch (MailException me) {
             saveError(request, me.getMostSpecificCause().getMessage());
         }
-        
+
         return new ModelAndView(getSuccessView());
     }
 }
