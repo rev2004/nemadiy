@@ -19,10 +19,11 @@
                 
             </goals>
             <properties>
-                <env>test</env>
+                <env>production</env>
                 <maven.test.skip>true</maven.test.skip>
                 <jpda.listen>maven</jpda.listen>
                 <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
+                
             </properties>
         </action>
         <action>

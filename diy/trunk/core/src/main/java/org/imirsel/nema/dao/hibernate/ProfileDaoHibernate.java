@@ -50,7 +50,7 @@ public class ProfileDaoHibernate extends GenericDaoHibernate<Profile, Long>
      * {@inheritDoc }
      */
     public Profile findByUuid(UUID uuid) {
-        List<Profile> list=getHibernateTemplate().find("from Profile where uuidStr=",uuid.toString());
+        List<Profile> list=getHibernateTemplate().find("from Profile where uuidStr=?",uuid.toString());
         if ((list!=null)&&(list.size()>0)){
             return list.get(0);
         }else{return null;}
