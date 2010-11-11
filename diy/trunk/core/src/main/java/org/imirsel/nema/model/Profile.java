@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -186,10 +187,31 @@ public class Profile implements Serializable {
     /**
      * @return the uuid
      */
+    @Transient
     public UUID getUuid() {
         return uuid;
     }
 
+    @Column(name="uuid")
+    public String getUuidStr(){
+        if (uuid!=null) {
+            return uuid.toString();
+        }else {
+            return null;
+        }
+    }
+
+    public void setUuidStr(String uuidStr){
+        this.uuid=null;
+        if (uuidStr!=null){
+            try{
+                this.uuid=UUID.fromString(uuidStr);
+            }catch(IllegalArgumentException e){
+
+            }
+        }
+
+    }
     /**
      * This method is only for Hibernate to populate the object from database,
      * password is set once the user is created and should not be changed or set

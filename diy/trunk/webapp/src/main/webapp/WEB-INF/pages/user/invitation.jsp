@@ -14,7 +14,7 @@
 
 </head>
 <body id="login">
-    <c:if test="not empty greeting">
+    <c:if test="${not empty greeting}">
         <div class="message" >${greeting}</div>
     </c:if>
     <script type="text/javascript">

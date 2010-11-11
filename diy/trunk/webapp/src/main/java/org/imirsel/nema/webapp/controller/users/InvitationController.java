@@ -6,8 +6,11 @@ package org.imirsel.nema.webapp.controller.users;
 
 import javax.servlet.http.HttpSession;
 import java.util.UUID;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.imirsel.nema.dao.ProfileDao;
 import org.imirsel.nema.model.Profile;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,17 +25,25 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/UserManager")
 public class InvitationController {
 
+
+    static protected Log logger=LogFactory.getLog(InvitationController.class);
+
     private ProfileDao profileDao;
 
     @RequestMapping("invitation")
     ModelAndView invitationHandler(HttpSession session, @RequestParam(required=false,value="code") String uuidStr) {
-
-        Profile profile;
+        logger.debug("An invitation page request with code:"+uuidStr);
+        Profile profile=null;
         try{
-            UUID uuid=UUID.fromString(uuidStr);
-            profile= profileDao.findByUuid(uuid);
+            if (uuidStr!=null) {
+
+                UUID uuid=UUID.fromString(uuidStr);
+                profile= profileDao.findByUuid(uuid);
+                logger.info("start to process invitation of code:"+uuid+":"+profile);
+            }
+            
         }catch(IllegalArgumentException ex){
-            profile=null;
+            
         }
         ModelAndView mav=new ModelAndView("user/invitation");
         if (profile != null) {
@@ -53,6 +64,7 @@ public class InvitationController {
     /**
      * @param profileDao the profileDao to set
      */
+    @Autowired
     public void setProfileDao(ProfileDao profileDao) {
         this.profileDao = profileDao;
     }
