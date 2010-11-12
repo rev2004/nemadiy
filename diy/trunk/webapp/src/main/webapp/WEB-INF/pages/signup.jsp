@@ -28,7 +28,7 @@
     </div>
 
 
-    <div class="surround"><label class="fixed required">UserName:</label>${USER_OPENID_CREDENTIAL}  </div>
+    <div class="surround"><label class="fixed required">OpenID:</label>${USER_OPENID_CREDENTIAL}  </div>
     <div style="clear:both;"><form:hidden path="username" value="${USER_OPENID_CREDENTIAL}" htmlEscape="false"/></div>
     <br/>
     <div class="surround"><label class="fixed required">First Name:</label><form:input path="profile.firstname"/></div>

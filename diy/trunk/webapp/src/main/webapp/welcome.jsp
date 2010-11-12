@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" media="all" href="<c:url value='/styles/${appConfig["csstheme"]}/layout-1col.css'/>" />
 </head>
 <body id="welcomeMenu"/>
-
+${userPrincipal}
 <c:choose>
 	<c:when test="${empty pageContext.request.remoteUser}">
 
