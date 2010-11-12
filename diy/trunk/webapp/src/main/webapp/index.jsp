@@ -7,7 +7,6 @@
     <link rel="stylesheet" type="text/css" media="all" href="<c:url value='/styles/${appConfig["csstheme"]}/layout-1col.css'/>" />
 </head>
 <body id="welcomeMenu"/>
-
 <div style="margin-left:30px">
 	<H3  align="left">Music Analysis Made Simpler</H3>
 	<p align="left">
