@@ -80,7 +80,6 @@ public class SignupController extends BaseFormController {
 
         if (log.isDebugEnabled()) {
             log.debug("Got: " + list.size() + " default preferences");
-
         }
 
         for (PreferenceValue pvalue : list) {
@@ -115,7 +114,7 @@ public class SignupController extends BaseFormController {
                 user.getUsername(), user.getPassword(), user.getAuthorities());
         auth.setDetails(user);
         SecurityContextHolder.getContext().setAuthentication(auth);
-
+        //request.getSession().setAttribute("seesionUsername", user.getProfile().getEmail());
         // Send user an e-mail
         if (log.isDebugEnabled()) {
             log.debug("Sending user '" + user.getUsername() + "' an account information e-mail");

@@ -42,7 +42,7 @@
         <openid-login login-page="/login.jsp" login-processing-url="/openlogin" user-service-ref="userDao"
                    authentication-failure-handler-ref="openIdAuthFailureHandler"/>
 
-        <logout/>
+        <logout logout-success-url="/login.jsp"/>
         <remember-me user-service-ref="userDao"
 			key="e37f4b31-0c45-11dd-bd0b-0800200c9a66" />
     </http>

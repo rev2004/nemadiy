@@ -175,7 +175,6 @@
 				/JobManager.getNemaStatus.json=getNemaStatus
 				/JobManager.getNotification.json=getNotification
 
-
 				/JobManager.dumpConsole=dumpConsole
             </value>
         </property>
@@ -191,7 +190,7 @@
 
     <bean id="signupController" class="org.imirsel.nema.webapp.controller.SignupController">
         <property name="formView" value="signup" />
-        <property name="successView" value="redirect:index.jsp" />
+        <property name="successView" value="redirect:/j_spring_security_logout" />
         <property name="userManager" ref="userManager" />
         <property name="roleManager" ref="roleManager" />
         <property name="preferenceValueManager" ref="preferenceValueManager" />
