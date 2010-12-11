@@ -23,8 +23,10 @@ import org.imirsel.nema.model.Profile;
 
 /**
  * Controller to signup new users. Prepopulate the form with the profile if it is from an invitation.
+ * Modified for openid signup.  
  *
  * @author <a href="mailto:matt@raibledesigns.com">Matt Raible</a>
+ * @author gzhu1
  */
 public class SignupController extends BaseFormController {
 
@@ -60,6 +62,7 @@ public class SignupController extends BaseFormController {
         return user;
     }
 
+    @Override
     public ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response,
             Object command, BindException errors)
             throws Exception {
@@ -111,7 +114,7 @@ public class SignupController extends BaseFormController {
 
         // log user in automatically
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                user.getUsername(), user.getPassword(), user.getAuthorities());
+                user, user.getPassword(), user.getAuthorities());
         auth.setDetails(user);
         SecurityContextHolder.getContext().setAuthentication(auth);
         //request.getSession().setAttribute("seesionUsername", user.getProfile().getEmail());
