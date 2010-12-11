@@ -27,7 +27,9 @@
     <form method="post" id="openid_form" action="<c:url value='/openlogin'/>">
         <fieldset>
             <div id="openid_choice">
-                <label for="openid_btns">Please select your account provider:</label>
+                <label for="openid_btns">Please select your <a href="http://openid.net/">OpenID</a> account provider:
+                   <p style="font-size: small; font-weight: bold;">OpenID is provided by various sites, one can just use your own Google, Yahoo, AOL, or several other popular sites' account to log in. </p>
+                </label>
                 <div id="openid_btns"></div>
             </div>
             <div id="openid_input_area">
