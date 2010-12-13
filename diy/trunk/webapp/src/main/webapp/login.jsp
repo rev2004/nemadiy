@@ -19,9 +19,9 @@
     <script type="text/javascript">
         jQuery.noConflict();
         jQuery(document).ready(function(){
-            openid.img_path=imgPath;
+            openid.img_path="<c:url value='/scripts/jquery/openid-selector/images/'/>";
             openid.init("openid_identifier");
-            //jQuery("#openid_identifier").focus();
+            jQuery("#openid_identifier").focus();
         });
     </script>
     <form method="post" id="openid_form" action="<c:url value='/openlogin'/>">
