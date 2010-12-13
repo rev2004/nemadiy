@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: diy090
 -- ------------------------------------------------------
--- Server version	5.1.41-3ubuntu12.3
+-- Server version	5.1.41-3ubuntu12.8
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,14 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `diy090`
---
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `diy090` /*!40100 DEFAULT CHARACTER SET latin1 */;
-
-USE `diy090`;
-
---
 -- Table structure for table `app_user`
 --
 
@@ -35,18 +27,17 @@ CREATE TABLE `app_user` (
   `account_expired` bit(1) NOT NULL,
   `account_locked` bit(1) NOT NULL,
   `credentials_expired` bit(1) NOT NULL,
-  `email` varchar(255) NOT NULL,
   `account_enabled` bit(1) DEFAULT NULL,
-  `first_name` varchar(50) NOT NULL,
-  `last_name` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `password_hint` varchar(255) DEFAULT NULL,
-  `username` varchar(50) NOT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `username` varchar(200) NOT NULL,
   `version` int(11) DEFAULT NULL,
+  `profile_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `profile_id` (`profile_id`),
+  KEY `FK459C5729112A54FD` (`profile_id`),
+  CONSTRAINT `FK459C5729112A54FD` FOREIGN KEY (`profile_id`) REFERENCES `mirex_profile` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55,7 +46,7 @@ CREATE TABLE `app_user` (
 
 LOCK TABLES `app_user` WRITE;
 /*!40000 ALTER TABLE `app_user` DISABLE KEYS */;
-INSERT INTO `app_user` VALUES (-2,'\0','\0','\0','amitku@uiuc.edu','','Kumar','Amit','b2cebd873228d3e6753d9b39195730694e3d1bbc','Amit.','admin',2),(-1,'\0','\0','\0','kumaramit01@gmail.com','','Tomcat','User','12dea96fec20593566ab75692c9949596833adc9','A male kitty.','user',1);
+INSERT INTO `app_user` VALUES (1,'\0','\0','\0','','?????????????????????????','https://www.google.com/accounts/o8/id?id=aitoawluccmlcclb-g1u00lsqtgfanthvvf8xrw',0,1),(2,'\0','\0','\0','','????????????????????','https://www.google.com/accounts/o8/id?id=aitoawlwimoraefnyns5btsbremhlhwnenzf0oi',0,2);
 /*!40000 ALTER TABLE `app_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -72,14 +63,14 @@ CREATE TABLE `mirex_note` (
   `createTime` datetime DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
   `author_id` bigint(20) DEFAULT NULL,
-  `submission_id` bigint(20) DEFAULT NULL,
+  `submission_id` bigint(20) NOT NULL,
   `note_order` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKC6A600E87057DF17` (`author_id`),
   KEY `FKC6A600E8A0F2F586` (`submission_id`),
   CONSTRAINT `FKC6A600E8A0F2F586` FOREIGN KEY (`submission_id`) REFERENCES `mirex_submission` (`id`),
   CONSTRAINT `FKC6A600E87057DF17` FOREIGN KEY (`author_id`) REFERENCES `app_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -88,7 +79,6 @@ CREATE TABLE `mirex_note` (
 
 LOCK TABLES `mirex_note` WRITE;
 /*!40000 ALTER TABLE `mirex_note` DISABLE KEYS */;
-INSERT INTO `mirex_note` VALUES (10,'this has been reviewed \r\n\r\n\r\n\r\nOK','2010-07-18 02:05:56','PUBLIC',-2,1,0);
 /*!40000 ALTER TABLE `mirex_note` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,17 +103,18 @@ CREATE TABLE `mirex_profile` (
   `endYear` varchar(255) DEFAULT NULL,
   `firstname` varchar(255) DEFAULT NULL,
   `lastname` varchar(255) DEFAULT NULL,
-  `orgnization` varchar(255) DEFAULT NULL,
+  `organization` varchar(255) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL,
   `startYear` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `unit` varchar(255) DEFAULT NULL,
   `url` varchar(255) DEFAULT NULL,
-  `creator_id` bigint(20) DEFAULT NULL,
+  `uuid` varchar(255) DEFAULT NULL,
+  `owner_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FK5EAA0CF36A9AF0D6` (`creator_id`),
-  CONSTRAINT `FK5EAA0CF36A9AF0D6` FOREIGN KEY (`creator_id`) REFERENCES `app_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+  KEY `FK5EAA0CF37B859CEF` (`owner_id`),
+  CONSTRAINT `FK5EAA0CF37B859CEF` FOREIGN KEY (`owner_id`) REFERENCES `app_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -132,7 +123,7 @@ CREATE TABLE `mirex_profile` (
 
 LOCK TABLES `mirex_profile` WRITE;
 /*!40000 ALTER TABLE `mirex_profile` DISABLE KEYS */;
-INSERT INTO `mirex_profile` VALUES (1,NULL,'USA',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2010','Nema','Imirsel','UIUC',NULL,'2000',NULL,NULL,'http://nema.lis.uiuc.edu',-1),(2,NULL,'USA',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'now','Imirsel','Imirsel','UI','2173331000','2009',NULL,NULL,'http://imirsel.lis.uiuc.edu',-1),(3,NULL,'USA',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'now','Nemadiy','Imirsel','Imirsel','2173331000','2009',NULL,NULL,'http://imirsel.lis.uiuc.edu',-2);
+INSERT INTO `mirex_profile` VALUES (1,'Champaign','USA','61801','IL','','','','GSLIS','nemamirex@gmail.com','2011','Nema','Mirex','UIUC','','2000',NULL,'imirsel','http://www.music-ir.org/','349edefa-e9d7-44e6-892e-76b9c133aafa',1),(2,'','USA','','','','','','physics','zggame@gmail.com','2010','Guojun','Zhu','UIUC','','2008',NULL,'','','d5350753-5ddc-4c6a-b993-0aa68100ecdc',2);
 /*!40000 ALTER TABLE `mirex_profile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,6 +140,7 @@ CREATE TABLE `mirex_submission` (
   `hashcode` varchar(10) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `readme` varchar(30000) DEFAULT NULL,
+  `resourcePath` varchar(255) DEFAULT NULL,
   `status` varchar(255) NOT NULL,
   `updateTime` datetime DEFAULT NULL,
   `url` varchar(255) DEFAULT NULL,
@@ -158,9 +150,9 @@ CREATE TABLE `mirex_submission` (
   UNIQUE KEY `hashcode` (`hashcode`),
   KEY `FKF4E97BC2571AF63D` (`mirexTask_id`),
   KEY `FKF4E97BC2F9EECD7` (`user_id`),
-  CONSTRAINT `FKF4E97BC2571AF63D` FOREIGN KEY (`mirexTask_id`) REFERENCES `mirex_task` (`id`),
-  CONSTRAINT `FKF4E97BC2F9EECD7` FOREIGN KEY (`user_id`) REFERENCES `app_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+  CONSTRAINT `FKF4E97BC2F9EECD7` FOREIGN KEY (`user_id`) REFERENCES `app_user` (`id`),
+  CONSTRAINT `FKF4E97BC2571AF63D` FOREIGN KEY (`mirexTask_id`) REFERENCES `mirex_task` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -169,7 +161,6 @@ CREATE TABLE `mirex_submission` (
 
 LOCK TABLES `mirex_submission` WRITE;
 /*!40000 ALTER TABLE `mirex_submission` DISABLE KEYS */;
-INSERT INTO `mirex_submission` VALUES (1,'1992-07-01 18:25:10','ABC1','submission 1','readme','REVIEWED','2010-07-18 02:05:56',NULL,1,-1),(2,'1985-07-11 18:25:19','ABC2','submission 2','readme','FINISHED','1999-10-01 00:00:00',NULL,1,-1),(3,'2003-07-10 18:25:35','EF','submission 3','readme','UNKNOWN','2005-03-01 12:34:00',NULL,2,-2),(4,'2010-07-01 18:24:50','GZ','submission 4','readme','REVIEWED','2010-07-12 18:24:41',NULL,3,-2);
 /*!40000 ALTER TABLE `mirex_submission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -186,8 +177,8 @@ CREATE TABLE `mirex_submission_mirex_profile` (
   `contributor_rank` int(11) NOT NULL,
   PRIMARY KEY (`mirex_submission_id`,`contributor_rank`),
   KEY `FK5D749F36ACAD5950` (`mirex_submission_id`),
-  KEY `FK5D749F36F9089B00` (`contributors_id`),
-  CONSTRAINT `FK5D749F36F9089B00` FOREIGN KEY (`contributors_id`) REFERENCES `mirex_profile` (`id`),
+  KEY `FK5D749F3672FF6D4E` (`contributors_id`),
+  CONSTRAINT `FK5D749F3672FF6D4E` FOREIGN KEY (`contributors_id`) REFERENCES `mirex_profile` (`id`),
   CONSTRAINT `FK5D749F36ACAD5950` FOREIGN KEY (`mirex_submission_id`) REFERENCES `mirex_submission` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -198,7 +189,6 @@ CREATE TABLE `mirex_submission_mirex_profile` (
 
 LOCK TABLES `mirex_submission_mirex_profile` WRITE;
 /*!40000 ALTER TABLE `mirex_submission_mirex_profile` DISABLE KEYS */;
-INSERT INTO `mirex_submission_mirex_profile` VALUES (1,1,0),(2,1,0),(3,1,1),(2,2,1),(4,2,0),(3,3,0);
 /*!40000 ALTER TABLE `mirex_submission_mirex_profile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -217,7 +207,7 @@ CREATE TABLE `mirex_task` (
   `name` varchar(255) NOT NULL,
   `url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -226,7 +216,6 @@ CREATE TABLE `mirex_task` (
 
 LOCK TABLES `mirex_task` WRITE;
 /*!40000 ALTER TABLE `mirex_task` DISABLE KEYS */;
-INSERT INTO `mirex_task` VALUES (1,'',NULL,'Query By Tapping','QBT',NULL),(2,'',NULL,'Query By Singing and Humming','QBSH',NULL),(3,'',NULL,'Chord Description','Chord',NULL),(4,'\0',NULL,'Melody Finding','Melody',NULL);
 /*!40000 ALTER TABLE `mirex_task` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -251,7 +240,7 @@ CREATE TABLE `preference_value` (
 
 LOCK TABLES `preference_value` WRITE;
 /*!40000 ALTER TABLE `preference_value` DISABLE KEYS */;
-INSERT INTO `preference_value` VALUES (1,'emailPrefStartFlow','FALSE'),(2,'emailPrefEndFlow','TRUE'),(3,'emailPrefAbortFlow','TRUE'),(4,'emailPrefFlowResult','TRUE'),(5,'emailPrefStartFlow','false'),(6,'emailPrefEndFlow','true'),(7,'emailPrefAbortFlow','true'),(8,'emailPrefFlowResult','true');
+INSERT INTO `preference_value` VALUES (1,'emailPrefFlowResult','true'),(2,'emailPrefAbortFlow','true'),(3,'emailPrefStartFlow','true'),(4,'emailPrefEndFlow','true'),(5,'emailPrefFlowResult','true'),(6,'emailPrefAbortFlow','true'),(7,'emailPrefStartFlow','true'),(8,'emailPrefEndFlow','true');
 /*!40000 ALTER TABLE `preference_value` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -281,36 +270,6 @@ INSERT INTO `role` VALUES (-2,'Default role for all Users','ROLE_USER'),(-1,'Adm
 UNLOCK TABLES;
 
 --
--- Table structure for table `submission`
---
-
-DROP TABLE IF EXISTS `submission`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `submission` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `dateCreated` datetime DEFAULT NULL,
-  `jobId` bigint(20) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `userId` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK84363B4CE68F30EE` (`userId`),
-  CONSTRAINT `FK84363B4CE68F30EE` FOREIGN KEY (`userId`) REFERENCES `app_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `submission`
---
-
-LOCK TABLES `submission` WRITE;
-/*!40000 ALTER TABLE `submission` DISABLE KEYS */;
-INSERT INTO `submission` VALUES (1,NULL,1,'one','Inherits',-2),(2,NULL,2,'one','Feature Extraction',-2),(3,NULL,3,'one','Classification',-2),(4,NULL,4,'one','Evaluation',-2),(5,NULL,5,'one','Analysis',-2);
-/*!40000 ALTER TABLE `submission` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `user_prefs`
 --
 
@@ -335,7 +294,7 @@ CREATE TABLE `user_prefs` (
 
 LOCK TABLES `user_prefs` WRITE;
 /*!40000 ALTER TABLE `user_prefs` DISABLE KEYS */;
-INSERT INTO `user_prefs` VALUES (-1,1),(-1,2),(-1,3),(-1,4),(-2,5),(-2,6),(-2,7),(-2,8);
+INSERT INTO `user_prefs` VALUES (1,1),(1,2),(1,3),(1,4),(2,5),(2,6),(2,7),(2,8);
 /*!40000 ALTER TABLE `user_prefs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -363,7 +322,7 @@ CREATE TABLE `user_role` (
 
 LOCK TABLES `user_role` WRITE;
 /*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
-INSERT INTO `user_role` VALUES (-1,-2),(-2,-1);
+INSERT INTO `user_role` VALUES (1,-2),(2,-2),(1,-1),(1,1);
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -376,4 +335,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-07-21 17:11:21
+-- Dump completed on 2010-12-13 17:26:47
