@@ -24,6 +24,7 @@
                     var segmentation_colors = ["lightsalmon", "lightblue", "lightgoldenrodyellow", "lightgreen", "lightgrey", "beige"];
                     var jPlayerReady=false;
                     var playInterval;
+                    var songLoaded=false;
                     
                     jQuery.noConflict();//declare to avoid conflict with Prototype
                     function loadScript(url, plot){
@@ -98,10 +99,10 @@
                                 .data(seriesNames)
                                 .textAlign("right")
                                 .textBaseline("middle")
-                                .top(function() 33 +((numseries - (1+this.index)) * 33))
+                                .top(function() {return 33 +((numseries - (1+this.index)) * 33);})
                                 .height(10)
                                 .right(0)
-                                .text(function(d) d);
+                                .text(function(d) {return d;});
                                 legend.add(pv.Label)
                                 .text('time (secs)')
                                 .textAlign("right")
@@ -125,10 +126,10 @@
                                     d2 = x.invert(i.x + i.dx);
                                     var out = new Array(numseries);
                                     for(s=0;s<numseries;s=s+1){;
-                                        offsetsearch = pv.search.index(data[s], d1, function(d) d.f),
-                                        firstvisible = offsetsearch >= 0 ? offsetsearch : -(1+offsetsearch),
-                                        onsetsearch = pv.search.index(data[s], d2, function(d) d.f),
-                                        lastvisible = onsetsearch >= 0 ? onsetsearch : -(1+onsetsearch),
+                                        offsetsearch = pv.search.index(data[s], d1, function(d) {return d.f;});
+                                        firstvisible = offsetsearch >= 0 ? offsetsearch : -(1+offsetsearch);
+                                        onsetsearch = pv.search.index(data[s], d2, function(d){return d.f;});
+                                        lastvisible = onsetsearch >= 0 ? onsetsearch : -(1+onsetsearch);
                                         out[s] = data[s].slice(firstvisible,lastvisible+1);
                                     }
                                     fx.domain(d1, d2);
@@ -146,25 +147,10 @@
                                 .bottom(0)
                                 .height(h2);
 
-                                /* setup player 
-                                jQuery("#jquery_jplayer").jPlayer({
-                                    ready: function () {},
-                                    volume: 50,
-                                    preload: 'auto'
-                                })
-                                .jPlayer("onProgressChange",function(loadPercent, playedPercentRelative, playedPercentAbsolute, playedTime, totalTime) {
-                                    var playedSecs = playedTime/1000.0;
-                                    playbackTime = playedSecs;
-                                    focus.render();
-                                    context.render();
-                                })
-                                .jPlayer("setFile",track_url);
-                                 */
-
-
+                               
                                 /* X-axis ticks. */
                                 focus.add(pv.Rule)
-                                .data(function() fx.ticks())
+                                .data(function() {return fx.ticks()})
                                 .left(fx)
                                 .strokeStyle("#eee")
                                 .anchor("bottom").add(pv.Label)
@@ -175,15 +161,22 @@
                                     // Local copy of jQuery selectors, for performance.
                                     if (jPlayerReady) {
                                         
-                                        clearInterval(playInterval);//sto
-                                        jQuery("#jquery_jplayer").jPlayer("setMedia",{mp3:track_url})
+                                        clearInterval(playInterval);
+                                        if (!songLoaded){
+                                            jQuery("#jquery_jplayer").jPlayer("setMedia",{mp3:track_url});
+                                            songLoaded=true;
+                                        }
+                                        jQuery("#jquery_jplayer").jPlayer("stop").unbind(jQuery.jPlayer.event.timeupdate)
                                         .jPlayer("play",startTime)
                                         .bind(jQuery.jPlayer.event.timeupdate, function(event){
                                             playbackTime = event.jPlayer.status.currentTime;
                                             if (playbackTime>endTime){
                                                 if (jQuery('#jplayer_repeat:checked').val()!=null)
                                                 {jQuery(this).jPlayer("play",startTime);}
-                                                else {jQuery(this).jPlayer("pause");endTime=totalTime;}
+                                                else {
+                                                    jQuery(this).jPlayer("pause");
+                                                    //endTime=totalTime;
+                                                }
                                             };
                                             focus.render();
                                             context.render();
@@ -212,19 +205,19 @@
                                 /* Focus area chart. */
                                 var focus_plot = focus.add(pv.Panel)
                                 .overflow("hidden")
-                                .data(function() focus.init_data())
+                                .data(function() {return focus.init_data()})
                                 .def("selection",[-1,-1]);
                                 focus_plot.add(pv.Panel)
                                 .fillStyle("#FFFFFF")
-                                .data(function(array) array)
+                                .data(function(array) {return array})
                                 .strokeStyle("black")
                                 .lineWidth(1)
                                 .antialias(false)
-                                .left(function(d) fx(d.o) < 0 ? 0 : fx(d.o))
-                                .width(function(d) fx(d.o) < 0 ? fx(d.f) : (fx(d.f) - fx(d.o)))
-                                .bottom(function() 3 + (33*this.parent.index))
+                                .left(function(d) {return fx(d.o) < 0 ? 0 : fx(d.o)})
+                                .width(function(d) {return fx(d.o) < 0 ? fx(d.f) : (fx(d.f) - fx(d.o))})
+                                .bottom(function() {return 3 + (33*this.parent.index)})
                                 .height(30)
-                                .fillStyle(function(d) focus_plot.selection()[0]==this.index && focus_plot.selection()[1]==this.parent.index ? "steelblue" : pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6))
+                                .fillStyle(function(d) {return focus_plot.selection()[0]==this.index && focus_plot.selection()[1]==this.parent.index ? "steelblue" : pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6)})
                                 /*.event("click", function(d) label.text("selected: " + d.o+ " to " + d.f + " seconds"))*/
                                 .event("click",function(d){
                                     if(focus_plot.selection()[0]==this.index && focus_plot.selection()[1]==this.parent.index){
@@ -236,14 +229,14 @@
                                     }
                                 })
                                 .add(pv.Panel)
-                                .title(function(d) d.l)
-                                .anchor("left").add(pv.Label).text(function(d) fx(d.o) < 0 ? '...' + d.l : d.l).width(function() this.parent.width());
+                                .title(function(d) {return d.l})
+                                .anchor("left").add(pv.Label).text(function(d) {return fx(d.o) < 0 ? '...' + d.l : d.l}).width(function() {return this.parent.width()});
 
                                 /* Playback position indicator. */
                                 focus_plot.add(pv.Line)
                                 .data([0, h1-12])
-                                .bottom(function(d) d)
-                                .left(function() fx(playbackTime))
+                                .bottom(function(d) {return d})
+                                .left(function() {return fx(playbackTime)})
                                 .strokeStyle("#000000")
                                 .lineWidth(2);
 
@@ -252,14 +245,14 @@
                                 .right(10)
                                 .top(12)
                                 .textAlign("right")
-                                .text(function() focus.focus_length());
+                                .text(function() {return focus.focus_length()});
 
                                 /* selected label */
                                 var label = focus.add(pv.Label)
                                 .right(180)
                                 .top(12)
                                 .textAlign("right")
-                                .text(function() "nothing selected");
+                                .text("nothing selected");
 
 
 
@@ -287,22 +280,22 @@
                                 context.add(pv.Panel)
                                 .data(data)
                                 .add(pv.Bar)
-                                .data(function(array) array)
-                                .left(function(d) x(d.o))
-                                .width(function(d) x(d.f) - x(d.o))
-                                .bottom(function() 3 + (13 * this.parent.index))
+                                .data(function(array) {return  array})
+                                .left(function(d) {return x(d.o)})
+                                .width(function(d) {return x(d.f) - x(d.o)})
+                                .bottom(function() {return 3 + (13 * this.parent.index)})
                                 .height(10)
                                 .strokeStyle("Black")
                                 .lineWidth(1)
                                 .antialias(false)
-                                .fillStyle(function(d) pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6))
-                                .title(function(d) d.l);
+                                .fillStyle(function(d) {return pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6)})
+                                .title(function(d) {return d.l});
 
-                                /* COntext area playback indicator */
+                                /* Context area playback indicator */
                                 context.add(pv.Line)
                                 .data([0, h2])
-                                .bottom(function(d) d)
-                                .left(function() x(playbackTime))
+                                .bottom(function(d) {return d})
+                                .left(function() {return x(playbackTime)})
                                 .strokeStyle("#000000")
                                 .lineWidth(2);
 
@@ -316,8 +309,8 @@
                                 .event("select", focus)
                                 .title("click and drag to select new focus region")
                                 .add(pv.Bar)
-                                .left(function(d) d.x)
-                                .width(function(d) d.dx)
+                                .left(function(d) {return d.x})
+                                .width(function(d) {return d.dx})
                                 .fillStyle("rgba(255, 128, 128, .4)")
                                 .strokeStyle("rgb(255, 128, 128)")
                                 .lineWidth(1)
@@ -414,6 +407,10 @@
                                                     <div class="jp-volume-bar-value"></div>
                                                 </div>
                                                 <div class="jp-repeat" style="left:252px;position:absolute;top:52px;"><input id="jplayer_repeat"  type="checkbox" checked="true" name="repeat"/><label>repeat</label></div>
+                                                
+                                                
+                                                <!--
+                                                <div class="jp-video-play"></div><div class="jp-seek-bar"></div><div class="jp-current-time"></div><div class="jp-duration"></div><div class="jp-play-bar"></div>-->
                                               </div>
                                             
                                         </div>
