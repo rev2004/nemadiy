@@ -1,3 +1,11 @@
+<%-- 
+    Document   : song1
+    Created on : Jun 2, 2011, 12:58:28 PM
+    Author     : gzhu1
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core"  prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -9,10 +17,14 @@
 
                 <script type="text/javascript" src="protovis-r3.2.js"></script>
                 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
-                <script type="text/javascript" src="jquery.jplayer.min.js"></script>
-                <link rel="stylesheet" href='jplayer.blue.monday.css' type="text/css" media="all" />
+                <script type="text/javascript" src='<c:url value="/jplayer/jquery.jplayer.min.js"/>'></script>
+                <script type="text/javascript" src='<c:url value="/jplayer/jquery.jplayer.inspector.js"/>'></script>
+                <link rel="stylesheet" href='<c:url value="/jplayer/jplayer.blue.monday.css"/>' type="text/css" media="all" />
                 <script type="text/javascript">
                     var segmentation_colors = ["lightsalmon", "lightblue", "lightgoldenrodyellow", "lightgreen", "lightgrey", "beige"];
+                    var jPlayerReady=false;
+                    var playInterval;
+                    
                     jQuery.noConflict();//declare to avoid conflict with Prototype
                     function loadScript(url, plot){
                         var loadedscript = document.createElement('script');
@@ -134,7 +146,7 @@
                                 .bottom(0)
                                 .height(h2);
 
-                                /* setup player */
+                                /* setup player 
                                 jQuery("#jquery_jplayer").jPlayer({
                                     ready: function () {},
                                     volume: 50,
@@ -147,7 +159,7 @@
                                     context.render();
                                 })
                                 .jPlayer("setFile",track_url);
-
+                                 */
 
 
                                 /* X-axis ticks. */
@@ -161,25 +173,29 @@
                                 function play(startTime,endTime){
 
                                     // Local copy of jQuery selectors, for performance.
-
-                                    jQuery("#jquery_jplayer").jPlayer("setFile",track_url)
-                                    .jPlayer("playHeadTime",startTime*1000)
-                                    .jPlayer("onProgressChange",function(loadPercent, playedPercentRelative, playedPercentAbsolute, playedTime, totalTime) {
-                                        var playedSecs = playedTime/1000.0;
-                                        if (playedSecs>endTime){
-                                            if (jQuery('#jplayer_repeat:checked').val()!=null)
-                                            {this.element.jPlayer("playHeadTime",startTime*1000);}
-                                            else {this.element.jPlayer("pause");endTime=totalTime;}
-                                        }
-                                        playbackTime = playedSecs;
-                                        focus.render();
-                                        context.render();
-                                    });
+                                    if (jPlayerReady) {
+                                        
+                                        clearInterval(playInterval);//sto
+                                        jQuery("#jquery_jplayer").jPlayer("setMedia",{mp3:track_url})
+                                        .jPlayer("play",startTime)
+                                        .bind(jQuery.jPlayer.event.timeupdate, function(event){
+                                            playbackTime = event.jPlayer.status.currentTime;
+                                            if (playbackTime>endTime){
+                                                if (jQuery('#jplayer_repeat:checked').val()!=null)
+                                                {jQuery(this).jPlayer("play",startTime);}
+                                                else {jQuery(this).jPlayer("pause");endTime=totalTime;}
+                                            };
+                                            focus.render();
+                                            context.render();
+                                        });
+                                    }else{
+                                        jQuery("#jplayer_status").text("jPlayer is not ready. Please wait..");
+                                    }
                                 }
 
                                 function handleSelect(d){
                                     label.text("selected: " + d.o+ " to " + d.f + " seconds");
-                                    play(d.o,d.f);
+                                    playInterval=setInterval(function(){play(d.o,d.f);},1000);
                                     focus.render();
                                     context.render();
                                     //do something with player here
@@ -187,12 +203,8 @@
 
                                 function handleDeselect() {
                                     label.text("nothing selected");
-                                    jQuery("#jquery_jplayer").jPlayer("onProgressChange",function(loadPercent, playedPercentRelative, playedPercentAbsolute, playedTime, totalTime) {
-                                        var playedSecs = playedTime/1000.0;
-                                        playbackTime = playedSecs;
-                                        focus.render();
-                                        context.render();
-                                    });
+                                    jQuery("#jquery_jplayer").jPlayer("stop");
+                                    jQuery("#jquery_jplayer").unbind(jQuery.jPlayer.event.timeupdate);
                                     focus.render();
                                     context.render();
                                 }
@@ -323,17 +335,17 @@
             
                         /* setup player */
                         jQuery("#jquery_jplayer").jPlayer({
-                            ready: function () {},
+                            warningAlerts:true,
+                            //errorAlerts:true,
+                            ready: function () {
+                                jPlayerReady=true;},
                             volume: 50,
-                            preload: 'auto'
-                        })
-                        .jPlayer("onProgressChange",function(loadPercent, playedPercentRelative, playedPercentAbsolute, playedTime, totalTime) {
-                            var playedSecs = playedTime/1000.0;
-                            playbackTime = playedSecs;
-                            focus.render();
-                            context.render();
-                        })
-                        .jPlayer("setFile",track_url);
+                            preload: 'auto',
+                            swfPath: '<c:url value="/jplayer"/>'
+                            
+                        });
+                        jQuery("#jplayer_inspector").jPlayerInspector({jPlayer:jQuery("#jquery_jplayer")});
+                        jQuery("#segmentsstructmrx09000000_button").removeAttr('disabled');
                     });
                 </script>
                 </head>
@@ -370,43 +382,44 @@
                                 <h4>Segmentation Plot: Structural Segmentation for track struct_mrx_09_000000</h4>
                                 <div id="center">
                                     <div style="width: 860px; height: 421px; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;">
-                                        <script type="text/javascript+protovis">
-			var segmentsstructmrx09000000_segment_plot = init_segmentation_plot(0.0, 141.087, 7);
-
-			var segmentsstructmrx09000000_interval;
-			function segmentsstructmrx09000000_serviceInterval(){
-				if(segmentsstructmrx09000000_segment_plot.isLoaded()){
-					clearInterval(segmentsstructmrx09000000_interval);
-					segmentsstructmrx09000000_segment_plot.plot(segmentsstructmrx09000000_track_url,segmentsstructmrx09000000_data,segmentsstructmrx09000000_seriesNames);
-					document.getElementById("segmentsstructmrx09000000_button").setAttribute("value","done.");
-				}
-			}
+                                        <script type="text/javascript">
+                                            var segmentsstructmrx09000000_segment_plot = init_segmentation_plot(0.0, 141.087, 7);
+                                            
+                                            var segmentsstructmrx09000000_interval;
+                                            function segmentsstructmrx09000000_serviceInterval(){
+                                                if(segmentsstructmrx09000000_segment_plot.isLoaded()){
+                                                    clearInterval(segmentsstructmrx09000000_interval);
+                                                    segmentsstructmrx09000000_segment_plot.plot(segmentsstructmrx09000000_track_url,segmentsstructmrx09000000_data,segmentsstructmrx09000000_seriesNames);
+                                                    //document.getElementById("segmentsstructmrx09000000_button").setAttribute("value","done.");
+                                                    jQuery("#segmentsstructmrx09000000_button").attr('value','plot').attr('disabled','disabled');
+                                                }
+                                            }
                                         </script>
 
                                     </div>
 
-                                    <div id="jquery_jplayer"></div>
-
-                                    <div class="jp-single-player">
-                                        <div class="jp-interface">
-                                            <ul class="jp-controls">
-                                                <li><a href="#" id="jplayer_play" class="jp-play" tabindex="1">play</a></li>
-                                                <li><a href="#" id="jplayer_pause" class="jp-pause" tabindex="1">pause</a></li>
-                                                <li><a href="#" id="jplayer_stop" class="jp-stop" tabindex="1">stop</a></li>
-
-                                                <li><a href="#" id="jplayer_volume_min" class="jp-volume-min" tabindex="1">min volume</a></li>
-                                                <li><a href="#" id="jplayer_volume_max" class="jp-volume-max" tabindex="1">max volume</a></li>
-                                            </ul>
-
-
-                                            <div id="jplayer_volume_bar" class="jp-volume-bar">
-                                                <div id="jplayer_volume_bar_value" class="jp-volume-bar-value"></div>
-                                            </div>
-                                            <div class="jp-repeat" style="left:252px;position:absolute;top:52px;"><input id="jplayer_repeat"  type="checkbox" checked="true" name="repeat"/><label>repeat</label></div>
+                                    <div id="jquery_jplayer" class="jp-player"></div>
+                                    <div class="jp-audio">
+                                        <div class="jp-type-single">
+                                            <div id="jp_interface_1" class="jp-interface">
+                                                <ul class="jp-controls">
+                                                    <li><a href="#" class="jp-play" tabindex="1">play</a></li>
+                                                    <li><a href="#" class="jp-pause" tabindex="1">pause</a></li>
+                                                    <li><a href="#" class="jp-stop" tabindex="1">stop</a></li>
+                                                    <li><a href="#" class="jp-mute" tabindex="1">mute</a></li>
+                                                    <li><a href="#" class="jp-unmute" tabindex="1">unmute</a></li>
+                                                </ul>
+                                                
+                                                <div class="jp-volume-bar">
+                                                    <div class="jp-volume-bar-value"></div>
+                                                </div>
+                                                <div class="jp-repeat" style="left:252px;position:absolute;top:52px;"><input id="jplayer_repeat"  type="checkbox" checked="true" name="repeat"/><label>repeat</label></div>
+                                              </div>
+                                            
                                         </div>
-
                                     </div>
-
+                                    <div id="jplayer_inspector"></div>
+                                    <div id="jplayer_status"></div>
                                     <div style="text-align:left;padding-left:10px;">
                                         <input type="button" value="Plot" id="segmentsstructmrx09000000_button" onClick="
                                             this.value='loading data...';
