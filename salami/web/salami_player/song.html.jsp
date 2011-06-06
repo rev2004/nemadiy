@@ -5,7 +5,6 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core"  prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -17,9 +16,9 @@
 
                 <script type="text/javascript" src="protovis-r3.2.js"></script>
                 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
-                <script type="text/javascript" src='<c:url value="/jplayer/jquery.jplayer.min.js"/>'></script>
-                <script type="text/javascript" src='<c:url value="/jplayer/jquery.jplayer.inspector.js"/>'></script>
-                <link rel="stylesheet" href='<c:url value="/jplayer/jplayer.blue.monday.css"/>' type="text/css" media="all" />
+                <script type="text/javascript" src='../jplayer/jquery.jplayer.min.js'></script>
+                <script type="text/javascript" src='../jplayer/jquery.jplayer.inspector.js'></script>
+                <link rel="stylesheet" href='../jplayer/jplayer.blue.monday.css' type="text/css" media="all" />
                 <script type="text/javascript">
                     var segmentation_colors = ["lightsalmon", "lightblue", "lightgoldenrodyellow", "lightgreen", "lightgrey", "beige"];
                     var jPlayerReady=false;
@@ -163,10 +162,10 @@
                                         
                                         clearInterval(playInterval);
                                         if (!songLoaded){
-                                            jQuery("#jquery_jplayer").jPlayer("setMedia",{oga:track_url});
+                                            jQuery("#jquery_jplayer").jPlayer("setMedia",{mp3:track_url});
                                             songLoaded=true;
                                         }
-                                        jQuery("#jquery_jplayer").jPlayer("pause",startTime).unbind(jQuery.jPlayer.event.timeupdate)
+                                        jQuery("#jquery_jplayer").jPlayer("stop").unbind(jQuery.jPlayer.event.timeupdate)
                                         .jPlayer("play",startTime)
                                         .bind(jQuery.jPlayer.event.timeupdate, function(event){
                                             playbackTime = event.jPlayer.status.currentTime;
@@ -329,14 +328,12 @@
                         /* setup player */
                         jQuery("#jquery_jplayer").jPlayer({
                             warningAlerts:true,
-                            errorAlerts:true,
+                            //errorAlerts:true,
                             ready: function () {
                                 jPlayerReady=true;},
-                            supplied: "oga",
-                            solution: "html,flash",
                             volume: 50,
                             preload: 'auto',
-                            swfPath: '<c:url value="/jplayer"/>'
+                            swfPath: '../jplayer'
                             
                         });
                         jQuery("#jplayer_inspector").jPlayerInspector({jPlayer:jQuery("#jquery_jplayer")});
@@ -384,8 +381,7 @@
                                             function segmentsstructmrx09000000_serviceInterval(){
                                                 if(segmentsstructmrx09000000_segment_plot.isLoaded()){
                                                     clearInterval(segmentsstructmrx09000000_interval);
-                                                    //segmentsstructmrx09000000_segment_plot.plot(segmentsstructmrx09000000_track_url,segmentsstructmrx09000000_data,segmentsstructmrx09000000_seriesNames);
-                                                    segmentsstructmrx09000000_segment_plot.plot("../struct_mrx_09_000000.wav.ogg",segmentsstructmrx09000000_data,segmentsstructmrx09000000_seriesNames);
+                                                    segmentsstructmrx09000000_segment_plot.plot(segmentsstructmrx09000000_track_url,segmentsstructmrx09000000_data,segmentsstructmrx09000000_seriesNames);
                                                     //document.getElementById("segmentsstructmrx09000000_button").setAttribute("value","done.");
                                                     jQuery("#segmentsstructmrx09000000_button").attr('value','plot').attr('disabled','disabled');
                                                 }
