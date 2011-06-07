@@ -1,4 +1,4 @@
-var segmentsstructmrx09000004_data = [
+var data = [
 [{o: 0.44, f: 13.978, l: "intro", a: 0},
 {o: 13.978, f: 35.421, l: "verse", a: 1},
 {o: 35.421, f: 47.867, l: "refrain", a: 0},
@@ -91,6 +91,6 @@ var segmentsstructmrx09000004_data = [
 {o: 178.752, f: 182.909, l: "G", a: 1}]
 ];
 
-var segmentsstructmrx09000004_seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
+var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
-var segmentsstructmrx09000004_track_url = "http://www.music-ir.org/diy-demo/struct_mrx_09_000004.wav.mp3";
+var track_url = "song4.ogg";

@@ -9,7 +9,7 @@
             <LINK REL=StyleSheet HREF="tableblue.css" TYPE="text/css" >
 
                 <script type="text/javascript" src="protovis-r3.2.js"></script>
-                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+                <script type="text/javascript" src="../support/jquery.min.js"></script>
                 <script type="text/javascript" src='../jplayer/jquery.jplayer.min.js'></script>
                 <script type="text/javascript" src='../jplayer/jquery.jplayer.inspector.js'></script>
                 <link rel="stylesheet" href='../jplayer/jplayer.blue.monday.css' type="text/css" media="all" />
@@ -20,7 +20,7 @@
                      jQuery.noConflict();//declare to avoid conflict with Prototype
                      var jPlayerReady=false;
                     jQuery(document).ready(function(){
-                        plot(0.0, 141.087, 7,"song3.ogg",segmentsstructmrx09000003_data,segmentsstructmrx09000003_seriesNames);
+                        plot(0.0, 141.087, 7,track_url,data,seriesNames);
                         /* setup player */
                         jQuery("#jquery_jplayer").jPlayer({
                             //warningAlerts:true,
@@ -45,7 +45,7 @@
                     <br><a name="top"></a>
 
                         <div id="content">
-                            <h4>Segmentation Plot: Structural Segmentation for track struct_mrx_09_000000</h4>
+                            <h4>Segmentation Plot: Structural Segmentation </h4>
                                 <div id="center">
                                     <div id="plot" style="width: 860px; height: 421px; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;">
                                     </div>
