@@ -85,7 +85,7 @@
                                     <div id="jplayer_inspector"></div>
                                     <div id="jplayer_status"></div>
                                     <div style="text-align:left;padding-left:10px;">
-                                        <a href="segmentsstructmrx09000000.js">download JSON data file</a>
+                                        <a href="<c:url value='/data/segments${param.plot}.js'/>">download JSON data file</a>
                                     </div>
 
 
