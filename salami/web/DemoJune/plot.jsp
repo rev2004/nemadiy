@@ -30,7 +30,7 @@
             jQuery(document).ready(function(){
                 jQuery("#artist").text(artist);
                 jQuery("#track").text(track);
-                plot(0.0, 141.087, 7,data,seriesNames);
+                plot( 7,data,seriesNames);
                 /* setup player */
                 jQuery("#jquery_jplayer").jPlayer({
                     //warningAlerts:true,
@@ -94,7 +94,7 @@
                     <a href="<c:url value='/data/segments${param.plot}.js'/>">download JSON data file</a>
                 </div>
                 <h4>Self Similarity Images:</h4>
-                <img src="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png"/>
+                <a href="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png" ><img src="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png"/></a>
 
             </div>
             <br>

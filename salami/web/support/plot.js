@@ -11,8 +11,11 @@ var playInterval;
                     
                    
            
-function plot(start,end,numseries,data,seriesNames){
+function plot(numseries,data,seriesNames){
 
+    var tmpSeg=data[0],
+        start=tmpSeg[0].o,
+        end=tmpSeg[tmpSeg.length-1].f;
     var w = 810,
     hOffset = 0,
     hSep = 15,
@@ -22,7 +25,7 @@ function plot(start,end,numseries,data,seriesNames){
     totalHeight = h1 + 20 + h2 + 15 + hOffset + hSep,
     x = pv.Scale.linear(start, end).range(0, w-legendOffset),
     i = -1;
-
+    
     /* Root panel. */
     var vis = new pv.Panel().canvas("plot")
     .width(w)
