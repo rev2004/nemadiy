@@ -7,11 +7,11 @@
  var segmentation_colors = ["lightsalmon", "lightblue", "lightgoldenrodyellow", "lightgreen", "lightgrey", "beige"];
                     
                     var playInterval;
-                    var songLoaded=false;
+                    
                     
                    
            
-                    function plot(start,end,numseries,track_url,data,seriesNames){
+                    function plot(start,end,numseries,data,seriesNames){
 
                         var w = 810,
                         hOffset = 0,
@@ -116,10 +116,6 @@
                             if (jPlayerReady) {
                                         
                                 clearInterval(playInterval);
-                                if (!songLoaded){
-                                    jQuery("#jquery_jplayer").jPlayer("setMedia",{oga:track_url});
-                                    songLoaded=true;
-                                }
                                 jQuery("#jquery_jplayer").jPlayer("pause",startTime).unbind(jQuery.jPlayer.event.timeupdate)
                                 .jPlayer("play",startTime)
                                 .bind(jQuery.jPlayer.event.timeupdate, function(event){
