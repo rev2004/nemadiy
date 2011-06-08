@@ -10,7 +10,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Segmentation Plot Results - Segmentation Plots</title>
+        <title>SALAMI: Structural Segmentation Experiments</title>
 
         <LINK REL=StyleSheet HREF="support/menu.css" TYPE="text/css" >
         <LINK REL=StyleSheet HREF="support/tableblue.css" TYPE="text/css" >
@@ -42,7 +42,7 @@
                     <table id="h2table">
                         <tr>
                             <td><img src="support/logo.png" width="160"></td>
-                            <td><h2>Segmentation Plot Results</h2></td>
+                            <td><h2>SALAMI: Structural Segmentation Experiments</h2></td>
                         </tr>
                     </table>
 

@@ -13,8 +13,8 @@ var playInterval;
            
 function plot(numseries,data,seriesNames){
 
-    var tmpSeg=data[0],
-        start=tmpSeg[0].o,
+    var tmpSeg=data[data.length-1],
+        start=0,
         end=tmpSeg[tmpSeg.length-1].f;
     var w = 810,
     hOffset = 0,
