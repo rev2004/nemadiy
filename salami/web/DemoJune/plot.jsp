@@ -11,7 +11,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Segmentation Plot Results - Segmentation Plots ${param.plot}</title>
+        <title>SALAMI: Structural Segmentation Experiments - Segmentation Plots ${param.plot}</title>
 
         <LINK REL=StyleSheet HREF="<c:url value='/support/menu.css'/>" TYPE="text/css" >
         <LINK REL=StyleSheet HREF="<c:url value='/support/tableblue.css'/>" TYPE="text/css" >
@@ -88,14 +88,14 @@
 
                     </div>
                 </div>
-                <div id="jplayer_inspector"></div>
+                
                 <div id="jplayer_status"></div>
-                <div style="text-align:left;padding-left:10px;">
-                    <a href="<c:url value='/data/segments${param.plot}.js'/>">download JSON data file</a>
-                </div>
+                <br/>
+                <a href="<c:url value='/data/segments${param.plot}.js'/>"><h4 style="font-weight: bold;">Download JSON Structure Data File</h4></a>
+                <br/>
                 <h4>Self Similarity Images:</h4>
-                <a href="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png" ><img src="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png"/></a>
-
+                <a href="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png" ><img height="400px" src="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png"/></a>
+                <div id="jplayer_inspector"></div>
             </div>
             <br>
 
