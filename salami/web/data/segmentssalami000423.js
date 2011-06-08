@@ -99,3 +99,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000423.ogg";
+
+var artist = "Compay Segundo";
+
+var track = "Cuba Y Espan a Cuba And Spain ";

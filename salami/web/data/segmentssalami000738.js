@@ -131,3 +131,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000738.ogg";
+
+var artist = "Gillian Welch";
+
+var track = "Only One And Only";

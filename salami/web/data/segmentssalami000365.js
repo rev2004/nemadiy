@@ -78,3 +78,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000365.ogg";
+
+var artist = "Besh O Drom";
+
+var track = "Engem anya m mega tkozott My mother c";

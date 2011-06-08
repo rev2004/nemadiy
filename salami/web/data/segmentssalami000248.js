@@ -79,3 +79,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000248.ogg";
+
+var artist = "James Taylor";
+
+var track = "Lo And Behold";

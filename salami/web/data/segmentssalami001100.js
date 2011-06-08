@@ -69,3 +69,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001100.ogg";
+
+var artist = "Compilations";
+
+var track = "Te Deum In D Major Introduction";

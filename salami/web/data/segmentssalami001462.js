@@ -97,3 +97,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001462.ogg";
+
+var artist = "Brownie McGhee Sonny Terry";
+
+var track = "C mon If You re Comin ";

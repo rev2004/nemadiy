@@ -113,3 +113,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000749.ogg";
+
+var artist = "Stan Getz Bill Evans";
+
+var track = "Night and Day 2";

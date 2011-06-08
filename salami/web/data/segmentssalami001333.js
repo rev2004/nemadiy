@@ -90,3 +90,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001333.ogg";
+
+var artist = "Radiohead";
+
+var track = "Blow Out";

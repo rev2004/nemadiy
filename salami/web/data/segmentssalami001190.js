@@ -103,3 +103,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001190.ogg";
+
+var artist = "City on the Make";
+
+var track = "Good Old Fashioned Fire";

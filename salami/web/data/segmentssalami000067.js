@@ -105,3 +105,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000067.ogg";
+
+var artist = "Les Chambristes de Montreal";
+
+var track = "Rhapsodie a sept I";

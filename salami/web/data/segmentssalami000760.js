@@ -90,3 +90,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000760.ogg";
+
+var artist = "Cassie";
+
+var track = "What Do U Want";

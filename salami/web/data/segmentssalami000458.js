@@ -146,3 +146,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000458.ogg";
+
+var artist = "Big Blue";
+
+var track = "They Love Each Other";

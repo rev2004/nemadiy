@@ -69,3 +69,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000300.ogg";
+
+var artist = "Daniel Adni";
+
+var track = "Songs Without Words Op 30 No 4";

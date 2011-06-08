@@ -121,3 +121,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000906.ogg";
+
+var artist = "Grazgrove";
+
+var track = "grazgrove20080606t05flac";

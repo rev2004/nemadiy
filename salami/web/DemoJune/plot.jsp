@@ -28,6 +28,8 @@
                      jQuery.noConflict();//declare to avoid conflict with Prototype
                      var jPlayerReady=false;
                     jQuery(document).ready(function(){
+                        jQuery("#artist").text(artist);
+                        jQuery("#track").text(track);
                         plot(0.0, 141.087, 7,"http://www.music-ir.org/diy-demo/music/${param.plot}.ogg",data,seriesNames);
                         /* setup player */
                         jQuery("#jquery_jplayer").jPlayer({
@@ -54,6 +56,8 @@
 
                         <div id="content">
                             <h4>Segmentation Plot: Structural Segmentation -${param.plot}</h4>
+                            <h5>Artist: <label id="artist"/></h5>
+                            <h5>Track: <label id="track"/></h5>
                                 <div id="center">
                                     <div id="plot" style="width: 860px; height: 421px; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;">
                                     </div>

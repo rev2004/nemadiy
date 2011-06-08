@@ -75,3 +75,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000801.ogg";
+
+var artist = "Yolk";
+
+var track = "yolk20020406d1t01shn";

@@ -99,3 +99,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000425.ogg";
+
+var artist = "Ric Soens and Jimi Tarnowski Tavern Tour";
+
+var track = "Im always in Love";

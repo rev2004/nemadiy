@@ -77,3 +77,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001139.ogg";
+
+var artist = "Me Shell Ndege ocello";
+
+var track = "Interlude 6 Legged Griot Trio Wear";

@@ -93,3 +93,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000976.ogg";
+
+var artist = "Montreal Jubilation Gospel Choir";
+
+var track = "Go Tell it on the Mountain";

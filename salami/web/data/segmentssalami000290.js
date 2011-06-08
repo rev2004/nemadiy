@@ -81,3 +81,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000290.ogg";
+
+var artist = "Hank Williams III";
+
+var track = "Life of Sin";

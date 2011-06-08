@@ -71,3 +71,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000299.ogg";
+
+var artist = "The Arrogant Worms";
+
+var track = "A Night on Dildo";

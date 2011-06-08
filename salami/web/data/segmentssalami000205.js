@@ -94,3 +94,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000205.ogg";
+
+var artist = "The Amorphous Band";
+
+var track = "track 1 ";

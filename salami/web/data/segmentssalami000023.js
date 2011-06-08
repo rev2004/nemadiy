@@ -91,3 +91,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000023.ogg";
+
+var artist = "Montreal Symphony Orchestra Charles Du";
+
+var track = "Concerto in D Rondo";

@@ -106,3 +106,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000021.ogg";
+
+var artist = "Laura Reed and Deep Pocket";
+
+var track = "One World";

@@ -128,3 +128,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001008.ogg";
+
+var artist = "Mr Devious";
+
+var track = "Theme from A Fistful of Testicles";

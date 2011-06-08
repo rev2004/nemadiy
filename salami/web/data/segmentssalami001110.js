@@ -60,3 +60,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001110.ogg";
+
+var artist = "The Academy Of Ancient Music Christoph";
+
+var track = "Dido Aeneas Act 2 In our deep vau";

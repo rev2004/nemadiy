@@ -46,3 +46,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000990.ogg";
+
+var artist = "Andre s Segovia";
+
+var track = "Studies In A minor";

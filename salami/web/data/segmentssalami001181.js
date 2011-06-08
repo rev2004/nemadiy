@@ -105,3 +105,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001181.ogg";
+
+var artist = "Barry Melton Band";
+
+var track = "Jesse James";

@@ -95,3 +95,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000403.ogg";
+
+var artist = "Yuri Bashmet";
+
+var track = "Bruch Concerto III";

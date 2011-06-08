@@ -64,3 +64,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000540.ogg";
+
+var artist = "Big Mama Thornton";
+
+var track = "Looking the World Over";

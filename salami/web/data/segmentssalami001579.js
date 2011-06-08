@@ -109,3 +109,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001579.ogg";
+
+var artist = "Charlie Hunter";
+
+var track = "Shango";

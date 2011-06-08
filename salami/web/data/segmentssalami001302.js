@@ -144,3 +144,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001302.ogg";
+
+var artist = "Quartetto Italiano";
+
+var track = "String Quartet in F III";

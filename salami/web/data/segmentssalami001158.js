@@ -138,3 +138,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001158.ogg";
+
+var artist = "Oliver Jones Clark Terry";
+
+var track = "Last Night In Rio";

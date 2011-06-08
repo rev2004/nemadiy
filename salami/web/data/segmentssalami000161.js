@@ -105,3 +105,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000161.ogg";
+
+var artist = "Jims Big Ego";
+
+var track = "She Said He Said";

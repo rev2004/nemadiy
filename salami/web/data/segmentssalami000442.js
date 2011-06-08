@@ -81,3 +81,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000442.ogg";
+
+var artist = "Mahalia Jackson";
+
+var track = "To Me It s So Wonderful";

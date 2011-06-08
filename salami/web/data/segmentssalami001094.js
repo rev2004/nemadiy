@@ -91,3 +91,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001094.ogg";
+
+var artist = "Justin Timberlake";
+
+var track = "13 justin timberlake pose feat snoo";

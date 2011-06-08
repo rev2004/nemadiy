@@ -113,3 +113,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001015.ogg";
+
+var artist = "Fina Dupa";
+
+var track = "finadupa20060415d1t04flac";

@@ -82,3 +82,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000254.ogg";
+
+var artist = "Black Ice";
+
+var track = "Stuck in the Mud";

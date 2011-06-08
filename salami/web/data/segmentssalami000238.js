@@ -121,3 +121,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000238.ogg";
+
+var artist = "Electric Avenue";
+
+var track = "ea20040626d1t06flac";
