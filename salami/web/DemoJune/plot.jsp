@@ -21,7 +21,8 @@
         <script type="text/javascript" src="<c:url value='/support/jplayer/jquery.jplayer.min.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/support/jplayer/jquery.jplayer.inspector.js'/>"></script>
         <link rel="stylesheet" href="<c:url value='/support/jplayer/jplayer.blue.monday.css'/>" type="text/css" media="all" />
-        <script type="text/javascript" src="<c:url value='/data/segments${param.plot}.js'/>"></script>
+        <c:url value='/data/segments${param.plot}.js' var="dataUrl"/>
+        <script type="text/javascript" src="${dataUrl}"></script>
         <script type="text/javascript" src="<c:url value='/support/plot.js'/>"></script>
         <script type="text/javascript">
                    
@@ -91,7 +92,8 @@
                 
                 <div id="jplayer_status"></div>
                 <br/>
-                <a href="<c:url value='/data/segments${param.plot}.js'/>"><h4 style="font-weight: bold;">Download JSON Structure Data File</h4></a>
+                <h4 style="font-weight: bold;">Download JSON Structure Data File <button onclick="window.open('${dataUrl}');">Download</button></h4>
+                    
                 <br/>
                 <h4>Self Similarity Images:</h4>
                 <a href="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png" ><img height="400px" src="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png"/></a>
