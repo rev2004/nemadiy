@@ -93,7 +93,8 @@
                 <div style="text-align:left;padding-left:10px;">
                     <a href="<c:url value='/data/segments${param.plot}.js'/>">download JSON data file</a>
                 </div>
-
+                <h4>Self Similarity Images:</h4>
+                <img src="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png"/>
 
             </div>
             <br>
