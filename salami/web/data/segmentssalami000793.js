@@ -44,3 +44,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000793.ogg";
+
+var artist = "Compilations";
+
+var track = "Molimo Song of Devotion to the Fores";

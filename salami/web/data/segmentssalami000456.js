@@ -109,3 +109,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000456.ogg";
+
+var artist = "Fantasia Barrino";
+
+var track = "Free Yourself";

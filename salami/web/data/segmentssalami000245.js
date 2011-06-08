@@ -79,3 +79,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000245.ogg";
+
+var artist = "Kirov Chorus and Orchestra Valery Gerg";
+
+var track = "Ruslan and Lyudmila Oriental Dance";

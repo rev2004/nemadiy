@@ -64,6 +64,7 @@ h2 {
       font-size:93%;
       line-height:normal;
       }
+    
     #tabs ul {
 	margin:0;
 	padding:10px 10px 0 50px;
@@ -74,6 +75,10 @@ h2 {
       margin:0;
       padding:0;
       }
+    #tabs li.shown{
+          font-weight: bolder;
+          
+      }  
     #tabs a {
       float:left;
       background:url("tableft.gif") no-repeat left top;

@@ -123,3 +123,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000944.ogg";
+
+var artist = "Duke Junior and The Smokey Boots";
+
+var track = "Roadhouse Rag TAKE 1";

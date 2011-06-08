@@ -137,3 +137,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001058.ogg";
+
+var artist = "Buena Vista Social Club";
+
+var track = "El Cuarto de Tula";

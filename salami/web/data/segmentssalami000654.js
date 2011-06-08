@@ -69,3 +69,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000654.ogg";
+
+var artist = "Jonathan Scales Fourchestra";
+
+var track = "jonscales20090423t03flac";

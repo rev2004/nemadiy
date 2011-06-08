@@ -86,3 +86,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000639.ogg";
+
+var artist = "Compilations";
+
+var track = "Walk This Land";

@@ -78,3 +78,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001253.ogg";
+
+var artist = "Gothic Voices Christopher Page";
+
+var track = "Mon Cuer Me Fait Tous Dis Penser R";

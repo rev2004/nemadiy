@@ -110,3 +110,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000731.ogg";
+
+var artist = "Pepe Romero";
+
+var track = "Cantos Des Espana Op";

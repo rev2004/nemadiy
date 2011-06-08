@@ -105,3 +105,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000225.ogg";
+
+var artist = "Hamsa Lila";
+
+var track = "hamsalila20040703t06flac";

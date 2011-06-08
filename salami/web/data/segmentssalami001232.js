@@ -86,3 +86,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001232.ogg";
+
+var artist = "Bon Jovi";
+
+var track = "I d Die For You";

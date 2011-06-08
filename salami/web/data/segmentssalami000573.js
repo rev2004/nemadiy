@@ -70,3 +70,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000573.ogg";
+
+var artist = "Ella Fitzgerald Louis Armstrong";
+
+var track = "You Won t Be Satisfied Until You Br";

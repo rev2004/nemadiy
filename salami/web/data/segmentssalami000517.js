@@ -70,3 +70,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000517.ogg";
+
+var artist = "The King s Consort Robert King";
+
+var track = "Water Music Suite in D G Major M 1";

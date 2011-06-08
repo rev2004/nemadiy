@@ -85,3 +85,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000852.ogg";
+
+var artist = "Alicia Keys";
+
+var track = "Someday We ll All Be Free";

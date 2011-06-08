@@ -100,3 +100,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000845.ogg";
+
+var artist = "Choir of Westminster Cathedral David H";
+
+var track = "Missa O quam gloriosum c1583 2 G";

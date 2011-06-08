@@ -61,3 +61,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000710.ogg";
+
+var artist = "Compilations";
+
+var track = "Orfeo Ed Euridice Act II Scene I 3";

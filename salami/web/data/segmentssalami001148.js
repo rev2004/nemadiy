@@ -97,3 +97,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001148.ogg";
+
+var artist = "R E M ";
+
+var track = "Imitation Of Life";

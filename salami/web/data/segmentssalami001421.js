@@ -115,3 +115,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001421.ogg";
+
+var artist = "Norbert Kraft Northern Chamber Orchest";
+
+var track = "Concerto for Guitar and Orchestra 2";

@@ -141,3 +141,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000775.ogg";
+
+var artist = "Grant Green";
+
+var track = "Somewhere In The Night";

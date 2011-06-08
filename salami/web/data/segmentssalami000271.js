@@ -57,3 +57,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000271.ogg";
+
+var artist = "Compilations";
+
+var track = "Danseries A 4 Parties Basse Danse A 1";

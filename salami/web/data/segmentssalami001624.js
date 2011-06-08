@@ -90,3 +90,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001624.ogg";
+
+var artist = "Stray Cats";
+
+var track = "You Don t Believe Me";

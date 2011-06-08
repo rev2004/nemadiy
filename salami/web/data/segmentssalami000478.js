@@ -112,3 +112,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000478.ogg";
+
+var artist = "Steven Dann Bruce Vogt";
+
+var track = "Sonata for Viola and Piano Impetuoso";

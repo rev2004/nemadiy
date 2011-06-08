@@ -127,3 +127,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001381.ogg";
+
+var artist = "Pete Thurston";
+
+var track = "Whiskey Song";

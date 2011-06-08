@@ -87,3 +87,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000490.ogg";
+
+var artist = "Maria Cristina Kiehr Concerto Soave";
+
+var track = "Nascente Maria 2";

@@ -94,3 +94,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001613.ogg";
+
+var artist = "Franky Malloon";
+
+var track = "Things You Want";

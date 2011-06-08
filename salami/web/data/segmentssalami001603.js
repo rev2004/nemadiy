@@ -112,3 +112,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001603.ogg";
+
+var artist = "Tim Conley";
+
+var track = "TimConley20050729SPC4d2t03flac";

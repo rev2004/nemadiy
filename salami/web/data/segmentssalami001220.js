@@ -98,3 +98,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001220.ogg";
+
+var artist = "Academy Of St Martin In The Fields";
+
+var track = "Aprite Un Po quegli Occhi Figaro ";

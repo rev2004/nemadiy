@@ -96,3 +96,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000965.ogg";
+
+var artist = "Ravi Shankar";
+
+var track = "Kafi Holi Spring Festival Of Colors";

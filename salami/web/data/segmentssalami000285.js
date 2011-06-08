@@ -55,3 +55,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000285.ogg";
+
+var artist = "Erez Perelman";
+
+var track = "Prelude 1 by Villa Lobos with Flamenco intro";

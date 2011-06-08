@@ -59,3 +59,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000180.ogg";
+
+var artist = "Compilations";
+
+var track = "La Poste Lute version and harpsicho 1";

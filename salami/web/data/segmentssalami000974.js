@@ -88,3 +88,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000974.ogg";
+
+var artist = "John McLaughlin Paco de Lucia Al Di Me";
+
+var track = "Frevo Rasgado";

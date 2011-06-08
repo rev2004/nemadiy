@@ -79,3 +79,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001229.ogg";
+
+var artist = "Ashley MacIsaac";
+
+var track = "Rusty D con STRUCK tion";

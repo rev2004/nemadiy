@@ -71,3 +71,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001198.ogg";
+
+var artist = "Paris Combo";
+
+var track = "Si J Avais E te ";

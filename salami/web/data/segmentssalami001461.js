@@ -64,3 +64,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001461.ogg";
+
+var artist = "Benedictine Monks of Santo Domingo De Si";
+
+var track = "De Profundis";

@@ -104,3 +104,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000427.ogg";
+
+var artist = "Astral Project";
+
+var track = "astralproject20030326t02shn";

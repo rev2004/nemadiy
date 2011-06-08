@@ -117,3 +117,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000564.ogg";
+
+var artist = "the Pistol Whippin Party Penguins";
+
+var track = "Its Over Now";

@@ -80,3 +80,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001622.ogg";
+
+var artist = "The Everly Brothers";
+
+var track = "Til I Kissed You";

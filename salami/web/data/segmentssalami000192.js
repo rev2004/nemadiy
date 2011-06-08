@@ -77,3 +77,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000192.ogg";
+
+var artist = "Te tes Raides";
+
+var track = "Viens ";

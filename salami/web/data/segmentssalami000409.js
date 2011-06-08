@@ -103,3 +103,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000409.ogg";
+
+var artist = "Laughing Gas Treatment";
+
+var track = "LGT20061020t09flac";

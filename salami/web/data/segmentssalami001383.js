@@ -53,3 +53,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001383.ogg";
+
+var artist = "George Benson";
+
+var track = "Low Down Dirty";

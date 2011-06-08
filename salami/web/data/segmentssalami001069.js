@@ -83,3 +83,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami001069.ogg";
+
+var artist = "Mstislav Rostropovich";
+
+var track = "Cello Concerto in D major 2 II";

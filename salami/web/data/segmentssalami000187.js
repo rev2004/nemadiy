@@ -89,3 +89,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000187.ogg";
+
+var artist = "Nobody Drives My Car";
+
+var track = "Halloween Have You Ever Seen Me";

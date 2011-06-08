@@ -92,3 +92,7 @@ var data = [
 var seriesNames = ["Ground-truth","BV1","BV2","GP7","MHRAF2","MND1","WB1"];
 
 var track_url = "salami000196.ogg";
+
+var artist = "Captain Soularcat";
+
+var track = "Salt Lick";
