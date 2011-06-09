@@ -1359,20 +1359,32 @@
 
                <br/>
 
-                <b>Table 4c</b>. Fined-grained vs. coarse-grained FPC-F results.
+                <b>Table 4c.</b> Fined-grained vs. coarse-grained FPC-F results.
 
                 
 
-                <p><span><img width=597 height=384
-                              src="image003.gif" ><![endif]></span></p>
+                <p><a href="img/fig4a.png"><img width="700" src="img/fig4a.png" ></a></p>
 
-                <p><b>Figure 4</b><span>.
-                        Tukey-Kramer HSD comparison plots of the human and algorithm mean performance
-                        ranks across 794 double-keyed tracks</span></p>
-
-                <o:p>&nbsp;</o:p>
+                <p style="width: 800px;"><b>Figure 4a.</b>
+                        Tukey-Kramer HSD comparison plots of the human and algorithm mean performance ranks across 794 double-keyed tracks. Circles indicate the groups. The members of each group are statistically significantly different than the other groups.</p>
 
 
+
+                
+
+                <p><a href="img/fig4b.png"><img width="700" src="img/fig4b.png" ></a></p>
+
+                <p style="width: 800px;"><b>Figure 4b.</b><span>
+                        Tukey-Kramer HSD comparison plots of each musical style's mean performance  ranks across algorithms. There is no statistically significant difference. Algorithms performed equally well across different musical styles.</span></p>
+                
+                
+
+                
+
+                <p><a href="img/fig4c.png"><img width="700" src="img/fig4c.png" ></a></p>
+
+                <p style="width: 800px;"><b>Figure 4c.</b><span>
+                        Tukey-Kramer HSD comparison plots of each dataset's mean performance  ranks across algorithms. Algorithms performed better on MIREX10 dataset which consists of tracks from the RWC database.</span></p>
 
 
             </div>
