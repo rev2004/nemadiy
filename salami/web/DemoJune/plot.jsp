@@ -96,7 +96,7 @@
                     
                 <br/>
                 <h4>Self Similarity Images:</h4>
-                <a href="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png" ><img height="400px" src="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png"/></a>
+                <a href="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png" ><img height="600px" src="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png"/></a>
                 <div id="jplayer_inspector"></div>
             </div>
             <br>

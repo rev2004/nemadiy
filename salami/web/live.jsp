@@ -32,6 +32,7 @@
                      <div id="tabs">
                             <ul>
                                 <li><a href="index.jsp" title="classical"><span>Summary</span></a></li>
+                                <li><a href="comparison.jsp" title="comparison"><span>Comparison</span></a></li>
                                 <li><a href="classical.jsp" title="classical"><span>Classical</span></a></li>
                                 <li><a href="jazz.jsp" title="Jazz"><span>Jazz</span></a></li>
                                 <li class="shown"><a href="live.jsp" title="Live"><span>Live</span></a></li>
