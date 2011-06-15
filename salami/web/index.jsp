@@ -111,7 +111,7 @@
 
                         <table id="h2table">
                             <tr>
-                                <td><img src="support/logo.png" width="160"></td>
+                                <td><img src="support/logo.png" width="160"/></td>
                                 <td><h2>SALAMI: Structural Segmentation Experiments</h2></td>
                             </tr>
                         </table>
@@ -125,23 +125,26 @@
                                 <li><a href="live.jsp" title="Live"><span>Live</span></a></li>
                                 <li><a href="pop.jsp" title="Pop"><span>Popular</span></a></li>
                                 <li><a href="world.jsp" title="World"><span>World</span></a></li>
+                                <li><a href="help.jsp" title="help"><span>Help</span></a></li>
                             </ul>
                         </div>
 
-                        <br><a name="top"></a>
-                            <div id="content">
-                                <h3>Summary</h3>
-                                <a name="legend"></a>
+                        <br/><a name="top"></a>
+                        <div id="content">
+                            <h3>Summary</h3>
+                            <a name="legend"></a>
 
-                                <h4>Legend</h4>
-                                <div id="legend"></div>
-                                <br><br>
-                                        <a name="summaryresults"></a>
-                                        <h4>Summary Results&nbsp;&nbsp;&nbsp;&nbsp;<span class="toplink"><a href="#top">[top]</a></span></h4>
-                                        <div id="summaryresults"></div>
-                                        <br><br>
+                            <h4>Legend</h4>
+                            <div id="legend"></div>
+                            <br/><br/>
+                            <a name="summaryresults"></a>
+                            <h4>Summary Results&nbsp;&nbsp;&nbsp;&nbsp;<span class="toplink"><a href="#top">[top]</a></span></h4>
+                            <div id="summaryresults"></div>
+                            <br/><br/>
 
 
-                                                </div>
-                                                </body>
-                                                </html>
+                        </div>
+                    </body>
+                    </html>
+
+
