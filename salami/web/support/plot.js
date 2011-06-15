@@ -1,6 +1,8 @@
 /* 
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
+ * 
+ * Author: Kris West, Guojun Zhu
  */
 
 
@@ -8,7 +10,12 @@ var segmentation_colors = ["lightsalmon", "lightblue", "lightgoldenrodyellow", "
                     
 var playInterval;
                     
-                    
+/**
+ *numseries: number of series, (it is redundant as length of data or seriesNames)
+ *data: real segmentation data
+ *seriesNames:  Names of algorithms. 
+ *                    
+ *                    */                    
                    
            
 function plot(numseries,data,seriesNames){
@@ -23,8 +30,8 @@ function plot(numseries,data,seriesNames){
     h1 = 15 + 3 + 33 * numseries,
     h2 = 15 * numseries,
     totalHeight = h1 + 20 + h2 + 15 + hOffset + hSep,
-    x = pv.Scale.linear(start, end).range(0, w-legendOffset),
-    i = -1;
+    fullScale = pv.Scale.linear(start, end).range(0, w-legendOffset),
+    interaction = -1;
     
     /* Root panel. */
     var vis = new pv.Panel().canvas("plot")
@@ -43,11 +50,11 @@ function plot(numseries,data,seriesNames){
 
 
     /* Interaction state. Focus scales will have domain set on-render. */
-    var i = {
+    var interaction = {
         x:0, 
         dx:100
     },
-    fx = pv.Scale.linear().range(0, w-legendOffset);
+    contentScale = pv.Scale.linear().range(0, w-legendOffset);
 
     /* Legend area. */
     var legend = vis.add(pv.Panel)
@@ -86,8 +93,8 @@ function plot(numseries,data,seriesNames){
     var focus = vis.add(pv.Panel)
     .left(legendOffset)
     .def("init_data", function() {
-        var d1 = x.invert(i.x),
-        d2 = x.invert(i.x + i.dx);
+        var d1 = fullScale.invert(interaction.x),
+        d2 = fullScale.invert(interaction.x + interaction.dx);
         var out = new Array(numseries);
         for(s=0;s<numseries;s=s+1){
             ;
@@ -101,11 +108,11 @@ function plot(numseries,data,seriesNames){
             lastvisible = onsetsearch >= 0 ? onsetsearch : -(1+onsetsearch);
             out[s] = data[s].slice(firstvisible,lastvisible+1);
         }
-        fx.domain(d1, d2);
+        contentScale.domain(d1, d2);
         return out;
     })
     .def("focus_length", function() {
-        return "showing: " + x.invert(i.x).toFixed(2) + " to " + x.invert(i.x + i.dx).toFixed(2) + " seconds";
+        return "showing: " + fullScale.invert(interaction.x).toFixed(2) + " to " + fullScale.invert(interaction.x + interaction.dx).toFixed(2) + " seconds";
     })
     .top(hOffset)
     .height(h1);
@@ -120,13 +127,15 @@ function plot(numseries,data,seriesNames){
     /* X-axis ticks. */
     focus.add(pv.Rule)
     .data(function() {
-        return fx.ticks()
+        return contentScale.ticks()
         })
-    .left(fx)
+    .left(contentScale)
     .strokeStyle("#eee")
     .anchor("bottom").add(pv.Label)
-    .text(fx.tickFormat);
+    .text(contentScale.tickFormat);
 
+
+    //enable the play button in jplayer to play the full song
     function defaultPlay(event){
         playbackTime = event.jPlayer.status.currentTime;
                             
@@ -134,6 +143,7 @@ function plot(numseries,data,seriesNames){
         context.render();
     }
     jQuery("#jquery_jplayer").bind(jQuery.jPlayer.event.timeupdate,defaultPlay);
+    
     
     function play(startTime,endTime){
 
@@ -151,7 +161,7 @@ function plot(numseries,data,seriesNames){
                         jQuery(this).jPlayer("play",startTime);
                     }
                     else {
-                        jQuery(this).jPlayer("pause");
+                        jQuery(this).jPlayer("pause",startTime);
                     //endTime=totalTime;
                     }
                 };
@@ -198,25 +208,27 @@ function plot(numseries,data,seriesNames){
     .lineWidth(1)
     .antialias(false)
     .left(function(d) {
-        return fx(d.o) < 0 ? 0 : fx(d.o)
+        return contentScale(d.o) < 0 ? 0 : contentScale(d.o)
         })
     .width(function(d) {
-        return fx(d.o) < 0 ? fx(d.f) : (fx(d.f) - fx(d.o))
+        return contentScale(d.o) < 0 ? contentScale(d.f) : (contentScale(d.f) - contentScale(d.o))
         })
     .bottom(function() {
         return 3 + (33*this.parent.index)
         })
     .height(30)
     .fillStyle(function(d) {
-        return focus_plot.selection()[0]==this.index && focus_plot.selection()[1]==this.parent.index ? "steelblue" : pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6)
+        //console.log(playbackTime);
+        //console.log(d.o<playbackTime-0.1)&&(d.f>playbackTime);
+        return (d.o<playbackTime-0.1)&&(d.f>playbackTime+0.1) && focus_plot.selection()[1]==this.parent.index ? "steelblue" : pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6)
         })
     /*.event("click", function(d) label.text("selected: " + d.o+ " to " + d.f + " seconds"))*/
     .event("click",function(d){
-        if(focus_plot.selection()[0]==this.index && focus_plot.selection()[1]==this.parent.index){
+        if((d.o<playbackTime)&&(d.f>playbackTime) && focus_plot.selection()[1]==this.parent.index){
             handleDeselect();
             focus_plot.selection([-1,-1]);
         }else{
-            handleSelect(d);
+            handleSelect(d,this.parent.index);
             focus_plot.selection([this.index,this.parent.index]);
         }
     })
@@ -225,7 +237,7 @@ function plot(numseries,data,seriesNames){
         return d.l
         })
     .anchor("left").add(pv.Label).text(function(d) {
-        return fx(d.o) < 0 ? '...' + d.l : d.l
+        return contentScale(d.o) < 0 ? '...' + d.l : d.l
         }).width(function() {
         return this.parent.width()
         });
@@ -237,7 +249,7 @@ function plot(numseries,data,seriesNames){
         return d
         })
     .left(function() {
-        return fx(playbackTime)
+        return contentScale(playbackTime)
         })
     .strokeStyle("#000000")
     .lineWidth(2);
@@ -262,11 +274,11 @@ function plot(numseries,data,seriesNames){
 
     /* X-axis ticks. */
     context.add(pv.Rule)
-    .data(x.ticks())
-    .left(x)
+    .data(fullScale.ticks())
+    .left(fullScale)
     .strokeStyle("#eee")
     .anchor("bottom").add(pv.Label)
-    .text(x.tickFormat);
+    .text(fullScale.tickFormat);
 
     context.add(pv.Rule)
     .bottom(0);
@@ -288,10 +300,10 @@ function plot(numseries,data,seriesNames){
         return  array
         })
     .left(function(d) {
-        return x(d.o)
+        return fullScale(d.o)
         })
     .width(function(d) {
-        return x(d.f) - x(d.o)
+        return fullScale(d.f) - fullScale(d.o)
         })
     .bottom(function() {
         return 3 + (13 * this.parent.index)
@@ -314,14 +326,14 @@ function plot(numseries,data,seriesNames){
         return d
         })
     .left(function() {
-        return x(playbackTime)
+        return fullScale(playbackTime)
         })
     .strokeStyle("#000000")
     .lineWidth(2);
 
     /* The selectable, draggable focus region. */
     context.add(pv.Panel)
-    .data([i])
+    .data([interaction])
     .bottom(0)
     .cursor("crosshair")
     .events("all")
