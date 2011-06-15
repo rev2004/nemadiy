@@ -38,6 +38,7 @@
                                 <li><a href="live.jsp" title="Live"><span>Live</span></a></li>
                                 <li><a href="pop.jsp" title="Pop"><span>Popular</span></a></li>
                                 <li class="shown"><a href="world.jsp" title="World"><span>World</span></a></li>
+                                <li><a href="help.jsp" title="help"><span>Help</span></a></li>
                             </ul>
                         </div>
                     <br><a name="top"></a>
