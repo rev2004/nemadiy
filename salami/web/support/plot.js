@@ -339,7 +339,7 @@ function plot(numseries,data,seriesNames){
                             startTime=nextSeg.o;
                             if (interaction.x>fullScale(startTime)) interaction.x=Math.max(0,fullScale(startTime)-2);
                             if (interaction.dx+interaction.x<fullScale(endTime)) {
-                                interaction.dx=Math.min(fullScale(endTime)-interaction.xfullScale(end)-interaction.x);
+                                interaction.dx=Math.min(fullScale(endTime)-interaction.x+1,fullScale(end)-interaction.x);
                             }
                             jQuery(this).jPlayer("play",startTime); 
                             return;
