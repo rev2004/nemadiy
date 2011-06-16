@@ -325,6 +325,9 @@ function plot(numseries,data,seriesNames){
             .jPlayer("play",startTime)
             .bind(jQuery.jPlayer.event.timeupdate, function(event){
                 playbackTime = event.jPlayer.status.currentTime;
+                if (interaction.dx+interaction.x<fullScale(playbackTime)) {
+                    interaction.dx=Math.min(fullScale(endTime)-interaction.x+1,fullScale(end)-interaction.x);
+                }
                 if (playbackTime>endTime){
                     if (jQuery('#next:checked').val()!=null){
                         var nextSegIndex=findNextSegmentIndex(data[focus_plot.selection()[1]],playbackTime,sign);
@@ -334,8 +337,10 @@ function plot(numseries,data,seriesNames){
                             label.text("selected: " + nextSeg.o+ " to " + nextSeg.f + " seconds");
                             endTime=nextSeg.f;
                             startTime=nextSeg.o;
-                            if (interaction.x>fullScale(startTime)) interaction.x=fullScale(startTime);
-                            if (interaction.dx+interaction.x<fullScale(endTime)) interaction.dx=fullScale(endTime)-interaction.x;
+                            if (interaction.x>fullScale(startTime)) interaction.x=Math.max(0,fullScale(startTime)-2);
+                            if (interaction.dx+interaction.x<fullScale(endTime)) {
+                                interaction.dx=Math.min(fullScale(endTime)-interaction.xfullScale(end)-interaction.x);
+                            }
                             jQuery(this).jPlayer("play",startTime); 
                             return;
                         }
@@ -345,10 +350,10 @@ function plot(numseries,data,seriesNames){
                             jQuery(this).jPlayer("play",startTime);
                             return;
                         };
-                    
-                        jQuery(this).jPlayer("pause",startTime);
-                    //endTime=totalTime;
                     };
+                    jQuery(this).jPlayer("pause",startTime);
+                //endTime=totalTime;
+                    
                 };
                 focus.render();
                 context.render();
