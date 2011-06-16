@@ -21,8 +21,8 @@ var playInterval;
 function plot(numseries,data,seriesNames){
 
     var tmpSeg=data[data.length-1],
-        start=0,
-        end=tmpSeg[tmpSeg.length-1].f;
+    start=0,
+    end=tmpSeg[tmpSeg.length-1].f;
     var w = 810,
     hOffset = 0,
     hSep = 15,
@@ -128,7 +128,7 @@ function plot(numseries,data,seriesNames){
     focus.add(pv.Rule)
     .data(function() {
         return contentScale.ticks()
-        })
+    })
     .left(contentScale)
     .strokeStyle("#eee")
     .anchor("bottom").add(pv.Label)
@@ -145,83 +145,37 @@ function plot(numseries,data,seriesNames){
     jQuery("#jquery_jplayer").bind(jQuery.jPlayer.event.timeupdate,defaultPlay);
     
     
-    function play(startTime,endTime){
-
-        // Local copy of jQuery selectors, for performance.
-        if (jPlayerReady) {
-                                        
-            clearInterval(playInterval);
-            jQuery("#jquery_jplayer").jPlayer("pause",startTime).unbind(jQuery.jPlayer.event.timeupdate)
-            .jPlayer("play",startTime)
-            .bind(jQuery.jPlayer.event.timeupdate, function(event){
-                playbackTime = event.jPlayer.status.currentTime;
-                if (playbackTime>endTime){
-                    if (jQuery('#jplayer_repeat:checked').val()!=null)
-                    {
-                        jQuery(this).jPlayer("play",startTime);
-                    }
-                    else {
-                        jQuery(this).jPlayer("pause",startTime);
-                    //endTime=totalTime;
-                    }
-                };
-                focus.render();
-                context.render();
-            });
-        }else{
-            jQuery("#jplayer_status").text("jPlayer is not ready. Please wait..");
-        }
-    }
-
-    function handleSelect(d){
-        label.text("selected: " + d.o+ " to " + d.f + " seconds");
-        playInterval=setInterval(function(){
-            play(d.o,d.f);
-        },1000);
-        focus.render();
-        context.render();
-    //do something with player here
-    }
-
-    function handleDeselect() {
-        label.text("nothing selected");
-        jQuery("#jquery_jplayer").jPlayer("stop");
-        jQuery("#jquery_jplayer").unbind(jQuery.jPlayer.event.timeupdate)
-            .bind(jQuery.jPlayer.event.timeupdate,defaultPlay);
-        focus.render();
-        context.render();
-    }
-
+ 
     /* Focus area chart. */
     var focus_plot = focus.add(pv.Panel)
     .overflow("hidden")
     .data(function() {
         return focus.init_data()
-        })
+    })
     .def("selection",[-1,-1]);
     focus_plot.add(pv.Panel)
     .fillStyle("#FFFFFF")
     .data(function(array) {
         return array
-        })
+    })
     .strokeStyle("black")
     .lineWidth(1)
     .antialias(false)
     .left(function(d) {
         return contentScale(d.o) < 0 ? 0 : contentScale(d.o)
-        })
+    })
     .width(function(d) {
         return contentScale(d.o) < 0 ? contentScale(d.f) : (contentScale(d.f) - contentScale(d.o))
-        })
+    })
     .bottom(function() {
         return 3 + (33*this.parent.index)
-        })
+    })
     .height(30)
     .fillStyle(function(d) {
         //console.log(playbackTime);
         //console.log(d.o<playbackTime-0.1)&&(d.f>playbackTime);
         return (d.o<playbackTime-0.1)&&(d.f>playbackTime+0.1) && focus_plot.selection()[1]==this.parent.index ? "steelblue" : pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6)
-        })
+    })
     /*.event("click", function(d) label.text("selected: " + d.o+ " to " + d.f + " seconds"))*/
     .event("click",function(d){
         if((d.o<playbackTime)&&(d.f>playbackTime) && focus_plot.selection()[1]==this.parent.index){
@@ -235,22 +189,22 @@ function plot(numseries,data,seriesNames){
     .add(pv.Panel)
     .title(function(d) {
         return d.l
-        })
+    })
     .anchor("left").add(pv.Label).text(function(d) {
         return contentScale(d.o) < 0 ? '...' + d.l : d.l
-        }).width(function() {
+    }).width(function() {
         return this.parent.width()
-        });
+    });
 
     /* Playback position indicator. */
     focus_plot.add(pv.Line)
     .data([0, h1-12])
     .bottom(function(d) {
         return d
-        })
+    })
     .left(function() {
         return contentScale(playbackTime)
-        })
+    })
     .strokeStyle("#000000")
     .lineWidth(2);
 
@@ -261,7 +215,7 @@ function plot(numseries,data,seriesNames){
     .textAlign("right")
     .text(function() {
         return focus.focus_length()
-        });
+    });
 
     /* selected label */
     var label = focus.add(pv.Label)
@@ -298,36 +252,36 @@ function plot(numseries,data,seriesNames){
     .add(pv.Bar)
     .data(function(array) {
         return  array
-        })
+    })
     .left(function(d) {
         return fullScale(d.o)
-        })
+    })
     .width(function(d) {
         return fullScale(d.f) - fullScale(d.o)
-        })
+    })
     .bottom(function() {
         return 3 + (13 * this.parent.index)
-        })
+    })
     .height(10)
     .strokeStyle("Black")
     .lineWidth(1)
     .antialias(false)
     .fillStyle(function(d) {
         return pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6)
-        })
+    })
     .title(function(d) {
         return d.l
-        });
+    });
 
     /* Context area playback indicator */
     context.add(pv.Line)
     .data([0, h2])
     .bottom(function(d) {
         return d
-        })
+    })
     .left(function() {
         return fullScale(playbackTime)
-        })
+    })
     .strokeStyle("#000000")
     .lineWidth(2);
 
@@ -343,10 +297,10 @@ function plot(numseries,data,seriesNames){
     .add(pv.Bar)
     .left(function(d) {
         return d.x
-        })
+    })
     .width(function(d) {
         return d.dx
-        })
+    })
     .fillStyle("rgba(255, 128, 128, .4)")
     .strokeStyle("rgb(255, 128, 128)")
     .lineWidth(1)
@@ -357,5 +311,77 @@ function plot(numseries,data,seriesNames){
     .event("drag", focus);
 
     vis.render();
-                            
+               
+               
+               
+    function play(startTime,endTime){
+
+        // Local copy of jQuery selectors, for performance.
+        if (jPlayerReady) {
+                                        
+            clearInterval(playInterval);
+            
+            jQuery("#jquery_jplayer").jPlayer("pause",startTime).unbind(jQuery.jPlayer.event.timeupdate)
+            .jPlayer("play",startTime)
+            .bind(jQuery.jPlayer.event.timeupdate, function(event){
+                playbackTime = event.jPlayer.status.currentTime;
+                if (playbackTime>endTime){
+                    if (jQuery('#next').val()!=null){
+                        var nextSegIndex=findNextSegmentIndex(data[focus_plot.selection()[1]],focus_plot.selection()[0]);
+                        focus_plot.selection()[0]=nextSegIndex;
+                        var nextSeg=data[focus_plot.selection()[1]][nextSegIndex];
+                        if ((jQuery('#jplayer_repeat:checked').val()!=null)||(nextSeg.o>playbackTime)){
+                            endTime=nextSeg.f;
+                            startTime=nextSeg.o;
+                            if (interaction.x>fullScale(startTime)) interaction.x=fullScale(startTime);
+                            if (interaction.dx+interaction.x<fullScale(endTime)) interaction.dx=fullScale(endTime)-interaction.x;
+                            jQuery(this).jPlayer("play",startTime); 
+                            return;
+                        }
+                    }else {
+                       if (jQuery('#jplayer_repeat:checked').val()!=null)
+                        {
+                            jQuery(this).jPlayer("play",startTime);
+                            return;
+                        };
+                    
+                     jQuery(this).jPlayer("pause",startTime);
+                    //endTime=totalTime;
+                    };
+                };
+                focus.render();
+                context.render();
+            });
+        }else{
+            jQuery("#jplayer_status").text("jPlayer is not ready. Please wait..");
+        }
+    }
+
+    function handleSelect(d){
+        label.text("selected: " + d.o+ " to " + d.f + " seconds");
+        playInterval=setInterval(function(){
+            play(d.o,d.f);
+        },1000);
+        focus.render();
+        context.render();
+    //do something with player here
+    }
+
+    function handleDeselect() {
+        label.text("nothing selected");
+        jQuery("#jquery_jplayer").jPlayer("stop");
+        jQuery("#jquery_jplayer").unbind(jQuery.jPlayer.event.timeupdate)
+        .bind(jQuery.jPlayer.event.timeupdate,defaultPlay);
+        focus.render();
+        context.render();
+    }
+
+    function findNextSegmentIndex(lineData,index){
+        var i=index+1;
+        while (lineData[i].l!=lineData[index].l){
+            i++; 
+            i%=lineData.length;
+        }
+        return i;
+    }
 };
