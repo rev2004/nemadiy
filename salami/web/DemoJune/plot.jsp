@@ -64,7 +64,8 @@
             <div id="center">
                 <div id="plot" style="width: 860px; height: 421px; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;">
                 </div>
-
+                <div><input id="next"  type="checkbox" checked="true" name="repeat"/><label style="font-weight: bold;">Continue to similar segment</label></div>
+                           
                 <div id="jquery_jplayer" class="jp-player"></div>
                 <div class="jp-audio">
                     <div class="jp-type-single">
@@ -80,7 +81,7 @@
                             <div class="jp-volume-bar">
                                 <div class="jp-volume-bar-value"></div>
                             </div>
-                            <div class="jp-repeat" style="left:252px;position:absolute;top:52px;"><input id="jplayer_repeat"  type="checkbox" checked="true" name="repeat"/><label>repeat</label></div>
+                             <div class="jp-repeat" style="left:252px;position:absolute;top:52px;"><input id="jplayer_repeat"  type="checkbox" checked="true" name="repeat"/><label>repeat</label></div>
 
 
                             <!--

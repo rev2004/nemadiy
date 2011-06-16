@@ -314,7 +314,7 @@ function plot(numseries,data,seriesNames){
                
                
                
-    function play(startTime,endTime){
+    function play(startTime,endTime,sign){
 
         // Local copy of jQuery selectors, for performance.
         if (jPlayerReady) {
@@ -326,11 +326,12 @@ function plot(numseries,data,seriesNames){
             .bind(jQuery.jPlayer.event.timeupdate, function(event){
                 playbackTime = event.jPlayer.status.currentTime;
                 if (playbackTime>endTime){
-                    if (jQuery('#next').val()!=null){
-                        var nextSegIndex=findNextSegmentIndex(data[focus_plot.selection()[1]],focus_plot.selection()[0]);
-                        focus_plot.selection()[0]=nextSegIndex;
+                    if (jQuery('#next:checked').val()!=null){
+                        var nextSegIndex=findNextSegmentIndex(data[focus_plot.selection()[1]],playbackTime,sign);
+                        //focus_plot.selection()[0]=nextSegIndex;
                         var nextSeg=data[focus_plot.selection()[1]][nextSegIndex];
                         if ((jQuery('#jplayer_repeat:checked').val()!=null)||(nextSeg.o>playbackTime)){
+                            label.text("selected: " + nextSeg.o+ " to " + nextSeg.f + " seconds");
                             endTime=nextSeg.f;
                             startTime=nextSeg.o;
                             if (interaction.x>fullScale(startTime)) interaction.x=fullScale(startTime);
@@ -339,13 +340,13 @@ function plot(numseries,data,seriesNames){
                             return;
                         }
                     }else {
-                       if (jQuery('#jplayer_repeat:checked').val()!=null)
+                        if (jQuery('#jplayer_repeat:checked').val()!=null)
                         {
                             jQuery(this).jPlayer("play",startTime);
                             return;
                         };
                     
-                     jQuery(this).jPlayer("pause",startTime);
+                        jQuery(this).jPlayer("pause",startTime);
                     //endTime=totalTime;
                     };
                 };
@@ -360,7 +361,7 @@ function plot(numseries,data,seriesNames){
     function handleSelect(d){
         label.text("selected: " + d.o+ " to " + d.f + " seconds");
         playInterval=setInterval(function(){
-            play(d.o,d.f);
+            play(d.o,d.f,d.l);
         },1000);
         focus.render();
         context.render();
@@ -376,11 +377,15 @@ function plot(numseries,data,seriesNames){
         context.render();
     }
 
-    function findNextSegmentIndex(lineData,index){
-        var i=index+1;
-        while (lineData[i].l!=lineData[index].l){
+    function findNextSegmentIndex(lineData,currentTime,sign){
+        var i = pv.search.index(lineData, currentTime, function(d) {
+            return d.f;
+        });
+        i   =i >= 0 ? i : -(1+i);
+        i=i%lineData.length;
+        while (lineData[i].l!=sign){
             i++; 
-            i%=lineData.length;
+            i=i%lineData.length;
         }
         return i;
     }
