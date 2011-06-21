@@ -59,6 +59,7 @@
 
         <div id="content">
             <h4>Segmentation Plot: Structural Segmentation -${param.plot}</h4>
+            <a href="../index.jsp" style="float: right;">Home</a><span style="clear: both;"></span>
             <h5>Artist: <label id="artist"/></h5>
             <h5>Track: <label id="track"/></h5>
             <div id="center">
@@ -101,7 +102,7 @@
                 <div id="jplayer_inspector"></div>
             </div>
             <br>
-
+            
         </div>
     </body>
 </html>
