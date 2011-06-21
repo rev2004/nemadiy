@@ -172,13 +172,12 @@ function plot(numseries,data,seriesNames){
     })
     .height(30)
     .fillStyle(function(d) {
-        //console.log(playbackTime);
-        //console.log(d.o<playbackTime-0.1)&&(d.f>playbackTime);
         return (d.o<playbackTime-0.1)&&(d.f>playbackTime+0.1) && focus_plot.selection()[1]==this.parent.index ? "steelblue" : pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6)
     })
     /*.event("click", function(d) label.text("selected: " + d.o+ " to " + d.f + " seconds"))*/
-    .event("click",function(d){
-        if((d.o<playbackTime)&&(d.f>playbackTime) && focus_plot.selection()[1]==this.parent.index){
+    .event("dblclick",function(d){
+        console.log("playbackTime:",playbackTime);
+        if((d.o<=playbackTime)&&(d.f>=playbackTime) && focus_plot.selection()[1]==this.parent.index){
             handleDeselect();
             focus_plot.selection([-1,-1]);
         }else{
@@ -316,9 +315,12 @@ function plot(numseries,data,seriesNames){
                
     function play(startTime,endTime,sign){
 
+        playbackTime=startTime+0.01;
         // Local copy of jQuery selectors, for performance.
         if (jPlayerReady) {
-                                        
+                           
+                           
+            //console.log("play ",startTime," to ",endTime,"(",playInterval,")");
             clearInterval(playInterval);
             
             jQuery("#jquery_jplayer").jPlayer("pause",startTime).unbind(jQuery.jPlayer.event.timeupdate)
@@ -365,9 +367,12 @@ function plot(numseries,data,seriesNames){
 
     function handleSelect(d){
         label.text("selected: " + d.o+ " to " + d.f + " seconds");
+        
         playInterval=setInterval(function(){
+            
             play(d.o,d.f,d.l);
         },1000);
+        //console.log("playInterval:",playInterval);
         focus.render();
         context.render();
     //do something with player here
