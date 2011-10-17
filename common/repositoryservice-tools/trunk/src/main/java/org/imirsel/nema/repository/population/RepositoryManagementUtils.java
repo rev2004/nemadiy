@@ -724,6 +724,10 @@ public class RepositoryManagementUtils {
 				throw new RuntimeException("SQLException occured whien rolling back transaction!",e);
 			}
             throw new RuntimeException("SQLException occured!",ex);
+        }finally{
+        	if (client != null){
+        		client.close();
+        	}
         }
     }
     
