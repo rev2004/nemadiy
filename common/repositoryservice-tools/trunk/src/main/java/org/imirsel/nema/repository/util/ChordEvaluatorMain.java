@@ -4,6 +4,8 @@ package org.imirsel.nema.repository.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,11 +13,19 @@ import java.util.logging.Logger;
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.ResultRenderer;
 import org.imirsel.nema.analytics.evaluation.tagsClassification.TagClassificationEvaluator;
-import org.imirsel.nema.analytics.evaluation.tagsClassification.TagClassificationResultRenderer;
+import org.imirsel.nema.analytics.evaluation.chord.*;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.NemaTrack;
 import org.imirsel.nema.model.fileTypes.MultipleTrackEvalFileType;
-import org.imirsel.nema.model.fileTypes.TagClassificationTextFile;
+import org.imirsel.nema.model.fileTypes.ChordShortHandTextFile;
+import org.imirsel.nema.model.fileTypes.ChordNumberTextFile;
+import org.imirsel.nema.model.fileTypes.ChordIntervalTextFile;
+import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
+
+
+
+
 
 
 /**
@@ -40,21 +50,26 @@ public class ChordEvaluatorMain extends AbstractEvaluatorMain{
 
 	@Override
 	public List<NemaData> readGTFile(File path) throws IOException{
-		MultipleTrackEvalFileType reader = new TagClassificationTextFile();
+		SingleTrackEvalFileType reader = new ChordShortHandTextFile(); //TagClassificationTextFile();
+				    
 		reader.getLogger().setLevel(Level.WARNING);
-		return reader.readFile(path);
+		return reader.readDirectory(path, null);
+
 	}
 
 	@Override
 	public List<List<NemaData>> readResultDirectory(File path) throws IOException{
-		MultipleTrackEvalFileType reader = new TagClassificationTextFile();
+		//MultipleTrackEvalFileType reader = new TagClassificationTextFile();
+        SingleTrackEvalFileType reader = new ChordShortHandTextFile();
+
 		reader.getLogger().setLevel(Level.WARNING);
 		return reader.readDirectory(path, null);
 	}
 
 	@Override
 	public Evaluator getEvaluator() {
-		Evaluator eval = new TagClassificationEvaluator();
+		//Evaluator eval = new TagClassificationEvaluator();
+		Evaluator eval = new ChordEvaluator();
 		eval.setTask(task);
 		eval.setDataset(dataset);
 		eval.setGroundTruth(gtData);
@@ -64,7 +79,9 @@ public class ChordEvaluatorMain extends AbstractEvaluatorMain{
 
 	@Override
 	public ResultRenderer getRenderer(String matlabPath) throws FileNotFoundException {
-		ResultRenderer renderer = new TagClassificationResultRenderer();
+		//ResultRenderer renderer = new TagClassificationResultRenderer();
+		ResultRenderer renderer = new ChordResultRenderer(); //TagClassificationResultRenderer();
+		
 		renderer.setWorkingDir(outputDirectory);
 		renderer.setOutputDir(outputDirectory);
 		renderer.setPerformMatlabStatSigTests(matlabPath != null);
