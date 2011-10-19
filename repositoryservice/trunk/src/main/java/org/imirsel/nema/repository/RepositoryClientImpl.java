@@ -1299,7 +1299,7 @@ public class RepositoryClientImpl implements RepositoryClientInterface{
 	public NemaSubmission getSubmissionDetails(String subCode) throws SQLException {
 		String subName = getSubmissionNameForSubmissionCode(subCode);
 		List<NemaContributor> contributors = getSubmissionContributorsForSubmissionCode(subCode);
-		String abstractUrl = "http://www.music-ir.org/mirex/abstracts/2010/" + subCode + ".pdf";
+		String abstractUrl = "http://www.music-ir.org/mirex/abstracts/2011/" + subCode + ".pdf";
 		return new NemaSubmission(subCode, subName, contributors, abstractUrl);		
 	}
 	
