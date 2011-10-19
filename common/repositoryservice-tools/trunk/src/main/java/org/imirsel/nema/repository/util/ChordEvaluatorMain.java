@@ -4,23 +4,16 @@ package org.imirsel.nema.repository.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.imirsel.nema.analytics.evaluation.Evaluator;
 import org.imirsel.nema.analytics.evaluation.ResultRenderer;
-import org.imirsel.nema.analytics.evaluation.tagsClassification.TagClassificationEvaluator;
 import org.imirsel.nema.analytics.evaluation.chord.*;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
-import org.imirsel.nema.model.NemaTrack;
-import org.imirsel.nema.model.fileTypes.MultipleTrackEvalFileType;
 import org.imirsel.nema.model.fileTypes.ChordShortHandTextFile;
-import org.imirsel.nema.model.fileTypes.ChordNumberTextFile;
-import org.imirsel.nema.model.fileTypes.ChordIntervalTextFile;
 import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
 
 
@@ -33,7 +26,7 @@ import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
  * @author kris.west@gmail.com
  * @since 0.4.0
  */
-public class ChordEvaluatorMain extends AbstractEvaluatorMain{
+public class ChordEvaluatorMain extends AbstractEvaluatorMainSingleTrack{
 	
 	public ChordEvaluatorMain(String[] args) {
 		super(args, Logger.getLogger(ChordEvaluatorMain.class.getName()));
@@ -58,12 +51,11 @@ public class ChordEvaluatorMain extends AbstractEvaluatorMain{
 	}
 
 	@Override
-	public List<List<NemaData>> readResultDirectory(File path) throws IOException{
-		//MultipleTrackEvalFileType reader = new TagClassificationTextFile();
+	public SingleTrackEvalFileType readResultDirectory(File path) throws IOException{
         SingleTrackEvalFileType reader = new ChordShortHandTextFile();
 
 		reader.getLogger().setLevel(Level.WARNING);
-		return reader.readDirectory(path, null);
+		return reader;
 	}
 
 	@Override
