@@ -312,7 +312,7 @@ public class TagClassificationEvaluator extends EvaluatorImpl{
             data.setMetadata(NemaDataConstants.TAG_POS_ACCURACY, posAccuracy);
             data.setMetadata(NemaDataConstants.TAG_NEG_ACCURACY, negAccuracy);
             data.setMetadata(NemaDataConstants.TAG_PRECISION, precision);
-            data.setMetadata(NemaDataConstants.TAG_RECALL, precision);
+            data.setMetadata(NemaDataConstants.TAG_RECALL, recall);
             data.setMetadata(NemaDataConstants.TAG_FMEASURE, fMeasure);
             
             
