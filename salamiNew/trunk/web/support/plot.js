@@ -6,7 +6,7 @@
  */
 
 
-var segmentation_colors = ["lightsalmon", "lightblue", "lightgoldenrodyellow", "lightgreen", "lightgrey", "beige"];
+var segmentation_colors = ["salmon", "slateblue", "red", "green", "grey", "lightseagreen","gold"];
                     
 var playInterval;
                     
@@ -174,7 +174,10 @@ function plot(numseries,data,seriesNames){
     })
     .height(30)
     .fillStyle(function(d) {
-        return (d.o<playbackTime-0.1)&&(d.f>playbackTime+0.1) && focus_plot.selection()[1]==this.parent.index ? "steelblue" : pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6)
+         var color=stat[this.parent.index].color;
+        return (d.o<playbackTime-0.1)&&(d.f>playbackTime+0.1) && focus_plot.selection()[1]==this.parent.index ? 
+            "steelblue" : 
+            pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(1-0.8*color[d.l]/color.total);
     })
     /*.event("click", function(d) label.text("selected: " + d.o+ " to " + d.f + " seconds"))*/
     .event("dblclick",function(d){
@@ -269,8 +272,8 @@ function plot(numseries,data,seriesNames){
     .antialias(false)
     .fillStyle(function(d) {
         var color=stat[this.parent.index].color;
-        var colorLength=color.length();
-        return pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(d.a % 2 == 0 ? 1 : 0.6)
+        
+        return pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(1-0.8*color[d.l]/color.total);
     })
     .title(function(d) {
         return d.l
@@ -441,7 +444,7 @@ function plot(numseries,data,seriesNames){
             line.sort(function(a,b){return a.l>b.l;});
             var count=0;
             var sign=line[0].l;
-            var color=new Array();
+            var color=new Object();
             color[sign]=count;
             for (var j in line){
                if (line[j].l!=sign){
@@ -450,6 +453,7 @@ function plot(numseries,data,seriesNames){
                 color[sign]=count;
                }
             };
+            color.total=count+1;
             stat[i]={line:line, color:color};
         };
         return stat;
