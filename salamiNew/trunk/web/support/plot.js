@@ -384,7 +384,7 @@ function plot(numseries,data,seriesNames){
     //do something with player here
     
         jQuery("#lineStat").show();
-        jQuery("#lineStatTitle").html("Segments list of "+seriesNames[index]+":");
+        jQuery("#lineStatTitle").html("Segment list of "+seriesNames[index]+":");
         var line=stat[index].line;
         //var $table=jQuery("#lineStatTable");
         //line.sort(function(a,b){return a.l>b.l;});
