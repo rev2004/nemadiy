@@ -174,10 +174,9 @@ function plot(numseries,data,seriesNames){
     })
     .height(30)
     .fillStyle(function(d) {
-         var color=stat[this.parent.index].color;
         return (d.o<playbackTime-0.1)&&(d.f>playbackTime+0.1) && focus_plot.selection()[1]==this.parent.index ? 
             "steelblue" : 
-            pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(1-0.8*color[d.l]/color.total);
+            colorRgba(this.parent.index,d.l);
     })
     /*.event("click", function(d) label.text("selected: " + d.o+ " to " + d.f + " seconds"))*/
     .event("dblclick",function(d){
@@ -271,10 +270,7 @@ function plot(numseries,data,seriesNames){
     .lineWidth(1)
     .antialias(false)
     .fillStyle(function(d) {
-        var color=stat[this.parent.index].color;
-        
-        return pv.color(segmentation_colors[this.parent.index % segmentation_colors.length]).alpha(1-0.8*color[d.l]/color.total);
-    })
+        return colorRgba(this.parent.index,d.l);})
     .title(function(d) {
         return d.l
     });
@@ -389,9 +385,9 @@ function plot(numseries,data,seriesNames){
     
         jQuery("#lineStat").show();
         jQuery("#lineStatTitle").html("Segments list of "+seriesNames[index]+":");
-        var line=data[index].slice(0);
-        var $table=jQuery("#lineStatTable");
-        line.sort(function(a,b){return a.l>b.l;});
+        var line=stat[index].line;
+        //var $table=jQuery("#lineStatTable");
+        //line.sort(function(a,b){return a.l>b.l;});
         var sign=line[0].l;
         var content="<tr class='lineStat'><td class='lineStat'>"
                 +sign+"</td><td class='lineStat'>:</td><td>";
@@ -407,7 +403,9 @@ function plot(numseries,data,seriesNames){
             };
             content+="<input type='button'  onclick='play(";
             content+=line[i].o+","+line[i].f+",\""+sign+"\"";
-            content+=")' value='"+count+"'/>";
+            content+=")' value='"+count+"'";
+            content+="style='background-color:"+colorRgbaStr(index,sign)+";' "   
+            content+=  "/>";
             count++;
         }
         content+="</td></tr>";
@@ -436,12 +434,14 @@ function plot(numseries,data,seriesNames){
         }
         return i;
     }
-    
+    function orderByL(a,b){
+        return new Boolean(a.l>b.l);
+    }
     function process(data){
         var stat=new Array();
         for (var i in data){
             var line=data[i].slice(0);
-            line.sort(function(a,b){return a.l>b.l;});
+            stableSort(line,orderByL);
             var count=0;
             var sign=line[0].l;
             var color=new Object();
@@ -454,9 +454,32 @@ function plot(numseries,data,seriesNames){
                }
             };
             color.total=count+1;
+            
             stat[i]={line:line, color:color};
         };
         return stat;
+    }
+    function stableSort(list,orderfunc){
+        
+        var length=list.length;
+        do {
+            var changed=false;
+            for (i=0;i<length-1;i++){
+                if (list[i].l>list[i+1].l)
+                {var tmp=list[i];list[i]=list[i+1];list[i+1]=tmp;
+                 changed=true;
+                }
+            }
+        }while (changed);
+    }
+    function colorRgba(index,sign){
+         var color=stat[index].color;
+        
+        return pv.color(segmentation_colors[index % segmentation_colors.length]).alpha(1-0.8*color[sign]/color.total);
+    }
+    function colorRgbaStr(index,sign){
+        rgba=colorRgba(index,sign);
+        return " rgba("+rgba.r+","+rgba.g+","+rgba.b+","+rgba.a+") ";
     }
     return play;
 };
