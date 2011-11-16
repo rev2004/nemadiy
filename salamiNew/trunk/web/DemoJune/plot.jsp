@@ -72,13 +72,13 @@
             <div id="center">
                 <div id="plot" style="width: 860px; height: 421px; padding: 2px; margin: 3px; border-width: 1px; border-color: black; border-style:solid;">
                 </div>
-                <div id ="lineStat" style="border-style:solid; border-width: 1px; display:none; width:600px;padding: 10px; ">
+                <div id ="lineStat" style="border-style:solid; border-width: 1px; display:none; width:500px;padding: 10px; float:right;">
                     <h5 id="lineStatTitle"></h5>
                     <table id="lineStatTable"   style="border-style:none;"      >
                         
                     </table>
                 </div>       
-                <div><input id="next"  type="checkbox"  name="repeat"/><label style="font-weight: bold;">Continue to similar segment</label></div>
+                <div><input id="next"  type="checkbox"  name="repeat"/><label for="next" style="font-weight: bold;">Continue to similar segment</label></div>
                    
                 <div id="jquery_jplayer" class="jp-player"></div>
                 <div class="jp-audio">
@@ -95,7 +95,9 @@
                             <div class="jp-volume-bar">
                                 <div class="jp-volume-bar-value"></div>
                             </div>
-                             <div class="jp-repeat" style="left:252px;position:absolute;top:52px;"><input id="jplayer_repeat"  type="checkbox"  name="repeat"/><label>repeat</label></div>
+                             <div class="jp-repeat" style="left:252px;position:absolute;top:52px;">
+                                 <input id="jplayer_repeat"  type="checkbox"  name="repeat"/><label for="jplayer_repeat">repeat</label>
+                             </div>
 
 
                             <!--
@@ -109,7 +111,7 @@
                 <br/>
                 <h4 style="font-weight: bold;">Download JSON Structure Data File <button onclick="window.open('${dataUrl}');">Download</button></h4>
                     
-                <br/>
+                <br style="clear:both;"/>
                 <h4>Self Similarity Images:</h4>
                 <a href="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png" ><img height="600px" src="http://www.music-ir.org/diy-demo/music/selfSimImg/${param.plot}.png"/></a>
                 <div id="jplayer_inspector"></div>
