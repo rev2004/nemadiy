@@ -337,11 +337,11 @@ function plot(numseries,data,seriesNames){
                     interaction.dx=Math.min(fullScale(endTime)-interaction.x+1,fullScale(end)-interaction.x);
                 }
                 if (playbackTime>endTime){
-                    if (jQuery('#next:checked').val()!=null){
+                    if (jQuery('#next').attr("checked")){
                         var nextSegIndex=findNextSegmentIndex(data[focus_plot.selection()[1]],playbackTime,sign);
                         //focus_plot.selection()[0]=nextSegIndex;
                         var nextSeg=data[focus_plot.selection()[1]][nextSegIndex];
-                        if ((jQuery('#jplayer_repeat:checked').val()!=null)||(nextSeg.o>playbackTime)){
+                        if ((jQuery('#jplayer_repeat').attr("checked"))||(nextSeg.f>playbackTime)){
                             label.text("selected: " + nextSeg.o+ " to " + nextSeg.f + " seconds");
                             endTime=nextSeg.f;
                             startTime=nextSeg.o;
@@ -353,7 +353,7 @@ function plot(numseries,data,seriesNames){
                             return;
                         }
                     }else {
-                        if (jQuery('#jplayer_repeat:checked').val()!=null)
+                        if (jQuery('#jplayer_repeat').attr("checked"))
                         {
                             jQuery(this).jPlayer("play",startTime);
                             return;
@@ -399,7 +399,6 @@ function plot(numseries,data,seriesNames){
                content+="</td></tr>";
                content+="<tr class='lineStat'><td class='lineStat'>"
                content+=sign+"</td><td class='lineStat'>:</td><td>";
-               
             };
             content+="<input type='button'  onclick='play(";
             content+=line[i].o+","+line[i].f+",\""+sign+"\"";
