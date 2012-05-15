@@ -13,6 +13,7 @@ import org.imirsel.nema.analytics.evaluation.ResultRenderer;
 import org.imirsel.nema.analytics.evaluation.chord.*;
 import org.imirsel.nema.model.NemaData;
 import org.imirsel.nema.model.NemaEvaluationResultSet;
+import org.imirsel.nema.model.fileTypes.ChordNumberTextFile;
 import org.imirsel.nema.model.fileTypes.ChordShortHandTextFile;
 import org.imirsel.nema.model.fileTypes.SingleTrackEvalFileType;
 
@@ -52,8 +53,13 @@ public class ChordEvaluatorMain extends AbstractEvaluatorMainSingleTrack{
 
 	@Override
 	public SingleTrackEvalFileType readResultDirectory(File path) throws IOException{
-        SingleTrackEvalFileType reader = new ChordShortHandTextFile();
-
+		SingleTrackEvalFileType reader;
+		if (path.toString().contains("RHRC1") || path.toString().contains("UUOS1")){
+			reader = new ChordNumberTextFile();
+		}
+		else {
+			reader = new ChordShortHandTextFile();
+		}
 		reader.getLogger().setLevel(Level.WARNING);
 		return reader;
 	}
