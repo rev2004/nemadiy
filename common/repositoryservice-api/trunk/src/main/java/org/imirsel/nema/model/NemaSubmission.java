@@ -46,10 +46,11 @@ public class NemaSubmission {
         this.submissionName = getProperty(SUBMISSION_NAME);
         this.abstractUrl = getProperty(ABSTRACT_URL);
         String contribs = getProperty(CONTRIBUTORS);
-        String[] comps = contribs.split("|");
+        String[] comps = contribs.split("\\|");
         List<NemaContributor> contribList = new ArrayList<NemaContributor>(comps.length);
         for (int i = 0; i < comps.length; i++) {
-    		contribList.add(NemaContributor.fromString(comps[i]));
+        	System.out.println(comps[i]);
+    		contribList.add(NemaContributor.fromString(comps[i].trim()));
 		}
         this.contributors = contribList;
 	}
