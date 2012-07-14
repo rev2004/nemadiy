@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="C:/Users/aehmann/.m2/repository/org/imirsel/nema-analytics/0.4.0-SNAPSHOT/nema-analytics-0.4.0-SNAPSHOT.jar">
+		<attributes>
+			<attribute name="maven.groupId" value="org.imirsel"/>
+			<attribute name="maven.artifactId" value="nema-analytics"/>
+			<attribute name="maven.version" value="0.4.0-SNAPSHOT"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/imirsel/Documents/workspace-sts-2.3.2.RELEASE/nema-repositoryservice-0.5.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/aehmann/.m2/repository/commons-io/commons-io/1.4/commons-io-1.4.jar">
+		<attributes>
+			<attribute name="maven.groupId" value="commons-io"/>
+			<attribute name="maven.artifactId" value="commons-io"/>
+			<attribute name="maven.version" value="1.4"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/imirsel/Documents/nema-repositoryservice-api-melody.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
