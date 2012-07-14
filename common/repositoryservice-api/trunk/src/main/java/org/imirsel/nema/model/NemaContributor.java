@@ -8,6 +8,7 @@ public class NemaContributor {
 	private String affiliation;
 	private String affiliationDept;
 	private String affiliationDeptUnit;
+	private static String delim = ";";
 	
 	public NemaContributor(String title, String firstName, String lastName,
 			String affiliationUrl, String affiliation, String affiliationDept,
@@ -63,5 +64,28 @@ public class NemaContributor {
 	}
 	public String getAffiliationDeptUnit() {
 		return affiliationDeptUnit;
+	}
+	
+	public String toString() {
+		String theString;		
+		theString = title + delim + firstName + delim + lastName + delim 
+		+ affiliationUrl + delim + affiliation + delim + affiliationDept
+		+ delim + affiliationDeptUnit; 
+		return theString;
+	}
+	
+	public static NemaContributor fromString(String theString) {
+		String[] stringComps = theString.split(delim);
+		String title = stringComps[0]; 
+		String firstName = stringComps[1];  
+		String lastName = stringComps[2]; 
+		String affiliationUrl = stringComps[3]; 
+		String affiliation = stringComps[4];  
+		String affiliationDept = stringComps[5]; 
+		String affiliationDeptUnit = stringComps[6]; 
+
+		return new NemaContributor(title, firstName, lastName,
+				affiliationUrl, affiliation, affiliationDept,
+				affiliationDeptUnit);
 	}
 }
