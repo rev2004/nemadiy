@@ -2,6 +2,8 @@ package org.imirsel.nema.model;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -83,6 +85,26 @@ public class NemaSubmission {
 	private String getProperty(String name){
     	String val = props.getProperty(name);
     	return val;
-    }	
+    }
+	
+	public void toPropertiesFile(File theFile) {		
+		try {
+			props = new Properties();
+			props.setProperty(SUBMISSION_CODE, submissionCode);
+			props.setProperty(SUBMISSION_NAME, submissionName);
+			props.setProperty(CONTRIBUTORS, contributors.toString());
+			props.setProperty(ABSTRACT_URL, abstractUrl);
+
+			FileOutputStream fileOut = new FileOutputStream(theFile);
+			String commentString = "Submission Details for: " + submissionCode;
+			props.store(fileOut, commentString);
+			fileOut.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 }
