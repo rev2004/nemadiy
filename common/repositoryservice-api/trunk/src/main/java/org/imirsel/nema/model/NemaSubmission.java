@@ -91,8 +91,7 @@ public class NemaSubmission {
 		try {
 			props = new Properties();
 			props.setProperty(SUBMISSION_CODE, submissionCode);
-			props.setProperty(SUBMISSION_NAME, submissionName);
-			props.setProperty(CONTRIBUTORS, contributors.toString());
+			props.setProperty(SUBMISSION_NAME, submissionName);			
 			props.setProperty(ABSTRACT_URL, abstractUrl);
 			
 			String contributorsString = contributors.get(0).toString();
@@ -101,6 +100,7 @@ public class NemaSubmission {
 					contributorsString = contributorsString + "|" + contributors.get(i).toString();
 				}
 			}
+			props.setProperty(CONTRIBUTORS, contributorsString);
 
 			FileOutputStream fileOut = new FileOutputStream(theFile);
 			String commentString = "Submission Details for: " + submissionCode;
