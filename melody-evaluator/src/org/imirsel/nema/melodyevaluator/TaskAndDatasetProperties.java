@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.imirsel.nema.melodyevaluator.util;
+package org.imirsel.nema.melodyevaluator;
 
 import java.io.File;
 import java.io.FileInputStream;
