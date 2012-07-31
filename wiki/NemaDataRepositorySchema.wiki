@@ -1,0 +1,104 @@
+#summary Database schema for Nema Data Repository database
+
+= Introduction =
+
+
+
+
+= Concepts =
+ * Task: MIREX task/subtask
+ * File: Concrete song file on disk
+ * Track: Abstract concept representing a song
+ * Dataset: 
+ * Site: (Not used) Where collections reside
+ * Track List: List of tracks in a dataset
+ * Collection 
+
+== Tables ==
+
+=== TRACK === 
+Represents a song (abstract concept). See FILE table for concrete song files stored on disk. The MIREX database contains nearly 150,000 tracks.
+   * id: Track identifier
+
+=== TRACK_METADATA_DEFINITIONS ===
+The set of possible TRACK metadata fields (e.g., album, artist, genre, composer, etc). 
+   * id:  Metadata field identifier
+   * name: Metadata field name
+
+=== TRACK_METADATA ===
+The set of possible TRACK metadata field values.
+   * id: Metadata value identifier
+   * metadata_type_id: TRACK_METADATA_DEFINITIONS.ID
+   * value: Metadata value
+
+=== TRACK_TRACK_METADATA_LINK
+Maps tracks to TRACK_METADATA values.
+   * id: Unique identifier
+   * track_id: TRACK.ID
+   * track_metadata_id: TRACK_METADATA.ID
+
+=== FILE ===
+Represents the concrete file in disk.
+   * id: Unique identifier
+   * track_id: TRACK.ID
+   * path: File path on disk
+   * site: SITE.ID
+
+=== FILE_METADATA ===
+The set of possible FILE metadata field values.
+   * id: Unique identifier
+   * metadata_type_id: FILE_METADATA_DEFINITIONS.ID
+   * value: Metadata value
+
+=== FILE_METADATA_DEFINITIONS ===
+The set of possible FILE metadata fields (e.g., bitrate, channels, encoding).
+   * id: Unique identifier
+   * name: Field name
+
+=== FILE_FILE_METADATA_LINK ===
+Maps files to FILE_METADATA values.
+   * id: Unique identifier
+   * file_id: FILE.ID
+   * file_metadata_id: FILE_METADATA.ID
+
+=== TASK ===
+A task is a MIREX task or subtask. There is one TASK record for each MIREX subtask associated with a test corpus. Tasks group the metadata that participants are trying to predict. Subtasks are grouped together by TASK.SUBJECT_TASK_METADATA, which keys into TRACK_METADATA_DEFINITIONS.ID. For example, the MIREX task "Audio Beat Tracking" includes to TASK records -- "Audio Beat Tracking - MAZ dataset" and "Audio Beat Tracking - MCK Dataset". Both of these subtasks share a common SUBJET_TASK_METADATA value "11" -- "List of beat times". Each task links to a DATASET.
+
+Fields:
+   * id: Unique identifier
+   * name: Task/subtask name
+   * description: Task/subtask description
+   * subject_track_metadata: TRACK_METADATA_DEFINITIONS.ID
+   * dataset_id: DATASET.ID
+
+=== DATASET ===
+There is a dataset for each task. Datasets can be reused. For example, genre classification and mood classification can use the same dataset as long as there is associated metadata.
+
+Fields:
+   * id: Unique identifier
+   * name: Dataset name
+   * description: Dataset description
+   * collection_id: COLLECTION.ID (Not used)
+   * subset_set_id: TRACKLIST.ID
+   * num_splits: Number of test/training sets (either 1 or 3)
+   * num_set_per_split: test/train = 2; test/train/validate = 3
+   * split_class: (Not used, but code exists). See "Splitting" section below
+   * split_parameters_string = (Not used)
+   * subject_track_metadata_type_id = Redundant -- same as TASK.SUBJECT_TRACK_METADATA
+   * filter_track_metadata_type_id: no filter = -1; artist = 2; album = 3
+  
+=== COLLECTION ===
+
+=== TRACKLIST ===
+All of the TRACKS in a DATASET -- audio files used for a particular run.
+   * id: Unique identifier
+   * dataset_id: DATASET.ID
+   * set_type_id:
+   * split_number: 
+
+
+== Splitting ==
+The DATASET table includes a SPLIT_CLASS column. Code exists for splitting datasets. The splitting process can be non-trivial.  For example, splits may need to be balanced based on collection statistics. 
+
+== Filtering ==
+The DATASET table includes a FILTER_TRACK_METADATA_TYPE_ID field. Need to get a better understanding of this from Andy/Mert. Example, for genre classification, it's easier to classify the artist, so need to make sure that we have each artist in the test/training/validation sets.
