@@ -6,6 +6,7 @@
 package org.imirsel.nema.repository.util;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -102,6 +103,7 @@ public class TaskAndDatasetProperties {
     
     public List<NemaTrackList> getTestTrackLists() throws IOException{
     	int[] ids = getIntArrayProperty(DATASET_TEST_IDS);
+    	
     	int[] foldNumbers = getIntArrayProperty(DATASET_TEST_FOLD_NUMBERS);
     	String[] paths = getArrayProperty(DATASET_TEST_PATHS);
     	
@@ -158,7 +160,7 @@ public class TaskAndDatasetProperties {
     
     private int getIntProperty(String name){
     	String val = props.getProperty(name);
-    	if(val == null){
+    	if(val == null || val.length() == 0) {
     		Logger.getLogger(TaskAndDatasetProperties.class.getName()).warning("No property value found for property: " + name);
     		return -1;
     	}else{
@@ -168,7 +170,7 @@ public class TaskAndDatasetProperties {
     
     private int[] getIntArrayProperty(String name){
     	String val = props.getProperty(name);
-    	if(val == null){
+    	if(val == null || val.length() == 0){
     		Logger.getLogger(TaskAndDatasetProperties.class.getName()).warning("No property value found for property: " + name);
     		return null;
     	}else{
