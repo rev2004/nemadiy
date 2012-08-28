@@ -46,7 +46,7 @@ public class QBSHTResultsTextFile extends MultipleTrackEvalFileTypeImpl {
 				resultStr = resultStr.replaceAll("t01", "");
 				String[] results = resultStr.split(" ");
 				
-				System.out.println(pathStr + "," + resultStr);
+				//System.out.println(pathStr + "," + resultStr);
 				
 				String trackID = getQBSHTrackID(pathStr);
 				NemaData obj = new NemaData(trackID);
