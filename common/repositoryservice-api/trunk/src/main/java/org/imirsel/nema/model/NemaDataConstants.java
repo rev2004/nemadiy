@@ -239,4 +239,11 @@ public class NemaDataConstants {
     public static final String BEAT_TRACKING_AMLT = "AMLt";
     public static final String BEAT_TRACKING_D = "D (bits)";
     public static final String BEAT_TRACKING_DG = "Dg (bits)";
+    
+    //Query by Singing/Humming and Query by Tapping evaluator constants
+    public static final String QBSHT_DATA = "Original track identifier";
+    public static final String QBSHT_QUERY_HITMISS = "Hit/Miss";
+    public static final String QBSHT_QUERY_MRR = "MRR";
+    public static final String QBSHT_QUERY_RAW_COUNT = "Raw Count";
+    public static final String QBSHT_NUM_FOLD_RESULTS = "Number of results in fold";
 }
