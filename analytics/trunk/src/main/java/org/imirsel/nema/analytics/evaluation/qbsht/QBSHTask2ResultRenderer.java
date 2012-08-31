@@ -173,7 +173,7 @@ public class QBSHTask2ResultRenderer extends ResultRendererImpl {
 				);
 			
 			items.add(new TableItem(results.getJobName(jobId) + "_results", results.getJobName(jobId)
-					+ " Per Track Results", perTrackTable.getColHeaders(),
+					+ " Summary Results by Query", perTrackTable.getColHeaders(),
 					perTrackTable.getRows()));
 			
 			aPage = new Page(results.getJobName(jobId) + "_results", results.getJobName(jobId),
