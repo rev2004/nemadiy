@@ -20,6 +20,11 @@ One way to configure your Eclipse environment is to download the "Eclipse IDE fo
 
 Instead, we recommend you download and install the Spring Source Tool Suite, a Spring branded Eclipse environment that comes pre-installed with Spring IDE, Mylyn, and M2 Eclipse. Then, you can install the remaining plugins.
 
+<wiki:comment>
+working notes:
+* STS seems to require mylyn to already be installed.
+</wiki:comment>
+
 Here are the complete steps for setting up your Eclipse environment.
 
   # Download and install the Spring Source Tool Suite (http://www.springsource.com/products/eclipse-downloads)
