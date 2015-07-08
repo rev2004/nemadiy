@@ -1,0 +1,51 @@
+# Introduction #
+
+In addition to the base Eclipse environment, a number of third-party plugins are required to properly configure an Eclipse environment for the NEMA code base. This document will help you through the complete process of installation.
+
+
+# Details #
+
+The NEMA Eclipse environment requires the following Eclipse plugins:
+  * Spring IDE
+  * M2 Eclipse
+  * Subversive SVN connector
+  * Mylyn
+  * Google code connector for Mylyn
+  * Find Bugs
+  * Ecl Emma
+
+One way to configure your Eclipse environment is to download the "Eclipse IDE for Java EE Developers" from the Eclipse site (http://www.eclipse.org/downloads/), and then download and install each plugin individually. However, this can be a time consuming and error prone process.
+
+Instead, we recommend you download and install the Spring Source Tool Suite, a Spring branded Eclipse environment that comes pre-installed with Spring IDE, Mylyn, and M2 Eclipse. Then, you can install the remaining plugins.
+
+<a href='Hidden comment: 
+working notes:
+* STS seems to require mylyn to already be installed.
+'></a>
+
+Here are the complete steps for setting up your Eclipse environment.
+
+  1. Download and install the Spring Source Tool Suite (http://www.springsource.com/products/eclipse-downloads)
+  1. Now install the SVN plugin, Subversive. Open the Spring Source Tool Suite, and go to Help->Install New Software
+  1. In the "Work with:" field, type "http://download.eclipse.org/releases/galileo/"
+  1. Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Subversive Update Site" then click "OK".
+  1. In the categorized list of plugins that appears, expand the "Collaboration" tree node and select the "Subversive SVN Integration for the Mylyn Project" and the "Subversive SVN Team Provider" plugins. Complete the installation by following the buttons.
+  1. To complete the Subversive installation, you will need to restart Eclipse. When Eclipse restarts, Subversive will ask you to choose an SVN connector to install. Choose SVNKit 1.3.0.
+  1. Now add the NEMA SVN repository by switching to the "SVN Repository Exploring" perspective and creating a new repository location with the following URL: https://nemadiy.googlecode.com/svn. Enter your user and password, and select "Save password" to avoid being prompted each time you browse the repository.
+  1. Now install the Google Code Mylyn Connector. In Eclipse go to Help->Install New Software
+  1. In the "Work with:" field, type "http://knittig.de/googlecode-mylyn-connector/update/"
+  1. Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Google Code Mylyn Connector" then click "OK".
+  1. In the list of plugins that appears, expand the "Nightly Builds" tree node and select the "Google Code Mylyn Connector Feature" plugin. Complete the installation by following the buttons.
+  1. Now you need to add the NEMA Google Code Task Repository. In Eclipse, go to Window->Show View->Other... Expand the "Tasks" node and then select "Task Repositories". The view should appear at the bottom of the IDE window.
+  1. Right click within the Task Repositories view, and select "Add Task Repository". In the dialog box that appears, choose "Google Code" and then click next. In the next window, add "https://code.google.com/p/nemadiy" in the Project field. Give the task repository a name of your choice. Finally, check "Anonymous" then the "Finish" button.
+  1. You should now be able to add a task query to the "Task List" view. Right click on the view pane, and select New->Query. Choose the NEMA task repository, then choose the predefined "All Issues" query. When you're done, all the repository task should display in the Task List.
+  1. Now install the Find Bugs plugin. In Eclipse go to Help->Install New Software
+  1. In the "Work with:" field, type "http://findbugs.cs.umd.edu/eclipse"
+  1. Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Find Bugs Update Site" then click "OK".
+  1. In the list of plugins that appears, expand the "Find Bugs" tree node and select the latest "Find Bugs Feature" plugin. Complete the installation by following the buttons.
+  1. Now install the Ecl Emma plugin. In Eclipse go to Help->Install New Software
+  1. In the "Work with:" field, type "http://update.eclemma.org/"
+  1. Click the "Add..." button, a dialog box will appear. In the "Name" field, type something like, "Ecl Emma Update Site" then click "OK".
+  1. In the list of plugins that appears, expand the "EclEmma" tree node and select the latest "EclEmma Java Code Coverage 1.4.3" plugin. Complete the installation by following the buttons.
+
+You have now completed configuration of your Eclipse environment.

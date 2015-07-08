@@ -1,0 +1,92 @@
+DIY is set up to get data source and several properties via JNDI. So it is important to set up JNDI service in web container (Jetty, Tomcat, Jboss...) before one can run diy web application. Below I will detailed how to set Jetty with JNDI.
+
+1. First of all, jetty by default does not support jndi. So we need to tell jetty to turn it on. (Modify your etc/jetty.xml file.)
+```
+<Array id="plusConfig" type="java.lang.String"> 
+   <Item>org.mortbay.jetty.webapp.WebInfConfiguration</Item>
+   <Item>org.mortbay.jetty.plus.webapp.EnvConfiguration</Item>
+   <Item>org.mortbay.jetty.plus.webapp.Configuration</Item>
+   <Item>org.mortbay.jetty.webapp.JettyWebXmlConfiguration</Item>
+   <Item>org.mortbay.jetty.webapp.TagLibConfiguration</Item>
+ </Array>
+
+<Call name="addLifeCycle">
+     <Arg>
+       <New class="org.mortbay.jetty.deployer.WebAppDeployer">
+         <Set name="contexts"><Ref id="Contexts"/></Set>
+         <Set name="webAppDir"><SystemProperty name="jetty.home" default="."/>/webapps</Set>
+   ......
+        <Set name="configurationClasses"><Ref id="plusConfig"/></Set>
+       </New>
+     </Arg>
+   </Call>
+```
+
+Alternatively, one can turn it on in one particular webApp, but that is kind of complicated, and we would like resources configured in server level. So this works fine for us.
+
+2. Adding the resources.
+Create a xml file (myjndi.xml) and put it along with jetty.xml in jetty.home/etc. Or just put it into jetty.xml file. (Please use the content in WEB-INF/local/jetty-env.xml except the root tag `<Configure...>`. )
+```
+
+<Configure  id="Server" class="org.mortbay.jetty.Server">
+<New id="dataSource" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg>jdbc/dataSource</Arg>
+        <Arg>
+            <New class="org.apache.commons.dbcp.BasicDataSource">
+                <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
+                <Set name="url">jdbc:mysql://localhost:3306/diy090?autoReconnect=true</Set>
+                <Set name="username">user</Set>
+                <Set name="password">pass</Set>
+                <Set name="maxActive">100</Set>
+                <Set name="maxWait">1000</Set>
+                <Set name="poolPreparedStatements">true</Set>
+                <Set name="defaultAutoCommit">true</Set>
+            </New>
+        </Arg>
+    </New>
+    
+    <New class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>flowservice/url</Arg>
+        <Arg type="java.lang.String">rmi://remote.service.call:1099/FlowService</Arg>
+        <Arg type="boolean">true</Arg>
+    </New>
+.......
+</Configure>
+```
+This will add the resource ("java:comp/env/jdbc/dataSource", "java:comp/env/flowservice/url") in the server level that available to every web applications. Note that "id" attribute in configure tag needs to match "id" attribute in jetty.xml so jetty know they are for the same server.
+Now instead of starting jetty by "java -jar start.jar", we need to tell jetty to use both the default setting (etc/jetty.xml) and extra xml (myjndi.xml), the command is "java -jar start.jar etc/jetty.xml etc/myjndi.xml". Or we can simply put the content of `<configure>` tag into jetty.xml. Then one can use the same old command "java -jar start.jar".
+
+
+
+Note: to make the data source work, relevant jars need to be in jetty's library jetty.home/lib/ext. For common dbcp with mysql. Here is the list:
+```
+commons-dbcp-1.2.1.jar
+commons-collections-3.2.jar
+commons-pool-1.2.jar
+mysql-connector-java-5.1.6.jar
+```
+
+
+3. (Only for maven jetty:run) Now you have to specify the setting for jetty to use maven-jetty-plugin to run the web application.  You can do the following.
+
+Change pom.xml
+```
+<plugin>
+    <groupId>org.mortbay.jetty</groupId>
+    <artifactId>maven-jetty-plugin</artifactId>
+    <version>6.1.22</version>
+    <configuration>
+
+     <contextPath>/</contextPath>
+     
+     <jettyEnvXml>${jetty.setting}</jettyEnvXml>
+     .......
+    </configuration>
+   </plugin>
+```
+
+Put jetty-env.xml somewhere outside svn directory. Now when you start maven append the system property jetty.setting=directory.
+```
+mvn -Djetty.setting=**/jetty-env.xml jetty:run
+```
+Refer to my blog's  [this post](http://zggame.blogspot.com/2010/10/set-optional-jetty-envxml-for-jndi-in.html).

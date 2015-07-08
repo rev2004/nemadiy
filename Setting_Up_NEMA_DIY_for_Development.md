@@ -1,0 +1,30 @@
+# Introduction #
+
+This tutorial gives step-by-step instructions for setting up a local NEMA DIY webapp instance for the purposes of developing the web app itself.
+
+
+# Details #
+
+Before you begin, make sure you have the NEMA settings.xml file, which should be located in your .m2 directory in your home directory. If it is not present, ask another developer to give you theirs.
+
+Now, follow these steps:
+
+  1. Check out the DIY source code project from SVN
+  1. Install MySQL 5.X if you have not already done so
+  1. Start MySQL
+  1. Log into the MySQL monitor and create a new database named 'diy051':
+    * `create database diy051`
+  1. Create a user with privileges to modify the database:
+    * `grant all privileges on diy051.* to 'nema_user'@'localhost' identified by '********';`
+    * Ask one of the other developers for the database password
+  1. Now flush the privileges:
+    * `flush privileges;`
+  1. From the command line, navigate to the root of the DIY source code project
+  1. Run the following Maven command, which creates the database schema and runs the tests
+    * `mvn clean test -Denv=development`
+    * You should see log messages on the command line that indicate database tables are being successfully created.
+    * Currently, the tests will fail. This is expected behavior.
+  1. Now navigate to webapp directory, just inside the root directory of the DIY source code.
+  1. Run the following Maven command, which starts the Jetty application server as well as the NEMA DIY web app:
+    * `mvn jetty:run -Denv=development -Dmaven.test.skip=true`
+    * The -P switch along with the diy-development, etc. parameters specify which Maven profiles should be used to generate the executable web app code. Depending on the profile IDs that are specified, the DIY application configuration files will be populated with different property values. For example, specifying flowservice-development ensures the DIY webapp will connect to the Flow Service instance that is for development, rather than the production version.
